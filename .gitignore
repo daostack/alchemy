@@ -1,0 +1,8 @@
+node_modules/
+dist/
+kovan_pass.txt
+ropsten_pass.txt
+PRIVATE_README.md
+
+*.log*
+*sublime*
