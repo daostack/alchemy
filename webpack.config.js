@@ -52,7 +52,33 @@ module.exports = {
         enforce: "pre",
         test: /\.js$/,
         loader: "source-map-loader"
-      }
+      },
+
+      // CSS handling
+      {
+        test: /\.css$/,
+        include: /client/,
+        use: [
+          'style-loader',
+          {
+            'loader': 'css-loader',
+            options: {
+              modules: true, // Use CSS Modules
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          }
+        ],
+      },
+
+      // Images & fonts
+      {
+        test: /\.(png|jpg|gif|mp4|ogg|svg|woff|woff2|ttf|eot|ico)$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000 // For assets smaller than 10k inline them as data urls, otherwise use regular file loader
+        }
+      },
+
     ]
   },
 

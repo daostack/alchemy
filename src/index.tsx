@@ -4,6 +4,8 @@ import { AppContainer } from 'react-hot-loader'
 
 import { App } from "./App";
 
+import './assets/styles/global.css'
+
 function renderApp() {
   ReactDOM.render(
     <AppContainer>

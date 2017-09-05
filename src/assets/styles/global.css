@@ -1,0 +1,9 @@
+:global html {
+  min-height: 100%;
+  position: relative;
+}
+
+:global body {
+  background-color: gray;
+  color: white;
+}
