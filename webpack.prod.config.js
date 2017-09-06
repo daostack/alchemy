@@ -33,17 +33,26 @@ module.exports = merge(baseConfig, {
       {
         test: /\.scss$/,
         use: extractSass.extract({
-          use: [{
-            loader: "css-loader",
-            options: {
-              minimize: true,
-              modules: true, // Use CSS Modules
-              localIdentName: '[name]__[local]___[hash:base64:5]',
-              importLoaders: 1
-            }
-          }, {
-            loader: "sass-loader"
-          }],
+          use: [
+            {
+              loader: "css-loader",
+              options: {
+                minimize: true,
+                modules: true, // Use CSS Modules
+                localIdentName: '[name]__[local]___[hash:base64:5]',
+                importLoaders: 2
+              }
+            },
+            {
+              loader: "sass-loader"
+            },
+            {
+              loader: 'sass-resources-loader',
+              options: {
+                resources: ['./src/assets/styles/global-variables.scss']
+              },
+            },
+          ],
         }),
       },
     ],

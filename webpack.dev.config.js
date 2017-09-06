@@ -35,18 +35,28 @@ module.exports = merge(baseConfig, {
     rules: [
       {
         test: /\.scss$/,
-        use: [{
-          loader: "style-loader" // creates style nodes from JS strings
-        }, {
-          loader: "css-loader", // translates CSS into CommonJS
-          options: {
-            modules: true, // Use CSS Modules
-            localIdentName: '[name]__[local]___[hash:base64:5]',
-            importLoaders: 1
-          }
-        }, {
-          loader: "sass-loader" // compiles Sass to CSS
-        }]
+        use: [
+          { // creates style nodes from JS strings
+            loader: "style-loader"
+          },
+          { // translates CSS into CommonJS
+            loader: "css-loader",
+            options: {
+              modules: true, // Use CSS Modules
+              localIdentName: '[name]__[local]___[hash:base64:5]',
+              importLoaders: 2
+            }
+          },
+          { // compiles Sass to CSS
+            loader: "sass-loader"
+          },
+          { // Load global scss files in every other scss file without an @import needed
+            loader: 'sass-resources-loader',
+            options: {
+              resources: ['./src/assets/styles/global-variables.scss']
+            },
+          },
+        ]
       }
     ],
   },
