@@ -44,11 +44,15 @@ module.exports = merge(baseConfig, {
             options: {
               modules: true, // Use CSS Modules
               localIdentName: '[name]__[local]___[hash:base64:5]',
-              importLoaders: 2
+              importLoaders: 2,
+              sourceMap: true
             }
           },
           { // compiles Sass to CSS
-            loader: "sass-loader"
+            loader: "sass-loader",
+            options: {
+              sourceMap: true
+            }
           },
           { // Load global scss files in every other scss file without an @import needed
             loader: 'sass-resources-loader',
