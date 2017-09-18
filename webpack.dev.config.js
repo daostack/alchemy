@@ -39,10 +39,12 @@ module.exports = merge(baseConfig, {
           { // creates style nodes from JS strings
             loader: "style-loader"
           },
-          { // translates CSS into CommonJS
-            loader: "css-loader",
+          { // translates CSS into CommonJS (css-loader) and automatically generates TypeScript types
+            loader: 'typings-for-css-modules-loader',
             options: {
-              modules: true, // Use CSS Modules
+              camelCase: true,
+              modules: true,
+              namedExport: true,
               localIdentName: '[name]__[local]___[hash:base64:5]',
               importLoaders: 2,
               sourceMap: true

@@ -5,6 +5,8 @@ const ENV = process.env.NODE_ENV || 'development';
 const isProd = ENV === 'production';
 const isDev = ENV === 'development';
 
+const basePath = process.cwd();
+
 module.exports = {
 
   output: {
@@ -18,7 +20,16 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".js", ".json"]
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+
+    alias: {
+      actions: path.resolve(basePath, 'src/actions'),
+      arc: path.resolve(basePath, 'src/arc'),
+      components: path.resolve(basePath, 'src/components'),
+      constants: path.resolve(basePath, 'src/constants'),
+      lib: path.resolve(basePath, 'src/lib'),
+      reducers: path.resolve(basePath, 'src/reducers')
+    },
   },
 
   module: {
@@ -42,14 +53,17 @@ module.exports = {
         include: /client/,
         use: [
           'style-loader',
-          {
-            loader: 'css-loader',
+          { // translates CSS into CommonJS (css-loader) and automatically generates TypeScript types
+            loader: 'typings-for-css-modules-loader',
             options: {
+              camelCase: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]',
               minimize: isProd,
-              modules: true, // Use CSS Modules
-              localIdentName: '[name]__[local]___[hash:base64:5]'
+              modules: true,
+              namedExport: true,
+              sourceMap: true
             }
-          }
+          },
         ],
       },
 
