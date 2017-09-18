@@ -1,16 +1,26 @@
 import * as React from "react";
+import { Provider } from 'react-redux';
+import { Switch, Route } from 'react-router-dom';
+import { ConnectedRouter } from 'react-router-redux';
 
-import Welcome from "./components/Welcome/Welcome";
+import Web3Provider from 'lib/components/Web3Provider';
 
-export interface AppProps {
-  compiler: string;
-  framework: string;
-}
+import { default as store, history } from './configureStore';
 
-// 'AppProps' describes the shape of props.
-// State is never set so we use the 'undefined' type.
-export class App extends React.Component<AppProps, undefined> {
+import * as arcActions from './actions/arcActions';
+
+import AppContainer from "./AppContainer";
+import ViewDaoContainer from "./components/ViewDao/ViewDaoContainer";
+
+export class App extends React.Component<undefined, undefined> {
+
   render() {
-    return <Welcome {...this.props} />
+    return (
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <Route path="/" component={AppContainer}/>
+        </ConnectedRouter>
+      </Provider>
+    );
   }
 }

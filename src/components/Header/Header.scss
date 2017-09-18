@@ -1,0 +1,18 @@
+.header {
+  width: 100%;
+  vertical-align: middle;
+
+  img {
+    float: left;
+  }
+
+  h1 {
+    float: left;
+  }
+
+  .etherBalance {
+    float: right;
+  }
+}
+
+.header:after { clear: both;  content: ""; display: table; }

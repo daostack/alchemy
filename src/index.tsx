@@ -9,7 +9,7 @@ import './assets/styles/global.scss'
 function renderApp() {
   ReactDOM.render(
     <AppContainer>
-      <App compiler="TypeScript" framework="React"/>
+      <App />
     </AppContainer>,
     document.querySelector('#root')
   );
