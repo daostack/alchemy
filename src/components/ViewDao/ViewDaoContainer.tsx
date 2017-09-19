@@ -1,37 +1,56 @@
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 
+import * as arcActions from 'actions/arcActions';
 import { IStateShape } from 'reducers';
+import { IDaoState } from 'reducers/arcReducer';
 
 import * as css from './ViewDao.scss';
 
 interface IStateProps {
-  dao: any
+  dao: any,
+  daoAddress : string
 }
 
 const mapStateToProps = (state : IStateShape, ownProps: any) => {
   return {
-    dao: state.arc.daoList.find((dao : any) => (dao.avatarAddress == ownProps.match.params.dao_address))
+    dao: state.arc.daoList[ownProps.match.params.daoAddress],
+    daoAddress : ownProps.match.params.daoAddress
   };
 };
 
-type IProps = IStateProps
+interface IDispatchProps {
+  getDAO: typeof arcActions.getDAO
+}
+
+const mapDispatchToProps = {
+  getDAO: arcActions.getDAO
+};
+
+type IProps = IStateProps & IDispatchProps
 
 class ViewDaoContainer extends React.Component<IProps, null> {
 
+  componentDidMount() {
+    this.props.getDAO(this.props.daoAddress);
+  }
+
   render() {
     const { dao } = this.props;
+    console.log("render view dao", dao);
 
     return(
-      <div className={css.wrapper}>
-        <h2>Viewing Dao: {dao.name}</h2>
-        <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-        <div>Num members: {dao.members}</div>
-        <div>Num tokens: {dao.tokenCount}</div>
-        <div>Omega: {dao.reputationCount}</div>
-      </div>
+      dao ?
+        <div className={css.wrapper}>
+          <h2>Viewing Dao: {dao.name}</h2>
+          <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
+          <div>Num members: {dao.members}</div>
+          <div>Num tokens: {dao.tokenCount}</div>
+          <div>Omega: {dao.reputationCount}</div>
+        </div>
+       : <div>Loading... </div>
     );
   }
 }
 
-export default connect(mapStateToProps)(ViewDaoContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewDaoContainer);

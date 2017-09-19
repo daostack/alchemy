@@ -53,7 +53,7 @@ class AppContainer extends React.Component<IProps, null> {
           <Header web3={this.props.web3} />
           <Switch>
             <Route exact path="/" component={HomeContainer}/>
-            <Route path="/dao/:dao_address" component={ViewDaoContainer}/>
+            <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
           </Switch>
         </div>
         : <div>Loading...</div>

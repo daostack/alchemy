@@ -62,18 +62,9 @@ export function getDAOList() {
       type: arcConstants.ARC_GET_DAOS,
       payload: new Promise((resolve, reject) => {
         const web3 = getState().web3.instance;
-        const ethAccountAddress = getState().web3.ethAccountAddress;
 
         const GenesisContract = contract(GenesisScheme);
         GenesisContract.setProvider(web3.currentProvider);
-        const AvatarContract = contract(Avatar);
-        AvatarContract.setProvider(web3.currentProvider);
-        const ControllerContract = contract(Controller);
-        ControllerContract.setProvider(web3.currentProvider);
-        const MintableTokenContract = contract(MintableToken);
-        MintableTokenContract.setProvider(web3.currentProvider);
-        const ReputationContract = contract(Reputation);
-        ReputationContract.setProvider(web3.currentProvider);
 
         const genesisAddress = GenesisScheme.networks[web3Constants.CURRENT_CHAIN_ID]['address'];
 
@@ -85,74 +76,104 @@ export function getDAOList() {
               reject("Error getting new orgs from genesis contract");
             }
 
-            let orgs = <IDaoState[]>[];
+            let orgs = <{ [key : string] : IDaoState }>{};
 
             // Do some promise magic to get all the info we need about each Org
             const promise = eventsArray.reduce(function(promise, event) {
-              let org : IDaoState = {
-                avatarAddress: "",
-                controllerAddress: "",
-                name: "",
-                members: 3, // TODO
-                rank: 1, // TODO
-                promotedAmount: 0,
-                reputationAddress: "",
-                reputationCount: 0,
-                tokenAddress: "",
-                tokenCount: 0,
-                tokenName: "",
-                tokenSymbol: ""
-              };
-              let avatarInstance : any = null;
-              let controllerInstance : any = null;
-              let tokenInstance : any = null;
-
               return promise.then(function() {
-                org.avatarAddress = event.args._avatar;
-
-                return AvatarContract.at(org.avatarAddress).then((avatarInst : any) => {
-                  avatarInstance = avatarInst;
-                  return avatarInstance.orgName();
-                }).then((avatarName : string) => {
-                  org.name = web3.toAscii(avatarName);
-                  return avatarInstance.owner();
-                }).then((controllerAddress : string) => {
-                  org.controllerAddress = controllerAddress;
-                  return ControllerContract.at(controllerAddress);
-                }).then((controllerInst : any) => {
-                  controllerInstance = controllerInst;
-                  return controllerInstance.nativeToken();
-                }).then((tokenAddress: string) => {
-                  org.tokenAddress = tokenAddress;
-                  return MintableTokenContract.at(tokenAddress);
-                }).then((tokenInst : any) => {
-                  tokenInstance = tokenInst;
-                  return tokenInstance.name();
-                }).then((tokenName : string) => {
-                  org.tokenName = tokenName;
-                  return tokenInstance.symbol();
-                }).then((tokenSymbol : string) => {
-                  org.tokenSymbol = tokenSymbol;
-                  return tokenInstance.totalSupply();
-                }).then((tokenSupply : BigNumber.BigNumber) => {
-                  org.tokenCount = Number(web3.fromWei(tokenSupply, "ether"));
-                  return controllerInstance.nativeReputation();
-                }).then((reputationAddress : string) => {
-                  org.reputationAddress = reputationAddress;
-                  return ReputationContract.at(reputationAddress);
-                }).then((reputationInst : any) => {
-                  return reputationInst.totalSupply();
-                }).then((repSupply : BigNumber.BigNumber) => {
-                  org.reputationCount = Number(web3.fromWei(repSupply, "ether"));
-                  orgs.push(org);
+                return getDAOData(event.args._avatar, web3).then((org : IDaoState) => {
+                  orgs[event.args._avatar] = org;
                 });
               });
             }, Promise.resolve()).then(() => {
               resolve(orgs);
             });
-          })
+          });
+        });
+      })
+    });
+  }
+}
+
+export function getDAO(avatarAddress : string) {
+  return (dispatch: any, getState: any) => {
+    return dispatch({
+      type: arcConstants.ARC_GET_DAO,
+      payload: new Promise((resolve, reject) => {
+        const web3 = getState().web3.instance;
+
+        return getDAOData(avatarAddress, web3).then((org : IDaoState) => {
+          resolve(org);
         })
       })
     })
   }
+}
+
+export function getDAOData(avatarAddress : string, web3 : any) {
+  const GenesisContract = contract(GenesisScheme);
+  GenesisContract.setProvider(web3.currentProvider);
+  const AvatarContract = contract(Avatar);
+  AvatarContract.setProvider(web3.currentProvider);
+  const ControllerContract = contract(Controller);
+  ControllerContract.setProvider(web3.currentProvider);
+  const MintableTokenContract = contract(MintableToken);
+  MintableTokenContract.setProvider(web3.currentProvider);
+  const ReputationContract = contract(Reputation);
+  ReputationContract.setProvider(web3.currentProvider);
+
+  let org : IDaoState = {
+    avatarAddress: avatarAddress,
+    controllerAddress: "",
+    name: "",
+    members: 3, // TODO
+    rank: 1, // TODO
+    promotedAmount: 0,
+    reputationAddress: "",
+    reputationCount: 0,
+    tokenAddress: "",
+    tokenCount: 0,
+    tokenName: "",
+    tokenSymbol: ""
+  };
+  let avatarInstance : any = null;
+  let controllerInstance : any = null;
+  let tokenInstance : any = null;
+
+  return AvatarContract.at(avatarAddress).then((avatarInst : any) => {
+    avatarInstance = avatarInst;
+    return avatarInstance.orgName();
+  }).then((avatarName : string) => {
+    org.name = web3.toAscii(avatarName);
+    return avatarInstance.owner();
+  }).then((controllerAddress : string) => {
+    org.controllerAddress = controllerAddress;
+    return ControllerContract.at(controllerAddress);
+  }).then((controllerInst : any) => {
+    controllerInstance = controllerInst;
+    return controllerInstance.nativeToken();
+  }).then((tokenAddress: string) => {
+    org.tokenAddress = tokenAddress;
+    return MintableTokenContract.at(tokenAddress);
+  }).then((tokenInst : any) => {
+    tokenInstance = tokenInst;
+    return tokenInstance.name();
+  }).then((tokenName : string) => {
+    org.tokenName = tokenName;
+    return tokenInstance.symbol();
+  }).then((tokenSymbol : string) => {
+    org.tokenSymbol = tokenSymbol;
+    return tokenInstance.totalSupply();
+  }).then((tokenSupply : BigNumber.BigNumber) => {
+    org.tokenCount = Number(web3.fromWei(tokenSupply, "ether"));
+    return controllerInstance.nativeReputation();
+  }).then((reputationAddress : string) => {
+    org.reputationAddress = reputationAddress;
+    return ReputationContract.at(reputationAddress);
+  }).then((reputationInst : any) => {
+    return reputationInst.totalSupply();
+  }).then((repSupply : BigNumber.BigNumber) => {
+    org.reputationCount = Number(web3.fromWei(repSupply, "ether"));
+    return org;
+  });
 }
