@@ -1,10 +1,16 @@
 import * as ActionTypes from 'constants/arcConstants'
 
+export interface ICollaborator {
+  address: string
+  tokens: number
+  reputation: number
+}
+
 export interface IDaoState {
   avatarAddress: string,
   controllerAddress: string,
   name: string,
-  members: number,
+  members: ICollaborator[],
   rank: number,
   promotedAmount: number,
   reputationAddress: string,
@@ -13,7 +19,7 @@ export interface IDaoState {
   tokenCount: number
   tokenName: string,
   tokenSymbol: string
- }
+}
 
 export interface IArcState {
   controllerAddress: string,
@@ -64,6 +70,10 @@ const arcReducer = (state = initialState, action: any) => {
       return state;
     }
 
+    case ActionTypes.ARC_GET_DAO_PENDING: {
+      return state;
+    }
+
     case ActionTypes.ARC_GET_DAO_FULFILLED: {
       let daoList = state.daoList;
       daoList[action.payload.avatarAddress] = action.payload;
@@ -71,6 +81,24 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_GET_DAO_REJECTED: {
+      return state;
+    }
+
+    case ActionTypes.ARC_CREATE_DAO: {
+      return state;
+    }
+
+    case ActionTypes.ARC_CREATE_DAO_PENDING: {
+      return state;
+    }
+
+    case ActionTypes.ARC_CREATE_DAO_FULFILLED: {
+      let daoList = state.daoList;
+      daoList[action.payload.avatarAddress] = action.payload;
+      return {...state, daoList: daoList};
+    }
+
+    case ActionTypes.ARC_CREATE_DAO_REJECTED: {
       return state;
     }
 

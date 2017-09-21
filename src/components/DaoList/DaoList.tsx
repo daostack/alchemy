@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
-import { IStateShape } from 'reducers';
+import { IRootState } from 'reducers';
 import { IDaoState } from 'reducers/arcReducer';
 
 import EthBalance from 'components/EthBalance/EthBalance';
@@ -27,14 +27,13 @@ export default class DaoList extends React.Component<IProps, null> {
 
   render() {
     const { daoList } = this.props;
-    console.log("render dao list ", daoList);
+
     const daoNodes = Object.keys(daoList).map((key : string) => {
       const dao = daoList[key];
       return (
         <div key={"dao_" + dao.avatarAddress} className={css.dao}>
           <Link to={"/dao/" + dao.avatarAddress}><h3>{dao.name}</h3></Link>
           <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-          <div>Num members: {dao.members}</div>
           <div>Num tokens: {dao.tokenCount}</div>
           <div>Omega: {dao.reputationCount}</div>
         </div>

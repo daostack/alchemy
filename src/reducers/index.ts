@@ -4,7 +4,7 @@ import { combineReducers, Reducer } from 'redux';
 import arcReducer, { IArcState } from './arcReducer'
 import web3Reducer, { IWeb3State } from './web3Reducer'
 
-export interface IStateShape {
+export interface IRootState {
   arc: IArcState,
   web3: IWeb3State,
   router: any

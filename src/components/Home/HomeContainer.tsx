@@ -1,7 +1,8 @@
 import * as React from "react";
 import { connect, Dispatch } from 'react-redux';
+import { Link } from 'react-router-dom'
 
-import { IStateShape } from 'reducers';
+import { IRootState } from 'reducers';
 import { IArcState } from 'reducers/arcReducer';
 import DaoList from 'components/DaoList/DaoList';
 
@@ -13,7 +14,7 @@ interface IStateProps {
   arc: IArcState,
 }
 
-const mapStateToProps = (state : IStateShape, ownProps: any) => ({
+const mapStateToProps = (state : IRootState, ownProps: any) => ({
   arc: state.arc,
 });
 
@@ -33,6 +34,7 @@ class HomeContainer extends React.Component<IProps, null> {
     return (
       <div className={css.homeWrapper}>
         <DaoList daoList={this.props.arc.daoList} getDAOList={this.props.getDAOList} />
+        <Link to='/dao/create'>Create a New DAO</Link>
       </div>
     );
   }

@@ -4,12 +4,13 @@ import { Switch, Route } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 
 import store from './configureStore';
-import { IStateShape } from 'reducers';
+import { IRootState } from 'reducers';
 import { IArcState } from 'reducers/arcReducer'
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as arcActions from 'actions/arcActions';
 
+import CreateDaoContainer from "./components/CreateDao/CreateDaoContainer";
 import Header from "./components/Header/Header";
 import HomeContainer from "./components/Home/HomeContainer";
 import ViewDaoContainer from "./components/ViewDao/ViewDaoContainer";
@@ -19,7 +20,7 @@ interface IStateProps {
   web3: IWeb3State
 }
 
-const mapStateToProps = (state : IStateShape, ownProps: any) => ({
+const mapStateToProps = (state : IRootState, ownProps: any) => ({
   arc: state.arc,
   web3: state.web3
 });
@@ -53,6 +54,7 @@ class AppContainer extends React.Component<IProps, null> {
           <Header web3={this.props.web3} />
           <Switch>
             <Route exact path="/" component={HomeContainer}/>
+            <Route exact path="/dao/create" component={CreateDaoContainer}/>
             <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
           </Switch>
         </div>

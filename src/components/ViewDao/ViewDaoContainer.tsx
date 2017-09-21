@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 
 import * as arcActions from 'actions/arcActions';
-import { IStateShape } from 'reducers';
+import { IRootState } from 'reducers';
 import { IDaoState } from 'reducers/arcReducer';
 
 import * as css from './ViewDao.scss';
@@ -12,7 +12,7 @@ interface IStateProps {
   daoAddress : string
 }
 
-const mapStateToProps = (state : IStateShape, ownProps: any) => {
+const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     dao: state.arc.daoList[ownProps.match.params.daoAddress],
     daoAddress : ownProps.match.params.daoAddress
@@ -37,14 +37,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
   render() {
     const { dao } = this.props;
-    console.log("render view dao", dao);
 
     return(
       dao ?
         <div className={css.wrapper}>
           <h2>Viewing Dao: {dao.name}</h2>
           <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-          <div>Num members: {dao.members}</div>
+          <div>Num members: {dao.members.length}</div>
           <div>Num tokens: {dao.tokenCount}</div>
           <div>Omega: {dao.reputationCount}</div>
         </div>

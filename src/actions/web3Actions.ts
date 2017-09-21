@@ -34,11 +34,11 @@ export const initializeWeb3 = () => (dispatch : any) => {
     }
 
     payload.ethAccountAddress = payload.instance.eth.accounts[0];
+    payload.instance.eth.defaultAccount = payload.ethAccountAddress;
 
     payload.instance.eth.getBalance(payload.ethAccountAddress, (error : Error, res : BigNumber.BigNumber) => {
       if (error) { console.log("error getting balance"); reject("Error getting ether account balance"); }
 
-      console.log("got balance", res);
       payload.ethAccountBalance = Number(payload.instance.fromWei(res, "ether")).toFixed(2);
 
       const action = {
