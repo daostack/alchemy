@@ -1,4 +1,5 @@
 import * as BigNumber from 'bignumber.js';
+import promisify = require('es6-promisify');
 import * as Redux from 'redux';
 import { push } from 'react-router-redux'
 import { ThunkAction } from 'redux-thunk';
@@ -22,7 +23,7 @@ import * as web3Actions from 'actions/web3Actions';
 import * as web3Constants from 'constants/web3Constants';
 import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
-import { IDaoState } from 'reducers/arcReducer';
+import { IDaoState, ICollaborator } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -83,7 +84,7 @@ export function getDAOList() {
           const newOrgEvents = genesisInstance.NewOrg({}, { fromBlock: 0 })
           newOrgEvents.get((err : Error, eventsArray : any[]) => {
             if (err) {
-              reject("Error getting new orgs from genesis contract");
+              reject("Error getting new orgs from genesis contract: " + err.message);
             }
 
             let orgs = <{ [key : string] : IDaoState }>{};
@@ -157,6 +158,45 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
   org.reputationAddress = await controllerInstance.nativeReputation();
   const reputationInstance = await ReputationContract.at(org.reputationAddress);
   org.reputationCount = Number(web3.fromWei(await reputationInstance.totalSupply(), "ether"));
+
+  if (detailed) {
+    const mintTokenEvents = tokenInstance.Mint({}, { fromBlock: 0 })
+    const transferTokenEvents = tokenInstance.Transfer({}, { fromBlock: 0 });
+    const mintReputationEvents = reputationInstance.Mint({}, { fromBlock: 0 });
+    let collaboratorAddresses : string[] = [];
+
+    const getMintTokenEvents = promisify(mintTokenEvents.get.bind(mintTokenEvents));
+    let eventsArray = await getMintTokenEvents();
+    for (let cnt = 0; cnt < eventsArray.length; cnt++) {
+      collaboratorAddresses.push(eventsArray[cnt].args.to);
+    }
+
+    const getTransferTokenEvents = promisify(transferTokenEvents.get.bind(transferTokenEvents));
+    eventsArray = await getTransferTokenEvents();
+    for (let cnt = 0; cnt < eventsArray.length; cnt++) {
+      collaboratorAddresses.push(eventsArray[cnt].args.to);
+    }
+
+    const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
+    eventsArray = await getMintReputationEvents();
+    for (let cnt = 0; cnt < eventsArray.length; cnt++) {
+      collaboratorAddresses.push(eventsArray[cnt].args.to);
+    }
+
+    collaboratorAddresses = [...new Set(collaboratorAddresses)]; // Dedupe
+
+    let collaborators : ICollaborator[] = [];
+    for (let cnt = 0; cnt < collaboratorAddresses.length; cnt++) {
+      const address = collaboratorAddresses[cnt];
+      let collaborator = { address: address, tokens: 0, reputation: 0 };
+      const tokens = await tokenInstance.balanceOf.call(address)
+      collaborator.tokens = Number(web3.fromWei(tokens, "ether"));
+      const reputation = await reputationInstance.reputationOf.call(address);
+      collaborator.reputation = Number(web3.fromWei(reputation, "ether"));
+      collaborators.push(collaborator);
+    }
+    org.members = collaborators;
+  }
 
   return org;
 }

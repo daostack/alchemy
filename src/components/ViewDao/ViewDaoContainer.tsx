@@ -3,7 +3,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState } from 'reducers/arcReducer';
+import { IDaoState, ICollaborator } from 'reducers/arcReducer';
 
 import * as css from './ViewDao.scss';
 
@@ -41,13 +41,36 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     return(
       dao ?
         <div className={css.wrapper}>
-          <h2>Viewing Dao: {dao.name}</h2>
+          <h1>Viewing Dao: {dao.name}</h1>
           <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-          <div>Num members: {dao.members.length}</div>
           <div>Num tokens: {dao.tokenCount}</div>
           <div>Omega: {dao.reputationCount}</div>
+          {this.renderMembers()}
         </div>
        : <div>Loading... </div>
+    );
+  }
+
+  renderMembers() {
+    const { dao } = this.props;
+
+    const membersHTML = dao.members.map((member : ICollaborator, index : number) => {
+      return (
+        <div className={css.member} key={"member_" + index}>
+          <strong>{index + 1}: {member.address}</strong>
+          <br />
+          Tokens: <span>{member.tokens}</span>
+          <br />
+          Reputation: <span>{member.reputation}</span>
+        </div>
+      );
+    });
+
+    return (
+      <div className={css.members}>
+        <h2>Members</h2>
+        {membersHTML}
+      </div>
     );
   }
 }
