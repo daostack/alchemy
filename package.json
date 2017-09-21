@@ -5,9 +5,12 @@
   "author": "Tibet Sprague",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open=chrome --config webpack.dev.config.js",
+    "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
+    "migrate-testrpc": "cd lib/arc && yarn truffle migrate",
     "lint": "eslint src",
-    "build": "NODE_ENV=production webpack --config webpack.prod.config.js"
+    "start": "webpack-dev-server --open='google chrome' --config webpack.dev.config.js",
+    "start-testrpc": "yarn migrate-testrpc && ETH_ENV=testrpc yarn start",
+    "testrpc": "testrpc --account=\"0x0191ecbd1b150b8a3c27c27010ba51b45521689611e669109e034fd66ae69621,9999999999999999999999999999999999999999999\" --account=\"0x00f360233e89c65970a41d4a85990ec6669526b2230e867c352130151453180d,9999999999999999999999999999999999999999999\" --account=\"0x987a26abca7432016104ce2f24ce639340e25afe06ac69f68791399e7a5d1028,9999999999999999999999999999999999999999999\" --account=\"0x89af34b1b7347834048b99423dad174a14bf14540d720d72c16ae92e94b987cb,9999999999999999999999999999999999999999999\" --account=\"0xc867be647eb2bc51e4c0d61066859875cf3634fe949b6f5f85c69ab90e485b37,9999999999999999999999999999999999999999999\" --account=\"0xefabcc2377dee5e51b5a9e65a3854aec85fbbec3cb584d8ad4f9679869fb33c6,9999999999999999999999999999999999999999999\" "
   },
   "dependencies": {
     "css-loader": "^0.28.7",
@@ -16,7 +19,7 @@
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
-    "react-router-redux": "^5.0.0",
+    "react-router-redux": "5.0.0-alpha.6",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-logger": "^3.0.6",
