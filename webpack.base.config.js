@@ -24,7 +24,8 @@ module.exports = {
 
     alias: {
       actions: path.resolve(basePath, 'src/actions'),
-      arc: path.resolve(basePath, 'src/arc'),
+      arc: path.resolve(basePath, 'lib/arc'),
+      arcjs: path.resolve(basePath, 'lib/arc/lib'),
       components: path.resolve(basePath, 'src/components'),
       constants: path.resolve(basePath, 'src/constants'),
       lib: path.resolve(basePath, 'src/lib'),

@@ -1,4 +1,4 @@
-var GenesisScheme = require('arc/contracts/GenesisScheme.json');
+var GenesisScheme = require('arc/build/contracts/GenesisScheme.json');
 
 let currentChainId = Object.keys(GenesisScheme.networks).pop()
 let currentChain = 'testrpc'

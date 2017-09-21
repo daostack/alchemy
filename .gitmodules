@@ -1,0 +1,3 @@
+[submodule "lib/arc"]
+	path = lib/arc
+	url = https://github.com/daostack/daostack
