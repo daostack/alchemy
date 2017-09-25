@@ -3,8 +3,6 @@ import { Provider } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
 import { ConnectedRouter } from 'react-router-redux';
 
-import Web3Provider from 'lib/components/Web3Provider';
-
 import { default as store, history } from './configureStore';
 
 import * as arcActions from './actions/arcActions';
