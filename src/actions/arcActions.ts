@@ -34,6 +34,7 @@ export function connectToArc() {
   }
 }
 
+// TODO: use async/await instead of redux-promise
 export function getArcAdresses(web3 : any) {
   return (dispatch: any, getState: any) => {
     return dispatch({
@@ -45,7 +46,7 @@ export function getArcAdresses(web3 : any) {
           controllerInstance: <any> null,
           currentNetworkId : <string> null,
           isCorrectChain: false,
-          genesisAddress: GenesisScheme.networks[web3Constants.CURRENT_CHAIN_ID]['address'],
+          genesisAddress: GenesisScheme.networks[web3Constants.CURRENT_CHAIN_ID]['address'], // TODO: use .deployed() instead?
           simpleICOAddress: SimpleICO.networks[web3Constants.CURRENT_CHAIN_ID]['address'],
         };
 
@@ -68,6 +69,7 @@ export function getArcAdresses(web3 : any) {
   };
 }
 
+// TODO: use async/await instead of redux-promise
 export function getDAOList() {
   return (dispatch: Redux.Dispatch<any>, getState: Function) => {
     return dispatch({
@@ -107,6 +109,7 @@ export function getDAOList() {
   }
 }
 
+// TODO: use async/await instead of redux-promise
 export function getDAO(avatarAddress : string) {
   return (dispatch: any, getState: any) => {
     return dispatch({
@@ -276,7 +279,7 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
 
       const votePrecision = 50; // percentage to pass proposals. TODO: pass this in
 
-      const votingMachineInstance = await SimpleVoteContract.deployed(); // TODO: what does deployed() do? can i use it instead of the GenesisScheme.networks thing?
+      const votingMachineInstance = await SimpleVoteContract.deployed();
       await votingMachineInstance.setParameters(org.reputationAddress, votePrecision);
       const voteParametersHash = await votingMachineInstance.getParametersHash(org.reputationAddress, votePrecision);
 

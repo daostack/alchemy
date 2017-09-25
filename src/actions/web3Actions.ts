@@ -21,7 +21,8 @@ export const initializeWeb3 = () => (dispatch : any) => {
   };
 
   return new Promise(function(resolve, reject) {
-     // TODO: poll for this?
+     // TODO: poll/watch for changes to network/account
+
     if (typeof window.web3 !== 'undefined') {
       // web3 injected by MetaMask
       payload.instance = new Web3(window.web3.currentProvider)
