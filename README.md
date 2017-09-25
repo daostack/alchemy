@@ -11,6 +11,7 @@ Alchemy Client
 ## Installation
 * `yarn install`
 * `git submodule init`
+* `git submodule update`
 
 # Development Environments
 
