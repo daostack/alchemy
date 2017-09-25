@@ -15,6 +15,7 @@ var GlobalConstraintRegistrar = require('arc/build/contracts/GlobalConstraintReg
 var MintableToken = require('arc/build/contracts/MintableToken.json');
 var Reputation = require('arc/build/contracts/Reputation.json');
 var SchemeRegistrar = require('arc/build/contracts/SchemeRegistrar.json');
+var SimpleContributionScheme = require('arc/build/contracts/SimpleContributionScheme.json');
 var SimpleICO = require('arc/build/contracts/SimpleICO.json');
 var SimpleVote = require('arc/build/contracts/SimpleVote.json');
 var UpgradeScheme = require('arc/build/contracts/UpgradeScheme.json');
@@ -135,7 +136,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     avatarAddress: avatarAddress,
     controllerAddress: "",
     name: "",
-    members: [], // TODO
+    members: [],
     rank: 1, // TODO
     promotedAmount: 0,
     reputationAddress: "",
@@ -230,6 +231,8 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       ReputationContract.setProvider(web3.currentProvider);
       const SchemeRegistrarContract = contract(SchemeRegistrar);
       SchemeRegistrarContract.setProvider(web3.currentProvider);
+      const SimpleContributionSchemeContract = contract(SimpleContributionScheme);
+      SimpleContributionSchemeContract.setProvider(web3.currentProvider);
       const SimpleVoteContract = contract(SimpleVote);
       SimpleVoteContract.setProvider(web3.currentProvider);
       const UpgradeSchemeContract = contract(UpgradeScheme);
@@ -239,7 +242,7 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         avatarAddress: null,
         controllerAddress: "",
         name: "",
-        members: [], // TODO
+        members: [],
         rank: 1, // TODO
         promotedAmount: 0,
         reputationAddress: "",
@@ -264,7 +267,6 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       const avatarInstance = await AvatarContract.at(org.avatarAddress);
       org.controllerAddress = await avatarInstance.owner();
       const controllerInstance = await ControllerContract.at(org.controllerAddress);
-      org.tokenAddress = await controllerInstance.nativeToken();
 
       org.tokenAddress = await controllerInstance.nativeToken();
       const tokenInstance = DAOTokenContract.at(org.tokenAddress);
@@ -272,11 +274,10 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       org.reputationAddress = await controllerInstance.nativeReputation();
       const reputationInstance = ReputationContract.at(org.reputationAddress);
 
-      const votePrecision = 50; // TODO: set this
+      const votePrecision = 50; // percentage to pass proposals. TODO: pass this in
 
       const votingMachineInstance = await SimpleVoteContract.deployed(); // TODO: what does deployed() do? can i use it instead of the GenesisScheme.networks thing?
       await votingMachineInstance.setParameters(org.reputationAddress, votePrecision);
-
       const voteParametersHash = await votingMachineInstance.getParametersHash(org.reputationAddress, votePrecision);
 
       const globalConstraintRegistrarInstance = await GlobalConstraintRegistrarContract.deployed();
@@ -294,7 +295,7 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       initialSchemesParams.push(await schemeRegistrarInstance.getParametersHash(voteParametersHash, voteParametersHash, votingMachineInstance.address));
       initialSchemesTokenAddresses.push(await schemeRegistrarInstance.nativeToken());
       initialSchemesFees.push(await schemeRegistrarInstance.fee());
-      initialSchemesPermissions.push('0x00000003'); // TODO: where does this come from?
+      initialSchemesPermissions.push('0x00000003'); // Docs in Controller.sol
 
       await upgradeSchemeInstance.setParameters(voteParametersHash, votingMachineInstance.address);
       initialSchemesAddresses.push(upgradeSchemeInstance.address);
@@ -329,11 +330,41 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       let token, fee, scheme;
       for (let i=0; i < initialSchemesAddresses.length; i = i + 1) {
         scheme = await SchemeRegistrarContract.at(initialSchemesAddresses[i]);
-        token = DAOTokenContract.at(initialSchemesTokenAddresses[i]);
-        fee  = initialSchemesFees[i];
-        await token.transfer(org.avatarAddress, fee);
+        if (initialSchemesTokenAddresses[i] != "0x0000000000000000000000000000000000000000") {
+          token = DAOTokenContract.at(initialSchemesTokenAddresses[i]);
+          fee  = initialSchemesFees[i];
+          await token.transfer(org.avatarAddress, fee);
+        }
         await scheme.registerOrganization(org.avatarAddress);
       }
+
+      // XXX: for now give all orgs a SimpleContributionScheme. Has to happen via a proposal? (TODO: Adam says it could be registered in the inititalSchemes too, but it wasnt working for me)
+      const simpleContributionSchemeInstance = await SimpleContributionSchemeContract.deployed();
+
+      const simpleContributionParametersHash = await simpleContributionSchemeInstance.getParametersHash(0, 0, voteParametersHash, votingMachineInstance.address);
+      await simpleContributionSchemeInstance.setParameters(
+        0, // uint orgNativeTokenFee; // a fee (in the organization's token) that is to be paid for submitting a contribution
+        0, // uint schemeNativeTokenFee; // a fee (in the present schemes token)  that is to be paid for submission
+        voteParametersHash, // bytes32 voteApproveParams;
+        votingMachineInstance.address,
+      );
+
+      // This will actually pass the proposal automatically because my vote for yes is registered on proposal.
+      const proposeSchemeTransaction = await schemeRegistrarInstance.proposeScheme(
+        org.avatarAddress, // Avatar _avatar,
+        simpleContributionSchemeInstance.address, //address _scheme,
+        simpleContributionParametersHash, // bytes32 _parametersHash,
+        false, // bool _isRegistering,
+        org.tokenAddress, // StandardToken _tokenFee,
+        0, // uint _fee
+        false, // bool _autoRegister,
+        { gas: 4000000 }
+      );
+
+      //const proposalId = proposeSchemeTransaction.logs[0].args.proposalId;
+
+      // now we register it
+      await simpleContributionSchemeInstance.registerOrganization(org.avatarAddress, { gas : 4000000 });
 
       dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: org });
       dispatch(push('/dao/' + org.avatarAddress));
