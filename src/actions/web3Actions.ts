@@ -32,6 +32,7 @@ export const initializeWeb3 = () => (dispatch : any) => {
       //let web3Location = `http://${truffleConfig.rpc.host}:${truffleConfig.rpc.port}`
       var provider = new Web3.providers.HttpProvider('http://localhost:8545');
       payload.instance = new Web3(provider);
+      window.web3 = payload.instance;
     }
 
     payload.ethAccountAddress = payload.instance.eth.accounts[0];
