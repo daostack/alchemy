@@ -1,30 +1,37 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
+import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaborator } from 'reducers/arcReducer';
+import { IDaoState, ICollaborator, IProposal } from 'reducers/arcReducer';
+import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as css from './ViewDao.scss';
 
 interface IStateProps {
-  dao: any,
+  dao: IDaoState
   daoAddress : string
+  web3: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     dao: state.arc.daoList[ownProps.match.params.daoAddress],
-    daoAddress : ownProps.match.params.daoAddress
+    daoAddress : ownProps.match.params.daoAddress,
+    web3: state.web3
   };
 };
 
 interface IDispatchProps {
   getDAO: typeof arcActions.getDAO
+  voteOnProposition: typeof arcActions.voteOnProposition
 }
 
 const mapDispatchToProps = {
-  getDAO: arcActions.getDAO
+  getDAO: arcActions.getDAO,
+  voteOnProposition: arcActions.voteOnProposition
 };
 
 type IProps = IStateProps & IDispatchProps
@@ -35,6 +42,10 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.props.getDAO(this.props.daoAddress);
   }
 
+  handleClickVote = (proposalId : string, vote : number) => (event : any) => {
+    this.props.voteOnProposition(proposalId, this.props.web3.ethAccountAddress, vote);
+  }
+
   render() {
     const { dao } = this.props;
 
@@ -42,10 +53,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       dao ?
         <div className={css.wrapper}>
           <h1>Viewing Dao: {dao.name}</h1>
+          <div>Avatar address: {dao.avatarAddress}</div>
           <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
           <div>Num tokens: {dao.tokenCount}</div>
           <div>Omega: {dao.reputationCount}</div>
           {this.renderMembers()}
+          {this.renderProposals()}
+          <Link to={'/proposition/create/'+dao.avatarAddress}>Create Proposition</Link>
         </div>
        : <div>Loading... </div>
     );
@@ -70,6 +84,59 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       <div className={css.members}>
         <h2>Members</h2>
         {membersHTML}
+      </div>
+    );
+  }
+
+  renderProposals() {
+    const { dao } = this.props;
+
+    const proposalsHTML = dao.proposals.map((proposal : IProposal, index : number) => {
+      var proposalClass = classNames({
+        [css.proposal]: true,
+        [css.openProposal]: proposal.open,
+        [css.failedProposal]: proposal.failed,
+        [css.passedProposal]: proposal.passed,
+      });
+
+      return (
+        <div className={proposalClass} key={"proposal_" + index}>
+          <h3>{proposal.description}</h3>
+          Token Reward: <span>{proposal.tokenReward}</span>
+          <br />
+          Reputation Reward: <span>{proposal.reputationReward}</span>
+          <br />
+          Beneficiary: <span>{proposal.beneficiary}</span>
+          <br />
+          { proposal.open ?
+            <div>
+              Yes votes: <span>{proposal.yesVotes}</span>
+              <br />
+              No votes: <span>{proposal.noVotes}</span>
+              <br />
+              Abstain Votes: <span>{proposal.abstainVotes}</span>
+              <br />
+              <button onClick={this.handleClickVote(proposal.proposalId, 1)}>Vote Yes</button> -
+              <button onClick={this.handleClickVote(proposal.proposalId, 2)}>Vote No</button> -
+              <button onClick={this.handleClickVote(proposal.proposalId, 0)}>Abstain</button>
+            </div>
+            : proposal.passed ?
+            <div>
+              Passed!
+            </div>
+            : proposal.failed ?
+            <div>
+              Failed to pass
+            </div> : ""
+          }
+        </div>
+      );
+    });
+
+    return (
+      <div className={css.members}>
+        <h2>Propositions</h2>
+        {proposalsHTML}
       </div>
     );
   }

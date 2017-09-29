@@ -17,14 +17,14 @@ var Reputation = require('arc/build/contracts/Reputation.json');
 var SchemeRegistrar = require('arc/build/contracts/SchemeRegistrar.json');
 var SimpleContributionScheme = require('arc/build/contracts/SimpleContributionScheme.json');
 var SimpleICO = require('arc/build/contracts/SimpleICO.json');
-var SimpleVote = require('arc/build/contracts/SimpleVote.json');
+var AbsoluteVote = require('arc/build/contracts/AbsoluteVote.json');
 var UpgradeScheme = require('arc/build/contracts/UpgradeScheme.json');
 
 import * as web3Actions from 'actions/web3Actions';
 import * as web3Constants from 'constants/web3Constants';
 import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaborator } from 'reducers/arcReducer';
+import { IDaoState, ICollaborator, IProposal } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -126,6 +126,8 @@ export function getDAO(avatarAddress : string) {
 }
 
 export async function getDAOData(avatarAddress : string, web3 : any, detailed = false) {
+  const AbsoluteVoteContract = contract(AbsoluteVote);
+  AbsoluteVoteContract.setProvider(web3.currentProvider);
   const AvatarContract = contract(Avatar);
   AvatarContract.setProvider(web3.currentProvider);
   const ControllerContract = contract(Controller);
@@ -134,6 +136,8 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
   DAOTokenContract.setProvider(web3.currentProvider);
   const ReputationContract = contract(Reputation);
   ReputationContract.setProvider(web3.currentProvider);
+  const SimpleContributionSchemeContract = contract(SimpleContributionScheme);
+  SimpleContributionSchemeContract.setProvider(web3.currentProvider);
 
   let org : IDaoState = {
     avatarAddress: avatarAddress,
@@ -142,6 +146,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     members: [],
     rank: 1, // TODO
     promotedAmount: 0,
+    proposals: [],
     reputationAddress: "",
     reputationCount: 0,
     tokenAddress: "",
@@ -164,6 +169,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
   org.reputationCount = Number(web3.fromWei(await reputationInstance.totalSupply(), "ether"));
 
   if (detailed) {
+    // Get all collaborators
     const mintTokenEvents = tokenInstance.Mint({}, { fromBlock: 0 })
     const transferTokenEvents = tokenInstance.Transfer({}, { fromBlock: 0 });
     const mintReputationEvents = reputationInstance.Mint({}, { fromBlock: 0 });
@@ -200,6 +206,59 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
       collaborators.push(collaborator);
     }
     org.members = collaborators;
+
+    // Get proposals
+    const votingMachineInstance = await AbsoluteVoteContract.deployed();
+    const simpleContributionInstance = await SimpleContributionSchemeContract.deployed();
+    const newProposalEvents = simpleContributionInstance.LogNewContributionProposal({}, { fromBlock: 0 })
+    const getNewProposalEvents = promisify(newProposalEvents.get.bind(newProposalEvents));
+    const allProposals = await getNewProposalEvents();
+
+    const executedProposalEvents = simpleContributionInstance.LogProposalExecuted({}, { fromBlock: 0 })
+    const getExecutedProposalEvents = promisify(executedProposalEvents.get.bind(executedProposalEvents));
+    const executedProposals = await getExecutedProposalEvents();
+    const executedProposalIds = executedProposals.map((proposal : any) => proposal.args._proposalId);
+
+    const failedProposalEvents = simpleContributionInstance.LogProposalDeleted({}, { fromBlock: 0 })
+    const getFailedProposalEvents = promisify(failedProposalEvents.get.bind(failedProposalEvents));
+    const failedProposals = await getFailedProposalEvents();
+    const failedProposalIds = failedProposals.map((proposal : any) => proposal.args._proposalId);
+
+    let proposalArgs : any;
+    for (let cnt = 0; cnt < allProposals.length; cnt++) {
+      proposalArgs = allProposals[cnt].args;
+      if (proposalArgs._avatar == org.avatarAddress) {
+        let proposal = <IProposal>{
+          abstainVotes: 0,
+          beneficiary: proposalArgs._beneficiary,
+          description: proposalArgs._contributionDesciption,
+          failed: false,
+          noVotes: 0,
+          open: true,
+          passed: false,
+          proposalId: proposalArgs._proposalId,
+          reputationReward: Number(web3.fromWei(proposalArgs._reputationReward, "ether")),
+          tokenReward: Number(web3.fromWei(proposalArgs._nativeTokenReward, "ether")),
+          yesVotes: 0
+        };
+
+        if (executedProposalIds.includes(proposalArgs._proposalId)) {
+          proposal.passed = true;
+          proposal.open = false;
+        } else if (failedProposalIds.includes(proposalArgs._proposalId)) {
+          proposal.failed = true;
+          proposal.open = false;
+        } else {
+          const proposalStatus = await votingMachineInstance.proposalStatus(proposalArgs._proposalId);
+          console.log("proposal status = ", proposalStatus);
+          proposal.abstainVotes = Number(proposalStatus[0]);
+          proposal.noVotes = Number(proposalStatus[1]);
+          proposal.yesVotes = Number(proposalStatus[2]);
+        };
+        org.proposals.push(proposal);
+      }
+    }
+    console.log(org.proposals);
   }
 
   return org;
@@ -219,7 +278,6 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
 
       const web3 : Web3 = getState().web3.instance;
 
-
       const AvatarContract = contract(Avatar);
       AvatarContract.setProvider(web3.currentProvider);
       const ControllerContract = contract(Controller);
@@ -236,8 +294,8 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       SchemeRegistrarContract.setProvider(web3.currentProvider);
       const SimpleContributionSchemeContract = contract(SimpleContributionScheme);
       SimpleContributionSchemeContract.setProvider(web3.currentProvider);
-      const SimpleVoteContract = contract(SimpleVote);
-      SimpleVoteContract.setProvider(web3.currentProvider);
+      const AbsoluteVoteContract = contract(AbsoluteVote);
+      AbsoluteVoteContract.setProvider(web3.currentProvider);
       const UpgradeSchemeContract = contract(UpgradeScheme);
       UpgradeSchemeContract.setProvider(web3.currentProvider);
 
@@ -248,6 +306,7 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         members: [],
         rank: 1, // TODO
         promotedAmount: 0,
+        proposals: [],
         reputationAddress: "",
         reputationCount: 0,
         tokenAddress: "",
@@ -279,9 +338,10 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
 
       const votePrecision = 50; // percentage to pass proposals. TODO: pass this in
 
-      const votingMachineInstance = await SimpleVoteContract.deployed();
-      await votingMachineInstance.setParameters(org.reputationAddress, votePrecision);
-      const voteParametersHash = await votingMachineInstance.getParametersHash(org.reputationAddress, votePrecision);
+      const votingMachineInstance = await AbsoluteVoteContract.deployed();
+      const allowOwnerVote = true; // Whether the owner of the proposal automatically votes yes on proposals they create
+      await votingMachineInstance.setParameters(org.reputationAddress, votePrecision, allowOwnerVote);
+      const voteParametersHash = await votingMachineInstance.getParametersHash(org.reputationAddress, votePrecision, allowOwnerVote);
 
       const globalConstraintRegistrarInstance = await GlobalConstraintRegistrarContract.deployed();
       const schemeRegistrarInstance = await SchemeRegistrarContract.deployed();
@@ -360,11 +420,9 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         false, // bool _isRegistering,
         org.tokenAddress, // StandardToken _tokenFee,
         0, // uint _fee
-        false, // bool _autoRegister,
+        false, // bool _autoRegister. TODO: if we make this true then we shouldnt have to do the registerOrganization call below
         { gas: 4000000 }
       );
-
-      //const proposalId = proposeSchemeTransaction.logs[0].args.proposalId;
 
       // now we register it
       await simpleContributionSchemeInstance.registerOrganization(org.avatarAddress, { gas : 4000000 });
@@ -373,6 +431,80 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       dispatch(push('/dao/' + org.avatarAddress));
     } catch (err) {
       dispatch({ type: arcConstants.ARC_CREATE_DAO_REJECTED, payload: err.message });
+    }
+  } /* EO createDAO */
+}
+
+export function createProposition(orgAvatarAddress : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_PENDING, payload: null });
+    try {
+      const web3 : Web3 = getState().web3.instance;
+      const ethAccountAddress : string = getState().web3.ethAccountAddress;
+
+      const SimpleContributionSchemeContract = contract(SimpleContributionScheme);
+      SimpleContributionSchemeContract.setProvider(web3.currentProvider);
+      const simpleContributionSchemeInstance = await SimpleContributionSchemeContract.deployed();
+
+      console.log(orgAvatarAddress, description, nativeTokenReward, reputationReward, beneficiary, ethAccountAddress);
+
+      const submitProposalTransaction = await simpleContributionSchemeInstance.submitContribution(
+        orgAvatarAddress,
+        description,
+        web3.toWei(nativeTokenReward, "ether"), // uint _nativeTokenReward,
+        web3.toWei(reputationReward, "ether"), // uint _reputationReward,
+        0, // uint _ethReward,
+        '0x0008e8314d3f08fd072e06b6253d62ed526038a0', // StandardToken _externalToken, we provide some arbitrary address
+        0, // uint _externalTokenReward,
+        beneficiary, // address _beneficiary
+        { from: ethAccountAddress, gas : 4000000 }
+      );
+
+      // const AbsoluteVoteContract = contract(AbsoluteVote);
+      // AbsoluteVoteContract.setProvider(web3.currentProvider);
+      // const votingMachineInstance = await AbsoluteVoteContract.deployed();
+      // const proposalX = await votingMachineInstance.proposals(submitProposalTransaction.logs[0].args._proposalId);
+      // console.log(" vot mach prop = ", proposalX);
+
+      const proposal = <IProposal>{
+        abstainVotes: 0,
+        beneficiary: beneficiary,
+        description: description,
+        failed: false,
+        noVotes: 0,
+        open: true,
+        orgAvatarAddress: orgAvatarAddress,
+        passed: false, // TODO: This could actually be true if owner had enough rep, should probably pull the updated proposal info from the voting machine
+        proposalId: submitProposalTransaction.logs[0].args._proposalId,
+        reputationReward: reputationReward,
+        tokenReward: nativeTokenReward,
+        yesVotes: 0, // TODO: actually this is probably the reputation of the opener with ownerVote turned on.
+      };
+
+      dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_FULFILLED, payload: proposal });
+      dispatch(push('/dao/' + orgAvatarAddress));
+    } catch (err) {
+      dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_REJECTED, payload: err.message });
+    }
+  }
+}
+
+export function voteOnProposition(proposalId: string, voterAddress: string, vote: number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: null });
+    try {
+      const web3 : Web3 = getState().web3.instance;
+
+      const AbsoluteVoteContract = contract(AbsoluteVote);
+      AbsoluteVoteContract.setProvider(web3.currentProvider);
+      const votingMachineInstance = await AbsoluteVoteContract.deployed();
+      // TODO: from the right person
+      await votingMachineInstance.vote(proposalId, vote, { from: "0x403a1879cfd1499e1d6c5de4d0914659c40cf96a", gas: 4000000 });
+      // TODO: update proposal by checking status of the vote from the voting machine instance
+
+      dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: null });
+    } catch (err) {
+      dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
     }
   }
 }

@@ -6,13 +6,29 @@ export interface ICollaborator {
   reputation: number
 }
 
+export interface IProposal {
+  abstainVotes: number
+  beneficiary: string
+  description: string
+  failed: boolean
+  noVotes: number
+  open: boolean
+  orgAvatarAddress: string
+  passed: boolean
+  proposalId: string
+  reputationReward: number
+  tokenReward: number
+  yesVotes: number
+}
+
 export interface IDaoState {
   avatarAddress: string,
   controllerAddress: string,
-  name: string,
   members: ICollaborator[],
+  name: string,
   rank: number,
   promotedAmount: number,
+  proposals: IProposal[],
   reputationAddress: string,
   reputationCount: number,
   tokenAddress: string,
@@ -99,6 +115,26 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_CREATE_DAO_REJECTED: {
+      return state;
+    }
+
+
+    case ActionTypes.ARC_CREATE_PROPOSITION: {
+      return state;
+    }
+
+    case ActionTypes.ARC_CREATE_PROPOSITION_PENDING: {
+      return state;
+    }
+
+    case ActionTypes.ARC_CREATE_PROPOSITION_FULFILLED: {
+      let daoList = state.daoList;
+      let dao = daoList[action.payload.orgAvatarAddress];
+      dao.proposals.push(action.payload);
+      return {...state, daoList: daoList};
+    }
+
+    case ActionTypes.ARC_CREATE_PROPOSITION_REJECTED: {
       return state;
     }
 
