@@ -9,9 +9,9 @@ Alchemy Client
 * [DAOstack Solidity Contracts](https://github.com/daostack/daostack) - This is included as a submodule
 
 ## Installation
-* `yarn install`
 * `git submodule init`
 * `git submodule update`
+* `yarn`
 
 # Development Environments
 
