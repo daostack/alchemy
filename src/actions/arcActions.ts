@@ -250,15 +250,13 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           proposal.open = false;
         } else {
           const proposalStatus = await votingMachineInstance.proposalStatus(proposalArgs._proposalId);
-          console.log("proposal status = ", proposalStatus);
-          proposal.abstainVotes = Number(proposalStatus[0]);
-          proposal.noVotes = Number(proposalStatus[1]);
-          proposal.yesVotes = Number(proposalStatus[2]);
+          proposal.abstainVotes = proposalStatus[0].toNumber();
+          proposal.yesVotes = proposalStatus[1].toNumber();
+          proposal.noVotes = proposalStatus[2].toNumber();
         };
         org.proposals.push(proposal);
       }
     }
-    console.log(org.proposals);
   }
 
   return org;
@@ -445,8 +443,6 @@ export function createProposition(orgAvatarAddress : string, description : strin
       const SimpleContributionSchemeContract = contract(SimpleContributionScheme);
       SimpleContributionSchemeContract.setProvider(web3.currentProvider);
       const simpleContributionSchemeInstance = await SimpleContributionSchemeContract.deployed();
-
-      console.log(orgAvatarAddress, description, nativeTokenReward, reputationReward, beneficiary, ethAccountAddress);
 
       const submitProposalTransaction = await simpleContributionSchemeInstance.submitContribution(
         orgAvatarAddress,
