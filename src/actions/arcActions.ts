@@ -250,9 +250,9 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           proposal.open = false;
         } else {
           const proposalStatus = await votingMachineInstance.proposalStatus(proposalArgs._proposalId);
-          proposal.abstainVotes = proposalStatus[0].toNumber();
-          proposal.yesVotes = proposalStatus[1].toNumber();
-          proposal.noVotes = proposalStatus[2].toNumber();
+          proposal.abstainVotes = Number(web3.fromWei(proposalStatus[0], "ether"));
+          proposal.yesVotes = Number(web3.fromWei(proposalStatus[1], "ether"));
+          proposal.noVotes = Number(web3.fromWei(proposalStatus[2], "ether"));
         };
         org.proposals.push(proposal);
       }
@@ -316,9 +316,20 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       const genesisAddress = GenesisScheme.networks[web3Constants.CURRENT_CHAIN_ID]['address'];
       const genesisInstance = await GenesisContract.at(genesisAddress);
 
-      const founderAddresses = collaborators.map((c : any) => c.address);
-      const founderTokens = collaborators.map((c : any) => web3.toWei(c.tokens, "ether"));
-      const founderReputations = collaborators.map((c : any) => web3.toWei(c.reputation, "ether"));
+      let collaborator, totalOmega = 0;
+      let founderAddresses = [];
+      let founderTokens = [];
+      let founderReputations = [];
+      collaborators.sort((a : any, b : any) => {
+        b.reputation - a.reputation;
+      });
+      for (let i = 0; i < collaborators.length; i++) {
+        collaborator = collaborators[i];
+        totalOmega += collaborator.reputation;
+        founderAddresses.push(collaborator.address);
+        founderTokens.push(web3.toWei(collaborator.tokens, "ether"));
+        founderReputations.push(web3.toWei(collaborator.reputation, "ether"));
+      }
 
       // TODO: how do we know how much gas to spend?
       const forgeOrgTransaction = await genesisInstance.forgeOrg(orgName, tokenName, tokenSymbol, founderAddresses, founderTokens, founderReputations, { gas: 4000000 });
@@ -341,15 +352,16 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
       await votingMachineInstance.setParameters(org.reputationAddress, votePrecision, allowOwnerVote);
       const voteParametersHash = await votingMachineInstance.getParametersHash(org.reputationAddress, votePrecision, allowOwnerVote);
 
-      const globalConstraintRegistrarInstance = await GlobalConstraintRegistrarContract.deployed();
-      const schemeRegistrarInstance = await SchemeRegistrarContract.deployed();
-      const upgradeSchemeInstance = await UpgradeSchemeContract.deployed();
-
+      // Add initial schemes
       let initialSchemesAddresses = [];
       let initialSchemesParams = [];
       let initialSchemesTokenAddresses = [];
       let initialSchemesFees = [];
       let initialSchemesPermissions = [];
+
+      const globalConstraintRegistrarInstance = await GlobalConstraintRegistrarContract.deployed();
+      const schemeRegistrarInstance = await SchemeRegistrarContract.deployed();
+      const upgradeSchemeInstance = await UpgradeSchemeContract.deployed();
 
       await schemeRegistrarInstance.setParameters(voteParametersHash, voteParametersHash, votingMachineInstance.address);
       initialSchemesAddresses.push(schemeRegistrarInstance.address);
@@ -410,7 +422,6 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         votingMachineInstance.address,
       );
 
-      // This will actually pass the proposal automatically because my vote for yes is registered on proposal.
       const proposeSchemeTransaction = await schemeRegistrarInstance.proposeScheme(
         org.avatarAddress, // Avatar _avatar,
         simpleContributionSchemeInstance.address, //address _scheme,
@@ -419,8 +430,19 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         org.tokenAddress, // StandardToken _tokenFee,
         0, // uint _fee
         false, // bool _autoRegister. TODO: if we make this true then we shouldnt have to do the registerOrganization call below
-        { gas: 4000000 }
+        { from: collaborators[0].address, gas: 4000000 }
       );
+
+      // If the proposer didn't have enough reputation to pass the new scheme
+      //   make sure we have enough collaborators vote to make sure it passes
+      let reputationUsed = collaborators[0].reputation, i = 1;
+      const proposalId = proposeSchemeTransaction.logs[0].args._proposalId;
+      while (reputationUsed < totalOmega * votePrecision / 100) {
+        collaborator = collaborators[i];
+        await votingMachineInstance.vote(proposalId, 1, collaborator.addess, { from: collaborator.address, gas: 4000000 });
+        i++;
+        reputationUsed += collaborator.reputation;
+      }
 
       // now we register it
       await simpleContributionSchemeInstance.registerOrganization(org.avatarAddress, { gas : 4000000 });
@@ -453,14 +475,8 @@ export function createProposition(orgAvatarAddress : string, description : strin
         '0x0008e8314d3f08fd072e06b6253d62ed526038a0', // StandardToken _externalToken, we provide some arbitrary address
         0, // uint _externalTokenReward,
         beneficiary, // address _beneficiary
-        { from: ethAccountAddress, gas : 4000000 }
+        { from: beneficiary, gas : 4000000 }
       );
-
-      // const AbsoluteVoteContract = contract(AbsoluteVote);
-      // AbsoluteVoteContract.setProvider(web3.currentProvider);
-      // const votingMachineInstance = await AbsoluteVoteContract.deployed();
-      // const proposalX = await votingMachineInstance.proposals(submitProposalTransaction.logs[0].args._proposalId);
-      // console.log(" vot mach prop = ", proposalX);
 
       const proposal = <IProposal>{
         abstainVotes: 0,
