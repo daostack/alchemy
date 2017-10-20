@@ -4,7 +4,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaborator } from 'reducers/arcReducer';
+import { IDaoState, ICollaboratorState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as css from './CreateProposition.scss';

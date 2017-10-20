@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaborator, IProposal } from 'reducers/arcReducer';
+import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as css from './ViewDao.scss';
@@ -43,7 +43,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   }
 
   handleClickVote = (proposalId : string, vote : number) => (event : any) => {
-    this.props.voteOnProposition(proposalId, this.props.web3.ethAccountAddress, vote);
+    this.props.voteOnProposition(this.props.daoAddress, proposalId, this.props.web3.ethAccountAddress, vote);
   }
 
   render() {
@@ -68,7 +68,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   renderMembers() {
     const { dao } = this.props;
 
-    const membersHTML = dao.members.map((member : ICollaborator, index : number) => {
+    const membersHTML = dao.members.map((member : ICollaboratorState, index : number) => {
       return (
         <div className={css.member} key={"member_" + index}>
           <strong>{index + 1}: {member.address}</strong>
@@ -91,7 +91,9 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   renderProposals() {
     const { dao } = this.props;
 
-    const proposalsHTML = dao.proposals.map((proposal : IProposal, index : number) => {
+    const proposalsHTML = Object.keys(dao.proposals).map((proposalAddress : string) => {
+      const proposal = dao.proposals[proposalAddress];
+
       var proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.open,
@@ -100,7 +102,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       });
 
       return (
-        <div className={proposalClass} key={"proposal_" + index}>
+        <div className={proposalClass} key={"proposal_" + proposalAddress}>
           <h3>{proposal.description}</h3>
           Token Reward: <span>{proposal.tokenReward}</span>
           <br />

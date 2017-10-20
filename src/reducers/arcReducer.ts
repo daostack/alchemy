@@ -1,12 +1,14 @@
+import * as update from 'immutability-helper';
+
 import * as ActionTypes from 'constants/arcConstants'
 
-export interface ICollaborator {
+export interface ICollaboratorState {
   address: string
   tokens: number
   reputation: number
 }
 
-export interface IProposal {
+export interface IProposalState {
   abstainVotes: number
   beneficiary: string
   description: string
@@ -24,11 +26,11 @@ export interface IProposal {
 export interface IDaoState {
   avatarAddress: string,
   controllerAddress: string,
-  members: ICollaborator[],
+  members: ICollaboratorState[],
   name: string,
   rank: number,
   promotedAmount: number,
-  proposals: IProposal[],
+  proposals: { [key : string] : IProposalState },
   reputationAddress: string,
   reputationCount: number,
   tokenAddress: string,
@@ -75,7 +77,7 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_GET_DAOS_FULFILLED: {
-      return {...state, daoList: action.payload };
+      return update(state , { daoList : { $set: action.payload } } )
     }
 
     case ActionTypes.ARC_GET_DAOS_REJECTED: {
@@ -91,9 +93,8 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_GET_DAO_FULFILLED: {
-      let daoList = state.daoList;
-      daoList[action.payload.avatarAddress] = action.payload;
-      return {...state, daoList: daoList};
+      // Replace the DAO's state using immutability-helper
+      return update(state , { daoList : { [action.payload.avatarAddress] : { $set: action.payload } } })
     }
 
     case ActionTypes.ARC_GET_DAO_REJECTED: {
@@ -109,9 +110,8 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_CREATE_DAO_FULFILLED: {
-      let daoList = state.daoList;
-      daoList[action.payload.avatarAddress] = action.payload;
-      return {...state, daoList: daoList};
+      // Add the new DAO to the state using immutability-helper
+      return update(state , { daoList : { [action.payload.avatarAddress] : { $set: action.payload } } })
     }
 
     case ActionTypes.ARC_CREATE_DAO_REJECTED: {
@@ -128,13 +128,20 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_CREATE_PROPOSITION_FULFILLED: {
-      let daoList = state.daoList;
-      let dao = daoList[action.payload.orgAvatarAddress];
-      dao.proposals.push(action.payload);
-      return {...state, daoList: daoList};
+      // Add the new proposal to the DAO's state using immutability-helper
+      return update(state , { daoList : { [action.payload.orgAvatarAddress] : { proposals: { [action.payload.proposalId] : { $set: action.payload } } } } })
     }
 
     case ActionTypes.ARC_CREATE_PROPOSITION_REJECTED: {
+      return state;
+    }
+
+    case ActionTypes.ARC_VOTE_FULFILLED: {
+      // Update the proposal state
+      return update(state , { daoList : { [action.payload.orgAvatarAddress] : { proposals: { [action.payload.proposalId] : { $merge: action.payload } } } } })
+    }
+
+    case ActionTypes.ARC_VOTE_REJECTED: {
       return state;
     }
 

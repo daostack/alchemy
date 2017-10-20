@@ -24,7 +24,7 @@ import * as web3Actions from 'actions/web3Actions';
 import * as web3Constants from 'constants/web3Constants';
 import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaborator, IProposal } from 'reducers/arcReducer';
+import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -146,7 +146,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     members: [],
     rank: 1, // TODO
     promotedAmount: 0,
-    proposals: [],
+    proposals: {},
     reputationAddress: "",
     reputationCount: 0,
     tokenAddress: "",
@@ -195,7 +195,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
 
     collaboratorAddresses = [...new Set(collaboratorAddresses)]; // Dedupe
 
-    let collaborators : ICollaborator[] = [];
+    let collaborators : ICollaboratorState[] = [];
     for (let cnt = 0; cnt < collaboratorAddresses.length; cnt++) {
       const address = collaboratorAddresses[cnt];
       let collaborator = { address: address, tokens: 0, reputation: 0 };
@@ -228,7 +228,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     for (let cnt = 0; cnt < allProposals.length; cnt++) {
       proposalArgs = allProposals[cnt].args;
       if (proposalArgs._avatar == org.avatarAddress) {
-        let proposal = <IProposal>{
+        let proposal = <IProposalState>{
           abstainVotes: 0,
           beneficiary: proposalArgs._beneficiary,
           description: proposalArgs._contributionDesciption,
@@ -254,7 +254,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           proposal.yesVotes = Number(web3.fromWei(proposalStatus[1], "ether"));
           proposal.noVotes = Number(web3.fromWei(proposalStatus[2], "ether"));
         };
-        org.proposals.push(proposal);
+        org.proposals[proposalArgs._proposalId] = proposal;
       }
     }
   }
@@ -304,7 +304,7 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         members: [],
         rank: 1, // TODO
         promotedAmount: 0,
-        proposals: [],
+        proposals: {},
         reputationAddress: "",
         reputationCount: 0,
         tokenAddress: "",
@@ -478,7 +478,7 @@ export function createProposition(orgAvatarAddress : string, description : strin
         { from: beneficiary, gas : 4000000 }
       );
 
-      const proposal = <IProposal>{
+      const proposal = <IProposalState>{
         abstainVotes: 0,
         beneficiary: beneficiary,
         description: description,
@@ -501,20 +501,33 @@ export function createProposition(orgAvatarAddress : string, description : strin
   }
 }
 
-export function voteOnProposition(proposalId: string, voterAddress: string, vote: number) {
+export function voteOnProposition(orgAvatarAddress: string, proposalId: string, voterAddress: string, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: null });
     try {
       const web3 : Web3 = getState().web3.instance;
+      const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
       const AbsoluteVoteContract = contract(AbsoluteVote);
       AbsoluteVoteContract.setProvider(web3.currentProvider);
       const votingMachineInstance = await AbsoluteVoteContract.deployed();
-      // TODO: from the right person
-      await votingMachineInstance.vote(proposalId, vote, { from: "0x403a1879cfd1499e1d6c5de4d0914659c40cf96a", gas: 4000000 });
-      // TODO: update proposal by checking status of the vote from the voting machine instance
+      const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
+      const proposalStatus = await votingMachineInstance.proposalStatus(proposalId);
 
-      dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: null });
+      const passed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
+
+      const payload = {
+        abstainVotes: Number(web3.fromWei(proposalStatus[0], "ether")),
+        failed: false,
+        noVotes: Number(web3.fromWei(proposalStatus[2], "ether")),
+        orgAvatarAddress: orgAvatarAddress,
+        open: true,
+        passed: passed,
+        proposalId: proposalId,
+        yesVotes: Number(web3.fromWei(proposalStatus[1], "ether"))
+      }
+
+      dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
     } catch (err) {
       dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
     }
