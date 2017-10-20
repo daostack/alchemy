@@ -20,3 +20,9 @@ if (ethEnv === 'livenet') {
 
 export const CURRENT_CHAIN = currentChain
 export const CURRENT_CHAIN_ID = currentChainId
+
+export enum ActionTypes {
+  WEB3_CONNECTED = "WEB3_CONNECTED",
+  WEB3_CHANGE_ACCOUNT = "WEB3_CHANGE_ACCOUNT",
+  OTHER_ACTION = "__any_other_action_type__"
+}

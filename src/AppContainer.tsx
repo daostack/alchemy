@@ -12,7 +12,7 @@ import * as arcActions from 'actions/arcActions';
 
 import CreateDaoContainer from "./components/CreateDao/CreateDaoContainer";
 import CreatePropositionContainer from "./components/CreateProposition/CreatePropositionContainer";
-import Header from "./components/Header/Header";
+import HeaderContainer from "./components/Header/HeaderContainer";
 import HomeContainer from "./components/Home/HomeContainer";
 import ViewDaoContainer from "./components/ViewDao/ViewDaoContainer";
 
@@ -52,7 +52,7 @@ class AppContainer extends React.Component<IProps, null> {
     return (
       (web3.isConnected ?
         <div className='wrapper'>
-          <Header web3={this.props.web3} />
+          <HeaderContainer />
           <Switch>
             <Route exact path="/" component={HomeContainer}/>
             <Route exact path="/dao/create" component={CreateDaoContainer}/>

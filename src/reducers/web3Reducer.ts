@@ -1,4 +1,4 @@
-import * as ActionTypes from 'actions/web3Actions'
+import { ActionTypes } from 'constants/web3Constants';
 import * as Web3 from 'web3';
 
 export interface IWeb3State {
@@ -29,9 +29,8 @@ const web3Reducer = (state = initialState, action: any) => {
     //   console.log('received account', action);
     //   return state;
 
-    // case 'web3/CHANGE_ACCOUNT':
-    //   console.log('account changed', action);
-    //   return state;
+    case ActionTypes.WEB3_CHANGE_ACCOUNT:
+      return {...state, ...action.payload }
 
     default: {
       return state;

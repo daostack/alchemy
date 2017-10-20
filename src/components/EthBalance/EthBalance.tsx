@@ -23,9 +23,9 @@ export default class EthBalance extends React.Component<Props, null>  {
 
     // <EtherscanLink address={ ethAddress } >{ ethBalance } ETH</EtherscanLink>
     return (
-      <div className={css.accountBalance}>
+      <span className={css.accountBalance}>
         { ethAccountBalance } ETH
-      </div>
+      </span>
     )
   }
 }
