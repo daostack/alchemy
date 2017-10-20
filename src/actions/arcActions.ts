@@ -514,17 +514,30 @@ export function voteOnProposition(orgAvatarAddress: string, proposalId: string, 
       const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
       const proposalStatus = await votingMachineInstance.proposalStatus(proposalId);
 
-      const passed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
-
-      const payload = {
+      let payload = {
         abstainVotes: Number(web3.fromWei(proposalStatus[0], "ether")),
         failed: false,
         noVotes: Number(web3.fromWei(proposalStatus[2], "ether")),
         orgAvatarAddress: orgAvatarAddress,
         open: true,
-        passed: passed,
+        passed: false,
         proposalId: proposalId,
         yesVotes: Number(web3.fromWei(proposalStatus[1], "ether"))
+      }
+
+      // See if the proposition was executed, either passing or failing
+      const executed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
+      if (executed) {
+        const decision = executed.args._decision.toNumber();
+        payload.open = false;
+        if (decision == 1) {
+          payload.passed = true;
+        } else if (decision == 2) {
+          payload.failed = true;
+        } else {
+          dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposition decision ", decision });
+          return
+        }
       }
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
