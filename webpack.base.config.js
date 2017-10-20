@@ -28,6 +28,7 @@ module.exports = {
       arcjs: path.resolve(basePath, 'arc/lib'),
       components: path.resolve(basePath, 'src/components'),
       constants: path.resolve(basePath, 'src/constants'),
+      layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
       reducers: path.resolve(basePath, 'src/reducers')
     },

@@ -7,8 +7,7 @@ import { default as store, history } from './configureStore';
 
 import * as arcActions from './actions/arcActions';
 
-import AppContainer from "./AppContainer";
-import ViewDaoContainer from "./components/ViewDao/ViewDaoContainer";
+import AppContainer from "layouts/AppContainer";
 
 export class App extends React.Component<undefined, undefined> {
 

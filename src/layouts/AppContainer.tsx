@@ -3,18 +3,20 @@ import { connect, Dispatch } from 'react-redux';
 import { Switch, Route } from 'react-router-dom'
 import { bindActionCreators } from 'redux';
 
-import store from './configureStore';
+import store from '../configureStore';
 import { IRootState } from 'reducers';
 import { IArcState } from 'reducers/arcReducer'
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as arcActions from 'actions/arcActions';
 
-import CreateDaoContainer from "./components/CreateDao/CreateDaoContainer";
-import CreatePropositionContainer from "./components/CreateProposition/CreatePropositionContainer";
-import HeaderContainer from "./components/Header/HeaderContainer";
-import HomeContainer from "./components/Home/HomeContainer";
-import ViewDaoContainer from "./components/ViewDao/ViewDaoContainer";
+import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
+import CreatePropositionContainer from "components/CreateProposition/CreatePropositionContainer";
+import HeaderContainer from "layouts/HeaderContainer";
+import HomeContainer from "components/Home/HomeContainer";
+import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
+
+import * as css from "./App.scss"
 
 interface IStateProps {
   arc: IArcState,
@@ -51,7 +53,7 @@ class AppContainer extends React.Component<IProps, null> {
 
     return (
       (web3.isConnected ?
-        <div className='wrapper'>
+        <div className={css.wrapper}>
           <HeaderContainer />
           <Switch>
             <Route exact path="/" component={HomeContainer}/>

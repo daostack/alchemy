@@ -9,7 +9,7 @@ import * as web3Actions from 'actions/web3Actions';
 
 import EthBalance from 'components/EthBalance/EthBalance'
 
-import * as css from "./Header.scss"
+import * as css from "./App.scss"
 
 interface IStateProps {
   web3: IWeb3State

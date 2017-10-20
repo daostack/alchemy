@@ -1,6 +1,18 @@
+$header-height: 100px;
+
+.wrapper {
+  width: 100%;
+  margin-top: $header-height;
+}
+
 .header {
   width: 100%;
   vertical-align: middle;
+  position: fixed;
+  top: 0;
+  height: $header-height;
+  z-index: 1000;
+  background-color: $bg-color;
 
   img {
     float: left;
