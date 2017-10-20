@@ -21,6 +21,12 @@ Alchemy Client
 3. Run `yarn testrpc` in one terminal tab
 4. In a separate tab run `yarn start-testrpc`
 
+## Working with Kovan testnet locally
+1. Install parity - `bash <(curl https://get.parity.io -Lk)`
+2. Create a file in the root of the project called 'kovan_pass.txt' with your parity wallet password
+3. Run `parity --no-warp --unlock KOVAN_ACCOUNT_PUBLIC_ADDRESS --password kovan_pass.txt --chain=kovan` in one terminal tab
+4. Run `yarn start-kovan` in a separate tab
+
 ## Regular end users
 
 * Install [Metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) or the [Parity Chrome Extension](https://chrome.google.com/webstore/detail/himekenlppkgeaoeddcliojfddemadig)
