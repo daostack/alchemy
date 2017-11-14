@@ -20,7 +20,9 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
+    "emergent-arc": "github:daostack/daostack#dev",
     "es6-promisify": "^5.0.0",
+    "ethers": "^2.1.2",
     "immutability-helper": "^2.4.0",
     "lodash": "^4.17.4",
     "react": "^15.6.1",

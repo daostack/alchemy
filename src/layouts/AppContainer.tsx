@@ -12,6 +12,7 @@ import * as arcActions from 'actions/arcActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import CreatePropositionContainer from "components/CreateProposition/CreatePropositionContainer";
+import CreateWalletContainer from "components/CreateWallet/CreateWalletContainer";
 import HeaderContainer from "layouts/HeaderContainer";
 import HomeContainer from "components/Home/HomeContainer";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
@@ -60,6 +61,7 @@ class AppContainer extends React.Component<IProps, null> {
             <Route exact path="/dao/create" component={CreateDaoContainer}/>
             <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
             <Route path="/proposition/create/:daoAddress" component={CreatePropositionContainer}/>
+            <Route path="/wallet/create" component={CreateWalletContainer}/>
           </Switch>
         </div>
         : <div>Loading...</div>

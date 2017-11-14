@@ -1,4 +1,5 @@
 import * as BigNumber from 'bignumber.js';
+import { Wallet } from 'emergent-arc';
 import promisify = require('es6-promisify');
 import * as Redux from 'redux';
 import { push } from 'react-router-redux'
@@ -12,7 +13,6 @@ var Controller = require('arc/build/contracts/Controller.json');
 var DAOToken = require('arc/build/contracts/DAOToken.json');
 var GenesisScheme = require('arc/build/contracts/GenesisScheme.json');
 var GlobalConstraintRegistrar = require('arc/build/contracts/GlobalConstraintRegistrar.json');
-var MintableToken = require('arc/build/contracts/MintableToken.json');
 var Reputation = require('arc/build/contracts/Reputation.json');
 var SchemeRegistrar = require('arc/build/contracts/SchemeRegistrar.json');
 var SimpleContributionScheme = require('arc/build/contracts/SimpleContributionScheme.json');
@@ -132,7 +132,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
   AvatarContract.setProvider(web3.currentProvider);
   const ControllerContract = contract(Controller);
   ControllerContract.setProvider(web3.currentProvider);
-  const DAOTokenContract = contract(MintableToken);
+  const DAOTokenContract = contract(DAOToken);
   DAOTokenContract.setProvider(web3.currentProvider);
   const ReputationContract = contract(Reputation);
   ReputationContract.setProvider(web3.currentProvider);
@@ -544,5 +544,11 @@ export function voteOnProposition(orgAvatarAddress: string, proposalId: string, 
     } catch (err) {
       dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
     }
+  }
+}
+
+export function createWallet(password : string) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    var wallet = Wallet.new(password, (progress) => {console.log("progress");});
   }
 }
