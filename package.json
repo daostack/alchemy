@@ -1,8 +1,9 @@
 {
-  "name": "alchemy_client",
-  "version": "0.0.1",
-  "description": "Client Side Alchemy",
+  "name": "alchemy-client",
+  "version": "0.1.0",
+  "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
