@@ -58,7 +58,7 @@ class CreateWalletContainer extends React.Component<IProps, IState> {
 
   render() {
     return(
-      <div className={css.createWalletWrapper}>
+      <div className={css.createWalletContainer}>
         <h2>Create a Wallet</h2>
         <form onSubmit={this.handleSubmit}>
           <label htmlFor='nameInput'>Password: </label>
