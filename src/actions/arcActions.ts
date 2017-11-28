@@ -1,5 +1,5 @@
 import * as BigNumber from 'bignumber.js';
-import { Wallet } from 'emergent-arc';
+import { Wallet } from 'daostack-arc';
 import promisify = require('es6-promisify');
 import * as Redux from 'redux';
 import { push } from 'react-router-redux'
@@ -549,6 +549,6 @@ export function voteOnProposition(orgAvatarAddress: string, proposalId: string, 
 
 export function createWallet(password : string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    var wallet = Wallet.new(password, (progress) => {console.log("progress");});
+    var wallet = Wallet.new();
   }
 }

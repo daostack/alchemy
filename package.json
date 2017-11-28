@@ -20,7 +20,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
-    "emergent-arc": "github:daostack/daostack#dev",
+    "daostack-arc": "github:daostack/daostack#wallet",
     "es6-promisify": "^5.0.0",
     "ethers": "^2.1.2",
     "immutability-helper": "^2.4.0",

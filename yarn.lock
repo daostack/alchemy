@@ -152,8 +152,8 @@ ajv@^5.0.0, ajv@^5.1.5:
     json-stable-stringify "^1.0.1"
 
 ajv@^5.1.1:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.3.0.tgz#4414ff74a50879c208ee5fdc826e32c303549eda"
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.4.0.tgz#32d1cf08dbc80c432f426f12e10b2511f6b46474"
   dependencies:
     co "^4.6.0"
     fast-deep-equal "^1.0.0"
@@ -1539,6 +1539,16 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
+"daostack-arc@github:daostack/daostack#wallet":
+  version "0.0.0-alpha.9"
+  resolved "https://codeload.github.com/daostack/daostack/tar.gz/f3fdc54b27c9709063866d68ce3b12139c584a23"
+  dependencies:
+    bip39 "^2.4.0"
+    default-options "^1.0.0"
+    ethers "^2.1.2"
+    promisify "^0.0.3"
+    truffle-contract "^3.0.0"
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -1725,16 +1735,6 @@ elliptic@^6.0.0, elliptic@^6.2.3:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
-
-"emergent-arc@github:daostack/daostack#wallet":
-  version "0.0.8"
-  resolved "https://codeload.github.com/daostack/daostack/tar.gz/de6448d2b3bb71523ef183ea2d679bc2d66435c3"
-  dependencies:
-    bip39 "^2.4.0"
-    default-options "^1.0.0"
-    ethers "^2.1.2"
-    promisify "^0.0.3"
-    truffle-contract "^3.0.0"
 
 emojis-list@^2.0.0:
   version "2.1.0"
