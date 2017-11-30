@@ -50,7 +50,7 @@ class CreateWalletContainer extends React.Component<IProps, IState> {
   }
 
   handleChange = (event : any) => {
-    const newPassword = ReactDOM.findDOMNode<HTMLInputElement>(this.refs.nameNode).value;
+    const newPassword = ReactDOM.findDOMNode<HTMLInputElement>(this.refs.passwordNode).value;
     this.setState({
       password: newPassword,
     });

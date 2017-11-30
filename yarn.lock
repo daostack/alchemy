@@ -1540,14 +1540,16 @@ d@1:
     es5-ext "^0.10.9"
 
 "daostack-arc@github:daostack/daostack#wallet":
-  version "0.0.0-alpha.9"
-  resolved "https://codeload.github.com/daostack/daostack/tar.gz/f3fdc54b27c9709063866d68ce3b12139c584a23"
+  version "0.0.0-alpha.11"
+  resolved "https://codeload.github.com/daostack/daostack/tar.gz/35cc04657eaf252305b52604a7a1b470a899c6b7"
   dependencies:
+    "@types/bignumber.js" "^4.0.3"
     bip39 "^2.4.0"
     default-options "^1.0.0"
     ethers "^2.1.2"
     promisify "^0.0.3"
     truffle-contract "^3.0.0"
+    web3-typescript-typings "^0.7.2"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -5816,6 +5818,12 @@ web3-provider-engine@^8.4.0:
 web3-typescript-typings@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/web3-typescript-typings/-/web3-typescript-typings-0.6.0.tgz#ed8f01cfa3ef2c7ff2f1b0cafe7c682d0c6dc333"
+  dependencies:
+    bignumber.js "^4.0.2"
+
+web3-typescript-typings@^0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/web3-typescript-typings/-/web3-typescript-typings-0.7.2.tgz#5312bb786936a9c91381eee7af3d02ac21cf13b3"
   dependencies:
     bignumber.js "^4.0.2"
 
