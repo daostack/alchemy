@@ -7,20 +7,17 @@
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
-    "migrate-testrpc": "cd arc && yarn truffle migrate",
-    "migrate-kovan": "cd arc && yarn truffle migrate --network kovan --reset",
+    "ganache": "npm explore daostack-arc-js -- npm start test.ganache.run",
+    "migrate-ganache": "npm explore daostack-arc-js -- npm start migrateContracts",
     "lint": "eslint src",
-    "postinstall": "cd arc && yarn",
-    "prebuild": "yarn clean",
     "start": "webpack-dev-server --open='google chrome' --config webpack.dev.config.js",
-    "start-testrpc": "yarn migrate-testrpc && ETH_ENV=testrpc yarn start",
-    "start-kovan": "ETH_ENV=kovan yarn start",
-    "testrpc": "testrpc -l 5500000 --account=\"0x0191ecbd1b150b8a3c27c27010ba51b45521689611e669109e034fd66ae69621,9999999999999999999999999999999999999999999\" --account=\"0x00f360233e89c65970a41d4a85990ec6669526b2230e867c352130151453180d,9999999999999999999999999999999999999999999\" --account=\"0x987a26abca7432016104ce2f24ce639340e25afe06ac69f68791399e7a5d1028,9999999999999999999999999999999999999999999\" --account=\"0x89af34b1b7347834048b99423dad174a14bf14540d720d72c16ae92e94b987cb,9999999999999999999999999999999999999999999\" --account=\"0xc867be647eb2bc51e4c0d61066859875cf3634fe949b6f5f85c69ab90e485b37,9999999999999999999999999999999999999999999\" --account=\"0xefabcc2377dee5e51b5a9e65a3854aec85fbbec3cb584d8ad4f9679869fb33c6,9999999999999999999999999999999999999999999\" "
+    "start-ganache": "ETH_ENV=ganache yarn start",
+    "start-kovan": "ETH_ENV=kovan yarn start"
   },
   "dependencies": {
     "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
-    "daostack-arc": "github:daostack/daostack#wallet",
+    "daostack-arc-js": "0.0.0-alpha.14",
     "es6-promisify": "^5.0.0",
     "ethers": "^2.1.2",
     "immutability-helper": "^2.4.0",
@@ -36,7 +33,7 @@
     "redux-promise-middleware": "^4.4.1",
     "redux-thunk": "^2.2.0",
     "style-loader": "^0.18.2",
-    "truffle-contract": "^2.0.4",
+    "truffle-contract": "^3.0.1",
     "web3": "^0.20.0",
     "webpack": "^3.5.5",
     "zeppelin-solidity": "^1.2.0"
@@ -59,6 +56,7 @@
     "@types/webpack-env": "^1.13.0",
     "awesome-typescript-loader": "^3.2.3",
     "extract-text-webpack-plugin": "^3.0.0",
+    "ganache-cli": "^6.0.3",
     "node-sass": "^4.5.3",
     "react-hot-loader": "^3.0.0-beta.7",
     "sass-loader": "^6.0.6",
