@@ -546,9 +546,3 @@ export function voteOnProposition(orgAvatarAddress: string, proposalId: string, 
     }
   }
 }
-
-export function createWallet(password : string) {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    var wallet = Wallet.new();
-  }
-}
