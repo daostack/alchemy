@@ -135,7 +135,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
       let collaborator = { address: address, tokens: 0, reputation: 0 };
       const tokens = await org.token.balanceOf.call(address)
       collaborator.tokens = Number(web3.fromWei(tokens, "ether"));
-      const reputation = await org.token.balanceOf.call(address);
+      const reputation = await org.reputation.reputationOf.call(address);
       collaborator.reputation = Number(web3.fromWei(reputation, "ether"));
       collaborators.push(collaborator);
     }
@@ -171,8 +171,8 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           open: true,
           passed: false,
           proposalId: proposalArgs._proposalId,
-          reputationReward: Number(web3.fromWei(proposalArgs._reputationReward, "ether")),
-          tokenReward: Number(web3.fromWei(proposalArgs._nativeTokenReward, "ether")),
+          reputationReward: Number(web3.fromWei(proposalArgs._rewards[1], "ether")),
+          tokenReward: Number(web3.fromWei(proposalArgs._rewards[0], "ether")),
           yesVotes: 0
         };
 
@@ -226,7 +226,6 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         founders: founders,
         schemes: schemes
       });
-
 
       let orgData : IDaoState = {
         avatarAddress: org.avatar.address,
