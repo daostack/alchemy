@@ -43,7 +43,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     const { web3 } = this.props;
 
     const accountOptionNodes = web3.instance.eth.accounts.map((account : string) => (
-      <option key={'account_' + account} selected={account == web3.ethAccountAddress}>
+      <option key={'account_' + account}>
         {account}
       </option>
     ));
@@ -55,7 +55,7 @@ class HeaderContainer extends React.Component<IProps, null> {
         { web3
           ? <div className={css.accountInfo}>
               <span>Current account:</span>
-              <select onChange={this.handleChangeAccount} ref='accountSelectNode'>
+              <select onChange={this.handleChangeAccount} ref='accountSelectNode' defaultValue={web3.ethAccountAddress}>
                 {accountOptionNodes}
               </select>&nbsp;-&nbsp;
               <span className={css.etherBalance}>Ether Balance <EthBalance ethAccountBalance={web3.ethAccountBalance} ethAccountAddress={web3.ethAccountAddress} /> </span>
