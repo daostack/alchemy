@@ -1,6 +1,4 @@
-Alchemy Client
-
-# Run app locally
+# Alchemy Client
 
 ## Dependencies:
 * [NVM](https://github.com/creationix/nvm#installation)
@@ -10,7 +8,7 @@ Alchemy Client
 ## Installation
 * `yarn`
 
-# Development Environments
+# Run app locally
 
 ## Working with Ganache
 1. Switch off chrome extensions such as MetaMask or Parity extension OR have MetaMask listen to localhost:8545
@@ -26,7 +24,7 @@ Alchemy Client
 4. Run `yarn start-kovan` in a separate tab
 5. Go to http://localhost:3000/ in your favorite browser
 
-## Regular end users
+# Regular end users
 
 * Install [Metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) or the [Parity Chrome Extension](https://chrome.google.com/webstore/detail/himekenlppkgeaoeddcliojfddemadig)
 * In MetaMask - Make sure to switch the network to kovan
