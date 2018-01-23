@@ -1,4 +1,4 @@
-var GenesisScheme = require('arc/build/contracts/GenesisScheme.json');
+// TODO: how to get ganache chain id? var GenesisScheme = require('arc/build/contracts/GenesisScheme.json');
 
 const ethEnv = process.env.ETH_ENV
 
@@ -15,8 +15,8 @@ switch (ethEnv) {
     currentChainId = '42'
     break;
   default:
-    currentChain = 'testrpc';
-    currentChainId = Object.keys(GenesisScheme.networks).pop();
+    currentChain = 'ganache';
+    currentChainId = '0'; // TODO: do we need this? Object.keys(GenesisScheme.networks).pop();
 }
 
 export const CURRENT_CHAIN = currentChain

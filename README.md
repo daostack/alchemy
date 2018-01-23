@@ -15,11 +15,11 @@ Alchemy Client
 
 # Development Environments
 
-## Working with testrpc
-1. Install [testrpc](https://github.com/ethereumjs/testrpc)
+## Working with Ganache
+1. Install [ganache-cli](https://github.com/trufflesuite/ganache-cli)
 2. Switch off chrome extensions such as MetaMask or Parity extension OR have MetaMask listen to localhost:8545
-3. Run `yarn testrpc` in one terminal tab
-4. In a separate tab run `yarn start-testrpc`
+3. Run `yarn ganache` in one terminal tab
+4. In a separate tab run `yarn start-ganache`
 
 ## Working with Kovan testnet locally
 1. Install parity - `bash <(curl https://get.parity.io -Lk)`
