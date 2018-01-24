@@ -56,7 +56,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
           <div>Avatar address: {dao.avatarAddress}</div>
           <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
           <div>Num tokens: {dao.tokenCount}</div>
-          <div>Omega: {dao.reputationCount}</div>
+          <div>Reputation: {dao.reputationCount}</div>
           {this.renderMembers()}
           {this.renderProposals()}
           <Link to={'/proposition/create/'+dao.avatarAddress}>Create Proposition</Link>

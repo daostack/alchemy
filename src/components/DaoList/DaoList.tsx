@@ -35,7 +35,7 @@ export default class DaoList extends React.Component<IProps, null> {
           <Link to={"/dao/" + dao.avatarAddress}><h3>{dao.name}</h3></Link>
           <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
           <div>Num tokens: {dao.tokenCount}</div>
-          <div>Omega: {dao.reputationCount}</div>
+          <div>Reputation: {dao.reputationCount}</div>
         </div>
       );
     });

@@ -110,7 +110,7 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
               value={this.state.nativeTokenReward}
             />
             <br /><br />
-            <label htmlFor='reputationRewardInput'>Omega reward: </label>
+            <label htmlFor='reputationRewardInput'>Reputation reward: </label>
             <input
               id='reputationRewardInput'
               maxLength={10}
