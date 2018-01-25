@@ -1,4 +1,3 @@
-import * as BigNumber from 'bignumber.js';
 import * as Arc from 'daostack-arc-js';
 import promisify = require('es6-promisify');
 import * as Redux from 'redux';
@@ -183,10 +182,10 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           proposal.failed = true;
           proposal.open = false;
         } else {
-          const proposalStatus = await votingMachineInstance.proposalStatus(proposalArgs._proposalId);
-          proposal.abstainVotes = Number(web3.fromWei(proposalStatus[0], "ether"));
-          proposal.yesVotes = Number(web3.fromWei(proposalStatus[1], "ether"));
-          proposal.noVotes = Number(web3.fromWei(proposalStatus[2], "ether"));
+          const votesStatus = await votingMachineInstance.votesStatus(proposalArgs._proposalId);
+          proposal.abstainVotes = Number(web3.fromWei(votesStatus[0], "ether"));
+          proposal.yesVotes = Number(web3.fromWei(votesStatus[1], "ether"));
+          proposal.noVotes = Number(web3.fromWei(votesStatus[2], "ether"));
         };
         orgData.proposals[proposalArgs._proposalId] = proposal;
       }
@@ -260,13 +259,22 @@ export function createProposition(orgAvatarAddress : string, description : strin
 
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
 
-      const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
-        avatar: orgAvatarAddress,
-        description: description,
-        nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
-        reputationReward : web3.toWei(reputationReward, "ether"),
-        beneficiary : beneficiary,
-      });
+      // TODO: bypassing ArcJS right now because we need to change the from: address to be able to support our own account/identity management with Ganache
+      const submitProposalTransaction = await contributionRewardInstance.contract.proposeContributionReward(
+        orgAvatarAddress,
+        description,
+        [web3.toWei(nativeTokenReward, "ether"), web3.toWei(reputationReward, "ether"), 0, 0],
+        null,
+        beneficiary,
+        { from: web3.eth.defaultAccount }
+      );
+      // const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
+      //   avatar: orgAvatarAddress,
+      //   description: description,
+      //   nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
+      //   reputationReward : web3.toWei(reputationReward, "ether"),
+      //   beneficiary : beneficiary,
+      // });
 
       const proposal = <IProposalState>{
         abstainVotes: 0,
@@ -301,17 +309,17 @@ export function voteOnProposition(orgAvatarAddress: string, proposalId: string, 
       const orgInstance = await Arc.Organization.at(orgAvatarAddress);
       const votingMachineInstance = await orgInstance.votingMachine;
       const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
-      const proposalStatus = await votingMachineInstance.proposalStatus(proposalId);
+      const votesStatus = await votingMachineInstance.votesStatus(proposalId);
 
       let payload = {
-        abstainVotes: Number(web3.fromWei(proposalStatus[0], "ether")),
+        abstainVotes: Number(web3.fromWei(votesStatus[0], "ether")),
         failed: false,
-        noVotes: Number(web3.fromWei(proposalStatus[2], "ether")),
+        noVotes: Number(web3.fromWei(votesStatus[2], "ether")),
         orgAvatarAddress: orgAvatarAddress,
         open: true,
         passed: false,
         proposalId: proposalId,
-        yesVotes: Number(web3.fromWei(proposalStatus[1], "ether"))
+        yesVotes: Number(web3.fromWei(votesStatus[1], "ether"))
       }
 
       // See if the proposition was executed, either passing or failing
