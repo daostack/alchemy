@@ -56,9 +56,9 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
   }
 
   handleChange = (event : any) => {
-    const newName = ReactDOM.findDOMNode<HTMLInputElement>(this.refs.nameNode).value;
-    const newTokenName = ReactDOM.findDOMNode<HTMLInputElement>(this.refs.tokenNode).value;
-    const newTokenSymbol = ReactDOM.findDOMNode<HTMLInputElement>(this.refs.tokenSymbolNode).value;
+    const newName = (ReactDOM.findDOMNode(this.refs.nameNode) as HTMLInputElement).value;
+    const newTokenName = (ReactDOM.findDOMNode(this.refs.tokenNode) as HTMLInputElement).value;
+    const newTokenSymbol = (ReactDOM.findDOMNode(this.refs.tokenSymbolNode)as HTMLInputElement).value;
     this.setState({
       name: newName,
       tokenName: newTokenName,

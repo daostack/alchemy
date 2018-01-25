@@ -67,10 +67,10 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
   }
 
   handleChange = (event : any) => {
-    const newDescription = ReactDOM.findDOMNode<HTMLInputElement>(this.refs.descriptionNode).value;
-    const newNativeTokenReward = Number(ReactDOM.findDOMNode<HTMLInputElement>(this.refs.nativeTokenRewardNode).value);
-    const newReputationReward = Number(ReactDOM.findDOMNode<HTMLInputElement>(this.refs.reputationRewardNode).value);
-    const newBenificiary = ReactDOM.findDOMNode<HTMLInputElement>(this.refs.beneficiaryNode).value;
+    const newDescription = (ReactDOM.findDOMNode(this.refs.descriptionNode) as HTMLInputElement).value;
+    const newNativeTokenReward = Number((ReactDOM.findDOMNode(this.refs.nativeTokenRewardNode) as HTMLInputElement).value);
+    const newReputationReward = Number((ReactDOM.findDOMNode(this.refs.reputationRewardNode) as HTMLInputElement).value);
+    const newBenificiary = (ReactDOM.findDOMNode(this.refs.beneficiaryNode) as HTMLInputElement).value;
     this.setState({
       description: newDescription,
       nativeTokenReward: newNativeTokenReward,

@@ -35,7 +35,8 @@ type IProps = IStateProps & IDispatchProps
 class HeaderContainer extends React.Component<IProps, null> {
 
   handleChangeAccount = (e : any) => {
-    const newAddress = ReactDOM.findDOMNode<HTMLSelectElement>(this.refs.accountSelectNode).value;
+    let selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
+    const newAddress = selectElement.value;
     this.props.changeAccount(newAddress);
   }
 
