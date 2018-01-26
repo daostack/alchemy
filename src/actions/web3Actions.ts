@@ -1,4 +1,5 @@
 import * as BigNumber from 'bignumber.js';
+import { getWeb3 } from 'daostack-arc-js';
 import * as Redux from 'redux';
 import * as Web3 from 'web3';
 
@@ -23,22 +24,8 @@ export const initializeWeb3 = () => (dispatch : any) => {
   return new Promise(function(resolve, reject) {
      // TODO: poll/watch for changes to network/account
 
-    if (typeof window.web3 !== 'undefined') {
-      // web3 injected by MetaMask
-      payload.instance = new Web3(window.web3.currentProvider)
-      payload.hasProvider = true;
-    } else {
-      // fallback to localhost
-      //let web3Location = `http://${truffleConfig.rpc.host}:${truffleConfig.rpc.port}`
-      var provider = new Web3.providers.HttpProvider('http://localhost:8545');
-      payload.instance = new Web3(provider);
-      window.web3 = payload.instance;
-    }
-
-    payload.ethAccountAddress = payload.instance.eth.accounts[0];
-
-    // TODO: this is an awkward place to do this, do it in the reducer?
-    payload.instance.eth.defaultAccount = payload.ethAccountAddress;
+    payload.instance = getWeb3();
+    payload.ethAccountAddress = payload.instance.eth.defaultAccount;
 
     payload.instance.eth.getBalance(payload.ethAccountAddress, (error : Error, res : BigNumber.BigNumber) => {
       if (error) { console.log("error getting balance"); reject("Error getting ether account balance"); }
