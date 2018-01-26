@@ -259,22 +259,13 @@ export function createProposition(orgAvatarAddress : string, description : strin
 
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
 
-      // TODO: bypassing ArcJS right now because we need to change the from: address to be able to support our own account/identity management with Ganache
-      const submitProposalTransaction = await contributionRewardInstance.contract.proposeContributionReward(
-        orgAvatarAddress,
-        description,
-        [web3.toWei(nativeTokenReward, "ether"), web3.toWei(reputationReward, "ether"), 0, 0],
-        null,
-        beneficiary,
-        { from: web3.eth.defaultAccount }
-      );
-      // const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
-      //   avatar: orgAvatarAddress,
-      //   description: description,
-      //   nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
-      //   reputationReward : web3.toWei(reputationReward, "ether"),
-      //   beneficiary : beneficiary,
-      // });
+      const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
+        avatar: orgAvatarAddress,
+        description: description,
+        nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
+        reputationReward : web3.toWei(reputationReward, "ether"),
+        beneficiary : beneficiary,
+      });
 
       const proposal = <IProposalState>{
         abstainVotes: 0,
