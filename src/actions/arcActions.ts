@@ -13,42 +13,15 @@ import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReduc
 
 export function connectToArc() {
   return (dispatch : any) => {
-    dispatch(web3Actions.initializeWeb3()).then((results: any) => {
-      dispatch(getArcAdresses(results.payload.instance));
-    });
+    dispatch(web3Actions.initializeWeb3());
   }
-}
-
-export function getArcAdresses(web3 : any) {
-  return async (dispatch: any, getState: any) => {
-    dispatch({ type: arcConstants.ARC_INITIALIZATION_PENDING, payload: null });
-
-    let arcContracts = await Arc.getDeployedContracts();
-
-    let payload = {
-      genesisAddress: arcContracts.allContracts['GenesisScheme'].address
-    };
-
-    if (web3 != null) {
-      web3.version.getNetwork((err : any, currentNetworkId : string) => {
-        if (err) {
-          dispatch({ type: arcConstants.ARC_INITIALIZATION_REJECTED, payload: null });
-          return;
-        }
-      });
-      dispatch({ type: arcConstants.ARC_INITIALIZATION_FULFILLED, payload: payload });
-    } else {
-      dispatch({ type: arcConstants.ARC_INITIALIZATION_REJECTED, payload: "Failed to get arc addresses, don't know why" });
-    }
-  };
 }
 
 export function getDAOList() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
 
-    const web3 = getState().web3.instance;
-    let arcContracts = await Arc.getDeployedContracts();
+    const web3 = Arc.Utils.getWeb3();
 
     const genesisContract = await Arc.Utils.requireContract("GenesisScheme");
     const genesisInstance = await genesisContract.deployed();
@@ -76,7 +49,7 @@ export function getDAO(avatarAddress : string) {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: arcConstants.ARC_GET_DAO_PENDING, payload: null });
 
-    const web3 = getState().web3.instance;
+    const web3 = Arc.Utils.getWeb3();
     const daoData = await getDAOData(avatarAddress, web3, true);
     dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: daoData });
   }
@@ -199,7 +172,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_DAO_PENDING, payload: null });
     try {
-      const web3 : Web3 = getState().web3.instance;
+      const web3 : Web3 = Arc.Utils.getWeb3();
 
       let founders : Arc.FounderConfig[] = [], collaborator;
       collaborators.sort((a : any, b : any) => {
@@ -254,7 +227,7 @@ export function createProposition(daoAvatarAddress : string, description : strin
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_PENDING, payload: null });
     try {
-      const web3 : Web3 = getState().web3.instance;
+      const web3 : Web3 = Arc.Utils.getWeb3();
       const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
@@ -296,7 +269,7 @@ export function voteOnProposition(daoAvatarAddress: string, proposalId: string|n
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: null });
     try {
-      const web3 : Web3 = getState().web3.instance;
+      const web3 : Web3 = Arc.Utils.getWeb3();
       const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);

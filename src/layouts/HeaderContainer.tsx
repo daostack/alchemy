@@ -1,3 +1,4 @@
+import * as Arc from 'daostack-arc-js';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom'
@@ -12,12 +13,12 @@ import EthBalance from 'components/EthBalance/EthBalance'
 import * as css from "./App.scss"
 
 interface IStateProps {
-  web3: IWeb3State
+  web3State: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
-    web3: state.web3
+    web3State: state.web3
   };
 };
 
@@ -41,9 +42,10 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   render() {
-    const { web3 } = this.props;
+    const { web3State } = this.props;
+    const web3 = Arc.Utils.getWeb3();
 
-    const accountOptionNodes = web3.instance.eth.accounts.map((account : string) => (
+    const accountOptionNodes = web3.eth.accounts.map((account : string) => (
       <option key={'account_' + account}>
         {account}
       </option>
@@ -56,10 +58,10 @@ class HeaderContainer extends React.Component<IProps, null> {
         { web3
           ? <div className={css.accountInfo}>
               <span>Current account:</span>
-              <select onChange={this.handleChangeAccount} ref='accountSelectNode' defaultValue={web3.ethAccountAddress}>
+              <select onChange={this.handleChangeAccount} ref='accountSelectNode' defaultValue={web3State.ethAccountAddress}>
                 {accountOptionNodes}
               </select>&nbsp;-&nbsp;
-              <span className={css.etherBalance}>Ether Balance <EthBalance ethAccountBalance={web3.ethAccountBalance} ethAccountAddress={web3.ethAccountAddress} /> </span>
+              <span className={css.etherBalance}>Ether Balance <EthBalance ethAccountBalance={web3State.ethAccountBalance} ethAccountAddress={web3State.ethAccountAddress} /> </span>
             </div>
           : ""
         }

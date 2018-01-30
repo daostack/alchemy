@@ -5,16 +5,14 @@ export interface IWeb3State {
   ethAccountBalance: string,
   ethAccountAddress: string,
   hasProvider: boolean,
-  isConnected: boolean,
-  instance: Web3,
+  isConnected: boolean
 }
 
 export const initialState : IWeb3State = {
   ethAccountBalance: "",
   ethAccountAddress: null,
   hasProvider: false,
-  isConnected: false,
-  instance: null,
+  isConnected: false
 }
 
 // TODO: make all action types explicit?
