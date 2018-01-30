@@ -1,5 +1,5 @@
 import * as BigNumber from 'bignumber.js';
-import { getWeb3 } from 'daostack-arc-js';
+import { Utils } from 'daostack-arc-js';
 import * as Redux from 'redux';
 import * as Web3 from 'web3';
 
@@ -24,7 +24,7 @@ export const initializeWeb3 = () => (dispatch : any) => {
   return new Promise(function(resolve, reject) {
      // TODO: poll/watch for changes to network/account
 
-    payload.instance = getWeb3();
+    payload.instance = Utils.getWeb3();
     payload.ethAccountAddress = payload.instance.eth.defaultAccount;
 
     payload.instance.eth.getBalance(payload.ethAccountAddress, (error : Error, res : BigNumber.BigNumber) => {

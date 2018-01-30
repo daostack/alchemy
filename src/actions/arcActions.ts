@@ -50,24 +50,24 @@ export function getDAOList() {
     const web3 = getState().web3.instance;
     let arcContracts = await Arc.getDeployedContracts();
 
-    const genesisContract = await Arc.requireContract("GenesisScheme");
+    const genesisContract = await Arc.Utils.requireContract("GenesisScheme");
     const genesisInstance = await genesisContract.deployed();
 
-    // Get the list of orgs we populated on the blockchain during genesis by looking for NewOrg events
+    // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
     const newOrgEvents = genesisInstance.NewOrg({}, { fromBlock: 0 })
     newOrgEvents.get(async (err : Error, eventsArray : any[]) => {
       if (err) {
-        dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new orgs from genesis contract: " + err.message });
+        dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
       }
 
-      let orgs = <{ [key : string] : IDaoState }>{};
+      let daos = <{ [key : string] : IDaoState }>{};
 
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
-        orgs[event.args._avatar] = await getDAOData(event.args._avatar, web3);
+        daos[event.args._avatar] = await getDAOData(event.args._avatar, web3);
       }
 
-      dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: orgs });
+      dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: daos });
     });
   };
 }
@@ -83,29 +83,29 @@ export function getDAO(avatarAddress : string) {
 }
 
 export async function getDAOData(avatarAddress : string, web3 : any, detailed = false) {
-  const org = await Arc.Organization.at(avatarAddress);
+  const dao = await Arc.DAO.at(avatarAddress);
 
-  let orgData : IDaoState = {
+  let daoData : IDaoState = {
     avatarAddress: avatarAddress,
     controllerAddress: "",
-    name: await org.getName(),
+    name: await dao.getName(),
     members: [],
     rank: 1, // TODO
     promotedAmount: 0,
     proposals: {},
-    reputationAddress: await org.controller.nativeReputation(),
-    reputationCount: Number(web3.fromWei(await org.reputation.totalSupply(), "ether")),
-    tokenAddress: await org.controller.nativeToken(),
-    tokenCount: Number(web3.fromWei(await org.token.totalSupply(), "ether")),
-    tokenName: await org.getTokenName(),
-    tokenSymbol: await org.getTokenSymbol(),
+    reputationAddress: await dao.controller.nativeReputation(),
+    reputationCount: Number(web3.fromWei(await dao.reputation.totalSupply(), "ether")),
+    tokenAddress: await dao.controller.nativeToken(),
+    tokenCount: Number(web3.fromWei(await dao.token.totalSupply(), "ether")),
+    tokenName: await dao.getTokenName(),
+    tokenSymbol: await dao.getTokenSymbol(),
   };
 
   if (detailed) {
     // Get all collaborators
-    const mintTokenEvents = org.token.Mint({}, { fromBlock: 0 })
-    const transferTokenEvents = org.token.Transfer({}, { fromBlock: 0 });
-    const mintReputationEvents = org.reputation.Mint({}, { fromBlock: 0 });
+    const mintTokenEvents = dao.token.Mint({}, { fromBlock: 0 })
+    const transferTokenEvents = dao.token.Transfer({}, { fromBlock: 0 });
+    const mintReputationEvents = dao.reputation.Mint({}, { fromBlock: 0 });
     let collaboratorAddresses : string[] = [];
 
     const getMintTokenEvents = promisify(mintTokenEvents.get.bind(mintTokenEvents));
@@ -132,16 +132,16 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     for (let cnt = 0; cnt < collaboratorAddresses.length; cnt++) {
       const address = collaboratorAddresses[cnt];
       let collaborator = { address: address, tokens: 0, reputation: 0 };
-      const tokens = await org.token.balanceOf.call(address)
+      const tokens = await dao.token.balanceOf.call(address)
       collaborator.tokens = Number(web3.fromWei(tokens, "ether"));
-      const reputation = await org.reputation.reputationOf.call(address);
+      const reputation = await dao.reputation.reputationOf.call(address);
       collaborator.reputation = Number(web3.fromWei(reputation, "ether"));
       collaborators.push(collaborator);
     }
-    orgData.members = collaborators;
+    daoData.members = collaborators;
 
     // Get proposals
-    const votingMachineInstance = org.votingMachine;
+    const votingMachineInstance = dao.votingMachine;
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
     const newProposalEvents = contributionRewardInstance.LogNewContributionProposal({}, { fromBlock: 0 });
     const getNewProposalEvents = promisify(newProposalEvents.get.bind(newProposalEvents));
@@ -160,7 +160,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     let proposalArgs : any;
     for (let cnt = 0; cnt < allProposals.length; cnt++) {
       proposalArgs = allProposals[cnt].args;
-      if (proposalArgs._avatar == org.avatar.address) {
+      if (proposalArgs._avatar == dao.avatar.address) {
         let proposal = <IProposalState>{
           abstainVotes: 0,
           beneficiary: proposalArgs._beneficiary,
@@ -187,15 +187,15 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           proposal.yesVotes = Number(web3.fromWei(votesStatus[1], "ether"));
           proposal.noVotes = Number(web3.fromWei(votesStatus[2], "ether"));
         };
-        orgData.proposals[proposalArgs._proposalId] = proposal;
+        daoData.proposals[proposalArgs._proposalId] = proposal;
       }
     }
   }
 
-  return orgData;
+  return daoData;
 }
 
-export function createDAO(orgName : string, tokenName: string, tokenSymbol: string, collaborators: any) : ThunkAction<any, IRootState, null> {
+export function createDAO(daoName : string, tokenName: string, tokenSymbol: string, collaborators: any) : ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_DAO_PENDING, payload: null });
     try {
@@ -218,39 +218,39 @@ export function createDAO(orgName : string, tokenName: string, tokenSymbol: stri
         name: "ContributionReward"
       }];
 
-      let org = await Arc.Organization.new({
-        orgName: orgName,
+      let dao = await Arc.DAO.new({
+        orgName: daoName,
         tokenName: tokenName,
         tokenSymbol: tokenSymbol,
         founders: founders,
         schemes: schemes
       });
 
-      let orgData : IDaoState = {
-        avatarAddress: org.avatar.address,
-        controllerAddress: org.controller.address,
-        name: orgName,
+      let daoData : IDaoState = {
+        avatarAddress: dao.avatar.address,
+        controllerAddress: dao.controller.address,
+        name: daoName,
         members: [],
         rank: 1, // TODO
         promotedAmount: 0,
         proposals: {},
-        reputationAddress: org.reputation.address,
+        reputationAddress: dao.reputation.address,
         reputationCount: 0,
-        tokenAddress: org.token.address,
+        tokenAddress: dao.token.address,
         tokenCount: 0,
         tokenName: tokenName,
         tokenSymbol: tokenSymbol
       };
 
-      dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: orgData });
-      dispatch(push('/dao/' + org.avatar.address));
+      dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: daoData });
+      dispatch(push('/dao/' + dao.avatar.address));
     } catch (err) {
       dispatch({ type: arcConstants.ARC_CREATE_DAO_REJECTED, payload: err.message });
     }
   } /* EO createDAO */
 }
 
-export function createProposition(orgAvatarAddress : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
+export function createProposition(daoAvatarAddress : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_PENDING, payload: null });
     try {
@@ -260,13 +260,15 @@ export function createProposition(orgAvatarAddress : string, description : strin
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
 
       const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
-        avatar: orgAvatarAddress,
+        avatar: daoAvatarAddress,
         description: description,
         nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
         reputationReward : web3.toWei(reputationReward, "ether"),
         beneficiary : beneficiary,
       });
 
+      // TODO: error checking
+      const proposalId = submitProposalTransaction.proposalId;
       const proposal = <IProposalState>{
         abstainVotes: 0,
         beneficiary: beneficiary,
@@ -274,31 +276,31 @@ export function createProposition(orgAvatarAddress : string, description : strin
         failed: false,
         noVotes: 0,
         open: true,
-        orgAvatarAddress: orgAvatarAddress,
+        daoAvatarAddress: daoAvatarAddress,
         passed: false, // TODO: This could actually be true if owner had enough rep, should probably pull the updated proposal info from the voting machine
-        proposalId: submitProposalTransaction.logs[0].args._proposalId,
+        proposalId: proposalId,
         reputationReward: reputationReward,
         tokenReward: nativeTokenReward,
         yesVotes: 0, // TODO: actually this is probably the reputation of the opener with ownerVote turned on.
       };
 
       dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_FULFILLED, payload: proposal });
-      dispatch(push('/dao/' + orgAvatarAddress));
+      dispatch(push('/dao/' + daoAvatarAddress));
     } catch (err) {
       dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_REJECTED, payload: err.message });
     }
   }
 }
 
-export function voteOnProposition(orgAvatarAddress: string, proposalId: string, voterAddress: string, vote: number) {
+export function voteOnProposition(daoAvatarAddress: string, proposalId: string|number, voterAddress: string, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: null });
     try {
       const web3 : Web3 = getState().web3.instance;
       const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
-      const orgInstance = await Arc.Organization.at(orgAvatarAddress);
-      const votingMachineInstance = await orgInstance.votingMachine;
+      const daoInstance = await Arc.DAO.at(daoAvatarAddress);
+      const votingMachineInstance = await daoInstance.votingMachine;
       const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
       const votesStatus = await votingMachineInstance.votesStatus(proposalId);
 
@@ -306,7 +308,7 @@ export function voteOnProposition(orgAvatarAddress: string, proposalId: string, 
         abstainVotes: Number(web3.fromWei(votesStatus[0], "ether")),
         failed: false,
         noVotes: Number(web3.fromWei(votesStatus[2], "ether")),
-        orgAvatarAddress: orgAvatarAddress,
+        daoAvatarAddress: daoAvatarAddress,
         open: true,
         passed: false,
         proposalId: proposalId,

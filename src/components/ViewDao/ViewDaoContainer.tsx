@@ -42,7 +42,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.props.getDAO(this.props.daoAddress);
   }
 
-  handleClickVote = (proposalId : string, vote : number) => (event : any) => {
+  handleClickVote = (proposalId : string|number, vote : number) => (event : any) => {
     this.props.voteOnProposition(this.props.daoAddress, proposalId, this.props.web3.ethAccountAddress, vote);
   }
 

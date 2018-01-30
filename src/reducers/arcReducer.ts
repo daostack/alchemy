@@ -15,9 +15,9 @@ export interface IProposalState {
   failed: boolean
   noVotes: number
   open: boolean
-  orgAvatarAddress: string
+  daoAvatarAddress: string
   passed: boolean
-  proposalId: string
+  proposalId: string|number
   reputationReward: number
   tokenReward: number
   yesVotes: number
@@ -129,7 +129,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_CREATE_PROPOSITION_FULFILLED: {
       // Add the new proposal to the DAO's state using immutability-helper
-      return update(state , { daoList : { [action.payload.orgAvatarAddress] : { proposals: { [action.payload.proposalId] : { $set: action.payload } } } } })
+      return update(state , { daoList : { [action.payload.daoAvatarAddress] : { proposals: { [action.payload.proposalId] : { $set: action.payload } } } } })
     }
 
     case ActionTypes.ARC_CREATE_PROPOSITION_REJECTED: {
@@ -138,7 +138,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_VOTE_FULFILLED: {
       // Update the proposal state
-      return update(state , { daoList : { [action.payload.orgAvatarAddress] : { proposals: { [action.payload.proposalId] : { $merge: action.payload } } } } })
+      return update(state , { daoList : { [action.payload.daoAvatarAddress] : { proposals: { [action.payload.proposalId] : { $merge: action.payload } } } } })
     }
 
     case ActionTypes.ARC_VOTE_REJECTED: {
