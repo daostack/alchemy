@@ -25,10 +25,12 @@ const mapStateToProps = (state : IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   createProposition: typeof arcActions.createProposition
+  getDAO: typeof arcActions.getDAO
 }
 
 const mapDispatchToProps = {
-  createProposition: arcActions.createProposition
+  createProposition: arcActions.createProposition,
+  getDAO: arcActions.getDAO
 };
 
 type IProps = IStateProps & IDispatchProps
@@ -61,6 +63,12 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
     };
   }
 
+  componentDidMount() {
+    if (!this.props.dao) {
+      this.props.getDAO(this.props.daoAddress);
+    }
+  }
+
   handleSubmit = (event : any) => {
     event.preventDefault();
     this.props.createProposition(this.state.avatarAddress, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
@@ -80,65 +88,67 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
   }
 
   render() {
+    const { dao } = this.props;
+
     return(
-      <div className={css.createPropositionWrapper}>
+      dao ? <div className={css.createPropositionWrapper}>
         <h2>Create a Contribution Proposition for DAO <i>{this.props.dao.name}</i></h2>
-          <form onSubmit={this.handleSubmit}>
-            <label htmlFor='descriptionInput'>Description: </label>
-            <input
-              autoFocus
-              id='descriptionInput'
-              onChange={this.handleChange}
-              placeholder="Describe your propsoal"
-              ref="descriptionNode"
-              required
-              size={100}
-              type="text"
-              value={this.state.description}
-            />
-            <br /><br />
-            <label htmlFor='nativeTokenRewardInput'>Token reward: </label>
-            <input
-              id='nativeTokenRewardInput'
-              maxLength={10}
-              onChange={this.handleChange}
-              placeholder="How many tokens to reward"
-              ref="nativeTokenRewardNode"
-              required
-              size={10}
-              type="text"
-              value={this.state.nativeTokenReward}
-            />
-            <br /><br />
-            <label htmlFor='reputationRewardInput'>Reputation reward: </label>
-            <input
-              id='reputationRewardInput'
-              maxLength={10}
-              onChange={this.handleChange}
-              placeholder="How much reputation to reward"
-              ref="reputationRewardNode"
-              required
-              size={10}
-              type="text"
-              value={this.state.reputationReward}
-            />
-            <br /><br />
-            <label htmlFor='beneficiaryInput'>Beneficiary: </label>
-            <input
-              id='beneficiaryInput'
-              maxLength={42}
-              onChange={this.handleChange}
-              placeholder="Who to reward"
-              ref="beneficiaryNode"
-              required
-              size={46}
-              type="text"
-              value={this.state.beneficiary}
-            />
-            <br /><br />
-            <button type='submit'>Submit</button>
-          </form>
-      </div>
+        <form onSubmit={this.handleSubmit}>
+          <label htmlFor='descriptionInput'>Description: </label>
+          <input
+            autoFocus
+            id='descriptionInput'
+            onChange={this.handleChange}
+            placeholder="Describe your propsoal"
+            ref="descriptionNode"
+            required
+            size={100}
+            type="text"
+            value={this.state.description}
+          />
+          <br /><br />
+          <label htmlFor='nativeTokenRewardInput'>Token reward: </label>
+          <input
+            id='nativeTokenRewardInput'
+            maxLength={10}
+            onChange={this.handleChange}
+            placeholder="How many tokens to reward"
+            ref="nativeTokenRewardNode"
+            required
+            size={10}
+            type="text"
+            value={this.state.nativeTokenReward}
+          />
+          <br /><br />
+          <label htmlFor='reputationRewardInput'>Reputation reward: </label>
+          <input
+            id='reputationRewardInput'
+            maxLength={10}
+            onChange={this.handleChange}
+            placeholder="How much reputation to reward"
+            ref="reputationRewardNode"
+            required
+            size={10}
+            type="text"
+            value={this.state.reputationReward}
+          />
+          <br /><br />
+          <label htmlFor='beneficiaryInput'>Beneficiary: </label>
+          <input
+            id='beneficiaryInput'
+            maxLength={42}
+            onChange={this.handleChange}
+            placeholder="Who to reward"
+            ref="beneficiaryNode"
+            required
+            size={46}
+            type="text"
+            value={this.state.beneficiary}
+          />
+          <br /><br />
+          <button type='submit'>Submit</button>
+        </form>
+      </div> : "Loading..."
     );
   }
 }
