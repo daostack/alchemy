@@ -1,4 +1,5 @@
 export const wrapper: string;
+export const header: string;
 export const members: string;
 export const member: string;
 export const proposal: string;

@@ -8,6 +8,8 @@ import { IRootState } from 'reducers';
 import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
+import DaoHeader from './DaoHeader';
+
 import * as css from './ViewDao.scss';
 
 interface IStateProps {
@@ -52,11 +54,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     return(
       dao ?
         <div className={css.wrapper}>
-          <h1>Viewing Dao: {dao.name}</h1>
-          <div>Avatar address: {dao.avatarAddress}</div>
-          <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-          <div>Num tokens: {dao.tokenCount}</div>
-          <div>Reputation: {dao.reputationCount}</div>
+          <DaoHeader dao={dao} />
           {this.renderMembers()}
           {this.renderProposals()}
           <Link to={'/proposition/create/'+dao.avatarAddress}>Create Proposition</Link>
