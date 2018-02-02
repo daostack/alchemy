@@ -1,3 +1,4 @@
+import axios from 'axios';
 import * as Arc from 'daostack-arc.js';
 import promisify = require('es6-promisify');
 import * as Redux from 'redux';
@@ -134,10 +135,24 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     for (let cnt = 0; cnt < allProposals.length; cnt++) {
       proposalArgs = allProposals[cnt].args;
       if (proposalArgs._avatar == dao.avatar.address) {
+        // Default to showing the description hash if we don't have better description on the server
+        let description = proposalArgs._contributionDesciption;
+
+        // Get description from the server
+        // TODO: pull all the proposals for this DAO in one request
+        try {
+          const response = await axios.get(arcConstants.API_URL + '/api/Proposals?filter={"where":{"arcId":"'+proposalArgs._proposalId+'"}}');
+          if (response.data.length > 0) {
+            description = response.data[0].description;
+          }
+        } catch (e) {
+          console.log(e);
+        }
+
         let proposal = <IProposalState>{
           abstainVotes: 0,
           beneficiary: proposalArgs._beneficiary,
-          description: proposalArgs._contributionDesciption,
+          description: description,
           failed: false,
           noVotes: 0,
           open: true,
@@ -242,6 +257,20 @@ export function createProposition(daoAvatarAddress : string, description : strin
 
       // TODO: error checking
       const proposalId = submitProposalTransaction.proposalId;
+      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDesciption");
+
+      try {
+        const response = await axios.post(arcConstants.API_URL + '/api/Proposals', {
+          arcId: proposalId,
+          daoAvatarAddress: daoAvatarAddress,
+          descriptionHash: descriptionHash,
+          description: description,
+          title: "title"
+        });
+      } catch (e) {
+        console.log(e);
+      }
+
       const proposal = <IProposalState>{
         abstainVotes: 0,
         beneficiary: beneficiary,

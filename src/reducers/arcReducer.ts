@@ -84,10 +84,6 @@ const arcReducer = (state = initialState, action: any) => {
       return state;
     }
 
-    case ActionTypes.ARC_GET_DAO: {
-      return state;
-    }
-
     case ActionTypes.ARC_GET_DAO_PENDING: {
       return state;
     }
@@ -101,10 +97,6 @@ const arcReducer = (state = initialState, action: any) => {
       return state;
     }
 
-    case ActionTypes.ARC_CREATE_DAO: {
-      return state;
-    }
-
     case ActionTypes.ARC_CREATE_DAO_PENDING: {
       return state;
     }
@@ -115,11 +107,6 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_CREATE_DAO_REJECTED: {
-      return state;
-    }
-
-
-    case ActionTypes.ARC_CREATE_PROPOSITION: {
       return state;
     }
 
