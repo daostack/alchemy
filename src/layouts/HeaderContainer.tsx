@@ -1,4 +1,4 @@
-import * as Arc from 'daostack-arc-js';
+import * as Arc from 'daostack-arc.js';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom'

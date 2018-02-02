@@ -1,5 +1,5 @@
 import * as BigNumber from 'bignumber.js';
-import { Utils } from 'daostack-arc-js';
+import { Utils } from 'daostack-arc.js';
 import * as Redux from 'redux';
 import * as Web3 from 'web3';
 

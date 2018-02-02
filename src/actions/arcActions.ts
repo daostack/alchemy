@@ -1,4 +1,4 @@
-import * as Arc from 'daostack-arc-js';
+import * as Arc from 'daostack-arc.js';
 import promisify = require('es6-promisify');
 import * as Redux from 'redux';
 import { push } from 'react-router-redux'
@@ -66,9 +66,9 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     rank: 1, // TODO
     promotedAmount: 0,
     proposals: {},
-    reputationAddress: await dao.controller.nativeReputation(),
+    reputationAddress: await dao.reputation.address,
     reputationCount: Number(web3.fromWei(await dao.reputation.totalSupply(), "ether")),
-    tokenAddress: await dao.controller.nativeToken(),
+    tokenAddress: await dao.token.address,
     tokenCount: Number(web3.fromWei(await dao.token.totalSupply(), "ether")),
     tokenName: await dao.getTokenName(),
     tokenSymbol: await dao.getTokenSymbol(),
@@ -192,7 +192,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
       }];
 
       let dao = await Arc.DAO.new({
-        orgName: daoName,
+        name: daoName,
         tokenName: tokenName,
         tokenSymbol: tokenSymbol,
         founders: founders,
