@@ -10,12 +10,23 @@
 
 # Run app locally
 
-## Working with Ganache
-1. Switch off chrome extensions such as MetaMask or Parity extension OR have MetaMask listen to localhost:8545
+## Working with Ganache without MetaMask
+1. Switch off chrome extensions such as MetaMask or Parity extension
 2. Run `yarn ganache` in one terminal tab
 3. In a separate tab run `yarn migrate-ganache`
 4. Run `yarn start-ganache`
 5. Go to http://localhost:3000/ in your favorite browser
+
+## Working with Ganache and MetaMask
+1. Install and Enable the [MetaMask extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) in Chrome
+2. Run `yarn ganacheDb` in one terminal tab
+3. In a separate tab run `yarn migrate-ganache`
+4. Run `yarn start-ganache`
+5. Go to http://localhost:3000/ in Chrome
+6. Click on the MetaMask extension icon in the toolbar
+7. Click on Restore from Seed Phrase
+8. Enter `behave pipe turkey animal voyage dial relief menu blush match jeans general` into the box labeled Wallet Seed, and any password you want.
+9. Now all transactions will require confirmation through MetaMask
 
 ## Working with Kovan testnet locally (XXX: Not working with current version of Arc + ArcJS)
 1. Install parity - `bash <(curl https://get.parity.io -Lk)`
