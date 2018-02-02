@@ -2,7 +2,7 @@
 
 ## Dependencies:
 * [NVM](https://github.com/creationix/nvm#installation)
-* [NodeJS + NPM](https://github.com/creationix/nvm#usage)
+* [NodeJS 9.1 or greater + NPM](https://github.com/creationix/nvm#usage)
 * [Yarn](https://yarnpkg.com/en/) - `curl -o- -L https://yarnpkg.com/install.sh | bash`
 
 ## Installation
