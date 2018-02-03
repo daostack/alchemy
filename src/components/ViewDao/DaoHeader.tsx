@@ -25,7 +25,7 @@ export default class DaoHeader extends React.Component<IProps, null> {
 
     return (
       <div className={css.header}>
-        <h2>Viewing DAO: {dao.name}</h2>
+        <h2><Link to={'/dao/'+dao.avatarAddress}>Viewing DAO: {dao.name}</Link></h2>
         <div>Avatar address: {dao.avatarAddress}</div>
         <div>{dao.members.length} reputation holders with {dao.reputationCount} {dao.name} reputation</div>
         <div>Prediction Token: {dao.tokenName} ({dao.tokenSymbol})</div>
