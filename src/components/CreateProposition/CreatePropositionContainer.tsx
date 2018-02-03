@@ -9,6 +9,8 @@ import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as css from './CreateProposition.scss';
 
+import DaoHeader from '../ViewDao/DaoHeader';
+
 interface IStateProps {
   dao: IDaoState,
   daoAddress : string,
@@ -92,7 +94,8 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
 
     return(
       dao ? <div className={css.createPropositionWrapper}>
-        <h2>Create a Contribution Proposition for DAO <i>{this.props.dao.name}</i></h2>
+        <DaoHeader dao={dao} />
+        <h2>Create a Contribution Proposition</h2>
         <form onSubmit={this.handleSubmit}>
           <label htmlFor='descriptionInput'>Description: </label>
           <input
