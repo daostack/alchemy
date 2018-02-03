@@ -9,6 +9,7 @@ import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReduc
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import DaoHeader from './DaoHeader';
+import DaoNav from './DaoNav';
 
 import * as css from './ViewDao.scss';
 
@@ -55,9 +56,9 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       dao ?
         <div className={css.wrapper}>
           <DaoHeader dao={dao} />
+          <DaoNav dao={dao} />
           {this.renderMembers()}
           {this.renderProposals()}
-          <Link to={'/proposition/create/'+dao.avatarAddress}>Create Proposition</Link>
         </div>
        : <div>Loading... </div>
     );
