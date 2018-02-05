@@ -11,7 +11,7 @@ import { IWeb3State } from 'reducers/web3Reducer'
 import * as arcActions from 'actions/arcActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
-import CreatePropositionContainer from "components/CreateProposition/CreatePropositionContainer";
+import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import HeaderContainer from "layouts/HeaderContainer";
 import HomeContainer from "components/Home/HomeContainer";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
@@ -59,7 +59,7 @@ class AppContainer extends React.Component<IProps, null> {
             <Route exact path="/" component={HomeContainer}/>
             <Route exact path="/dao/create" component={CreateDaoContainer}/>
             <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
-            <Route path="/proposition/create/:daoAddress" component={CreatePropositionContainer}/>
+            <Route path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
           </Switch>
         </div>
         : <div>Loading...</div>

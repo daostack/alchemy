@@ -30,7 +30,7 @@ export default class DaoNav extends React.Component<IProps, null> {
         <span>DAOs</span> |
         <span>Budgets</span> |
         <span>Recurring Transfers</span>
-        <span><Link to={'/proposition/create/'+dao.avatarAddress}>Create Proposition</Link></span>
+        <span><Link to={'/proposal/create/'+dao.avatarAddress}>Create Proposal</Link></span>
       </div>
     );
   }

@@ -29,12 +29,12 @@ const mapStateToProps = (state : IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   getDAO: typeof arcActions.getDAO
-  voteOnProposition: typeof arcActions.voteOnProposition
+  voteOnProposal: typeof arcActions.voteOnProposal
 }
 
 const mapDispatchToProps = {
   getDAO: arcActions.getDAO,
-  voteOnProposition: arcActions.voteOnProposition
+  voteOnProposal: arcActions.voteOnProposal
 };
 
 type IProps = IStateProps & IDispatchProps
@@ -46,7 +46,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   }
 
   handleClickVote = (proposalId : string|number, vote : number) => (event : any) => {
-    this.props.voteOnProposition(this.props.daoAddress, proposalId, this.props.web3.ethAccountAddress, vote);
+    this.props.voteOnProposal(this.props.daoAddress, proposalId, this.props.web3.ethAccountAddress, vote);
   }
 
   render() {
@@ -136,7 +136,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.members}>
-        <h2>Propositions</h2>
+        <h2>Proposals</h2>
         {proposalsHTML}
       </div>
     );

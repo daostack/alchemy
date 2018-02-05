@@ -7,7 +7,7 @@ import { IRootState } from 'reducers';
 import { IDaoState, ICollaboratorState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
-import * as css from './CreateProposition.scss';
+import * as css from './CreateProposal.scss';
 
 import DaoHeader from '../ViewDao/DaoHeader';
 
@@ -26,12 +26,12 @@ const mapStateToProps = (state : IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  createProposition: typeof arcActions.createProposition
+  createProposal: typeof arcActions.createProposal
   getDAO: typeof arcActions.getDAO
 }
 
 const mapDispatchToProps = {
-  createProposition: arcActions.createProposition,
+  createProposal: arcActions.createProposal,
   getDAO: arcActions.getDAO
 };
 
@@ -48,7 +48,7 @@ interface IState {
   beneficiary: string,
 }
 
-class CreatePropositionContainer extends React.Component<IProps, IState> {
+class CreateProposalContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps){
     super(props);
@@ -73,7 +73,7 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
 
   handleSubmit = (event : any) => {
     event.preventDefault();
-    this.props.createProposition(this.state.avatarAddress, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
+    this.props.createProposal(this.state.avatarAddress, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
   }
 
   handleChange = (event : any) => {
@@ -93,9 +93,9 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
     const { dao } = this.props;
 
     return(
-      dao ? <div className={css.createPropositionWrapper}>
+      dao ? <div className={css.createProposalWrapper}>
         <DaoHeader dao={dao} />
-        <h2>Create a Contribution Proposition</h2>
+        <h2>Create a Contribution Proposal</h2>
         <form onSubmit={this.handleSubmit}>
           <label htmlFor='descriptionInput'>Description: </label>
           <input
@@ -156,4 +156,4 @@ class CreatePropositionContainer extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreatePropositionContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateProposalContainer);

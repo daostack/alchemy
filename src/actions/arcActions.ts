@@ -238,7 +238,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
   } /* EO createDAO */
 }
 
-export function createProposition(daoAvatarAddress : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
+export function createProposal(daoAvatarAddress : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_PENDING, payload: null });
     try {
@@ -294,7 +294,7 @@ export function createProposition(daoAvatarAddress : string, description : strin
   }
 }
 
-export function voteOnProposition(daoAvatarAddress: string, proposalId: string|number, voterAddress: string, vote: number) {
+export function voteOnProposal(daoAvatarAddress: string, proposalId: string|number, voterAddress: string, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: null });
     try {
@@ -317,7 +317,7 @@ export function voteOnProposition(daoAvatarAddress: string, proposalId: string|n
         yesVotes: Number(web3.fromWei(votesStatus[1], "ether"))
       }
 
-      // See if the proposition was executed, either passing or failing
+      // See if the proposal was executed, either passing or failing
       const executed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
       if (executed) {
         const decision = executed.args._decision.toNumber();
@@ -327,7 +327,7 @@ export function voteOnProposition(daoAvatarAddress: string, proposalId: string|n
         } else if (decision == 2) {
           payload.failed = true;
         } else {
-          dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposition decision ", decision });
+          dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposal decision ", decision });
           return
         }
       }
