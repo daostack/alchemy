@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as Arc from 'daostack-arc.js';
 import promisify = require('es6-promisify');
+import { normalize } from 'normalizr';
 import * as Redux from 'redux';
 import { push } from 'react-router-redux'
 import { ThunkAction } from 'redux-thunk';
@@ -10,6 +11,8 @@ import * as web3Actions from 'actions/web3Actions';
 import * as web3Constants from 'constants/web3Constants';
 import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
+import * as schemas from '../schemas';
+
 import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReducer';
 
 export function connectToArc() {
@@ -18,7 +21,7 @@ export function connectToArc() {
   }
 }
 
-export function getDAOList() {
+export function getDAOs() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
 
@@ -41,7 +44,7 @@ export function getDAOList() {
         daos[event.args._avatar] = await getDAOData(event.args._avatar, web3);
       }
 
-      dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: daos });
+      dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: normalize(daos, schemas.daoList) });
     });
   };
 }
@@ -52,7 +55,7 @@ export function getDAO(avatarAddress : string) {
 
     const web3 = Arc.Utils.getWeb3();
     const daoData = await getDAOData(avatarAddress, web3, true);
-    dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: daoData });
+    dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
   }
 }
 
@@ -66,7 +69,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     members: [],
     rank: 1, // TODO
     promotedAmount: 0,
-    proposals: {},
+    proposals: [],
     reputationAddress: await dao.reputation.address,
     reputationCount: Number(web3.fromWei(await dao.reputation.totalSupply(), "ether")),
     tokenAddress: await dao.token.address,
@@ -141,7 +144,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
         // Get description from the server
         // TODO: pull all the proposals for this DAO in one request
         try {
-          const response = await axios.get(arcConstants.API_URL + '/api/Proposals?filter={"where":{"arcId":"'+proposalArgs._proposalId+'"}}');
+          const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"arcId":"'+proposalArgs._proposalId+'"}}');
           if (response.data.length > 0) {
             description = response.data[0].description;
           }
@@ -175,7 +178,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           proposal.yesVotes = Number(web3.fromWei(votesStatus[1], "ether"));
           proposal.noVotes = Number(web3.fromWei(votesStatus[2], "ether"));
         };
-        daoData.proposals[proposalArgs._proposalId] = proposal;
+        daoData.proposals.push(proposal);
       }
     }
   }
@@ -221,7 +224,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         members: [],
         rank: 1, // TODO
         promotedAmount: 0,
-        proposals: {},
+        proposals: [],
         reputationAddress: dao.reputation.address,
         reputationCount: 0,
         tokenAddress: dao.token.address,
@@ -230,7 +233,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         tokenSymbol: tokenSymbol
       };
 
-      dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: daoData });
+      dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
       dispatch(push('/dao/' + dao.avatar.address));
     } catch (err) {
       dispatch({ type: arcConstants.ARC_CREATE_DAO_REJECTED, payload: err.message });
@@ -240,7 +243,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
 
 export function createProposal(daoAvatarAddress : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_PENDING, payload: null });
+    dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_PENDING, payload: null });
     try {
       const web3 : Web3 = Arc.Utils.getWeb3();
       const ethAccountAddress : string = getState().web3.ethAccountAddress;
@@ -260,7 +263,7 @@ export function createProposal(daoAvatarAddress : string, description : string, 
       const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDesciption");
 
       try {
-        const response = await axios.post(arcConstants.API_URL + '/api/Proposals', {
+        const response = await axios.post(arcConstants.API_URL + '/api/proposals', {
           arcId: proposalId,
           daoAvatarAddress: daoAvatarAddress,
           descriptionHash: descriptionHash,
@@ -286,10 +289,14 @@ export function createProposal(daoAvatarAddress : string, description : string, 
         yesVotes: 0, // TODO: actually this is probably the reputation of the opener with ownerVote turned on.
       };
 
-      dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_FULFILLED, payload: proposal });
+
+      let payload = normalize(proposal, schemas.proposalSchema);
+      (payload as any).daoAvatarAddress = daoAvatarAddress;
+
+      dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_FULFILLED, payload: payload });
       dispatch(push('/dao/' + daoAvatarAddress));
     } catch (err) {
-      dispatch({ type: arcConstants.ARC_CREATE_PROPOSITION_REJECTED, payload: err.message });
+      dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_REJECTED, payload: err.message });
     }
   }
 }

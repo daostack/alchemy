@@ -30,7 +30,7 @@ export interface IDaoState {
   name: string,
   rank: number,
   promotedAmount: number,
-  proposals: { [key : string] : IProposalState },
+  proposals: (IProposalState | string)[], // Either normalized (string) or denormalized (IProposalState)
   reputationAddress: string,
   reputationCount: number,
   tokenAddress: string,
@@ -40,102 +40,36 @@ export interface IDaoState {
 }
 
 export interface IArcState {
-  controllerAddress: string,
-  controllerInstance: any
-  daoList: { [key : string] : IDaoState },
-  genesisAddress: string,
-  isCorrectChain: boolean,
-  simpleICOAddress: string
- }
+  daos: { [key : string] : IDaoState },
+  proposals: { [key : string] : IProposalState },
+}
 
 export const initialState : IArcState = {
-  controllerAddress: null,
-  controllerInstance: null,
-  daoList: {},
-  genesisAddress: null,
-  isCorrectChain: false,
-  simpleICOAddress: null
+  daos: {},
+  proposals: {}
 }
 
 const arcReducer = (state = initialState, action: any) => {
+  const { payload } = action;
+
+  console.log("pre state = ", state, "payload = ", payload);
+  // If there are normalized entities in the payload add to the state
+  if (payload && payload.entities) {
+    state = update(state, {
+      daos : { $merge: payload.entities.daos || {} },
+      proposals : { $merge : payload.entities.proposals || {} }
+    });
+  }
+  console.log("post entities = ", state);
+
   switch (action.type) {
-
-    case ActionTypes.ARC_INITIALIZATION_PENDING: {
-      return state;
-    }
-
-    case ActionTypes.ARC_INITIALIZATION_FULFILLED: {
-      return {...state, ...action.payload };
-    }
-
-    case ActionTypes.ARC_INITIALIZATION_REJECTED: {
-      return state;
-    }
-
-    case ActionTypes.ARC_GET_DAOS_PENDING: {
-      return state;
-    }
-
-    case ActionTypes.ARC_GET_DAOS_FULFILLED: {
-      return update(state , { daoList : { $set: action.payload } } )
-    }
-
-    case ActionTypes.ARC_GET_DAOS_REJECTED: {
-      return state;
-    }
-
-    case ActionTypes.ARC_GET_DAO_PENDING: {
-      return state;
-    }
-
-    case ActionTypes.ARC_GET_DAO_FULFILLED: {
-      // Replace the DAO's state using immutability-helper
-      return update(state , { daoList : { [action.payload.avatarAddress] : { $set: action.payload } } })
-    }
-
-    case ActionTypes.ARC_GET_DAO_REJECTED: {
-      return state;
-    }
-
-    case ActionTypes.ARC_CREATE_DAO_PENDING: {
-      return state;
-    }
-
-    case ActionTypes.ARC_CREATE_DAO_FULFILLED: {
-      // Add the new DAO to the state using immutability-helper
-      return update(state , { daoList : { [action.payload.avatarAddress] : { $set: action.payload } } })
-    }
-
-    case ActionTypes.ARC_CREATE_DAO_REJECTED: {
-      return state;
-    }
-
-    case ActionTypes.ARC_CREATE_PROPOSITION_PENDING: {
-      return state;
-    }
-
-    case ActionTypes.ARC_CREATE_PROPOSITION_FULFILLED: {
-      // Add the new proposal to the DAO's state using immutability-helper
-      return update(state , { daoList : { [action.payload.daoAvatarAddress] : { proposals: { [action.payload.proposalId] : { $set: action.payload } } } } })
-    }
-
-    case ActionTypes.ARC_CREATE_PROPOSITION_REJECTED: {
-      return state;
-    }
-
-    case ActionTypes.ARC_VOTE_FULFILLED: {
-      // Update the proposal state
-      return update(state , { daoList : { [action.payload.daoAvatarAddress] : { proposals: { [action.payload.proposalId] : { $merge: action.payload } } } } })
-    }
-
-    case ActionTypes.ARC_VOTE_REJECTED: {
-      return state;
-    }
-
-    default: {
-      return state;
+    case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
+      // Add the new proposal to the DAO's state
+      return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
     }
   }
+
+  return state;
 }
 
 export default arcReducer;

@@ -1,4 +1,5 @@
 import * as classNames from 'classnames';
+import { denormalize } from 'normalizr';
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
@@ -7,9 +8,11 @@ import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
+import * as schemas from '../../schemas';
 
 import DaoHeader from './DaoHeader';
 import DaoNav from './DaoNav';
+import ProposalContainer from '../Proposal/ProposalContainer';
 
 import * as css from './ViewDao.scss';
 
@@ -21,7 +24,7 @@ interface IStateProps {
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
-    dao: state.arc.daoList[ownProps.match.params.daoAddress],
+    dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
     daoAddress : ownProps.match.params.daoAddress,
     web3: state.web3
   };
@@ -29,12 +32,10 @@ const mapStateToProps = (state : IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   getDAO: typeof arcActions.getDAO
-  voteOnProposal: typeof arcActions.voteOnProposal
 }
 
 const mapDispatchToProps = {
-  getDAO: arcActions.getDAO,
-  voteOnProposal: arcActions.voteOnProposal
+  getDAO: arcActions.getDAO
 };
 
 type IProps = IStateProps & IDispatchProps
@@ -45,23 +46,28 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.props.getDAO(this.props.daoAddress);
   }
 
-  handleClickVote = (proposalId : string|number, vote : number) => (event : any) => {
-    this.props.voteOnProposal(this.props.daoAddress, proposalId, this.props.web3.ethAccountAddress, vote);
-  }
-
   render() {
     const { dao } = this.props;
 
-    return(
-      dao ?
+    if (dao) {
+      const proposalsHTML = dao.proposals.map((proposal : IProposalState) => {
+        return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} />);
+      });
+
+      return(
         <div className={css.wrapper}>
           <DaoHeader dao={dao} />
           <DaoNav dao={dao} />
           {this.renderMembers()}
-          {this.renderProposals()}
+          <div className={css.proposalsContainer}>
+            <h2>Proposals</h2>
+            {proposalsHTML}
+          </div>
         </div>
-       : <div>Loading... </div>
-    );
+      );
+    } else {
+      return (<div>Loading... </div>);
+    }
   }
 
   renderMembers() {
@@ -80,67 +86,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     });
 
     return (
-      <div className={css.members}>
+      <div className={css.membersContainer}>
         <h2>Members</h2>
         {membersHTML}
       </div>
     );
   }
 
-  renderProposals() {
-    const { dao } = this.props;
-
-    const proposalsHTML = Object.keys(dao.proposals).map((proposalAddress : string) => {
-      const proposal = dao.proposals[proposalAddress];
-
-      var proposalClass = classNames({
-        [css.proposal]: true,
-        [css.openProposal]: proposal.open,
-        [css.failedProposal]: proposal.failed,
-        [css.passedProposal]: proposal.passed,
-      });
-
-      return (
-        <div className={proposalClass} key={"proposal_" + proposalAddress}>
-          <h3>{proposal.description}</h3>
-          Token Reward: <span>{proposal.tokenReward}</span>
-          <br />
-          Reputation Reward: <span>{proposal.reputationReward}</span>
-          <br />
-          Beneficiary: <span>{proposal.beneficiary}</span>
-          <br />
-          { proposal.open ?
-            <div>
-              Yes votes: <span>{proposal.yesVotes}</span>
-              <br />
-              No votes: <span>{proposal.noVotes}</span>
-              <br />
-              Abstain Votes: <span>{proposal.abstainVotes}</span>
-              <br />
-              <button onClick={this.handleClickVote(proposal.proposalId, 1)}>Vote Yes</button> -
-              <button onClick={this.handleClickVote(proposal.proposalId, 2)}>Vote No</button> -
-              <button onClick={this.handleClickVote(proposal.proposalId, 0)}>Abstain</button>
-            </div>
-            : proposal.passed ?
-            <div>
-              Passed!
-            </div>
-            : proposal.failed ?
-            <div>
-              Failed to pass
-            </div> : ""
-          }
-        </div>
-      );
-    });
-
-    return (
-      <div className={css.members}>
-        <h2>Proposals</h2>
-        {proposalsHTML}
-      </div>
-    );
-  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewDaoContainer);

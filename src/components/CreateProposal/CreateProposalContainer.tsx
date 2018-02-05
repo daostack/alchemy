@@ -1,3 +1,4 @@
+import { denormalize } from 'normalizr';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { connect, Dispatch } from 'react-redux';
@@ -6,6 +7,7 @@ import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IDaoState, ICollaboratorState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
+import * as schemas from '../../schemas';
 
 import * as css from './CreateProposal.scss';
 
@@ -19,7 +21,7 @@ interface IStateProps {
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
-    dao: state.arc.daoList[ownProps.match.params.daoAddress],
+    dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
     daoAddress : ownProps.match.params.daoAddress,
     web3: state.web3
   };
