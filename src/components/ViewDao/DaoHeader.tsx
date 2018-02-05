@@ -9,14 +9,9 @@ import EthBalance from 'components/EthBalance/EthBalance';
 
 import * as css from './ViewDao.scss';
 
-interface IStateProps {
+interface IProps {
   dao: IDaoState
 }
-
-interface IDispatchProps {
-}
-
-type IProps = IStateProps & IDispatchProps
 
 export default class DaoHeader extends React.Component<IProps, null> {
 
