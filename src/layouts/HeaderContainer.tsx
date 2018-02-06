@@ -53,15 +53,24 @@ class HeaderContainer extends React.Component<IProps, null> {
 
     return(
       <nav className={css.header}>
-        <Link to='/'><img src='/assets/images/Emergent+-+White@2x.png' height='100' /></Link>
-        <h1>Welcome to the Emergent ecosystem</h1>
+        <Link className={css.alchemyLogo} to='/'><img src='/assets/images/alchemy-logo.svg'/></Link>
         { web3
           ? <div className={css.accountInfo}>
-              <span>Current account:</span>
-              <select onChange={this.handleChangeAccount} ref='accountSelectNode' defaultValue={web3State.ethAccountAddress}>
-                {accountOptionNodes}
-              </select>&nbsp;-&nbsp;
-              <span className={css.etherBalance}>Ether Balance <EthBalance ethAccountBalance={web3State.ethAccountBalance} ethAccountAddress={web3State.ethAccountAddress} /> </span>
+              <div className={css.holdings}>
+                <div>
+                  <span className={css.holdingsLabel}>Current account</span>
+                  <select onChange={this.handleChangeAccount} ref='accountSelectNode' defaultValue={web3State.ethAccountAddress}>
+                    {accountOptionNodes}
+                  </select>
+                </div>
+                <div>
+                  <span className={css.holdingsLabel}>Ether Balance </span>
+                  <EthBalance ethAccountBalance={web3State.ethAccountBalance} ethAccountAddress={web3State.ethAccountAddress} />
+                </div>
+              </div>
+              <button className={css.profileLink}>
+                <img src='/assets/images/user-profile-icon.svg'/>
+              </button>
             </div>
           : ""
         }

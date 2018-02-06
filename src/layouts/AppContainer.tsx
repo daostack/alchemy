@@ -53,14 +53,17 @@ class AppContainer extends React.Component<IProps, null> {
 
     return (
       (web3.isConnected ?
-        <div className={css.wrapper}>
-          <HeaderContainer />
-          <Switch>
-            <Route exact path="/" component={HomeContainer}/>
-            <Route exact path="/dao/create" component={CreateDaoContainer}/>
-            <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
-            <Route path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
-          </Switch>
+        <div className={css.outer}>
+          <div className={css.container}>
+            <HeaderContainer />
+            <Switch>
+              <Route exact path="/" component={HomeContainer}/>
+              <Route exact path="/dao/create" component={CreateDaoContainer}/>
+              <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
+              <Route path="/proposition/create/:daoAddress" component={CreatePropositionContainer}/>
+            </Switch>
+          </div>
+          <div className={css.background}></div>
         </div>
         : <div>Loading...</div>
       )
