@@ -52,7 +52,6 @@ export const initialState : IArcState = {
 const arcReducer = (state = initialState, action: any) => {
   const { payload } = action;
 
-  console.log("pre state = ", state, "payload = ", payload);
   // If there are normalized entities in the payload add to the state
   if (payload && payload.entities) {
     state = update(state, {
@@ -60,7 +59,6 @@ const arcReducer = (state = initialState, action: any) => {
       proposals : { $merge : payload.entities.proposals || {} }
     });
   }
-  console.log("post entities = ", state);
 
   switch (action.type) {
     case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
