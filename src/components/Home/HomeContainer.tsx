@@ -1,29 +1,31 @@
+import { denormalize } from 'normalizr';
 import * as React from "react";
 import { connect, Dispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
 
 import { IRootState } from 'reducers';
-import { IArcState } from 'reducers/arcReducer';
+import { IDaoState } from 'reducers/arcReducer';
 import DaoList from 'components/DaoList/DaoList';
 
 import * as arcActions from 'actions/arcActions';
+import * as schemas from '../../schemas';
 
 import * as css from './Home.scss';
 
 interface IStateProps {
-  arc: IArcState,
+  daos: { [key : string] : IDaoState }
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => ({
-  arc: state.arc,
+  daos: denormalize(state.arc.daos, schemas.daoList, state.arc)
 });
 
 interface IDispatchProps {
-  getDAOList: typeof arcActions.getDAOList
+  getDAOs: typeof arcActions.getDAOs
 }
 
 const mapDispatchToProps = {
-  getDAOList: arcActions.getDAOList
+  getDAOs: arcActions.getDAOs
 };
 
 type IProps = IStateProps & IDispatchProps
@@ -33,7 +35,7 @@ class HomeContainer extends React.Component<IProps, null> {
   render() {
     return (
       <div className={css.homeWrapper}>
-        <DaoList daoList={this.props.arc.daoList} getDAOList={this.props.getDAOList} />
+        <DaoList daos={this.props.daos} getDAOs={this.props.getDAOs} />
         <Link to='/dao/create'>Create a New DAO</Link>
       </div>
     );

@@ -8,7 +8,7 @@
 
 .nav {
   width: 100%;
-  background-color: blue;
+  border: 1px solid black;
   padding: 10px;
 
   span {
@@ -16,7 +16,7 @@
   }
 }
 
-.members {
+.membersContainer {
   margin: 10px 0;
 }
 
@@ -24,19 +24,6 @@
   padding: 5px 0;
 }
 
-.proposal {
-  padding: 5px;
+.proposalsContainer {
   margin: 10px 0;
-}
-
-.openProposal {
-  border: 1px solid white;
-}
-
-.failedProposal {
-  border: 1px solid red;
-}
-
-.passedProposal {
-  border: 1px solid green;
 }

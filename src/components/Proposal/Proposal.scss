@@ -1,0 +1,20 @@
+.proposalContainer {
+  width: 300px;
+}
+
+.proposal {
+  padding: 5px;
+  margin: 10px 0;
+}
+
+.openProposal {
+  border: 1px solid white;
+}
+
+.failedProposal {
+  border: 1px solid red;
+}
+
+.passedProposal {
+  border: 1px solid green;
+}

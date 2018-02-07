@@ -10,11 +10,11 @@ import EthBalance from 'components/EthBalance/EthBalance';
 import * as css from './DaoList.scss';
 
 interface IStateProps {
-  daoList: { [key : string] : IDaoState }
+  daos: { [key : string] : IDaoState }
 }
 
 interface IDispatchProps {
-  getDAOList: typeof arcActions.getDAOList
+  getDAOs: typeof arcActions.getDAOs
 }
 
 type IProps = IStateProps & IDispatchProps
@@ -22,14 +22,14 @@ type IProps = IStateProps & IDispatchProps
 export default class DaoList extends React.Component<IProps, null> {
 
   componentDidMount() {
-    this.props.getDAOList();
+    this.props.getDAOs();
   }
 
   render() {
-    const { daoList } = this.props;
+    const { daos } = this.props;
 
-    const daoNodes = Object.keys(daoList).map((key : string) => {
-      const dao = daoList[key];
+    const daoNodes = Object.keys(daos).map((key : string) => {
+      const dao = daos[key];
       return (
         <div key={"dao_" + dao.avatarAddress} className={css.dao}>
           <Link to={"/dao/" + dao.avatarAddress}><h3>{dao.name}</h3></Link>
