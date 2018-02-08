@@ -2,6 +2,34 @@
 # yarn lockfile v1
 
 
+"@daostack/arc.js@0.0.0-alpha.20":
+  version "0.0.0-alpha.20"
+  resolved "https://registry.yarnpkg.com/@daostack/arc.js/-/arc.js-0.0.0-alpha.20.tgz#78164728b577f0d7da6965c1ad5f5005455ec5ce"
+  dependencies:
+    archiver "^2.1.0"
+    bignumber.js "^5.0.0"
+    bip39 "^2.4.0"
+    color-convert "^1.9.1"
+    cwd "^0.10.0"
+    decompress "^4.2.0"
+    default-options "^1.0.0"
+    env-variable "0.0.3"
+    ethereumjs-abi "^0.6.5"
+    fs-extra "^5.0.0"
+    ganache-cli "^6.0.3"
+    has-flag "^3.0.0"
+    locate-path "^2.0.0"
+    node-glob "^1.2.0"
+    nps "^5.7.1"
+    nps-utils "^1.5.0"
+    path.join "^1.0.0"
+    pm2 "^1.1.3"
+    promisify "0.0.3"
+    pug "^2.0.0-rc.1"
+    truffle-contract "^3.0.1"
+    truffle-core-migrate-without-compile "^4.0.7"
+    uint32 "^0.2.1"
+
 "@types/classnames@^2.2.3":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.3.tgz#3f0ff6873da793870e20a260cada55982f38a9e5"
@@ -1862,34 +1890,6 @@ d@1:
   resolved "https://registry.yarnpkg.com/d/-/d-1.0.0.tgz#754bb5bfe55451da69a58b94d45f4c5b0462d58f"
   dependencies:
     es5-ext "^0.10.9"
-
-daostack-arc.js@0.0.0-alpha.16:
-  version "0.0.0-alpha.16"
-  resolved "https://registry.yarnpkg.com/daostack-arc.js/-/daostack-arc.js-0.0.0-alpha.16.tgz#61bf3ad0bceb3d64288a058f30d14c4ac0c93a3b"
-  dependencies:
-    archiver "^2.1.0"
-    bignumber.js "^5.0.0"
-    bip39 "^2.4.0"
-    color-convert "^1.9.1"
-    cwd "^0.10.0"
-    decompress "^4.2.0"
-    default-options "^1.0.0"
-    env-variable "0.0.3"
-    ethereumjs-abi "^0.6.5"
-    fs-extra "^5.0.0"
-    ganache-cli "^6.0.3"
-    has-flag "^3.0.0"
-    locate-path "^2.0.0"
-    node-glob "^1.2.0"
-    nps "^5.7.1"
-    nps-utils "^1.5.0"
-    path.join "^1.0.0"
-    pm2 "^1.1.3"
-    promisify "0.0.3"
-    pug "^2.0.0-rc.1"
-    truffle-contract "^3.0.1"
-    truffle-core-migrate-without-compile "^4.0.7"
-    uint32 "^0.2.1"
 
 dashdash@^1.12.0:
   version "1.14.1"

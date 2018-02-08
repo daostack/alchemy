@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as Arc from 'daostack-arc.js';
+import * as Arc from '@daostack/arc.js';
 import promisify = require('es6-promisify');
 import { normalize } from 'normalizr';
 import * as Redux from 'redux';
@@ -26,12 +26,10 @@ export function getDAOs() {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
 
     const web3 = Arc.Utils.getWeb3();
-
-    const genesisContract = await Arc.Utils.requireContract("GenesisScheme");
-    const genesisInstance = await genesisContract.deployed();
+    const daoCreator = await Arc.DaoCreator.deployed();
 
     // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
-    const newOrgEvents = genesisInstance.NewOrg({}, { fromBlock: 0 })
+    const newOrgEvents = daoCreator.contract.NewOrg({}, { fromBlock: 0 })
     newOrgEvents.get(async (err : Error, eventsArray : any[]) => {
       if (err) {
         dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
@@ -119,16 +117,16 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
 
     // Get proposals
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
-    const newProposalEvents = contributionRewardInstance.LogNewContributionProposal({}, { fromBlock: 0 });
+    const newProposalEvents = contributionRewardInstance.NewContributionProposal({}, { fromBlock: 0 });
     const getNewProposalEvents = promisify(newProposalEvents.get.bind(newProposalEvents));
     const allProposals = await getNewProposalEvents();
 
-    const executedProposalEvents = contributionRewardInstance.LogProposalExecuted({}, { fromBlock: 0 })
+    const executedProposalEvents = contributionRewardInstance.ProposalExecuted({}, { fromBlock: 0 })
     const getExecutedProposalEvents = promisify(executedProposalEvents.get.bind(executedProposalEvents));
     const executedProposals = await getExecutedProposalEvents();
     const executedProposalIds = executedProposals.map((proposal : any) => proposal.args._proposalId);
 
-    const failedProposalEvents = contributionRewardInstance.LogProposalDeleted({}, { fromBlock: 0 });
+    const failedProposalEvents = contributionRewardInstance.ProposalDeleted({}, { fromBlock: 0 });
     const getFailedProposalEvents = promisify(failedProposalEvents.get.bind(failedProposalEvents));
     const failedProposals = await getFailedProposalEvents();
     const failedProposalIds = failedProposals.map((proposal : any) => proposal.args._proposalId);
@@ -329,7 +327,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string|numb
 
       const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
       const votesStatus = await votingMachineInstance.votesStatus(proposalId);
-      console.log(votesStatus);
 
       let payload = {
         votesNo: Number(web3.fromWei(votesStatus[2], "ether")),

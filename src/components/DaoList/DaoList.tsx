@@ -31,8 +31,8 @@ export default class DaoList extends React.Component<IProps, null> {
     const daoNodes = Object.keys(daos).map((key : string) => {
       const dao = daos[key];
       return (
-        <Link className={css.daoLink} to={"/dao/" + dao.avatarAddress}>
-          <div key={"dao_" + dao.avatarAddress} className={css.dao}>
+        <Link className={css.daoLink} to={"/dao/" + dao.avatarAddress} key={"dao_" + dao.avatarAddress}>
+          <div className={css.dao}>
             <div className={css.daoAvatar}>
               <img src='/assets/images/daostack-logo.svg'/>
             </div>
