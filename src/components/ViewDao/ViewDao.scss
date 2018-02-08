@@ -63,7 +63,7 @@ a.navItem {
   margin-left: 0;
 }
 
-a.createProposal {
+a.createProposal, .buyGen {
   border: 1px solid $accent-1;
   float: right;
   color: $accent-1;
@@ -73,6 +73,10 @@ a.createProposal {
   background-color: $accent-1-transparent;
   border-radius: $button-border-radius;
   vertical-align: middle;
+}
+
+.buyGen {
+  font-size: $small;
 }
 
 a.createProposal:hover {
@@ -101,6 +105,14 @@ a.navItem:hover {
   float: left;
   height: 90px;
   border-radius: 90px;
+  text-align: center;
+
+  img {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    top: 24px;
+  }
 }
 
 .genBox {
@@ -108,16 +120,40 @@ a.navItem:hover {
   border-radius: 3px;
   padding: 15px;
   float: right;
+
+  .small {
+    color: $black-halftone;
+  }
+
+  .buyGenContainer {
+    padding-top: 10px;
+    float: left;
+    position: relative;
+    top:  -3px;
+  }
 }
 
 .daoDescription {
   float: left;
-  width: 400px;
+  width: 360px;
+  padding-left: 20px;
+  padding-top: 10px;
 }
 
 .daoInfo {
   max-width: 500px;
   float: left;
+
+  .daoReputationInfo {
+    font-size: $caption;
+    color: $black-halftone;
+
+    a {
+      font-weight: $bold;
+      text-decoration: underline;
+    }
+  }
+
 }
 
 .daoName {
@@ -127,9 +163,13 @@ a.navItem:hover {
 .daoPrefs {
   display: inline;
   background-color: transparent;
-  border: $gray-border;
-  padding: 8px;
+  border: $gray-border-halftone;
+  padding: 5px 5px 4px 5px;
   border-radius: 50px;
+  position: relative;
+  top: -3px;
+  left: 6px;
+  opacity: .5;
 }
 
 .genTitle {
@@ -140,8 +180,12 @@ a.navItem:hover {
 }
 
 .genStats {
-  width: 150px;
+  width: 90px;
   float: left;
+
+  .caption {
+    padding-top: 10px;
+  }
 }
 
 .centered {
