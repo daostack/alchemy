@@ -1,16 +1,22 @@
-.wrapper {
-  width: 100%
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
-.header {
+.wrapper {
+  max-width: $max-width;
+  margin: 0 auto;
+}
+
+.daoHeader {
+  padding: 30px 0;
   width: 100%;
 }
 
 .nav {
   width: 100%;
-  border: 1px solid black;
-  padding: 10px;
-
+  padding-bottom: 40px;
   span {
     padding: 10px;
   }
@@ -26,4 +32,134 @@
 
 .proposalsContainer {
   margin: 10px 0;
+}
+
+.openProposal {
+  border: 1px solid white;
+}
+
+.failedProposal {
+  border: 1px solid red;
+}
+
+.passedProposal {
+  border: 1px solid green;
+}
+
+a {
+  text-decoration: none;
+}
+
+a.navItem {
+  font-size: $body;
+  color: $black-halftone;
+  padding: 20px 0;
+  transition: all .25s ease;
+  margin: 10px 30px;
+  border-bottom: 3px solid $accent-4-transparent;
+}
+
+.nav a.navItem:nth-child(1) {
+  margin-left: 0;
+}
+
+a.createProposal {
+  border: 1px solid $accent-1;
+  float: right;
+  color: $accent-1;
+  font-size: $caption;
+  padding: $button-padding;
+  transition: all .25s ease;
+  background-color: $accent-1-transparent;
+  border-radius: $button-border-radius;
+  vertical-align: middle;
+}
+
+a.createProposal:hover {
+  background-color: $accent-1;
+  color: $white;
+}
+
+a.navItem.selected {
+  font-size: $headline-2;
+  font-weight: $bold;
+  color: $black;
+  border-bottom: 3px solid $accent-4;
+}
+
+a.navItem:hover {
+  font-size: $headline-2;
+  font-weight: $bold;
+  color: $black;
+  border-bottom: 3px solid $accent-4;
+}
+
+.daoAvatar {
+  background-color: $white;
+  box-shadow: $shadow-3;
+  width: 90px;
+  float: left;
+  height: 90px;
+  border-radius: 90px;
+}
+
+.genBox {
+  background: rgba(247, 247, 247, 1.000);
+  border-radius: 3px;
+  padding: 15px;
+  float: right;
+}
+
+.daoDescription {
+  float: left;
+  width: 400px;
+}
+
+.daoInfo {
+  max-width: 500px;
+  float: left;
+}
+
+.daoName {
+  font-size: $display;
+}
+
+.daoPrefs {
+  display: inline;
+  background-color: transparent;
+  border: $gray-border;
+  padding: 8px;
+  border-radius: 50px;
+}
+
+.genTitle {
+  font-weight: $bold;
+  font-size: $display;
+  width: 80px;
+  float: left;
+}
+
+.genStats {
+  width: 150px;
+  float: left;
+}
+
+.centered {
+  text-align: center;
+}
+
+.small {
+  font-size: $small;
+}
+
+.caption {
+  font-size: $caption;
+}
+
+.leftAlign {
+  text-align: left;
+}
+
+.rightAlign {
+  text-align: right;
 }

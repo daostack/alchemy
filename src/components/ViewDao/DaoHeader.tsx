@@ -19,12 +19,39 @@ export default class DaoHeader extends React.Component<IProps, null> {
     const { dao } = this.props;
 
     return (
-      <div className={css.header}>
-        <h2><Link to={'/dao/'+dao.avatarAddress}>Viewing DAO: {dao.name}</Link></h2>
-        <div>Avatar address: {dao.avatarAddress}</div>
-        <div>{dao.members.length} reputation holders with {dao.reputationCount} {dao.name} reputation</div>
-        <div>Prediction Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-        <div>{dao.tokenCount} {dao.tokenSymbol} in circulation</div>
+      <div className={css.daoHeader + " " + css.clearfix}>
+        <div className={css.daoInfo}>
+          <div className={css.daoAvatar}>
+            <img src='/assets/images/daostack-logo.svg'/>
+          </div>
+          <div className={css.daoDescription}>
+            <div className={css.daoName}>
+              {dao.name}
+              <button className={css.daoPrefs}>
+                <img src='/assets/images/configure-dao-icon.svg'/>
+              </button>
+            </div>
+            <h2><Link to={'/dao/'+dao.avatarAddress}>Viewing DAO:</Link></h2>
+            <div>Avatar address: {dao.avatarAddress}</div>
+            <div>{dao.members.length} reputation holders with {dao.reputationCount} {dao.name} reputation</div>
+            <div>Prediction Token: {dao.tokenName} ({dao.tokenSymbol})</div>
+            <div> {dao.tokenSymbol} in circulation</div>
+          </div>
+        </div>
+        <div className={css.genBox + " " + css.clearfix}>
+          <div className={css.genTitle}>
+            GEN
+          </div>
+          <div className={css.genStats}>
+            <div className={css.centered + " " + css.small}>
+              PREDICTION TOKEN
+            </div>
+            <div className={css.caption + " " + css.leftAlign}>
+              <div>{dao.tokenCount}</div>
+              <div>IN CIRCULATION</div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

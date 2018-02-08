@@ -3,14 +3,20 @@
 $bg-color: gray;
 $black: rgba(12, 0, 51, 1.000);
 $black-halftone: rgba(12, 0, 51, .5);
+$gray-border: 1px solid rgba(151, 151, 151, 1.000);
+$white: rgba(255, 255, 255, 1);
+$white-transparent: rgba(255, 255, 255, 0);
 $accent-1: rgba(0, 211, 167, 1.000);
 $accent-1-halftone: rgba(0, 211, 167, .5);
+$accent-1-transparent: rgba(0, 211, 167, 0);
 $accent-2: rgba(255, 192, 0, 1.000);
 $accent-2-halftone: rgba(255, 192, 0, .5);
 $accent-3: rgba(255, 0, 72, 1.000);
 $accent-3-halftone: rgba(255, 0, 72, .5);
-$accent-4: rgba(255, 0, 72, 1.000);
-$accent-4-halftone: rgba(255, 0, 72, .5);
+$accent-4: rgba(64, 0, 255, 1.000);
+$accent-4-halftone: rgba(64, 0, 255, .5);
+$accent-4-transparent: rgba(64, 0, 255, 0);
+
 
 $shadow-1: 0 2px 4px 0 rgba(12,0,51,0.10);
 $shadow-2: 0 8px 16px 0 rgba(12,0,51,0.10);
@@ -25,3 +31,10 @@ $small: 10px;
 $caption: 12px;
 $body: 14px;
 $subheader: 16px;
+$headline-2: 24px;
+$display: 36px;
+
+$button-padding: 8px 11px;
+$button-border-radius: 3px;
+
+$max-width: 1280px;

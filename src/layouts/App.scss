@@ -53,11 +53,15 @@ body {
       }
 
       select {
-        margin-right: -22px;
+        margin-right: -5px;
+        border: none;
+        background: transparent;
       }
     }
 
     .profileLink {
+      border: none;
+      background: transparent;
       float: left;
       padding: 9px;
     }

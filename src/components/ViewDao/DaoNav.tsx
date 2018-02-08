@@ -20,12 +20,10 @@ export default class DaoNav extends React.Component<IProps, null> {
 
     return (
       <div className={css.nav}>
-        <span><Link to={'/dao/'+dao.avatarAddress}>Proposals</Link></span>
-        <span>Decisions</span> |
-        <span>DAOs</span> |
-        <span>Budgets</span> |
-        <span>Recurring Transfers</span>
-        <span><Link to={'/proposal/create/'+dao.avatarAddress}>Create Proposal</Link></span>
+        <Link className={css.navItem + " " + css.selected} to={'/dao/'+dao.avatarAddress}>Proposals</Link>
+        <Link className={css.navItem} to={'/dao/'+dao.avatarAddress+'/history/'}>History</Link>
+        <Link className={css.navItem} to={'/dao/'+dao.avatarAddress+'/recurring-transfers/'}>Recurring Transfers</Link>
+        <Link className={css.createProposal} to={'/proposal/create/'+dao.avatarAddress}>Create proposal</Link>
       </div>
     );
   }
