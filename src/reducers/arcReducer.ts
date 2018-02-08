@@ -9,18 +9,21 @@ export interface ICollaboratorState {
 }
 
 export interface IProposalState {
-  abstainVotes: number
   beneficiary: string
+  boostedAt: number
   description: string
-  failed: boolean
-  noVotes: number
-  open: boolean
   daoAvatarAddress: string
-  passed: boolean
+  state: string // Closed, Executed, NotBoosted, Boosted
+  predictionsFail: number
+  predictionsPass: number
   proposalId: string|number
-  reputationReward: number
-  tokenReward: number
-  yesVotes: number
+  rewardEth: number
+  rewardReputation: number
+  rewardToken: number
+  submittedAt: number
+  votesYes: number
+  votesNo: number
+  winningVote: number // 1 = YES, 2 = NO
 }
 
 export interface IDaoState {

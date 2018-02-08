@@ -152,26 +152,29 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
         }
 
         let proposal = <IProposalState>{
-          abstainVotes: 0,
           beneficiary: proposalArgs._beneficiary,
+          boostedAt: 0, // TODO
+          description: description, // TODO
           daoAvatarAddress: dao.avatar.address,
-          description: description,
-          failed: false,
-          noVotes: 0,
-          open: true,
-          passed: false,
+          state: "NotBoosted", // TODO, string // Closed, Executed, NotBoosted, Boosted
+          predictionsFail: 0, // TODO
+          predictionsPass: 0, // TODO
           proposalId: proposalArgs._proposalId,
-          reputationReward: Number(web3.fromWei(proposalArgs._rewards[1], "ether")),
-          tokenReward: Number(web3.fromWei(proposalArgs._rewards[0], "ether")),
-          yesVotes: 0
+          rewardEth: 0, // TODO
+          rewardReputation: Number(web3.fromWei(proposalArgs._rewards[1], "ether")),
+          rewardToken: Number(web3.fromWei(proposalArgs._rewards[0], "ether")),
+          submittedAt: 0, // TODO
+          votesYes: 0,
+          votesNo: 0,
+          winningVote: 0
         };
 
         if (executedProposalIds.includes(proposalArgs._proposalId)) {
-          proposal.passed = true;
-          proposal.open = false;
+          proposal.state = "Executed";
+          proposal.winningVote = 1;
         } else if (failedProposalIds.includes(proposalArgs._proposalId)) {
-          proposal.failed = true;
-          proposal.open = false;
+          proposal.state = "Executed";
+          proposal.winningVote = 2;
         } else {
           // TODO: update as Arc.js supports better stuff
           const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
@@ -180,9 +183,8 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           const votingMachineInstance = await Arc.Utils.requireContract("AbsoluteVote").at(votingMachineAddress);
 
           const votesStatus = await votingMachineInstance.votesStatus(proposalArgs._proposalId);
-          proposal.abstainVotes = Number(web3.fromWei(votesStatus[0], "ether"));
-          proposal.yesVotes = Number(web3.fromWei(votesStatus[1], "ether"));
-          proposal.noVotes = Number(web3.fromWei(votesStatus[2], "ether"));
+          proposal.votesYes = Number(web3.fromWei(votesStatus[1], "ether"));
+          proposal.votesNo = Number(web3.fromWei(votesStatus[2], "ether"));
         };
         daoData.proposals.push(proposal);
       }
@@ -281,20 +283,22 @@ export function createProposal(daoAvatarAddress : string, description : string, 
       }
 
       const proposal = <IProposalState>{
-        abstainVotes: 0,
         beneficiary: beneficiary,
-        description: description,
-        failed: false,
-        noVotes: 0,
-        open: true,
+        boostedAt: 0, // TODO
+        description: description, // TODO
         daoAvatarAddress: daoAvatarAddress,
-        passed: false, // TODO: This could actually be true if owner had enough rep, should probably pull the updated proposal info from the voting machine
+        state: "NotBoosted", // TODO, string // Closed, Executed, NotBoosted, Boosted
+        predictionsFail: 0, // TODO
+        predictionsPass: 0, // TODO
         proposalId: proposalId,
-        reputationReward: reputationReward,
-        tokenReward: nativeTokenReward,
-        yesVotes: 0, // TODO: actually this is probably the reputation of the opener with ownerVote turned on.
+        rewardEth: 0, // TODO
+        rewardReputation: reputationReward,
+        rewardToken: nativeTokenReward,
+        submittedAt: 0, // TODO
+        votesYes: 0,
+        votesNo: 0,
+        winningVote: 0
       };
-
 
       let payload = normalize(proposal, schemas.proposalSchema);
       (payload as any).daoAvatarAddress = daoAvatarAddress;
@@ -325,27 +329,26 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string|numb
 
       const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
       const votesStatus = await votingMachineInstance.votesStatus(proposalId);
+      console.log(votesStatus);
 
       let payload = {
-        abstainVotes: Number(web3.fromWei(votesStatus[0], "ether")),
-        failed: false,
-        noVotes: Number(web3.fromWei(votesStatus[2], "ether")),
+        votesNo: Number(web3.fromWei(votesStatus[2], "ether")),
         daoAvatarAddress: daoAvatarAddress,
-        open: true,
-        passed: false,
         proposalId: proposalId,
-        yesVotes: Number(web3.fromWei(votesStatus[1], "ether"))
+        state: "NotBoosted",
+        votesYes: Number(web3.fromWei(votesStatus[1], "ether")),
+        winningVote: 0
       }
 
       // See if the proposal was executed, either passing or failing
       const executed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
       if (executed) {
         const decision = executed.args._decision.toNumber();
-        payload.open = false;
+        payload.state = "Executed";
         if (decision == 1) {
-          payload.passed = true;
+          payload.winningVote = 1;
         } else if (decision == 2) {
-          payload.failed = true;
+          payload.winningVote = 2;
         } else {
           dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposal decision ", decision });
           return
