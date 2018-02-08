@@ -31,18 +31,26 @@ export default class DaoList extends React.Component<IProps, null> {
     const daoNodes = Object.keys(daos).map((key : string) => {
       const dao = daos[key];
       return (
-        <div key={"dao_" + dao.avatarAddress} className={css.dao}>
-          <Link to={"/dao/" + dao.avatarAddress}><h3>{dao.name}</h3></Link>
-          <div>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-          <div>Num tokens: {dao.tokenCount}</div>
-          <div>Reputation: {dao.reputationCount}</div>
-        </div>
+        <Link className={css.daoLink} to={"/dao/" + dao.avatarAddress}>
+          <div key={"dao_" + dao.avatarAddress} className={css.dao}>
+            <div className={css.daoAvatar}>
+              <img src='/assets/images/daostack-logo.svg'/>
+            </div>
+            <h3 className={css.daoName}>{dao.name}</h3>
+            <div className={css.daoInfo}>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
+            <div className={css.daoInfo}>Num tokens: {dao.tokenCount}</div>
+            <div className={css.daoInfo}>Reputation: {dao.reputationCount}</div>
+          </div>
+        </Link>
       );
     });
 
     return (
       <div className={css.wrapper}>
-        <h2>Your DAOs</h2>
+        <div className={css.daoListHeader + " " + css.clearfix}>
+          <h2>Your DAOs</h2>
+          <Link to='/dao/create'>Create a New DAO</Link>
+        </div>
         {daoNodes ? daoNodes : "None"}
       </div>
     );

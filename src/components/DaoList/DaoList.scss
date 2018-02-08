@@ -1,9 +1,88 @@
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .wrapper {
-  width: 200px;
+  max-width: $max-width;
+  margin: 0 auto;
 }
 
 .dao {
-  border: 2px solid white;
-  padding: 10px;
-  margin: 10px 0;
+	top: 60px;
+	width: 200px;
+	height: 200px;
+	shadow: $shadow-1;
+	background-image: linear-gradient(-222deg, #FDB93E 0%, #1CBDF7 100%);
+	border-radius: 3px;
+	position: relative;
+	text-align: center;
+
+	.daoAvatar {
+		position: absolute;
+		top: -45px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
+.daoAvatar {
+  background-color: $white;
+  box-shadow: $shadow-3;
+  width: 90px;
+  float: left;
+  height: 90px;
+  border-radius: 90px;
+
+  img {
+  	width: 40px;
+  	height: 40px;
+  	position: relative;
+  	top: 24px;
+  }
+}
+
+a.daoLink {
+	text-decoration: none;
+	color: $white;
+	text-align: center;
+
+	.daoName {
+		font-size: $title;
+		font-weight: $normal;
+		padding-top: 60px;
+	}
+
+	.daoInfo {
+		font-size: $body;
+	}
+
+}
+
+.daoListHeader {
+	width: 100%;
+	padding-top: 30px;
+
+	h2 {
+		float: left;
+		display: block;
+		width: 50%;
+	}
+
+	a {
+		float: right;
+		display: block;
+		width: 110px;
+		text-align: center;
+		border: 1px solid $accent-1;
+		float: right;
+		color: $accent-1;
+		font-size: $caption;
+		padding: $button-padding;
+		transition: all .25s ease;
+		background-color: $accent-1-transparent;
+		border-radius: $button-border-radius;
+		vertical-align: middle;
+	}
 }

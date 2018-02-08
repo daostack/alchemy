@@ -36,7 +36,6 @@ class HomeContainer extends React.Component<IProps, null> {
     return (
       <div className={css.homeWrapper}>
         <DaoList daos={this.props.daos} getDAOs={this.props.getDAOs} />
-        <Link to='/dao/create'>Create a New DAO</Link>
       </div>
     );
   }
