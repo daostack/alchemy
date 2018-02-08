@@ -118,7 +118,6 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     daoData.members = collaborators;
 
     // Get proposals
-    const votingMachineInstance = dao.votingMachine;
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
     const newProposalEvents = contributionRewardInstance.LogNewContributionProposal({}, { fromBlock: 0 });
     const getNewProposalEvents = promisify(newProposalEvents.get.bind(newProposalEvents));
@@ -155,6 +154,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
         let proposal = <IProposalState>{
           abstainVotes: 0,
           beneficiary: proposalArgs._beneficiary,
+          daoAvatarAddress: dao.avatar.address,
           description: description,
           failed: false,
           noVotes: 0,
@@ -173,6 +173,12 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           proposal.failed = true;
           proposal.open = false;
         } else {
+          // TODO: update as Arc.js supports better stuff
+          const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
+          const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
+          const votingMachineAddress = schemeParams[2];
+          const votingMachineInstance = await Arc.Utils.requireContract("AbsoluteVote").at(votingMachineAddress);
+
           const votesStatus = await votingMachineInstance.votesStatus(proposalArgs._proposalId);
           proposal.abstainVotes = Number(web3.fromWei(votesStatus[0], "ether"));
           proposal.yesVotes = Number(web3.fromWei(votesStatus[1], "ether"));
@@ -309,7 +315,14 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string|numb
       const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const votingMachineInstance = await daoInstance.votingMachine;
+      const contributionRewardInstance = await Arc.ContributionReward.deployed();
+
+      // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
+      const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
+      const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
+      const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
+      const votingMachineInstance = await Arc.Utils.requireContract("AbsoluteVote").at(votingMachineAddress);
+
       const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
       const votesStatus = await votingMachineInstance.votesStatus(proposalId);
 
