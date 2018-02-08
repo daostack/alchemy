@@ -136,7 +136,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
       proposalArgs = allProposals[cnt].args;
       if (proposalArgs._avatar == dao.avatar.address) {
         // Default to showing the description hash if we don't have better description on the server
-        let description = proposalArgs._contributionDesciption;
+        let description = proposalArgs._contributionDescription;
 
         // Get description from the server
         // TODO: pull all the proposals for this DAO in one request
@@ -266,7 +266,7 @@ export function createProposal(daoAvatarAddress : string, description : string, 
 
       // TODO: error checking
       const proposalId = submitProposalTransaction.proposalId;
-      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDesciption");
+      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
 
       try {
         const response = await axios.post(arcConstants.API_URL + '/api/proposals', {
