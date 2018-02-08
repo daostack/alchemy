@@ -13,7 +13,7 @@
 	top: 60px;
 	width: 200px;
 	height: 200px;
-	shadow: $shadow-1;
+	box-shadow: $shadow-1;
 	background-image: linear-gradient(-222deg, #FDB93E 0%, #1CBDF7 100%);
 	border-radius: 3px;
 	position: relative;
@@ -74,7 +74,7 @@ a.daoLink {
 		float: right;
 		display: block;
 		width: 110px;
-		text-align: center;
+		text-align: center;	
 		border: 1px solid $accent-1;
 		float: right;
 		color: $accent-1;
