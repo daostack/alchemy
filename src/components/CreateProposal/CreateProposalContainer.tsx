@@ -153,7 +153,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           <br /><br />
           <button type='submit'>Submit</button>
         </form>
-      </div> : "Loading..."
+      </div>
+      : "Loading..."
     );
   }
 }
