@@ -4,7 +4,7 @@ export const daoHeader: string;
 export const nav: string;
 export const membersContainer: string;
 export const member: string;
-export const proposal: string;
+export const proposalsContainer: string;
 export const openProposal: string;
 export const failedProposal: string;
 export const passedProposal: string;
