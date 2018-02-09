@@ -172,7 +172,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                 <td>
                   <span className={css.tokenAmount}>12.333 ETH </span>
                   monthly for 6 months
-                  <img className={css.transferIcon} src='/assets/images/Icon/Transfer.svg'/>
+                  <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
                   <img className={css.userAvatar} src="/assets/images/generic-user-avatar.png"/>
                 </td>
                 <td className={css.transferTotals}>
@@ -181,11 +181,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               </tr>
             </table>
           </div>
-          <br /><br />
-          <button type='submit'>
-            <img src='/assets/images/Icon/Close.svg'/>
-            Submit proposal
-          </button>
+          <div className={css.alignCenter}>
+            <button className={css.submitProposal} type='submit'>
+              <img src='/assets/images/Icon/Send.svg'/>
+              Submit proposal
+            </button>
+          </div>
         </form>
       </div>
       : "Loading..."
