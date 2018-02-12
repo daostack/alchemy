@@ -30,6 +30,7 @@ module.exports = {
       layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
       reducers: path.resolve(basePath, 'src/reducers'),
+      selectors: path.resolve(basePath, 'src/selectors'),
       src: path.resolve(basePath, 'src')
     },
   },

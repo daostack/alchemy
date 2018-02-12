@@ -8,12 +8,19 @@ export interface ICollaboratorState {
   reputation: number
 }
 
+export enum ProposalStates {
+  Closed = "Closed",
+  Executed = "Executed",
+  NotBoosted = "NotBoosted",
+  Boosted = "Boosted"
+}
+
 export interface IProposalState {
   beneficiary: string
   boostedAt: number
   description: string
   daoAvatarAddress: string
-  state: string // Closed, Executed, NotBoosted, Boosted
+  state: ProposalStates
   predictionsFail: number
   predictionsPass: number
   proposalId: string|number
