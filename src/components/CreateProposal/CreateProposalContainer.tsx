@@ -168,17 +168,19 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               <span>TOTAL</span>
             </h3>
             <table>
-              <tr>
-                <td>
-                  <span className={css.tokenAmount}>12.333 ETH </span>
-                  monthly for 6 months
-                  <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
-                  <img className={css.userAvatar} src="/assets/images/generic-user-avatar.png"/>
-                </td>
-                <td className={css.transferTotals}>
-                  <span className={css.tokenAmount}>79.98 ETH</span>
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td>
+                    <span className={css.tokenAmount}>12.333 ETH </span>
+                    monthly for 6 months
+                    <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
+                    <img className={css.userAvatar} src="/assets/images/generic-user-avatar.png"/>
+                  </td>
+                  <td className={css.transferTotals}>
+                    <span className={css.tokenAmount}>79.98 ETH</span>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
           <div className={css.alignCenter}>
