@@ -100,6 +100,8 @@ class ProposalContainer extends React.Component<IProps, null> {
               <span className={css.transferType}>Transfer of</span> 
               <span className={css.transferAmount}>{proposal.rewardToken} ETH + {proposal.rewardReputation} Reputation</span>
               <img src="/assets/images/Icon/Transfer.svg"/>
+
+
               <div className={css.targetAccount}>
                 <div className={css.avatar}>
                   <img src="/assets/images/generic-user-avatar.png"/>
@@ -118,9 +120,122 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <button className={css.viewProfile}>View Profile</button>
                 </div>
               </div>
+
+
+
             </div>
-            
           </div>
+          { proposal.state == "Boosted" ?
+              <div>
+                <div className={css.proposalDetails}>
+                  <div className={css.createdBy}>
+                    CREATED BY
+
+
+                    <div className={css.targetAccount}>
+                      <div className={css.avatar}>
+                        <img src="/assets/images/generic-user-avatar.png"/>
+                      </div>
+                      <div className={css.accountInfo}>
+                        <div className={css.beneficiaryAddress}>
+                          <span>{proposal.beneficiary}</span>
+                          <button><img src="/assets/images/Icon/Copy-white.svg"/></button>
+                        </div>
+                        <div className={css.holdings}>
+                          <span>HOLDINGS</span>
+                          <div>15,2333 <strong>Genesis Reputation</strong></div>
+                          <div>15,2333 <strong>GEN</strong></div>
+                          <div>15,2333 <strong>ETH</strong></div>
+                        </div>
+                        <button className={css.viewProfile}>View Profile</button>
+                      </div>
+                    </div>
+
+
+                    ON JAN 29TH
+                  </div>
+                </div>
+
+                <div className={css.predictions}>
+                  <div>
+                    <span>PREDICTIONS</span>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td className={css.passPrediction}>PASS</td>
+                          <td>42 GEN</td>
+                        </tr>
+                        <tr>
+                          <td className={css.failPrediction}>FAIL</td>
+                          <td>42 GEN</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            : proposal.state == "NotBoosted" ?
+              <div>
+
+                <div className={css.proposalDetails}>
+                  <div className={css.createdBy}>
+                    CREATED BY
+
+
+                    <div className={css.targetAccount}>
+                      <div className={css.avatar}>
+                        <img src="/assets/images/generic-user-avatar.png"/>
+                      </div>
+                      <div className={css.accountInfo}>
+                        <div className={css.beneficiaryAddress}>
+                          <span>{proposal.beneficiary}</span>
+                          <button><img src="/assets/images/Icon/Copy-white.svg"/></button>
+                        </div>
+                        <div className={css.holdings}>
+                          <span>HOLDINGS</span>
+                          <div>15,2333 <strong>Genesis Reputation</strong></div>
+                          <div>15,2333 <strong>GEN</strong></div>
+                          <div>15,2333 <strong>ETH</strong></div>
+                        </div>
+                        <button className={css.viewProfile}>View Profile</button>
+                      </div>
+                    </div>
+
+
+
+                    ON JAN 29TH
+                  </div>
+
+                  <button className={css.viewProposal}>
+                    <img src="/assets/images/Icon/View.svg"/>
+                  </button>
+                </div>
+
+                <div className={css.predictions}>
+                  <div>
+                    <span>PREDICTIONS</span>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td className={css.passPrediction}><button>PASS +</button></td>
+                          <td>502 GEN</td>
+                        </tr>
+                        <tr>
+                          <td className={css.failPrediction}><button>FAIL +</button></td>
+                          <td>42 GEN</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>          
+            : proposal.winningVote == 1 ?
+              ""
+            : proposal.winningVote == 2 ?
+              ""
+            : ""
+
+          }
         </div>
       );
     } else {
