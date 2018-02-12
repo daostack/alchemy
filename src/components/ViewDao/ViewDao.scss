@@ -32,18 +32,13 @@
 
 .proposalsContainer {
   margin: 10px 0;
+  background-color: $white;
+  shadow: $shadow-1;
+  border-radius: 3px;
 }
 
 .openProposal {
   border: 1px solid white;
-}
-
-.failedProposal {
-  border: 1px solid red;
-}
-
-.passedProposal {
-  border: 1px solid green;
 }
 
 a {
@@ -206,4 +201,21 @@ a.navItem:hover {
 
 .rightAlign {
   text-align: right;
+}
+
+.proposalsHeader {
+  font-size: $title;
+  position: relative;
+  font-weight: $bold;
+
+  span {
+    position: absolute;
+    right: 0;
+    font-size: $body;
+
+    span {
+      font-weight: $bold;
+      position: relative;
+    }
+  }
 }

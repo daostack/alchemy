@@ -59,8 +59,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
           <DaoHeader dao={dao} />
           <DaoNav dao={dao} />
           {this.renderMembers()}
+
+          <div className={css.proposalsHeader}>
+            Boosted Proposals
+            <span>Available funds: <span>13,000 ETH - 327 KIN</span></span>
+          </div>
           <div className={css.proposalsContainer}>
-            <h2>Proposals</h2>
             {proposalsHTML}
           </div>
         </div>
