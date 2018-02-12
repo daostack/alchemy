@@ -49,14 +49,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       });
 
       return (
-        <div className={proposalClass}>
-          <h3>{proposal.description}</h3>
-          Token Reward: <span>{proposal.rewardToken}</span>
-          <br />
-          Reputation Reward: <span>{proposal.rewardReputation}</span>
-          <br />
-          Beneficiary: <span>{proposal.beneficiary}</span>
-          <br />
+        <div className={proposalClass + " " + css.clearfix}>
           { proposal.state == "NotBoosted" ?
             <VoteBox
               proposal={proposal}
@@ -64,15 +57,70 @@ class ProposalContainer extends React.Component<IProps, null> {
               voteOnProposal={voteOnProposal}
             />
             : proposal.winningVote == 1 ?
-              <div>
-                Passed!
+              <div className={css.decidedProposal}>
+                  <div className={css.result}>
+                    <div>PASSED</div>
+                    <div><img src="/assets/images/Icon/Passed.svg"/></div>
+                    <div>Jan 18, 2017</div>
+                  </div>
               </div>
             : proposal.winningVote == 2 ?
-              <div>
-                Failed to pass
+              <div className={css.decidedProposal}>
+                  <div className={css.result}>
+                    <div>FAILED</div>
+                    <div><img src="/assets/images/Icon/Failed.svg"/></div>
+                    <div>Jan 18, 2017</div>
+                  </div>
               </div>
             : ""
           }
+          <div className={css.proposalInfo}>
+            { proposal.winningVote == 1 || proposal.winningVote == 2 ? 
+              <div className={css.decisionGraph}>
+                <span className={css.forLabel}>12,603 (22%)</span>
+                <div className={css.graph}>
+                  <div className={css.forBar}></div>
+                  <div className={css.againstBar}></div>
+                  <div className={css.divider}></div>
+                </div>
+                <span className={css.againstLabel}>12,603 (22%)</span>
+              </div>
+              : ""
+            }
+            <h3>
+              {proposal.description}
+              { proposal.state == "NotBoosted" ?
+                <span>CLOSES IN 3 WEEKS</span>
+              : proposal.state == "Boosted" ?
+                <span>5 DAYS</span>
+              : ""
+              }
+            </h3>
+            <div className={css.transferDetails}>
+              <span className={css.transferType}>Transfer of</span> 
+              <span className={css.transferAmount}>{proposal.rewardToken} ETH + {proposal.rewardReputation} Reputation</span>
+              <img src="/assets/images/Icon/Transfer.svg"/>
+              <div className={css.targetAccount}>
+                <div className={css.avatar}>
+                  <img src="/assets/images/generic-user-avatar.png"/>
+                </div>
+                <div className={css.accountInfo}>
+                  <div className={css.beneficiaryAddress}>
+                    <span>{proposal.beneficiary}</span>
+                    <button><img src="/assets/images/Icon/Copy-white.svg"/></button>
+                  </div>
+                  <div className={css.holdings}>
+                    <span>HOLDINGS</span>
+                    <div>15,2333 <strong>Genesis Reputation</strong></div>
+                    <div>15,2333 <strong>GEN</strong></div>
+                    <div>15,2333 <strong>ETH</strong></div>
+                  </div>
+                  <button className={css.viewProfile}>View Profile</button>
+                </div>
+              </div>
+            </div>
+            
+          </div>
         </div>
       );
     } else {

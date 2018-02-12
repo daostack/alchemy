@@ -31,25 +31,28 @@ export default class DaoHeader extends React.Component<IProps, null> {
                 <img src='/assets/images/configure-dao-icon.svg'/>
               </button>
             </div>
-            <h2><Link to={'/dao/'+dao.avatarAddress}>Viewing DAO:</Link></h2>
-            <div>Avatar address: {dao.avatarAddress}</div>
-            <div>{dao.members.length} reputation holders with {dao.reputationCount} {dao.name} reputation</div>
-            <div>Prediction Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-            <div> {dao.tokenSymbol} in circulation</div>
+            <div className={css.daoReputationInfo}>
+              <Link to={'/dao/'+dao.avatarAddress}>{dao.members.length}</Link> Reputation holders with {dao.reputationCount} {dao.name} reputation
+            </div>
           </div>
         </div>
         <div className={css.genBox + " " + css.clearfix}>
+          <div className={css.centered + " " + css.small}>
+            PREDICTION TOKEN
+          </div>
           <div className={css.genTitle}>
-            GEN
+            {dao.tokenSymbol} 
           </div>
           <div className={css.genStats}>
-            <div className={css.centered + " " + css.small}>
-              PREDICTION TOKEN
-            </div>
             <div className={css.caption + " " + css.leftAlign}>
               <div>{dao.tokenCount}</div>
-              <div>IN CIRCULATION</div>
+              <div className={css.small}>IN CIRCULATION</div>
             </div>
+          </div>
+          <div className={css.buyGenContainer}>
+            <Link to={'/dao/'+dao.avatarAddress} className={css.buyGen}>
+              BUY
+            </Link>
           </div>
         </div>
       </div>

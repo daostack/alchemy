@@ -96,10 +96,18 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
     return(
       dao ? <div className={css.createProposalWrapper}>
-        <DaoHeader dao={dao} />
-        <h2>Create a Contribution Proposal</h2>
+        <h2>
+          <img className={css.editIcon} src='/assets/images/Icon/Edit.svg'/>
+          <span>Create proposal</span>
+          <button className={css.exitProposalCreation}>
+            <img src='/assets/images/Icon/Close.svg'/>
+          </button>
+        </h2>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor='descriptionInput'>Description: </label>
+          <label htmlFor='descriptionInput'>
+            Title (120 characters)
+            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
+          </label>
           <input
             autoFocus
             id='descriptionInput'
@@ -107,51 +115,78 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             placeholder="Describe your propsoal"
             ref="descriptionNode"
             required
-            size={100}
             type="text"
             value={this.state.description}
           />
-          <br /><br />
-          <label htmlFor='nativeTokenRewardInput'>Token reward: </label>
-          <input
-            id='nativeTokenRewardInput'
-            maxLength={10}
-            onChange={this.handleChange}
-            placeholder="How many tokens to reward"
-            ref="nativeTokenRewardNode"
-            required
-            size={10}
-            type="text"
-            value={this.state.nativeTokenReward}
-          />
-          <br /><br />
-          <label htmlFor='reputationRewardInput'>Reputation reward: </label>
-          <input
-            id='reputationRewardInput'
-            maxLength={10}
-            onChange={this.handleChange}
-            placeholder="How much reputation to reward"
-            ref="reputationRewardNode"
-            required
-            size={10}
-            type="text"
-            value={this.state.reputationReward}
-          />
-          <br /><br />
-          <label htmlFor='beneficiaryInput'>Beneficiary: </label>
+          <label htmlFor="proposalDescriptionUrl">
+            Description (URL)
+            <button className={css.recommendedTemplate}>Recommended template</button>
+            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
+          </label>
+          <input id="proposalDescriptionUrl" placeholder="Proposal description URL"/>
+          <label htmlFor='beneficiaryInput'>
+            Target Address
+            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
+          </label>
           <input
             id='beneficiaryInput'
             maxLength={42}
             onChange={this.handleChange}
-            placeholder="Who to reward"
+            placeholder="Recipient's address public key"
             ref="beneficiaryNode"
             required
-            size={46}
             type="text"
             value={this.state.beneficiary}
           />
-          <br /><br />
-          <button type='submit'>Submit</button>
+          <div className={css.addTransfer}>
+            <label htmlFor='nativeTokenRewardInput'>Token reward: </label>
+            <input
+              id='nativeTokenRewardInput'
+              maxLength={10}
+              onChange={this.handleChange}
+              placeholder="How many tokens to reward"
+              ref="nativeTokenRewardNode"
+              required
+              type="text"
+              value={this.state.nativeTokenReward}
+            />
+            <label htmlFor='reputationRewardInput'>Reputation reward: </label>
+            <input
+              id='reputationRewardInput'
+              maxLength={10}
+              onChange={this.handleChange}
+              placeholder="How much reputation to reward"
+              ref="reputationRewardNode"
+              required
+              type="text"
+              value={this.state.reputationReward}
+            />
+          </div>
+          <div className={css.transactionList}>
+            <h3 className={css.transactionListHeader}>
+              Transactions
+              <span>TOTAL</span>
+            </h3>
+            <table>
+              <tr>
+                <td>
+                  <span className={css.tokenAmount}>12.333 ETH </span>
+                  monthly for 6 months
+                  <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
+                  <img className={css.userAvatar} src="/assets/images/generic-user-avatar.png"/>
+                </td>
+                <td className={css.transferTotals}>
+                  <span className={css.tokenAmount}>79.98 ETH</span>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div className={css.alignCenter}>
+            <button className={css.submitProposal} type='submit'>
+              <img src='/assets/images/Icon/Send.svg'/>
+              Submit proposal
+            </button>
+          </div>
         </form>
       </div>
       : "Loading..."
