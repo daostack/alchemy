@@ -13,7 +13,7 @@ import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
 import * as schemas from '../schemas';
 
-import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReducer';
+import { IDaoState, ICollaboratorState, IProposalState, ProposalStates } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -154,7 +154,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           boostedAt: 0, // TODO
           description: description, // TODO
           daoAvatarAddress: dao.avatar.address,
-          state: "NotBoosted", // TODO, string // Closed, Executed, NotBoosted, Boosted
+          state: "NotBoosted", // TODO: Closed, Executed, NotBoosted, Boosted
           predictionsFail: 0, // TODO
           predictionsPass: 0, // TODO
           proposalId: proposalArgs._proposalId,
@@ -168,10 +168,10 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
         };
 
         if (executedProposalIds.includes(proposalArgs._proposalId)) {
-          proposal.state = "Executed";
+          proposal.state = ProposalStates.Executed;
           proposal.winningVote = 1;
         } else if (failedProposalIds.includes(proposalArgs._proposalId)) {
-          proposal.state = "Executed";
+          proposal.state = ProposalStates.Executed;
           proposal.winningVote = 2;
         } else {
           // TODO: update as Arc.js supports better stuff
