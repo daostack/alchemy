@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
@@ -20,10 +20,10 @@ export default class DaoNav extends React.Component<IProps, null> {
 
     return (
       <div className={css.nav}>
-        <Link className={css.navItem + " " + css.selected} to={'/dao/'+dao.avatarAddress}>Proposals</Link>
-        <Link className={css.navItem} to={'/dao/'+dao.avatarAddress+'/history/'}>History</Link>
-        <Link className={css.navItem} to={'/dao/'+dao.avatarAddress+'/recurring-transfers/'}>Recurring Transfers</Link>
-        <Link className={css.createProposal} to={'/proposal/create/'+dao.avatarAddress}>Create proposal</Link>
+        <NavLink exact className={css.navItem} activeClassName={css.selected} to={'/dao/'+dao.avatarAddress}>Proposals</NavLink>
+        <NavLink className={css.navItem} activeClassName={css.selected} to={'/dao/'+dao.avatarAddress+'/history/'}>History</NavLink>
+        <NavLink className={css.navItem} activeClassName={css.selected} to={'/dao/'+dao.avatarAddress+'/recurring-transfers/'}>Recurring Transfers</NavLink>
+        <NavLink className={css.createProposal} activeClassName={css.selected} to={'/proposal/create/'+dao.avatarAddress}>Create proposal</NavLink>
       </div>
     );
   }
