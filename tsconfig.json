@@ -8,7 +8,7 @@
     "jsx": "react",
     "baseUrl": "src",
     "paths": {
-      "@daostack/arc-js": ["../node_modules/@daostack/arc-js"]
+      "@daostack/arc.js": ["../node_modules/@daostack/arc.js"]
     }
   },
   "include": [
