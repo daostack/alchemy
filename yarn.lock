@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@daostack/arc.js@0.0.0-alpha.20":
-  version "0.0.0-alpha.20"
-  resolved "https://registry.yarnpkg.com/@daostack/arc.js/-/arc.js-0.0.0-alpha.20.tgz#78164728b577f0d7da6965c1ad5f5005455ec5ce"
+"@daostack/arc.js@0.0.0-alpha.22":
+  version "0.0.0-alpha.22"
+  resolved "https://registry.yarnpkg.com/@daostack/arc.js/-/arc.js-0.0.0-alpha.22.tgz#c85260f55779e63071b9de66f105caecd05c60be"
   dependencies:
     archiver "^2.1.0"
     bignumber.js "^5.0.0"
@@ -4437,7 +4437,7 @@ moment-timezone@~0.3.0:
   dependencies:
     moment ">= 2.6.0"
 
-"moment@>= 2.6.0", moment@^2.12:
+"moment@>= 2.6.0", moment@^2.12, moment@^2.20.1:
   version "2.20.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.1.tgz#d6eb1a46cbcc14a2b2f9434112c1ff8907f313fd"
 

@@ -5,6 +5,10 @@
   "author": "Tibet Sprague",
   "license": "MIT",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daostack/alchemy.git"
+  },
   "scripts": {
     "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
     "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
@@ -16,15 +20,16 @@
     "start-kovan": "ETH_ENV=kovan yarn start"
   },
   "dependencies": {
+    "@daostack/arc.js": "0.0.0-alpha.22",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
     "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
-    "@daostack/arc.js": "0.0.0-alpha.20",
     "es6-promisify": "^5.0.0",
     "ethers": "^2.1.2",
     "immutability-helper": "^2.4.0",
     "lodash": "^4.17.4",
+    "moment": "^2.20.1",
     "normalizr": "^3.2.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
