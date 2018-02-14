@@ -116,7 +116,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <span>5 DAYS</span>
               : ""
               }
-              {proposal.description}
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of</span>
@@ -164,9 +163,9 @@ class ProposalContainer extends React.Component<IProps, null> {
                     ON JAN 29TH
                   </div>
 
-                  <button className={css.viewProposal}>
+                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/>
-                  </button>
+                  </a>
                 </div>
 
                 <PredictionBox
