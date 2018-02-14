@@ -139,7 +139,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
 
-                    ON JAN 29TH
+                    ON {submittedAt.format("MMM DD, YYYY")}
                   </div>
                 </div>
 
@@ -160,7 +160,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
 
-                    ON JAN 29TH
+                    ON {submittedAt.format("MMM DD, YYYY")}
                   </div>
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
