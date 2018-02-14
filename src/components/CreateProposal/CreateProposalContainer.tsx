@@ -11,6 +11,7 @@ import * as schemas from '../../schemas';
 
 import * as css from './CreateProposal.scss';
 
+import AccountImage from 'components/Account/AccountImage';
 import DaoHeader from '../ViewDao/DaoHeader';
 
 interface IStateProps {
@@ -186,7 +187,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     <span className={css.tokenAmount}>12.333 ETH </span>
                     monthly for 6 months
                     <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
-                    <img className={css.userAvatar} src="/assets/images/generic-user-avatar.png"/>
+                    <AccountImage accountAddress={this.state.beneficiary} className={css.userAvatar} />
                   </td>
                   <td className={css.transferTotals}>
                     <span className={css.tokenAmount}>79.98 ETH</span>

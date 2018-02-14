@@ -5,7 +5,7 @@ import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IProposalState, ProposalStates } from 'reducers/arcReducer';
 
-import EthBalance from 'components/EthBalance/EthBalance';
+import AccountImage from 'components/Account/AccountImage';
 
 import * as css from './Account.scss';
 
@@ -22,7 +22,7 @@ export default class AccountPopup extends React.Component<IProps, null> {
     return (
       <div className={css.targetAccount}>
         <div className={css.avatar}>
-          <img src="/assets/images/generic-user-avatar.png"/>
+          <AccountImage accountAddress={accountAddress} />
         </div>
         <div className={css.accountInfo}>
           <div className={css.beneficiaryAddress}>
