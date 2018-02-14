@@ -32,7 +32,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
   render() {
     const { dao } = this.props;
-    console.log("mojo", dao.members);
+
     const membersHTML = dao.members.map((member : ICollaboratorState, index : number) => {
       return (
         <div className={css.member} key={"member_" + index}>
