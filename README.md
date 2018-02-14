@@ -12,7 +12,7 @@
 ## Working with Ganache without MetaMask
 1. Switch off chrome extensions such as MetaMask or Parity extension
 2. Run `npm run ganache` in one terminal tab
-3. In a separate tab run `npm migrate-ganache`
+3. In a separate tab run `npm run migrate-ganache`
 4. Run `npm run start-ganache`
 5. Go to http://localhost:3000/ in your favorite browser
 
