@@ -15,6 +15,7 @@ import DaoHeader from './DaoHeader';
 import DaoNav from './DaoNav';
 import DaoProposalsContainer from './DaoProposalsContainer';
 import DaoHistoryContainer from './DaoHistoryContainer';
+import DaoMembersContainer from './DaoMembersContainer';
 
 import * as css from './ViewDao.scss';
 
@@ -56,11 +57,11 @@ class ViewDaoContainer extends React.Component<IProps, null> {
         <div className={css.wrapper}>
           <DaoHeader dao={dao} />
           <DaoNav dao={dao} />
-          {this.renderMembers()}
 
           <Switch>
             <Route exact path="/dao/:daoAddress" component={DaoProposalsContainer} />
             <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
+            <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
           </Switch>
         </div>
       );
@@ -68,30 +69,6 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       return (<div>Loading... </div>);
     }
   }
-
-  renderMembers() {
-    const { dao } = this.props;
-
-    const membersHTML = dao.members.map((member : ICollaboratorState, index : number) => {
-      return (
-        <div className={css.member} key={"member_" + index}>
-          <strong>{index + 1}: {member.address}</strong>
-          <br />
-          Tokens: <span>{member.tokens}</span>
-          <br />
-          Reputation: <span>{member.reputation}</span>
-        </div>
-      );
-    });
-
-    return (
-      <div className={css.membersContainer}>
-        <h2>Members</h2>
-        {membersHTML}
-      </div>
-    );
-  }
-
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewDaoContainer);
