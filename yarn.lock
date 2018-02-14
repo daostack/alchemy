@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@daostack/arc.js@0.0.0-alpha.22":
-  version "0.0.0-alpha.22"
-  resolved "https://registry.yarnpkg.com/@daostack/arc.js/-/arc.js-0.0.0-alpha.22.tgz#c85260f55779e63071b9de66f105caecd05c60be"
+"@daostack/arc.js@0.0.0-alpha.23":
+  version "0.0.0-alpha.23"
+  resolved "https://registry.yarnpkg.com/@daostack/arc.js/-/arc.js-0.0.0-alpha.23.tgz#e611a309e1dba486e48afbdb09d2f3c49c17fe82"
   dependencies:
     archiver "^2.1.0"
     bignumber.js "^5.0.0"

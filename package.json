@@ -20,7 +20,7 @@
     "start-kovan": "ETH_ENV=kovan yarn start"
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.22",
+    "@daostack/arc.js": "0.0.0-alpha.23",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
     "classnames": "^2.2.5",
