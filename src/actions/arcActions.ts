@@ -141,9 +141,9 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
         proposalId = proposalArgs._proposalId;
 
         // Default to showing the description hash if we don't have better description on the server
-        description = proposalArgs._contributionDescription;
+        description = "";
         submittedAt = 0;
-        title = proposalArgs._contributionDescription;
+        title = "";
 
         // Get description from the server
         // TODO: pull all the proposals for this DAO in one request
