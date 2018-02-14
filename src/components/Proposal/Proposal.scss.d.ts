@@ -50,3 +50,4 @@ export const failPrediction: string;
 export const proposalDetails: string;
 export const createdBy: string;
 export const viewProposal: string;
+export const proposalsContainer: string;

@@ -49,19 +49,24 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
     });
 
     return(
-      <div className={css.proposalsContainer}>
-        <div className={css.proposalsHeader}>
-          Boosted Proposals
-          <span>Available funds: <span>13,000 ETH - 327 KIN</span></span>
-        </div>
-        <div className={css.proposalsContainer}>
-          {boostedProposalsHTML}
-        </div>
+      <div>
+        { boostedProposalsHTML.length > 0 ?
+          <div>
+            <div className={css.proposalsHeader}>
+              Boosted Proposals
+              <span>Available funds: <span>13,000 ETH - 327 KIN</span></span>
+            </div>
+            <div className={css.proposalsContainer}>
+                {boostedProposalsHTML}
+            </div>
+          </div>
+        : ""
+        }
         <div className={css.proposalsHeader}>
           All Proposals
         </div>
         <div className={css.proposalsContainer}>
-          {notBoostedProposalsHTML}
+            {notBoostedProposalsHTML}
         </div>
       </div>
     );
