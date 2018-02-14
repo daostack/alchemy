@@ -62,10 +62,10 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       const styles = {
         forBar: {
-          width: yesPercentage
+          width: yesPercentage + "%"
         },
         againstBar: {
-          width: noPercentage
+          width: noPercentage + "%"
         }
       }
 
