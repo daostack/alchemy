@@ -13,7 +13,7 @@ import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
 import * as schemas from '../schemas';
 
-import { IDaoState, ICollaboratorState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
+import { IDaoState, IMemberState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -64,7 +64,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     avatarAddress: avatarAddress,
     controllerAddress: "",
     name: await dao.getName(),
-    members: [],
+    members: {},
     rank: 1, // TODO
     promotedAmount: 0,
     proposals: [],
@@ -77,43 +77,43 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
   };
 
   if (detailed) {
-    // Get all collaborators
+    // Get all members
     const mintTokenEvents = dao.token.Mint({}, { fromBlock: 0 })
     const transferTokenEvents = dao.token.Transfer({}, { fromBlock: 0 });
     const mintReputationEvents = dao.reputation.Mint({}, { fromBlock: 0 });
-    let collaboratorAddresses : string[] = [];
+    let memberAddresses : string[] = [];
 
     const getMintTokenEvents = promisify(mintTokenEvents.get.bind(mintTokenEvents));
     let eventsArray = await getMintTokenEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-      collaboratorAddresses.push(eventsArray[cnt].args.to);
+      memberAddresses.push(eventsArray[cnt].args.to);
     }
 
     const getTransferTokenEvents = promisify(transferTokenEvents.get.bind(transferTokenEvents));
     eventsArray = await getTransferTokenEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-      collaboratorAddresses.push(eventsArray[cnt].args.to);
+      memberAddresses.push(eventsArray[cnt].args.to);
     }
 
     const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
     eventsArray = await getMintReputationEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-      collaboratorAddresses.push(eventsArray[cnt].args.to);
+      memberAddresses.push(eventsArray[cnt].args.to);
     }
 
-    collaboratorAddresses = [...new Set(collaboratorAddresses)]; // Dedupe
+    memberAddresses = [...new Set(memberAddresses)]; // Dedupe
 
-    let collaborators : ICollaboratorState[] = [];
-    for (let cnt = 0; cnt < collaboratorAddresses.length; cnt++) {
-      const address = collaboratorAddresses[cnt];
-      let collaborator = { address: address, tokens: 0, reputation: 0 };
+    let members : { [ key : string ] : IMemberState } = {};
+    for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
+      const address = memberAddresses[cnt];
+      let member = { address: address, tokens: 0, reputation: 0 };
       const tokens = await dao.token.balanceOf.call(address)
-      collaborator.tokens = Number(web3.fromWei(tokens, "ether"));
+      member.tokens = Number(web3.fromWei(tokens, "ether"));
       const reputation = await dao.reputation.reputationOf.call(address);
-      collaborator.reputation = Number(web3.fromWei(reputation, "ether"));
-      collaborators.push(collaborator);
+      member.reputation = Number(web3.fromWei(reputation, "ether"));
+      members[address] = member;
     }
-    daoData.members = collaborators;
+    daoData.members = members;
 
     // Get proposals
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
@@ -200,22 +200,22 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
   return daoData;
 }
 
-export function createDAO(daoName : string, tokenName: string, tokenSymbol: string, collaborators: any) : ThunkAction<any, IRootState, null> {
+export function createDAO(daoName : string, tokenName: string, tokenSymbol: string, members: any) : ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_DAO_PENDING, payload: null });
     try {
       const web3 : Web3 = Arc.Utils.getWeb3();
 
-      let founders : Arc.FounderConfig[] = [], collaborator;
-      collaborators.sort((a : any, b : any) => {
+      let founders : Arc.FounderConfig[] = [], member;
+      members.sort((a : any, b : any) => {
         b.reputation - a.reputation;
       });
-      for (let i = 0; i < collaborators.length; i++) {
-        collaborator = collaborators[i];
+      for (let i = 0; i < members.length; i++) {
+        member = members[i];
         founders[i] = {
-          address : collaborator.address,
-          tokens : web3.toWei(collaborator.tokens, "ether"),
-          reputation: web3.toWei(collaborator.reputation, "ether")
+          address : member.address,
+          tokens : web3.toWei(member.tokens, "ether"),
+          reputation: web3.toWei(member.reputation, "ether")
         }
       }
 
@@ -286,7 +286,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
         name: daoName,
-        members: [],
+        members: {},
         rank: 1, // TODO
         promotedAmount: 0,
         proposals: [],
@@ -333,13 +333,12 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
         reputationChange : web3.toWei(reputationReward, "ether")
       });
 
-
       // TODO: error checking
+
       const proposalId = submitProposalTransaction.proposalId;
 
-      // Cast a Yes vote as the owner of the proposal
+      // Cast a Yes vote as the owner of the proposal?
       //const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote: VotesStatus.Yes});
-      //console.log("vote tra = ", voteTransaction);
 
       const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
       const submittedAt = Math.round((new Date()).getTime() / 1000);
@@ -379,8 +378,6 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
         winningVote: 0
       };
 
-      // TODO: redeem stuff for creating a proposal?
-
       let payload = normalize(proposal, schemas.proposalSchema);
       (payload as any).daoAvatarAddress = daoAvatarAddress;
 
@@ -415,39 +412,41 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       let payload = {
         daoAvatarAddress: daoAvatarAddress,
         proposalId: proposalId,
-        state: ProposalStates.PreBoosted,
+        state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
         votesNo: Number(web3.fromWei(noVotes, "ether")),
         votesYes: Number(web3.fromWei(yesVotes, "ether")),
-        winningVote: 0 // TODO: check if it won
+        winningVote: 0
       }
 
       try {
         const executedDecision = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
         payload.winningVote = executedDecision;
 
-        // TODO: can we just determine what this is? either Executed or Closed?
-        payload.state = Number(await votingMachineInstance.getState({ proposalId : proposalId }));
+        // Did proposal pass?
+        if (executedDecision == VotesStatus.Yes) {
+          // Redeem rewards if there are any instant ones
 
-        // Redeem rewards if there are any instant ones
-        // XXX: hack to increase the time on the blockchain so that enough time has passed to redeem the rewards
-        //      so we can have instant rewards for demo
-        await increaseTime(1);
+          // XXX: hack to increase the time on the ganache blockchain so that enough time has passed to redeem the rewards
+          //      so we can have instant rewards for demo
+          await increaseTime(1);
 
-        const redeemTransaction = await contributionRewardInstance.redeemContributionReward({
-          proposalId: proposalId,
-          avatar: daoAvatarAddress,
-          reputation: true,
-          nativeTokens: true,
-          eths: true,
-          externalTokens: true
-        });
+          const redeemTransaction = await contributionRewardInstance.redeemContributionReward({
+            proposalId: proposalId,
+            avatar: daoAvatarAddress,
+            reputation: true,
+            nativeTokens: true,
+            eths: true,
+            externalTokens: true
+          });
 
-        // TODO: redeem stuff from genesis for the proposer, voter and stakers if it passed
+          // TODO: also update the member reputation and tokens based on rewards
+          console.log("redeem = ", redeemTransaction);
+
+          // TODO: redeem stuff from genesis for the proposer, voter and stakers if it passed
+        }
       } catch (err) {
         // The proposal was not executed
       }
-
-      // TODO: also update the member reputation and tokens based on rewards
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
     } catch (err) {

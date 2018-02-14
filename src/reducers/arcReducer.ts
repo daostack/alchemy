@@ -2,7 +2,7 @@ import * as update from 'immutability-helper';
 
 import * as ActionTypes from 'constants/arcConstants'
 
-export interface ICollaboratorState {
+export interface IMemberState {
   address: string
   tokens: number
   reputation: number
@@ -45,7 +45,7 @@ export interface IProposalState {
 export interface IDaoState {
   avatarAddress: string,
   controllerAddress: string,
-  members: ICollaboratorState[],
+  members: { [key : string] : IMemberState },
   name: string,
   rank: number,
   promotedAmount: number,
@@ -86,6 +86,27 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_VOTE_FULFILLED: {
+      if (action.payload.winningVote = VotesStatus.Yes) {
+        // If the proposal passed then update the member of the dao
+        // TODO: do this here or in the action?
+        const proposal = state.proposals[payload.proposalId];
+        let member = state.daos[payload.daoAvatarAddress].members[proposal.beneficiary];
+        console.log("fulfilled prop = ", proposal, " member = ", member);
+        if (member) {
+          // Add reputation and token rewards to current counts
+          member.tokens = member.tokens + proposal.rewardToken;
+          member.reputation = member.reputation + proposal.rewardToken;
+        } else {
+          // Add new member to the DAO
+          member = {
+            address: proposal.beneficiary,
+            reputation : proposal.rewardToken,
+            tokens : proposal.rewardToken
+          }
+        }
+        state = update(state, { daos: { [payload.daoAvatarAddress] : { members: { [proposal.beneficiary]: { $set : member } } } } });
+      }
+
       // Merge in proposal changes
       return update(state, {
         proposals: { [payload.proposalId]: { $merge : action.payload } }

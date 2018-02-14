@@ -4,7 +4,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaboratorState } from 'reducers/arcReducer';
+import { IDaoState, IMemberState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as css from './CreateDao.scss';
@@ -33,7 +33,7 @@ interface IState {
   name: string,
   tokenName: string,
   tokenSymbol: string,
-  collaborators: ICollaboratorState[]
+  members: IMemberState[]
 }
 
 class CreateDaoContainer extends React.Component<IProps, IState> {
@@ -45,13 +45,13 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
       name: "",
       tokenName: "",
       tokenSymbol: "",
-      collaborators: [ { address: this.props.web3.ethAccountAddress, tokens: 1000, reputation: 1000 }]
+      members: [ { address: this.props.web3.ethAccountAddress, tokens: 1000, reputation: 1000 }]
     };
   }
 
   handleSubmit = (event : any) => {
     event.preventDefault();
-    this.props.createDAO(this.state.name, this.state.tokenName, this.state.tokenSymbol, this.state.collaborators);
+    this.props.createDAO(this.state.name, this.state.tokenName, this.state.tokenSymbol, this.state.members);
     return false;
   }
 
@@ -66,38 +66,38 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
     });
   }
 
-  handleChangeCollaboratorAddress = (index : number) => (event : any) => {
-    const newCollaborators = this.state.collaborators.map((collaborator, sidx) => {
-      if (index !== sidx) return collaborator;
-      return { ...collaborator, address: event.target.value }
+  handleChangeMemberAddress = (index : number) => (event : any) => {
+    const newMembers = this.state.members.map((member, sidx) => {
+      if (index !== sidx) return member;
+      return { ...member, address: event.target.value }
     })
-    this.setState({ collaborators: newCollaborators });
+    this.setState({ members: newMembers });
   }
 
-  handleChangeCollaboratorTokens = (index : number) => (event : any) => {
-    const newCollaborators = this.state.collaborators.map((collaborator, sidx) => {
-      if (index !== sidx) return collaborator;
-      return { ...collaborator, tokens: event.target.value }
+  handleChangeMemberTokens = (index : number) => (event : any) => {
+    const newMembers = this.state.members.map((member, sidx) => {
+      if (index !== sidx) return member;
+      return { ...member, tokens: event.target.value }
     })
-    this.setState({ collaborators: newCollaborators });
+    this.setState({ members: newMembers });
   }
 
-  handleChangeCollaboratorReputation = (index : number) => (event : any) => {
-    const newCollaborators = this.state.collaborators.map((collaborator, sidx) => {
-      if (index !== sidx) return collaborator;
-      return { ...collaborator, reputation: event.target.value }
+  handleChangeMemberReputation = (index : number) => (event : any) => {
+    const newMembers = this.state.members.map((member, sidx) => {
+      if (index !== sidx) return member;
+      return { ...member, reputation: event.target.value }
     })
-    this.setState({ collaborators: newCollaborators });
+    this.setState({ members: newMembers });
   }
 
-  handleRemoveCollaborator = (index : number) => (event : any) => {
-    if (this.state.collaborators.length === 1) { return }
-    this.setState({ collaborators: this.state.collaborators.filter((c, sidx) => index !== sidx) })
+  handleRemoveMember = (index : number) => (event : any) => {
+    if (this.state.members.length === 1) { return }
+    this.setState({ members: this.state.members.filter((c, sidx) => index !== sidx) })
   }
 
-  handleAddCollaborator = (event : any) => {
+  handleAddMember = (event : any) => {
     this.setState({
-      collaborators: this.state.collaborators.concat([{ address: '', tokens: 1000, reputation: 1000 }]),
+      members: this.state.members.concat([{ address: '', tokens: 1000, reputation: 1000 }]),
     })
   }
 
@@ -141,57 +141,57 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
               value={this.state.tokenSymbol}
             />
             <br />
-            {this.renderCollaborators()}
+            {this.renderMembers()}
             <button type='submit'>Submit</button>
           </form>
       </div>
     );
   }
 
-  renderCollaborators() {
-    const collaboratorRows = this.state.collaborators.map((collaborator : ICollaboratorState, index : number) => {
+  renderMembers() {
+    const memberRows = this.state.members.map((member : IMemberState, index : number) => {
       return (
-        <div key={`collaborator_${index}_row_`}>
-          <label htmlFor={`collaborator_${index}_address_input`}>Member Address: </label>
+        <div key={`member_${index}_row_`}>
+          <label htmlFor={`member_${index}_address_input`}>Member Address: </label>
           <input
-            id={`collaborator_${index}_address_input`}
+            id={`member_${index}_address_input`}
             maxLength={42}
             minLength={42}
-            onChange={this.handleChangeCollaboratorAddress(index)}
+            onChange={this.handleChangeMemberAddress(index)}
             placeholder="0x0000000000000000000000000000000000000000"
-            ref={`collaborator_${index}_address_input`}
+            ref={`member_${index}_address_input`}
             size={46}
             type='string'
-            value={collaborator.address} />
-          <label htmlFor={`collaborator_${index}_tokens_input`}>Num Tokens: </label>
+            value={member.address} />
+          <label htmlFor={`member_${index}_tokens_input`}>Num Tokens: </label>
           <input
-            id={`collaborator_${index}_tokens_input`}
-            onChange={this.handleChangeCollaboratorTokens(index)}
-            ref={`collaborator_${index}_tokens_input`}
+            id={`member_${index}_tokens_input`}
+            onChange={this.handleChangeMemberTokens(index)}
+            ref={`member_${index}_tokens_input`}
             placeholder='assign initial tokens'
             size={10}
             type='string'
-            value={collaborator.tokens} />
-          <label htmlFor={`collaborator_${index}_reputation_input`}>Reputation: </label>
+            value={member.tokens} />
+          <label htmlFor={`member_${index}_reputation_input`}>Reputation: </label>
           <input
-            id={`collaborator_${index}_reputation_input`}
-            onChange={this.handleChangeCollaboratorReputation(index)}
+            id={`member_${index}_reputation_input`}
+            onChange={this.handleChangeMemberReputation(index)}
             placeholder="assign initial reputation"
-            ref={`collaborator_${index}_reputation_input`}
+            ref={`member_${index}_reputation_input`}
             size={10}
             type='string'
-            value={collaborator.reputation} />
-          {index > 0 ? <button type='button' tabIndex={-1} onClick={this.handleRemoveCollaborator(index)}>X</button> : ""}
+            value={member.reputation} />
+          {index > 0 ? <button type='button' tabIndex={-1} onClick={this.handleRemoveMember(index)}>X</button> : ""}
         </div>
       );
     });
 
     return (
-      <div className={css.collaborators}>
+      <div className={css.members}>
         <h3>DAO Members</h3>
-        {collaboratorRows}
+        {memberRows}
         <br />
-        <button type='button' onClick={this.handleAddCollaborator}>Add Collaborator</button>
+        <button type='button' onClick={this.handleAddMember}>Add Member</button>
       </div>
     );
   }

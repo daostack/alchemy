@@ -6,7 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaboratorState } from 'reducers/arcReducer';
+import { IDaoState, IMemberState } from 'reducers/arcReducer';
 import * as schemas from '../../schemas';
 
 import * as css from './ViewDao.scss';
@@ -33,10 +33,11 @@ class DaoMembersContainer extends React.Component<IProps, null> {
   render() {
     const { dao } = this.props;
 
-    const membersHTML = dao.members.map((member : ICollaboratorState, index : number) => {
+    const membersHTML = Object.keys(dao.members).map((address : string) => {
+      const member = dao.members[address];
       return (
-        <div className={css.member} key={"member_" + index}>
-          <strong>{index + 1}: {member.address}</strong>
+        <div className={css.member} key={"member_" + address}>
+          <strong>{member.address}</strong>
           <br />
           Tokens: <span>{member.tokens}</span>
           <br />

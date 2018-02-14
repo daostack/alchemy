@@ -6,7 +6,7 @@ import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaboratorState, IProposalState } from 'reducers/arcReducer';
+import { IDaoState, IMemberState, IProposalState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 import * as schemas from '../../schemas';
 import * as selectors from 'selectors/daoSelectors';
