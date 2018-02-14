@@ -6,22 +6,26 @@ import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
+import { IDaoState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
+import AccountPopup from 'components/Account/AccountPopup';
 import PredictionBox from './PredictionBox';
 import VoteBox from './VoteBox';
 
 import * as css from './Proposal.scss';
 
 interface IStateProps {
-  web3: IWeb3State
+  dao: IDaoState
   proposal: IProposalState
+  web3: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
+  const proposal = state.arc.proposals[ownProps.proposalId];
   return {
-    proposal: state.arc.proposals[ownProps.proposalId],
+    dao: state.arc.daos[proposal.daoAvatarAddress],
+    proposal: proposal,
     web3: state.web3 // TODO: just need the current account address right?
   };
 };
@@ -41,7 +45,7 @@ type IProps = IStateProps & IDispatchProps
 class ProposalContainer extends React.Component<IProps, null> {
 
   render() {
-    const { proposal, voteOnProposal, stakeProposal, web3 } = this.props;
+    const { dao, proposal, voteOnProposal, stakeProposal, web3 } = this.props;
 
     if (proposal) {
       var proposalClass = classNames({
@@ -51,10 +55,19 @@ class ProposalContainer extends React.Component<IProps, null> {
         [css.passedProposal]: proposal.winningVote == VotesStatus.Yes
       });
 
-      const yesPercentage = proposal.totalVotes ? Math.round(proposal.votesYes / proposal.totalVotes * 100) : 0;
-      const noPercentage = proposal.totalVotes ? Math.round(proposal.votesNo / proposal.totalVotes * 100) : 0;
-
       let submittedAt = moment.unix(proposal.submittedAt);
+
+      const yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
+      const noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
+
+      const styles = {
+        forBar: {
+          width: yesPercentage
+        },
+        againstBar: {
+          width: noPercentage
+        }
+      }
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
@@ -62,6 +75,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             <VoteBox
               proposal={proposal}
               voteOnProposal={voteOnProposal}
+              daoTotalReputation={dao.reputationCount}
             />
             : proposal.winningVote == VotesStatus.Yes ?
               <div className={css.decidedProposal}>
@@ -86,8 +100,8 @@ class ProposalContainer extends React.Component<IProps, null> {
               <div className={css.decisionGraph}>
                 <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
                 <div className={css.graph}>
-                  <div className={css.forBar}></div>
-                  <div className={css.againstBar}></div>
+                  <div className={css.forBar} style={styles.forBar}></div>
+                  <div className={css.againstBar} style={styles.againstBar}></div>
                   <div className={css.divider}></div>
                 </div>
                 <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
@@ -108,26 +122,10 @@ class ProposalContainer extends React.Component<IProps, null> {
               <span className={css.transferAmount}>{proposal.rewardToken} ETH &amp; {proposal.rewardReputation} Reputation</span>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
-
-              <div className={css.targetAccount}>
-                <div className={css.avatar}>
-                  <img src="/assets/images/generic-user-avatar.png"/>
-                </div>
-                <div className={css.accountInfo}>
-                  <div className={css.beneficiaryAddress}>
-                    <span>{proposal.beneficiary}</span>
-                    <button><img src="/assets/images/Icon/Copy-white.svg"/></button>
-                  </div>
-                  <div className={css.holdings}>
-                    <span>HOLDINGS</span>
-                    <div>15,2333 <strong>Genesis Reputation</strong></div>
-                    <div>15,2333 <strong>GEN</strong></div>
-                    <div>15,2333 <strong>ETH</strong></div>
-                  </div>
-                  <button className={css.viewProfile}>View Profile</button>
-                </div>
-              </div>
-
+              <AccountPopup
+                accountAddress={proposal.beneficiary}
+                daoAvatarAddress={proposal.daoAvatarAddress}
+              />
             </div>
           </div>
           { proposal.state == ProposalStates.Boosted ?
@@ -136,26 +134,10 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <div className={css.createdBy}>
                     CREATED BY
 
-
-                    <div className={css.targetAccount}>
-                      <div className={css.avatar}>
-                        <img src="/assets/images/generic-user-avatar.png"/>
-                      </div>
-                      <div className={css.accountInfo}>
-                        <div className={css.beneficiaryAddress}>
-                          <span>{proposal.beneficiary}</span>
-                          <button><img src="/assets/images/Icon/Copy-white.svg"/></button>
-                        </div>
-                        <div className={css.holdings}>
-                          <span>HOLDINGS</span>
-                          <div>15,2333 <strong>Genesis Reputation</strong></div>
-                          <div>15,2333 <strong>GEN</strong></div>
-                          <div>15,2333 <strong>ETH</strong></div>
-                        </div>
-                        <button className={css.viewProfile}>View Profile</button>
-                      </div>
-                    </div>
-
+                    <AccountPopup
+                      accountAddress={proposal.beneficiary}
+                      daoAvatarAddress={proposal.daoAvatarAddress}
+                    />
 
                     ON JAN 29TH
                   </div>
@@ -173,27 +155,10 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <div className={css.createdBy}>
                     CREATED BY
 
-
-                    <div className={css.targetAccount}>
-                      <div className={css.avatar}>
-                        <img src="/assets/images/generic-user-avatar.png"/>
-                      </div>
-                      <div className={css.accountInfo}>
-                        <div className={css.beneficiaryAddress}>
-                          <span>{proposal.beneficiary}</span>
-                          <button><img src="/assets/images/Icon/Copy-white.svg"/></button>
-                        </div>
-                        <div className={css.holdings}>
-                          <span>HOLDINGS</span>
-                          <div>15,2333 <strong>Genesis Reputation</strong></div>
-                          <div>15,2333 <strong>GEN</strong></div>
-                          <div>15,2333 <strong>ETH</strong></div>
-                        </div>
-                        <button className={css.viewProfile}>View Profile</button>
-                      </div>
-                    </div>
-
-
+                    <AccountPopup
+                      accountAddress={proposal.beneficiary}
+                      daoAvatarAddress={proposal.daoAvatarAddress}
+                    />
 
                     ON JAN 29TH
                   </div>

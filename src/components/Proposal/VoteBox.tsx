@@ -10,6 +10,7 @@ import EthBalance from 'components/EthBalance/EthBalance';
 import * as css from './Proposal.scss';
 
 interface IProps {
+  daoTotalReputation: number
   proposal: IProposalState
   voteOnProposal: typeof arcActions.voteOnProposal
 }
@@ -22,17 +23,23 @@ export default class VoteBox extends React.Component<IProps, null> {
   }
 
   render() {
-    const { proposal } = this.props;
+    const { proposal, daoTotalReputation } = this.props;
 
-    const yesPercentage = proposal.totalVotes ? Math.round(proposal.votesYes / proposal.totalVotes * 100) : 0;
-    const noPercentage = proposal.totalVotes ? Math.round(proposal.votesNo / proposal.totalVotes * 100) : 0;
+    const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
+    const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
 
     const styles = {
       yesGraph: {
-        height: yesPercentage + "px"
+        height: yesPercentage + "%"
       },
       noGraph: {
-        height: noPercentage + "px"
+        height: noPercentage + "%"
+      },
+      forBar: {
+        width: yesPercentage + "%"
+      },
+      againstBar: {
+        width: noPercentage + "%"
       }
     }
 
@@ -63,7 +70,7 @@ export default class VoteBox extends React.Component<IProps, null> {
           <div className={css.reputationTurnout}>
             <div className={css.header}>REPUTATION TURNOUT</div>
             <div className={css.turnoutInfo}>
-              <span className={css.description}>312 accounts holding {proposal.totalVotes} reputation have voted</span>
+              <span className={css.description}>XXX accounts holding {proposal.totalVotes} reputation have voted</span>
               <div className={css.turnoutGraph}>
                 <div className={css.turnoutStats}>
                   <span className={css.forLabel}>{proposal.votesYes} <span>FOR</span></span>
@@ -71,12 +78,12 @@ export default class VoteBox extends React.Component<IProps, null> {
                 </div>
 
                 <div className={css.graph}>
-                  <div className={css.forBar}></div>
+                  <div className={css.forBar} style={styles.forBar}></div>
                   <div className={css.divider}></div>
-                  <div className={css.againstBar}></div>
+                  <div className={css.againstBar} style={styles.againstBar}></div>
                 </div>
 
-                <div className={css.reputationThreshold}>42,689 REPUTATION NEEDED FOR DECISION BY VOTE</div>
+                <div className={css.reputationThreshold}>{(daoTotalReputation / 2).toLocaleString()} REPUTATION NEEDED FOR DECISION BY VOTE</div>
 
               </div>
             </div>
