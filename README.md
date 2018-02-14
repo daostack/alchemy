@@ -1,13 +1,18 @@
 # Alchemy Client
 
 ## Dependencies:
-* [NVM](https://github.com/creationix/nvm#installation)
-* [NodeJS 9.3 or greater + NPM](https://github.com/creationix/nvm#usage)
+* [NVM](https://github.com/creationix/nvm#installation) can be helpful to manage different versions of node
+* [NodeJS 9.4 or greater + NPM](https://github.com/creationix/nvm#usage)
+* You will also need [alchemy-server](https://github.com/daostack/alchemy-server) running locally to save and display proposal titles and descriptions
 
 ## Installation
 * `npm install`
 
 # Run app locally
+
+## Run the Alchemy Server
+1. If you want to be able to save and display the proposal titles and descriptions you will need the Alchemy Server app running.
+2. Follow instructions [here](https://github.com/daostack/alchemy-server)
 
 ## Working with Ganache without MetaMask
 1. Switch off chrome extensions such as MetaMask or Parity extension
