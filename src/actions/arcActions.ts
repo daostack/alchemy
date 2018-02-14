@@ -379,6 +379,8 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
         winningVote: 0
       };
 
+      // TODO: redeem stuff for creating a proposal?
+
       let payload = normalize(proposal, schemas.proposalSchema);
       (payload as any).daoAvatarAddress = daoAvatarAddress;
 
@@ -419,24 +421,33 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
         winningVote: 0 // TODO: check if it won
       }
 
-      // See if the proposal was executed, either passing or failing
-      //const executedDecision = voteTransaction.getValueFromTx("_decision", "ExecutePoposal");
-      // TODO
+      try {
+        const executedDecision = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
+        payload.winningVote = executedDecision;
 
-      //console.log(voteTransaction, " decision = ", Number(executedDecision));
+        // TODO: can we just determine what this is? either Executed or Closed?
+        payload.state = Number(await votingMachineInstance.getState({ proposalId : proposalId }));
 
-      // if (executed) {
-      //   const decision = executed.args._decision.toNumber();
-      //   payload.state = "Executed";
-      //   if (decision == 1) {
-      //     payload.winningVote = 1;
-      //   } else if (decision == 2) {
-      //     payload.winningVote = 2;
-      //   } else {
-      //     dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposal decision ", decision });
-      //     return
-      //   }
-      // }
+        // Redeem rewards if there are any instant ones
+        // XXX: hack to increase the time on the blockchain so that enough time has passed to redeem the rewards
+        //      so we can have instant rewards for demo
+        await increaseTime(1);
+
+        const redeemTransaction = await contributionRewardInstance.redeemContributionReward({
+          proposalId: proposalId,
+          avatar: daoAvatarAddress,
+          reputation: true,
+          nativeTokens: true,
+          eths: true,
+          externalTokens: true
+        });
+
+        // TODO: redeem stuff from genesis for the proposer, voter and stakers if it passed
+      } catch (err) {
+        // The proposal was not executed
+      }
+
+      // TODO: also update the member reputation and tokens based on rewards
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
     } catch (err) {
@@ -494,4 +505,29 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       dispatch({ type: arcConstants.ARC_STAKE_REJECTED, payload: err.message });
     }
   }
+}
+
+async function increaseTime(duration : number) {
+  const id = new Date().getTime();
+  const web3 = Arc.Utils.getWeb3();
+
+  return new Promise((resolve, reject) => {
+    web3.currentProvider.sendAsync({
+      jsonrpc: "2.0",
+      method: "evm_increaseTime",
+      params: [duration],
+      id: id,
+    }, err1 => {
+      if (err1) {return reject(err1);}
+
+      web3.currentProvider.sendAsync({
+        jsonrpc: "2.0",
+        method: "evm_mine",
+        params: [],
+        id: id + 1,
+      }, (err2, res) => {
+        return err2 ? reject(err2) : resolve(res);
+      });
+    });
+  });
 }

@@ -84,6 +84,13 @@ const arcReducer = (state = initialState, action: any) => {
       // Add the new proposal to the DAO's state
       return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
     }
+
+    case ActionTypes.ARC_VOTE_FULFILLED: {
+      // Merge in proposal changes
+      return update(state, {
+        proposals: { [payload.proposalId]: { $merge : action.payload } }
+      });
+    }
   }
 
   return state;
