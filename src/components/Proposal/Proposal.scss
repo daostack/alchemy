@@ -32,7 +32,7 @@
 
 .passedProposal {
 	border-left: 4px solid $accent-1;
-	
+
 	.proposalInfo {
 	  	left: 105px;
 	}
@@ -81,7 +81,7 @@
 		opacity: 0;
 		z-index: 100;
 	}
-	
+
 	button:hover .upvote, button:hover .downvote {
 		opacity: 0;
 	}
@@ -171,7 +171,7 @@
 				}
 			}
 
-				
+
 			.reputationThreshold {
 				font-size: $small;
 				font-weight: $bold;
@@ -460,7 +460,6 @@
 
 	.voteGraph .voteMeasurement {
 		width: 20px;
-		height: 20px;
 		position: absolute;
 		border-radius: 0 0 3px 3px;
 		bottom: 0;

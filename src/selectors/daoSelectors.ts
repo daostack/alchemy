@@ -2,7 +2,7 @@ import { denormalize } from 'normalizr';
 import { createSelector } from 'reselect';
 
 import { IRootState } from 'reducers';
-import { IProposalState } from 'reducers/arcReducer';
+import { IProposalState, ProposalStates } from 'reducers/arcReducer';
 import * as schemas from '../schemas';
 
 const getArcEntities = (state : IRootState) => state.arc;
@@ -22,21 +22,21 @@ const getDaoProposals = createSelector(
 export const makeDaoBoostedProposalsSelector = () => {
   return createSelector(
     [ getDaoProposals ],
-    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == 'Boosted'))
+    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == ProposalStates.Boosted))
   );
 };
 
-export const makeDaoNotBoostedProposalsSelector = () => {
+export const makeDaoPreBoostedProposalsSelector = () => {
   return createSelector(
     [ getDaoProposals ],
-    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == 'NotBoosted'))
+    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == ProposalStates.PreBoosted))
   );
 };
 
 export const makeDaoExecutedProposalsSelector = () => {
   return createSelector(
     [ getDaoProposals ],
-    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == 'Executed'))
+    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed))
   );
 };
 

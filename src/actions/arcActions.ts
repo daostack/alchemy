@@ -13,7 +13,7 @@ import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
 import * as schemas from '../schemas';
 
-import { IDaoState, ICollaboratorState, IProposalState, ProposalStates } from 'reducers/arcReducer';
+import { IDaoState, ICollaboratorState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -117,6 +117,13 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
 
     // Get proposals
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
+
+    // Get the voting machine (GenesisProtocol) TODO: update as Arc.js supports a better way to do this
+    const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
+    const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
+    const votingMachineAddress = schemeParams[2];
+    const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+
     const newProposalEvents = contributionRewardInstance.NewContributionProposal({}, { fromBlock: 0 });
     const getNewProposalEvents = promisify(newProposalEvents.get.bind(newProposalEvents));
     const allProposals = await getNewProposalEvents();
@@ -126,17 +133,17 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     const executedProposals = await getExecutedProposalEvents();
     const executedProposalIds = executedProposals.map((proposal : any) => proposal.args._proposalId);
 
-    const failedProposalEvents = contributionRewardInstance.ProposalDeleted({}, { fromBlock: 0 });
-    const getFailedProposalEvents = promisify(failedProposalEvents.get.bind(failedProposalEvents));
-    const failedProposals = await getFailedProposalEvents();
-    const failedProposalIds = failedProposals.map((proposal : any) => proposal.args._proposalId);
-
-    let proposalArgs : any;
+    let proposalArgs : any, proposalId : string, description: string, submittedAt: number, title: string;
     for (let cnt = 0; cnt < allProposals.length; cnt++) {
       proposalArgs = allProposals[cnt].args;
+
       if (proposalArgs._avatar == dao.avatar.address) {
+        proposalId = proposalArgs._proposalId;
+
         // Default to showing the description hash if we don't have better description on the server
-        let description = proposalArgs._contributionDescription;
+        description = proposalArgs._contributionDescription;
+        submittedAt = 0;
+        title = proposalArgs._contributionDescription;
 
         // Get description from the server
         // TODO: pull all the proposals for this DAO in one request
@@ -144,46 +151,47 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"arcId":"'+proposalArgs._proposalId+'"}}');
           if (response.data.length > 0) {
             description = response.data[0].description;
+            submittedAt = response.data[0].submittedAt;
+            title = response.data[0].title;
           }
         } catch (e) {
           console.log(e);
         }
 
+        const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
+        const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
+
+        const yesStakes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
+        const noStakes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
+
+        const { totalVotes, totalStakes, votersStakes } = await votingMachineInstance.getProposalStatus({ proposalId: proposalId });
+
         let proposal = <IProposalState>{
           beneficiary: proposalArgs._beneficiary,
           boostedAt: 0, // TODO
-          description: description, // TODO
+          description: description,
           daoAvatarAddress: dao.avatar.address,
-          state: "NotBoosted", // TODO: Closed, Executed, NotBoosted, Boosted
-          predictionsFail: 0, // TODO
-          predictionsPass: 0, // TODO
-          proposalId: proposalArgs._proposalId,
+          state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          proposalId: proposalId,
           rewardEth: 0, // TODO
-          rewardReputation: Number(web3.fromWei(proposalArgs._rewards[1], "ether")),
+          rewardReputation: Number(web3.fromWei(proposalArgs._reputationChange, "ether")),
           rewardToken: Number(web3.fromWei(proposalArgs._rewards[0], "ether")),
-          submittedAt: 0, // TODO
-          votesYes: 0,
-          votesNo: 0,
+          stakesNo: Number(web3.fromWei(noStakes, "ether")),
+          stakesYes: Number(web3.fromWei(yesStakes, "ether")),
+          submittedAt: submittedAt,
+          title: title,
+          totalStakes: Number(web3.fromWei(totalStakes, "ether")),
+          totalVotes: Number(web3.fromWei(totalVotes, "ether")),
+          votesYes: Number(web3.fromWei(yesVotes, "ether")),
+          votesNo: Number(web3.fromWei(noVotes, "ether")),
           winningVote: 0
         };
 
-        if (executedProposalIds.includes(proposalArgs._proposalId)) {
-          proposal.state = ProposalStates.Executed;
-          proposal.winningVote = 1;
-        } else if (failedProposalIds.includes(proposalArgs._proposalId)) {
-          proposal.state = ProposalStates.Executed;
-          proposal.winningVote = 2;
-        } else {
-          // TODO: update as Arc.js supports better stuff
-          const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
-          const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
-          const votingMachineAddress = schemeParams[2];
-          const votingMachineInstance = await Arc.Utils.requireContract("AbsoluteVote").at(votingMachineAddress);
+        if (executedProposalIds.includes(proposalId)) {
+          //proposal.state = ProposalStates.Executed;
+          proposal.winningVote = await votingMachineInstance.getWinningVote({ proposalId : proposalId });
+        }
 
-          const votesStatus = await votingMachineInstance.votesStatus(proposalArgs._proposalId);
-          proposal.votesYes = Number(web3.fromWei(votesStatus[1], "ether"));
-          proposal.votesNo = Number(web3.fromWei(votesStatus[2], "ether"));
-        };
         daoData.proposals.push(proposal);
       }
     }
@@ -211,17 +219,68 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         }
       }
 
-      let schemes = [{
-        name: "ContributionReward"
-      }];
+      /**** TODO: use Arc.DAO.new once it supports GenesisProtocol ****/
+      // let schemes = [{
+      //   name: "ContributionReward"
+      // }];
 
-      let dao = await Arc.DAO.new({
+      // let dao = await Arc.DAO.new({
+      //   name: daoName,
+      //   tokenName: tokenName,
+      //   tokenSymbol: tokenSymbol,
+      //   founders: founders,
+      //   schemes: schemes
+      // });
+
+      const daoCreator = await Arc.DaoCreator.deployed();
+      let daoTransaction = await daoCreator.forgeOrg({
         name: daoName,
         tokenName: tokenName,
         tokenSymbol: tokenSymbol,
-        founders: founders,
-        schemes: schemes
+        founders: founders
       });
+
+      const avatarAddress = daoTransaction.getValueFromTx("_avatar", "NewOrg");
+      const dao = await Arc.DAO.at(avatarAddress);
+
+      const votingMachine = await Arc.GenesisProtocol.deployed();
+
+      const votingMachineParamsHash = (await votingMachine.setParams({
+        preBoostedVoteRequiredPercentage: 50,
+        preBoostedVotePeriodLimit: 60,
+        boostedVotePeriodLimit: 60,
+        thresholdConstA: 1,
+        thresholdConstB: 1,
+        minimumStakingFee: 0,
+        quietEndingPeriod: 0,
+        proposingRepRewardConstA: 1,
+        proposingRepRewardConstB: 1,
+        stakerFeeRatioForVoters: 1,
+        votersReputationLossRatio: 10,
+        votersGainRepRatioFromLostRep: 80,
+        governanceFormulasInterface: "0x0000000000000000000000000000000000000000"
+      })).result;
+
+      const contributionReward = await Arc.ContributionReward.deployed();
+      const contributionRewardParamsHash = (await contributionReward.setParams({
+        orgNativeTokenFee: web3.toWei(0, "ether"),
+        votingMachine: votingMachine.contract.address,
+        voteParametersHash: votingMachineParamsHash
+      })).result;
+
+      const initialSchemesSchemes = [contributionReward.contract.address, votingMachine.contract.address];
+      const initialSchemesParams = [contributionRewardParamsHash, votingMachineParamsHash];
+      const initialSchemesPermissions = ["0x00000001", "0x00000000"];
+
+      // register the schemes with the dao
+      const tx = await daoCreator.contract.setSchemes(
+        avatarAddress,
+        initialSchemesSchemes,
+        initialSchemesParams,
+        initialSchemesPermissions
+      );
+
+      /* EO creating DAO */
 
       let daoData : IDaoState = {
         avatarAddress: dao.avatar.address,
@@ -247,34 +306,53 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
   } /* EO createDAO */
 }
 
-export function createProposal(daoAvatarAddress : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
+export function createProposal(daoAvatarAddress : string, title : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_PENDING, payload: null });
     try {
       const web3 : Web3 = Arc.Utils.getWeb3();
       const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
+      const dao = await Arc.DAO.at(daoAvatarAddress);
+
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
+
+      // Get the voting machine (GenesisProtocol) TODO: there will be a better way to do this in Arc.js soon
+      const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
+      const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
+      const votingMachineAddress = schemeParams[2];
+      const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
       const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
         avatar: daoAvatarAddress,
+        beneficiary : beneficiary,
         description: description,
         nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
-        reputationReward : web3.toWei(reputationReward, "ether"),
-        beneficiary : beneficiary,
+        numberOfPeriods: 1,
+        periodLength : 1,
+        reputationChange : web3.toWei(reputationReward, "ether")
       });
+
 
       // TODO: error checking
       const proposalId = submitProposalTransaction.proposalId;
-      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
 
+      // Cast a Yes vote as the owner of the proposal
+      //const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote: VotesStatus.Yes});
+      //console.log("vote tra = ", voteTransaction);
+
+      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
+      const submittedAt = Math.round((new Date()).getTime() / 1000);
+
+      // Save the proposal title, description and submitted time on the server
       try {
         const response = await axios.post(arcConstants.API_URL + '/api/proposals', {
           arcId: proposalId,
           daoAvatarAddress: daoAvatarAddress,
           descriptionHash: descriptionHash,
           description: description,
-          title: "title"
+          submittedAt: submittedAt,
+          title: title
         });
       } catch (e) {
         console.log(e);
@@ -285,14 +363,17 @@ export function createProposal(daoAvatarAddress : string, description : string, 
         boostedAt: 0, // TODO
         description: description, // TODO
         daoAvatarAddress: daoAvatarAddress,
-        state: "NotBoosted", // TODO, string // Closed, Executed, NotBoosted, Boosted
-        predictionsFail: 0, // TODO
-        predictionsPass: 0, // TODO
+        state: ProposalStates.PreBoosted, // TODO: update if we do vote
         proposalId: proposalId,
         rewardEth: 0, // TODO
         rewardReputation: reputationReward,
         rewardToken: nativeTokenReward,
-        submittedAt: 0, // TODO
+        stakesNo: 0,
+        stakesYes: 0,
+        submittedAt: submittedAt,
+        title: title,
+        totalStakes: 0,
+        totalVotes: 0,
         votesYes: 0,
         votesNo: 0,
         winningVote: 0
@@ -309,7 +390,7 @@ export function createProposal(daoAvatarAddress : string, description : string, 
   }
 }
 
-export function voteOnProposal(daoAvatarAddress: string, proposalId: string|number, voterAddress: string, vote: number) {
+export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: null });
     try {
@@ -323,38 +404,94 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string|numb
       const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-      const votingMachineInstance = await Arc.Utils.requireContract("AbsoluteVote").at(votingMachineAddress);
+      const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
-      const voteTransaction = await votingMachineInstance.vote(proposalId, vote, { from: ethAccountAddress, gas: 4000000 });
-      const votesStatus = await votingMachineInstance.votesStatus(proposalId);
+      const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote : vote} );
+      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
+      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
 
       let payload = {
-        votesNo: Number(web3.fromWei(votesStatus[2], "ether")),
         daoAvatarAddress: daoAvatarAddress,
         proposalId: proposalId,
-        state: "NotBoosted",
-        votesYes: Number(web3.fromWei(votesStatus[1], "ether")),
-        winningVote: 0
+        state: ProposalStates.PreBoosted,
+        votesNo: Number(web3.fromWei(noVotes, "ether")),
+        votesYes: Number(web3.fromWei(yesVotes, "ether")),
+        winningVote: 0 // TODO: check if it won
       }
 
       // See if the proposal was executed, either passing or failing
-      const executed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
-      if (executed) {
-        const decision = executed.args._decision.toNumber();
-        payload.state = "Executed";
-        if (decision == 1) {
-          payload.winningVote = 1;
-        } else if (decision == 2) {
-          payload.winningVote = 2;
-        } else {
-          dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposal decision ", decision });
-          return
-        }
-      }
+      //const executedDecision = voteTransaction.getValueFromTx("_decision", "ExecutePoposal");
+      // TODO
+
+      //console.log(voteTransaction, " decision = ", Number(executedDecision));
+
+      // if (executed) {
+      //   const decision = executed.args._decision.toNumber();
+      //   payload.state = "Executed";
+      //   if (decision == 1) {
+      //     payload.winningVote = 1;
+      //   } else if (decision == 2) {
+      //     payload.winningVote = 2;
+      //   } else {
+      //     dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposal decision ", decision });
+      //     return
+      //   }
+      // }
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
     } catch (err) {
       dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
+    }
+  }
+}
+
+export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote: number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    dispatch({ type: arcConstants.ARC_STAKE_PENDING, payload: null });
+    try {
+      const web3 : Web3 = Arc.Utils.getWeb3();
+      const ethAccountAddress : string = getState().web3.ethAccountAddress;
+
+      const daoInstance = await Arc.DAO.at(daoAvatarAddress);
+      const contributionRewardInstance = await Arc.ContributionReward.deployed();
+
+      // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
+      const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
+      const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
+      const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
+      const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+
+      const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : web3.toWei(1, "ether")});
+      const stakeStatus = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: vote });
+
+      console.log("Stake tr = ", stakeTransaction);
+
+      let payload = {
+        daoAvatarAddress: daoAvatarAddress,
+        proposalId: proposalId,
+        state: "PreBoosted",
+        stakesNo: 0,
+        stakesYes: 1,
+      }
+
+      // See if the proposal was executed, either passing or failing
+      // const executed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
+      // if (executed) {
+      //   const decision = executed.args._decision.toNumber();
+      //   payload.state = "Executed";
+      //   if (decision == 1) {
+      //     payload.winningVote = 1;
+      //   } else if (decision == 2) {
+      //     payload.winningVote = 2;
+      //   } else {
+      //     dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposal decision ", decision });
+      //     return
+      //   }
+      // }
+
+      dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload: payload });
+    } catch (err) {
+      dispatch({ type: arcConstants.ARC_STAKE_REJECTED, payload: err.message });
     }
   }
 }

@@ -9,10 +9,16 @@ export interface ICollaboratorState {
 }
 
 export enum ProposalStates {
-  Closed = "Closed",
-  Executed = "Executed",
-  NotBoosted = "NotBoosted",
-  Boosted = "Boosted"
+  Closed = 0,
+  Executed = 1,
+  PreBoosted = 2,
+  Boosted = 3,
+  QuietEndingPeriod = 4
+}
+
+export enum VotesStatus {
+  Yes = 1,
+  No = 2
 }
 
 export interface IProposalState {
@@ -21,16 +27,19 @@ export interface IProposalState {
   description: string
   daoAvatarAddress: string
   state: ProposalStates
-  predictionsFail: number
-  predictionsPass: number
-  proposalId: string|number
+  proposalId: string
   rewardEth: number
   rewardReputation: number
   rewardToken: number
+  stakesNo: number
+  stakesYes: number
   submittedAt: number
+  title: string
+  totalStakes: number
+  totalVotes: number
   votesYes: number
   votesNo: number
-  winningVote: number // 1 = YES, 2 = NO
+  winningVote: VotesStatus
 }
 
 export interface IDaoState {
