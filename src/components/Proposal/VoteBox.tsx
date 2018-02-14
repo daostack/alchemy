@@ -10,20 +10,38 @@ import EthBalance from 'components/EthBalance/EthBalance';
 import * as css from './Proposal.scss';
 
 interface IProps {
+  daoTotalReputation: number
   proposal: IProposalState
   voteOnProposal: typeof arcActions.voteOnProposal
-  voterAddress: string
 }
 
 export default class VoteBox extends React.Component<IProps, null> {
 
   handleClickVote = (vote : number) => (event : any) => {
-    const { proposal, voteOnProposal, voterAddress } = this.props;
-    voteOnProposal(proposal.daoAvatarAddress, proposal.proposalId, voterAddress, vote);
+    const { proposal, voteOnProposal } = this.props;
+    voteOnProposal(proposal.daoAvatarAddress, proposal.proposalId, vote);
   }
 
   render() {
-    const { proposal } = this.props;
+    const { proposal, daoTotalReputation } = this.props;
+
+    const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
+    const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
+
+    const styles = {
+      yesGraph: {
+        height: yesPercentage + "%"
+      },
+      noGraph: {
+        height: noPercentage + "%"
+      },
+      forBar: {
+        width: yesPercentage + "%"
+      },
+      againstBar: {
+        width: noPercentage + "%"
+      }
+    }
 
     return (
       <div className={css.voteBox + " " + css.clearfix}>
@@ -43,16 +61,16 @@ export default class VoteBox extends React.Component<IProps, null> {
         <div className={css.voteGraphs}>
           <div className={css.upvoteGraph + " " + css.voteGraph}>
             <div className={css.dividingLine}></div>
-            <div className={css.voteMeasurement}></div>
+            <div className={css.voteMeasurement} style={styles.yesGraph}></div>
           </div>
           <div className={css.downvoteGraph + " " + css.voteGraph}>
             <div className={css.dividingLine}></div>
-            <div className={css.voteMeasurement}></div>
+            <div className={css.voteMeasurement} style={styles.noGraph}></div>
           </div>
           <div className={css.reputationTurnout}>
             <div className={css.header}>REPUTATION TURNOUT</div>
             <div className={css.turnoutInfo}>
-              <span className={css.description}>312 accounts holding 46,316 reputation have voted</span>
+              <span className={css.description}>XXX accounts holding {proposal.totalVotes} reputation have voted</span>
               <div className={css.turnoutGraph}>
                 <div className={css.turnoutStats}>
                   <span className={css.forLabel}>{proposal.votesYes} <span>FOR</span></span>
@@ -60,12 +78,12 @@ export default class VoteBox extends React.Component<IProps, null> {
                 </div>
 
                 <div className={css.graph}>
-                  <div className={css.forBar}></div>
+                  <div className={css.forBar} style={styles.forBar}></div>
                   <div className={css.divider}></div>
-                  <div className={css.againstBar}></div>
+                  <div className={css.againstBar} style={styles.againstBar}></div>
                 </div>
 
-                <div className={css.reputationThreshold}>42,689 REPUTATION NEEDED FOR DECISION BY VOTE</div>                  
+                <div className={css.reputationThreshold}>{(daoTotalReputation / 2).toLocaleString()} REPUTATION NEEDED FOR DECISION BY VOTE</div>
 
               </div>
             </div>

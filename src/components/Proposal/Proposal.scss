@@ -32,7 +32,7 @@
 
 .passedProposal {
 	border-left: 4px solid $accent-1;
-	
+
 	.proposalInfo {
 	  	left: 105px;
 	}
@@ -81,7 +81,7 @@
 		opacity: 0;
 		z-index: 100;
 	}
-	
+
 	button:hover .upvote, button:hover .downvote {
 		opacity: 0;
 	}
@@ -171,7 +171,7 @@
 				}
 			}
 
-				
+
 			.reputationThreshold {
 				font-size: $small;
 				font-weight: $bold;
@@ -193,14 +193,12 @@
 	position: relative;
 
 	.forBar {
-		width: 25%;
 		background-color: $accent-1;
 		height: 10px;
 		border-radius: 3px 0 0 3px;
 	}
 
 	.againstBar {
-		width: 15%;
 		background-color: $accent-2;
 		height: 10px;
 		position: absolute;
@@ -314,126 +312,6 @@
 	font-size: $body;
 }
 
-.targetAccount {
-	position: relative;
-	display: inline-block;
-	width: 22px;
-	height: 22px;
-	overflow: visible;
-    margin-top: -5px;
-    transition: all .25s ease;
-    top: 5px;
-    margin-right: 8px;
-    left: 8px;
-
-	.avatar {
-		width: 22px;
-		height: 22px;
-		z-index: 1;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background-color: rgba(255,255,255, 0);
-		transition: all .25s ease;
-
-		img {
-			transition: all .25s ease;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			width: 22px;
-			height: 22px;
-		}
-	}
-	.accountInfo {
-		position: absolute;
-		z-index: 0;
-		opacity: 0;
-		left: 50%;
-		top: -150px;
-		padding: 60px 30px 30px 30px;
-		width: 190px;
-		font-size: $caption;
-		color: $white;
-		z-index: 0;
-		transform: translateX(-50%) scale(0);
-		background-image: linear-gradient(-222deg, #FDB93E 0%, #1CBDF7 100%);
-		border-radius: 3px;
-		transition: all .25s ease;
-		box-shadow: $shadow-3;
-
-		.beneficiaryAddress {
-			overflow: hidden;
-			width: 140px;
-			padding: 10px 30px 5px 10px;
-			position: relative;
-			border-radius: 3px;
-			border: 1px solid rgba(255,255,255,.5);
-
-			span {
-				display: inline-block;
-				width: 135px;
-				text-overflow: ellipsis;
-				overflow: hidden;
-				whitespace: nowrap;
-			}
-
-			button {
-				position: absolute;
-				top: 5px;
-				right: 0;
-				border: none;
-				outline: none;
-				background-color: transparent;
-			}
-		}
-
-		.holdings {
-			padding-top: 30px;
-			text-align: center;
-
-			span {
-				font-size: $small;
-				color: $white-halftone;
-			}
-		}
-
-		.viewProfile {
-			border: 1px solid white;
-			background-color: transparent;
-			color: $white;
-			border-radius: 3px;
-			display: block;
-			margin: 30px auto 0 auto;
-			padding: 8px 10px;
-		}
-	}
-}
-
-.targetAccount:hover {
-    z-index: 1000000;
-
-	.avatar {
-		width: 80px;
-		height: 80px;
-		border-radius: 100px;
-		background-color: $white;
-		box-shadow: $shadow-1;
-
-		img {
-			width: 50px;
-			height: 50px;
-		}
-	}
-	.accountInfo {
-		opacity: 1;
-		top: 15px;
-		transform: translateX(-50%) scale(1);
-	}
-}
-
 .voteGraphs {
 	width: 67px;
 	float: left;
@@ -456,7 +334,6 @@
 
 	.voteGraph .voteMeasurement {
 		width: 20px;
-		height: 20px;
 		position: absolute;
 		border-radius: 0 0 3px 3px;
 		bottom: 0;
@@ -509,7 +386,7 @@
 		text-align: left;
 		font-weight: $bold;
 		width: 140px;
-	
+
 		.passPrediction {
 			text-align: right;
 			color: $accent-1-halftone;
@@ -519,7 +396,7 @@
 				color: $accent-1;
 			}
 		}
-		
+
 		.failPrediction {
 			color: $accent-2-halftone;
 			text-align: right;

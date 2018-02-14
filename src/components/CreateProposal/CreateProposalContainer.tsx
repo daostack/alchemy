@@ -5,7 +5,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, ICollaboratorState } from 'reducers/arcReducer';
+import { IDaoState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 import * as schemas from '../../schemas';
 
@@ -41,13 +41,14 @@ type IProps = IStateProps & IDispatchProps
 
 interface IState {
   avatarAddress: string,
+  beneficiary: string,
   description: string,
-  nativeTokenReward: number,
-  reputationReward: number,
   ethReward: number,
   externalTokenAddress: string,
   externalTokenReward: number,
-  beneficiary: string,
+  nativeTokenReward: number,
+  reputationReward: number,
+  title: string
 }
 
 class CreateProposalContainer extends React.Component<IProps, IState> {
@@ -57,13 +58,14 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
     this.state = {
       avatarAddress: this.props.daoAddress,
+      beneficiary: "",
       description: "",
-      nativeTokenReward: 0,
-      reputationReward: 0,
       ethReward: 0,
       externalTokenAddress: null,
       externalTokenReward: 0,
-      beneficiary: "",
+      nativeTokenReward: 0,
+      reputationReward: 0,
+      title: ""
     };
   }
 
@@ -75,19 +77,21 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
   handleSubmit = (event : any) => {
     event.preventDefault();
-    this.props.createProposal(this.state.avatarAddress, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
+    this.props.createProposal(this.state.avatarAddress, this.state.title, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
   }
 
   handleChange = (event : any) => {
+    const newTitle = (ReactDOM.findDOMNode(this.refs.titleNode) as HTMLInputElement).value;
     const newDescription = (ReactDOM.findDOMNode(this.refs.descriptionNode) as HTMLInputElement).value;
     const newNativeTokenReward = Number((ReactDOM.findDOMNode(this.refs.nativeTokenRewardNode) as HTMLInputElement).value);
     const newReputationReward = Number((ReactDOM.findDOMNode(this.refs.reputationRewardNode) as HTMLInputElement).value);
     const newBenificiary = (ReactDOM.findDOMNode(this.refs.beneficiaryNode) as HTMLInputElement).value;
     this.setState({
+      beneficiary: newBenificiary,
       description: newDescription,
       nativeTokenReward: newNativeTokenReward,
       reputationReward: newReputationReward,
-      beneficiary: newBenificiary
+      title: newTitle,
     });
   }
 
@@ -104,26 +108,34 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           </button>
         </h2>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor='descriptionInput'>
+          <label htmlFor='titleInput'>
             Title (120 characters)
             <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
           </label>
           <input
             autoFocus
+            id='titleInput'
+            onChange={this.handleChange}
+            placeholder="Summarize your propsoal"
+            ref="titleNode"
+            required
+            type="text"
+            value={this.state.title}
+          />
+          <label htmlFor="descriptionInput">
+            Description (URL)
+            <button className={css.recommendedTemplate}>Recommended template</button>
+            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
+          </label>
+          <input
             id='descriptionInput'
             onChange={this.handleChange}
-            placeholder="Describe your propsoal"
+            placeholder="Proposal description URL"
             ref="descriptionNode"
             required
             type="text"
             value={this.state.description}
           />
-          <label htmlFor="proposalDescriptionUrl">
-            Description (URL)
-            <button className={css.recommendedTemplate}>Recommended template</button>
-            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
-          </label>
-          <input id="proposalDescriptionUrl" placeholder="Proposal description URL"/>
           <label htmlFor='beneficiaryInput'>
             Target Address
             <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>

@@ -2,17 +2,23 @@ import * as update from 'immutability-helper';
 
 import * as ActionTypes from 'constants/arcConstants'
 
-export interface ICollaboratorState {
+export interface IMemberState {
   address: string
   tokens: number
   reputation: number
 }
 
 export enum ProposalStates {
-  Closed = "Closed",
-  Executed = "Executed",
-  NotBoosted = "NotBoosted",
-  Boosted = "Boosted"
+  Closed = 0,
+  Executed = 1,
+  PreBoosted = 2,
+  Boosted = 3,
+  QuietEndingPeriod = 4
+}
+
+export enum VotesStatus {
+  Yes = 1,
+  No = 2
 }
 
 export interface IProposalState {
@@ -21,22 +27,25 @@ export interface IProposalState {
   description: string
   daoAvatarAddress: string
   state: ProposalStates
-  predictionsFail: number
-  predictionsPass: number
-  proposalId: string|number
+  proposalId: string
   rewardEth: number
   rewardReputation: number
   rewardToken: number
+  stakesNo: number
+  stakesYes: number
   submittedAt: number
+  title: string
+  totalStakes: number
+  totalVotes: number
   votesYes: number
   votesNo: number
-  winningVote: number // 1 = YES, 2 = NO
+  winningVote: VotesStatus
 }
 
 export interface IDaoState {
   avatarAddress: string,
   controllerAddress: string,
-  members: ICollaboratorState[],
+  members: { [key : string] : IMemberState },
   name: string,
   rank: number,
   promotedAmount: number,
@@ -74,6 +83,34 @@ const arcReducer = (state = initialState, action: any) => {
     case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
       // Add the new proposal to the DAO's state
       return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
+    }
+
+    case ActionTypes.ARC_VOTE_FULFILLED: {
+      if (action.payload.winningVote = VotesStatus.Yes) {
+        // If the proposal passed then update the member of the dao
+        // TODO: do this here or in the action?
+        const proposal = state.proposals[payload.proposalId];
+        let member = state.daos[payload.daoAvatarAddress].members[proposal.beneficiary];
+        console.log("fulfilled prop = ", proposal, " member = ", member);
+        if (member) {
+          // Add reputation and token rewards to current counts
+          member.tokens = member.tokens + proposal.rewardToken;
+          member.reputation = member.reputation + proposal.rewardToken;
+        } else {
+          // Add new member to the DAO
+          member = {
+            address: proposal.beneficiary,
+            reputation : proposal.rewardToken,
+            tokens : proposal.rewardToken
+          }
+        }
+        state = update(state, { daos: { [payload.daoAvatarAddress] : { members: { [proposal.beneficiary]: { $set : member } } } } });
+      }
+
+      // Merge in proposal changes
+      return update(state, {
+        proposals: { [payload.proposalId]: { $merge : action.payload } }
+      });
     }
   }
 

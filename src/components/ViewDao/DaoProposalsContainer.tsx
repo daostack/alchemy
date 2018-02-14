@@ -18,14 +18,14 @@ import * as css from './ViewDao.scss';
 
 interface IStateProps extends RouteComponentProps<any> {
   proposalsBoosted: IProposalState[],
-  proposalsNotBoosted: IProposalState[]
+  proposalsPreBoosted: IProposalState[]
   web3: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     proposalsBoosted: selectors.makeDaoBoostedProposalsSelector()(state, ownProps),
-    proposalsNotBoosted: selectors.makeDaoNotBoostedProposalsSelector()(state, ownProps),
+    proposalsPreBoosted: selectors.makeDaoPreBoostedProposalsSelector()(state, ownProps),
     web3: state.web3
   };
 };
@@ -39,25 +39,25 @@ type IProps = IStateProps & IDispatchProps
 class DaoProposalsContainer extends React.Component<IProps, null> {
 
   render() {
-    const { proposalsBoosted, proposalsNotBoosted } = this.props;
+    const { proposalsBoosted, proposalsPreBoosted } = this.props;
 
     const boostedProposalsHTML = proposalsBoosted.map((proposal : IProposalState) => {
       return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} />);
     });
-    const notBoostedProposalsHTML = proposalsNotBoosted.map((proposal : IProposalState) => {
+    const preBoostedProposalsHTML = proposalsPreBoosted.map((proposal : IProposalState) => {
       return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} />);
     });
 
     return(
       <div>
-        { boostedProposalsHTML.length > 0 ?
+        { proposalsBoosted.length > 0 ?
           <div>
             <div className={css.proposalsHeader}>
               Boosted Proposals
               <span>Available funds: <span>13,000 ETH - 327 KIN</span></span>
             </div>
             <div className={css.proposalsContainer}>
-                {boostedProposalsHTML}
+              {boostedProposalsHTML}
             </div>
           </div>
         : ""
@@ -66,7 +66,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
           All Proposals
         </div>
         <div className={css.proposalsContainer}>
-            {notBoostedProposalsHTML}
+          {preBoostedProposalsHTML}
         </div>
       </div>
     );

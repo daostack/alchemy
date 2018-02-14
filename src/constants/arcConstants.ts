@@ -23,4 +23,8 @@ export const ARC_VOTE_PENDING = 'ARC_VOTE_PENDING';
 export const ARC_VOTE_FULFILLED = 'ARC_VOTE_FULFILLED';
 export const ARC_VOTE_REJECTED = 'ARC_VOTE_REJECTED';
 
+export const ARC_STAKE_PENDING = 'ARC_STAKE_PENDING';
+export const ARC_STAKE_FULFILLED = 'ARC_STAKE_FULFILLED';
+export const ARC_STAKE_REJECTED = 'ARC_STAKE_REJECTED';
+
 export const API_URL = process.env.API_URL || 'http://127.0.0.1:3001';
