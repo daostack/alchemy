@@ -5,8 +5,6 @@ import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IDaoState } from 'reducers/arcReducer';
 
-import EthBalance from 'components/EthBalance/EthBalance';
-
 import * as css from './ViewDao.scss';
 
 interface IProps {
@@ -41,7 +39,7 @@ export default class DaoHeader extends React.Component<IProps, null> {
             PREDICTION TOKEN
           </div>
           <div className={css.genTitle}>
-            {dao.tokenSymbol} 
+            {dao.tokenSymbol}
           </div>
           <div className={css.genStats}>
             <div className={css.caption + " " + css.leftAlign}>

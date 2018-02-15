@@ -3,7 +3,7 @@ import * as update from 'immutability-helper';
 import * as ActionTypes from 'constants/arcConstants'
 
 export interface IMemberState {
-  address: string
+  address?: string
   tokens: number
   reputation: number
 }

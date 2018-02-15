@@ -5,8 +5,6 @@ import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IDaoState } from 'reducers/arcReducer';
 
-import EthBalance from 'components/EthBalance/EthBalance';
-
 import * as css from './DaoList.scss';
 
 interface IStateProps {

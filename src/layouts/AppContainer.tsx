@@ -55,7 +55,9 @@ class AppContainer extends React.Component<IProps, null> {
       (web3.isConnected ?
         <div className={css.outer}>
           <div className={css.container}>
-            <HeaderContainer />
+            <Route path="/dao/:daoAddress" children={(props) => (
+              <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
+            )} />
             <Switch>
               <Route exact path="/" component={HomeContainer}/>
               <Route exact path="/dao/create" component={CreateDaoContainer}/>

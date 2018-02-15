@@ -3,28 +3,29 @@ import * as Web3 from 'web3';
 
 import { IWeb3State } from 'reducers/web3Reducer'
 
-import * as css from "./EthBalance.scss"
+import * as css from "./Account.scss"
 
 //import EtherscanLink from '../../components/EtherscanLink'
 
 interface Props {
-  ethAccountAddress: string,
-  ethAccountBalance: string
+  accountAddress: string,
+  balance: number | string
+  tokenSymbol: string
 }
 
-export default class EthBalance extends React.Component<Props, null>  {
+export default class Balance extends React.Component<Props, null>  {
 
   constructor(props : Props) {
     super(props);
   }
 
   render () {
-    const { ethAccountBalance } = this.props;
+    const { balance, tokenSymbol } = this.props;
 
     // <EtherscanLink address={ ethAddress } >{ ethBalance } ETH</EtherscanLink>
     return (
       <span className={css.accountBalance}>
-        { ethAccountBalance } ETH
+        {balance} {tokenSymbol}
       </span>
     )
   }

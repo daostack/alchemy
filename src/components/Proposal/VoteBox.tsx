@@ -5,8 +5,6 @@ import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IProposalState } from 'reducers/arcReducer';
 
-import EthBalance from 'components/EthBalance/EthBalance';
-
 import * as css from './Proposal.scss';
 
 interface IProps {

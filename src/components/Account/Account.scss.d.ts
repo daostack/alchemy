@@ -1,3 +1,4 @@
+export const accountBalance: string;
 export const targetAccount: string;
 export const avatar: string;
 export const accountInfo: string;
