@@ -16,9 +16,21 @@
 
 .nav {
   width: 100%;
+  position: relative;
   padding-bottom: 40px;
+
   span {
     padding: 10px;
+  }
+
+  .borderBottom {
+    height: 3px;
+    width: 100%;
+    position: absolute;
+    background-color: rgba(216, 216, 216, 1.000);
+    z-index: 0;
+    top: 51px;
+    opacity: .4;
   }
 }
 
@@ -28,13 +40,42 @@
 
 .member {
   padding: 5px 0;
+  vertical-align: middle;
+
+
+  .memberAddress {
+    float: left;
+    padding: 13px 15px;
+  }
+
+  .memberHoldings {
+    float: right;
+    position: relative;
+    top: 8px;
+  }
+
+  .verticalDivider {
+    display: inline-block;
+    height: 24px;
+    width: 1px;
+    background-color: rgba(234, 234, 234, 1.000);
+    margin: 0 15px;
+    position: relative;
+    top: 5px;
+  }
+
 }
 
-.proposalsContainer {
+.proposalsContainer, .membersContainer {
   margin: 10px 0 250px 0;
   background-color: $white;
   shadow: $shadow-1;
   border-radius: 3px;
+}
+
+.member {
+  padding: 15px;
+  border-bottom: $proposal-item-border-bottom;
 }
 
 .openProposal {
@@ -49,6 +90,8 @@ a.navItem {
   font-size: $body;
   color: $black-halftone;
   padding: 20px 0;
+  position: relative;
+  z-index: 100;
   transition: all .25s ease;
   margin: 10px 30px;
   border-bottom: 3px solid $accent-4-transparent;
@@ -152,7 +195,10 @@ a.navItem:hover {
 }
 
 .daoName {
-  font-size: $display;
+  font-family: $heading-1-font;
+  font-size: $jumbo;
+  margin-bottom: -8px;
+  padding-top: 2px;
 }
 
 .daoPrefs {
@@ -218,4 +264,48 @@ a.navItem:hover {
       position: relative;
     }
   }
+}
+
+.noDecisions {
+  padding: 50px 0;
+  text-align: center;
+
+  .relax {
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+    opacity: .6;
+  }
+
+  .proposalsHeader {
+    font-family: $heading-1-font;
+    font-size: $jumbo;
+    padding-top: 30px;
+  }
+
+  .subheader {
+    font-size: $subheader;
+    color: $black-halftone;
+  }
+
+  .cta {
+    padding-top: 50px;
+
+    a {
+      background-color: $accent-4;
+      border-radius: 3px;
+      height: 40px;
+      display: inline-block;
+      line-height: 30px;
+      margin: 0 auto;
+      color: $white;
+      font-weight: bold;
+      border: none;
+      font-size: $body;
+      box-shadow: $shadow-1;
+      padding: 7px 15px 0 15px;
+      text-decoration: none;
+    }
+  }
+
 }

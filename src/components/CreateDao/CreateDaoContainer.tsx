@@ -104,9 +104,15 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
   render() {
     return(
       <div className={css.createDaoWrapper}>
-        <h2>Create Your DAO</h2>
+        <h2>
+          <img className={css.editIcon} src='/assets/images/Icon/Edit.svg'/>
+          <span>Create DAO</span>
+          <button className={css.exitProposalCreation}>
+            <img src='/assets/images/Icon/Close.svg'/>
+          </button>
+        </h2>
           <form onSubmit={this.handleSubmit}>
-            <label htmlFor='nameInput'>Name: </label>
+            <label htmlFor='nameInput'>Name </label>
             <input
               autoFocus
               id='nameInput'
@@ -117,32 +123,35 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
               type="text"
               value={this.state.name}
             />
-            <br />
-            <label htmlFor='tokenInput'>Token: </label>
-            <input
-              id='tokenInput'
-              onChange={this.handleChange}
-              placeholder="Choose a token name"
-              ref="tokenNode"
-              required
-              type="text"
-              value={this.state.tokenName}
-            />
-            <br />
-            <label htmlFor='tokenSymbolInput'>Token Symbol: </label>
-            <input
-              id='tokenSymbolInput'
-              maxLength={3}
-              onChange={this.handleChange}
-              placeholder="Choose a three character token symbol"
-              ref="tokenSymbolNode"
-              required
-              type="text"
-              value={this.state.tokenSymbol}
-            />
-            <br />
+            <div className={css.clearfix + " " + css.tokenDetails}>
+              <div className={css.column}>
+                <label htmlFor='tokenInput'>Token name </label>
+                <input
+                  id='tokenInput'
+                  onChange={this.handleChange}
+                  placeholder="Choose a token name"
+                  ref="tokenNode"
+                  required
+                  type="text"
+                  value={this.state.tokenName}
+                />
+              </div>
+              <div className={css.column}>
+                <label htmlFor='tokenSymbolInput'>Token symbol </label>
+                <input
+                  id='tokenSymbolInput'
+                  maxLength={3}
+                  onChange={this.handleChange}
+                  placeholder="3 character symbol"
+                  ref="tokenSymbolNode"
+                  required
+                  type="text"
+                  value={this.state.tokenSymbol}
+                />
+              </div>
+            </div>
             {this.renderMembers()}
-            <button type='submit'>Submit</button>
+            <button type='submit' className={css.submitDao}>Create DAO</button>
           </form>
       </div>
     );
@@ -152,7 +161,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
     const memberRows = this.state.members.map((member : IMemberState, index : number) => {
       return (
         <div key={`member_${index}_row_`}>
-          <label htmlFor={`member_${index}_address_input`}>Member Address: </label>
+          <label htmlFor={`member_${index}_address_input`}>Member Address </label>
           <input
             id={`member_${index}_address_input`}
             maxLength={42}
@@ -163,37 +172,48 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
             size={46}
             type='string'
             value={member.address} />
-          <label htmlFor={`member_${index}_tokens_input`}>Num Tokens: </label>
-          <input
-            id={`member_${index}_tokens_input`}
-            onChange={this.handleChangeMemberTokens(index)}
-            ref={`member_${index}_tokens_input`}
-            placeholder='assign initial tokens'
-            size={10}
-            type='string'
-            value={member.tokens} />
-          <label htmlFor={`member_${index}_reputation_input`}>Reputation: </label>
-          <input
-            id={`member_${index}_reputation_input`}
-            onChange={this.handleChangeMemberReputation(index)}
-            placeholder="assign initial reputation"
-            ref={`member_${index}_reputation_input`}
-            size={10}
-            type='string'
-            value={member.reputation} />
-          {index > 0 ? <button type='button' tabIndex={-1} onClick={this.handleRemoveMember(index)}>X</button> : ""}
+          <div className={css.clearfix}>
+            <div className={css.column + " " + css.columnOne}>
+              <label htmlFor={`member_${index}_tokens_input`}>Tokens </label>
+              <input
+                id={`member_${index}_tokens_input`}
+                onChange={this.handleChangeMemberTokens(index)}
+                ref={`member_${index}_tokens_input`}
+                placeholder='assign initial tokens'
+                size={10}
+                type='string'
+                value={member.tokens} />
+            </div>
+            <div className={css.column + " " + css.columnTwo}>
+              <label htmlFor={`member_${index}_reputation_input`}>Reputation </label>
+              <input
+                id={`member_${index}_reputation_input`}
+                onChange={this.handleChangeMemberReputation(index)}
+                placeholder="assign initial reputation"
+                ref={`member_${index}_reputation_input`}
+                size={10}
+                type='string'
+                value={member.reputation} />
+            </div>
+            <div className={css.column + " " + css.columnThree}>
+              {index > 0 ? <button className={css.cancelAdd} type='button' tabIndex={-1} onClick={this.handleRemoveMember(index)}>X</button> : ""}
+            </div>
+          </div>
         </div>
       );
     });
 
-    return (
-      <div className={css.members}>
-        <h3>DAO Members</h3>
-        {memberRows}
-        <br />
-        <button type='button' onClick={this.handleAddMember}>Add Member</button>
-      </div>
-    );
+    if(memberRows.length) {
+      return (
+          <div className={css.addMember}>
+            <div className={css.membersList}>
+              <h3>DAO Members</h3>
+              {memberRows}
+              <button className={css.addMemberButton} type='button' onClick={this.handleAddMember}>Add Member</button>
+            </div>
+          </div>
+      );
+    }
   }
 }
 

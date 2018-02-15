@@ -1,7 +1,18 @@
 $header-height: 100px;
 
+@font-face {
+  font-family: "DINProLight";
+  src: url("/assets/fonts/DINPro-Light.woff");
+  font-weight: regular;
+}
+
+@font-face {
+  font-family: "GaramondProDisplay";
+  src: url("/assets/fonts/GaramondPremrPro-Disp.woff");
+}
+
 body {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: "DINProLight", sans-serif;
   font-weight: 400;
 }
 

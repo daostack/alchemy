@@ -62,12 +62,30 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
           </div>
         : ""
         }
-        <div className={css.proposalsHeader}>
-          All Proposals
-        </div>
-        <div className={css.proposalsContainer}>
-          {preBoostedProposalsHTML}
-        </div>
+        { preBoostedProposalsHTML.length == 0 ?
+          <div className={css.noDecisions}>
+            <img className={css.relax} src="/assets/images/meditate.svg"/>
+            <div className={css.proposalsHeader}>
+              No upcoming decisions
+            </div>
+            <div className={css.subheader}>
+              Take a moment to appreciate how nice it is to not have to make any decisions
+            </div>
+            <div className={css.cta}>
+              <Link to={'/proposal/create/'}>Create a proposal</Link>
+            </div>
+          </div>
+        : 
+          <div>
+            <div className={css.proposalsHeader}>
+              All Proposals
+            </div>
+            <div className={css.proposalsContainer}>
+              {preBoostedProposalsHTML}
+            </div>
+          </div>
+        }
+
       </div>
     );
   }

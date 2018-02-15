@@ -1,5 +1,18 @@
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .accountBalance {
   text-align: right;
+}
+
+:global .membersPage {
+  border-radius: 8px;
+  height: 50px;
+  width: 50px;
+  float: left;
 }
 
 .targetAccount {
@@ -8,15 +21,16 @@
   width: 22px;
   height: 22px;
   overflow: visible;
-    margin-top: -5px;
-    transition: all .25s ease;
-    top: 5px;
-    margin-right: 8px;
-    left: 8px;
+  margin-top: -5px;
+  transition: all .25s ease;
+  top: 6px;
+  margin-right: 13px;
+  left: 7px;
 
   .avatar {
-    width: 22px;
-    height: 22px;
+    width: 16px;
+    height: 16px;
+    box-shadow: $shadow-1;
     z-index: 1;
     position: absolute;
     top: 50%;
@@ -31,8 +45,9 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 22px;
-      height: 22px;
+      width: 16px;
+      border-radius: 3px;
+      height: 16px;
     }
   }
   .accountInfo {
@@ -113,6 +128,8 @@
     img {
       width: 50px;
       height: 50px;
+      border-radius: 8px;
+      box-shadow: $shadow-2;
     }
   }
   .accountInfo {

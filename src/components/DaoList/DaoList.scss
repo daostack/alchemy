@@ -53,9 +53,11 @@ a.daoLink {
 	text-align: center;
 
 	.daoName {
-		font-size: $title;
+		font-size: $headline-2;
 		font-weight: $normal;
-		padding-top: 60px;
+		font-family: $heading-1-font;
+		padding-top: 50px;
+		margin-bottom: 10px;
 	}
 
 	.daoInfo {

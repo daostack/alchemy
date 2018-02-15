@@ -23,6 +23,7 @@ export default class DaoNav extends React.Component<IProps, null> {
         <NavLink className={css.navItem} activeClassName={css.selected} to={'/dao/'+dao.avatarAddress+'/recurring-transfers/'}>Recurring Transfers</NavLink>
         <NavLink className={css.navItem} activeClassName={css.selected} to={'/dao/'+dao.avatarAddress+'/members/'}>Members</NavLink>
         <NavLink className={css.createProposal} activeClassName={css.selected} to={'/proposal/create/'+dao.avatarAddress}>Create proposal</NavLink>
+        <div className={css.borderBottom}></div>
       </div>
     );
   }

@@ -9,6 +9,8 @@ import { IRootState } from 'reducers';
 import { IDaoState, IMemberState } from 'reducers/arcReducer';
 import * as schemas from '../../schemas';
 
+import AccountPopup from 'components/Account/AccountImage';
+
 import * as css from './ViewDao.scss';
 
 interface IStateProps extends RouteComponentProps<any> {
@@ -36,12 +38,20 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     const membersHTML = Object.keys(dao.members).map((address : string) => {
       const member = dao.members[address];
       return (
-        <div className={css.member} key={"member_" + address}>
-          <strong>{member.address}</strong>
-          <br />
-          Tokens: <span>{member.tokens}</span>
-          <br />
-          Reputation: <span>{member.reputation}</span>
+        <div className={css.member + " " + css.clearfix} key={"member_" + address}>
+          <AccountPopup
+            accountAddress={member.address}
+            className="membersPage"
+          />
+          <div className={css.memberAddress}>
+            {member.address}
+          </div>
+          
+          <div className={css.memberHoldings}>
+            Tokens: <span>{member.tokens}</span>
+            <div className={css.verticalDivider}></div>
+            Reputation: <span>{member.reputation}</span>
+          </div>
         </div>
       );
     });
