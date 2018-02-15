@@ -115,7 +115,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     }
     daoData.members = members;
 
-    // Get proposals
+    //**** Get all proposals ****//
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
 
     // Get the voting machine (GenesisProtocol) TODO: update as Arc.js supports a better way to do this
@@ -128,11 +128,6 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
     const getNewProposalEvents = promisify(newProposalEvents.get.bind(newProposalEvents));
     const allProposals = await getNewProposalEvents();
 
-    const executedProposalEvents = contributionRewardInstance.ProposalExecuted({}, { fromBlock: 0 })
-    const getExecutedProposalEvents = promisify(executedProposalEvents.get.bind(executedProposalEvents));
-    const executedProposals = await getExecutedProposalEvents();
-    const executedProposalIds = executedProposals.map((proposal : any) => proposal.args._proposalId);
-
     let proposalArgs : any, proposalId : string, description: string, submittedAt: number, title: string;
     for (let cnt = 0; cnt < allProposals.length; cnt++) {
       proposalArgs = allProposals[cnt].args;
@@ -142,7 +137,6 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
 
         // Default to showing the description hash if we don't have better description on the server
         description = "";
-        submittedAt = 0;
         title = "";
 
         // Get description from the server
@@ -151,46 +145,40 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"arcId":"'+proposalArgs._proposalId+'"}}');
           if (response.data.length > 0) {
             description = response.data[0].description;
-            submittedAt = response.data[0].submittedAt;
             title = response.data[0].title;
           }
         } catch (e) {
           console.log(e);
         }
 
+        const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
+
         const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
         const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
 
-        const yesStakes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
-        const noStakes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
-
-        const { totalVotes, totalStakes, votersStakes } = await votingMachineInstance.getProposalStatus({ proposalId: proposalId });
+        const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.Yes });
+        const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.No });
 
         let proposal = <IProposalState>{
           beneficiary: proposalArgs._beneficiary,
-          boostedAt: 0, // TODO
+          boostedAt: Number(proposalDetails[10]),
           description: description,
           daoAvatarAddress: dao.avatar.address,
-          state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          state: Number(proposalDetails[9]),
           proposalId: proposalId,
           rewardEth: 0, // TODO
           rewardReputation: Number(web3.fromWei(proposalArgs._reputationChange, "ether")),
           rewardToken: Number(web3.fromWei(proposalArgs._rewards[0], "ether")),
           stakesNo: Number(web3.fromWei(noStakes, "ether")),
           stakesYes: Number(web3.fromWei(yesStakes, "ether")),
-          submittedAt: submittedAt,
+          submittedAt: proposalDetails[7],
           title: title,
-          totalStakes: Number(web3.fromWei(totalStakes, "ether")),
-          totalVotes: Number(web3.fromWei(totalVotes, "ether")),
+          totalStakes: Number(web3.fromWei(proposalDetails[4], "ether")),
+          totalVotes: Number(web3.fromWei(proposalDetails[4], "ether")),
           votesYes: Number(web3.fromWei(yesVotes, "ether")),
           votesNo: Number(web3.fromWei(noVotes, "ether")),
-          winningVote: 0
+          winningVote: Number(proposalDetails[10])
         };
-
-        if (executedProposalIds.includes(proposalId)) {
-          //proposal.state = ProposalStates.Executed;
-          proposal.winningVote = await votingMachineInstance.getWinningVote({ proposalId : proposalId });
-        }
 
         daoData.proposals.push(proposal);
       }
@@ -359,8 +347,8 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
 
       const proposal = <IProposalState>{
         beneficiary: beneficiary,
-        boostedAt: 0, // TODO
-        description: description, // TODO
+        boostedAt: 0,
+        description: description,
         daoAvatarAddress: daoAvatarAddress,
         state: ProposalStates.PreBoosted, // TODO: update if we do vote
         proposalId: proposalId,
