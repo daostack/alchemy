@@ -30,3 +30,7 @@ export const centered: string;
 export const leftAlign: string;
 export const rightAlign: string;
 export const proposalsHeader: string;
+export const noDecisions: string;
+export const relax: string;
+export const subheader: string;
+export const cta: string;

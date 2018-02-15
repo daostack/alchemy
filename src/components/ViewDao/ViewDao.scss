@@ -265,3 +265,47 @@ a.navItem:hover {
     }
   }
 }
+
+.noDecisions {
+  padding: 50px 0;
+  text-align: center;
+
+  .relax {
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+    opacity: .6;
+  }
+
+  .proposalsHeader {
+    font-family: $heading-1-font;
+    font-size: $jumbo;
+    padding-top: 30px;
+  }
+
+  .subheader {
+    font-size: $subheader;
+    color: $black-halftone;
+  }
+
+  .cta {
+    padding-top: 50px;
+
+    a {
+      background-color: $accent-4;
+      border-radius: 3px;
+      height: 40px;
+      display: inline-block;
+      line-height: 30px;
+      margin: 0 auto;
+      color: $white;
+      font-weight: bold;
+      border: none;
+      font-size: $body;
+      box-shadow: $shadow-1;
+      padding: 7px 15px 0 15px;
+      text-decoration: none;
+    }
+  }
+
+}
