@@ -109,13 +109,13 @@ class ProposalContainer extends React.Component<IProps, null> {
               : ""
             }
             <h3>
-              {proposal.title}
               { proposal.state == ProposalStates.PreBoosted ?
                 <span>CLOSES IN 3 WEEKS</span>
               : proposal.state == ProposalStates.Boosted ?
                 <span>5 DAYS</span>
               : ""
               }
+              {proposal.title}
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of</span>
