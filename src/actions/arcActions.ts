@@ -409,22 +409,13 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
       const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
 
-      let payload = {
-        daoAvatarAddress: daoAvatarAddress,
-        proposalId: proposalId,
-        state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
-        votesNo: Number(web3.fromWei(noVotes, "ether")),
-        votesYes: Number(web3.fromWei(yesVotes, "ether")),
-        winningVote: 0
-      }
-
+      let winningVote = 0;
       try {
-        const executedDecision = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
-        payload.winningVote = executedDecision;
+        winningVote = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
 
         // Did proposal pass?
-        if (executedDecision == VotesStatus.Yes) {
-          // Redeem rewards if there are any instant ones
+        if (winningVote == VotesStatus.Yes) {
+          // Redeem rewards if there are any instant ones. XXX: we shouldnt do this, have to switch to redeem system
 
           // XXX: hack to increase the time on the ganache blockchain so that enough time has passed to redeem the rewards
           //      so we can have instant rewards for demo
@@ -438,14 +429,27 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
             eths: true,
             externalTokens: true
           });
+          // TODO: update the member reputation and tokens based on rewards? right now doing this in the reducer
 
-          // TODO: also update the member reputation and tokens based on rewards
-          console.log("redeem = ", redeemTransaction);
-
-          // TODO: redeem stuff from genesis for the proposer, voter and stakers if it passed
+          // TODO: redeem stuff from genesis for the proposer, voter and stakers if it passed?
         }
       } catch (err) {
         // The proposal was not executed
+      }
+
+      let payload = {
+        daoAvatarAddress: daoAvatarAddress,
+        proposal: {
+          proposalId: proposalId,
+          state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          votesNo: Number(web3.fromWei(noVotes, "ether")),
+          votesYes: Number(web3.fromWei(yesVotes, "ether")),
+          winningVote: winningVote
+        },
+        dao: {
+          reputationCount: Number(web3.fromWei(await daoInstance.reputation.totalSupply(), "ether")),
+          tokenCount: Number(web3.fromWei(await daoInstance.token.totalSupply(), "ether"))
+        }
       }
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
