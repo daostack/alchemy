@@ -235,8 +235,8 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
 
       const votingMachineParamsHash = (await votingMachine.setParams({
         preBoostedVoteRequiredPercentage: 50,
-        preBoostedVotePeriodLimit: 60,
-        boostedVotePeriodLimit: 60,
+        preBoostedVotePeriodLimit: 10000,
+        boostedVotePeriodLimit: 10000,
         thresholdConstA: 1,
         thresholdConstB: 1,
         minimumStakingFee: 0,
