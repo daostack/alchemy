@@ -7,6 +7,7 @@
 .wrapper {
   max-width: $max-width;
   margin: 0 auto;
+  padding: 0 30px;
 }
 
 .daoHeader {
@@ -274,7 +275,7 @@ a.navItem:hover {
     width: 100px;
     display: block;
     margin: 0 auto;
-    opacity: .6;
+    opacity: .3;
   }
 
   .proposalsHeader {

@@ -66,10 +66,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
           <div className={css.noDecisions}>
             <img className={css.relax} src="/assets/images/meditate.svg"/>
             <div className={css.proposalsHeader}>
-              No upcoming decisions
-            </div>
-            <div className={css.subheader}>
-              Take a moment to appreciate how nice it is to not have to make any decisions
+              No upcoming proposals
             </div>
             <div className={css.cta}>
               <Link to={'/proposal/create/'}>Create a proposal</Link>
