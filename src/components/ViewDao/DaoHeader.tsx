@@ -20,7 +20,7 @@ export default class DaoHeader extends React.Component<IProps, null> {
       <div className={css.daoHeader + " " + css.clearfix}>
         <div className={css.daoInfo}>
           <div className={css.daoAvatar}>
-            <img src='/assets/images/daostack-logo.svg'/>
+            <img src='/assets/images/daostack-logo.png'/>
           </div>
           <div className={css.daoDescription}>
             <div className={css.daoName}>

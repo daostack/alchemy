@@ -32,7 +32,7 @@ export default class DaoList extends React.Component<IProps, null> {
         <Link className={css.daoLink} to={"/dao/" + dao.avatarAddress} key={"dao_" + dao.avatarAddress}>
           <div className={css.dao}>
             <div className={css.daoAvatar}>
-              <img src='/assets/images/daostack-logo.svg'/>
+              <img src='/assets/images/daostack-logo.png'/>
             </div>
             <h3 className={css.daoName}>{dao.name}</h3>
             <div className={css.daoInfo}>Token: {dao.tokenName} ({dao.tokenSymbol})</div>

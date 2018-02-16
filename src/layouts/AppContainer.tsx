@@ -67,7 +67,7 @@ class AppContainer extends React.Component<IProps, null> {
           </div>
           <div className={css.background}></div>
         </div>
-        : <div>Loading...</div>
+        : <div className={css.loading}>Loading...</div>
       )
     );
   }

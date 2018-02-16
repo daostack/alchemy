@@ -54,7 +54,7 @@ body {
     float: right;
     
     .holdings {
-      padding-top: 16px;
+      padding-top: 10px;
       text-align: right;
       font-size: $small;
       float: left;
@@ -91,3 +91,8 @@ body {
 }
 
 .header:after { clear: both;  content: ""; display: table; }
+
+.loading {
+  padding-top: 100px;
+  text-align: center;
+}

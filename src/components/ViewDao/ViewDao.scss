@@ -145,12 +145,15 @@ a.navItem:hover {
   height: 90px;
   border-radius: 90px;
   text-align: center;
+  position: relative;
 
   img {
-    width: 40px;
-    height: 40px;
-    position: relative;
-    top: 24px;
+    max-width: 40px;
+    max-height: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
   }
 }
 
