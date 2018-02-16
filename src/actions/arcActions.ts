@@ -167,6 +167,7 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           daoAvatarAddress: dao.avatar.address,
           state: Number(proposalDetails[9]),
           proposalId: proposalId,
+          proposer: proposalDetails[11],
           rewardEth: 0, // TODO
           rewardReputation: Number(web3.fromWei(proposalArgs._reputationChange, "ether")),
           rewardToken: Number(web3.fromWei(proposalArgs._rewards[0], "ether")),
@@ -354,6 +355,7 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
         daoAvatarAddress: daoAvatarAddress,
         state: ProposalStates.PreBoosted, // TODO: update if we do vote
         proposalId: proposalId,
+        proposer: ethAccountAddress,
         rewardEth: 0, // TODO
         rewardReputation: reputationReward,
         rewardToken: nativeTokenReward,

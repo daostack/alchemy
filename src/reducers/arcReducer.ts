@@ -28,6 +28,7 @@ export interface IProposalState {
   daoAvatarAddress: string
   state: ProposalStates
   proposalId: string
+  proposer: string
   rewardEth: number
   rewardReputation: number
   rewardToken: number

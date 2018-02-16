@@ -23,8 +23,8 @@ const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     accountAddress: ownProps.accountAddress,
     dao: dao,
-    reputation: member.reputation,
-    tokens: member.tokens
+    reputation: member ? member.reputation : 0,
+    tokens: member ? member.tokens : 0
   };
 };
 
