@@ -1,10 +1,11 @@
 .createProposalWrapper {
   width: 450px;
-  border-radius: 3px 3px 0 0;
+  border-radius: 3px;
   background-color: $white;
   position: fixed;
-  bottom: 0;
-  right: 60px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
   box-shadow: $shadow-3;
 
   h2 {
@@ -164,5 +165,6 @@
 
 	.alignCenter {
 		text-align: center;
+    margin-top: 30px;
 	}
 }

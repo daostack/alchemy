@@ -111,6 +111,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
             <img src='/assets/images/Icon/Close.svg'/>
           </button>
         </h2>
+        <div className={css.inner}>
           <form onSubmit={this.handleSubmit}>
             <label htmlFor='nameInput'>Name </label>
             <input
@@ -153,6 +154,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
             {this.renderMembers()}
             <button type='submit' className={css.submitDao}>Create DAO</button>
           </form>
+        </div>
       </div>
     );
   }

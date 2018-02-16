@@ -85,7 +85,11 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
           <div>
             <div className={css.proposalsHeader}>
               Boosted Proposals
-              <span>Available funds: <span>13,000 ETH - 327 KIN</span></span>
+             
+
+             {/* <span>Available funds: <span>13,000 ETH - 327 KIN</span></span> */}
+            
+
             </div>
             <div className={css.proposalsContainer}>
               {boostedProposalsHTML}
@@ -93,7 +97,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
           </div>
         : ""
         }
-        { proposalsPreBoosted.length == 0 ?
+        { proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0 ?
           <div className={css.noDecisions}>
             <img className={css.relax} src="/assets/images/meditate.svg"/>
             <div className={css.proposalsHeader}>
@@ -103,7 +107,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
               <Link to={'/proposal/create/' + this.props.daoAddress}>Create a proposal</Link>
             </div>
           </div>
-        :
+        : proposalsPreBoosted.length > 0 ?
           <div>
             <div className={css.proposalsHeader}>
               All Proposals
@@ -112,6 +116,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
               {preBoostedProposalsHTML}
             </div>
           </div>
+        : ""
         }
 
       </div>

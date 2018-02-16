@@ -1,5 +1,6 @@
 export const clearfix: string;
 export const createDaoWrapper: string;
+export const inner: string;
 export const editIcon: string;
 export const exitProposalCreation: string;
 export const infoTooltip: string;

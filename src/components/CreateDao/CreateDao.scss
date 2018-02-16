@@ -9,11 +9,21 @@
   border-radius: 3px 3px 0 0;
   background-color: $white;
   position: fixed;
-  bottom: 0;
-  right: 60px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
   box-shadow: $shadow-3;
+  max-height: 95%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .inner {
+    position: relative;
+  }
 
   h2 {
+  position: absolute;
+  top: 0;
 	background-image: linear-gradient(-136deg, #3ECFFA 0%, #1DA1F2 100%);
 	position: relative;
 	margin: 0;
@@ -182,7 +192,7 @@
 		background-color: $accent-4;
 		border-radius: 3px;
 		height: 40px;
-		display: inline-block;
+		display: block;
 		line-height: 30px;
 		margin: 30px auto 0 auto;
 		color: $white;
@@ -221,7 +231,7 @@
   border-radius: $button-border-radius;
   vertical-align: middle;
   position: relative;
-  right: 46px;
+  right: 45px;
 }
 
 .cancelAdd {

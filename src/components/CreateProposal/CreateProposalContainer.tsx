@@ -188,6 +188,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               value={this.state.reputationReward}
             />
           </div>
+          {/*
           <div className={css.transactionList}>
             <h3 className={css.transactionListHeader}>
               Transactions
@@ -208,7 +209,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div>*/}
+          
           <div className={css.alignCenter}>
             <button className={css.submitProposal} type='submit'>
               <img src='/assets/images/Icon/Send.svg'/>
