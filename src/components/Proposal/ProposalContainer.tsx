@@ -96,7 +96,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             : ""
           }
           <div className={css.proposalInfo}>
-            { proposal.winningVote == VotesStatus.Yes || proposal.winningVote == VotesStatus.No ?
+            { proposal.state == ProposalStates.Executed ?
               <div className={css.decisionGraph}>
                 <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
                 <div className={css.graph}>
@@ -119,7 +119,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of</span>
-              <span className={css.transferAmount}>{proposal.rewardToken} ETH &amp; {proposal.rewardReputation} Reputation</span>
+              <span className={css.transferAmount}>{proposal.rewardToken} {dao.tokenSymbol} &amp; {proposal.rewardReputation} Reputation</span>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
               <AccountPopup
@@ -178,7 +178,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/>
                   </a>
-                </div> 
+                </div>
               </div>
             : proposal.winningVote == VotesStatus.No ?
               ""
