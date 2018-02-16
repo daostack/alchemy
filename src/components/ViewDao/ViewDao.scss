@@ -308,5 +308,22 @@ a.navItem:hover {
       text-decoration: none;
     }
   }
+}
 
+.fadeEnter {
+  opacity: 0.01;
+}
+
+.fadeEnter.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExit.fadeExitActive {
+  opacity: 0.01;
+  transition: opacity 800ms ease-in;
 }

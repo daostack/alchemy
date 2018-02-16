@@ -34,3 +34,7 @@ export const noDecisions: string;
 export const relax: string;
 export const subheader: string;
 export const cta: string;
+export const fadeEnter: string;
+export const fadeEnterActive: string;
+export const fadeExit: string;
+export const fadeExitActive: string;
