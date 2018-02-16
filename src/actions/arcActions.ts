@@ -463,17 +463,20 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
-      const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : web3.toWei(1, "ether")});
-      const stakeStatus = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: vote });
+      //const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : web3.toWei(1, "ether")});
+      //console.log("Stake tr = ", stakeTransaction);
 
-      console.log("Stake tr = ", stakeTransaction);
+      const yesStakes = 0;//await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.Yes });
+      const noStakes = 0; //await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.No });
 
       let payload = {
         daoAvatarAddress: daoAvatarAddress,
-        proposalId: proposalId,
-        state: "PreBoosted",
-        stakesNo: 0,
-        stakesYes: 1,
+        proposal: {
+          proposalId: proposalId,
+          state: ProposalStates.Boosted, // Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          stakesNo: Number(web3.fromWei(noStakes, "ether")),
+          stakesYes: Number(web3.fromWei(yesStakes, "ether")),
+        }
       }
 
       // See if the proposal was executed, either passing or failing
