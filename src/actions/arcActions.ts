@@ -397,6 +397,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
       const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
 
+      const memberUpdates : { [key : string] : IMemberState } = {};
       let winningVote = 0;
       try {
         winningVote = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
@@ -417,13 +418,30 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
             eths: true,
             externalTokens: true
           });
-          // TODO: update the member reputation and tokens based on rewards? right now doing this in the reducer
+          const beneficiary = redeemTransaction.getValueFromTx("_beneficiary", "RedeemNativeToken");
 
-          // TODO: redeem stuff from genesis for the proposer, voter and stakers if it passed?
+          // XXX: redeem stuff from genesis for the proposer, voter and stakers if it passed?
+          const genesisRedeemTransaction = await votingMachineInstance.redeem({
+            proposalId: proposalId,
+            beneficiary: ethAccountAddress
+          });
+
+          memberUpdates[beneficiary] = {
+            tokens: Number(web3.fromWei(await daoInstance.token.balanceOf.call(beneficiary), "ether")),
+            reputation: Number(web3.fromWei(await daoInstance.reputation.reputationOf.call(beneficiary), "ether"))
+          };
+
+          // TODO: update the member reputation and tokens based on rewards? right now doing this in the reducer
         }
       } catch (err) {
         // The proposal was not executed
       }
+
+      // Update voter
+      memberUpdates[ethAccountAddress] = {
+        tokens: Number(web3.fromWei(await daoInstance.token.balanceOf.call(ethAccountAddress), "ether")),
+        reputation: Number(web3.fromWei(await daoInstance.reputation.reputationOf.call(ethAccountAddress), "ether"))
+      };
 
       let payload = {
         daoAvatarAddress: daoAvatarAddress,
@@ -437,7 +455,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
         dao: {
           reputationCount: Number(web3.fromWei(await daoInstance.reputation.totalSupply(), "ether")),
           tokenCount: Number(web3.fromWei(await daoInstance.token.totalSupply(), "ether"))
-        }
+        },
+        members: memberUpdates
       }
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });

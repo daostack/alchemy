@@ -86,31 +86,12 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_VOTE_FULFILLED: {
-      if (action.payload.proposal.winningVote = VotesStatus.Yes) {
-        // If the proposal passed then update the member of the dao
-        // TODO: do this here or in the action?
-        //       Could just load all DAO data from scratch again to get all updates
-        const proposal = state.proposals[payload.proposal.proposalId];
-        let member = state.daos[payload.daoAvatarAddress].members[proposal.beneficiary];
-
-        if (member) {
-          // Add reputation and token rewards to current counts
-          member.tokens = member.tokens + proposal.rewardToken;
-          member.reputation = member.reputation + proposal.rewardToken;
-        } else {
-          // Add new member to the DAO
-          member = {
-            address: proposal.beneficiary,
-            reputation : proposal.rewardToken,
-            tokens : proposal.rewardToken
-          }
+      // merge in member updates for the DAO
+      state = update(state, { daos: {
+        [payload.daoAvatarAddress] : {
+          members: { $merge : payload.members }
         }
-        state = update(state, { daos: {
-          [payload.daoAvatarAddress] : {
-            members: { [proposal.beneficiary]: { $set : member } }
-          }
-        }});
-      }
+      }});
 
       // Merge in proposal and dao changes
       return update(state, {
