@@ -1,3 +1,4 @@
+import * as H from 'history';
 import { denormalize } from 'normalizr';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -17,6 +18,7 @@ import DaoHeader from '../ViewDao/DaoHeader';
 interface IStateProps {
   dao: IDaoState,
   daoAddress : string,
+  history: H.History,
   web3: IWeb3State
 }
 
@@ -24,6 +26,7 @@ const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
     daoAddress : ownProps.match.params.daoAddress,
+    history: ownProps.history,
     web3: state.web3
   };
 };
@@ -81,6 +84,16 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.props.createProposal(this.state.avatarAddress, this.state.title, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
   }
 
+  goBack() {
+    const { history, dao } = this.props;
+
+    if (history.length > 0) {
+      history.goBack();
+    } else {
+      history.push("/dao/" + dao.avatarAddress);
+    }
+  }
+
   handleChange = (event : any) => {
     const newTitle = (ReactDOM.findDOMNode(this.refs.titleNode) as HTMLInputElement).value;
     const newDescription = (ReactDOM.findDOMNode(this.refs.descriptionNode) as HTMLInputElement).value;
@@ -104,7 +117,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
         <h2>
           <img className={css.editIcon} src='/assets/images/Icon/Edit.svg'/>
           <span>Create proposal</span>
-          <button className={css.exitProposalCreation}>
+          <button className={css.exitProposalCreation} onClick={this.goBack.bind(this)}>
             <img src='/assets/images/Icon/Close.svg'/>
           </button>
         </h2>

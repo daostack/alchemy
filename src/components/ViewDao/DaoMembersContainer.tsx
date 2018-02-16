@@ -40,17 +40,17 @@ class DaoMembersContainer extends React.Component<IProps, null> {
       return (
         <div className={css.member + " " + css.clearfix} key={"member_" + address}>
           <AccountPopup
-            accountAddress={member.address}
+            accountAddress={address}
             className="membersPage"
           />
           <div className={css.memberAddress}>
-            {member.address}
+            {address}
           </div>
-          
+
           <div className={css.memberHoldings}>
-            Tokens: <span>{member.tokens}</span>
+            Tokens: <span>{Math.round(member.tokens).toLocaleString()}</span>
             <div className={css.verticalDivider}></div>
-            Reputation: <span>{member.reputation}</span>
+            Reputation: <span>{Math.round(member.reputation).toLocaleString()}</span>
           </div>
         </div>
       );

@@ -30,7 +30,7 @@ export default class DaoHeader extends React.Component<IProps, null> {
               </button>
             </div>
             <div className={css.daoReputationInfo}>
-              {Object.keys(dao.members).length} reputation holders with {dao.reputationCount} {dao.name} reputation
+              {Object.keys(dao.members).length} reputation holders with {Math.round(dao.reputationCount).toLocaleString()} {dao.name} reputation
             </div>
           </div>
         </div>

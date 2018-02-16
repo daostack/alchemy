@@ -235,8 +235,8 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
 
       const votingMachineParamsHash = (await votingMachine.setParams({
         preBoostedVoteRequiredPercentage: 50,
-        preBoostedVotePeriodLimit: 60,
-        boostedVotePeriodLimit: 60,
+        preBoostedVotePeriodLimit: 10000,
+        boostedVotePeriodLimit: 10000,
         thresholdConstA: 1,
         thresholdConstB: 1,
         minimumStakingFee: 0,
@@ -397,6 +397,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
       const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
 
+      const memberUpdates : { [key : string] : IMemberState } = {};
       let winningVote = 0;
       try {
         winningVote = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
@@ -417,13 +418,30 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
             eths: true,
             externalTokens: true
           });
-          // TODO: update the member reputation and tokens based on rewards? right now doing this in the reducer
+          const beneficiary = redeemTransaction.getValueFromTx("_beneficiary", "RedeemNativeToken");
 
-          // TODO: redeem stuff from genesis for the proposer, voter and stakers if it passed?
+          // XXX: redeem stuff from genesis for the proposer, voter and stakers if it passed?
+          const genesisRedeemTransaction = await votingMachineInstance.redeem({
+            proposalId: proposalId,
+            beneficiary: ethAccountAddress
+          });
+
+          memberUpdates[beneficiary] = {
+            tokens: Number(web3.fromWei(await daoInstance.token.balanceOf.call(beneficiary), "ether")),
+            reputation: Number(web3.fromWei(await daoInstance.reputation.reputationOf.call(beneficiary), "ether"))
+          };
+
+          // TODO: update the member reputation and tokens based on rewards? right now doing this in the reducer
         }
       } catch (err) {
         // The proposal was not executed
       }
+
+      // Update voter
+      memberUpdates[ethAccountAddress] = {
+        tokens: Number(web3.fromWei(await daoInstance.token.balanceOf.call(ethAccountAddress), "ether")),
+        reputation: Number(web3.fromWei(await daoInstance.reputation.reputationOf.call(ethAccountAddress), "ether"))
+      };
 
       let payload = {
         daoAvatarAddress: daoAvatarAddress,
@@ -437,7 +455,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
         dao: {
           reputationCount: Number(web3.fromWei(await daoInstance.reputation.totalSupply(), "ether")),
           tokenCount: Number(web3.fromWei(await daoInstance.token.totalSupply(), "ether"))
-        }
+        },
+        members: memberUpdates
       }
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
@@ -463,17 +482,20 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
-      const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : web3.toWei(1, "ether")});
-      const stakeStatus = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: vote });
+      //const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : web3.toWei(1, "ether")});
+      //console.log("Stake tr = ", stakeTransaction);
 
-      console.log("Stake tr = ", stakeTransaction);
+      const yesStakes = 0;//await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.Yes });
+      const noStakes = 0; //await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.No });
 
       let payload = {
         daoAvatarAddress: daoAvatarAddress,
-        proposalId: proposalId,
-        state: "PreBoosted",
-        stakesNo: 0,
-        stakesYes: 1,
+        proposal: {
+          proposalId: proposalId,
+          state: ProposalStates.Boosted, // Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          stakesNo: Number(web3.fromWei(noStakes, "ether")),
+          stakesYes: Number(web3.fromWei(yesStakes, "ether")),
+        }
       }
 
       // See if the proposal was executed, either passing or failing
