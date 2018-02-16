@@ -141,6 +141,10 @@ class ProposalContainer extends React.Component<IProps, null> {
 
                     ON {submittedAt.format("MMM DD, YYYY")}
                   </div>
+
+                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
+                    <img src="/assets/images/Icon/View.svg"/>
+                  </a>
                 </div>
 
                 <PredictionBox
