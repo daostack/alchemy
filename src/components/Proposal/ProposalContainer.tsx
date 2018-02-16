@@ -9,7 +9,7 @@ import { IRootState } from 'reducers';
 import { IDaoState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
-import AccountPopup from 'components/Account/AccountPopup';
+import AccountPopupContainer from 'components/Account/AccountPopupContainer';
 import PredictionBox from './PredictionBox';
 import VoteBox from './VoteBox';
 
@@ -122,7 +122,7 @@ class ProposalContainer extends React.Component<IProps, null> {
               <span className={css.transferAmount}>{proposal.rewardToken} {dao.tokenSymbol} &amp; {proposal.rewardReputation} Reputation</span>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
-              <AccountPopup
+              <AccountPopupContainer
                 accountAddress={proposal.beneficiary}
                 daoAvatarAddress={proposal.daoAvatarAddress}
               />
@@ -134,7 +134,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <div className={css.createdBy}>
                     CREATED BY
 
-                    <AccountPopup
+                    <AccountPopupContainer
                       accountAddress={proposal.beneficiary}
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
@@ -155,7 +155,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <div className={css.createdBy}>
                     CREATED BY
 
-                    <AccountPopup
+                    <AccountPopupContainer
                       accountAddress={proposal.beneficiary}
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />

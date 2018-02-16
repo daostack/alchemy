@@ -9,7 +9,7 @@ import { IRootState } from 'reducers';
 import { IDaoState, IMemberState } from 'reducers/arcReducer';
 import * as schemas from '../../schemas';
 
-import AccountPopup from 'components/Account/AccountImage';
+import AccountImage from 'components/Account/AccountImage';
 
 import * as css from './ViewDao.scss';
 
@@ -39,7 +39,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
       const member = dao.members[address];
       return (
         <div className={css.member + " " + css.clearfix} key={"member_" + address}>
-          <AccountPopup
+          <AccountImage
             accountAddress={address}
             className="membersPage"
           />
