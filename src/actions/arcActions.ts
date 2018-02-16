@@ -7,6 +7,7 @@ import { push } from 'react-router-redux'
 import { ThunkAction } from 'redux-thunk';
 import * as Web3 from 'web3';
 
+import * as notificationsActions from 'actions/notificationsActions';
 import * as web3Actions from 'actions/web3Actions';
 import * as web3Constants from 'constants/web3Constants';
 import * as arcConstants from 'constants/arcConstants';
@@ -399,6 +400,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
 
       const memberUpdates : { [key : string] : IMemberState } = {};
       let winningVote = 0;
+      let alert = "";
       try {
         winningVote = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
 
@@ -431,6 +433,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
             reputation: Number(web3.fromWei(await daoInstance.reputation.reputationOf.call(beneficiary), "ether"))
           };
 
+          alert = "Proposal passed!";
+
           // TODO: update the member reputation and tokens based on rewards? right now doing this in the reducer
         }
       } catch (err) {
@@ -456,7 +460,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
           reputationCount: Number(web3.fromWei(await daoInstance.reputation.totalSupply(), "ether")),
           tokenCount: Number(web3.fromWei(await daoInstance.token.totalSupply(), "ether"))
         },
-        members: memberUpdates
+        members: memberUpdates,
+        alert: alert
       }
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });

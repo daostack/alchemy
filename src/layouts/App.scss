@@ -38,6 +38,24 @@ body {
   z-index: 0;
 }
 
+.fadeEnter {
+  opacity: 0.01;
+}
+
+.fadeEnter.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExit.fadeExitActive {
+  opacity: 0.01;
+  transition: opacity 1000ms ease-in;
+}
+
 .header {
   width: 100%;
   vertical-align: middle;
@@ -49,16 +67,26 @@ body {
     padding: 9px;
   }
 
+  .alert {
+    color: white;
+    background-color: #44aa44;
+    width: 100%;
+    top: 60px;
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    padding: 2px 0;
+  }
 
   .accountInfo {
     float: right;
-    
+
     .holdings {
       padding-top: 10px;
       text-align: right;
       font-size: $small;
       float: left;
-    
+
       .holdingsLabel {
         color: $black-halftone;
       }

@@ -3,8 +3,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Link, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux';
+import { CSSTransition } from 'react-transition-group';
 
 import { IDaoState, IMemberState } from 'reducers/arcReducer'
+import { INotificationsState } from 'reducers/notificationsReducer'
 import { IWeb3State } from 'reducers/web3Reducer'
 import { IRootState } from 'reducers';
 import * as web3Actions from 'actions/web3Actions';
@@ -15,12 +17,14 @@ import * as css from "./App.scss"
 
 interface IStateProps {
   dao: IDaoState
+  notifications: INotificationsState
   web3State: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     dao: state.arc.daos[ownProps.daoAddress],
+    notifications: state.notifications,
     web3State: state.web3
   };
 };
@@ -35,6 +39,20 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps
 
+const Fade = ({ children, ...props } : any) => (
+  <CSSTransition
+    {...props}
+    timeout={1000}
+    classNames={{
+     enter: css.fadeEnter,
+     enterActive: css.fadeEnterActive,
+     exit: css.fadeExit,
+     exitActive: css.fadeExitActive
+    }}
+  >
+    {children}
+  </CSSTransition>
+);
 
 class HeaderContainer extends React.Component<IProps, null> {
 
@@ -45,7 +63,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   render() {
-    const { dao, web3State } = this.props;
+    const { dao, notifications, web3State } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     let member = dao ? dao.members[web3State.ethAccountAddress] : false;
@@ -62,6 +80,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     return(
       <nav className={css.header}>
         <Link className={css.alchemyLogo} to='/'><img src='/assets/images/alchemy-logo.svg'/></Link>
+        { notifications.alert ? <Fade in={notifications.alert.length > 0}><div className={css.alert}>{notifications.alert}</div></Fade> : ""}
         { web3
           ? <div className={css.accountInfo}>
               <div className={css.holdings}>
