@@ -54,7 +54,7 @@ body {
     float: right;
     
     .holdings {
-      padding-top: 12px;
+      padding-top: 16px;
       text-align: right;
       font-size: $small;
       float: left;
@@ -67,6 +67,13 @@ body {
         margin-right: -5px;
         border: none;
         background: transparent;
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border: 1px solid red;
+        right: 20px;
+        top: 15px;
+        opacity: 0;
       }
     }
 

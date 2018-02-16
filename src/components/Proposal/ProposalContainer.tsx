@@ -159,7 +159,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                       accountAddress={proposal.beneficiary}
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
-
                     ON {submittedAt.format("MMM DD, YYYY")}
                   </div>
 
@@ -174,7 +173,13 @@ class ProposalContainer extends React.Component<IProps, null> {
                 />
               </div>
             : proposal.winningVote == VotesStatus.Yes ?
-              ""
+              <div>
+                <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
+                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
+                    <img src="/assets/images/Icon/View.svg"/>
+                  </a>
+                </div> 
+              </div>
             : proposal.winningVote == VotesStatus.No ?
               ""
             : ""
