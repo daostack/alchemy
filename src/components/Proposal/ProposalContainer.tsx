@@ -135,7 +135,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                     CREATED BY
 
                     <AccountPopupContainer
-                      accountAddress={proposal.beneficiary}
+                      accountAddress={proposal.proposer}
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
 
@@ -156,7 +156,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                     CREATED BY
 
                     <AccountPopupContainer
-                      accountAddress={proposal.beneficiary}
+                      accountAddress={proposal.proposer}
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
                     ON {submittedAt.format("MMM DD, YYYY")}
