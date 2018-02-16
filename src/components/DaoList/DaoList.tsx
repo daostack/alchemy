@@ -36,8 +36,8 @@ export default class DaoList extends React.Component<IProps, null> {
             </div>
             <h3 className={css.daoName}>{dao.name}</h3>
             <div className={css.daoInfo}>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-            <div className={css.daoInfo}>Num tokens: {dao.tokenCount}</div>
-            <div className={css.daoInfo}>Reputation: {dao.reputationCount}</div>
+            <div className={css.daoInfo}>Num tokens: {Math.round(dao.tokenCount).toLocaleString()}</div>
+            <div className={css.daoInfo}>Reputation: {Math.round(dao.reputationCount).toLocaleString()}</div>
           </div>
         </Link>
       );
