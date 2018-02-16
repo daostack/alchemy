@@ -175,7 +175,8 @@ export async function getDAOData(avatarAddress : string, web3 : any, detailed = 
           submittedAt: proposalDetails[7],
           title: title,
           totalStakes: Number(web3.fromWei(proposalDetails[4], "ether")),
-          totalVotes: Number(web3.fromWei(proposalDetails[4], "ether")),
+          totalVotes: Number(web3.fromWei(proposalDetails[3], "ether")),
+          totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
           votesYes: Number(web3.fromWei(yesVotes, "ether")),
           votesNo: Number(web3.fromWei(noVotes, "ether")),
           winningVote: Number(proposalDetails[10])
@@ -362,6 +363,7 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
         title: title,
         totalStakes: 0,
         totalVotes: 0,
+        totalVoters: 0,
         votesYes: 0,
         votesNo: 0,
         winningVote: 0

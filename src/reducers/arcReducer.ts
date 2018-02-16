@@ -37,6 +37,7 @@ export interface IProposalState {
   title: string
   totalStakes: number
   totalVotes: number
+  totalVoters: number
   votesYes: number
   votesNo: number
   winningVote: VotesStatus
