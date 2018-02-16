@@ -91,7 +91,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
             
 
             </div>
-            <div className={css.proposalsContainer}>
+            <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
               {boostedProposalsHTML}
             </div>
           </div>

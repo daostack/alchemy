@@ -9,6 +9,7 @@ export const memberAddress: string;
 export const memberHoldings: string;
 export const verticalDivider: string;
 export const proposalsContainer: string;
+export const boostedProposalsContainer: string;
 export const openProposal: string;
 export const navItem: string;
 export const createProposal: string;
