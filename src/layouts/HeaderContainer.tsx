@@ -12,6 +12,7 @@ import { IRootState } from 'reducers';
 import * as web3Actions from 'actions/web3Actions';
 
 import AccountBalance from 'components/Account/AccountBalance'
+import AccountImage from 'components/Account/AccountImage';
 
 import * as css from "./App.scss"
 
@@ -104,7 +105,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                 </div>
               </div>
               <button className={css.profileLink}>
-                <img src='/assets/images/user-profile-icon.svg'/>
+                <AccountImage accountAddress={web3State.ethAccountAddress} />
               </button>
             </div>
           : ""
