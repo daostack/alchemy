@@ -15,11 +15,9 @@
 2. Follow instructions [here](https://github.com/daostack/alchemy-server)
 
 ## Working with Ganache without MetaMask
-1. Switch off chrome extensions such as MetaMask or Parity extension
-2. Run `npm run ganache` in one terminal tab
-3. In a separate tab run `npm run migrate-ganache`
-4. Run `npm run start-ganache`
-5. Go to http://localhost:3000/ in your favorite browser
+1. Make sure plugins such as MetaMask or Parity extension are deactivated
+2. Run `npm run auto-start-ganache`
+3. Go to http://localhost:3000/ in your favorite browser
 
 ## Working with Ganache and MetaMask
 1. Install and Enable the [MetaMask extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) in Chrome
