@@ -19,8 +19,9 @@
     "migrate-ganache": "npm explore @daostack/arc.js -- npm start migrateContracts",
     "lint": "eslint src",
     "start": "webpack-dev-server --open='google chrome' --config webpack.dev.config.js",
-    "start-ganache": "ETH_ENV=ganache yarn start",
-    "start-kovan": "ETH_ENV=kovan yarn start"
+    "start-ganache": "ETH_ENV=ganache && npm run start",
+    "start-kovan": "ETH_ENV=kovan && npm run start",
+    "auto-start-ganache": "ETH_ENV=ganache && run-with-ganache --ganache-cmd ganache-cli 'npm run migrate-ganache && npm run start'"
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.24",
@@ -47,6 +48,7 @@
     "redux-promise-middleware": "^4.4.1",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
+    "run-with-ganache": "^0.1.1",
     "style-loader": "^0.18.2",
     "truffle-contract": "^3.0.1",
     "web3": "^0.20.4",
