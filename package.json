@@ -10,18 +10,18 @@
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
     "ganacheDb": "npm explore @daostack/arc.js -- npm start test.ganacheDb.run",
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start test.ganacheDb.clean",
     "ganacheDb-save": "npm explore @daostack/arc.js -- npm start test.ganacheDb.zip",
     "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start test.ganacheDb.restoreFromZip",
-    "migrate-ganache": "npm explore @daostack/arc.js -- npm start migrateContracts",
+    "migrate-ganache": "cross-env network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
     "lint": "eslint src",
-    "start": "webpack-dev-server --open='google chrome' --config webpack.dev.config.js",
-    "start-ganache": "ETH_ENV=ganache && npm run start",
-    "start-kovan": "ETH_ENV=kovan && npm run start",
-    "auto-start-ganache": "ETH_ENV=ganache && run-with-ganache --ganache-cmd ganache-cli 'npm run migrate-ganache && npm run start'"
+    "start": "webpack-dev-server --config webpack.dev.config.js",
+    "start-ganache": "cross-env ETH_ENV=ganache npm run start",
+    "start-kovan": "cross-env ETH_ENV=kovan npm run start",
+    "auto-start-ganache": "cross-env ETH_ENV=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.24",
@@ -71,6 +71,7 @@
     "@types/redux-promise-middleware": "^0.0.8",
     "@types/webpack-env": "^1.13.0",
     "awesome-typescript-loader": "^3.2.3",
+    "cross-env": "^5.1.3",
     "extract-text-webpack-plugin": "^3.0.0",
     "ganache-cli": "^6.0.3",
     "node-sass": "^4.5.3",
