@@ -88,6 +88,7 @@ const arcReducer = (state = initialState, action: any) => {
   }
 
   switch (action.type) {
+    case ActionTypes.ARC_GET_PROPOSAL_FULFILLED:
     case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
       // Add the new proposal to the DAO's state
       return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );

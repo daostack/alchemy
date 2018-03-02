@@ -1,13 +1,15 @@
 import * as classNames from 'classnames';
 import * as moment from 'moment';
+import { denormalize } from 'normalizr';
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
-import { Link } from 'react-router-dom'
+import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IDaoState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
-import { IWeb3State } from 'reducers/web3Reducer'
+import * as schemas from '../../schemas';
+import * as selectors from 'selectors/daoSelectors';
 
 import AccountPopupContainer from 'components/Account/AccountPopupContainer';
 import PredictionBox from './PredictionBox';
@@ -15,41 +17,44 @@ import VoteBox from './VoteBox';
 
 import * as css from './Proposal.scss';
 
-interface IStateProps {
+interface IStateProps extends RouteComponentProps<any> {
   dao: IDaoState
-  proposal: IProposalState
-  web3: IWeb3State
+  proposal : IProposalState
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
-  const proposal = state.arc.proposals[ownProps.proposalId];
   return {
-    dao: state.arc.daos[proposal.daoAvatarAddress],
-    proposal: proposal,
-    web3: state.web3 // TODO: just need the current account address right?
+    dao: state.arc.daos[ownProps.match.params.daoAddress],
+    proposal: state.arc.proposals[ownProps.match.params.proposalId]
   };
 };
 
 interface IDispatchProps {
+  getProposal: typeof arcActions.getProposal
   voteOnProposal: typeof arcActions.voteOnProposal
   stakeProposal: typeof arcActions.stakeProposal
 }
 
 const mapDispatchToProps = {
+  getProposal: arcActions.getProposal,
   voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal
 };
 
 type IProps = IStateProps & IDispatchProps
 
-class ProposalContainer extends React.Component<IProps, null> {
+class ViewProposalContainer extends React.Component<IProps, null> {
+
+  componentDidMount() {
+    this.props.getProposal(this.props.dao.avatarAddress, this.props.proposal.proposalId);
+  }
 
   render() {
-    const { dao, proposal, voteOnProposal, stakeProposal, web3 } = this.props;
+    const { dao, proposal, voteOnProposal, stakeProposal } = this.props;
 
     if (proposal) {
       var proposalClass = classNames({
-        [css.proposal]: true,
+        [css.viewProposalWrapper]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
         [css.failedProposal]: proposal.winningVote == VotesStatus.No,
         [css.passedProposal]: proposal.winningVote == VotesStatus.Yes
@@ -69,7 +74,7 @@ class ProposalContainer extends React.Component<IProps, null> {
         }
       }
 
-      return (
+      return(
         <div className={proposalClass + " " + css.clearfix}>
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
@@ -115,7 +120,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <span>5 DAYS</span>
               : ""
               }
-              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
+              {proposal.title}
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of</span>
@@ -197,4 +202,4 @@ class ProposalContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProposalContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ViewProposalContainer);

@@ -62,7 +62,7 @@ class AppContainer extends React.Component<IProps, null> {
               <Route exact path="/" component={HomeContainer}/>
               <Route exact path="/dao/create" component={CreateDaoContainer}/>
               <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
-              <Route path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
+              <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
             </Switch>
           </div>
           <div className={css.background}></div>

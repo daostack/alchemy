@@ -7,7 +7,6 @@ import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom'
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IDaoState, IMemberState, IProposalState } from 'reducers/arcReducer';
-import { IWeb3State } from 'reducers/web3Reducer'
 import * as schemas from '../../schemas';
 import * as selectors from 'selectors/daoSelectors';
 
@@ -16,20 +15,19 @@ import DaoNav from './DaoNav';
 import DaoProposalsContainer from './DaoProposalsContainer';
 import DaoHistoryContainer from './DaoHistoryContainer';
 import DaoMembersContainer from './DaoMembersContainer';
+import ViewProposalContainer from 'components/Proposal/ViewProposalContainer';
 
 import * as css from './ViewDao.scss';
 
 interface IStateProps extends RouteComponentProps<any> {
   dao: IDaoState
   daoAddress : string
-  web3: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
-    daoAddress : ownProps.match.params.daoAddress,
-    web3: state.web3
+    daoAddress : ownProps.match.params.daoAddress
   };
 };
 
@@ -62,6 +60,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
             <Route exact path="/dao/:daoAddress" component={DaoProposalsContainer} />
             <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
             <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
+            <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
           </Switch>
         </div>
       );
