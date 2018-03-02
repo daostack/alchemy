@@ -23,18 +23,24 @@ export enum VotesStatus {
 
 export interface IProposalState {
   beneficiary: string
-  boostedAt: number
+  boostedTime: number
+  contributionDescriptionHash: string
   description: string
   daoAvatarAddress: string
-  state: ProposalStates
+  ethReward: number
+  executionTime: number,
+  externalToken: string,
+  externalTokenReward: number
+  nativeTokenReward: number
+  numberOfPeriods: number,
+  periodLength: number,
   proposalId: string
   proposer: string
-  rewardEth: number
-  rewardReputation: number
-  rewardToken: number
+  reputationChange: number
   stakesNo: number
   stakesYes: number
-  submittedAt: number
+  state: ProposalStates
+  submittedTime: number
   title: string
   totalStakes: number
   totalVotes: number

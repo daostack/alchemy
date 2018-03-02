@@ -47,3 +47,4 @@ export const targetAccount: string;
 export const viewProposal: string;
 export const proposalsContainer: string;
 export const concludedDecisionDetails: string;
+export const viewProposalWrapper: string;

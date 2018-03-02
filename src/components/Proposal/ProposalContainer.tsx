@@ -55,7 +55,7 @@ class ProposalContainer extends React.Component<IProps, null> {
         [css.passedProposal]: proposal.winningVote == VotesStatus.Yes
       });
 
-      let submittedAt = moment.unix(proposal.submittedAt);
+      let submittedTime = moment.unix(proposal.submittedTime);
 
       const yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
       const noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
@@ -82,7 +82,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <div className={css.result}>
                     <div>PASSED</div>
                     <div><img src="/assets/images/Icon/Passed.svg"/></div>
-                    <div>{submittedAt.format("MMM DD, YYYY")}</div>
+                    <div>{submittedTime.format("MMM DD, YYYY")}</div>
                   </div>
               </div>
             : proposal.winningVote == VotesStatus.No ?
@@ -90,7 +90,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   <div className={css.result}>
                     <div>FAILED</div>
                     <div><img src="/assets/images/Icon/Failed.svg"/></div>
-                    <div>{submittedAt.format("MMM DD, YYYY")}</div>
+                    <div>{submittedTime.format("MMM DD, YYYY")}</div>
                   </div>
               </div>
             : ""
@@ -119,7 +119,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of</span>
-              <span className={css.transferAmount}>{proposal.rewardToken} {dao.tokenSymbol} &amp; {proposal.rewardReputation} Reputation</span>
+              <span className={css.transferAmount}>{proposal.nativeTokenReward} {dao.tokenSymbol} &amp; {proposal.reputationChange} Reputation</span>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
               <AccountPopupContainer
@@ -139,7 +139,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
 
-                    ON {submittedAt.format("MMM DD, YYYY")}
+                    ON {submittedTime.format("MMM DD, YYYY")}
                   </div>
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
@@ -163,7 +163,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                       accountAddress={proposal.proposer}
                       daoAvatarAddress={proposal.daoAvatarAddress}
                     />
-                    ON {submittedAt.format("MMM DD, YYYY")}
+                    ON {submittedTime.format("MMM DD, YYYY")}
                   </div>
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
