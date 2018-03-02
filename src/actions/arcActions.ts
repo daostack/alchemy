@@ -418,6 +418,15 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
           //      so we can have instant rewards for demo
           await increaseTime(1);
 
+          // XXX: redeem stuff from genesis for the proposer, voter and stakers if it passed?
+          const genesisRedeemTransaction = await votingMachineInstance.redeem({
+            proposalId: proposalId,
+            beneficiary: ethAccountAddress
+          });
+
+          const beneficiary = genesisRedeemTransaction.getValueFromTx("_beneficiary", "RedeemReputation");
+
+          // TODO: for some reason the Redeem* events on ContributionReward are not returning a _beneficiary arg
           const redeemTransaction = await contributionRewardInstance.redeemContributionReward({
             proposalId: proposalId,
             avatar: daoAvatarAddress,
@@ -425,13 +434,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
             nativeTokens: true,
             ethers: true,
             externalTokens: true
-          });
-          const beneficiary = redeemTransaction.getValueFromTx("_beneficiary", "RedeemNativeToken");
-
-          // XXX: redeem stuff from genesis for the proposer, voter and stakers if it passed?
-          const genesisRedeemTransaction = await votingMachineInstance.redeem({
-            proposalId: proposalId,
-            beneficiary: ethAccountAddress
           });
 
           memberUpdates[beneficiary] = {
@@ -510,7 +512,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       }
 
       // See if the proposal was executed, either passing or failing
-      // const executed = voteTransaction.logs.find((log : any) => log.event == "LogExecuteProposal");
+      // const executed = voteTransaction.logs.find((log : any) => log.event == "ExecuteProposal");
       // if (executed) {
       //   const decision = executed.args._decision.toNumber();
       //   payload.state = "Executed";
