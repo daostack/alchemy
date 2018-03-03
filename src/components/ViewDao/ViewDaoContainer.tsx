@@ -1,3 +1,4 @@
+import * as Arc from '@daostack/arc.js';
 import * as classNames from 'classnames';
 import { denormalize } from 'normalizr';
 import * as React from 'react';
@@ -33,18 +34,33 @@ const mapStateToProps = (state : IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   getDAO: typeof arcActions.getDAO
+  getProposal: typeof arcActions.getProposal
 }
 
 const mapDispatchToProps = {
-  getDAO: arcActions.getDAO
+  getDAO: arcActions.getDAO,
+  getProposal: arcActions.getProposal
 };
 
 type IProps = IStateProps & IDispatchProps
 
 class ViewDaoContainer extends React.Component<IProps, null> {
+  proposalEventWatcher : Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
 
-  componentDidMount() {
-    this.props.getDAO(this.props.daoAddress);
+  async componentDidMount() {
+    const { daoAddress, getDAO, getProposal } = this.props;
+
+    await getDAO(daoAddress);
+
+    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+    this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: 'latest' });
+    this.proposalEventWatcher.watch((error, result) => {
+      getProposal(daoAddress, result[0].args._proposalId)
+    });
+  }
+
+  componentWillUnmount() {
+    this.proposalEventWatcher.stopWatching();
   }
 
   render() {
