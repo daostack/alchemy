@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
+import { IDaoState, IProposalState, ProposalStates, VoteOptions } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import AccountPopupContainer from 'components/Account/AccountPopupContainer';
@@ -51,8 +51,8 @@ class ProposalContainer extends React.Component<IProps, null> {
       var proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
-        [css.failedProposal]: proposal.winningVote == VotesStatus.No,
-        [css.passedProposal]: proposal.winningVote == VotesStatus.Yes
+        [css.failedProposal]: proposal.winningVote == VoteOptions.No,
+        [css.passedProposal]: proposal.winningVote == VoteOptions.Yes
       });
 
       let submittedTime = moment.unix(proposal.submittedTime);
@@ -77,7 +77,7 @@ class ProposalContainer extends React.Component<IProps, null> {
               voteOnProposal={voteOnProposal}
               daoTotalReputation={dao.reputationCount}
             />
-            : proposal.winningVote == VotesStatus.Yes ?
+            : proposal.winningVote == VoteOptions.Yes ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
                     <div>PASSED</div>
@@ -85,7 +85,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                     <div>{submittedTime.format("MMM DD, YYYY")}</div>
                   </div>
               </div>
-            : proposal.winningVote == VotesStatus.No ?
+            : proposal.winningVote == VoteOptions.No ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
                     <div>FAILED</div>
@@ -176,7 +176,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   stakeProposal={stakeProposal}
                 />
               </div>
-            : proposal.winningVote == VotesStatus.Yes ?
+            : proposal.winningVote == VoteOptions.Yes ?
               <div>
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
@@ -184,7 +184,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </a>
                 </div>
               </div>
-            : proposal.winningVote == VotesStatus.No ?
+            : proposal.winningVote == VoteOptions.No ?
               ""
             : ""
 

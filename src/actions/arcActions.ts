@@ -14,7 +14,7 @@ import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
 import * as schemas from '../schemas';
 
-import { IDaoState, IMemberState, IProposalState, ProposalStates, VotesStatus } from 'reducers/arcReducer';
+import { IDaoState, IMemberState, IProposalState, ProposalStates, VoteOptions } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -149,11 +149,11 @@ export async function getDAOData(avatarAddress : string, detailed = false) {
       // Get more proposal details from the GenesisProtocol voting machine
       const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
 
-      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
-      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
+      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.Yes });
+      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.No });
 
-      const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.Yes });
-      const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.No });
+      const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
+      const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
 
       genesisProposal = {
         boostedTime: Number(proposalDetails[10]),
@@ -222,11 +222,11 @@ export function getProposal(avatarAddress : string, proposalId : string) {
     // Get more proposal details from the GenesisProtocol voting machine
     const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
 
-    const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
-    const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
+    const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.Yes });
+    const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.No });
 
-    const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.Yes });
-    const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.No });
+    const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
+    const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
 
     const genesisProposal = {
       boostedTime: Number(proposalDetails[10]),
@@ -396,7 +396,7 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
       const proposalId = submitProposalTransaction.proposalId;
 
       // Cast a Yes vote as the owner of the proposal?
-      //const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote: VotesStatus.Yes});
+      //const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote: VoteOptions.Yes});
 
       const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
       const submittedTime = Math.round((new Date()).getTime() / 1000);
@@ -472,8 +472,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
       const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote : vote} );
-      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.Yes });
-      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VotesStatus.No });
+      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.Yes });
+      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.No });
 
       const memberUpdates : { [key : string] : IMemberState } = {};
       let winningVote = 0;
@@ -482,7 +482,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
         winningVote = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
 
         // Did proposal pass?
-        if (winningVote == VotesStatus.Yes) {
+        if (winningVote == VoteOptions.Yes) {
           // Redeem rewards if there are any instant ones. XXX: we shouldnt do this, have to switch to redeem system
 
           // XXX: hack to increase the time on the ganache blockchain so that enough time has passed to redeem the rewards
@@ -569,8 +569,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       //const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : web3.toWei(1, "ether")});
       //console.log("Stake tr = ", stakeTransaction);
 
-      const yesStakes = 0;//await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.Yes });
-      const noStakes = 0; //await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VotesStatus.No });
+      const yesStakes = 0;//await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
+      const noStakes = 0; //await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
 
       let payload = {
         daoAvatarAddress: daoAvatarAddress,

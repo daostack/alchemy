@@ -16,7 +16,7 @@ export enum ProposalStates {
   QuietEndingPeriod = 4
 }
 
-export enum VotesStatus {
+export enum VoteOptions {
   Yes = 1,
   No = 2
 }
@@ -47,7 +47,7 @@ export interface IProposalState {
   totalVoters: number
   votesYes: number
   votesNo: number
-  winningVote: VotesStatus
+  winningVote: VoteOptions
 }
 
 export interface IDaoState {

@@ -55,7 +55,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: 'latest' });
     this.proposalEventWatcher.watch((error, result) => {
-      getProposal(daoAddress, result[0].args._proposalId)
+      getProposal(daoAddress, result[0].args._proposalId);
     });
   }
 
