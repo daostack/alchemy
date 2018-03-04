@@ -5,6 +5,7 @@ export const openProposal: string;
 export const failedProposal: string;
 export const proposalInfo: string;
 export const passedProposal: string;
+export const unconfirmedProposal: string;
 export const voteControls: string;
 export const upvote: string;
 export const downvote: string;

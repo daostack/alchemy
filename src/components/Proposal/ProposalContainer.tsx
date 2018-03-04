@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, IProposalState, ProposalStates, VoteOptions } from 'reducers/arcReducer';
+import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import AccountPopupContainer from 'components/Account/AccountPopupContainer';
@@ -52,7 +52,8 @@ class ProposalContainer extends React.Component<IProps, null> {
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
         [css.failedProposal]: proposal.winningVote == VoteOptions.No,
-        [css.passedProposal]: proposal.winningVote == VoteOptions.Yes
+        [css.passedProposal]: proposal.winningVote == VoteOptions.Yes,
+        [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed
       });
 
       let submittedTime = moment.unix(proposal.submittedTime);

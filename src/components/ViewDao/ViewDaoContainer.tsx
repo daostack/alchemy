@@ -48,9 +48,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   proposalEventWatcher : Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
 
   async componentDidMount() {
-    const { daoAddress, getDAO, getProposal } = this.props;
+    const { daoAddress, dao, getDAO, getProposal } = this.props;
 
-    await getDAO(daoAddress);
+    // TODO: kind of a hack to make sure we dont overwrite all proposals after creating an unconfirmed proposal and coming back to this page
+    //       this should be handled by better merging in the reducer
+    if (!dao || dao.proposals.length == 0) {
+      await getDAO(daoAddress);
+    }
 
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: 'latest' });

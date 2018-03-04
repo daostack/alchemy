@@ -16,6 +16,12 @@ export enum ProposalStates {
   QuietEndingPeriod = 4
 }
 
+export enum TransactionStates {
+  Unconfirmed = "unconfirmed",
+  Confirmed = "confirmed",
+  Failed = "failed"
+}
+
 export enum VoteOptions {
   Yes = 1,
   No = 2
@@ -42,6 +48,7 @@ export interface IProposalState {
   state: ProposalStates
   submittedTime: number
   title: string
+  transactionState: TransactionStates
   totalStakes: number
   totalVotes: number
   totalVoters: number

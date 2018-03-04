@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as Arc from '@daostack/arc.js';
 import promisify = require('es6-promisify');
+import * as _ from 'lodash';
 import { normalize } from 'normalizr';
 import * as Redux from 'redux';
 import { push } from 'react-router-redux'
@@ -14,7 +15,7 @@ import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
 import * as schemas from '../schemas';
 
-import { IDaoState, IMemberState, IProposalState, ProposalStates, VoteOptions } from 'reducers/arcReducer';
+import { IDaoState, IMemberState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -126,24 +127,26 @@ export async function getDAOData(avatarAddress : string, detailed = false) {
 
     const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address});
 
+    // Get all proposals' details like title and description from the server
+    let serverProposals : { [ key : string ] : any } = {};
+    try {
+      const results = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress +'"}}');
+      serverProposals = _.keyBy(results.data, 'arcId');
+    } catch (e) {
+      console.log(e);
+    }
+
     let contributionProposal : Arc.ContributionProposal, genesisProposal: any, proposalId : string, description: string, title: string;
     for (let cnt = 0; cnt < proposals.length; cnt++) {
       contributionProposal = proposals[cnt];
       proposalId = contributionProposal.proposalId;
 
-      // Get title and description from the server
       // Default to showing the description hash if we don't have better description on the server
-      // TODO: pull all the proposals for this DAO in one API request
       description = contributionProposal.contributionDescriptionHash;
-      title = "";
-      try {
-        const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"arcId":"' + proposalId +'"}}');
-        if (response.data.length > 0) {
-          description = response.data[0].description;
-          title = response.data[0].title;
-        }
-      } catch (e) {
-        console.log(e);
+      title = "[no title]";
+      if (serverProposals[proposalId]) {
+        description = serverProposals[proposalId].description;
+        title = serverProposals[proposalId].title;
       }
 
       // Get more proposal details from the GenesisProtocol voting machine
@@ -172,6 +175,7 @@ export async function getDAOData(avatarAddress : string, detailed = false) {
         totalStakes: Number(web3.fromWei(proposalDetails[4], "ether")),
         totalVotes: Number(web3.fromWei(proposalDetails[3], "ether")),
         totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
+        transactionState: TransactionStates.Confirmed,
         votesYes: Number(web3.fromWei(yesVotes, "ether")),
         votesNo: Number(web3.fromWei(noVotes, "ether")),
         winningVote: Number(proposalDetails[10])
@@ -210,7 +214,7 @@ export function getProposal(avatarAddress : string, proposalId : string) {
     let description = contributionProposal.contributionDescriptionHash;
     let title = "";
     try {
-      const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"arcId":"' + proposalId +'"}}');
+      const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress +'", "arcId":"' + proposalId +'"}}');
       if (response.data.length > 0) {
         description = response.data[0].description;
         title = response.data[0].title;
@@ -245,6 +249,7 @@ export function getProposal(avatarAddress : string, proposalId : string) {
       totalStakes: Number(web3.fromWei(proposalDetails[4], "ether")),
       totalVotes: Number(web3.fromWei(proposalDetails[3], "ether")),
       totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
+      transactionState: TransactionStates.Confirmed,
       votesYes: Number(web3.fromWei(yesVotes, "ether")),
       votesNo: Number(web3.fromWei(noVotes, "ether")),
       winningVote: Number(proposalDetails[10])
@@ -439,6 +444,7 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
         totalStakes: 0,
         totalVotes: 0,
         totalVoters: 0,
+        transactionState: TransactionStates.Unconfirmed,
         votesYes: 0,
         votesNo: 0,
         winningVote: 0
