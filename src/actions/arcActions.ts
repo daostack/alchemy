@@ -572,11 +572,23 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
-      //const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : web3.toWei(1, "ether")});
-      //console.log("Stake tr = ", stakeTransaction);
+      const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
+      const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
+      const minimumStakingFee = votingMachineParam[6]; // 6 is the index of minimumStakingFee in the Parameters struct.
 
-      const yesStakes = 0;//await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
-      const noStakes = 0; //await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
+      const input = parseInt(prompt(`How much ether would you like to stake? (min = ${minimumStakingFee})`, '1'));
+      const amount = web3.toWei(input,'ether');
+      if(amount < minimumStakingFee) throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`);
+
+      const StandardToken = Arc.Utils.requireContract('StandardToken');
+      const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken())
+      await stakingToken.approve(votingMachineInstance.address,amount);
+
+      const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : amount});
+      console.log("Stake tr = ", stakeTransaction);
+
+      const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
+      const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
 
       let payload = {
         daoAvatarAddress: daoAvatarAddress,
