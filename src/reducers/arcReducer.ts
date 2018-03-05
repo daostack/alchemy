@@ -2,7 +2,7 @@
 
 import * as ActionTypes from 'constants/arcConstants'
 
-export interface IMemberState {
+export interface IAccountState {
   address?: string
   tokens: number
   reputation: number
@@ -58,24 +58,24 @@ export interface IProposalState {
 }
 
 export interface IDaoState {
-  avatarAddress: string,
-  controllerAddress: string,
-  members: { [key : string] : IMemberState },
-  name: string,
-  rank: number,
-  promotedAmount: number,
-  proposals: (IProposalState | string)[], // Either normalized (string) or denormalized (IProposalState)
-  reputationAddress: string,
-  reputationCount: number,
-  tokenAddress: string,
+  avatarAddress: string
+  controllerAddress: string
+  members: { [key : string] : IAccountState }
+  name: string
+  rank: number
+  promotedAmount: number
+  proposals: (IProposalState | string)[] // Either normalized (string) or denormalized (IProposalState)
+  reputationAddress: string
+  reputationCount: number
+  tokenAddress: string
   tokenCount: number
-  tokenName: string,
+  tokenName: string
   tokenSymbol: string
 }
 
 export interface IArcState {
-  daos: { [key : string] : IDaoState },
-  proposals: { [key : string] : IProposalState },
+  daos: { [key : string] : IDaoState }
+  proposals: { [key : string] : IProposalState }
 }
 
 export const initialState : IArcState = {

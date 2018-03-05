@@ -15,7 +15,7 @@ import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
 import * as schemas from '../schemas';
 
-import { IDaoState, IMemberState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
+import { IDaoState, IAccountState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -104,7 +104,7 @@ export async function getDAOData(avatarAddress : string, detailed = false) {
 
     memberAddresses = [...new Set(memberAddresses)]; // Dedupe
 
-    let members : { [ key : string ] : IMemberState } = {};
+    let members : { [ key : string ] : IAccountState } = {};
     for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
       const address = memberAddresses[cnt];
       let member = { address: address, tokens: 0, reputation: 0 };
@@ -481,7 +481,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.Yes });
       const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.No });
 
-      const memberUpdates : { [key : string] : IMemberState } = {};
+      const memberUpdates : { [key : string] : IAccountState } = {};
       let winningVote = 0;
       let alert = "";
       try {
