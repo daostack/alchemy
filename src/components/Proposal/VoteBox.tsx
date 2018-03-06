@@ -43,6 +43,9 @@ export default class VoteBox extends React.Component<IProps, null> {
 
     return (
       <div className={css.voteBox + " " + css.clearfix}>
+        <div className={css.loading}>
+          <img src="/assets/images/Icon/loading-black.svg"/>
+        </div>
         <div className={css.voteControls}>
           <button onClick={this.handleClickVote(1)}>
             <img className={css.upvote} src='/assets/images/Icon/Upvote.svg'/>

@@ -24,6 +24,22 @@ export default class PredictionBox extends React.Component<IProps, null> {
 
     return (
       <div className={css.predictions}>
+        <div className={css.loading}>
+          <img src="/assets/images/Icon/loading-black.svg"/>
+        </div>
+        <div className={css.newPrediction + " " + css.newPassPrediction}>        {/*switch out for newFailPrediction*/}
+          <div className={css.newPredictionTitle}>
+            NEW <strong>PASS</strong> STAKE
+          </div>
+          <input type="text" placeholder="0" className={css.predictionAmount}/>
+          <span className={css.genLabel}>GEN</span>
+          <div className={css.clearfix}>
+            <button className={css.cancelPrediction}>
+              <img src="/assets/images/Icon/Close-black.svg"/>
+            </button>
+            <button className={css.placePrediction}>Place stake</button>
+          </div>
+        </div>
         <div>
           <span>PREDICTIONS</span>
           <table>
@@ -46,7 +62,7 @@ export default class PredictionBox extends React.Component<IProps, null> {
                 </td>
                 <td>{proposal.stakesNo} GEN</td>
               </tr>
-            </tbody>
+            </tbody> 
           </table>
         </div>
       </div>

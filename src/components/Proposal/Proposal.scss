@@ -241,6 +241,7 @@
 }
 
 .voteBox {
+	position: relative;
 	float: left;
 	padding: 20px 0 14px 0;
 }
@@ -252,6 +253,10 @@
 	transform: translateY(-50%);
 	position: absolute;
 
+	a {
+		color: $black;
+	}
+
 	h3 {
 		font-size: $body;
 		margin: 0 0 8px 0;
@@ -262,12 +267,13 @@
 			font-weight: $normal;
 			font-size: $small;
 			color: $black-halftone;
+			margin: 0 0 6px 0;
 		}
 	}
 }
 
 .passedProposal .proposalInfo h3, .failedProposal .proposalInfo h3 {
-	margin: 12px 0 9px 0;
+	margin: 0px 0px 4px 0px;
 }
 
 .decisionGraph {
@@ -453,6 +459,97 @@
 	top: 0;
 }
 
+.newPrediction {
+	display: none;
+	background-color: $white;
+	box-shadow: $shadow-3;
+	border-radius: 3px;
+	position: absolute;
+	top: -5px;
+	left: -5px;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+	padding: 10px;
+
+
+	.newPredictionTitle {
+		font-size: $caption;
+		text-align: center;
+		color: $black;
+		padding-bottom: 6px;
+		position: relative;
+		top: auto;
+		left: auto;
+		transform: none;
+	}
+
+	.predictionAmount {
+		border: 1px solid rgba(199, 208, 212, 1.000);
+		padding: 6px 25px 6px 8px;
+		border-radius: 3px;
+		width: 90px;
+		margin: 4px auto;
+		display: block;
+	}
+
+	.genLabel {
+		position: absolute;
+		top: 43px;
+		right: 25px;
+	}
+
+	.cancelPrediction {
+		margin: 0 2px 0 8px;
+		border: 1px solid rgba(199, 208, 212, 1.000);
+		float: left;
+		display: inline;
+		padding: 8px 8px 6px 8px;
+	}
+
+	.placePrediction {
+		padding: 8px 10px;
+		border: 1px solid $accent-1;
+		color: $accent-1;
+	}
+
+	.clearfix {
+		margin-top: 7px;
+		position: relative;
+		top: auto;
+		left: auto;
+		width: 100%;
+		text-align: center;
+		transform: none;
+	}
+}
+
+.loading {
+	display: none;
+	position: absolute;
+	width: 80%;
+	height: 80%;
+	top: 10%;
+	left: 10%;
+	text-align: center;
+	z-index: 100000;
+	box-shadow: $shadow-3;
+	border-radius: 3px;
+	background-color: $white;
+	
+	img {
+		height: 68px;
+	}
+}
+
+
+.newPassPrediction div strong {
+	color: $accent-1;
+}
+
+.newFailPrediction div strong {
+	color: $accent-2;
+}
 
 
 /****** View Proposal Page ******/
