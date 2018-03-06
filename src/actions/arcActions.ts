@@ -576,16 +576,18 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
       const minimumStakingFee = votingMachineParam[6]; // 6 is the index of minimumStakingFee in the Parameters struct.
 
-      const input = parseInt(prompt(`How much ether would you like to stake? (min = ${minimumStakingFee})`, '1'));
+      const StandardToken = Arc.Utils.requireContract('StandardToken');
+      const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
+      const balance = await stakingToken.balanceOf(getState().web3.ethAccountAddress);
+      console.log(web3.toWei(balance,'ether') + '');
+
+      const input = parseInt(prompt(`How much would you like to stake? (min = ${minimumStakingFee})`, '1'));
       const amount = web3.toWei(input,'ether');
       if(amount < minimumStakingFee) throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`);
+      if(amount > balance) throw new Error(`Staked more than than the balacne: ${balance}!`);
 
-      const StandardToken = Arc.Utils.requireContract('StandardToken');
-      const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken())
       await stakingToken.approve(votingMachineInstance.address,amount);
-
       const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : amount});
-      console.log("Stake tr = ", stakeTransaction);
 
       const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
       const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
