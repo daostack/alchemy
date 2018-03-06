@@ -1,11 +1,11 @@
 import * as update from 'immutability-helper';
-
 import * as ActionTypes from 'constants/arcConstants'
 
 export interface IAccountState {
   address?: string
   tokens: number
   reputation: number
+  votes?: { [proposalId : string] : IVoteState }
 }
 
 export enum ProposalStates {
@@ -27,6 +27,14 @@ export enum VoteOptions {
   No = 2
 }
 
+export interface IVoteState {
+  avatarAddress: string,
+  proposalId: string,
+  reputation: number,
+  vote: VoteOptions,
+  voterAddress: string
+}
+
 export interface IProposalState {
   beneficiary: string
   boostedTime: number
@@ -34,15 +42,16 @@ export interface IProposalState {
   description: string
   daoAvatarAddress: string
   ethReward: number
-  executionTime: number,
-  externalToken: string,
+  executionTime: number
+  externalToken: string
   externalTokenReward: number
   nativeTokenReward: number
-  numberOfPeriods: number,
-  periodLength: number,
+  numberOfPeriods: number
+  periodLength: number
   proposalId: string
   proposer: string
   reputationChange: number
+  reputationWhenExecuted?: number
   stakesNo: number
   stakesYes: number
   state: ProposalStates
@@ -95,17 +104,41 @@ const arcReducer = (state = initialState, action: any) => {
   }
 
   switch (action.type) {
-    case ActionTypes.ARC_GET_PROPOSAL_FULFILLED:
     case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
       // Add the new proposal to the DAO's state
       return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
     }
 
-    case ActionTypes.ARC_VOTE_FULFILLED: {
-      // merge in member updates for the DAO
+    case ActionTypes.ARC_GET_PROPOSAL_FULFILLED: {
+      // Add the new proposal to the DAO's state if not already there
+      if (state.daos[action.payload.daoAvatarAddress].proposals.indexOf(action.payload.result) === -1) {
+        state = update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
+      }
+
+      // Add the current account's vote on the proposal
       state = update(state, { daos: {
         [payload.daoAvatarAddress] : {
-          members: { $merge : payload.members }
+          members: {
+            [payload.vote.voterAddress]: {
+              votes : { [payload.vote.proposalId] : { $set : payload.vote }}
+            }
+          }
+        }
+      }});
+
+      return state;
+    }
+
+    case ActionTypes.ARC_VOTE_FULFILLED: {
+      // Update the account that voted
+      state = update(state, { daos: {
+        [payload.daoAvatarAddress] : {
+          members: {
+            [payload.vote.voterAddress]: {
+              $merge : payload.voter,
+              votes : { [payload.vote.proposalId] : { $set : payload.vote }}
+            }
+          }
         }
       }});
 
