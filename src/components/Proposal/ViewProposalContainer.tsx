@@ -18,12 +18,14 @@ import VoteBox from './VoteBox';
 import * as css from './Proposal.scss';
 
 interface IStateProps extends RouteComponentProps<any> {
+  currentAccountAddress: string
   dao: IDaoState
   proposal : IProposalState
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
+    currentAccountAddress: state.web3.ethAccountAddress,
     dao: state.arc.daos[ownProps.match.params.daoAddress],
     proposal: state.arc.proposals[ownProps.match.params.proposalId]
   };
@@ -50,7 +52,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
   }
 
   render() {
-    const { dao, proposal, voteOnProposal, stakeProposal } = this.props;
+    const { currentAccountAddress, dao, proposal, voteOnProposal, stakeProposal } = this.props;
 
     if (proposal) {
       var proposalClass = classNames({
@@ -62,8 +64,13 @@ class ViewProposalContainer extends React.Component<IProps, null> {
 
       let submittedTime = moment.unix(proposal.submittedTime);
 
-      const yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
-      const noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
+      // Calculate reputation percentages
+      const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
+      const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
+      const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
+
+      const daoAccount = dao.members[currentAccountAddress];
+      const currentAccountVote = daoAccount && daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
 
       const styles = {
         forBar: {
@@ -78,6 +85,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
         <div className={proposalClass + " " + css.clearfix}>
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
+              currentVote={currentAccountVote}
               proposal={proposal}
               voteOnProposal={voteOnProposal}
               daoTotalReputation={dao.reputationCount}

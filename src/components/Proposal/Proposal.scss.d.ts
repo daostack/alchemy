@@ -11,6 +11,7 @@ export const upvote: string;
 export const downvote: string;
 export const upvoted: string;
 export const downvoted: string;
+export const voted: string;
 export const voteDivider: string;
 export const reputationTurnout: string;
 export const header: string;

@@ -86,11 +86,11 @@
 		z-index: 100;
 	}
 
-	button:hover .upvote, button:hover .downvote {
+	button:hover .upvote, button:hover .downvote, button.voted .upvote, button.voted .downvote {
 		opacity: 0;
 	}
 
-	button:hover .upvote.upvoted, button:hover .downvote.downvoted {
+	button:hover .upvote.upvoted, button:hover .downvote.downvoted, button.voted .upvote.upvoted, button.voted .downvote.downvoted {
 		opacity: 1;
 		cursor: pointer;
 		height: 18px;
