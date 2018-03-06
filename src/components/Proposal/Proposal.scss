@@ -390,6 +390,10 @@
 		font-weight: $bold;
 		width: 140px;
 
+		.predicted {
+			font-style: italic;
+		}
+
 		.passPrediction {
 			text-align: right;
 			color: $accent-1-halftone;

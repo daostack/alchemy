@@ -20,7 +20,6 @@ interface IState {
 }
 
 export default class VoteBox extends React.Component<IProps, IState> {
-  voteUpButton : any;
 
   constructor(props: IProps){
     super(props);

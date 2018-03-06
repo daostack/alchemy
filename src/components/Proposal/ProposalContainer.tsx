@@ -64,6 +64,8 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       const daoAccount = dao.members[currentAccountAddress];
       const currentAccountVote = daoAccount && daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
+      const currentAccountPrediction = daoAccount && daoAccount.stakes[proposal.proposalId] ? daoAccount.stakes[proposal.proposalId].prediction : 0;
+      const currentAccountStake = daoAccount && daoAccount.stakes[proposal.proposalId] ? daoAccount.stakes[proposal.proposalId].stake : 0;
 
       const styles = {
         forBar: {
@@ -154,6 +156,8 @@ class ProposalContainer extends React.Component<IProps, null> {
                 </div>
 
                 <PredictionBox
+                  currentPrediction={currentAccountPrediction}
+                  currentStake={currentAccountStake}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                 />
@@ -178,6 +182,8 @@ class ProposalContainer extends React.Component<IProps, null> {
                 </div>
 
                 <PredictionBox
+                  currentPrediction={currentAccountPrediction}
+                  currentStake={currentAccountStake}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                 />

@@ -6,6 +6,7 @@ export interface IAccountState {
   tokens: number
   reputation: number
   votes?: { [proposalId : string] : IVoteState }
+  stakes?: { [proposalId : string] : IStakeState }
 }
 
 export enum ProposalStates {
@@ -33,6 +34,14 @@ export interface IVoteState {
   reputation: number,
   vote: VoteOptions,
   voterAddress: string
+}
+
+export interface IStakeState {
+  avatarAddress: string,
+  prediction: VoteOptions,
+  proposalId: string,
+  stake: number,
+  stakerAddress: string
 }
 
 export interface IProposalState {
@@ -115,12 +124,13 @@ const arcReducer = (state = initialState, action: any) => {
         state = update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
       }
 
-      // Add the current account's vote on the proposal
+      // Add the current account's vote and stake on the proposal
       state = update(state, { daos: {
         [payload.daoAvatarAddress] : {
           members: {
             [payload.vote.voterAddress]: {
-              votes : { [payload.vote.proposalId] : { $set : payload.vote }}
+              votes : { [payload.vote.proposalId] : { $set : payload.vote }},
+              stakes: { [payload.vote.proposalId] : { $set : payload.stake }}
             }
           }
         }

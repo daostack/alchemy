@@ -110,7 +110,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
     let members : { [ key : string ] : IAccountState } = {};
     for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
       const address = memberAddresses[cnt];
-      let member = { address: address, tokens: 0, reputation: 0, votes: {} };
+      let member = { address: address, tokens: 0, reputation: 0, votes: {}, stakes: {} };
       const tokens = await dao.token.balanceOf.call(address)
       member.tokens = Number(web3.fromWei(tokens, "ether"));
       const reputation = await dao.reputation.reputationOf.call(address);
@@ -120,7 +120,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
 
     // If the current account is not a "member" of this DAO populate an empty account object
     if (!members[currentAccountAddress]) {
-      members[currentAccountAddress] = { reputation: 0, tokens: 0, votes: {}};
+      members[currentAccountAddress] = { reputation: 0, tokens: 0, votes: {}, stakes: {}};
     }
 
     daoData.members = members;
@@ -178,6 +178,16 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         voterAddress: currentAccountAddress
       };
 
+      // Check if current account staked on this proposal
+      const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId: proposalId, staker: currentAccountAddress });
+      daoData.members[currentAccountAddress].stakes[proposalId] = {
+        avatarAddress: avatarAddress,
+        proposalId: proposalId,
+        stake: Number(web3.fromWei(stakerInfo.stake, "ether")),
+        prediction: stakerInfo.vote,
+        stakerAddress: currentAccountAddress
+      };
+
       genesisProposal = {
         boostedTime: Number(proposalDetails[10]),
         description: description,
@@ -206,7 +216,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         const eventFetcher = await votingMachineInstance.ExecuteProposal({ _proposalId: proposalId }, { fromBlock: 0 });
         await new Promise((resolve) => {
           eventFetcher.get((err, events) => {
-            if (events.length > 0) {
+            if (typeof err === 'undefined' && events.length > 0) {
               genesisProposal.reputationWhenExecuted = Number(web3.fromWei((events[0].args as any)._totalReputation, "ether"));
             }
             resolve();
@@ -270,6 +280,9 @@ export function getProposal(avatarAddress : string, proposalId : string) {
     // Check if current account voted on this proposal
     const voterInfo = await votingMachineInstance.getVoterInfo({ proposalId: proposalId, voter: currentAccountAddress });
 
+    // Check if current account staked on this proposal
+    const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId: proposalId, staker: currentAccountAddress });
+
     let genesisProposal : any = {
       boostedTime: Number(proposalDetails[10]),
       description: description,
@@ -298,7 +311,7 @@ export function getProposal(avatarAddress : string, proposalId : string) {
       const eventFetcher = await votingMachineInstance.ExecuteProposal({ _proposalId: proposalId }, { fromBlock: 0 });
       await new Promise((resolve) => {
         eventFetcher.get((err, events) => {
-          if (events.length > 0) {
+          if (typeof err === 'undefined' && events.length > 0) {
             genesisProposal.reputationWhenExecuted = Number(web3.fromWei((events[0].args as any)._totalReputation, "ether"));
           }
           resolve();
@@ -315,7 +328,14 @@ export function getProposal(avatarAddress : string, proposalId : string) {
       reputation: Number(web3.fromWei(voterInfo.reputation, "ether")),
       vote: voterInfo.vote,
       voterAddress: currentAccountAddress
-    }
+    };
+    (payload as any).stake = {
+      avatarAddress: avatarAddress,
+      proposalId: proposalId,
+      stake: Number(web3.fromWei(stakerInfo.stake, "ether")),
+      prediction: stakerInfo.vote,
+      stakerAddress: currentAccountAddress
+    };
 
     dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload: payload });
   }
@@ -599,7 +619,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
   }
 }
 
-export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote: number) {
+export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stake: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_STAKE_PENDING, payload: null });
     try {
@@ -623,13 +643,12 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(getState().web3.ethAccountAddress);
 
-      const input = parseInt(prompt(`How much would you like to stake? (min = ${minimumStakingFee})`, '1'));
-      const amount = web3.toWei(input,'ether');
+      const amount = web3.toWei(stake, 'ether');
       if(amount < minimumStakingFee) throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`);
-      if(amount > balance) throw new Error(`Staked more than than the balacne: ${balance}!`);
+      if(amount > balance) throw new Error(`Staked more than than the balance: ${balance}!`);
 
-      await stakingToken.approve(votingMachineInstance.address,amount);
-      const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : vote, amount : amount});
+      await stakingToken.approve(votingMachineInstance.address, amount);
+      const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : prediction, amount : amount});
 
       const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
       const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
@@ -638,26 +657,11 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
         daoAvatarAddress: daoAvatarAddress,
         proposal: {
           proposalId: proposalId,
-          state: ProposalStates.Boosted, // Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
           stakesNo: Number(web3.fromWei(noStakes, "ether")),
           stakesYes: Number(web3.fromWei(yesStakes, "ether")),
         }
       }
-
-      // See if the proposal was executed, either passing or failing
-      // const executed = voteTransaction.logs.find((log : any) => log.event == "ExecuteProposal");
-      // if (executed) {
-      //   const decision = executed.args._decision.toNumber();
-      //   payload.state = "Executed";
-      //   if (decision == 1) {
-      //     payload.winningVote = 1;
-      //   } else if (decision == 2) {
-      //     payload.winningVote = 2;
-      //   } else {
-      //     dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: "Unknown proposal decision ", decision });
-      //     return
-      //   }
-      // }
 
       dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload: payload });
     } catch (err) {
