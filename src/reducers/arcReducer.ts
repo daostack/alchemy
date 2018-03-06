@@ -1,4 +1,4 @@
-//import * as update from 'immutability-helper';
+import * as update from 'immutability-helper';
 
 import * as ActionTypes from 'constants/arcConstants'
 
@@ -88,87 +88,39 @@ const arcReducer = (state = initialState, action: any) => {
 
   // If there are normalized entities in the payload add to the state
   if (payload && payload.entities) {
-    state = {
-      ...state,
-      daos: {
-        ...state.daos,
-        ...(payload.entities.daos || {})
-      },
-      proposals: {
-        ...state.proposals,
-        ...(payload.entities.proposals)
-      }
-    }
+    state = update(state, {
+      daos : { $merge: payload.entities.daos || {} },
+      proposals : { $merge : payload.entities.proposals || {} }
+    });
   }
 
   switch (action.type) {
     case ActionTypes.ARC_GET_PROPOSAL_FULFILLED:
     case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
       // Add the new proposal to the DAO's state
-      return {
-        ...state,
-        daos: {
-          ...state.daos,
-          [action.payload.daoAvatarAddress]: {
-            ...state.daos[action.payload.daoAvatarAddress],
-            proposals: [
-              ...state.daos[action.payload.daoAvatarAddress].proposals,
-              action.payload.result
-            ]
-          }
-        }
-      }
+      return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
     }
 
     case ActionTypes.ARC_VOTE_FULFILLED: {
       // merge in member updates for the DAO
-      state = {
-        ...state,
-        daos: {
-          ...state.daos,
-          [payload.daoAvatarAddress]: {
-            ...state.daos[payload.daoAvatarAddress],
-            members: {
-              ...state.daos[payload.daoAvatarAddress].members,
-              ...payload.members
-            }
-          }
+      state = update(state, { daos: {
+        [payload.daoAvatarAddress] : {
+          members: { $merge : payload.members }
         }
-      }
-
+      }});
 
       // Merge in proposal and dao changes
-      return {
-        ...state,
-        proposals: {
-          ...state.proposals,
-          [payload.proposal.proposalId]: {
-            ...state.proposals[payload.proposal.proposalId],
-            ...action.payload.proposal
-          }
-        },
-        daos: {
-          ...state.daos,
-          [payload.daoAvatarAddress]: {
-            ...state.daos[payload.daoAvatarAddress],
-            ...action.payload.dao
-          }
-        }
-      }
+      return update(state, {
+        proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } },
+        daos: { [payload.daoAvatarAddress]: { $merge: action.payload.dao } }
+      });
     }
 
     case ActionTypes.ARC_STAKE_FULFILLED: {
       // Merge in proposal and dao changes
-      return {
-        ...state,
-        proposals: {
-          ...state.proposals,
-          [payload.proposal.proposalId]: {
-            ...state.proposals[payload.proposal.proposalId],
-            ...action.payload.proposal
-          }
-        }
-      }
+      return update(state, {
+        proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } }
+      });
     }
   }
 

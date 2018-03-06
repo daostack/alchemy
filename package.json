@@ -32,6 +32,7 @@
     "es6-promisify": "^5.0.0",
     "ethereum-blockies-png": "https://github.com/Terran-Collective/ethereum-blockies-png",
     "ethers": "^2.1.2",
+    "immutability-helper": "2.6.4",
     "lodash": "^4.17.4",
     "moment": "^2.20.1",
     "normalizr": "^3.2.4",
