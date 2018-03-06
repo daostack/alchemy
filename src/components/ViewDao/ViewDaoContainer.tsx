@@ -64,7 +64,9 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   }
 
   componentWillUnmount() {
-    this.proposalEventWatcher.stopWatching();
+    if (this.proposalEventWatcher) {
+      this.proposalEventWatcher.stopWatching();
+    }
   }
 
   render() {
