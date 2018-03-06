@@ -579,7 +579,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, vote
       const StandardToken = Arc.Utils.requireContract('StandardToken');
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(getState().web3.ethAccountAddress);
-      console.log(web3.toWei(balance,'ether') + '');
 
       const input = parseInt(prompt(`How much would you like to stake? (min = ${minimumStakingFee})`, '1'));
       const amount = web3.toWei(input,'ether');
