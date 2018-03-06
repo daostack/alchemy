@@ -41,6 +41,7 @@ export const voteMeasurement: string;
 export const upvoteGraph: string;
 export const downvoteGraph: string;
 export const predictions: string;
+export const predicted: string;
 export const passPrediction: string;
 export const failPrediction: string;
 export const proposalDetails: string;
