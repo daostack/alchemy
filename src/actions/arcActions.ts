@@ -322,6 +322,8 @@ export function getProposal(avatarAddress : string, proposalId : string) {
     let proposal = <IProposalState>{...contributionProposal, ...genesisProposal};
     let payload = normalize(proposal, schemas.proposalSchema);
     (payload as any).daoAvatarAddress = proposal.daoAvatarAddress;
+
+    // TODO: only do this if the person did a vote
     (payload as any).vote = {
       avatarAddress: avatarAddress,
       proposalId: proposalId,
