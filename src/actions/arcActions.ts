@@ -217,7 +217,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         await new Promise((resolve) => {
           eventFetcher.get((err, events) => {
             if (typeof err === 'undefined' && events.length > 0) {
-              genesisProposal.reputationWhenExecuted = Number(web3.fromWei((events[0].args as any)._totalReputation, "ether"));
+              genesisProposal.reputationWhenExecuted = Number(web3.fromWei(events[0].args._totalReputation, "ether"));
             }
             resolve();
           });
