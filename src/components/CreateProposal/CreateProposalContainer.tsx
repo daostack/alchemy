@@ -176,7 +176,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               placeholder="How many tokens to reward"
               ref="nativeTokenRewardNode"
               required
-              type="text"
+              type="number"
               value={this.state.nativeTokenReward}
             />
             <label htmlFor='reputationRewardInput'>Reputation reward: </label>
@@ -187,7 +187,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               placeholder="How much reputation to reward"
               ref="reputationRewardNode"
               required
-              type="text"
+              type="number"
               value={this.state.reputationReward}
             />
           </div>

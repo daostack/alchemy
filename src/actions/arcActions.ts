@@ -218,7 +218,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         await new Promise((resolve) => {
           eventFetcher.get((err, events) => {
             if (typeof err === 'undefined' && events.length > 0) {
-              genesisProposal.reputationWhenExecuted = Number(web3.fromWei(events[0].args._totalReputation, "ether"));
+              genesisProposal.reputationWhenExecuted = Number(web3.fromWei((events[0].args as any)._totalReputation, "ether"));
             }
             resolve();
           });
@@ -456,8 +456,11 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
     dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_PENDING, payload: null });
     try {
       const web3 : Web3 = Arc.Utils.getWeb3();
-      const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
+      if(!web3.isAddress(beneficiary)) throw new Error(`Invalid address`);
+      if(!beneficiary.startsWith('0x')) beneficiary = '0x' + beneficiary;
+
+      const ethAccountAddress : string = getState().web3.ethAccountAddress;
       const dao = await Arc.DAO.at(daoAvatarAddress);
 
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
