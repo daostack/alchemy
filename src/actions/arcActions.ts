@@ -218,7 +218,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         await new Promise((resolve) => {
           eventFetcher.get((err, events) => {
             if (typeof err === 'undefined' && events.length > 0) {
-              genesisProposal.reputationWhenExecuted = Number(web3.fromWei((events[0].args as any)._totalReputation, "ether"));
+              genesisProposal.reputationWhenExecuted = Number(web3.fromWei(events[0].args._totalReputation, "ether"));
             }
             resolve();
           });
@@ -667,7 +667,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if(amount < minimumStakingFee) throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`);
       if(amount > balance) throw new Error(`Staked more than than the balance: ${balance}!`);
 
-      await stakingToken.approve(votingMachineInstance.address, amount);
       const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : prediction, amount : amount});
 
       const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
