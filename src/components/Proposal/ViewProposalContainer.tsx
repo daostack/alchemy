@@ -7,7 +7,7 @@ import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, IProposalState, ProposalStates, VoteOptions } from 'reducers/arcReducer';
+import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
 import * as schemas from '../../schemas';
 import * as selectors from 'selectors/daoSelectors';
 
@@ -70,9 +70,15 @@ class ViewProposalContainer extends React.Component<IProps, null> {
       const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
 
       const daoAccount = dao.members[currentAccountAddress];
-      const currentAccountVote = daoAccount && daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
-      const currentAccountPrediction = daoAccount && daoAccount.stakes[proposal.proposalId] ? daoAccount.stakes[proposal.proposalId].prediction : 0;
-      const currentAccountStake = daoAccount && daoAccount.stakes[proposal.proposalId] ? daoAccount.stakes[proposal.proposalId].stake : 0;
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0, currentAccountStakeState = TransactionStates.Confirmed;
+      if (daoAccount) {
+        currentAccountVote = daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
+        if (daoAccount.stakes[proposal.proposalId]) {
+          currentAccountPrediction =  daoAccount.stakes[proposal.proposalId].prediction;
+          currentAccountStake = daoAccount.stakes[proposal.proposalId].stake;
+          currentAccountStakeState = daoAccount.stakes[proposal.proposalId].transactionState;
+        }
+      }
 
       const styles = {
         forBar: {
@@ -167,6 +173,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
                   currentStake={currentAccountStake}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
+                  transactionState={currentAccountStakeState}
                 />
               </div>
             : proposal.state == ProposalStates.PreBoosted ?
@@ -193,6 +200,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
                   currentStake={currentAccountStake}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
+                  transactionState={currentAccountStakeState}
                 />
               </div>
             : proposal.winningVote == VoteOptions.Yes ?

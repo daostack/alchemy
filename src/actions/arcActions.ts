@@ -15,7 +15,7 @@ import * as arcConstants from 'constants/arcConstants';
 import { IRootState } from 'reducers';
 import * as schemas from '../schemas';
 
-import { IDaoState, IAccountState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
+import { IDaoState, IAccountState, IProposalState, IStakeState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
 
 export function connectToArc() {
   return (dispatch : any) => {
@@ -185,7 +185,8 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         proposalId: proposalId,
         stake: Number(web3.fromWei(stakerInfo.stake, "ether")),
         prediction: stakerInfo.vote,
-        stakerAddress: currentAccountAddress
+        stakerAddress: currentAccountAddress,
+        transactionState: TransactionStates.Confirmed
       };
 
       genesisProposal = {
@@ -334,7 +335,8 @@ export function getProposal(avatarAddress : string, proposalId : string) {
       proposalId: proposalId,
       stake: Number(web3.fromWei(stakerInfo.stake, "ether")),
       prediction: stakerInfo.vote,
-      stakerAddress: currentAccountAddress
+      stakerAddress: currentAccountAddress,
+      transactionState: TransactionStates.Confirmed
     };
 
     dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload: payload });
@@ -621,11 +623,24 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stake: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    dispatch({ type: arcConstants.ARC_STAKE_PENDING, payload: null });
-    try {
-      const web3 : Web3 = Arc.Utils.getWeb3();
-      const ethAccountAddress : string = getState().web3.ethAccountAddress;
+    const web3 : Web3 = Arc.Utils.getWeb3();
+    const currentAccountAddress : string = getState().web3.ethAccountAddress;
 
+    // TODO: num transactions pending...
+    let payload : any = {
+      stake: {
+        avatarAddress: daoAvatarAddress,
+        proposalId: proposalId,
+        stake: stake,
+        prediction: prediction,
+        stakerAddress: currentAccountAddress,
+        transactionState: TransactionStates.Unconfirmed
+      }
+    }
+
+    dispatch({ type: arcConstants.ARC_STAKE_PENDING, payload: payload });
+
+    try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
 
@@ -641,7 +656,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 
       const StandardToken = Arc.Utils.requireContract('StandardToken');
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
-      const balance = await stakingToken.balanceOf(getState().web3.ethAccountAddress);
+      const balance = await stakingToken.balanceOf(currentAccountAddress);
 
       const amount = web3.toWei(stake, 'ether');
       if(amount < minimumStakingFee) throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`);
@@ -653,44 +668,44 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
       const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
 
-      let payload = {
+      // TODO: also update the account with the new # of GENS available?
+      // TODO: no longer need to send the stake info below because we do it in the PENDING action
+      payload = {
         daoAvatarAddress: daoAvatarAddress,
         proposal: {
           proposalId: proposalId,
           state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
           stakesNo: Number(web3.fromWei(noStakes, "ether")),
           stakesYes: Number(web3.fromWei(yesStakes, "ether")),
+        },
+        stake: {
+          avatarAddress: daoAvatarAddress,
+          proposalId: proposalId,
+          stake: stake,
+          prediction: prediction,
+          stakerAddress: currentAccountAddress,
+          transactionState: TransactionStates.Unconfirmed
         }
       }
 
       dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload: payload });
     } catch (err) {
+      // TODO: update UI
       dispatch({ type: arcConstants.ARC_STAKE_REJECTED, payload: err.message });
     }
   }
 }
 
-async function increaseTime(duration : number) {
-  const id = new Date().getTime();
-  const web3 = Arc.Utils.getWeb3();
-
-  return new Promise((resolve, reject) => {
-    web3.currentProvider.sendAsync({
-      jsonrpc: "2.0",
-      method: "evm_increaseTime",
-      params: [duration],
-      id: id,
-    }, err1 => {
-      if (err1) {return reject(err1);}
-
-      web3.currentProvider.sendAsync({
-        jsonrpc: "2.0",
-        method: "evm_mine",
-        params: [],
-        id: id + 1,
-      }, (err2, res) => {
-        return err2 ? reject(err2) : resolve(res);
-      });
-    });
-  });
+export function confirmStake(avatarAddress : string, proposalId: string, stakerAddress: string, prediction: number, stake: number) {
+  return (dispatch : any) => {
+    const payload : IStakeState = {
+      avatarAddress: avatarAddress,
+      proposalId: proposalId,
+      stake: stake,
+      prediction: prediction,
+      stakerAddress: stakerAddress,
+      transactionState: TransactionStates.Confirmed
+    };
+    dispatch({ type: arcConstants.ARC_STAKE_CONFIRMED, payload: payload });
+  }
 }

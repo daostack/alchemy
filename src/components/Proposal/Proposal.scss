@@ -4,6 +4,24 @@
   clear: both;
 }
 
+.loading {
+	display: none;
+	position: absolute;
+	width: 80%;
+	height: 80%;
+	top: 10%;
+	left: 10%;
+	text-align: center;
+	z-index: 100000;
+	box-shadow: $shadow-3;
+	border-radius: 3px;
+	background-color: $white;
+
+	img {
+		height: 68px;
+	}
+}
+
 .proposalContainer {
   max-width: $max-width;
   background-color: $white;
@@ -422,6 +440,10 @@
 	}
 }
 
+.predictions.unconfirmedPrediction {
+	.loading { display: block; }
+}
+
 .proposalDetails {
 	position: absolute;
 	right: 160px;
@@ -528,31 +550,20 @@
 	}
 }
 
-.loading {
-	display: none;
-	position: absolute;
-	width: 80%;
-	height: 80%;
-	top: 10%;
-	left: 10%;
-	text-align: center;
-	z-index: 100000;
-	box-shadow: $shadow-3;
-	border-radius: 3px;
-	background-color: $white;
-	
-	img {
-		height: 68px;
+.newPassPrediction {
+	display: block;
+
+	div strong {
+		color: $accent-1;
 	}
 }
 
+.newFailPrediction {
+	display: block;
 
-.newPassPrediction div strong {
-	color: $accent-1;
-}
-
-.newFailPrediction div strong {
-	color: $accent-2;
+	div strong {
+		color: $accent-2;
+	}
 }
 
 

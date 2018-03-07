@@ -31,4 +31,6 @@ export const ARC_STAKE_PENDING = 'ARC_STAKE_PENDING';
 export const ARC_STAKE_FULFILLED = 'ARC_STAKE_FULFILLED';
 export const ARC_STAKE_REJECTED = 'ARC_STAKE_REJECTED';
 
+export const ARC_STAKE_CONFIRMED = 'ARC_STAKE_CONFIRMED';
+
 export const API_URL = process.env.API_URL || 'http://127.0.0.1:3001';

@@ -4,13 +4,12 @@ import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IProposalState, ProposalStates, VoteOptions } from 'reducers/arcReducer';
+import { IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
 
 import * as css from './Proposal.scss';
 
 interface IState {
-  currentPrediction: number
-  currentStake: number
+  showStakeModal: number
 }
 
 interface IProps {
@@ -18,32 +17,50 @@ interface IProps {
   currentStake: number
   proposal: IProposalState
   stakeProposal: typeof arcActions.stakeProposal
+  transactionState: TransactionStates
 }
 
 export default class PredictionBox extends React.Component<IProps, IState> {
+  stakeInput: any;
 
   constructor(props: IProps){
     super(props);
 
     this.state = {
-      currentPrediction: props.currentPrediction,
-      currentStake: props.currentStake
+      showStakeModal: 0
     };
+  }
+
+  showModal(prediction : number, event : any) {
+    this.setState({ showStakeModal: prediction });
+    setTimeout(() => this.stakeInput.focus(), 10);
+  }
+
+  closeModal(event : any) {
+    this.setState({ showStakeModal: 0 });
   }
 
   handleClickStake(prediction : number, stake: number, event : any) {
     const { proposal, stakeProposal } = this.props;
-
-    // TODO: need a better UI for specifiying stake amounts
-    const amount = parseInt(prompt(`How much would you like to stake? (min = 1)`, '1'));
-
-    this.setState({ currentPrediction: prediction, currentStake : amount });
+    const amount = this.stakeInput.value;
+    this.setState({ showStakeModal: 0 });
     stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, amount);
   }
 
-  render() {
-    const { currentPrediction, currentStake, proposal } = this.props;
 
+  render() {
+    const { currentPrediction, currentStake, proposal, transactionState } = this.props;
+    const { showStakeModal } = this.state;
+
+    var wrapperClass = classNames({
+      [css.predictions] : true,
+      [css.unconfirmedPrediction] : transactionState == TransactionStates.Unconfirmed
+    });
+    var predictionModalClass = classNames({
+      [css.newPrediction] : true,
+      [css.newPassPrediction] : showStakeModal == VoteOptions.Yes,
+      [css.newFailPrediction] : showStakeModal == VoteOptions.No
+    });
     var stakeUpClass = classNames({
       [css.predicted]: currentPrediction == VoteOptions.Yes
     });
@@ -52,21 +69,21 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     });
 
     return (
-      <div className={css.predictions}>
+      <div className={wrapperClass}>
         <div className={css.loading}>
           <img src="/assets/images/Icon/loading-black.svg"/>
         </div>
-        <div className={css.newPrediction + " " + css.newPassPrediction}>        {/*switch out for newFailPrediction*/}
+        <div className={predictionModalClass}>
           <div className={css.newPredictionTitle}>
-            NEW <strong>PASS</strong> STAKE
+            NEW <strong>{showStakeModal == VoteOptions.Yes ? "PASS" : "FAIL"}</strong> STAKE
           </div>
-          <input type="text" placeholder="0" className={css.predictionAmount}/>
+          <input type="number" min="1" ref={(input) => { this.stakeInput = input;}} className={css.predictionAmount}/>
           <span className={css.genLabel}>GEN</span>
           <div className={css.clearfix}>
-            <button className={css.cancelPrediction}>
+            <button className={css.cancelPrediction} onClick={this.closeModal.bind(this)}>
               <img src="/assets/images/Icon/Close-black.svg"/>
             </button>
-            <button className={css.placePrediction}>Place stake</button>
+            <button className={css.placePrediction} onClick={this.handleClickStake.bind(this, showStakeModal)}>Place stake</button>
           </div>
         </div>
         <div>
@@ -76,7 +93,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <tr className={stakeUpClass}>
                 <td className={css.passPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
-                    ? <button onClick={this.handleClickStake.bind(this, 1, 1)}>PASS +</button>
+                    ? <button onClick={this.showModal.bind(this, 1)}>PASS +</button>
                     : "PASS"
                   }
                 </td>
@@ -85,13 +102,13 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <tr className={stakeDownClass} >
                 <td className={css.failPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
-                    ? <button onClick={this.handleClickStake.bind(this, 2, 1)}>FAIL +</button>
+                    ? <button onClick={this.showModal.bind(this, 2)}>FAIL +</button>
                     : "FAIL"
                   }
                 </td>
                 <td>{proposal.stakesNo} GEN</td>
               </tr>
-            </tbody> 
+            </tbody>
           </table>
         </div>
       </div>

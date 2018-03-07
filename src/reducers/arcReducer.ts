@@ -1,14 +1,6 @@
 import * as update from 'immutability-helper';
 import * as ActionTypes from 'constants/arcConstants'
 
-export interface IAccountState {
-  address?: string
-  tokens: number
-  reputation: number
-  votes?: { [proposalId : string] : IVoteState }
-  stakes?: { [proposalId : string] : IStakeState }
-}
-
 export enum ProposalStates {
   Closed = 0,
   Executed = 1,
@@ -32,6 +24,7 @@ export interface IVoteState {
   avatarAddress: string,
   proposalId: string,
   reputation: number,
+  transactionState?: TransactionStates,
   vote: VoteOptions,
   voterAddress: string
 }
@@ -40,8 +33,17 @@ export interface IStakeState {
   avatarAddress: string,
   prediction: VoteOptions,
   proposalId: string,
+  transactionState?: TransactionStates,
   stake: number,
   stakerAddress: string
+}
+
+export interface IAccountState {
+  address?: string
+  tokens: number
+  reputation: number
+  votes?: { [proposalId : string] : IVoteState }
+  stakes?: { [proposalId : string] : IStakeState }
 }
 
 export interface IProposalState {
@@ -159,11 +161,46 @@ const arcReducer = (state = initialState, action: any) => {
       });
     }
 
+    case ActionTypes.ARC_STAKE_PENDING: {
+      return update(state, { daos: {
+        [payload.stake.avatarAddress] : {
+          members: {
+            [payload.stake.stakerAddress]: {
+              stakes : { [payload.stake.proposalId] : { $set : payload.stake }}
+            }
+          }
+        }
+      }});
+    }
+
     case ActionTypes.ARC_STAKE_FULFILLED: {
-      // Merge in proposal and dao changes
+      // Update the account that staked
+      state = update(state, { daos: {
+        [payload.daoAvatarAddress] : {
+          members: {
+            [payload.stake.stakerAddress]: {
+              stakes : { [payload.stake.proposalId] : { $set : payload.stake }}
+            }
+          }
+        }
+      }});
+
+      // Merge in proposal
       return update(state, {
         proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } }
       });
+    }
+
+    case ActionTypes.ARC_STAKE_CONFIRMED: {
+      return update(state, { daos: {
+        [payload.avatarAddress] : {
+          members: {
+            [payload.stakerAddress]: {
+              stakes : { [payload.proposalId] : { $set : payload }}
+            }
+          }
+        }
+      }});
     }
   }
 
