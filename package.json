@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "auto-start-ganache": "cross-env ETH_ENV=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.32",
+    "@daostack/arc.js": "0.0.0-alpha.33",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
     "classnames": "^2.2.5",
