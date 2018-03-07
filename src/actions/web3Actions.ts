@@ -1,44 +1,57 @@
 import * as BigNumber from 'bignumber.js';
 import { Utils } from '@daostack/arc.js';
+import promisify = require('es6-promisify');
 import * as Redux from 'redux';
 import * as Web3 from 'web3';
 
 import { IWeb3State } from 'reducers/web3Reducer'
 import { ActionTypes } from 'constants/web3Constants';
 
-export const initializeWeb3 = () => (dispatch : any) => {
-  let payload : IWeb3State = {
-    ethAccountAddress: <string> null,
-    ethAccountBalance: "",
-    hasProvider: false,
-    isConnected: true,
-  };
+export function initializeWeb3() {
+  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
 
-  return new Promise(function(resolve, reject) {
-     // TODO: poll/watch for changes to network/account
-
-    const web3 = Utils.getWeb3();
-    payload.ethAccountAddress = web3.eth.defaultAccount;
-
-    // TODO: seems like there should be more different kinds of error handling here
-    web3.version.getNetwork((err : any, currentNetworkId : string) => {
-      if (err) {
-        reject("Error getting web3 network");
-      }
-    });
-
-    web3.eth.getBalance(payload.ethAccountAddress, (error : Error, res : BigNumber.BigNumber) => {
-      if (error) { reject("Error getting ether account balance"); }
-
-      payload.ethAccountBalance = Number(web3.fromWei(res, "ether")).toFixed(2);
-
+    let web3 : Web3;
+    try {
+      web3 = Utils.getWeb3();
+    } catch (e) {
+      // No web3 in the browser
       const action = {
-        type: ActionTypes.WEB3_CONNECTED,
-        payload: payload
+        type: ActionTypes.WEB3_CONNECTION_REJECTED,
+        action: "Can't connect to web3"
       }
-      resolve(dispatch(action));
-    });
-  });
+      dispatch(action);
+      return
+    }
+
+    let payload : IWeb3State = {
+      ethAccountAddress: null,
+      ethAccountBalance: ""
+    };
+
+    const getAccounts = promisify(web3.eth.getAccounts);
+    const accounts = await getAccounts();
+
+    if (accounts.length > 0) {
+      payload.ethAccountAddress = accounts[0];
+    }
+
+    // TODO: actually check if we are connected to right chain
+    const getNetwork = promisify(web3.version.getNetwork);
+    const network = await getNetwork();
+
+    // TODO: the flow of this code is all so ugly
+    if (payload.ethAccountAddress !== null) {
+      const getBalance = promisify(web3.eth.getBalance);
+      const balance = await getBalance(payload.ethAccountAddress);
+      payload.ethAccountBalance = Number(web3.fromWei(balance, "ether")).toFixed(2);
+    }
+
+    const action = {
+      type: ActionTypes.WEB3_CONNECTED,
+      payload: payload
+    };
+    dispatch(action);
+  };
 }
 
 export const changeAccount = (accountAddress : string) => (dispatch: Redux.Dispatch<any>, getState: Function) => {

@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import store from '../configureStore';
 import { IRootState } from 'reducers';
 import { IArcState } from 'reducers/arcReducer'
-import { IWeb3State } from 'reducers/web3Reducer'
+import { IWeb3State, ConnectionStatus } from 'reducers/web3Reducer'
 
 import * as arcActions from 'actions/arcActions';
 
@@ -15,16 +15,22 @@ import CreateProposalContainer from "components/CreateProposal/CreateProposalCon
 import HeaderContainer from "layouts/HeaderContainer";
 import HomeContainer from "components/Home/HomeContainer";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
+import NoWeb3Container from "components/Errors/NoWeb3Container";
+import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
 
 import * as css from "./App.scss"
 
 interface IStateProps {
-  arc: IArcState,
+  arc: IArcState
+  connectionStatus: ConnectionStatus
+  ethAccountAddress: string | null
   web3: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => ({
   arc: state.arc,
+  connectionStatus: state.web3.connectionStatus,
+  ethAccountAddress: state.web3.ethAccountAddress,
   web3: state.web3
 });
 
@@ -49,25 +55,31 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   render() {
-    const { web3 } = this.props;
+    const { connectionStatus, ethAccountAddress } = this.props;
 
     return (
-      (web3.isConnected ?
-        <div className={css.outer}>
-          <div className={css.container}>
-            <Route path="/dao/:daoAddress" children={(props) => (
-              <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
-            )} />
-            <Switch>
-              <Route exact path="/" component={HomeContainer}/>
-              <Route exact path="/dao/create" component={CreateDaoContainer}/>
-              <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
-              <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
-            </Switch>
+      (connectionStatus === ConnectionStatus.Pending
+        ? <div className={css.loading}>Loading...</div>
+      : connectionStatus === ConnectionStatus.Failed
+        ? <NoWeb3Container />
+      : ethAccountAddress === null
+        ? <NoEthAccountContainer />
+      : connectionStatus == ConnectionStatus.Connected
+        ? <div className={css.outer}>
+            <div className={css.container}>
+              <Route path="/dao/:daoAddress" children={(props) => (
+                <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
+              )} />
+              <Switch>
+                <Route exact path="/" component={HomeContainer}/>
+                <Route exact path="/dao/create" component={CreateDaoContainer}/>
+                <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
+                <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
+              </Switch>
+            </div>
+            <div className={css.background}></div>
           </div>
-          <div className={css.background}></div>
-        </div>
-        : <div className={css.loading}>Loading...</div>
+        : <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
       )
     );
   }

@@ -1,26 +1,34 @@
 import { ActionTypes } from 'constants/web3Constants';
 import * as Web3 from 'web3';
 
+export enum ConnectionStatus {
+  Pending = "pending",
+  Connected = "connected",
+  Failed = "failed"
+}
+
 export interface IWeb3State {
   ethAccountBalance: string,
-  ethAccountAddress: string,
-  hasProvider: boolean,
-  isConnected: boolean
+  ethAccountAddress: string | null,
+  connectionStatus?: ConnectionStatus
 }
 
 export const initialState : IWeb3State = {
   ethAccountBalance: "",
   ethAccountAddress: null,
-  hasProvider: false,
-  isConnected: false
+  connectionStatus: ConnectionStatus.Pending
 }
 
 // TODO: make all action types explicit?
 const web3Reducer = (state = initialState, action: any) => {
   switch (action.type) {
 
+    case ActionTypes.WEB3_CONNECTION_REJECTED: {
+      return {...state, ...action.payload, ...{ connectionStatus : ConnectionStatus.Failed } };
+    }
+
     case ActionTypes.WEB3_CONNECTED: {
-      return {...state, ...action.payload };
+      return {...state, ...action.payload, ...{ connectionStatus : ConnectionStatus.Connected } };
     }
 
     // case 'web3/RECEIVE_ACCOUNT':
