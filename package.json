@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "main": "index.js",
   "repository": {
     "type": "git",
