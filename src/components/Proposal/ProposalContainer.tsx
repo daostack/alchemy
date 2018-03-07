@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom'
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
 import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
-import { IWeb3State } from 'reducers/web3Reducer'
 
 import AccountPopupContainer from 'components/Account/AccountPopupContainer';
 import PredictionBox from './PredictionBox';
@@ -16,17 +15,17 @@ import VoteBox from './VoteBox';
 import * as css from './Proposal.scss';
 
 interface IStateProps {
+  currentAccountAddress: string
   dao: IDaoState
   proposal: IProposalState
-  web3: IWeb3State
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   const proposal = state.arc.proposals[ownProps.proposalId];
   return {
+    currentAccountAddress: state.web3.ethAccountAddress,
     dao: state.arc.daos[proposal.daoAvatarAddress],
-    proposal: proposal,
-    web3: state.web3 // TODO: just need the current account address right?
+    proposal: proposal
   };
 };
 
@@ -45,7 +44,7 @@ type IProps = IStateProps & IDispatchProps
 class ProposalContainer extends React.Component<IProps, null> {
 
   render() {
-    const { dao, proposal, voteOnProposal, stakeProposal, web3 } = this.props;
+    const { dao, proposal, voteOnProposal, stakeProposal, currentAccountAddress } = this.props;
 
     if (proposal) {
       var proposalClass = classNames({
@@ -58,8 +57,15 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       let submittedTime = moment.unix(proposal.submittedTime);
 
-      const yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
-      const noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
+      // Calculate reputation percentages
+      const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
+      const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
+      const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
+
+      const daoAccount = dao.members[currentAccountAddress];
+      const currentAccountVote = daoAccount && daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
+      const currentAccountPrediction = daoAccount && daoAccount.stakes[proposal.proposalId] ? daoAccount.stakes[proposal.proposalId].prediction : 0;
+      const currentAccountStake = daoAccount && daoAccount.stakes[proposal.proposalId] ? daoAccount.stakes[proposal.proposalId].stake : 0;
 
       const styles = {
         forBar: {
@@ -74,9 +80,10 @@ class ProposalContainer extends React.Component<IProps, null> {
         <div className={proposalClass + " " + css.clearfix}>
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
+              currentVote={currentAccountVote}
+              daoTotalReputation={dao.reputationCount}
               proposal={proposal}
               voteOnProposal={voteOnProposal}
-              daoTotalReputation={dao.reputationCount}
             />
             : proposal.winningVote == VoteOptions.Yes ?
               <div className={css.decidedProposal}>
@@ -149,6 +156,8 @@ class ProposalContainer extends React.Component<IProps, null> {
                 </div>
 
                 <PredictionBox
+                  currentPrediction={currentAccountPrediction}
+                  currentStake={currentAccountStake}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                 />
@@ -173,6 +182,8 @@ class ProposalContainer extends React.Component<IProps, null> {
                 </div>
 
                 <PredictionBox
+                  currentPrediction={currentAccountPrediction}
+                  currentStake={currentAccountStake}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                 />

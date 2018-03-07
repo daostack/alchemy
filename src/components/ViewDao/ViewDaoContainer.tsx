@@ -7,7 +7,7 @@ import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, IMemberState, IProposalState } from 'reducers/arcReducer';
+import { IDaoState, IProposalState } from 'reducers/arcReducer';
 import * as schemas from '../../schemas';
 import * as selectors from 'selectors/daoSelectors';
 
@@ -64,7 +64,9 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   }
 
   componentWillUnmount() {
-    this.proposalEventWatcher.stopWatching();
+    if (this.proposalEventWatcher) {
+      this.proposalEventWatcher.stopWatching();
+    }
   }
 
   render() {

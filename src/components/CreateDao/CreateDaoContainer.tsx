@@ -4,7 +4,7 @@ import { connect, Dispatch } from 'react-redux';
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, IMemberState } from 'reducers/arcReducer';
+import { IDaoState, IAccountState } from 'reducers/arcReducer';
 import { IWeb3State } from 'reducers/web3Reducer'
 
 import * as css from './CreateDao.scss';
@@ -33,7 +33,7 @@ interface IState {
   name: string,
   tokenName: string,
   tokenSymbol: string,
-  members: IMemberState[]
+  members: IAccountState[]
 }
 
 class CreateDaoContainer extends React.Component<IProps, IState> {
@@ -160,7 +160,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
   }
 
   renderMembers() {
-    const memberRows = this.state.members.map((member : IMemberState, index : number) => {
+    const memberRows = this.state.members.map((member : IAccountState, index : number) => {
       return (
         <div key={`member_${index}_row_`}>
           <label htmlFor={`member_${index}_address_input`}>Member Address </label>

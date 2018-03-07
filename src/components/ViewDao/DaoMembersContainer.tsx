@@ -6,7 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IDaoState, IMemberState } from 'reducers/arcReducer';
+import { IDaoState } from 'reducers/arcReducer';
 import * as schemas from '../../schemas';
 
 import AccountImage from 'components/Account/AccountImage';

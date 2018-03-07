@@ -5,7 +5,7 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
-import { IDaoState, IMemberState } from 'reducers/arcReducer'
+import { IDaoState } from 'reducers/arcReducer'
 import { INotificationsState } from 'reducers/notificationsReducer'
 import { IWeb3State } from 'reducers/web3Reducer'
 import { IRootState } from 'reducers';
