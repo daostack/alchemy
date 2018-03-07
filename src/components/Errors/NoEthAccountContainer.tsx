@@ -47,7 +47,13 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
   render() {
     return(
       <div className={css.wrapper}>
-        Found Web3 but there is no default account available. Please make sure that MetaMask is unlocked.
+        <div className={css.notification}>
+          <img src="/assets/images/metamask.png"/>
+          <h1>Found Web3 but there is no default account available.<br/>Please make sure that MetaMask is unlocked.</h1>
+        </div>
+        <div className={css.unlockMetamask}>
+          Make sure <img className={css.icon} src="/assets/images/metamask-icon.png"/> Metamask is unlocked! <img src="/assets/images/metamask-arrow.svg"/>
+        </div>
       </div>
     )
   }
