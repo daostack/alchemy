@@ -12,9 +12,17 @@ export function initializeWeb3() {
 
     let web3 : Web3;
     try {
-      web3 = Utils.getWeb3();
+      web3 = await Utils.getWeb3();
     } catch (e) {
-      // No web3 in the browser
+      // No web3 accessible
+      const action = {
+        type: ActionTypes.WEB3_CONNECTION_REJECTED,
+        action: "Can't connect to web3"
+      }
+      dispatch(action);
+      return
+    }
+    if (!web3.isConnected()) {
       const action = {
         type: ActionTypes.WEB3_CONNECTION_REJECTED,
         action: "Can't connect to web3"

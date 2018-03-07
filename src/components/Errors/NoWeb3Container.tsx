@@ -35,7 +35,7 @@ class NoWeb3Container extends React.Component<IProps, null> {
   interval : any;
 
   componentDidMount() {
-    this.interval = setInterval(this.props.connectToArc, 200);
+    this.interval = setInterval(this.props.connectToArc, 1000);
   }
 
   componentWillUnmount() {
