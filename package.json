@@ -11,6 +11,7 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
+    "browse": "http-server dist --cors -o -p 8090",
     "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
     "ganacheDb": "npm explore @daostack/arc.js -- npm start test.ganacheDb.run",
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start test.ganacheDb.clean",
