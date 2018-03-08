@@ -392,17 +392,17 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
 
       const votingMachineParamsHash = (await votingMachine.setParams({
         preBoostedVoteRequiredPercentage: 50,
-        preBoostedVotePeriodLimit: 10000,
-        boostedVotePeriodLimit: 10000,
-        thresholdConstA: 1,
-        thresholdConstB: 1,
+        preBoostedVotePeriodLimit: 5184000, // 2 months
+        boostedVotePeriodLimit: 604800, // 1 week
+        thresholdConstA: 2, // Threshold effects how likely it is for a propoasl to get boosted
+        thresholdConstB: 10, //     based on how many proposals are already boosted
         minimumStakingFee: 0,
-        quietEndingPeriod: 0,
-        proposingRepRewardConstA: 1,
-        proposingRepRewardConstB: 1,
-        stakerFeeRatioForVoters: 1,
-        votersReputationLossRatio: 1,
-        votersGainRepRatioFromLostRep: 80,
+        quietEndingPeriod: 7200, // Two hours
+        proposingRepRewardConstA: 5, // baseline rep rewarded TODO: good for now but needs more thought
+        proposingRepRewardConstB: 5, // how much to weight strength of yes votes vs no votes in reward TODO: good for now but needs more thought
+        stakerFeeRatioForVoters: 1, // 1 percent of staker fee given to voters
+        votersReputationLossRatio: 1, // 1 percent of rep lost by voting
+        votersGainRepRatioFromLostRep: 80, // percentage of how much rep correct voters get from incorrect voters who lost rep
         governanceFormulasInterface: "0x0000000000000000000000000000000000000000"
       })).result;
 
