@@ -13,7 +13,7 @@ const extractSass = new ExtractTextPlugin({
 network = process.env.network || 'kovan';
 
 module.exports = merge(baseConfig, {
-  devtool: 'source-map',
+  devtool: 'nosources-source-map',
 
   entry: [
     // activate HMR for React
@@ -71,10 +71,14 @@ module.exports = merge(baseConfig, {
     new HtmlWebpackPlugin({
       template: 'src/index.html'
     }),
-    // Minify JS
     // new UglifyJsPlugin({
-    //   sourceMap: false,
-    //   compress: true,
-    // }),
+    //   test: /\.js($|\?)/i,
+    //   sourceMap: true,
+    //   extractComments: true,
+    //   parallel: true,
+    //   uglifyOptions: {
+    //     ecma: 6
+    //   }
+    // })
   ],
 });
