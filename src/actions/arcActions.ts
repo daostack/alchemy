@@ -71,6 +71,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
     rank: 1, // TODO
     promotedAmount: 0,
     proposals: [],
+    proposalsLoaded: false,
     reputationAddress: await dao.reputation.address,
     reputationCount: Number(web3.fromWei(await dao.reputation.totalSupply(), "ether")),
     tokenAddress: await dao.token.address,
@@ -228,8 +229,10 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
       let proposal = <IProposalState>{...contributionProposal, ...genesisProposal};
 
       daoData.proposals.push(proposal);
-    }
-  }
+    } // EO for each proposal
+
+    daoData.proposalsLoaded = true;
+  } // EO get DAO details
 
   return daoData;
 }
@@ -435,6 +438,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         rank: 1, // TODO
         promotedAmount: 0,
         proposals: [],
+        proposalsLoaded: true,
         reputationAddress: dao.reputation.address,
         reputationCount: 0,
         tokenAddress: dao.token.address,

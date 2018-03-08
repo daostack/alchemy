@@ -19,6 +19,7 @@ import * as css from './ViewDao.scss';
 
 interface IStateProps extends RouteComponentProps<any> {
   daoAddress: string
+  proposalsLoaded: boolean
   proposalsBoosted: IProposalState[],
   proposalsPreBoosted: IProposalState[]
   web3: IWeb3State
@@ -27,6 +28,7 @@ interface IStateProps extends RouteComponentProps<any> {
 const mapStateToProps = (state : IRootState, ownProps: any) => {
   return {
     daoAddress: ownProps.match.params.daoAddress,
+    proposalsLoaded: state.arc.daos[ownProps.match.params.daoAddress].proposalsLoaded,
     proposalsBoosted: selectors.makeDaoBoostedProposalsSelector()(state, ownProps),
     proposalsPreBoosted: selectors.makeDaoPreBoostedProposalsSelector()(state, ownProps),
     web3: state.web3
@@ -57,7 +59,7 @@ const Fade = ({ children, ...props } : any) => (
 class DaoProposalsContainer extends React.Component<IProps, null> {
 
   render() {
-    const { proposalsBoosted, proposalsPreBoosted } = this.props;
+    const { proposalsLoaded, proposalsBoosted, proposalsPreBoosted } = this.props;
 
     const boostedProposalsHTML = (
       <TransitionGroup className='boosted-proposals-list'>
@@ -81,33 +83,39 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
 
     return(
       <div>
+        { !proposalsLoaded
+            ? <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>
+            : proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
+              ? <div className={css.noDecisions}>
+                  <img className={css.relax} src="/assets/images/meditate.svg"/>
+                  <div className={css.proposalsHeader}>
+                    No upcoming proposals
+                  </div>
+                  <div className={css.cta}>
+                    <Link to={'/proposal/create/' + this.props.daoAddress}>Create a proposal</Link>
+                  </div>
+                </div>
+              : ""
+        }
+
         { proposalsBoosted.length > 0 ?
           <div>
             <div className={css.proposalsHeader}>
               Boosted Proposals
-             
+
 
              {/* <span>Available funds: <span>13,000 ETH - 327 KIN</span></span> */}
-            
+
 
             </div>
             <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
               {boostedProposalsHTML}
             </div>
           </div>
-        : ""
+          : ""
         }
-        { proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0 ?
-          <div className={css.noDecisions}>
-            <img className={css.relax} src="/assets/images/meditate.svg"/>
-            <div className={css.proposalsHeader}>
-              No upcoming proposals
-            </div>
-            <div className={css.cta}>
-              <Link to={'/proposal/create/' + this.props.daoAddress}>Create a proposal</Link>
-            </div>
-          </div>
-        : proposalsPreBoosted.length > 0 ?
+
+        { proposalsPreBoosted.length > 0 ?
           <div>
             <div className={css.proposalsHeader}>
               All Proposals
@@ -116,7 +124,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
               {preBoostedProposalsHTML}
             </div>
           </div>
-        : ""
+          : ""
         }
 
       </div>

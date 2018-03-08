@@ -47,7 +47,6 @@ export function initializeWeb3() {
     const getNetwork = promisify(web3.version.getNetwork);
     const network = await getNetwork();
 
-    // TODO: the flow of this code is all so ugly
     if (payload.ethAccountAddress !== null) {
       const getBalance = promisify(web3.eth.getBalance);
       const balance = await getBalance(payload.ethAccountAddress);

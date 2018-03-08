@@ -85,6 +85,7 @@ export interface IDaoState {
   rank: number
   promotedAmount: number
   proposals: (IProposalState | string)[] // Either normalized (string) or denormalized (IProposalState)
+  proposalsLoaded: boolean
   reputationAddress: string
   reputationCount: number
   tokenAddress: string
