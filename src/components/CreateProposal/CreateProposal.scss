@@ -163,6 +163,9 @@
 			margin-right: 8px;
 		}
 	}
+  .submitProposal:disabled {
+    background-color: gray;
+  }
 
 	.alignCenter {
 		text-align: center;

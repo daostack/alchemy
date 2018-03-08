@@ -53,6 +53,7 @@ interface IState {
   nativeTokenReward: number,
   reputationReward: number,
   title: string
+  buttonEnabled: boolean
 }
 
 class CreateProposalContainer extends React.Component<IProps, IState> {
@@ -69,7 +70,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
       externalTokenReward: 0,
       nativeTokenReward: 0,
       reputationReward: 0,
-      title: ""
+      title: "",
+      buttonEnabled : true
     };
   }
 
@@ -81,6 +83,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
   handleSubmit = (event : any) => {
     event.preventDefault();
+    this.setState({ buttonEnabled: false });
     this.props.createProposal(this.state.avatarAddress, this.state.title, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
   }
 
@@ -210,9 +213,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               </tbody>
             </table>
           </div>*/}
-          
+
           <div className={css.alignCenter}>
-            <button className={css.submitProposal} type='submit'>
+            <button className={css.submitProposal} type='submit' disabled={!this.state.buttonEnabled}>
               <img src='/assets/images/Icon/Send.svg'/>
               Submit proposal
             </button>
