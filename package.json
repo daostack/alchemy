@@ -19,9 +19,9 @@
     "migrate-ganache": "cross-env network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
     "lint": "eslint src",
     "start": "webpack-dev-server --config webpack.dev.config.js",
-    "start-ganache": "cross-env ETH_ENV=ganache npm run start",
-    "start-kovan": "cross-env ETH_ENV=kovan npm run start",
-    "auto-start-ganache": "cross-env ETH_ENV=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
+    "start-ganache": "cross-env network=ganache npm run start",
+    "start-kovan": "cross-env network=kovan npm run start",
+    "auto-start-ganache": "cross-env network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.33",
@@ -74,6 +74,7 @@
     "cross-env": "^5.1.3",
     "extract-text-webpack-plugin": "^3.0.0",
     "ganache-cli": "^6.0.3",
+    "html-webpack-plugin": "^3.0.6",
     "node-sass": "^4.5.3",
     "react-hot-loader": "^3.0.0-beta.7",
     "sass-loader": "^6.0.6",

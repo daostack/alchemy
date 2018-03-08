@@ -1,4 +1,5 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
@@ -8,6 +9,8 @@ const baseConfig = require('./webpack.base.config.js');
 const extractSass = new ExtractTextPlugin({
   filename: "[name].[contenthash].css"
 });
+
+network = process.env.network || 'kovan';
 
 module.exports = merge(baseConfig, {
   devtool: 'source-map',
@@ -60,7 +63,14 @@ module.exports = merge(baseConfig, {
 
   plugins: [
     extractSass,
-
+    new webpack.DefinePlugin({
+      'process.env': {
+        network: JSON.stringify(network)
+      },
+    }),
+    new HtmlWebpackPlugin({
+      template: 'src/index.html'
+    }),
     // Minify JS
     // new UglifyJsPlugin({
     //   sourceMap: false,
