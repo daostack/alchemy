@@ -401,7 +401,7 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         proposingRepRewardConstA: 1,
         proposingRepRewardConstB: 1,
         stakerFeeRatioForVoters: 1,
-        votersReputationLossRatio: 10,
+        votersReputationLossRatio: 1,
         votersGainRepRatioFromLostRep: 80,
         governanceFormulasInterface: "0x0000000000000000000000000000000000000000"
       })).result;
