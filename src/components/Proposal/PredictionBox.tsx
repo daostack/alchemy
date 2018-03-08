@@ -71,7 +71,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     return (
       <div className={wrapperClass}>
         <div className={css.loading}>
-          <img src="/assets/images/Icon/loading-black.svg"/>
+          <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
         <div className={predictionModalClass}>
           <div className={css.newPredictionTitle}>
