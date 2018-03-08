@@ -4,13 +4,14 @@
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
   "license": "GPL-3.0",
-  "main": "index.js",
+  "main": "./src/index.tsx",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
+    "heroku-postbuild": "npm run build",
     "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
     "ganacheDb": "npm explore @daostack/arc.js -- npm start test.ganacheDb.run",
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start test.ganacheDb.clean",
