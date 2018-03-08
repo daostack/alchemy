@@ -84,7 +84,7 @@ module.exports = merge(baseConfig, {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('development'),
-        'API_URL': 'http://127.0.0.1:3001'
+        'API_URL': JSON.stringify('http://127.0.0.1:3001')
       }
     })
   ]
