@@ -79,6 +79,13 @@ module.exports = merge(baseConfig, {
     new webpack.HotModuleReplacementPlugin(),
 
     // Prints more readable module names in the browser console on HMR updates
-    new webpack.NamedModulesPlugin()
+    new webpack.NamedModulesPlugin(),
+
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('development'),
+        'API_URL': 'http://127.0.0.1:3001'
+      }
+    })
   ]
 });
