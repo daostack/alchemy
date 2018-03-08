@@ -457,7 +457,6 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
     try {
       const web3 : Web3 = Arc.Utils.getWeb3();
 
-      if(!web3.isAddress(beneficiary)) throw new Error(`Invalid address`);
       if(!beneficiary.startsWith('0x')) beneficiary = '0x' + beneficiary;
 
       const ethAccountAddress : string = getState().web3.ethAccountAddress;

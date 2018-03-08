@@ -64,8 +64,16 @@
   		border-radius: 3px;
   		font-size: $subheader;
   		padding: 8px;
-      font-family: $body-font;
-  	}
+			font-family: $body-font;
+
+			&.error{
+				border: 1px solid red;
+			}
+		}
+
+		.errorMessage{
+			color: red
+		}
 
   	.addTransfer {
   		background-color: rgba(247, 247, 247, 1.000);
