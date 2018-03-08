@@ -31,6 +31,7 @@ export const divider: string;
 export const decidedProposal: string;
 export const result: string;
 export const voteBox: string;
+export const unconfirmedVote: string;
 export const decisionGraph: string;
 export const transferAmount: string;
 export const transferType: string;

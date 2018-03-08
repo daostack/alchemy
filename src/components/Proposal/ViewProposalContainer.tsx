@@ -70,13 +70,15 @@ class ViewProposalContainer extends React.Component<IProps, null> {
       const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
 
       const daoAccount = dao.members[currentAccountAddress];
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0, currentAccountStakeState = TransactionStates.Confirmed;
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
+          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed;
       if (daoAccount) {
         currentAccountVote = daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
         if (daoAccount.stakes[proposal.proposalId]) {
           currentAccountPrediction =  daoAccount.stakes[proposal.proposalId].prediction;
           currentAccountStake = daoAccount.stakes[proposal.proposalId].stake;
           currentAccountStakeState = daoAccount.stakes[proposal.proposalId].transactionState;
+          currentAccountVoteState = daoAccount.votes[proposal.proposalId].transactionState;
         }
       }
 
@@ -94,9 +96,10 @@ class ViewProposalContainer extends React.Component<IProps, null> {
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
               currentVote={currentAccountVote}
-              proposal={proposal}
-              voteOnProposal={voteOnProposal}
               daoTotalReputation={dao.reputationCount}
+              proposal={proposal}
+              transactionState={currentAccountVoteState}
+              voteOnProposal={voteOnProposal}
             />
             : proposal.winningVote == VoteOptions.Yes ?
               <div className={css.decidedProposal}>

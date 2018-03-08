@@ -264,6 +264,10 @@
 	padding: 20px 0 14px 0;
 }
 
+.voteBox.unconfirmedVote {
+	.loading { display: block; }
+}
+
 .proposalInfo {
 	left: 130px;
 	top: 50%;

@@ -4,14 +4,15 @@ import { Link } from 'react-router-dom'
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
-import { IProposalState, VoteOptions } from 'reducers/arcReducer';
+import { IProposalState, TransactionStates, VoteOptions } from 'reducers/arcReducer';
 
 import * as css from './Proposal.scss';
 
 interface IProps {
+  currentVote: number
   daoTotalReputation: number
   proposal: IProposalState
-  currentVote: number
+  transactionState: TransactionStates
   voteOnProposal: typeof arcActions.voteOnProposal
 }
 
@@ -30,13 +31,13 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   handleClickVote(vote : number, event: any) {
-    const { proposal, voteOnProposal } = this.props;
+    const { proposal, transactionState, voteOnProposal } = this.props;
     this.setState({ currentVote: vote });
     voteOnProposal(proposal.daoAvatarAddress, proposal.proposalId, vote);
   }
 
   render() {
-    const { currentVote, proposal, daoTotalReputation } = this.props;
+    const { currentVote, proposal, daoTotalReputation, transactionState } = this.props;
 
     const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
     const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
@@ -56,6 +57,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
       }
     }
 
+    var wrapperClass = classNames({
+      [css.voteBox] : true,
+      [css.clearfix] : true,
+      [css.unconfirmedVote] : transactionState == TransactionStates.Unconfirmed
+    });
     var voteUpButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.Yes
     });
@@ -64,7 +70,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
 
     return (
-      <div className={css.voteBox + " " + css.clearfix}>
+      <div className={wrapperClass}>
         <div className={css.loading}>
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>

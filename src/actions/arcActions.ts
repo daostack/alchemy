@@ -176,6 +176,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         avatarAddress: avatarAddress,
         proposalId: proposalId,
         reputation: Util.fromWei(voterInfo.reputation),
+        transactionState: TransactionStates.Confirmed,
         vote: voterInfo.vote,
         voterAddress: currentAccountAddress
       };
@@ -333,6 +334,7 @@ export function getProposal(avatarAddress : string, proposalId : string) {
       avatarAddress: avatarAddress,
       proposalId: proposalId,
       reputation: Util.fromWei(voterInfo.reputation),
+      transactionState: TransactionStates.Confirmed,
       vote: voterInfo.vote,
       voterAddress: currentAccountAddress
     };
@@ -552,10 +554,22 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
 
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: null });
+    const web3 : Web3 = Arc.Utils.getWeb3();
+    const currentAccountAddress : string = getState().web3.ethAccountAddress;
+
+    // TODO: num transactions pending...
+    let payload : any = {
+      vote: {
+        avatarAddress : daoAvatarAddress,
+        proposalId: proposalId,
+        transactionState: TransactionStates.Unconfirmed,
+        vote: vote,
+        voterAddress: currentAccountAddress
+      }
+    }
+
+    dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: payload });
     try {
-      const web3 : Web3 = Arc.Utils.getWeb3();
-      const currentAccountAddress : string = getState().web3.ethAccountAddress;
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
@@ -591,7 +605,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
         // The proposal was not executed
       }
 
-      let payload = {
+      payload = {
         daoAvatarAddress: daoAvatarAddress,
         // Update the proposal
         proposal: {

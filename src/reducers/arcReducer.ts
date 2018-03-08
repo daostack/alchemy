@@ -23,7 +23,7 @@ export enum VoteOptions {
 export interface IVoteState {
   avatarAddress: string,
   proposalId: string,
-  reputation: number,
+  reputation?: number,
   transactionState?: TransactionStates,
   vote: VoteOptions,
   voterAddress: string
@@ -146,6 +146,18 @@ const arcReducer = (state = initialState, action: any) => {
       }});
 
       return state;
+    }
+
+    case ActionTypes.ARC_VOTE_PENDING: {
+      return update(state, { daos: {
+        [payload.vote.avatarAddress] : {
+          members: {
+            [payload.vote.voterAddress]: {
+              votes : { [payload.vote.proposalId] : { $set : payload.vote }}
+            }
+          }
+        }
+      }});
     }
 
     case ActionTypes.ARC_VOTE_FULFILLED: {
