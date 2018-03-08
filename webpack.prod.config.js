@@ -65,12 +65,16 @@ module.exports = merge(baseConfig, {
     extractSass,
     new webpack.DefinePlugin({
       'process.env': {
-        network: JSON.stringify(network)
+        'network': JSON.stringify(network),
+        'NODE_ENV': JSON.stringify('production')
       },
     }),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
     }),
+    new CopyWebpackPlugin([
+      { from: 'src/assets', to: 'assets' }
+    ])
     // new UglifyJsPlugin({
     //   test: /\.js($|\?)/i,
     //   sourceMap: true,
