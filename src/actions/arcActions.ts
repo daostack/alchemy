@@ -460,8 +460,10 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
     dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_PENDING, payload: null });
     try {
       const web3 : Web3 = Arc.Utils.getWeb3();
-      const ethAccountAddress : string = getState().web3.ethAccountAddress;
 
+      if(!beneficiary.startsWith('0x')) beneficiary = '0x' + beneficiary;
+
+      const ethAccountAddress : string = getState().web3.ethAccountAddress;
       const dao = await Arc.DAO.at(daoAvatarAddress);
 
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
@@ -668,7 +670,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if(amount < minimumStakingFee) throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`);
       if(amount > balance) throw new Error(`Staked more than than the balance: ${balance}!`);
 
-      await stakingToken.approve(votingMachineInstance.address, amount);
       const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : prediction, amount : amount});
 
       const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });

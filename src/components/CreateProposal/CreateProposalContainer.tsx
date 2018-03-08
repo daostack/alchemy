@@ -3,6 +3,8 @@ import { denormalize } from 'normalizr';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { connect, Dispatch } from 'react-redux';
+import * as Arc from '@daostack/arc.js';
+import * as Web3 from 'web3';
 
 import * as arcActions from 'actions/arcActions';
 import { IRootState } from 'reducers';
@@ -43,6 +45,10 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps
 
+type FormErrors = {
+  beneficiary?: string
+}
+
 interface IState {
   avatarAddress: string,
   beneficiary: string,
@@ -54,6 +60,7 @@ interface IState {
   reputationReward: number,
   title: string
   buttonEnabled: boolean
+  errors: FormErrors
 }
 
 class CreateProposalContainer extends React.Component<IProps, IState> {
@@ -71,8 +78,19 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
       nativeTokenReward: 0,
       reputationReward: 0,
       title: "",
-      buttonEnabled : true
+      buttonEnabled : true,
+      errors: {}
     };
+  }
+
+  validate(): FormErrors {
+    const state = this.state;
+    let out: FormErrors = {};
+    const web3: Web3 = Arc.Utils.getWeb3();
+    if(!web3.isAddress(state.beneficiary))
+      out.beneficiary = 'Invalid address';
+    this.setState({...this.state,errors: out});
+    return out;
   }
 
   componentDidMount() {
@@ -83,8 +101,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
   handleSubmit = (event : any) => {
     event.preventDefault();
-    this.setState({ buttonEnabled: false });
-    this.props.createProposal(this.state.avatarAddress, this.state.title, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
+
+    if(!Object.keys(this.state.errors).length){
+      this.setState({...this.state, buttonEnabled: false });
+      this.props.createProposal(this.state.avatarAddress, this.state.title, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
+    }
   }
 
   goBack() {
@@ -159,14 +180,22 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           </label>
           <input
             id='beneficiaryInput'
+            className={this.state.errors.beneficiary ? css.error : null}
             maxLength={42}
             onChange={this.handleChange}
+            onBlur={e => this.validate()}
             placeholder="Recipient's address public key"
             ref="beneficiaryNode"
             required
             type="text"
             value={this.state.beneficiary}
           />
+          {this.state.errors.beneficiary ?
+            <span className={css.errorMessage}>
+              {this.state.errors.beneficiary}
+            </span>
+            : ''
+          }
           <div className={css.addTransfer}>
             <label htmlFor='nativeTokenRewardInput'>{dao.tokenSymbol} Token reward: </label>
             <input
@@ -176,7 +205,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               placeholder="How many tokens to reward"
               ref="nativeTokenRewardNode"
               required
-              type="text"
+              type="number"
               value={this.state.nativeTokenReward}
             />
             <label htmlFor='reputationRewardInput'>Reputation reward: </label>
@@ -187,7 +216,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               placeholder="How much reputation to reward"
               ref="reputationRewardNode"
               required
-              type="text"
+              type="number"
               value={this.state.reputationReward}
             />
           </div>
@@ -215,7 +244,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           </div>*/}
 
           <div className={css.alignCenter}>
-            <button className={css.submitProposal} type='submit' disabled={!this.state.buttonEnabled}>
+            <button className={css.submitProposal} type='submit' disabled={!this.state.buttonEnabled || !!Object.keys(this.state.errors).length}>
               <img src='/assets/images/Icon/Send.svg'/>
               Submit proposal
             </button>

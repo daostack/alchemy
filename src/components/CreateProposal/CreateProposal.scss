@@ -5,170 +5,154 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   box-shadow: $shadow-3;
-
   h2 {
-	background-image: linear-gradient(-136deg, #3ECFFA 0%, #1DA1F2 100%);
-	position: relative;
-	margin: 0;
-	padding: 0;
-	color: $white;
-	height: 50px;
-	font-weight: $normal;
-	border-radius: 3px 3px 0 0;
-
-	span {
-		position: relative;
-		top: -18px;
-		font-size: $subheader;
-	}
-
-	.editIcon {
-		display: inline-block;
-		margin: 14px;
-	}
-
-	.exitProposalCreation {
-	 	position: absolute;
-	 	right: 12px;
-	 	border: none;
-	 	background: transparent;
-	 	top: 14px;
-    cursor: pointer;
-	 }
+    background-image: linear-gradient(-136deg, #3ECFFA 0%, #1DA1F2 100%);
+    position: relative;
+    margin: 0;
+    padding: 0;
+    color: $white;
+    height: 50px;
+    font-weight: $normal;
+    border-radius: 3px 3px 0 0;
+    span {
+      position: relative;
+      top: -18px;
+      font-size: $subheader;
+    }
+    .editIcon {
+      display: inline-block;
+      margin: 14px;
+    }
+    .exitProposalCreation {
+      position: absolute;
+      right: 12px;
+      border: none;
+      background: transparent;
+      top: 14px;
+      cursor: pointer;
+    }
   }
-
   form {
-  	padding: 0 30px 30px 30px;
-
-  	label {
-  		color: $black-halftone;
-  		display: block;
-  		width: 372px;
-  		font-size: $body;
-  		padding: 20px 0 8px;
-  		position: relative;
-
-  		.infoTooltip {
-  			position: absolute;
-  			right: 0;
-  			right: -17px;
-  		}
-  	}
-
-  	input {
-  		width: 372px;
-  		border: $form-field-outline;
-  		display: block;
-  		border-radius: 3px;
-  		font-size: $subheader;
-  		padding: 8px;
+    padding: 0 30px 30px 30px;
+    label {
+      color: $black-halftone;
+      display: block;
+      width: 372px;
+      font-size: $body;
+      padding: 20px 0 8px;
+      position: relative;
+      .infoTooltip {
+        position: absolute;
+        right: 0;
+        right: -17px;
+      }
+    }
+    input {
+      width: 372px;
+      border: $form-field-outline;
+      display: block;
+      border-radius: 3px;
+      font-size: $subheader;
+      padding: 8px;
       font-family: $body-font;
-  	}
-
-  	.addTransfer {
-  		background-color: rgba(247, 247, 247, 1.000);
-  		width: 100%;
-  		position: relative;
-  		left: -30px;
-  		padding: 0 30px 30px 30px;
-  		margin-top: 30px;
-  	}
+      &.error {
+        border: 1px solid red;
+      }
+    }
+    .errorMessage {
+      color: red
+    }
+    .addTransfer {
+      background-color: rgba(247, 247, 247, 1.000);
+      width: 100%;
+      position: relative;
+      left: -30px;
+      padding: 0 30px 30px 30px;
+      margin-top: 30px;
+    }
   }
-
   .recommendedTemplate {
-  	border: 1px solid rgba(56, 175, 244, .2);
-  	color: rgba(34, 167, 243, 1.000);
-  	font-size: $small;
-  	border-radius: 3px;
-  	position: relative;
-  	top: -2px;
-  	left: 10px;
+    border: 1px solid rgba(56, 175, 244, .2);
+    color: rgba(34, 167, 243, 1.000);
+    font-size: $small;
+    border-radius: 3px;
+    position: relative;
+    top: -2px;
+    left: 10px;
   }
-
   .transactionList {
-  	padding: 30px 0;
-
-  	.transactionListHeader {
-  		font-size: $body;
-  		font-weight: $normal;
-  		color: $black-halftone;
-  		position: relative;
-  		margin: 0;
-
-  		span {
-  			color: $black-thirdtone;
-  			position: absolute;
-  			right: 0;
-  			font-size: $small;
-  		}
-  	}
-
-  	table {
-  		font-size: $caption;
-  		width: 100%;
-  		border-top: $gray-border-halftone;
-  		border-spacing: 0;
-  		margin-top: 12px;
-  		color: $black-halftone;
-
-  		td {
-  			padding: 8px 0;
-  			border-spacing: 0;
-  			border-collapse: collapse;
-  			border-bottom: $gray-border-halftone;
-  		}
-  	}
-
-
-  	.tokenAmount {
-  		color: $accent-1;
-  		font-weight: $bold;
-  	}
-
-  	.userAvatar {
-  		height: 20px;
-  		position: relative;
-  		top: 5px;
-  		margin: 0 8px;
-  		margin-top: -6px;
-  	}
-
-  	.transferIcon {
-  		margin-left: 8px;
-  	}
-
-  	.transferTotals {
-  		text-align: right;
-  	}
+    padding: 30px 0;
+    .transactionListHeader {
+      font-size: $body;
+      font-weight: $normal;
+      color: $black-halftone;
+      position: relative;
+      margin: 0;
+      span {
+        color: $black-thirdtone;
+        position: absolute;
+        right: 0;
+        font-size: $small;
+      }
+    }
+    table {
+      font-size: $caption;
+      width: 100%;
+      border-top: $gray-border-halftone;
+      border-spacing: 0;
+      margin-top: 12px;
+      color: $black-halftone;
+      td {
+        padding: 8px 0;
+        border-spacing: 0;
+        border-collapse: collapse;
+        border-bottom: $gray-border-halftone;
+      }
+    }
+    .tokenAmount {
+      color: $accent-1;
+      font-weight: $bold;
+    }
+    .userAvatar {
+      height: 20px;
+      position: relative;
+      top: 5px;
+      margin: 0 8px;
+      margin-top: -6px;
+    }
+    .transferIcon {
+      margin-left: 8px;
+    }
+    .transferTotals {
+      text-align: right;
+    }
   }
-	.submitProposal {
-		background-color: $accent-4;
-		border-radius: 3px;
-		height: 40px;
-		display: inline-block;
-		line-height: 30px;
-		margin: 0 auto;
-		color: $white;
-		font-weight: bold;
-		border: none;
-		font-size: $body;
-		box-shadow: $shadow-1;
-		padding: 0 15px;
-
-		img {
-			position: relative;
-			top: 4px;
-			margin-right: 8px;
-		}
-	}
+  .submitProposal {
+    background-color: $accent-4;
+    border-radius: 3px;
+    height: 40px;
+    display: inline-block;
+    line-height: 30px;
+    margin: 0 auto;
+    color: $white;
+    font-weight: bold;
+    border: none;
+    font-size: $body;
+    box-shadow: $shadow-1;
+    padding: 0 15px;
+    img {
+      position: relative;
+      top: 4px;
+      margin-right: 8px;
+    }
+  }
   .submitProposal:disabled {
     background-color: gray;
   }
-
-	.alignCenter {
-		text-align: center;
+  .alignCenter {
+    text-align: center;
     margin-top: 30px;
-	}
+  }
 }
