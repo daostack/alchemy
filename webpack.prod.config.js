@@ -1,6 +1,7 @@
+const path = require('path');
+
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
@@ -17,6 +18,8 @@ module.exports = merge(baseConfig, {
   devtool: 'nosources-source-map',
 
   output: {
+    filename: "bundle.js",
+    path: path.resolve(__dirname, 'dist'),
     publicPath: '/'
   },
 
@@ -63,20 +66,17 @@ module.exports = merge(baseConfig, {
         'NODE_ENV': JSON.stringify('production')
       },
     }),
-    new HtmlWebpackPlugin({
-      template: 'src/index.html'
-    }),
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
-    ])
-    // new UglifyJsPlugin({
-    //   test: /\.js($|\?)/i,
-    //   sourceMap: true,
-    //   extractComments: true,
-    //   parallel: true,
-    //   uglifyOptions: {
-    //     ecma: 6
-    //   }
-    // })
+    ]),
+    new UglifyJsPlugin({
+      test: /\.js($|\?)/i,
+      sourceMap: true,
+      extractComments: true,
+      parallel: true,
+      uglifyOptions: {
+        ecma: 6
+      }
+    })
   ],
 });

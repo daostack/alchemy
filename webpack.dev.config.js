@@ -15,6 +15,13 @@ module.exports = merge(baseConfig, {
     port: 3000
   },
 
+  output: {
+    filename: "bundle.js",
+    path: path.resolve(__dirname, 'dist'),
+    // necessary for HMR to know where to load the hot update chunks
+    publicPath: '/'
+  },
+
   entry: [
     // activate HMR for React
     'react-hot-loader/patch',

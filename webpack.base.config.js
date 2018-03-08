@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const ENV = process.env.NODE_ENV || 'development';
 const isProd = ENV === 'production';
@@ -9,15 +10,6 @@ const ETH_ENV = process.env.ETH_ENV || 'ganache';
 const basePath = process.cwd();
 
 module.exports = {
-
-  output: {
-    filename: "bundle.js",
-
-    path: __dirname + "/dist/",
-
-    // necessary for HMR to know where to load the hot update chunks
-    publicPath: '/dist/'
-  },
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
@@ -85,6 +77,9 @@ module.exports = {
 
   plugins: [
     // do not emit compiled assets that include errors
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
+    new HtmlWebpackPlugin({
+      template: 'src/index.html'
+    }),
   ],
 };
