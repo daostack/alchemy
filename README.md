@@ -30,14 +30,16 @@
 8. Enter `behave pipe turkey animal voyage dial relief menu blush match jeans general` into the box labeled Wallet Seed, and any password you want.
 9. Now all transactions will require confirmation through MetaMask
 
-## Working with Kovan testnet locally (XXX: Not working with current version of Arc + ArcJS)
+## Working with Kovan testnet and Parity locally
 1. Install parity - `bash <(curl https://get.parity.io -Lk)`
 2. Create a file in the root of the project called 'kovan_pass.txt' with your parity wallet password
 3. Run `parity --no-warp --unlock KOVAN_ACCOUNT_PUBLIC_ADDRESS --password kovan_pass.txt --chain=kovan` in one terminal tab
 4. Run `npm run start-kovan` in a separate tab
 5. Go to http://localhost:3000/ in your favorite browser
 
-# Regular end users
+# Regular end users - use MetaMask
 
+* Go to https://daostack-alchemy-client.herokuapp.com
 * Install [Metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) or the [Parity Chrome Extension](https://chrome.google.com/webstore/detail/himekenlppkgeaoeddcliojfddemadig)
-* In MetaMask - Make sure to switch the network to kovan
+* In MetaMask switch to the desired network. Note that we are only deployed on Kovan right now.
+* Unlock your account
