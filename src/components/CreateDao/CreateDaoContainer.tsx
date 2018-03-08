@@ -30,9 +30,10 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps
 
 interface IState {
-  name: string,
-  tokenName: string,
-  tokenSymbol: string,
+  buttonEnabled: boolean
+  name: string
+  tokenName: string
+  tokenSymbol: string
   members: IAccountState[]
 }
 
@@ -42,6 +43,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
+      buttonEnabled: true,
       name: "",
       tokenName: "",
       tokenSymbol: "",
@@ -51,6 +53,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
 
   handleSubmit = (event : any) => {
     event.preventDefault();
+    this.setState({ buttonEnabled: false });
     this.props.createDAO(this.state.name, this.state.tokenName, this.state.tokenSymbol, this.state.members);
     return false;
   }
@@ -152,7 +155,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
               </div>
             </div>
             {this.renderMembers()}
-            <button type='submit' className={css.submitDao}>Create DAO</button>
+            <button type='submit' className={css.submitDao} disabled={!this.state.buttonEnabled}>Create DAO</button>
           </form>
         </div>
       </div>

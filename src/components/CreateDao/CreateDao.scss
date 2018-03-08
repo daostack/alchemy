@@ -201,13 +201,17 @@
 		font-size: $body;
 		box-shadow: $shadow-1;
 		padding: 0 15px;
-	
+
 		img {
 			position: relative;
 			top: 4px;
 			margin-right: 8px;
 		}
 	}
+
+  .submitDao:disabled {
+    background-color: gray;
+  }
 
 	.alignCenter {
 		text-align: center;
