@@ -6,6 +6,7 @@ import * as Web3 from 'web3';
 
 import { IWeb3State } from 'reducers/web3Reducer'
 import { ActionTypes } from 'constants/web3Constants';
+import Util from 'lib/util';
 
 export function initializeWeb3() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -50,7 +51,7 @@ export function initializeWeb3() {
     if (payload.ethAccountAddress !== null) {
       const getBalance = promisify(web3.eth.getBalance);
       const balance = await getBalance(payload.ethAccountAddress);
-      payload.ethAccountBalance = Number(web3.fromWei(balance, "ether")).toFixed(2);
+      payload.ethAccountBalance = Util.fromWei(balance).toFixed(2);
     }
 
     const action = {
@@ -79,7 +80,7 @@ export const changeAccount = (accountAddress : string) => (dispatch: Redux.Dispa
       web3.eth.getBalance(accountAddress, (error : Error, res : BigNumber.BigNumber) => {
         if (error) { console.log("error getting balance"); reject("Error getting ether account balance"); }
 
-        payload.ethAcountBalance = Number(web3.fromWei(res, "ether")).toFixed(2);
+        payload.ethAcountBalance = Util.fromWei(res).toFixed(2);
 
         const action = {
           type: ActionTypes.WEB3_CHANGE_ACCOUNT,

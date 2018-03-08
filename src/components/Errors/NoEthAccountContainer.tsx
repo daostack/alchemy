@@ -32,7 +32,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps
 
 class NoEthAccountContainer extends React.Component<IProps, null> {
-   interval : any;
+  interval : any;
 
   componentDidMount() {
     const { connectToArc } = this.props;
