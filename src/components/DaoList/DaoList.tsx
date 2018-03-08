@@ -8,6 +8,7 @@ import { IDaoState } from 'reducers/arcReducer';
 import * as css from './DaoList.scss';
 
 interface IStateProps {
+  daosLoaded : boolean
   daos: { [key : string] : IDaoState }
 }
 
@@ -24,7 +25,7 @@ export default class DaoList extends React.Component<IProps, null> {
   }
 
   render() {
-    const { daos } = this.props;
+    const { daos, daosLoaded } = this.props;
 
     const daoNodes = Object.keys(daos).map((key : string) => {
       const dao = daos[key];
@@ -46,10 +47,11 @@ export default class DaoList extends React.Component<IProps, null> {
     return (
       <div className={css.wrapper}>
         <div className={css.daoListHeader + " " + css.clearfix}>
-          <h2>Your DAOs</h2>
+          <h2>All DAOs</h2>
 {/*          <Link to='/dao/create'>Create a New DAO</Link>*/}
         </div>
         {daoNodes ? daoNodes : "None"}
+        { !daosLoaded ? <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div> : ""}
       </div>
     );
   }

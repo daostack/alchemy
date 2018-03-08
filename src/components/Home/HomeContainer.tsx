@@ -14,10 +14,12 @@ import * as css from './Home.scss';
 
 interface IStateProps {
   daos: { [key : string] : IDaoState }
+  daosLoaded: boolean
 }
 
 const mapStateToProps = (state : IRootState, ownProps: any) => ({
-  daos: denormalize(state.arc.daos, schemas.daoList, state.arc)
+  daos: denormalize(state.arc.daos, schemas.daoList, state.arc),
+  daosLoaded: state.arc.daosLoaded
 });
 
 interface IDispatchProps {
@@ -33,9 +35,11 @@ type IProps = IStateProps & IDispatchProps
 class HomeContainer extends React.Component<IProps, null> {
 
   render() {
+    const { daos, daosLoaded, getDAOs } = this.props;
+
     return (
       <div className={css.homeWrapper}>
-        <DaoList daos={this.props.daos} getDAOs={this.props.getDAOs} />
+        <DaoList daos={daos} daosLoaded={daosLoaded} getDAOs={getDAOs} />
       </div>
     );
   }

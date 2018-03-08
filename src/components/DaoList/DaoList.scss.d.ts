@@ -1,5 +1,6 @@
 export const clearfix: string;
 export const wrapper: string;
+export const loading: string;
 export const dao: string;
 export const daoAvatar: string;
 export const daoLink: string;

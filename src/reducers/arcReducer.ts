@@ -94,11 +94,13 @@ export interface IDaoState {
 }
 
 export interface IArcState {
+  daosLoaded: boolean
   daos: { [key : string] : IDaoState }
   proposals: { [key : string] : IProposalState }
 }
 
 export const initialState : IArcState = {
+  daosLoaded: false,
   daos: {},
   proposals: {}
 }
@@ -115,6 +117,10 @@ const arcReducer = (state = initialState, action: any) => {
   }
 
   switch (action.type) {
+    case ActionTypes.ARC_GET_DAOS_FULFILLED: {
+      return update(state, { daosLoaded : { $set : true } });
+    }
+
     case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
       // Add the new proposal to the DAO's state
       return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );

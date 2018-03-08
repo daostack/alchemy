@@ -5,9 +5,15 @@
 }
 
 .wrapper {
+  position: relative;
   max-width: $max-width;
   margin: 0 auto;
   padding: 0 30px;
+}
+
+.loading img {
+  margin: 0 auto;
+  display: block;
 }
 
 .dao {
@@ -85,7 +91,7 @@ a.daoLink {
 		float: right;
 		display: block;
 		width: 110px;
-		text-align: center;	
+		text-align: center;
 		border: 1px solid $accent-1;
 		float: right;
 		color: $accent-1;
