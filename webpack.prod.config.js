@@ -18,7 +18,7 @@ module.exports = merge(baseConfig, {
   devtool: 'nosources-source-map',
 
   output: {
-    filename: "bundle.js",
+    filename: "bundle-[hash:8].js",
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/'
   },
