@@ -28,6 +28,12 @@ const web3Reducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.WEB3_CONNECTED: {
+      // XXX: hack, for now refresh the page if we go from failing to connect to web3 to a successful connection (e.g. MetaMask unlocked)
+      //      Ideally we should be able to just force reload web3 in arc.js and get all the nice data from it, like accounts.
+      if (state.connectionStatus == ConnectionStatus.Failed) {
+        window.location.reload();
+      }
+
       return {...state, ...action.payload, ...{ connectionStatus : ConnectionStatus.Connected } };
     }
 
