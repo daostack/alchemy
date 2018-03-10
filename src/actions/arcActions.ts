@@ -31,7 +31,7 @@ export function getDAOs() {
     const daoCreator = await Arc.DaoCreator.deployed();
 
     // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
-    const newOrgEvents = daoCreator.contract.NewOrg({}, { fromBlock: 0 })
+    const newOrgEvents = daoCreator.InitialSchemesSet({}, { fromBlock: 0 })
     newOrgEvents.get(async (err : Error, eventsArray : any[]) => {
       if (err) {
         dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
@@ -677,7 +677,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
       const minimumStakingFee = votingMachineParam[6]; // 6 is the index of minimumStakingFee in the Parameters struct.
 
-      const StandardToken = Arc.Utils.requireContract('StandardToken');
+      const StandardToken = await Arc.Utils.requireContractAsync('StandardToken');
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(currentAccountAddress);
 
