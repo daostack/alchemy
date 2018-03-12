@@ -677,7 +677,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
       const minimumStakingFee = votingMachineParam[6]; // 6 is the index of minimumStakingFee in the Parameters struct.
 
-      const StandardToken = await Arc.Utils.requireContractAsync('StandardToken');
+      const StandardToken = await Arc.Utils.requireContract('StandardToken');
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(currentAccountAddress);
 

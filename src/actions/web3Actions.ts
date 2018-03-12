@@ -32,28 +32,24 @@ export function initializeWeb3() {
       return
     }
 
-    let payload : IWeb3State = {
-      ethAccountAddress: null,
-      ethAccountBalance: ""
-    };
-
     // TODO: actually check if we are connected to right chain
     // TODO: is this presently needed?
     const getNetwork = promisify(web3.version.getNetwork);
     // await the network 
     await getNetwork();
-    
+
+    let payload : IWeb3State = {
+      ethAccountAddress: null,
+      ethAccountBalance: ""
+    };
+
     try {
       // this throws an exception if default account isn't found
-      payload.ethAccountAddress = await Utils.getDefaultAccountAsync();
-
-      if (payload.ethAccountAddress !== null) {
-        const getBalance = promisify(web3.eth.getBalance);
-        const balance = await getBalance(payload.ethAccountAddress);
-        payload.ethAccountBalance = Util.fromWei(balance).toFixed(2);
-      }
+      payload.ethAccountAddress = await Utils.getDefaultAccount();
+      const getBalance = promisify(web3.eth.getBalance);
+      const balance = await getBalance(payload.ethAccountAddress);
+      payload.ethAccountBalance = Util.fromWei(balance).toFixed(2);
     } catch { }
-
 
     const action = {
       type: ActionTypes.WEB3_CONNECTED,
