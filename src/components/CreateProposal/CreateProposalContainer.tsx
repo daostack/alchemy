@@ -53,11 +53,11 @@ interface IState {
   avatarAddress: string,
   beneficiary: string,
   description: string,
-  ethReward: number,
+  ethReward: number | string,
   externalTokenAddress: string,
-  externalTokenReward: number,
-  nativeTokenReward: number,
-  reputationReward: number,
+  externalTokenReward: number | string,
+  nativeTokenReward: number | string,
+  reputationReward: number | string,
   title: string
   buttonEnabled: boolean
   errors: FormErrors
@@ -72,11 +72,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
       avatarAddress: this.props.daoAddress,
       beneficiary: "",
       description: "",
-      ethReward: 0,
+      ethReward: '',
       externalTokenAddress: null,
-      externalTokenReward: 0,
-      nativeTokenReward: 0,
-      reputationReward: 0,
+      externalTokenReward: '',
+      nativeTokenReward: '',
+      reputationReward: '',
       title: "",
       buttonEnabled : true,
       errors: {}
@@ -87,9 +87,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     const state = this.state;
     let out: FormErrors = {};
     const web3: Web3 = Arc.Utils.getWeb3();
-    if(!web3.isAddress(state.beneficiary))
+
+    if (!web3.isAddress(state.beneficiary)) {
       out.beneficiary = 'Invalid address';
-    this.setState({...this.state,errors: out});
+    }
+
+    this.setState({...this.state, errors: out});
     return out;
   }
 
@@ -104,7 +107,14 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
     if(!Object.keys(this.state.errors).length){
       this.setState({...this.state, buttonEnabled: false });
-      this.props.createProposal(this.state.avatarAddress, this.state.title, this.state.description, this.state.nativeTokenReward, this.state.reputationReward, this.state.beneficiary);
+      this.props.createProposal(
+        this.state.avatarAddress,
+        this.state.title,
+        this.state.description,
+        Number(this.state.nativeTokenReward),
+        Number(this.state.reputationReward),
+        this.state.beneficiary
+      );
     }
   }
 
@@ -121,9 +131,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   handleChange = (event : any) => {
     const newTitle = (ReactDOM.findDOMNode(this.refs.titleNode) as HTMLInputElement).value;
     const newDescription = (ReactDOM.findDOMNode(this.refs.descriptionNode) as HTMLInputElement).value;
-    const newNativeTokenReward = Number((ReactDOM.findDOMNode(this.refs.nativeTokenRewardNode) as HTMLInputElement).value);
-    const newReputationReward = Number((ReactDOM.findDOMNode(this.refs.reputationRewardNode) as HTMLInputElement).value);
+    const newNativeTokenReward = (ReactDOM.findDOMNode(this.refs.nativeTokenRewardNode) as HTMLInputElement).value;
+    const newReputationReward = (ReactDOM.findDOMNode(this.refs.reputationRewardNode) as HTMLInputElement).value;
     const newBenificiary = (ReactDOM.findDOMNode(this.refs.beneficiaryNode) as HTMLInputElement).value;
+
     this.setState({
       beneficiary: newBenificiary,
       description: newDescription,
