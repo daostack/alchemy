@@ -1,9 +1,9 @@
+import * as Arc from '@daostack/arc.js';
 import * as H from 'history';
 import { denormalize } from 'normalizr';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { connect, Dispatch } from 'react-redux';
-import * as Arc from '@daostack/arc.js';
 import * as Web3 from 'web3';
 
 import * as arcActions from 'actions/arcActions';
@@ -162,7 +162,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           />
           <label htmlFor="descriptionInput">
             Description (URL)
-            <button className={css.recommendedTemplate}>Recommended template</button>
+            <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
+              Recommended template
+            </a>
             <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
           </label>
           <input

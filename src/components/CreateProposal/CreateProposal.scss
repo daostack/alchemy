@@ -79,8 +79,9 @@
     font-size: $small;
     border-radius: 3px;
     position: relative;
-    top: -2px;
+    top: 0px;
     left: 10px;
+    padding: 1px;
   }
   .transactionList {
     padding: 30px 0;
