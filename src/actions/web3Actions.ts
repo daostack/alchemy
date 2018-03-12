@@ -32,34 +32,32 @@ export function initializeWeb3() {
       return
     }
 
+    // TODO: actually check if we are connected to right chain
+    // TODO: is this presently needed?
+    const getNetwork = promisify(web3.version.getNetwork);
+    // await the network 
+    await getNetwork();
+
     let payload : IWeb3State = {
       ethAccountAddress: null,
       ethAccountBalance: ""
     };
 
-    const getAccounts = promisify(web3.eth.getAccounts);
-    const accounts = await getAccounts();
-
-    if (accounts.length > 0) {
-      payload.ethAccountAddress = accounts[0];
-    }
-
-    // TODO: actually check if we are connected to right chain
-    const getNetwork = promisify(web3.version.getNetwork);
-    const network = await getNetwork();
-
-    if (payload.ethAccountAddress !== null) {
+    try {
+      // this throws an exception if default account isn't found
+      payload.ethAccountAddress = await Utils.getDefaultAccount();
       const getBalance = promisify(web3.eth.getBalance);
       const balance = await getBalance(payload.ethAccountAddress);
       payload.ethAccountBalance = Util.fromWei(balance).toFixed(2);
-    }
+    } catch { }
 
     const action = {
       type: ActionTypes.WEB3_CONNECTED,
       payload: payload
     };
+
     dispatch(action);
-  };
+  }
 }
 
 export const changeAccount = (accountAddress : string) => (dispatch: Redux.Dispatch<any>, getState: Function) => {
