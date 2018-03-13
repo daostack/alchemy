@@ -54,7 +54,6 @@ const Fade = ({ children, ...props } : any) => (
     {children}
   </CSSTransition>
 );
-
 class HeaderContainer extends React.Component<IProps, null> {
 
   handleChangeAccount = (e : any) => {
@@ -81,6 +80,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     return(
       <nav className={css.header}>
         <Link className={css.alchemyLogo} to='/'><img src='/assets/images/alchemy-logo.svg'/></Link>
+        <span className={css.version}>v.{VERSION}#{COMMIT}</span>
         { notifications.alert ? <Fade in={notifications.alert.length > 0}><div className={css.alert}>{notifications.alert}</div></Fade> : ""}
         { web3
           ? <div className={css.accountInfo}>
