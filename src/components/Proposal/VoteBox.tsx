@@ -1,42 +1,42 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import { Link } from 'react-router-dom'
+import * as classNames from "classnames";
+import * as React from "react";
+import { Link } from "react-router-dom";
 
-import * as arcActions from 'actions/arcActions';
-import { IRootState } from 'reducers';
-import { IProposalState, TransactionStates, VoteOptions } from 'reducers/arcReducer';
+import * as arcActions from "actions/arcActions";
+import { IRootState } from "reducers";
+import { IProposalState, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
-import * as css from './Proposal.scss';
+import * as css from "./Proposal.scss";
 
 interface IProps {
-  currentVote: number
-  daoTotalReputation: number
-  proposal: IProposalState
-  transactionState: TransactionStates
-  voteOnProposal: typeof arcActions.voteOnProposal
+  currentVote: number;
+  daoTotalReputation: number;
+  proposal: IProposalState;
+  transactionState: TransactionStates;
+  voteOnProposal: typeof arcActions.voteOnProposal;
 }
 
 interface IState {
-  currentVote: number
+  currentVote: number;
 }
 
 export default class VoteBox extends React.Component<IProps, IState> {
 
-  constructor(props: IProps){
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
-      currentVote: props.currentVote
+      currentVote: props.currentVote,
     };
   }
 
-  handleClickVote(vote : number, event: any) {
+  public handleClickVote(vote: number, event: any) {
     const { proposal, transactionState, voteOnProposal } = this.props;
     this.setState({ currentVote: vote });
     voteOnProposal(proposal.daoAvatarAddress, proposal.proposalId, vote);
   }
 
-  render() {
+  public render() {
     const { currentVote, proposal, daoTotalReputation, transactionState } = this.props;
 
     const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
@@ -44,29 +44,29 @@ export default class VoteBox extends React.Component<IProps, IState> {
 
     const styles = {
       yesGraph: {
-        height: yesPercentage + "%"
+        height: yesPercentage + "%",
       },
       noGraph: {
-        height: noPercentage + "%"
+        height: noPercentage + "%",
       },
       forBar: {
-        width: yesPercentage + "%"
+        width: yesPercentage + "%",
       },
       againstBar: {
-        width: noPercentage + "%"
-      }
-    }
+        width: noPercentage + "%",
+      },
+    };
 
-    var wrapperClass = classNames({
+    let wrapperClass = classNames({
       [css.voteBox] : true,
       [css.clearfix] : true,
-      [css.unconfirmedVote] : transactionState == TransactionStates.Unconfirmed
+      [css.unconfirmedVote] : transactionState == TransactionStates.Unconfirmed,
     });
-    var voteUpButtonClass = classNames({
-      [css.voted]: currentVote == VoteOptions.Yes
+    let voteUpButtonClass = classNames({
+      [css.voted]: currentVote == VoteOptions.Yes,
     });
-    var voteDownButtonClass = classNames({
-      [css.voted]: currentVote == VoteOptions.No
+    let voteDownButtonClass = classNames({
+      [css.voted]: currentVote == VoteOptions.No,
     });
 
     return (
@@ -76,15 +76,15 @@ export default class VoteBox extends React.Component<IProps, IState> {
         </div>
         <div className={css.voteControls}>
           <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
-            <img className={css.upvote} src='/assets/images/Icon/Upvote.svg'/>
-            <img className={css.upvote + " " + css.upvoted} src='/assets/images/Icon/Upvoted.svg'/>
+            <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
+            <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
           </button>
           <div className={css.voteDivider}>
-            <img src='/assets/images/vote-divider.svg'/>
+            <img src="/assets/images/vote-divider.svg"/>
           </div>
           <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-            <img className={css.downvote} src='/assets/images/Icon/Downvote.svg'/>
-            <img className={css.downvote + " " + css.downvoted} src='/assets/images/Icon/Downvoted.svg'/>
+            <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
+            <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
           </button>
         </div>
         <div className={css.voteGraphs}>

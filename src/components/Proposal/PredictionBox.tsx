@@ -1,71 +1,70 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import { Link } from 'react-router-dom'
+import * as classNames from "classnames";
+import * as React from "react";
+import { Link } from "react-router-dom";
 
-import * as arcActions from 'actions/arcActions';
-import { IRootState } from 'reducers';
-import { IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
+import * as arcActions from "actions/arcActions";
+import { IRootState } from "reducers";
+import { IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
-import * as css from './Proposal.scss';
+import * as css from "./Proposal.scss";
 
 interface IState {
-  showStakeModal: number
+  showStakeModal: number;
 }
 
 interface IProps {
-  currentPrediction: number
-  currentStake: number
-  proposal: IProposalState
-  stakeProposal: typeof arcActions.stakeProposal
-  transactionState: TransactionStates
+  currentPrediction: number;
+  currentStake: number;
+  proposal: IProposalState;
+  stakeProposal: typeof arcActions.stakeProposal;
+  transactionState: TransactionStates;
 }
 
 export default class PredictionBox extends React.Component<IProps, IState> {
-  stakeInput: any;
+  public stakeInput: any;
 
-  constructor(props: IProps){
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
-      showStakeModal: 0
+      showStakeModal: 0,
     };
   }
 
-  showModal(prediction : number, event : any) {
+  public showModal(prediction: number, event: any) {
     this.setState({ showStakeModal: prediction });
     setTimeout(() => this.stakeInput.focus(), 10);
   }
 
-  closeModal(event : any) {
+  public closeModal(event: any) {
     this.setState({ showStakeModal: 0 });
   }
 
-  handleClickStake(prediction : number, stake: number, event : any) {
+  public handleClickStake(prediction: number, stake: number, event: any) {
     const { proposal, stakeProposal } = this.props;
     const amount = this.stakeInput.value;
     this.setState({ showStakeModal: 0 });
     stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, amount);
   }
 
-
-  render() {
+  public render() {
     const { currentPrediction, currentStake, proposal, transactionState } = this.props;
     const { showStakeModal } = this.state;
 
-    var wrapperClass = classNames({
+    let wrapperClass = classNames({
       [css.predictions] : true,
-      [css.unconfirmedPrediction] : transactionState == TransactionStates.Unconfirmed
+      [css.unconfirmedPrediction] : transactionState == TransactionStates.Unconfirmed,
     });
-    var predictionModalClass = classNames({
+    let predictionModalClass = classNames({
       [css.newPrediction] : true,
       [css.newPassPrediction] : showStakeModal == VoteOptions.Yes,
-      [css.newFailPrediction] : showStakeModal == VoteOptions.No
+      [css.newFailPrediction] : showStakeModal == VoteOptions.No,
     });
-    var stakeUpClass = classNames({
-      [css.predicted]: currentPrediction == VoteOptions.Yes
+    let stakeUpClass = classNames({
+      [css.predicted]: currentPrediction == VoteOptions.Yes,
     });
-    var stakeDownClass = classNames({
-      [css.predicted]: currentPrediction == VoteOptions.No
+    let stakeDownClass = classNames({
+      [css.predicted]: currentPrediction == VoteOptions.No,
     });
 
     return (
@@ -77,7 +76,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <div className={css.newPredictionTitle}>
             NEW <strong>{showStakeModal == VoteOptions.Yes ? "PASS" : "FAIL"}</strong> STAKE
           </div>
-          <input type="number" min="1" ref={(input) => { this.stakeInput = input;}} className={css.predictionAmount}/>
+          <input type="number" min="1" ref={(input) => { this.stakeInput = input; }} className={css.predictionAmount}/>
           <span className={css.genLabel}>GEN</span>
           <div className={css.clearfix}>
             <button className={css.cancelPrediction} onClick={this.closeModal.bind(this)}>

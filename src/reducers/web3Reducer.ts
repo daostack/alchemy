@@ -1,23 +1,23 @@
-import { ActionTypes } from 'constants/web3Constants';
-import * as Web3 from 'web3';
+import { ActionTypes } from "constants/web3Constants";
+import * as Web3 from "web3";
 
 export enum ConnectionStatus {
   Pending = "pending",
   Connected = "connected",
-  Failed = "failed"
+  Failed = "failed",
 }
 
 export interface IWeb3State {
-  ethAccountBalance: string,
-  ethAccountAddress: string | null,
-  connectionStatus?: ConnectionStatus
+  ethAccountBalance: string;
+  ethAccountAddress: string | null;
+  connectionStatus?: ConnectionStatus;
 }
 
-export const initialState : IWeb3State = {
+export const initialState: IWeb3State = {
   ethAccountBalance: "",
   ethAccountAddress: null,
-  connectionStatus: ConnectionStatus.Pending
-}
+  connectionStatus: ConnectionStatus.Pending,
+};
 
 // TODO: make all action types explicit?
 const web3Reducer = (state = initialState, action: any) => {
@@ -36,12 +36,12 @@ const web3Reducer = (state = initialState, action: any) => {
     //   return state;
 
     case ActionTypes.WEB3_CHANGE_ACCOUNT:
-      return {...state, ...action.payload }
+      return {...state, ...action.payload };
 
     default: {
       return state;
     }
   }
-}
+};
 
 export default web3Reducer;

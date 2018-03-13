@@ -1,37 +1,37 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import * as classNames from "classnames";
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { Link, RouteComponentProps } from "react-router-dom";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
-import * as arcActions from 'actions/arcActions';
-import { IRootState } from 'reducers';
-import { IProposalState } from 'reducers/arcReducer';
-import { IWeb3State } from 'reducers/web3Reducer'
-import * as schemas from '../../schemas';
-import * as selectors from 'selectors/daoSelectors';
+import * as arcActions from "actions/arcActions";
+import { IRootState } from "reducers";
+import { IProposalState } from "reducers/arcReducer";
+import { IWeb3State } from "reducers/web3Reducer";
+import * as selectors from "selectors/daoSelectors";
+import * as schemas from "../../schemas";
 
-import DaoHeader from './DaoHeader';
-import DaoNav from './DaoNav';
-import ProposalContainer from '../Proposal/ProposalContainer';
+import ProposalContainer from "../Proposal/ProposalContainer";
+import DaoHeader from "./DaoHeader";
+import DaoNav from "./DaoNav";
 
-import * as css from './ViewDao.scss';
+import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
-  daoAddress: string
-  proposalsLoaded: boolean
-  proposalsBoosted: IProposalState[],
-  proposalsPreBoosted: IProposalState[]
-  web3: IWeb3State
+  daoAddress: string;
+  proposalsLoaded: boolean;
+  proposalsBoosted: IProposalState[];
+  proposalsPreBoosted: IProposalState[];
+  web3: IWeb3State;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAddress: ownProps.match.params.daoAddress,
     proposalsLoaded: state.arc.daos[ownProps.match.params.daoAddress].proposalsLoaded,
     proposalsBoosted: selectors.makeDaoBoostedProposalsSelector()(state, ownProps),
     proposalsPreBoosted: selectors.makeDaoPreBoostedProposalsSelector()(state, ownProps),
-    web3: state.web3
+    web3: state.web3,
   };
 };
 
@@ -39,9 +39,9 @@ interface IDispatchProps {}
 
 const mapDispatchToProps = {};
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
-const Fade = ({ children, ...props } : any) => (
+const Fade = ({ children, ...props }: any) => (
   <CSSTransition
     {...props}
     timeout={1000}
@@ -49,7 +49,7 @@ const Fade = ({ children, ...props } : any) => (
      enter: css.fadeEnter,
      enterActive: css.fadeEnterActive,
      exit: css.fadeExit,
-     exitActive: css.fadeExitActive
+     exitActive: css.fadeExitActive,
     }}
   >
     {children}
@@ -58,12 +58,12 @@ const Fade = ({ children, ...props } : any) => (
 
 class DaoProposalsContainer extends React.Component<IProps, null> {
 
-  render() {
+  public render() {
     const { proposalsLoaded, proposalsBoosted, proposalsPreBoosted } = this.props;
 
     const boostedProposalsHTML = (
-      <TransitionGroup className='boosted-proposals-list'>
-        { proposalsBoosted.map((proposal : IProposalState) => (
+      <TransitionGroup className="boosted-proposals-list">
+        { proposalsBoosted.map((proposal: IProposalState) => (
           <Fade key={"proposal_" + proposal.proposalId}>
             <ProposalContainer proposalId={proposal.proposalId} />
           </Fade>
@@ -72,8 +72,8 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
     );
 
     const preBoostedProposalsHTML = (
-      <TransitionGroup className='boosted-proposals-list'>
-        { proposalsPreBoosted.map((proposal : IProposalState) => (
+      <TransitionGroup className="boosted-proposals-list">
+        { proposalsPreBoosted.map((proposal: IProposalState) => (
           <Fade key={"proposal_" + proposal.proposalId}>
             <ProposalContainer proposalId={proposal.proposalId} />
           </Fade>
@@ -92,7 +92,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
                     No upcoming proposals
                   </div>
                   <div className={css.cta}>
-                    <Link to={'/proposal/create/' + this.props.daoAddress}>Create a proposal</Link>
+                    <Link to={"/proposal/create/" + this.props.daoAddress}>Create a proposal</Link>
                   </div>
                 </div>
               : ""
@@ -103,9 +103,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
             <div className={css.proposalsHeader}>
               Boosted Proposals
 
-
              {/* <span>Available funds: <span>13,000 ETH - 327 KIN</span></span> */}
-
 
             </div>
             <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>

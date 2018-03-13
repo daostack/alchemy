@@ -1,12 +1,12 @@
-import createHistory from 'history/createHashHistory';
-import { routerMiddleware } from 'react-router-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import loggerMiddleware from 'redux-logger';
-import promiseMiddleware from 'redux-promise-middleware';
-import thunkMiddleware from 'redux-thunk';
+import createHistory from "history/createHashHistory";
+import { routerMiddleware } from "react-router-redux";
+import { applyMiddleware, compose, createStore } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import loggerMiddleware from "redux-logger";
+import promiseMiddleware from "redux-promise-middleware";
+import thunkMiddleware from "redux-thunk";
 
-import reducers from './reducers';
+import reducers from "./reducers";
 
 export const history = createHistory();
 
@@ -17,9 +17,9 @@ const store = createStore(
       thunkMiddleware,
       promiseMiddleware(),
       routerMiddleware(history),
-      loggerMiddleware
-    )
-  )
+      loggerMiddleware,
+    ),
+  ),
 );
 
 export default store;

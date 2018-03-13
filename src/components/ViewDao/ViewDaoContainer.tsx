@@ -1,59 +1,59 @@
-import * as Arc from '@daostack/arc.js';
-import * as classNames from 'classnames';
-import { denormalize } from 'normalizr';
-import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom'
+import * as Arc from "@daostack/arc.js";
+import * as classNames from "classnames";
+import { denormalize } from "normalizr";
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
-import * as arcActions from 'actions/arcActions';
-import Util from 'lib/util';
-import { IRootState } from 'reducers';
-import { IDaoState, IProposalState } from 'reducers/arcReducer';
-import * as schemas from '../../schemas';
-import * as selectors from 'selectors/daoSelectors';
+import * as arcActions from "actions/arcActions";
+import Util from "lib/util";
+import { IRootState } from "reducers";
+import { IDaoState, IProposalState } from "reducers/arcReducer";
+import * as selectors from "selectors/daoSelectors";
+import * as schemas from "../../schemas";
 
-import DaoHeader from './DaoHeader';
-import DaoNav from './DaoNav';
-import DaoProposalsContainer from './DaoProposalsContainer';
-import DaoHistoryContainer from './DaoHistoryContainer';
-import DaoMembersContainer from './DaoMembersContainer';
-import ViewProposalContainer from 'components/Proposal/ViewProposalContainer';
+import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
+import DaoHeader from "./DaoHeader";
+import DaoHistoryContainer from "./DaoHistoryContainer";
+import DaoMembersContainer from "./DaoMembersContainer";
+import DaoNav from "./DaoNav";
+import DaoProposalsContainer from "./DaoProposalsContainer";
 
-import * as css from './ViewDao.scss';
+import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
-  currentAccountAddress: string
-  dao: IDaoState
-  daoAddress : string
+  currentAccountAddress: string;
+  dao: IDaoState;
+  daoAddress: string;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
-    daoAddress : ownProps.match.params.daoAddress
+    daoAddress : ownProps.match.params.daoAddress,
   };
 };
 
 interface IDispatchProps {
-  confirmStake: typeof arcActions.confirmStake
-  getDAO: typeof arcActions.getDAO
-  getProposal: typeof arcActions.getProposal
+  confirmStake: typeof arcActions.confirmStake;
+  getDAO: typeof arcActions.getDAO;
+  getProposal: typeof arcActions.getProposal;
 }
 
 const mapDispatchToProps = {
   confirmStake: arcActions.confirmStake,
   getDAO: arcActions.getDAO,
-  getProposal: arcActions.getProposal
+  getProposal: arcActions.getProposal,
 };
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
 class ViewDaoContainer extends React.Component<IProps, null> {
-  proposalEventWatcher : Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
-  stakeEventWatcher : Arc.EventFetcher<Arc.StakeEventResult>;
+  public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
+  public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
 
-  async componentDidMount() {
+  public async componentDidMount() {
     const { confirmStake, currentAccountAddress, daoAddress, dao, getDAO, getProposal } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
@@ -66,7 +66,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     // Watch for new, confirmed proposals coming in
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
-    this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: 'latest' });
+    this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: "latest" });
     this.proposalEventWatcher.watch((error, result) => {
       getProposal(daoAddress, result[0].args._proposalId);
     });
@@ -74,13 +74,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     // Watch for new, confirmed stakes coming in for the current account
     // TODO: watch for all new stakes from anyone?
     const genesisProtocolInstance = await Arc.GenesisProtocol.deployed();
-    this.stakeEventWatcher = genesisProtocolInstance.Stake({ _voter: currentAccountAddress }, { fromBlock: 'latest' });
+    this.stakeEventWatcher = genesisProtocolInstance.Stake({ _voter: currentAccountAddress }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
       confirmStake(daoAddress, result[0].args._proposalId, result[0].args._voter, result[0].args._vote, Util.fromWei(result[0].args._amount));
     });
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     if (this.proposalEventWatcher) {
       this.proposalEventWatcher.stopWatching();
     }
@@ -90,7 +90,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     }
   }
 
-  render() {
+  public render() {
     const { dao } = this.props;
 
     if (dao) {

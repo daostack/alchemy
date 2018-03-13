@@ -1,111 +1,111 @@
-import * as Arc from '@daostack/arc.js';
-import * as H from 'history';
-import { denormalize } from 'normalizr';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { connect, Dispatch } from 'react-redux';
-import * as Web3 from 'web3';
+import * as Arc from "@daostack/arc.js";
+import * as H from "history";
+import { denormalize } from "normalizr";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { connect, Dispatch } from "react-redux";
+import * as Web3 from "web3";
 
-import * as arcActions from 'actions/arcActions';
-import { IRootState } from 'reducers';
-import { IDaoState } from 'reducers/arcReducer';
-import { IWeb3State } from 'reducers/web3Reducer'
-import * as schemas from '../../schemas';
+import * as arcActions from "actions/arcActions";
+import { IRootState } from "reducers";
+import { IDaoState } from "reducers/arcReducer";
+import { IWeb3State } from "reducers/web3Reducer";
+import * as schemas from "../../schemas";
 
-import * as css from './CreateProposal.scss';
+import * as css from "./CreateProposal.scss";
 
-import AccountImage from 'components/Account/AccountImage';
-import DaoHeader from '../ViewDao/DaoHeader';
+import AccountImage from "components/Account/AccountImage";
+import DaoHeader from "../ViewDao/DaoHeader";
 
 interface IStateProps {
-  dao: IDaoState,
-  daoAddress : string,
-  history: H.History,
-  web3: IWeb3State
+  dao: IDaoState;
+  daoAddress: string;
+  history: H.History;
+  web3: IWeb3State;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
     daoAddress : ownProps.match.params.daoAddress,
     history: ownProps.history,
-    web3: state.web3
+    web3: state.web3,
   };
 };
 
 interface IDispatchProps {
-  createProposal: typeof arcActions.createProposal
-  getDAO: typeof arcActions.getDAO
+  createProposal: typeof arcActions.createProposal;
+  getDAO: typeof arcActions.getDAO;
 }
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  getDAO: arcActions.getDAO
+  getDAO: arcActions.getDAO,
 };
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
-type FormErrors = {
-  beneficiary?: string
+interface FormErrors {
+  beneficiary?: string;
 }
 
 interface IState {
-  avatarAddress: string,
-  beneficiary: string,
-  description: string,
-  ethReward: number | string,
-  externalTokenAddress: string,
-  externalTokenReward: number | string,
-  nativeTokenReward: number | string,
-  reputationReward: number | string,
-  title: string
-  buttonEnabled: boolean
-  errors: FormErrors
+  avatarAddress: string;
+  beneficiary: string;
+  description: string;
+  ethReward: number | string;
+  externalTokenAddress: string;
+  externalTokenReward: number | string;
+  nativeTokenReward: number | string;
+  reputationReward: number | string;
+  title: string;
+  buttonEnabled: boolean;
+  errors: FormErrors;
 }
 
 class CreateProposalContainer extends React.Component<IProps, IState> {
 
-  constructor(props: IProps){
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
       avatarAddress: this.props.daoAddress,
       beneficiary: "",
       description: "",
-      ethReward: '',
+      ethReward: "",
       externalTokenAddress: null,
-      externalTokenReward: '',
-      nativeTokenReward: '',
-      reputationReward: '',
+      externalTokenReward: "",
+      nativeTokenReward: "",
+      reputationReward: "",
       title: "",
       buttonEnabled : true,
-      errors: {}
+      errors: {},
     };
   }
 
-  validate(): FormErrors {
+  public validate(): FormErrors {
     const state = this.state;
-    let out: FormErrors = {};
+    const out: FormErrors = {};
     const web3: Web3 = Arc.Utils.getWeb3();
 
     if (!web3.isAddress(state.beneficiary)) {
-      out.beneficiary = 'Invalid address';
+      out.beneficiary = "Invalid address";
     }
 
     this.setState({...this.state, errors: out});
     return out;
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     if (!this.props.dao) {
       this.props.getDAO(this.props.daoAddress);
     }
   }
 
-  handleSubmit = (event : any) => {
+  public handleSubmit = (event: any) => {
     event.preventDefault();
 
-    if(!Object.keys(this.state.errors).length){
+    if (!Object.keys(this.state.errors).length) {
       this.setState({...this.state, buttonEnabled: false });
       this.props.createProposal(
         this.state.avatarAddress,
@@ -113,12 +113,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
         this.state.description,
         Number(this.state.nativeTokenReward),
         Number(this.state.reputationReward),
-        this.state.beneficiary
+        this.state.beneficiary,
       );
     }
   }
 
-  goBack() {
+  public goBack() {
     const { history, dao } = this.props;
 
     if (history.length > 0) {
@@ -128,7 +128,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     }
   }
 
-  handleChange = (event : any) => {
+  public handleChange = (event: any) => {
     const newTitle = (ReactDOM.findDOMNode(this.refs.titleNode) as HTMLInputElement).value;
     const newDescription = (ReactDOM.findDOMNode(this.refs.descriptionNode) as HTMLInputElement).value;
     const newNativeTokenReward = (ReactDOM.findDOMNode(this.refs.nativeTokenRewardNode) as HTMLInputElement).value;
@@ -144,26 +144,26 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     });
   }
 
-  render() {
+  public render() {
     const { dao } = this.props;
 
     return(
       dao ? <div className={css.createProposalWrapper}>
         <h2>
-          <img className={css.editIcon} src='/assets/images/Icon/Edit.svg'/>
+          <img className={css.editIcon} src="/assets/images/Icon/Edit.svg"/>
           <span>Create proposal</span>
           <button className={css.exitProposalCreation} onClick={this.goBack.bind(this)}>
-            <img src='/assets/images/Icon/Close.svg'/>
+            <img src="/assets/images/Icon/Close.svg"/>
           </button>
         </h2>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor='titleInput'>
+          <label htmlFor="titleInput">
             Title (120 characters)
-            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
+            <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
           </label>
           <input
             autoFocus
-            id='titleInput'
+            id="titleInput"
             onChange={this.handleChange}
             placeholder="Summarize your propsoal"
             ref="titleNode"
@@ -176,10 +176,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
               Recommended template
             </a>
-            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
+            <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
           </label>
           <input
-            id='descriptionInput'
+            id="descriptionInput"
             onChange={this.handleChange}
             placeholder="Proposal description URL"
             ref="descriptionNode"
@@ -187,16 +187,16 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             type="text"
             value={this.state.description}
           />
-          <label htmlFor='beneficiaryInput'>
+          <label htmlFor="beneficiaryInput">
             Target Address
-            <img className={css.infoTooltip} src='/assets/images/Icon/Info.svg'/>
+            <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
           </label>
           <input
-            id='beneficiaryInput'
+            id="beneficiaryInput"
             className={this.state.errors.beneficiary ? css.error : null}
             maxLength={42}
             onChange={this.handleChange}
-            onBlur={e => this.validate()}
+            onBlur={(e) => this.validate()}
             placeholder="Recipient's address public key"
             ref="beneficiaryNode"
             required
@@ -207,12 +207,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             <span className={css.errorMessage}>
               {this.state.errors.beneficiary}
             </span>
-            : ''
+            : ""
           }
           <div className={css.addTransfer}>
-            <label htmlFor='nativeTokenRewardInput'>{dao.tokenSymbol} Token reward: </label>
+            <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} Token reward: </label>
             <input
-              id='nativeTokenRewardInput'
+              id="nativeTokenRewardInput"
               maxLength={10}
               onChange={this.handleChange}
               placeholder="How many tokens to reward"
@@ -221,9 +221,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               type="number"
               value={this.state.nativeTokenReward}
             />
-            <label htmlFor='reputationRewardInput'>Reputation reward: </label>
+            <label htmlFor="reputationRewardInput">Reputation reward: </label>
             <input
-              id='reputationRewardInput'
+              id="reputationRewardInput"
               maxLength={10}
               onChange={this.handleChange}
               placeholder="How much reputation to reward"
@@ -257,8 +257,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           </div>*/}
 
           <div className={css.alignCenter}>
-            <button className={css.submitProposal} type='submit' disabled={!this.state.buttonEnabled || !!Object.keys(this.state.errors).length}>
-              <img src='/assets/images/Icon/Send.svg'/>
+            <button className={css.submitProposal} type="submit" disabled={!this.state.buttonEnabled || !!Object.keys(this.state.errors).length}>
+              <img src="/assets/images/Icon/Send.svg"/>
               Submit proposal
             </button>
           </div>
