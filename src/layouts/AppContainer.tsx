@@ -114,14 +114,100 @@ class AppContainer extends React.Component<IProps, null> {
                 <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
               </Switch>
             </div>
-            <div className={css.notificationsWrapper}>
-              {Object.keys(operations).map((key) => ({key, operation: operations[key]})).map(({key, operation}) =>
-                (<Notification
-                  key={key}
-                  operation={operation}
-                  close={() => dismissOperation(key)}
-                />),
-              )}
+            <div className={css.pendingTransactions}>
+
+
+              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.error}>
+                <div className={css.statusIcon}>
+                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
+                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
+                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
+                </div>
+                <div className={css.transactionMessage}>
+                  <div className={css.clearfix}>
+                    <div className={css.left}>
+                      <span className={css.pending}>PENDING TRANSACTION</span>
+                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
+                      <span className={css.error}>TRANSACTION FAILED</span>
+                    </div>
+                    <div className={css.right}>
+                      <span className={css.pending}>1 OF 1</span>
+                      <span className={css.success}>1 OF 1</span>
+                      <span className={css.error}>ERROR</span>
+                    </div>
+                  </div>
+                  <div className={css.notificationMessage}>
+                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
+                  </div>
+                </div>
+                <div className={css.notificationControls}>
+                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
+                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
+                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
+                </div>
+              </div>
+
+              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.success}>
+                <div className={css.statusIcon}>
+                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
+                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
+                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
+                </div>
+                <div className={css.transactionMessage}>
+                  <div className={css.clearfix}>
+                    <div className={css.left}>
+                      <span className={css.pending}>PENDING TRANSACTION</span>
+                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
+                      <span className={css.error}>TRANSACTION FAILED</span>
+                    </div>
+                    <div className={css.right}>
+                      <span className={css.pending}>1 OF 1</span>
+                      <span className={css.success}>1 OF 1</span>
+                      <span className={css.error}>ERROR</span>
+                    </div>
+                  </div>
+                  <div className={css.notificationMessage}>
+                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
+                  </div>
+                </div>
+                <div className={css.notificationControls}>
+                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
+                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
+                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
+                </div>
+              </div>
+
+              <div className={css.pendingTransaction + " " + css.clearfix + " " + css.pending}>
+                <div className={css.statusIcon}>
+                  <img className={css.pending} src="/assets/images/Icon/Loading-white.svg"/>
+                  <img className={css.success} src="/assets/images/Icon/Success-notification.svg"/>
+                  <img className={css.error} src="/assets/images/Icon/Error-notification.svg"/>
+                </div>
+                <div className={css.transactionMessage}>
+                  <div className={css.clearfix}>
+                    <div className={css.left}>
+                      <span className={css.pending}>PENDING TRANSACTION</span>
+                      <span className={css.success}>TRANSACTION SUCCESSFUL</span>
+                      <span className={css.error}>TRANSACTION FAILED</span>
+                    </div>
+                    <div className={css.right}>
+                      <span className={css.pending}>1 OF 1</span>
+                      <span className={css.success}>1 OF 1</span>
+                      <span className={css.error}>ERROR</span>
+                    </div>
+                  </div>
+                  <div className={css.notificationMessage}>
+                    <span>Fail stake on <a href="#">DAOstack meetup</a></span>
+                  </div>
+                </div>
+                <div className={css.notificationControls}>
+                  <button className={css.pending}><img src="/assets/images/Icon/Minimize-notification.svg"/></button>
+                  <button className={css.success}><img src="/assets/images/Icon/Close.svg"/></button>
+                  <button className={css.error}><img src="/assets/images/Icon/Close.svg"/></button>
+                </div>
+              </div>
+
+
             </div>
             <div className={css.background}></div>
           </div>

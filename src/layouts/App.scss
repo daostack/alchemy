@@ -1,5 +1,11 @@
 $header-height: 100px;
 
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 @font-face {
   font-family: "DINProLight";
   src: url("/assets/fonts/DINPro-Light.woff");
@@ -136,4 +142,122 @@ body {
 .loading {
   padding-top: 100px;
   text-align: center;
+}
+
+.pendingTransactions {
+  z-index: 1000000;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: auto;
+  height: auto;
+
+  .pendingTransaction {
+    padding: 10px 0;
+    background-color: $black-halftone;
+    min-width: 240px;
+    border-radius: 3px;
+    margin: 10px;
+
+    .pending, .success, .error {
+      display: none;
+    }
+
+    .statusIcon {
+      width: 50px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .statusIcon .pending {
+      height: 40px;
+      margin-top: -15px;
+      margin-bottom: -7px;
+      position: relative;
+      top: 9px;
+    }
+
+    .statusIcon .success, .statusIcon .error {
+      height: 20px;
+      position: relative;
+      top: 5px;
+    }
+
+    .transactionMessage {
+      min-width: 170px;
+    }
+
+    .transactionMessage .left {
+      font-size: $small;
+      color: $white-halftone;
+    }
+
+    .transactionMessage .right {
+      font-size: $small;
+      color: $white;
+      font-weight: $bold;
+    }
+
+    a {
+      color: $white;
+      text-decoration: underline;
+    }
+
+    button {
+      border: none;
+      background: none;
+    }
+
+    .notificationControls {
+      width: 50px;
+      text-align: center;
+    }
+
+    .notificationControls .pending {
+      position: relative;
+      top: 2px;
+    }
+
+    .notificationControls .success, .notificationControls .error {
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  .pendingTransaction.success .success, .pendingTransaction.pending .pending, .pendingTransaction.error .error {
+    display: inline;
+  }
+
+  .pendingTransaction.success {
+    background-color: $accent-1-halftone;
+  }
+
+  .pendingTransaction.error {
+    background-color: $accent-2-halftone;
+  }
+
+  .right {
+    float: right;
+  }
+
+  .left {
+    float: left;
+  }
+
+  .statusIcon {
+    float: left;
+  }
+
+  .transactionMessage {
+    float: left;
+  }
+
+  .notificationControls {
+    float: left;
+  }
+
+  .notificationMessage {
+    font-size: $caption;
+    color: $white;
+  }
 }
