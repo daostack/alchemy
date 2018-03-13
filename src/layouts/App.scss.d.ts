@@ -27,4 +27,6 @@ export const transactionMessage: string;
 export const left: string;
 export const right: string;
 export const notificationControls: string;
+export const minimized: string;
 export const notificationMessage: string;
+export const transactionWrapper: string;

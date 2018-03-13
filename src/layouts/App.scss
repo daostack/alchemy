@@ -147,17 +147,20 @@ body {
 .pendingTransactions {
   z-index: 1000000;
   position: fixed;
-  bottom: 0;
+  bottom: 5px;
   right: 0;
   width: auto;
   height: auto;
+  text-align: right;
 
   .pendingTransaction {
     padding: 10px 0;
+    display: inline-block;
     background-color: $black-halftone;
     min-width: 240px;
     border-radius: 3px;
-    margin: 10px;
+    box-shadow: $shadow-2;
+    margin: 3px 10px;
 
     .pending, .success, .error {
       display: none;
@@ -185,6 +188,7 @@ body {
 
     .transactionMessage {
       min-width: 170px;
+      text-align: left;
     }
 
     .transactionMessage .left {
@@ -228,6 +232,19 @@ body {
     display: inline;
   }
 
+  .pendingTransaction.minimized {
+    min-width: 50px;
+    width: 50px;
+
+    .statusIcon .pending {
+      top: 6px;
+    }
+
+    .transactionMessage, .notificationControls {
+      display: none;
+    }
+  }
+
   .pendingTransaction.success {
     background-color: $accent-1-halftone;
   }
@@ -259,5 +276,9 @@ body {
   .notificationMessage {
     font-size: $caption;
     color: $white;
+  }
+
+  .transactionWrapper {
+    display: inline;
   }
 }
