@@ -1,27 +1,27 @@
-import axios from 'axios';
-import * as Arc from '@daostack/arc.js';
-import promisify = require('es6-promisify');
-import * as _ from 'lodash';
-import { normalize } from 'normalizr';
-import * as Redux from 'redux';
-import { push } from 'react-router-redux'
-import { ThunkAction } from 'redux-thunk';
-import * as Web3 from 'web3';
+import * as Arc from "@daostack/arc.js";
+import axios from "axios";
+import promisify = require("es6-promisify");
+import * as _ from "lodash";
+import { normalize } from "normalizr";
+import { push } from "react-router-redux";
+import * as Redux from "redux";
+import { ThunkAction } from "redux-thunk";
+import * as Web3 from "web3";
 
-import * as notificationsActions from 'actions/notificationsActions';
-import * as web3Actions from 'actions/web3Actions';
-import * as web3Constants from 'constants/web3Constants';
-import * as arcConstants from 'constants/arcConstants';
-import { IRootState } from 'reducers';
-import * as schemas from '../schemas';
-import Util from 'lib/util';
+import * as notificationsActions from "actions/notificationsActions";
+import * as web3Actions from "actions/web3Actions";
+import * as arcConstants from "constants/arcConstants";
+import * as web3Constants from "constants/web3Constants";
+import Util from "lib/util";
+import { IRootState } from "reducers";
+import * as schemas from "../schemas";
 
-import { IDaoState, IAccountState, IProposalState, IStakeState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
+import { IAccountState, IDaoState, IProposalState, IStakeState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
 export function connectToArc() {
-  return (dispatch : any) => {
+  return (dispatch: any) => {
     dispatch(web3Actions.initializeWeb3());
-  }
+  };
 }
 
 export function getDAOs() {
@@ -31,13 +31,13 @@ export function getDAOs() {
     const daoCreator = await Arc.DaoCreator.deployed();
 
     // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
-    const newOrgEvents = daoCreator.InitialSchemesSet({}, { fromBlock: 0 })
-    newOrgEvents.get(async (err : Error, eventsArray : any[]) => {
+    const newOrgEvents = daoCreator.InitialSchemesSet({}, { fromBlock: 0 });
+    newOrgEvents.get(async (err: Error, eventsArray: any[]) => {
       if (err) {
         dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
       }
 
-      let daos = <{ [key : string] : IDaoState }>{};
+      const daos = {} as { [key: string]: IDaoState };
 
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
@@ -49,23 +49,23 @@ export function getDAOs() {
   };
 }
 
-export function getDAO(avatarAddress : string) {
+export function getDAO(avatarAddress: string) {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: arcConstants.ARC_GET_DAO_PENDING, payload: null });
 
-    const currentAccountAddress : string = getState().web3.ethAccountAddress;
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const daoData = await getDAOData(avatarAddress, currentAccountAddress);
 
     dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
-  }
+  };
 }
 
-export async function getDAOData(avatarAddress : string, currentAccountAddress : string = null) {
+export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null) {
   const web3 = Arc.Utils.getWeb3();
   const dao = await Arc.DAO.at(avatarAddress);
 
-  let daoData : IDaoState = {
-    avatarAddress: avatarAddress,
+  const daoData: IDaoState = {
+    avatarAddress,
     controllerAddress: "",
     name: await dao.getName(),
     members: {},
@@ -84,10 +84,10 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
   // If we pass in an account address then we want all the details for the DAO like proposals...
   if (currentAccountAddress != null) {
     // Get all members
-    const mintTokenEvents = dao.token.Mint({}, { fromBlock: 0 })
+    const mintTokenEvents = dao.token.Mint({}, { fromBlock: 0 });
     const transferTokenEvents = dao.token.Transfer({}, { fromBlock: 0 });
     const mintReputationEvents = dao.reputation.Mint({}, { fromBlock: 0 });
-    let memberAddresses : string[] = [];
+    let memberAddresses: string[] = [];
 
     const getMintTokenEvents = promisify(mintTokenEvents.get.bind(mintTokenEvents));
     let eventsArray = await getMintTokenEvents();
@@ -109,11 +109,11 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
 
     memberAddresses = [...new Set(memberAddresses)]; // Dedupe
 
-    let members : { [ key : string ] : IAccountState } = {};
+    const members: { [ key: string ]: IAccountState } = {};
     for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
       const address = memberAddresses[cnt];
-      let member = { address: address, tokens: 0, reputation: 0, votes: {}, stakes: {} };
-      const tokens = await dao.token.balanceOf.call(address)
+      const member = { address, tokens: 0, reputation: 0, votes: {}, stakes: {} };
+      const tokens = await dao.token.balanceOf.call(address);
       member.tokens = Util.fromWei(tokens);
       const reputation = await dao.reputation.reputationOf.call(address);
       member.reputation = Util.fromWei(reputation);
@@ -139,15 +139,15 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
     const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address});
 
     // Get all proposals' details like title and description from the server
-    let serverProposals : { [ key : string ] : any } = {};
+    let serverProposals: { [ key: string ]: any } = {};
     try {
-      const results = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress +'"}}');
-      serverProposals = _.keyBy(results.data, 'arcId');
+      const results = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '"}}');
+      serverProposals = _.keyBy(results.data, "arcId");
     } catch (e) {
       console.log(e);
     }
 
-    let contributionProposal : Arc.ContributionProposal, genesisProposal: any, proposalId : string, description: string, title: string;
+    let contributionProposal: Arc.ContributionProposal, genesisProposal: any, proposalId: string, description: string, title: string;
     for (let cnt = 0; cnt < proposals.length; cnt++) {
       contributionProposal = proposals[cnt];
       proposalId = contributionProposal.proposalId;
@@ -164,37 +164,37 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
       const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
       const state = Number(proposalDetails[9]);
 
-      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.Yes });
-      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.No });
+      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
+      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
 
-      const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
-      const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
+      const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
+      const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
 
       // Check if current account voted on this proposal
-      const voterInfo = await votingMachineInstance.getVoterInfo({ proposalId: proposalId, voter: currentAccountAddress });
+      const voterInfo = await votingMachineInstance.getVoterInfo({ proposalId, voter: currentAccountAddress });
       daoData.members[currentAccountAddress].votes[proposalId] = {
-        avatarAddress: avatarAddress,
-        proposalId: proposalId,
+        avatarAddress,
+        proposalId,
         reputation: Util.fromWei(voterInfo.reputation),
         transactionState: TransactionStates.Confirmed,
         vote: voterInfo.vote,
-        voterAddress: currentAccountAddress
+        voterAddress: currentAccountAddress,
       };
 
       // Check if current account staked on this proposal
-      const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId: proposalId, staker: currentAccountAddress });
+      const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId, staker: currentAccountAddress });
       daoData.members[currentAccountAddress].stakes[proposalId] = {
-        avatarAddress: avatarAddress,
-        proposalId: proposalId,
+        avatarAddress,
+        proposalId,
         stake: Util.fromWei(stakerInfo.stake),
         prediction: stakerInfo.vote,
         stakerAddress: currentAccountAddress,
-        transactionState: TransactionStates.Confirmed
+        transactionState: TransactionStates.Confirmed,
       };
 
       genesisProposal = {
         boostedTime: Number(proposalDetails[10]),
-        description: description,
+        description,
         daoAvatarAddress: dao.avatar.address,
         ethReward: Util.fromWei(contributionProposal.ethReward),
         externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
@@ -203,24 +203,24 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         proposer: proposalDetails[11],
         stakesNo: Util.fromWei(noStakes),
         stakesYes: Util.fromWei(yesStakes),
-        state: state,
+        state,
         submittedTime: proposalDetails[7],
-        title: title,
+        title,
         totalStakes: Util.fromWei(proposalDetails[4]),
         totalVotes: Util.fromWei(proposalDetails[3]),
         totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
         transactionState: TransactionStates.Confirmed,
         votesYes: Util.fromWei(yesVotes),
         votesNo: Util.fromWei(noVotes),
-        winningVote: Number(proposalDetails[10])
-      }
+        winningVote: Number(proposalDetails[10]),
+      };
 
       if (state == ProposalStates.Executed) {
         // For executed proposals load the reputation at time of execution
         const eventFetcher = await votingMachineInstance.ExecuteProposal({ _proposalId: proposalId }, { fromBlock: 0 });
         await new Promise((resolve) => {
           eventFetcher.get((err, events) => {
-            if (typeof err === 'undefined' && events.length > 0) {
+            if (typeof err === "undefined" && events.length > 0) {
               genesisProposal.reputationWhenExecuted = Util.fromWei(events[0].args._totalReputation);
             }
             resolve();
@@ -228,7 +228,7 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
         });
       }
 
-      let proposal = <IProposalState>{...contributionProposal, ...genesisProposal};
+      const proposal = {...contributionProposal, ...genesisProposal} as IProposalState;
 
       daoData.proposals.push(proposal);
     } // EO for each proposal
@@ -240,13 +240,13 @@ export async function getDAOData(avatarAddress : string, currentAccountAddress :
 }
 
 // TODO: there is a lot of duplicate code here with getDaoData
-export function getProposal(avatarAddress : string, proposalId : string) {
+export function getProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: arcConstants.ARC_GET_PROPOSAL_PENDING, payload: null });
 
     const web3 = Arc.Utils.getWeb3();
     const dao = await Arc.DAO.at(avatarAddress);
-    const currentAccountAddress : string = getState().web3.ethAccountAddress;
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
 
@@ -256,7 +256,7 @@ export function getProposal(avatarAddress : string, proposalId : string) {
     const votingMachineAddress = schemeParams[2];
     const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
-    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address, proposalId: proposalId });
+    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address, proposalId });
     const contributionProposal = proposals[0];
 
     // Get title and description from the server
@@ -264,7 +264,7 @@ export function getProposal(avatarAddress : string, proposalId : string) {
     let description = contributionProposal.contributionDescriptionHash;
     let title = "";
     try {
-      const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress +'", "arcId":"' + proposalId +'"}}');
+      const response = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '", "arcId":"' + proposalId + '"}}');
       if (response.data.length > 0) {
         description = response.data[0].description;
         title = response.data[0].title;
@@ -277,21 +277,21 @@ export function getProposal(avatarAddress : string, proposalId : string) {
     const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
     const state = Number(proposalDetails[9]);
 
-    const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.Yes });
-    const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.No });
+    const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
+    const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
 
-    const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
-    const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
+    const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
+    const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
 
     // Check if current account voted on this proposal
-    const voterInfo = await votingMachineInstance.getVoterInfo({ proposalId: proposalId, voter: currentAccountAddress });
+    const voterInfo = await votingMachineInstance.getVoterInfo({ proposalId, voter: currentAccountAddress });
 
     // Check if current account staked on this proposal
-    const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId: proposalId, staker: currentAccountAddress });
+    const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId, staker: currentAccountAddress });
 
-    let genesisProposal : any = {
+    const genesisProposal: any = {
       boostedTime: Number(proposalDetails[10]),
-      description: description,
+      description,
       daoAvatarAddress: dao.avatar.address,
       ethReward: Util.fromWei(contributionProposal.ethReward),
       externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
@@ -300,24 +300,24 @@ export function getProposal(avatarAddress : string, proposalId : string) {
       proposer: proposalDetails[11],
       stakesNo: Util.fromWei(noStakes),
       stakesYes: Util.fromWei(yesStakes),
-      state: state,
+      state,
       submittedTime: proposalDetails[7],
-      title: title,
+      title,
       totalStakes: Util.fromWei(proposalDetails[4]),
       totalVotes: Util.fromWei(proposalDetails[3]),
       totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
       transactionState: TransactionStates.Confirmed,
       votesYes: Util.fromWei(yesVotes),
       votesNo: Util.fromWei(noVotes),
-      winningVote: Number(proposalDetails[10])
-    }
+      winningVote: Number(proposalDetails[10]),
+    };
 
     if (state == ProposalStates.Executed) {
       // For executed proposals load the reputation at time of execution
       const eventFetcher = await votingMachineInstance.ExecuteProposal({ _proposalId: proposalId }, { fromBlock: 0 });
       await new Promise((resolve) => {
         eventFetcher.get((err, events) => {
-          if (typeof err === 'undefined' && events.length > 0) {
+          if (typeof err === "undefined" && events.length > 0) {
             genesisProposal.reputationWhenExecuted = Util.fromWei((events[0].args as any)._totalReputation);
           }
           resolve();
@@ -325,40 +325,40 @@ export function getProposal(avatarAddress : string, proposalId : string) {
       });
     }
 
-    let proposal = <IProposalState>{...contributionProposal, ...genesisProposal};
-    let payload = normalize(proposal, schemas.proposalSchema);
+    const proposal = {...contributionProposal, ...genesisProposal} as IProposalState;
+    const payload = normalize(proposal, schemas.proposalSchema);
     (payload as any).daoAvatarAddress = proposal.daoAvatarAddress;
 
     // TODO: only do this if the person did a vote
     (payload as any).vote = {
-      avatarAddress: avatarAddress,
-      proposalId: proposalId,
+      avatarAddress,
+      proposalId,
       reputation: Util.fromWei(voterInfo.reputation),
       transactionState: TransactionStates.Confirmed,
       vote: voterInfo.vote,
-      voterAddress: currentAccountAddress
+      voterAddress: currentAccountAddress,
     };
     (payload as any).stake = {
-      avatarAddress: avatarAddress,
-      proposalId: proposalId,
+      avatarAddress,
+      proposalId,
       stake: Util.fromWei(stakerInfo.stake),
       prediction: stakerInfo.vote,
       stakerAddress: currentAccountAddress,
-      transactionState: TransactionStates.Confirmed
+      transactionState: TransactionStates.Confirmed,
     };
 
-    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload: payload });
-  }
+    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload });
+  };
 }
 
-export function createDAO(daoName : string, tokenName: string, tokenSymbol: string, members: any) : ThunkAction<any, IRootState, null> {
+export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: any): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_DAO_PENDING, payload: null });
     try {
-      const web3 : Web3 = Arc.Utils.getWeb3();
+      const web3: Web3 = Arc.Utils.getWeb3();
 
-      let founders : Arc.FounderConfig[] = [], member;
-      members.sort((a : any, b : any) => {
+      let founders: Arc.FounderConfig[] = [], member;
+      members.sort((a: any, b: any) => {
         b.reputation - a.reputation;
       });
       for (let i = 0; i < members.length; i++) {
@@ -366,8 +366,8 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         founders[i] = {
           address : member.address,
           tokens : web3.toWei(member.tokens, "ether"),
-          reputation: web3.toWei(member.reputation, "ether")
-        }
+          reputation: web3.toWei(member.reputation, "ether"),
+        };
       }
 
       /**** TODO: use Arc.DAO.new once it supports GenesisProtocol ****/
@@ -384,11 +384,11 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
       // });
 
       const daoCreator = await Arc.DaoCreator.deployed();
-      let daoTransaction = await daoCreator.forgeOrg({
+      const daoTransaction = await daoCreator.forgeOrg({
         name: daoName,
-        tokenName: tokenName,
-        tokenSymbol: tokenSymbol,
-        founders: founders
+        tokenName,
+        tokenSymbol,
+        founders,
       });
 
       const avatarAddress = daoTransaction.getValueFromTx("_avatar", "NewOrg");
@@ -409,14 +409,14 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         stakerFeeRatioForVoters: 1, // 1 percent of staker fee given to voters
         votersReputationLossRatio: 1, // 1 percent of rep lost by voting
         votersGainRepRatioFromLostRep: 80, // percentage of how much rep correct voters get from incorrect voters who lost rep
-        governanceFormulasInterface: "0x0000000000000000000000000000000000000000"
+        governanceFormulasInterface: "0x0000000000000000000000000000000000000000",
       })).result;
 
       const contributionReward = await Arc.ContributionReward.deployed();
       const contributionRewardParamsHash = (await contributionReward.setParams({
         orgNativeTokenFee: web3.toWei(0, "ether"),
         votingMachine: votingMachine.contract.address,
-        voteParametersHash: votingMachineParamsHash
+        voteParametersHash: votingMachineParamsHash,
       })).result;
 
       const initialSchemesSchemes = [contributionReward.contract.address, votingMachine.contract.address];
@@ -428,12 +428,12 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         avatarAddress,
         initialSchemesSchemes,
         initialSchemesParams,
-        initialSchemesPermissions
+        initialSchemesPermissions,
       );
 
       /* EO creating DAO */
 
-      let daoData : IDaoState = {
+      const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
         name: daoName,
@@ -446,27 +446,27 @@ export function createDAO(daoName : string, tokenName: string, tokenSymbol: stri
         reputationCount: 0,
         tokenAddress: dao.token.address,
         tokenCount: 0,
-        tokenName: tokenName,
-        tokenSymbol: tokenSymbol
+        tokenName,
+        tokenSymbol,
       };
 
       dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
-      dispatch(push('/dao/' + dao.avatar.address));
+      dispatch(push("/dao/" + dao.avatar.address));
     } catch (err) {
       dispatch({ type: arcConstants.ARC_CREATE_DAO_REJECTED, payload: err.message });
     }
-  } /* EO createDAO */
+  }; /* EO createDAO */
 }
 
-export function createProposal(daoAvatarAddress : string, title : string, description : string, nativeTokenReward: number, reputationReward: number, beneficiary: string) : ThunkAction<any, IRootState, null> {
+export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, beneficiary: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_PENDING, payload: null });
     try {
-      const web3 : Web3 = Arc.Utils.getWeb3();
+      const web3: Web3 = Arc.Utils.getWeb3();
 
-      if(!beneficiary.startsWith('0x')) beneficiary = '0x' + beneficiary;
+      if (!beneficiary.startsWith("0x")) { beneficiary = "0x" + beneficiary; }
 
-      const ethAccountAddress : string = getState().web3.ethAccountAddress;
+      const ethAccountAddress: string = getState().web3.ethAccountAddress;
       const dao = await Arc.DAO.at(daoAvatarAddress);
 
       const contributionRewardInstance = await Arc.ContributionReward.deployed();
@@ -479,12 +479,12 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
 
       const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
         avatar: daoAvatarAddress,
-        beneficiary : beneficiary,
-        description: description,
+        beneficiary,
+        description,
         nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
         numberOfPeriods: 1,
         periodLength : 1,
-        reputationChange : web3.toWei(reputationReward, "ether")
+        reputationChange : web3.toWei(reputationReward, "ether"),
       });
 
       // TODO: error checking
@@ -499,76 +499,76 @@ export function createProposal(daoAvatarAddress : string, title : string, descri
 
       // Save the proposal title, description and submitted time on the server
       try {
-        const response = await axios.post(arcConstants.API_URL + '/api/proposals', {
+        const response = await axios.post(arcConstants.API_URL + "/api/proposals", {
           arcId: proposalId,
-          daoAvatarAddress: daoAvatarAddress,
-          descriptionHash: descriptionHash,
-          description: description,
+          daoAvatarAddress,
+          descriptionHash,
+          description,
           submittedAt: submittedTime,
-          title: title
+          title,
         });
       } catch (e) {
         console.log(e);
       }
 
-      const proposal = <IProposalState>{
-        beneficiary: beneficiary,
+      const proposal = {
+        beneficiary,
         boostedTime: 0,
         contributionDescriptionHash: descriptionHash,
-        description: description,
-        daoAvatarAddress: daoAvatarAddress,
+        description,
+        daoAvatarAddress,
         ethReward: 0, // TODO
         executionTime: 0,
         externalToken: "0",
         externalTokenReward: 0,
-        nativeTokenReward: nativeTokenReward,
+        nativeTokenReward,
         numberOfPeriods: 1,
         periodLength: 1,
-        proposalId: proposalId,
+        proposalId,
         proposer: ethAccountAddress,
         reputationChange: reputationReward,
         stakesNo: 0,
         stakesYes: 0,
         state: ProposalStates.PreBoosted, // TODO: update if we do vote
-        submittedTime: submittedTime,
-        title: title,
+        submittedTime,
+        title,
         totalStakes: 0,
         totalVotes: 0,
         totalVoters: 0,
         transactionState: TransactionStates.Unconfirmed,
         votesYes: 0,
         votesNo: 0,
-        winningVote: 0
-      };
+        winningVote: 0,
+      } as IProposalState;
 
-      let payload = normalize(proposal, schemas.proposalSchema);
+      const payload = normalize(proposal, schemas.proposalSchema);
       (payload as any).daoAvatarAddress = daoAvatarAddress;
 
-      dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_FULFILLED, payload: payload });
-      dispatch(push('/dao/' + daoAvatarAddress));
+      dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_FULFILLED, payload });
+      dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
       dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_REJECTED, payload: err.message });
     }
-  }
+  };
 }
 
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3 : Web3 = Arc.Utils.getWeb3();
-    const currentAccountAddress : string = getState().web3.ethAccountAddress;
+    const web3: Web3 = Arc.Utils.getWeb3();
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     // TODO: num transactions pending...
-    let payload : any = {
+    let payload: any = {
       vote: {
         avatarAddress : daoAvatarAddress,
-        proposalId: proposalId,
+        proposalId,
         transactionState: TransactionStates.Unconfirmed,
-        vote: vote,
-        voterAddress: currentAccountAddress
-      }
-    }
+        vote,
+        voterAddress: currentAccountAddress,
+      },
+    };
 
-    dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload: payload });
+    dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload });
     try {
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
@@ -580,9 +580,9 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
-      const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote : vote} );
-      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.Yes });
-      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId: proposalId, vote: VoteOptions.No });
+      const voteTransaction = await votingMachineInstance.vote({ proposalId, vote} );
+      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
+      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
 
       let winningVote = 0, reputationVoted = 0, reputationWhenExecuted = 0;
       let alert = "";
@@ -606,62 +606,62 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       }
 
       payload = {
-        daoAvatarAddress: daoAvatarAddress,
+        daoAvatarAddress,
         // Update the proposal
         proposal: {
-          proposalId: proposalId,
-          reputationWhenExecuted: reputationWhenExecuted,
-          state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          proposalId,
+          reputationWhenExecuted,
+          state: Number(await votingMachineInstance.getState({ proposalId })),
           votesNo: Util.fromWei(noVotes),
           votesYes: Util.fromWei(yesVotes),
-          winningVote: winningVote
+          winningVote,
         },
         // Update DAO total reputation and tokens
         dao: {
           reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
-          tokenCount: Util.fromWei(await daoInstance.token.totalSupply())
+          tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
         },
         // Update voter tokens and reputation
         voter: {
           tokens: Util.fromWei(await daoInstance.token.balanceOf.call(currentAccountAddress)),
-          reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(currentAccountAddress))
+          reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(currentAccountAddress)),
         },
         // New vote made on the proposal
         vote: {
           avatarAddress : daoAvatarAddress,
-          proposalId: proposalId,
+          proposalId,
           reputation: reputationVoted,
-          vote: vote,
-          voterAddress: currentAccountAddress
+          vote,
+          voterAddress: currentAccountAddress,
         },
-        alert: alert
-      }
+        alert,
+      };
 
-      dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload: payload });
+      dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload });
     } catch (err) {
       dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
     }
-  }
+  };
 }
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stake: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3 : Web3 = Arc.Utils.getWeb3();
-    const currentAccountAddress : string = getState().web3.ethAccountAddress;
+    const web3: Web3 = Arc.Utils.getWeb3();
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     // TODO: num transactions pending...
-    let payload : any = {
+    let payload: any = {
       stake: {
         avatarAddress: daoAvatarAddress,
-        proposalId: proposalId,
-        stake: stake,
-        prediction: prediction,
+        proposalId,
+        stake,
+        prediction,
         stakerAddress: currentAccountAddress,
-        transactionState: TransactionStates.Unconfirmed
-      }
-    }
+        transactionState: TransactionStates.Unconfirmed,
+      },
+    };
 
-    dispatch({ type: arcConstants.ARC_STAKE_PENDING, payload: payload });
+    dispatch({ type: arcConstants.ARC_STAKE_PENDING, payload });
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
@@ -677,57 +677,57 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
       const minimumStakingFee = votingMachineParam[6]; // 6 is the index of minimumStakingFee in the Parameters struct.
 
-      const StandardToken = await Arc.Utils.requireContract('StandardToken');
+      const StandardToken = await Arc.Utils.requireContract("StandardToken");
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(currentAccountAddress);
 
-      const amount = web3.toWei(stake, 'ether');
-      if(amount < minimumStakingFee) throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`);
-      if(amount > balance) throw new Error(`Staked more than than the balance: ${balance}!`);
+      const amount = web3.toWei(stake, "ether");
+      if (amount < minimumStakingFee) { throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`); }
+      if (amount > balance) { throw new Error(`Staked more than than the balance: ${balance}!`); }
 
-      const stakeTransaction = await votingMachineInstance.stake({ proposalId : proposalId, vote : prediction, amount : amount});
+      const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote : prediction, amount});
 
-      const yesStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.Yes });
-      const noStakes = await votingMachineInstance.getVoteStake({ proposalId: proposalId, vote: VoteOptions.No });
+      const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
+      const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
 
       // TODO: also update the account with the new # of GENS available?
       // TODO: no longer need to send the stake info below because we do it in the PENDING action
       payload = {
-        daoAvatarAddress: daoAvatarAddress,
+        daoAvatarAddress,
         proposal: {
-          proposalId: proposalId,
-          state: Number(await votingMachineInstance.getState({ proposalId : proposalId })),
+          proposalId,
+          state: Number(await votingMachineInstance.getState({ proposalId })),
           stakesNo: Util.fromWei(noStakes),
           stakesYes: Util.fromWei(yesStakes),
         },
         stake: {
           avatarAddress: daoAvatarAddress,
-          proposalId: proposalId,
-          stake: stake,
-          prediction: prediction,
+          proposalId,
+          stake,
+          prediction,
           stakerAddress: currentAccountAddress,
-          transactionState: TransactionStates.Unconfirmed
-        }
-      }
+          transactionState: TransactionStates.Unconfirmed,
+        },
+      };
 
-      dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload: payload });
+      dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload });
     } catch (err) {
       // TODO: update UI
       dispatch({ type: arcConstants.ARC_STAKE_REJECTED, payload: err.message });
     }
-  }
+  };
 }
 
-export function confirmStake(avatarAddress : string, proposalId: string, stakerAddress: string, prediction: number, stake: number) {
-  return (dispatch : any) => {
-    const payload : IStakeState = {
-      avatarAddress: avatarAddress,
-      proposalId: proposalId,
-      stake: stake,
-      prediction: prediction,
-      stakerAddress: stakerAddress,
-      transactionState: TransactionStates.Confirmed
+export function confirmStake(avatarAddress: string, proposalId: string, stakerAddress: string, prediction: number, stake: number) {
+  return (dispatch: any) => {
+    const payload: IStakeState = {
+      avatarAddress,
+      proposalId,
+      stake,
+      prediction,
+      stakerAddress,
+      transactionState: TransactionStates.Confirmed,
     };
-    dispatch({ type: arcConstants.ARC_STAKE_CONFIRMED, payload: payload });
-  }
+    dispatch({ type: arcConstants.ARC_STAKE_CONFIRMED, payload });
+  };
 }

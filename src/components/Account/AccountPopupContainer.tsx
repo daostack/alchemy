@@ -1,30 +1,30 @@
-import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Link } from 'react-router-dom'
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
-import * as arcActions from 'actions/arcActions';
-import { IRootState } from 'reducers';
-import { IDaoState, IProposalState, ProposalStates } from 'reducers/arcReducer';
+import * as arcActions from "actions/arcActions";
+import { IRootState } from "reducers";
+import { IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
 
-import AccountImage from 'components/Account/AccountImage';
+import AccountImage from "components/Account/AccountImage";
 
-import * as css from './Account.scss';
+import * as css from "./Account.scss";
 
 interface IStateProps {
-  accountAddress: string
-  dao: IDaoState
-  reputation: number
-  tokens: number
+  accountAddress: string;
+  dao: IDaoState;
+  reputation: number;
+  tokens: number;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = state.arc.daos[ownProps.daoAvatarAddress];
   const member = dao.members[ownProps.accountAddress];
   return {
     accountAddress: ownProps.accountAddress,
-    dao: dao,
+    dao,
     reputation: member ? member.reputation : 0,
-    tokens: member ? member.tokens : 0
+    tokens: member ? member.tokens : 0,
   };
 };
 
@@ -32,11 +32,11 @@ interface IDispatchProps {}
 
 const mapDispatchToProps = {};
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
 class AccountPopupContainer extends React.Component<IProps, null> {
 
-  render() {
+  public render() {
     const { accountAddress, dao, reputation, tokens } = this.props;
 
     return (

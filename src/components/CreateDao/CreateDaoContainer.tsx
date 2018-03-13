@@ -1,45 +1,45 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { connect, Dispatch } from 'react-redux';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { connect, Dispatch } from "react-redux";
 
-import * as arcActions from 'actions/arcActions';
-import { IRootState } from 'reducers';
-import { IDaoState, IAccountState } from 'reducers/arcReducer';
-import { IWeb3State } from 'reducers/web3Reducer'
+import * as arcActions from "actions/arcActions";
+import { IRootState } from "reducers";
+import { IAccountState, IDaoState } from "reducers/arcReducer";
+import { IWeb3State } from "reducers/web3Reducer";
 
-import * as css from './CreateDao.scss';
+import * as css from "./CreateDao.scss";
 
 interface IStateProps {
-  web3: IWeb3State
+  web3: IWeb3State;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    web3: state.web3
+    web3: state.web3,
   };
 };
 
 interface IDispatchProps {
-  createDAO: typeof arcActions.createDAO
+  createDAO: typeof arcActions.createDAO;
 }
 
 const mapDispatchToProps = {
-  createDAO: arcActions.createDAO
+  createDAO: arcActions.createDAO,
 };
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  buttonEnabled: boolean
-  name: string
-  tokenName: string
-  tokenSymbol: string
-  members: IAccountState[]
+  buttonEnabled: boolean;
+  name: string;
+  tokenName: string;
+  tokenSymbol: string;
+  members: IAccountState[];
 }
 
 class CreateDaoContainer extends React.Component<IProps, IState> {
 
-  constructor(props: IProps){
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
@@ -47,79 +47,79 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
       name: "",
       tokenName: "",
       tokenSymbol: "",
-      members: [ { address: this.props.web3.ethAccountAddress, tokens: 1000, reputation: 1000 }]
+      members: [ { address: this.props.web3.ethAccountAddress, tokens: 1000, reputation: 1000 }],
     };
   }
 
-  handleSubmit = (event : any) => {
+  public handleSubmit = (event: any) => {
     event.preventDefault();
     this.setState({ buttonEnabled: false });
     this.props.createDAO(this.state.name, this.state.tokenName, this.state.tokenSymbol, this.state.members);
     return false;
   }
 
-  handleChange = (event : any) => {
+  public handleChange = (event: any) => {
     const newName = (ReactDOM.findDOMNode(this.refs.nameNode) as HTMLInputElement).value;
     const newTokenName = (ReactDOM.findDOMNode(this.refs.tokenNode) as HTMLInputElement).value;
     const newTokenSymbol = (ReactDOM.findDOMNode(this.refs.tokenSymbolNode)as HTMLInputElement).value;
     this.setState({
       name: newName,
       tokenName: newTokenName,
-      tokenSymbol: newTokenSymbol
+      tokenSymbol: newTokenSymbol,
     });
   }
 
-  handleChangeMemberAddress = (index : number) => (event : any) => {
+  public handleChangeMemberAddress = (index: number) => (event: any) => {
     const newMembers = this.state.members.map((member, sidx) => {
-      if (index !== sidx) return member;
-      return { ...member, address: event.target.value }
-    })
+      if (index !== sidx) { return member; }
+      return { ...member, address: event.target.value };
+    });
     this.setState({ members: newMembers });
   }
 
-  handleChangeMemberTokens = (index : number) => (event : any) => {
+  public handleChangeMemberTokens = (index: number) => (event: any) => {
     const newMembers = this.state.members.map((member, sidx) => {
-      if (index !== sidx) return member;
-      return { ...member, tokens: event.target.value }
-    })
+      if (index !== sidx) { return member; }
+      return { ...member, tokens: event.target.value };
+    });
     this.setState({ members: newMembers });
   }
 
-  handleChangeMemberReputation = (index : number) => (event : any) => {
+  public handleChangeMemberReputation = (index: number) => (event: any) => {
     const newMembers = this.state.members.map((member, sidx) => {
-      if (index !== sidx) return member;
-      return { ...member, reputation: event.target.value }
-    })
+      if (index !== sidx) { return member; }
+      return { ...member, reputation: event.target.value };
+    });
     this.setState({ members: newMembers });
   }
 
-  handleRemoveMember = (index : number) => (event : any) => {
-    if (this.state.members.length === 1) { return }
-    this.setState({ members: this.state.members.filter((c, sidx) => index !== sidx) })
+  public handleRemoveMember = (index: number) => (event: any) => {
+    if (this.state.members.length === 1) { return; }
+    this.setState({ members: this.state.members.filter((c, sidx) => index !== sidx) });
   }
 
-  handleAddMember = (event : any) => {
+  public handleAddMember = (event: any) => {
     this.setState({
-      members: this.state.members.concat([{ address: '', tokens: 1000, reputation: 1000 }]),
-    })
+      members: this.state.members.concat([{ address: "", tokens: 1000, reputation: 1000 }]),
+    });
   }
 
-  render() {
+  public render() {
     return(
       <div className={css.createDaoWrapper}>
         <h2>
-          <img className={css.editIcon} src='/assets/images/Icon/Edit.svg'/>
+          <img className={css.editIcon} src="/assets/images/Icon/Edit.svg"/>
           <span>Create DAO</span>
           <button className={css.exitProposalCreation}>
-            <img src='/assets/images/Icon/Close.svg'/>
+            <img src="/assets/images/Icon/Close.svg"/>
           </button>
         </h2>
         <div className={css.inner}>
           <form onSubmit={this.handleSubmit}>
-            <label htmlFor='nameInput'>Name </label>
+            <label htmlFor="nameInput">Name </label>
             <input
               autoFocus
-              id='nameInput'
+              id="nameInput"
               onChange={this.handleChange}
               placeholder="Name your DAO"
               ref="nameNode"
@@ -129,9 +129,9 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
             />
             <div className={css.clearfix + " " + css.tokenDetails}>
               <div className={css.column}>
-                <label htmlFor='tokenInput'>Token name </label>
+                <label htmlFor="tokenInput">Token name </label>
                 <input
-                  id='tokenInput'
+                  id="tokenInput"
                   onChange={this.handleChange}
                   placeholder="Choose a token name"
                   ref="tokenNode"
@@ -141,9 +141,9 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
                 />
               </div>
               <div className={css.column}>
-                <label htmlFor='tokenSymbolInput'>Token symbol </label>
+                <label htmlFor="tokenSymbolInput">Token symbol </label>
                 <input
-                  id='tokenSymbolInput'
+                  id="tokenSymbolInput"
                   maxLength={3}
                   onChange={this.handleChange}
                   placeholder="3 character symbol"
@@ -155,15 +155,15 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
               </div>
             </div>
             {this.renderMembers()}
-            <button type='submit' className={css.submitDao} disabled={!this.state.buttonEnabled}>Create DAO</button>
+            <button type="submit" className={css.submitDao} disabled={!this.state.buttonEnabled}>Create DAO</button>
           </form>
         </div>
       </div>
     );
   }
 
-  renderMembers() {
-    const memberRows = this.state.members.map((member : IAccountState, index : number) => {
+  public renderMembers() {
+    const memberRows = this.state.members.map((member: IAccountState, index: number) => {
       return (
         <div key={`member_${index}_row_`}>
           <label htmlFor={`member_${index}_address_input`}>Member Address </label>
@@ -175,7 +175,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
             placeholder="0x0000000000000000000000000000000000000000"
             ref={`member_${index}_address_input`}
             size={46}
-            type='string'
+            type="string"
             value={member.address} />
           <div className={css.clearfix}>
             <div className={css.column + " " + css.columnOne}>
@@ -184,9 +184,9 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
                 id={`member_${index}_tokens_input`}
                 onChange={this.handleChangeMemberTokens(index)}
                 ref={`member_${index}_tokens_input`}
-                placeholder='assign initial tokens'
+                placeholder="assign initial tokens"
                 size={10}
-                type='string'
+                type="string"
                 value={member.tokens} />
             </div>
             <div className={css.column + " " + css.columnTwo}>
@@ -197,24 +197,24 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
                 placeholder="assign initial reputation"
                 ref={`member_${index}_reputation_input`}
                 size={10}
-                type='string'
+                type="string"
                 value={member.reputation} />
             </div>
             <div className={css.column + " " + css.columnThree}>
-              {index > 0 ? <button className={css.cancelAdd} type='button' tabIndex={-1} onClick={this.handleRemoveMember(index)}>X</button> : ""}
+              {index > 0 ? <button className={css.cancelAdd} type="button" tabIndex={-1} onClick={this.handleRemoveMember(index)}>X</button> : ""}
             </div>
           </div>
         </div>
       );
     });
 
-    if(memberRows.length) {
+    if (memberRows.length) {
       return (
           <div className={css.addMember}>
             <div className={css.membersList}>
               <h3>DAO Members</h3>
               {memberRows}
-              <button className={css.addMemberButton} type='button' onClick={this.handleAddMember}>Add Member</button>
+              <button className={css.addMemberButton} type="button" onClick={this.handleAddMember}>Add Member</button>
             </div>
           </div>
       );

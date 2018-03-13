@@ -1,17 +1,17 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { AppContainer } from 'react-hot-loader'
+import { AppContainer } from "react-hot-loader";
 
 import { App } from "./App";
 
-import './assets/styles/global.scss'
+import "./assets/styles/global.scss";
 
 function renderApp() {
   ReactDOM.render(
     <AppContainer>
       <App />
     </AppContainer>,
-    document.querySelector('#root')
+    document.querySelector("#root"),
   );
 }
 

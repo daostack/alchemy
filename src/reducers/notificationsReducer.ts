@@ -1,14 +1,14 @@
 export enum ActionTypes {
-  ALERT_SHOW = "ALERT_SHOW"
+  ALERT_SHOW = "ALERT_SHOW",
 }
 
 export interface INotificationsState {
-  alert: string
+  alert: string;
 }
 
-export const initialState : INotificationsState = {
+export const initialState: INotificationsState = {
   alert: "",
-}
+};
 
 const notificationsReducer = (state = initialState, action: any) => {
   if (action.payload && action.payload.alert) {
@@ -16,6 +16,6 @@ const notificationsReducer = (state = initialState, action: any) => {
   } else {
     return {...state, alert : "" };
   }
-}
+};
 
 export default notificationsReducer;

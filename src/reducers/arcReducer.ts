@@ -1,110 +1,110 @@
-import * as update from 'immutability-helper';
-import * as ActionTypes from 'constants/arcConstants'
+import * as ActionTypes from "constants/arcConstants";
+import * as update from "immutability-helper";
 
 export enum ProposalStates {
   Closed = 0,
   Executed = 1,
   PreBoosted = 2,
   Boosted = 3,
-  QuietEndingPeriod = 4
+  QuietEndingPeriod = 4,
 }
 
 export enum TransactionStates {
   Unconfirmed = "unconfirmed",
   Confirmed = "confirmed",
-  Failed = "failed"
+  Failed = "failed",
 }
 
 export enum VoteOptions {
   Yes = 1,
-  No = 2
+  No = 2,
 }
 
 export interface IVoteState {
-  avatarAddress: string,
-  proposalId: string,
-  reputation?: number,
-  transactionState?: TransactionStates,
-  vote: VoteOptions,
-  voterAddress: string
+  avatarAddress: string;
+  proposalId: string;
+  reputation?: number;
+  transactionState?: TransactionStates;
+  vote: VoteOptions;
+  voterAddress: string;
 }
 
 export interface IStakeState {
-  avatarAddress: string,
-  prediction: VoteOptions,
-  proposalId: string,
-  transactionState?: TransactionStates,
-  stake: number,
-  stakerAddress: string
+  avatarAddress: string;
+  prediction: VoteOptions;
+  proposalId: string;
+  transactionState?: TransactionStates;
+  stake: number;
+  stakerAddress: string;
 }
 
 export interface IAccountState {
-  address?: string
-  tokens: number
-  reputation: number
-  votes?: { [proposalId : string] : IVoteState }
-  stakes?: { [proposalId : string] : IStakeState }
+  address?: string;
+  tokens: number;
+  reputation: number;
+  votes?: { [proposalId: string]: IVoteState };
+  stakes?: { [proposalId: string]: IStakeState };
 }
 
 export interface IProposalState {
-  beneficiary: string
-  boostedTime: number
-  contributionDescriptionHash: string
-  description: string
-  daoAvatarAddress: string
-  ethReward: number
-  executionTime: number
-  externalToken: string
-  externalTokenReward: number
-  nativeTokenReward: number
-  numberOfPeriods: number
-  periodLength: number
-  proposalId: string
-  proposer: string
-  reputationChange: number
-  reputationWhenExecuted?: number
-  stakesNo: number
-  stakesYes: number
-  state: ProposalStates
-  submittedTime: number
-  title: string
-  transactionState: TransactionStates
-  totalStakes: number
-  totalVotes: number
-  totalVoters: number
-  votesYes: number
-  votesNo: number
-  winningVote: VoteOptions
+  beneficiary: string;
+  boostedTime: number;
+  contributionDescriptionHash: string;
+  description: string;
+  daoAvatarAddress: string;
+  ethReward: number;
+  executionTime: number;
+  externalToken: string;
+  externalTokenReward: number;
+  nativeTokenReward: number;
+  numberOfPeriods: number;
+  periodLength: number;
+  proposalId: string;
+  proposer: string;
+  reputationChange: number;
+  reputationWhenExecuted?: number;
+  stakesNo: number;
+  stakesYes: number;
+  state: ProposalStates;
+  submittedTime: number;
+  title: string;
+  transactionState: TransactionStates;
+  totalStakes: number;
+  totalVotes: number;
+  totalVoters: number;
+  votesYes: number;
+  votesNo: number;
+  winningVote: VoteOptions;
 }
 
 export interface IDaoState {
-  avatarAddress: string
-  controllerAddress: string
-  members: { [key : string] : IAccountState }
-  name: string
-  rank: number
-  promotedAmount: number
-  proposals: (IProposalState | string)[] // Either normalized (string) or denormalized (IProposalState)
-  proposalsLoaded: boolean
-  reputationAddress: string
-  reputationCount: number
-  tokenAddress: string
-  tokenCount: number
-  tokenName: string
-  tokenSymbol: string
+  avatarAddress: string;
+  controllerAddress: string;
+  members: { [key: string]: IAccountState };
+  name: string;
+  rank: number;
+  promotedAmount: number;
+  proposals: Array<IProposalState | string>; // Either normalized (string) or denormalized (IProposalState)
+  proposalsLoaded: boolean;
+  reputationAddress: string;
+  reputationCount: number;
+  tokenAddress: string;
+  tokenCount: number;
+  tokenName: string;
+  tokenSymbol: string;
 }
 
 export interface IArcState {
-  daosLoaded: boolean
-  daos: { [key : string] : IDaoState }
-  proposals: { [key : string] : IProposalState }
+  daosLoaded: boolean;
+  daos: { [key: string]: IDaoState };
+  proposals: { [key: string]: IProposalState };
 }
 
-export const initialState : IArcState = {
+export const initialState: IArcState = {
   daosLoaded: false,
   daos: {},
-  proposals: {}
-}
+  proposals: {},
+};
 
 const arcReducer = (state = initialState, action: any) => {
   const { payload } = action;
@@ -113,7 +113,7 @@ const arcReducer = (state = initialState, action: any) => {
   if (payload && payload.entities) {
     state = update(state, {
       daos : { $merge: payload.entities.daos || {} },
-      proposals : { $merge : payload.entities.proposals || {} }
+      proposals : { $merge : payload.entities.proposals || {} },
     });
   }
 
@@ -139,10 +139,10 @@ const arcReducer = (state = initialState, action: any) => {
           members: {
             [payload.vote.voterAddress]: {
               votes : { [payload.vote.proposalId] : { $set : payload.vote }},
-              stakes: { [payload.vote.proposalId] : { $set : payload.stake }}
-            }
-          }
-        }
+              stakes: { [payload.vote.proposalId] : { $set : payload.stake }},
+            },
+          },
+        },
       }});
 
       return state;
@@ -153,10 +153,10 @@ const arcReducer = (state = initialState, action: any) => {
         [payload.vote.avatarAddress] : {
           members: {
             [payload.vote.voterAddress]: {
-              votes : { [payload.vote.proposalId] : { $set : payload.vote }}
-            }
-          }
-        }
+              votes : { [payload.vote.proposalId] : { $set : payload.vote }},
+            },
+          },
+        },
       }});
     }
 
@@ -167,16 +167,16 @@ const arcReducer = (state = initialState, action: any) => {
           members: {
             [payload.vote.voterAddress]: {
               $merge : payload.voter,
-              votes : { [payload.vote.proposalId] : { $set : payload.vote }}
-            }
-          }
-        }
+              votes : { [payload.vote.proposalId] : { $set : payload.vote }},
+            },
+          },
+        },
       }});
 
       // Merge in proposal and dao changes
       return update(state, {
         proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } },
-        daos: { [payload.daoAvatarAddress]: { $merge: action.payload.dao } }
+        daos: { [payload.daoAvatarAddress]: { $merge: action.payload.dao } },
       });
     }
 
@@ -185,10 +185,10 @@ const arcReducer = (state = initialState, action: any) => {
         [payload.stake.avatarAddress] : {
           members: {
             [payload.stake.stakerAddress]: {
-              stakes : { [payload.stake.proposalId] : { $set : payload.stake }}
-            }
-          }
-        }
+              stakes : { [payload.stake.proposalId] : { $set : payload.stake }},
+            },
+          },
+        },
       }});
     }
 
@@ -198,15 +198,15 @@ const arcReducer = (state = initialState, action: any) => {
         [payload.daoAvatarAddress] : {
           members: {
             [payload.stake.stakerAddress]: {
-              stakes : { [payload.stake.proposalId] : { $set : payload.stake }}
-            }
-          }
-        }
+              stakes : { [payload.stake.proposalId] : { $set : payload.stake }},
+            },
+          },
+        },
       }});
 
       // Merge in proposal
       return update(state, {
-        proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } }
+        proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } },
       });
     }
 
@@ -215,15 +215,15 @@ const arcReducer = (state = initialState, action: any) => {
         [payload.avatarAddress] : {
           members: {
             [payload.stakerAddress]: {
-              stakes : { [payload.proposalId] : { $set : payload }}
-            }
-          }
-        }
+              stakes : { [payload.proposalId] : { $set : payload }},
+            },
+          },
+        },
       }});
     }
   }
 
   return state;
-}
+};
 
 export default arcReducer;

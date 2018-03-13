@@ -1,61 +1,61 @@
-import * as classNames from 'classnames';
-import * as moment from 'moment';
-import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Link } from 'react-router-dom'
+import * as classNames from "classnames";
+import * as moment from "moment";
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
-import * as arcActions from 'actions/arcActions';
-import { IRootState } from 'reducers';
-import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from 'reducers/arcReducer';
+import * as arcActions from "actions/arcActions";
+import { IRootState } from "reducers";
+import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
-import AccountPopupContainer from 'components/Account/AccountPopupContainer';
-import PredictionBox from './PredictionBox';
-import VoteBox from './VoteBox';
+import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import PredictionBox from "./PredictionBox";
+import VoteBox from "./VoteBox";
 
-import * as css from './Proposal.scss';
+import * as css from "./Proposal.scss";
 
 interface IStateProps {
-  currentAccountAddress: string
-  dao: IDaoState
-  proposal: IProposalState
+  currentAccountAddress: string;
+  dao: IDaoState;
+  proposal: IProposalState;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any) => {
   const proposal = state.arc.proposals[ownProps.proposalId];
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     dao: state.arc.daos[proposal.daoAvatarAddress],
-    proposal: proposal
+    proposal,
   };
 };
 
 interface IDispatchProps {
-  voteOnProposal: typeof arcActions.voteOnProposal
-  stakeProposal: typeof arcActions.stakeProposal
+  voteOnProposal: typeof arcActions.voteOnProposal;
+  stakeProposal: typeof arcActions.stakeProposal;
 }
 
 const mapDispatchToProps = {
   voteOnProposal: arcActions.voteOnProposal,
-  stakeProposal: arcActions.stakeProposal
+  stakeProposal: arcActions.stakeProposal,
 };
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
 class ProposalContainer extends React.Component<IProps, null> {
 
-  render() {
+  public render() {
     const { dao, proposal, voteOnProposal, stakeProposal, currentAccountAddress } = this.props;
 
     if (proposal) {
-      var proposalClass = classNames({
+      const proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
         [css.failedProposal]: proposal.winningVote == VoteOptions.No,
         [css.passedProposal]: proposal.winningVote == VoteOptions.Yes,
-        [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed
+        [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
       });
 
-      let submittedTime = moment.unix(proposal.submittedTime);
+      const submittedTime = moment.unix(proposal.submittedTime);
 
       // Calculate reputation percentages
       const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
@@ -77,12 +77,12 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       const styles = {
         forBar: {
-          width: yesPercentage + "%"
+          width: yesPercentage + "%",
         },
         againstBar: {
-          width: noPercentage + "%"
-        }
-      }
+          width: noPercentage + "%",
+        },
+      };
 
       return (
         <div className={proposalClass + " " + css.clearfix}>

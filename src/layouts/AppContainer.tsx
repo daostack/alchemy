@@ -1,60 +1,60 @@
-import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Switch, Route } from 'react-router-dom'
-import { bindActionCreators } from 'redux';
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { Route, Switch } from "react-router-dom";
+import { bindActionCreators } from "redux";
 
-import store from '../configureStore';
-import { IRootState } from 'reducers';
-import { IArcState } from 'reducers/arcReducer'
-import { IWeb3State, ConnectionStatus } from 'reducers/web3Reducer'
+import { IRootState } from "reducers";
+import { IArcState } from "reducers/arcReducer";
+import { ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
+import store from "../configureStore";
 
-import * as arcActions from 'actions/arcActions';
+import * as arcActions from "actions/arcActions";
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
-import HeaderContainer from "layouts/HeaderContainer";
+import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
+import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
-import NoWeb3Container from "components/Errors/NoWeb3Container";
-import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
+import HeaderContainer from "layouts/HeaderContainer";
 
-import * as css from "./App.scss"
+import * as css from "./App.scss";
 
 interface IStateProps {
-  arc: IArcState
-  connectionStatus: ConnectionStatus
-  ethAccountAddress: string | null
-  web3: IWeb3State
+  arc: IArcState;
+  connectionStatus: ConnectionStatus;
+  ethAccountAddress: string | null;
+  web3: IWeb3State;
 }
 
-const mapStateToProps = (state : IRootState, ownProps: any) => ({
+const mapStateToProps = (state: IRootState, ownProps: any) => ({
   arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
-  web3: state.web3
+  web3: state.web3,
 });
 
 interface IDispatchProps {
-  connectToArc: typeof arcActions.connectToArc
+  connectToArc: typeof arcActions.connectToArc;
 }
 
 const mapDispatchToProps = {
-  connectToArc: arcActions.connectToArc
+  connectToArc: arcActions.connectToArc,
 };
 
-type IProps = IStateProps & IDispatchProps
+type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
 
-  constructor(props : IProps) {
+  constructor(props: IProps) {
     super(props);
   }
 
-  componentDidMount () {
+  public componentDidMount() {
     this.props.connectToArc();
   }
 
-  render() {
+  public render() {
     const { connectionStatus, ethAccountAddress } = this.props;
 
     return (
@@ -86,4 +86,3 @@ class AppContainer extends React.Component<IProps, null> {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
-
