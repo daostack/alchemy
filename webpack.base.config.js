@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const gitRevisionPlugin = new GitRevisionPlugin();
 
 const ENV = process.env.NODE_ENV || 'development';
 const isProd = ENV === 'production';
@@ -80,6 +82,10 @@ module.exports = {
     new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
+    }),
+    new webpack.DefinePlugin({
+      'VERSION': JSON.stringify(require('./package.json').version),
+      'COMMIT': JSON.stringify(gitRevisionPlugin.commithash())
     }),
   ],
 };

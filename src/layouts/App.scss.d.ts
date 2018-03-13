@@ -7,6 +7,7 @@ export const fadeExit: string;
 export const fadeExitActive: string;
 export const header: string;
 export const alchemyLogo: string;
+export const version: string;
 export const alert: string;
 export const accountInfo: string;
 export const holdings: string;
