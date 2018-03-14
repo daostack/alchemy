@@ -1,5 +1,6 @@
 node_modules/
 dist/
+coverage/
 kovan_pass.txt
 ropsten_pass.txt
 PRIVATE_README.md

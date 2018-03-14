@@ -21,13 +21,18 @@
         "jsx-alignment": false,
         "jsx-wrap-multiline": false,
         "jsx-no-lambda": false,
+        "jsx-curly-spacing": false,
         "no-shadowed-variable": false,
         "no-empty": false,
         "no-empty-interface": false,
         "interface-name": false,
         "prefer-const": false,
         "comment-format": false,
-        "no-unused-expression": false
+        "no-unused-expression": false,
+        "quotemark": false,
+        "ordered-imports": false,
+        "trailing-comma": false,
+        "semicolon": false
     },
     "rulesDirectory": []
 }
