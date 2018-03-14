@@ -126,6 +126,13 @@ body {
 
 .header:after { clear: both;  content: ""; display: table; }
 
+.notificationsWrapper{
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: 999;
+}
+
 .loading {
   padding-top: 100px;
   text-align: center;

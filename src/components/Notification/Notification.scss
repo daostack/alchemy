@@ -1,0 +1,24 @@
+.notification {
+  padding: 1em;
+  margin: 0.5em;
+  border-radius: 0.5em;
+  background: dimgray;
+  color: lightgrey;
+  position: relative;
+
+  .message {
+    font-weight: bold;
+    color: lightgrey;
+  }
+
+  .timestamp {
+    color: lightgrey;
+  }
+
+  .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em;
+  }
+}

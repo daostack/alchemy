@@ -1,13 +1,20 @@
-import { ActionTypes, INotificationsState } from "reducers/notificationsReducer";
+import { ActionTypes, DismissNotification, INotificationsState, ShowNotification } from "reducers/notificationsReducer";
 
-export const showAlert = (alert: string) => (dispatch: any) => {
-  const payload: INotificationsState = {
-    alert,
+export const showAlert = (message: string) => (dispatch: any) => {
+  const show: ShowNotification = {
+    type: "Notification/Show",
+    message,
+    timestamp: new Date(),
   };
 
-  const action = {
-    type: ActionTypes.ALERT_SHOW,
-    payload,
+  dispatch(show);
+};
+
+export const dismissAlert = (id: number) => (dispatch: any) => {
+  const dismiss: DismissNotification = {
+    type: "Notification/Dismiss",
+    id,
   };
-  dispatch(action);
+
+  dispatch(dismiss);
 };

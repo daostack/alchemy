@@ -14,4 +14,5 @@ export const holdings: string;
 export const holdingsLabel: string;
 export const profileLink: string;
 export const etherBalance: string;
+export const notificationsWrapper: string;
 export const loading: string;
