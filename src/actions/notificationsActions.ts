@@ -1,4 +1,4 @@
-import { ActionTypes, DismissNotification, INotificationsState, ShowNotification } from "reducers/notificationsReducer";
+import { DismissNotification, ShowNotification } from "reducers/notificationsReducer";
 
 export const showAlert = (message: string) => (dispatch: any) => {
   const show: ShowNotification = {

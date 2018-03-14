@@ -8,7 +8,6 @@ import { CSSTransition } from "react-transition-group";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
-import { INotificationsState } from "reducers/notificationsReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import AccountBalance from "components/Account/AccountBalance";
