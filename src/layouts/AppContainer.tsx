@@ -1,3 +1,4 @@
+import * as Arc from '@daostack/arc.js';
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Route, Switch } from "react-router-dom";
@@ -8,7 +9,7 @@ import { IArcState } from "reducers/arcReducer";
 import { ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
 import store from "../configureStore";
 
-import * as arcActions from "actions/arcActions";
+import * as web3Actions from 'actions/web3Actions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
@@ -24,34 +25,54 @@ interface IStateProps {
   arc: IArcState;
   connectionStatus: ConnectionStatus;
   ethAccountAddress: string | null;
-  web3: IWeb3State;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
   arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
-  web3: state.web3,
 });
 
 interface IDispatchProps {
-  connectToArc: typeof arcActions.connectToArc;
+  initializeWeb3: any;
+  changeAccount: any;
 }
 
 const mapDispatchToProps = {
-  connectToArc: arcActions.connectToArc,
+  initializeWeb3: web3Actions.initializeWeb3,
+  changeAccount: web3Actions.changeAccount,
 };
 
 type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
+  accountInterval: any;
 
   constructor(props: IProps) {
     super(props);
   }
 
-  public componentDidMount() {
-    this.props.connectToArc();
+  public async componentDidMount () {
+    const { initializeWeb3} = this.props;
+    initializeWeb3();
+  }
+
+  componentWillReceiveProps(props : IProps) {
+    // If we are connected to an account through web3
+    if (props.ethAccountAddress) {
+      // Setup an interval to check for the account to change (e.g. via MetaMask)
+      // First clear the old interval
+      if (this.accountInterval) {
+        clearInterval(this.accountInterval);
+      }
+
+      this.accountInterval = setInterval(async function(accountAddress : string) {
+        const newAccount = await Arc.Utils.getDefaultAccount();
+        if (newAccount !== accountAddress) {
+          this.props.changeAccount(newAccount);
+        }
+      }.bind(this, props.ethAccountAddress), 400);
+    }
   }
 
   public render() {

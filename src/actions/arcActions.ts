@@ -18,12 +18,6 @@ import * as schemas from "../schemas";
 
 import { IAccountState, IDaoState, IProposalState, IStakeState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
-export function connectToArc() {
-  return (dispatch: any) => {
-    dispatch(web3Actions.initializeWeb3());
-  };
-}
-
 export function getDAOs() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });

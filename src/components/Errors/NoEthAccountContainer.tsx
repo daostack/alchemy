@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
-import * as arcActions from "actions/arcActions";
+import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
 
@@ -22,11 +22,11 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  connectToArc: typeof arcActions.connectToArc;
+  initializeWeb3: typeof web3Actions.initializeWeb3;
 }
 
 const mapDispatchToProps = {
-  connectToArc: arcActions.connectToArc,
+  initializeWeb3: web3Actions.initializeWeb3,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -35,9 +35,9 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
   public interval: any;
 
   public componentDidMount() {
-    const { connectToArc } = this.props;
+    const { initializeWeb3 } = this.props;
 
-    this.interval = setInterval(connectToArc, 1000);
+    this.interval = setInterval(initializeWeb3, 1000);
   }
 
   public componentWillUnmount() {
