@@ -10,7 +10,7 @@
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "engines": {
-    "node": "9.5"
+    "node": ">=9.5"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
