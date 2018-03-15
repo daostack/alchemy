@@ -1,65 +1,54 @@
-export interface Notification {
+import * as update from "immutability-helper";
+
+export interface INotification {
   id: number;
   message: string;
   timestamp: Date;
 }
 
-export type NotificationState = Notification[];
+export type INotificationState = INotification[];
 
-export type NotificationAction = ShowNotification | DismissNotification;
+export type NotificationAction = IShowNotification | IDismissNotification;
 
-export interface ShowNotification {
+export interface IShowNotification {
   type: "Notification/Show";
-  message: string;
-  timestamp: Date;
+  payload: {
+    message: string,
+    timestamp: Date,
+  };
 }
 
-export interface DismissNotification {
+export interface IDismissNotification {
   type: "Notification/Dismiss";
-  id: number;
+  payload: {
+    id: number,
+  };
 }
-
-const example: NotificationState = [
-  {
-    id: 0,
-    message: "Hello 1",
-    timestamp: new Date(new Date().getTime() - 30 * 1000),
-  },
-  {
-    id: 1,
-    message: "Hello 2",
-    timestamp: new Date(new Date().getTime() - 60 * 1000),
-  },
-  {
-    id: 2,
-    message: "Hello 3",
-    timestamp: new Date(),
-  },
-];
 
 export const notificationsReducer =
-  (state: NotificationState = example, action: NotificationAction) =>
-    action.type === "Notification/Show" ?
-      [
-        ...state,
-        {
-          id: id(state),
-          message: action.message,
-          timestamp: action.timestamp,
-        },
-      ] :
-
-    action.type === "Notification/Dismiss" ?
-      state.filter((n) => n.id !== action.id) :
-
-      state;
+  (state: INotificationState = [], action: NotificationAction) => {
+    switch (action.type) {
+      case "Notification/Show":
+        return update(state, {
+          $push: {
+            id: id(state),
+            message: action.payload.message,
+            timestamp: action.payload.timestamp,
+          },
+        });
+      case "Notification/Dismiss":
+        return state.filter((n) => n.id !== action.payload.id);
+      default:
+        return state;
+    }
+  };
 
 /**
  * @param state current notification state
  * @returns fresh unique notification id
  */
 const id =
-  (state: NotificationState): number => {
+  (state: INotificationState): number => {
     const ids = state.map((x) => x.id);
     let id = 0;
     while (ids.indexOf(id) !== -1) {

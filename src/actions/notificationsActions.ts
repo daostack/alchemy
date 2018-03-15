@@ -1,19 +1,23 @@
-import { DismissNotification, ShowNotification } from "reducers/notificationsReducer";
+import { IDismissNotification, IShowNotification } from "reducers/notificationsReducer";
 
 export const showAlert = (message: string) => (dispatch: any) => {
-  const show: ShowNotification = {
+  const show: IShowNotification = {
     type: "Notification/Show",
-    message,
-    timestamp: new Date(),
+    payload: {
+      message,
+      timestamp: new Date(),
+    },
   };
 
   dispatch(show);
 };
 
 export const dismissAlert = (id: number) => (dispatch: any) => {
-  const dismiss: DismissNotification = {
+  const dismiss: IDismissNotification = {
     type: "Notification/Dismiss",
-    id,
+    payload: {
+      id,
+    },
   };
 
   dispatch(dismiss);

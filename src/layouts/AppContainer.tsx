@@ -22,14 +22,14 @@ import Notification from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import HeaderContainer from "layouts/HeaderContainer";
 
-import { NotificationState } from "reducers/notificationsReducer";
+import { INotificationState } from "reducers/notificationsReducer";
 import * as css from "./App.scss";
 
 interface IStateProps {
   arc: IArcState;
   connectionStatus: ConnectionStatus;
   ethAccountAddress: string | null;
-  notifications: NotificationState;
+  notifications: INotificationState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
@@ -42,13 +42,13 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
 interface IDispatchProps {
   initializeWeb3: any;
   changeAccount: any;
-  closeNotification: (id: number) => any;
+  dismissAlert: typeof notificationsActions.dismissAlert;
 }
 
 const mapDispatchToProps = {
   initializeWeb3: web3Actions.initializeWeb3,
   changeAccount: web3Actions.changeAccount,
-  closeNotification: notificationsActions.dismissAlert,
+  dismissAlert: notificationsActions.dismissAlert,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -84,7 +84,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, notifications, ethAccountAddress, closeNotification } = this.props;
+    const { connectionStatus, notifications, ethAccountAddress, dismissAlert } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending
@@ -113,7 +113,7 @@ class AppContainer extends React.Component<IProps, null> {
                   id={n.id}
                   message={n.message}
                   timestamp={n.timestamp}
-                  close={() => closeNotification(n.id)}
+                  close={() => dismissAlert(n.id)}
                 />),
               )}
             </div>
