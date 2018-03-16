@@ -1,21 +1,58 @@
-export enum ActionTypes {
-  ALERT_SHOW = "ALERT_SHOW",
+import * as update from "immutability-helper";
+
+export interface INotification {
+  id: number;
+  message: string;
+  timestamp: Date;
 }
 
-export interface INotificationsState {
-  alert: string;
+export type INotificationState = INotification[];
+
+export type NotificationAction = IShowNotification | IDismissNotification;
+
+export interface IShowNotification {
+  type: "Notification/Show";
+  payload: {
+    message: string,
+    timestamp: Date,
+  };
 }
 
-export const initialState: INotificationsState = {
-  alert: "",
-};
+export interface IDismissNotification {
+  type: "Notification/Dismiss";
+  payload: {
+    id: number,
+  };
+}
 
-const notificationsReducer = (state = initialState, action: any) => {
-  if (action.payload && action.payload.alert) {
-    return {...state, alert : action.payload.alert };
-  } else {
-    return {...state, alert : "" };
-  }
-};
+export const notificationsReducer =
+  (state: INotificationState = [], action: NotificationAction) => {
+    switch (action.type) {
+      case "Notification/Show":
+        return update(state, {
+          $push: {
+            id: id(state),
+            message: action.payload.message,
+            timestamp: action.payload.timestamp,
+          },
+        });
+      case "Notification/Dismiss":
+        return state.filter((n) => n.id !== action.payload.id);
+      default:
+        return state;
+    }
+  };
 
-export default notificationsReducer;
+/**
+ * @param state current notification state
+ * @returns fresh unique notification id
+ */
+const id =
+  (state: INotificationState): number => {
+    const ids = state.map((x) => x.id);
+    let id = 0;
+    while (ids.indexOf(id) !== -1) {
+      id++;
+    }
+    return id;
+  };

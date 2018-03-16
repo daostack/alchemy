@@ -8,7 +8,6 @@ import { CSSTransition } from "react-transition-group";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
-import { INotificationsState } from "reducers/notificationsReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import AccountBalance from "components/Account/AccountBalance";
@@ -18,14 +17,12 @@ import * as css from "./App.scss";
 
 interface IStateProps {
   dao: IDaoState;
-  notifications: INotificationsState;
   web3State: IWeb3State;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     dao: state.arc.daos[ownProps.daoAddress],
-    notifications: state.notifications,
     web3State: state.web3,
   };
 };
@@ -63,7 +60,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { dao, notifications, web3State } = this.props;
+    const { dao, web3State } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     let member = dao ? dao.members[web3State.ethAccountAddress] : false;
@@ -79,9 +76,8 @@ class HeaderContainer extends React.Component<IProps, null> {
 
     return(
       <nav className={css.header}>
-        <Link className={css.alchemyLogo} to='/'><img src='/assets/images/alchemy-logo.svg'/></Link>
+        <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
         <span className={css.version}>v.{VERSION}#{COMMIT}</span>
-        { notifications.alert ? <Fade in={notifications.alert.length > 0}><div className={css.alert}>{notifications.alert}</div></Fade> : ""}
         { web3
           ? <div className={css.accountInfo}>
               <div className={css.holdings}>
