@@ -1,0 +1,16 @@
+language: node_js
+node_js: 9.5.0
+
+script:
+- npm run lint
+- npm run test
+- npm run build
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GH_TOKEN
+  keep-history: true
+  local-dir: dist
+  on:
+    branch: master
