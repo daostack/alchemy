@@ -9,7 +9,7 @@ import Util from "lib/util";
 import { IWeb3State } from "reducers/web3Reducer";
 
 export function initializeWeb3() {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function) : Promise<any> => {
+  return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
 
     let web3: Web3;
     try {
@@ -75,7 +75,7 @@ export function changeAccount(accountAddress: string) {
 
     const action = {
       type: ActionTypes.WEB3_CHANGE_ACCOUNT,
-      payload: payload
+      payload
     };
     dispatch(action);
   };

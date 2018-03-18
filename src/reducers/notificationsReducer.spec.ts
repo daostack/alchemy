@@ -2,9 +2,9 @@ import { notificationsReducer, INotification, INotificationState } from './notif
 
 describe('notificationsReducer', () => {
   it('should perform state transitions correctly', () => {
-    const initialState : INotificationState = [];
-    const notification : INotification =  { id: 1, message: "This is a notification", timestamp: new Date()};
-    const nextState : INotificationState = [ notification ];
+    const initialState: INotificationState = [];
+    const notification: INotification =  { id: 1, message: "This is a notification", timestamp: new Date()};
+    const nextState: INotificationState = [ notification ];
 
     expect(
       notificationsReducer(
