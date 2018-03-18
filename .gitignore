@@ -1,8 +1,0 @@
-node_modules/
-kovan_pass.txt
-ropsten_pass.txt
-PRIVATE_README.md
-
-*.log*
-*sublime*
-yarn*
