@@ -186,8 +186,11 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
         transactionState: TransactionStates.Confirmed,
       };
 
+      console.log('boostedPhaseTime', Number(proposalDetails[8]));
+      console.log('boostedVotePeriodLimit', Number(proposalDetails[12]));
       genesisProposal = {
-        boostedTime: Number(proposalDetails[10]),
+        boostedTime: Number(proposalDetails[8]),
+        boostedVotePeriodLimit: Number(proposalDetails[12]),
         description,
         daoAvatarAddress: dao.avatar.address,
         ethReward: Util.fromWei(contributionProposal.ethReward),
@@ -198,7 +201,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
         stakesNo: Util.fromWei(noStakes),
         stakesYes: Util.fromWei(yesStakes),
         state,
-        submittedTime: proposalDetails[7],
+        submittedTime: Number(proposalDetails[7]),
         title,
         totalStakes: Util.fromWei(proposalDetails[4]),
         totalVotes: Util.fromWei(proposalDetails[3]),
@@ -284,7 +287,8 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId, staker: currentAccountAddress });
 
     const genesisProposal: any = {
-      boostedTime: Number(proposalDetails[10]),
+      boostedTime: Number(proposalDetails[8]),
+      boostedVotePeriodLimit: Number(proposalDetails[12]),
       description,
       daoAvatarAddress: dao.avatar.address,
       ethReward: Util.fromWei(contributionProposal.ethReward),
@@ -295,7 +299,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       stakesNo: Util.fromWei(noStakes),
       stakesYes: Util.fromWei(yesStakes),
       state,
-      submittedTime: proposalDetails[7],
+      submittedTime: Number(proposalDetails[7]),
       title,
       totalStakes: Util.fromWei(proposalDetails[4]),
       totalVotes: Util.fromWei(proposalDetails[3]),
@@ -470,6 +474,8 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2];
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+      const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
+      const votingMahcineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
 
       const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
         avatar: daoAvatarAddress,
@@ -508,6 +514,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const proposal = {
         beneficiary,
         boostedTime: 0,
+        boostedVotePeriodLimit: votingMahcineParams[2],
         contributionDescriptionHash: descriptionHash,
         description,
         daoAvatarAddress,

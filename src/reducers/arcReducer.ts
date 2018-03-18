@@ -49,6 +49,7 @@ export interface IAccountState {
 export interface IProposalState {
   beneficiary: string;
   boostedTime: number;
+  boostedVotePeriodLimit: number;
   contributionDescriptionHash: string;
   description: string;
   daoAvatarAddress: string;
