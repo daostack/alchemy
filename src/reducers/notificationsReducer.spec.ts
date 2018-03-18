@@ -1,22 +1,16 @@
-import notificationsReducer, { ActionTypes } from './notificationsReducer';
+import { notificationsReducer, INotification, INotificationState } from './notificationsReducer';
 
 describe('notificationsReducer', () => {
   it('should perform state transitions correctly', () => {
-    const prev = {alert: Math.random().toString()};
-    const next = {alert: Math.random().toString()};
+    const initialState : INotificationState = [];
+    const notification : INotification =  { id: 1, message: "This is a notification", timestamp: new Date()};
+    const nextState : INotificationState = [ notification ];
 
     expect(
       notificationsReducer(
-        prev,
-        {type: ActionTypes.ALERT_SHOW, payload: next}
+        initialState,
+        { type: "Notification/Show", payload: notification }
       )
-    ).toEqual(next);
-
-    expect(
-      notificationsReducer(
-        prev,
-        {type: Math.random().toString}
-      )
-    ).toEqual({alert: ''});
+    ).toEqual(nextState);
   })
 });

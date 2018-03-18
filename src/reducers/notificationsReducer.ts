@@ -30,11 +30,11 @@ export const notificationsReducer =
     switch (action.type) {
       case "Notification/Show":
         return update(state, {
-          $push: {
+          $push: [{
             id: id(state),
             message: action.payload.message,
             timestamp: action.payload.timestamp,
-          },
+          }],
         });
       case "Notification/Dismiss":
         return state.filter((n) => n.id !== action.payload.id);
@@ -50,7 +50,7 @@ export const notificationsReducer =
 const id =
   (state: INotificationState): number => {
     const ids = state.map((x) => x.id);
-    let id = 0;
+    let id = 1;
     while (ids.indexOf(id) !== -1) {
       id++;
     }
