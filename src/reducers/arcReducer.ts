@@ -50,6 +50,7 @@ export interface IProposalState {
   beneficiary: string;
   boostedTime: number;
   boostedVotePeriodLimit: number;
+  preBoostedVotePeriodLimit: number;
   contributionDescriptionHash: string;
   description: string;
   daoAvatarAddress: string;

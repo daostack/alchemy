@@ -127,7 +127,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             }
             <h3>
               { proposal.state == ProposalStates.PreBoosted ?
-                <span>CLOSES IN {proposal.submittedTime.toString()} WEEKS</span>
+                <span>CLOSES {moment((proposal.submittedTime + proposal.preBoostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : proposal.state == ProposalStates.Boosted ?
                 <span>CLOSES {moment((proposal.boostedTime + proposal.boostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : ""
