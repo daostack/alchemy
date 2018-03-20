@@ -10,6 +10,7 @@ import * as css from "./Proposal.scss";
 
 interface IProps {
   currentVote: number;
+  voterReputation: number;
   daoTotalReputation: number;
   proposal: IProposalState;
   transactionState: TransactionStates;
@@ -37,7 +38,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { currentVote, proposal, daoTotalReputation, transactionState } = this.props;
+    const { currentVote, voterReputation, proposal, daoTotalReputation, transactionState } = this.props;
+    console.log('voterReputation', voterReputation)
 
     const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
     const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
@@ -64,9 +66,16 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
     let voteUpButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.Yes,
+      [css.disabled]: !!currentVote
     });
     let voteDownButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.No,
+      [css.disabled]: !!currentVote
+    });
+
+    const voteControls = classNames({
+      [css.voteControls]: true,
+      [css.disabled]: !voterReputation
     });
 
     return (
@@ -74,15 +83,15 @@ export default class VoteBox extends React.Component<IProps, IState> {
         <div className={css.loading}>
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
-        <div className={css.voteControls}>
-          <button disabled={!!currentVote} onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+        <div className={voteControls}>
+          <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
             <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
             <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
           </button>
           <div className={css.voteDivider}>
             <img src="/assets/images/vote-divider.svg"/>
           </div>
-          <button disabled={!!currentVote} onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+          <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
             <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
             <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
           </button>

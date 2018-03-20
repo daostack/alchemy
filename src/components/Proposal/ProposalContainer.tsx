@@ -89,6 +89,7 @@ class ProposalContainer extends React.Component<IProps, null> {
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
               currentVote={currentAccountVote}
+              voterReputation={daoAccount.reputation}
               daoTotalReputation={dao.reputationCount}
               proposal={proposal}
               transactionState={currentAccountVoteState}
@@ -167,6 +168,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
+                  stakerTokens={daoAccount.tokens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
@@ -194,6 +196,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
+                  stakerTokens={daoAccount.tokens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
