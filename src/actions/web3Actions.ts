@@ -36,11 +36,12 @@ export function initializeWeb3() {
     // TODO: is this presently needed?
     const getNetwork = promisify(web3.version.getNetwork);
     // await the network
-    await getNetwork();
+    const networkId = await getNetwork();
 
     const payload: IWeb3State = {
       ethAccountAddress: null,
       ethAccountBalance: "",
+      networkId: Number(networkId),
     };
 
     try {
