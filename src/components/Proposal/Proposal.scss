@@ -87,6 +87,10 @@
 
 	}
 
+	button[disabled] {
+		pointer-events: none;
+	}
+
 	button:nth-child(1) {
 		top: 0px;
 	}

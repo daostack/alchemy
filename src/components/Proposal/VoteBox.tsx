@@ -75,14 +75,14 @@ export default class VoteBox extends React.Component<IProps, IState> {
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
         <div className={css.voteControls}>
-          <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+          <button disabled={!!currentVote} onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
             <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
             <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
           </button>
           <div className={css.voteDivider}>
             <img src="/assets/images/vote-divider.svg"/>
           </div>
-          <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+          <button disabled={!!currentVote} onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
             <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
             <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
           </button>
