@@ -27,7 +27,7 @@ export function loadCachedState() {
       const cachedState = await axios.get(process.env.BASE_URL + '/initialArcState-' + Arc.Config.get('network') + '.json');
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: cachedState.data });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_REJECTED, payload: e });
     }
   };

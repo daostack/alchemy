@@ -38,6 +38,7 @@ const cacheBlockchain = async () => {
   // TODO: store cached data and last block in redis and only load new data since last check
   let lastBlock = Number(redis.get('alchemy-last-block')) || 0;
 
+  // tslint:disable-next-line:no-console
   console.log("Starting to cache the blockchain from block ", lastBlock);
 
   let initialState: IArcState = arcInitialState;
@@ -56,7 +57,7 @@ const cacheBlockchain = async () => {
       daos[event.args._avatar] = await arcActions.getDAOData(event.args._avatar, true);
     }
   } catch (e) {
-    console.log("Error getting DAOs: ", e);
+    console.error("Error getting DAOs: ", e);
     return;
   }
   initialState.daosLoaded = true;
@@ -92,7 +93,7 @@ const cacheBlockchain = async () => {
       }
     }
   } catch (e) {
-    console.log("Error getting votes: ", e)
+    console.error("Error getting votes: ", e)
   }
 
   try {
@@ -119,7 +120,7 @@ const cacheBlockchain = async () => {
       }
     }
   } catch (e) {
-    console.log("Error getting stakes: ", e);
+    console.error("Error getting stakes: ", e);
   }
 
   fs.writeFile(__dirname + '/initialArcState-' + network + '.json', JSON.stringify(initialState), (err) => {
@@ -127,6 +128,7 @@ const cacheBlockchain = async () => {
       throw err;
     }
 
+    // tslint:disable-next-line:no-console
     console.log('The file has been saved!');
   });
 
