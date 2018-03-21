@@ -14,6 +14,7 @@ import AccountBalance from "components/Account/AccountBalance";
 import AccountImage from "components/Account/AccountImage";
 
 import * as css from "./App.scss";
+import Util from "lib/util";
 
 interface IStateProps {
   dao: IDaoState;
@@ -59,23 +60,6 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.props.changeAccount(newAddress);
   }
 
-  public networkName = (id: number) => {
-    switch (id) {
-      case 1:
-        return "mainnet"
-      case 2:
-        return "morden"
-      case 3:
-        return "ropsten"
-      case 4:
-        return "rinkeby"
-      case 42:
-        return "kovan"
-      default:
-        return "unknown network"
-    }
-  }
-
   public render() {
     const { dao, web3State } = this.props;
     const web3 = Arc.Utils.getWeb3();
@@ -91,12 +75,10 @@ class HeaderContainer extends React.Component<IProps, null> {
       </option>
     ));
 
-
-
     return(
       <nav className={css.header}>
         <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
-        <span className={css.version}><b>{this.networkName(web3State.networkId)}</b> | v.{VERSION}#{COMMIT}</span>
+        <span className={css.version}><b>{Util.networkName(web3State.networkId)}</b> | v.{VERSION}#{COMMIT}</span>
         { web3
           ? <div className={css.accountInfo}>
               <div className={css.holdings}>
