@@ -10,6 +10,7 @@ import * as css from "./Proposal.scss";
 
 interface IProps {
   currentVote: number;
+  currentAccountReputation: number;
   daoTotalReputation: number;
   proposal: IProposalState;
   transactionState: TransactionStates;
@@ -37,7 +38,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { currentVote, proposal, daoTotalReputation, transactionState } = this.props;
+    const { currentVote, currentAccountReputation, proposal, daoTotalReputation, transactionState } = this.props;
 
     const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
     const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
@@ -64,9 +65,16 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
     let voteUpButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.Yes,
+      [css.disabled]: !!currentVote
     });
     let voteDownButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.No,
+      [css.disabled]: !!currentVote
+    });
+
+    const voteControls = classNames({
+      [css.voteControls]: true,
+      [css.disabled]: !currentAccountReputation
     });
 
     return (
@@ -74,7 +82,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
         <div className={css.loading}>
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
-        <div className={css.voteControls}>
+        <div className={voteControls}>
           <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
             <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
             <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>

@@ -15,6 +15,7 @@ interface IState {
 interface IProps {
   currentPrediction: number;
   currentStake: number;
+  currentAccountTokens: number;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   transactionState: TransactionStates;
@@ -48,7 +49,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { currentPrediction, currentStake, proposal, transactionState } = this.props;
+    const { currentPrediction, currentStake, currentAccountTokens, proposal, transactionState } = this.props;
     const { showStakeModal } = this.state;
 
     let wrapperClass = classNames({
@@ -65,6 +66,16 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     });
     let stakeDownClass = classNames({
       [css.predicted]: currentPrediction == VoteOptions.No,
+    });
+
+    const passPrediction = classNames({
+      [css.passPrediction]: true,
+      [css.disabled]: !currentAccountTokens,
+    });
+
+    const failPrediction = classNames({
+      [css.failPrediction]: true,
+      [css.disabled]: !currentAccountTokens,
     });
 
     return (
@@ -90,7 +101,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <table>
             <tbody>
               <tr className={stakeUpClass}>
-                <td className={css.passPrediction}>
+                <td className={passPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
                     ? <button onClick={this.showModal.bind(this, 1)}>PASS +</button>
                     : "PASS"
@@ -99,7 +110,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                 <td>{proposal.stakesYes} GEN</td>
               </tr>
               <tr className={stakeDownClass} >
-                <td className={css.failPrediction}>
+                <td className={failPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
                     ? <button onClick={this.showModal.bind(this, 2)}>FAIL +</button>
                     : "FAIL"
