@@ -23,7 +23,7 @@ const network = Arc.Config.get('network');
 if (process.env.NODE_ENV == 'production') {
   // Use Infura on production
   const infura_network = network == 'live' ? 'mainnet' : network;
-  const provider = new HDWalletProvider(mnemonic, "https://" + network + ".infura.io/UeW8cwaou03qFgsAHoDP");
+  const provider = new HDWalletProvider(mnemonic, "https://" + infura_network + ".infura.io/UeW8cwaou03qFgsAHoDP");
 
   // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
   global.web3 = new Web3(provider.engine);

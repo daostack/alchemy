@@ -41,7 +41,7 @@
   },
   "scripts": {
     "cache-arc-dev": "ts-node src/bg_cache_worker.ts",
-    "cache-arc-prod": "npm run build && cross-env NODE_ENV=production node dist/bg_cache_worker.js",
+    "cache-arc-prod": "npm run build && cross-env NODE_ENV=production network=kovan node dist/bg_cache_worker.js",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "heroku-postbuild": "npm run build",
     "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
