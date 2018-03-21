@@ -12,7 +12,9 @@ const extractSass = new ExtractTextPlugin({
   filename: "[name].[contenthash].css"
 });
 
-network = process.env.network || 'kovan';
+const network = process.env.network || 'kovan';
+const api_url = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
+const base_url = process.env.BASE_URL || "https://alchemy.daostack.io";
 
 module.exports = merge(baseConfig, {
   devtool: 'nosources-source-map',
@@ -64,7 +66,8 @@ module.exports = merge(baseConfig, {
       'process.env': {
         'network': JSON.stringify(network),
         'NODE_ENV': JSON.stringify('production'),
-        'API_URL': JSON.stringify('https://daostack-alchemy.herokuapp.com')
+        'API_URL': JSON.stringify(api_url),
+        'BASE_URL': JSON.stringify(base_url)
       },
     }),
     new CopyWebpackPlugin([
