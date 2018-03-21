@@ -188,8 +188,6 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
         transactionState: TransactionStates.Confirmed,
       };
 
-      console.log('boostedPhaseTime', Number(proposalDetails[8]));
-      console.log('boostedVotePeriodLimit', Number(proposalDetails[12]));
       genesisProposal = {
         boostedTime: Number(proposalDetails[8]),
         boostedVotePeriodLimit: Number(proposalDetails[12]),
@@ -520,8 +518,8 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const proposal = {
         beneficiary,
         boostedTime: 0,
-        boostedVotePeriodLimit: votingMachineParams[2],
-        preBoostedVotePeriodLimit: votingMachineParams[1],
+        boostedVotePeriodLimit: Number(votingMachineParams[2]),
+        preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
         contributionDescriptionHash: descriptionHash,
         description,
         daoAvatarAddress,
