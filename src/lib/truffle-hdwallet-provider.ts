@@ -1,3 +1,4 @@
+/* tslint:disable */
 // Copied and converted to typescript from https://github.com/trufflesuite/truffle-hdwallet-provider
 // TODO: publish our own fork of the repo
 var bip39 = require("bip39");

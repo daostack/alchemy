@@ -1,5 +1,6 @@
 // Hack to be able to find all our modules with relative paths
 process.env.NODE_PATH = __dirname;
+// tslint:disable-next-line:no-var-requires
 require('module').Module._initPaths();
 
 import * as Arc from "@daostack/arc.js";
@@ -22,8 +23,8 @@ const mnemonic = "upstart driveway blighted quartet machinist garter clinic sash
 const network = Arc.Config.get('network');
 if (process.env.NODE_ENV == 'production') {
   // Use Infura on production
-  const infura_network = network == 'live' ? 'mainnet' : network;
-  const provider = new HDWalletProvider(mnemonic, "https://" + infura_network + ".infura.io/UeW8cwaou03qFgsAHoDP");
+  const infuraNetwork = network == 'live' ? 'mainnet' : network;
+  const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/UeW8cwaou03qFgsAHoDP");
 
   // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
   global.web3 = new Web3(provider.engine);
