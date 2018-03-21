@@ -2,7 +2,7 @@ import { IDismissNotification, IShowNotification, nextId } from "reducers/notifi
 import { IRootState } from "reducers";
 
 export const showAlert = (message: string, ttl: number = 10000) =>
-  async (dispatch: any, getState: () => IRootState) => {
+  (dispatch: any, getState: () => IRootState) => {
     const show: IShowNotification = {
       type: "Notification/Show",
       payload: {
