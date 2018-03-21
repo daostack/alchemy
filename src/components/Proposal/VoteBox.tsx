@@ -10,7 +10,7 @@ import * as css from "./Proposal.scss";
 
 interface IProps {
   currentVote: number;
-  voterReputation: number;
+  currentAccountReputation: number;
   daoTotalReputation: number;
   proposal: IProposalState;
   transactionState: TransactionStates;
@@ -38,8 +38,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { currentVote, voterReputation, proposal, daoTotalReputation, transactionState } = this.props;
-    console.log('voterReputation', voterReputation)
+    const { currentVote, currentAccountReputation, proposal, daoTotalReputation, transactionState } = this.props;
+    console.log('voterReputation', currentAccountReputation)
 
     const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
     const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
@@ -75,7 +75,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
 
     const voteControls = classNames({
       [css.voteControls]: true,
-      [css.disabled]: !voterReputation
+      [css.disabled]: !currentAccountReputation
     });
 
     return (

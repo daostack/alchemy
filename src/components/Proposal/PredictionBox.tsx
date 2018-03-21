@@ -15,7 +15,7 @@ interface IState {
 interface IProps {
   currentPrediction: number;
   currentStake: number;
-  stakerTokens: number;
+  currentAccountTokens: number;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   transactionState: TransactionStates;
@@ -49,7 +49,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { currentPrediction, currentStake, stakerTokens, proposal, transactionState } = this.props;
+    const { currentPrediction, currentStake, currentAccountTokens, proposal, transactionState } = this.props;
     const { showStakeModal } = this.state;
 
     let wrapperClass = classNames({
@@ -70,12 +70,12 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     const passPrediction = classNames({
       [css.passPrediction]: true,
-      [css.disabled]: !stakerTokens,
+      [css.disabled]: !currentAccountTokens,
     });
 
     const failPrediction = classNames({
       [css.failPrediction]: true,
-      [css.disabled]: !stakerTokens,
+      [css.disabled]: !currentAccountTokens,
     });
 
     return (
