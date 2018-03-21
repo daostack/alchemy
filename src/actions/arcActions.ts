@@ -138,7 +138,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
       const results = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '"}}');
       serverProposals = _.keyBy(results.data, "arcId");
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     let contributionProposal: Arc.ContributionProposal, genesisProposal: any, proposalId: string, description: string, title: string;
@@ -264,7 +264,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
         title = response.data[0].title;
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     // Get more proposal details from the GenesisProtocol voting machine
@@ -502,7 +502,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
           title,
         });
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
 
       const proposal = {
