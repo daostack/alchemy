@@ -20,6 +20,7 @@ export function initializeWeb3() {
         type: ActionTypes.WEB3_CONNECTION_REJECTED,
         action: "Can't connect to web3",
       };
+      dispatch({type: 'Notification/Show', payload: { message: "Can't connect to web3"}})
       dispatch(action);
       return;
     }
