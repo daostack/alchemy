@@ -128,9 +128,9 @@ class ProposalContainer extends React.Component<IProps, null> {
             }
             <h3>
               { proposal.state == ProposalStates.PreBoosted ?
-                <span>CLOSES IN 3 WEEKS</span>
+                <span>CLOSES {moment((proposal.submittedTime + proposal.preBoostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : proposal.state == ProposalStates.Boosted ?
-                <span>5 DAYS</span>
+                <span>CLOSES {moment((proposal.boostedTime + proposal.boostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : ""
               }
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
