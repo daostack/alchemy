@@ -31,7 +31,7 @@ export const notificationsReducer =
       case "Notification/Show":
         return update(state, {
           $push: [{
-            id: id(state),
+            id: nextId(state),
             message: action.payload.message,
             timestamp: action.payload.timestamp,
           }],
@@ -47,7 +47,7 @@ export const notificationsReducer =
  * @param state current notification state
  * @returns fresh unique notification id
  */
-const id =
+export const nextId =
   (state: INotificationState): number => {
     const ids = state.map((x) => x.id);
     let id = 1;
