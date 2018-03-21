@@ -11,12 +11,14 @@ export interface IWeb3State {
   ethAccountBalance: string;
   ethAccountAddress: string | null;
   connectionStatus?: ConnectionStatus;
+  networkId: number;
 }
 
 export const initialState: IWeb3State = {
   ethAccountBalance: "",
   ethAccountAddress: null,
   connectionStatus: ConnectionStatus.Pending,
+  networkId: 0 // unknown network
 };
 
 // TODO: make all action types explicit?

@@ -60,6 +60,11 @@
 	opacity: .5;
 }
 
+.disabled {
+	pointer-events: none;
+	opacity: 0.5;
+}
+
 .voteControls {
 	float: left;
 	width: 30px;

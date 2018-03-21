@@ -89,6 +89,7 @@ class ProposalContainer extends React.Component<IProps, null> {
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
               currentVote={currentAccountVote}
+              currentAccountReputation={daoAccount.reputation}
               daoTotalReputation={dao.reputationCount}
               proposal={proposal}
               transactionState={currentAccountVoteState}
@@ -127,9 +128,9 @@ class ProposalContainer extends React.Component<IProps, null> {
             }
             <h3>
               { proposal.state == ProposalStates.PreBoosted ?
-                <span>CLOSES IN 3 WEEKS</span>
+                <span>CLOSES {moment((proposal.submittedTime + proposal.preBoostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : proposal.state == ProposalStates.Boosted ?
-                <span>5 DAYS</span>
+                <span>CLOSES {moment((proposal.boostedTime + proposal.boostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : ""
               }
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
@@ -167,6 +168,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
+                  currentAccountTokens={daoAccount.tokens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
@@ -194,6 +196,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
+                  currentAccountTokens={daoAccount.tokens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
