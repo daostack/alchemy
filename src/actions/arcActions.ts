@@ -50,7 +50,7 @@ export function getDAOs() {
 
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
-        daos[event.args._avatar] = await getDAOData(event.args._avatar);
+        daos[event.args._avatar] = await getDAOData(event.args._avatar, true);
       }
 
       dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: normalize(daos, schemas.daoList) });
