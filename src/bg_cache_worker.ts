@@ -15,15 +15,15 @@ import { initialState as arcInitialState, IArcState, IDaoState, TransactionState
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
-// TODO: this is an account of Tibet's used as the default account in reading from Infura
-//       What should this actually be? I dont think it actually matters since we are only reading, but it is still needed
-const mnemonic = "upstart driveway blighted quartet machinist garter clinic sash enjoyment reputable unknotted elastic";
-
 const network = Arc.Config.get('network');
 
 if (process.env.NODE_ENV == 'production') {
   // Use Infura on production
   const infuraNetwork = network == 'live' ? 'mainnet' : network;
+
+  // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
+  const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
+
   const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/UeW8cwaou03qFgsAHoDP");
 
   // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
