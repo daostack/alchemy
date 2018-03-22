@@ -48,7 +48,7 @@ export interface IAccountState {
 }
 
 export interface IProposalState {
-  beneficiary: string;
+  beneficiaryAddress: string;
   boostedTime: number;
   boostedVotePeriodLimit: number;
   preBoostedVotePeriodLimit: number;
@@ -64,6 +64,7 @@ export interface IProposalState {
   periodLength: number;
   proposalId: string;
   proposer: string;
+  redeemedPeriods?: number[];
   reputationChange: number;
   reputationWhenExecuted?: number;
   stakesNo: number;
