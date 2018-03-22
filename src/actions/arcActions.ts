@@ -105,7 +105,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
 
     memberAddresses = [...new Set(memberAddresses)]; // Dedupe
 
-    const members: { [ key: string ]: IAccountState } = {};
+    const members: { [key: string]: IAccountState } = {};
     for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
       const address = memberAddresses[cnt];
       const member = { address, tokens: 0, reputation: 0, votes: {}, stakes: {} };
@@ -118,7 +118,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
 
     // If the current account is not a "member" of this DAO populate an empty account object
     if (!members[currentAccountAddress]) {
-      members[currentAccountAddress] = { reputation: 0, tokens: 0, votes: {}, stakes: {}};
+      members[currentAccountAddress] = { reputation: 0, tokens: 0, votes: {}, stakes: {} };
     }
 
     daoData.members = members;
@@ -134,10 +134,10 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
     const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
 
-    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address});
+    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address });
 
     // Get all proposals' details like title and description from the server
-    let serverProposals: { [ key: string ]: any } = {};
+    let serverProposals: { [key: string]: any } = {};
     try {
       const results = await axios.get(arcConstants.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '"}}');
       serverProposals = _.keyBy(results.data, "arcId");
@@ -228,7 +228,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
         });
       }
 
-      const proposal = {...contributionProposal, ...genesisProposal} as IProposalState;
+      const proposal = { ...contributionProposal, ...genesisProposal } as IProposalState;
 
       daoData.proposals.push(proposal);
     } // EO for each proposal
@@ -329,7 +329,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       });
     }
 
-    const proposal = {...contributionProposal, ...genesisProposal} as IProposalState;
+    const proposal = { ...contributionProposal, ...genesisProposal } as IProposalState;
     const payload = normalize(proposal, schemas.proposalSchema);
     (payload as any).daoAvatarAddress = proposal.daoAvatarAddress;
 
@@ -368,8 +368,8 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       for (let i = 0; i < members.length; i++) {
         member = members[i];
         founders[i] = {
-          address : member.address,
-          tokens : web3.toWei(member.tokens, "ether"),
+          address: member.address,
+          tokens: web3.toWei(member.tokens, "ether"),
           reputation: web3.toWei(member.reputation, "ether"),
         };
       }
@@ -400,7 +400,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       const votingMachine = await Arc.GenesisProtocol.deployed();
 
-      const votingMachineParamsHash = (await votingMachine.setParams({
+      const votingMachineParamsHash = (await votingMachine.setParameters({
         preBoostedVoteRequiredPercentage: 50,
         preBoostedVotePeriodLimit: 5184000, // 2 months
         boostedVotePeriodLimit: 604800, // 1 week
@@ -412,14 +412,13 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         proposingRepRewardConstB: 5, // how much to weight strength of yes votes vs no votes in reward TODO: good for now but needs more thought
         stakerFeeRatioForVoters: 1, // 1 percent of staker fee given to voters
         votersReputationLossRatio: 1, // 1 percent of rep lost by voting
-        votersGainRepRatioFromLostRep: 80, // percentage of how much rep correct voters get from incorrect voters who lost rep
-        governanceFormulasInterface: "0x0000000000000000000000000000000000000000",
+        votersGainRepRatioFromLostRep: 80
       })).result;
 
       const contributionReward = await Arc.ContributionReward.deployed();
-      const contributionRewardParamsHash = (await contributionReward.setParams({
+      const contributionRewardParamsHash = (await contributionReward.setParameters({
         orgNativeTokenFee: web3.toWei(0, "ether"),
-        votingMachine: votingMachine.contract.address,
+        votingMachineAddress: votingMachine.contract.address,
         voteParametersHash: votingMachineParamsHash,
       })).result;
 
@@ -486,12 +485,12 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
 
       const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
         avatar: daoAvatarAddress,
-        beneficiary,
+        beneficiaryAddress: beneficiary,
         description,
-        nativeTokenReward : web3.toWei(nativeTokenReward, "ether"),
+        nativeTokenReward: web3.toWei(nativeTokenReward, "ether"),
         numberOfPeriods: 1,
-        periodLength : 1,
-        reputationChange : web3.toWei(reputationReward, "ether"),
+        periodLength: 1,
+        reputationChange: web3.toWei(reputationReward, "ether"),
       });
 
       // TODO: error checking
@@ -570,7 +569,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     // TODO: num transactions pending...
     let payload: any = {
       vote: {
-        avatarAddress : daoAvatarAddress,
+        avatarAddress: daoAvatarAddress,
         proposalId,
         transactionState: TransactionStates.Unconfirmed,
         vote,
@@ -590,7 +589,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
-      const voteTransaction = await votingMachineInstance.vote({ proposalId, vote} );
+      const voteTransaction = await votingMachineInstance.vote({ proposalId, vote });
       const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
       const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
 
@@ -638,7 +637,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
         },
         // New vote made on the proposal
         vote: {
-          avatarAddress : daoAvatarAddress,
+          avatarAddress: daoAvatarAddress,
           proposalId,
           reputation: reputationVoted,
           vote,
@@ -696,7 +695,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if (amount < minimumStakingFee) { throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`); }
       if (amount > balance) { throw new Error(`Staked more than than the balance: ${balance}!`); }
 
-      const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote : prediction, amount});
+      const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote: prediction, amount });
 
       const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
       const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
@@ -724,7 +723,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload });
     } catch (err) {
       dispatch(showAlert(('Staking failed: ' + err.message)));
-      dispatch({ type: arcConstants.ARC_STAKE_REJECTED,
+      dispatch({
+        type: arcConstants.ARC_STAKE_REJECTED,
         payload: {
           avatarAddress: daoAvatarAddress,
           stakerAddress: currentAccountAddress,
