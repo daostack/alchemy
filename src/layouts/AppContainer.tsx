@@ -66,7 +66,11 @@ class AppContainer extends React.Component<IProps, null> {
   public async componentDidMount() {
     const { initializeWeb3, loadCachedState} = this.props;
     initializeWeb3();
-    loadCachedState();
+
+    // If not using local testnet then load cached blockchain data from S3
+    if (Arc.Config.get('network') !== 'ganache') {
+      loadCachedState();
+    }
   }
 
   public componentWillReceiveProps(props: IProps) {
