@@ -136,10 +136,11 @@ const cacheBlockchain = async () => {
     ContentType: fileType,
     ACL: 'public-read'
   };
-  s3.putObject(s3Params, function(err, data) {
+  s3.putObject(s3Params, (err, data) => {
     if (err) {
-      console.log("Error writing data to S3 = ", err, err.stack);
+      console.error("Error writing data to S3 = ", err, err.stack);
     } else {
+      // tslint:disable-next-line:no-console
       console.log("Successfully wrote cached data for " + network + " to S3. ", data);
     }
   });
