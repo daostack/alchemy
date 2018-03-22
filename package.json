@@ -41,7 +41,7 @@
   },
   "scripts": {
     "cache-arc-dev": "ts-node src/bg_cache_worker.ts",
-    "cache-arc-prod": "npm run build && cross-env NODE_ENV=production network=kovan node dist/bg_cache_worker.js",
+    "cache-arc-prod": "cross-env NODE_ENV=production network=kovan ts-node src/bg_cache_worker.ts",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "heroku-postbuild": "npm run build",
     "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
@@ -60,6 +60,7 @@
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.38",
+    "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
     "bip39": "^2.2.0",

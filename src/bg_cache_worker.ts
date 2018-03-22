@@ -4,8 +4,7 @@ process.env.NODE_PATH = __dirname;
 require('module').Module._initPaths();
 
 import * as Arc from "@daostack/arc.js";
-import * as fs from 'fs';
-import * as Redis from 'ioredis';
+import * as aws from 'aws-sdk';
 import { normalize } from "normalizr";
 import promisify = require("es6-promisify");
 import HDWalletProvider from "./lib/truffle-hdwallet-provider";
@@ -16,11 +15,12 @@ import { initialState as arcInitialState, IArcState, IDaoState, TransactionState
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
-const redis = new Redis();
-
+// TODO: this is an account of Tibet's used as the default account in reading from Infura
+//       What should this actually be? I dont think it actually matters since we are only reading, but it is still needed
 const mnemonic = "upstart driveway blighted quartet machinist garter clinic sash enjoyment reputable unknotted elastic";
 
 const network = Arc.Config.get('network');
+
 if (process.env.NODE_ENV == 'production') {
   // Use Infura on production
   const infuraNetwork = network == 'live' ? 'mainnet' : network;
@@ -31,12 +31,12 @@ if (process.env.NODE_ENV == 'production') {
 
   process.env.API_URL = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
 } else {
-  process.env.API_URL = "http://127.0.0.1:3001";
+  process.env.API_URL = process.env.API_URL || "http://127.0.0.1:3001";
 }
 
 const cacheBlockchain = async () => {
-  // TODO: store cached data and last block in redis and only load new data since last check
-  let lastBlock = Number(redis.get('alchemy-last-block')) || 0;
+  // TODO: store last block checked somewhere (redis?) and only load new data since last check
+  let lastBlock = 0;
 
   // tslint:disable-next-line:no-console
   console.log("Starting to cache the blockchain from block ", lastBlock);
@@ -63,8 +63,8 @@ const cacheBlockchain = async () => {
   initialState.daosLoaded = true;
 
   const normalizedData = normalize(daos, schemas.daoList);
-  initialState.daos = normalizedData.entities.daos;
-  initialState.proposals = normalizedData.entities.proposals;
+  initialState.daos = normalizedData.entities.daos || {};
+  initialState.proposals = normalizedData.entities.proposals || {};
 
   const genesisProtocol = await Arc.GenesisProtocol.deployed();
 
@@ -123,13 +123,25 @@ const cacheBlockchain = async () => {
     console.error("Error getting stakes: ", e);
   }
 
-  fs.writeFile(__dirname + '/initialArcState-' + network + '.json', JSON.stringify(initialState), (err) => {
+  // Write cached blockchain data to S3
+  aws.config.region = 'us-west-2';
+  const s3 = new aws.S3();
+  const fileName = 'initialArcState-' + network + '.json';
+  const fileType = 'application/json';
+  const s3Params = {
+    Body: JSON.stringify(initialState),
+    Bucket: process.env.S3_BUCKET || 'daostack-alchemy',
+    Key: fileName,
+    //Expires: 60,
+    ContentType: fileType,
+    ACL: 'public-read'
+  };
+  s3.putObject(s3Params, function(err, data) {
     if (err) {
-      throw err;
+      console.log("Error writing data to S3 = ", err, err.stack);
+    } else {
+      console.log("Successfully wrote cached data for " + network + " to S3. ", data);
     }
-
-    // tslint:disable-next-line:no-console
-    console.log('The file has been saved!');
   });
 
   setTimeout(cacheBlockchain, 1000);

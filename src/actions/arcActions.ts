@@ -24,7 +24,7 @@ export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_PENDING, payload: null });
     try {
-      const cachedState = await axios.get(process.env.BASE_URL + '/initialArcState-' + Arc.Config.get('network') + '.json');
+      const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/daostack-alchemy/initialArcState-' + Arc.Config.get('network') + '.json');
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: cachedState.data });
     } catch (e) {
       console.error(e);
