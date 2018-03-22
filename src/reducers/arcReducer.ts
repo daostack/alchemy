@@ -198,6 +198,18 @@ const arcReducer = (state = initialState, action: any) => {
       }});
     }
 
+    case ActionTypes.ARC_STAKE_REJECTED: {
+      return update(state, { daos: {
+        [payload.avatarAddress] : {
+          members: {
+            [payload.stakerAddress]: {
+              stakes : { $unset : [payload.proposalId] },
+            },
+          },
+        },
+      }});
+    }
+
     case ActionTypes.ARC_STAKE_FULFILLED: {
       // Update the account that staked
       state = update(state, { daos: {

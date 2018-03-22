@@ -8,6 +8,7 @@ import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import * as Web3 from "web3";
 
+import { showAlert } from "actions/notificationsActions";
 import * as arcConstants from "constants/arcConstants";
 import Util from "lib/util";
 import { IRootState } from "reducers/index";
@@ -18,6 +19,7 @@ import { IAccountState,
          ProposalStates,
          TransactionStates,
          VoteOptions } from "reducers/arcReducer";
+
 import * as schemas from "../schemas";
 
 export function loadCachedState() {
@@ -43,6 +45,7 @@ export function getDAOs() {
     const newOrgEvents = daoCreator.InitialSchemesSet({}, { fromBlock: 0 });
     newOrgEvents.get(async (err: Error, eventsArray: any[]) => {
       if (err) {
+        dispatch(showAlert(('Could not get DAOs: ' + err.message)));
         dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
       }
 
@@ -469,6 +472,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
       dispatch(push("/dao/" + dao.avatar.address));
     } catch (err) {
+      dispatch(showAlert(('Failed to create DAO: ' + err.message)));
       dispatch({ type: arcConstants.ARC_CREATE_DAO_REJECTED, payload: err.message });
     }
   }; /* EO createDAO */
@@ -567,6 +571,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_FULFILLED, payload });
       dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
+      dispatch(showAlert(('Failed to create proposal: ' + err.message)));
       dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_REJECTED, payload: err.message });
     }
   };
@@ -659,6 +664,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
 
       dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload });
     } catch (err) {
+      dispatch(showAlert(('Voting failed: ' + err.message)));
       dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
     }
   };
@@ -732,8 +738,15 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 
       dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload });
     } catch (err) {
-      // TODO: update UI
-      dispatch({ type: arcConstants.ARC_STAKE_REJECTED, payload: err.message });
+      dispatch(showAlert(('Staking failed: ' + err.message)));
+      dispatch({ type: arcConstants.ARC_STAKE_REJECTED,
+        payload: {
+          avatarAddress: daoAvatarAddress,
+          stakerAddress: currentAccountAddress,
+          proposalId,
+          error: err.message
+        }
+      });
     }
   };
 }
