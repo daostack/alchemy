@@ -15,7 +15,7 @@ import { initialState as arcInitialState, IArcState, IDaoState, TransactionState
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
-const arcjsNetwork = Arc.ConfigService.get('arcjs_network');
+const arcjsNetwork = Arc.ConfigService.get('network');
 
 if (process.env.NODE_ENV == 'production') {
   // Use Infura on production
