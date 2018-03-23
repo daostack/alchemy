@@ -520,7 +520,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       // Cast a Yes vote as the owner of the proposal?
       //const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote: VoteOptions.Yes});
 
-      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescriptionHash");
+      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
       const submittedTime = Math.round((new Date()).getTime() / 1000);
 
       // Save the proposal title, description and submitted time on the server
