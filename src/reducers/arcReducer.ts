@@ -120,6 +120,10 @@ const arcReducer = (state = initialState, action: any) => {
   }
 
   switch (action.type) {
+    case ActionTypes.ARC_LOAD_CACHED_STATE_FULFILLED: {
+      return payload;
+    }
+
     case ActionTypes.ARC_GET_DAOS_FULFILLED: {
       return update(state, { daosLoaded : { $set : true } });
     }

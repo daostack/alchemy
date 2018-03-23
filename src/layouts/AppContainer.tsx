@@ -1,4 +1,5 @@
 import * as Arc from '@daostack/arc.js';
+import axios from "axios";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Route, Switch } from "react-router-dom";
@@ -40,15 +41,17 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
 });
 
 interface IDispatchProps {
-  initializeWeb3: any;
-  changeAccount: any;
+  changeAccount: typeof web3Actions.changeAccount;
   dismissAlert: typeof notificationsActions.dismissAlert;
+  initializeWeb3: typeof web3Actions.initializeWeb3;
+  loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
-  initializeWeb3: web3Actions.initializeWeb3,
   changeAccount: web3Actions.changeAccount,
   dismissAlert: notificationsActions.dismissAlert,
+  initializeWeb3: web3Actions.initializeWeb3,
+  loadCachedState: arcActions.loadCachedState,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -61,8 +64,13 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { initializeWeb3} = this.props;
+    const { initializeWeb3, loadCachedState} = this.props;
     initializeWeb3();
+
+    // If not using local testnet then load cached blockchain data from S3
+    if (Arc.Config.get('arcjs_network') !== 'ganache') {
+      loadCachedState();
+    }
   }
 
   public componentWillReceiveProps(props: IProps) {

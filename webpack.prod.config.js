@@ -12,8 +12,6 @@ const extractSass = new ExtractTextPlugin({
   filename: "[name].[contenthash].css"
 });
 
-network = process.env.arcjs_network || 'kovan';
-
 module.exports = merge(baseConfig, {
   devtool: 'nosources-source-map',
 
@@ -62,9 +60,10 @@ module.exports = merge(baseConfig, {
     extractSass,
     new webpack.DefinePlugin({
       'process.env': {
-        'network': JSON.stringify(network),
-        'NODE_ENV': JSON.stringify('production'),
-        'API_URL': JSON.stringify('https://daostack-alchemy.herokuapp.com')
+        'NODE_ENV': JSON.stringify("production"),
+        'arcjs_network': JSON.stringify(process.env.arcjs_network || "kovan"),
+        'API_URL': JSON.stringify(process.env.API_URL || "https://daostack-alchemy.herokuapp.com"),
+        'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io")
       },
     }),
     new CopyWebpackPlugin([
