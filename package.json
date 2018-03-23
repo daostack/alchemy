@@ -47,17 +47,17 @@
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start test.ganacheDb.clean",
     "ganacheDb-save": "npm explore @daostack/arc.js -- npm start test.ganacheDb.zip",
     "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start test.ganacheDb.restoreFromZip",
-    "migrate-ganache": "cross-env network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
+    "migrate-ganache": "cross-env arcjs_network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
     "lint": "tslint --project .",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "start": "webpack-dev-server --config webpack.dev.config.js",
-    "start-ganache": "cross-env network=ganache npm run start",
-    "start-kovan": "cross-env network=kovan npm run start",
-    "auto-start-ganache": "cross-env network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
+    "start-ganache": "cross-env arcjs_network=ganache npm run start",
+    "start-kovan": "cross-env arcjs_network=kovan npm run start",
+    "auto-start-ganache": "cross-env arcjs_network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
-    "@daostack/arc.js": "file:../arc.js/daostack-arc.js-0.0.0-alpha.40.tgz",
+    "@daostack/arc.js": "0.0.0-alpha.40",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
     "classnames": "^2.2.5",

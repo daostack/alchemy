@@ -12,7 +12,7 @@ const extractSass = new ExtractTextPlugin({
   filename: "[name].[contenthash].css"
 });
 
-network = process.env.network || 'kovan';
+network = process.env.arcjs_network || 'kovan';
 
 module.exports = merge(baseConfig, {
   devtool: 'nosources-source-map',
