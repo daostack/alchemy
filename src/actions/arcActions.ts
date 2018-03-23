@@ -171,7 +171,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
 
       // Get more proposal details from the GenesisProtocol voting machine
       const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
-      const state = Number(proposalDetails[9]);
+      const state = Number(proposalDetails[8]);
 
       const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
       const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
@@ -209,8 +209,8 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
       }
 
       genesisProposal = {
-        boostedTime: Number(proposalDetails[8]),
-        boostedVotePeriodLimit: Number(proposalDetails[12]),
+        boostedTime: Number(proposalDetails[7]),
+        boostedVotePeriodLimit: Number(proposalDetails[11]),
         preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
         description,
         daoAvatarAddress: dao.avatar.address,
@@ -218,19 +218,19 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
         externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
         nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
         reputationChange: Util.fromWei(contributionProposal.reputationChange),
-        proposer: proposalDetails[11],
+        proposer: proposalDetails[10],
         stakesNo: Util.fromWei(noStakes),
         stakesYes: Util.fromWei(yesStakes),
         state,
-        submittedTime: Number(proposalDetails[7]),
+        submittedTime: Number(proposalDetails[6]),
         title,
-        totalStakes: Util.fromWei(proposalDetails[4]),
+        totalStakes: 0, //Util.fromWei(proposalDetails[8]),
         totalVotes: Util.fromWei(proposalDetails[3]),
         totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
         transactionState: TransactionStates.Confirmed,
         votesYes: Util.fromWei(yesVotes),
         votesNo: Util.fromWei(noVotes),
-        winningVote: Number(proposalDetails[10]),
+        winningVote: Number(proposalDetails[9]),
       };
 
       if (state == ProposalStates.Executed) {
@@ -292,7 +292,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
 
     // Get more proposal details from the GenesisProtocol voting machine
     const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
-    const state = Number(proposalDetails[9]);
+    const state = Number(proposalDetails[8]);
 
     const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
     const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
@@ -307,8 +307,8 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId, staker: currentAccountAddress });
 
     const genesisProposal: any = {
-      boostedTime: Number(proposalDetails[8]),
-      boostedVotePeriodLimit: Number(proposalDetails[12]),
+      boostedTime: Number(proposalDetails[7]),
+      boostedVotePeriodLimit: Number(proposalDetails[11]),
       preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
       description,
       daoAvatarAddress: dao.avatar.address,
@@ -316,19 +316,19 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
       nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
       reputationChange: Util.fromWei(contributionProposal.reputationChange),
-      proposer: proposalDetails[11],
+      proposer: proposalDetails[10],
       stakesNo: Util.fromWei(noStakes),
       stakesYes: Util.fromWei(yesStakes),
       state,
-      submittedTime: Number(proposalDetails[7]),
+      submittedTime: Number(proposalDetails[6]),
       title,
-      totalStakes: Util.fromWei(proposalDetails[4]),
+      totalStakes: 0, //Util.fromWei(proposalDetails[8]),
       totalVotes: Util.fromWei(proposalDetails[3]),
       totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
       transactionState: TransactionStates.Confirmed,
       votesYes: Util.fromWei(yesVotes),
       votesNo: Util.fromWei(noVotes),
-      winningVote: Number(proposalDetails[10]),
+      winningVote: Number(proposalDetails[9]),
     };
 
     if (state == ProposalStates.Executed) {
@@ -348,23 +348,26 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const payload = normalize(proposal, schemas.proposalSchema);
     (payload as any).daoAvatarAddress = proposal.daoAvatarAddress;
 
-    // TODO: only do this if the person did a vote
-    (payload as any).vote = {
-      avatarAddress,
-      proposalId,
-      reputation: Util.fromWei(voterInfo.reputation),
-      transactionState: TransactionStates.Confirmed,
-      vote: voterInfo.vote,
-      voterAddress: currentAccountAddress,
-    };
-    (payload as any).stake = {
-      avatarAddress,
-      proposalId,
-      stake: Util.fromWei(stakerInfo.stake),
-      prediction: stakerInfo.vote,
-      stakerAddress: currentAccountAddress,
-      transactionState: TransactionStates.Confirmed,
-    };
+    if (Util.fromWei(voterInfo.reputation)) {
+      (payload as any).vote = {
+        avatarAddress,
+        proposalId,
+        reputation: Util.fromWei(voterInfo.reputation),
+        transactionState: TransactionStates.Confirmed,
+        vote: voterInfo.vote,
+        voterAddress: currentAccountAddress,
+      };
+    }
+    if (Util.fromWei(stakerInfo.stake)) {
+      (payload as any).stake = {
+        avatarAddress,
+        proposalId,
+        stake: Util.fromWei(stakerInfo.stake),
+        prediction: stakerInfo.vote,
+        stakerAddress: currentAccountAddress,
+        transactionState: TransactionStates.Confirmed,
+      };
+    }
 
     dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload });
   };
