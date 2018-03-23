@@ -63,9 +63,11 @@ class ProposalContainer extends React.Component<IProps, null> {
       const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
 
       const daoAccount = dao.members[currentAccountAddress];
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
+      let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
           currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed;
       if (daoAccount) {
+        currentAccountReputation = daoAccount.reputation;
+        currentAccountTokens = daoAccount.tokens;
         currentAccountVote = daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
         if (daoAccount.stakes[proposal.proposalId]) {
           currentAccountPrediction =  daoAccount.stakes[proposal.proposalId].prediction;
@@ -89,7 +91,7 @@ class ProposalContainer extends React.Component<IProps, null> {
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
               currentVote={currentAccountVote}
-              currentAccountReputation={daoAccount.reputation}
+              currentAccountReputation={currentAccountReputation}
               daoTotalReputation={dao.reputationCount}
               proposal={proposal}
               transactionState={currentAccountVoteState}
@@ -168,7 +170,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
-                  currentAccountTokens={daoAccount.tokens}
+                  currentAccountTokens={currentAccountTokens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
@@ -196,7 +198,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
-                  currentAccountTokens={daoAccount.tokens}
+                  currentAccountTokens={currentAccountTokens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
