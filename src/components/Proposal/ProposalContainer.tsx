@@ -68,12 +68,16 @@ class ProposalContainer extends React.Component<IProps, null> {
       if (daoAccount) {
         currentAccountReputation = daoAccount.reputation;
         currentAccountTokens = daoAccount.tokens;
-        currentAccountVote = daoAccount.votes[proposal.proposalId] ? daoAccount.votes[proposal.proposalId].vote : 0;
+
+        if (daoAccount.votes[proposal.proposalId]) {
+          currentAccountVote = daoAccount.votes[proposal.proposalId].vote;
+          currentAccountVoteState = daoAccount.votes[proposal.proposalId].transactionState;
+        }
+
         if (daoAccount.stakes[proposal.proposalId]) {
           currentAccountPrediction =  daoAccount.stakes[proposal.proposalId].prediction;
           currentAccountStake = daoAccount.stakes[proposal.proposalId].stake;
           currentAccountStakeState = daoAccount.stakes[proposal.proposalId].transactionState;
-          currentAccountVoteState = daoAccount.votes[proposal.proposalId].transactionState;
         }
       }
 
