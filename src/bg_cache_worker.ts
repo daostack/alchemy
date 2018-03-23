@@ -23,8 +23,8 @@ if (process.env.NODE_ENV == 'production') {
 
   // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
   const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
-
-  const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/UeW8cwaou03qFgsAHoDP");
+  const infuraKey = process.env.INFURA_KEY;
+  const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/" + infuraKey);
 
   // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
   global.web3 = new Web3(provider.engine);
@@ -63,6 +63,7 @@ const cacheBlockchain = async () => {
   initialState.daosLoaded = true;
 
   const normalizedData = normalize(daos, schemas.daoList);
+  // TODO: use arcReducer to handle this adding
   initialState.daos = normalizedData.entities.daos || {};
   initialState.proposals = normalizedData.entities.proposals || {};
 
@@ -83,6 +84,7 @@ const cacheBlockchain = async () => {
       if (!initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter]) {
         initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter] = { reputation: 0, tokens: 0, votes: {}, stakes: {}};
       }
+      // TODO: use arcReducer to add this.
       initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes[voteEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: voteEventArgs._proposalId,
