@@ -61,7 +61,7 @@ module.exports = merge(baseConfig, {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify("production"),
-        'network': JSON.stringify(process.env.network || "kovan"),
+        'arcjs_network': JSON.stringify(process.env.arcjs_network || "kovan"),
         'API_URL': JSON.stringify(process.env.API_URL || "https://daostack-alchemy.herokuapp.com"),
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io")
       },

@@ -83,7 +83,7 @@ module.exports = merge(baseConfig, {
 
     new webpack.DefinePlugin({
       'process.env': {
-        'network': JSON.stringify(process.env.network || 'ganache'),
+        'arcjs_network': JSON.stringify(process.env.arcjs_network || 'ganache'),
         'NODE_ENV': JSON.stringify('development'),
         'API_URL': JSON.stringify('http://127.0.0.1:3001'),
         'BASE_URL': JSON.stringify("http://localhost:3000")

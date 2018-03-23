@@ -15,11 +15,11 @@ import { initialState as arcInitialState, IArcState, IDaoState, TransactionState
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
-const network = Arc.Config.get('network');
+const arcjsNetwork = Arc.ConfigService.get('arcjs_network');
 
 if (process.env.NODE_ENV == 'production') {
   // Use Infura on production
-  const infuraNetwork = network == 'live' ? 'mainnet' : network;
+  const infuraNetwork = arcjsNetwork == 'live' ? 'mainnet' : arcjsNetwork;
 
   // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
   const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
@@ -128,7 +128,7 @@ const cacheBlockchain = async () => {
   // Write cached blockchain data to S3
   aws.config.region = 'us-west-2';
   const s3 = new aws.S3();
-  const fileName = 'initialArcState-' + network + '.json';
+  const fileName = 'initialArcState-' + arcjsNetwork + '.json';
   const fileType = 'application/json';
   const s3Params = {
     Body: JSON.stringify(initialState),
@@ -143,7 +143,7 @@ const cacheBlockchain = async () => {
       console.error("Error writing data to S3 = ", err, err.stack);
     } else {
       // tslint:disable-next-line:no-console
-      console.log("Successfully wrote cached data for " + network + " to S3. ", data);
+      console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
     }
   });
 

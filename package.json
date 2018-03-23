@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
   "license": "GPL-3.0",
@@ -41,7 +41,7 @@
   },
   "scripts": {
     "cache-arc-dev": "ts-node src/bg_cache_worker.ts",
-    "cache-arc-prod": "cross-env NODE_ENV=production network=kovan ts-node src/bg_cache_worker.ts",
+    "cache-arc-prod": "cross-env NODE_ENV=production arcjs_network=kovan ts-node src/bg_cache_worker.ts",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "heroku-postbuild": "npm run build",
     "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
@@ -49,17 +49,17 @@
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start test.ganacheDb.clean",
     "ganacheDb-save": "npm explore @daostack/arc.js -- npm start test.ganacheDb.zip",
     "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start test.ganacheDb.restoreFromZip",
-    "migrate-ganache": "cross-env network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
+    "migrate-ganache": "cross-env arcjs_network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
     "lint": "tslint --project .",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "start": "webpack-dev-server --config webpack.dev.config.js",
-    "start-ganache": "cross-env network=ganache npm run start",
-    "start-kovan": "cross-env network=kovan npm run start",
-    "auto-start-ganache": "cross-env network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
+    "start-ganache": "cross-env arcjs_network=ganache npm run start",
+    "start-kovan": "cross-env arcjs_network=kovan npm run start",
+    "auto-start-ganache": "cross-env arcjs_network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.38",
+    "@daostack/arc.js": "0.0.0-alpha.40",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",

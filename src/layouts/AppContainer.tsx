@@ -68,7 +68,7 @@ class AppContainer extends React.Component<IProps, null> {
     initializeWeb3();
 
     // If not using local testnet then load cached blockchain data from S3
-    if (Arc.Config.get('network') !== 'ganache') {
+    if (Arc.ConfigService.get('arcjs_network') !== 'ganache') {
       loadCachedState();
     }
   }
