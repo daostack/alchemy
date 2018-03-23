@@ -140,16 +140,28 @@ const arcReducer = (state = initialState, action: any) => {
       }
 
       // Add the current account's vote and stake on the proposal
-      state = update(state, { daos: {
-        [payload.daoAvatarAddress] : {
-          members: {
-            [payload.vote.voterAddress]: {
-              votes : { [payload.vote.proposalId] : { $set : payload.vote }},
-              stakes: { [payload.vote.proposalId] : { $set : payload.stake }},
+      if (payload.vote) {
+        state = update(state, { daos: {
+          [payload.daoAvatarAddress] : {
+            members: {
+              [payload.vote.voterAddress]: {
+                votes : { [payload.vote.proposalId] : { $set : payload.vote }},
+              },
             },
           },
-        },
-      }});
+        }});
+      }
+      if (payload.stake) {
+        state = update(state, { daos: {
+          [payload.daoAvatarAddress] : {
+            members: {
+              [payload.vote.voterAddress]: {
+                stakes: { [payload.vote.proposalId] : { $set : payload.stake }},
+              },
+            },
+          },
+        }});
+      }
 
       return state;
     }
