@@ -2,11 +2,12 @@ import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
 
 export enum ProposalStates {
-  Closed = 0,
-  Executed = 1,
-  PreBoosted = 2,
-  Boosted = 3,
-  QuietEndingPeriod = 4,
+  None = 0,
+  Closed = 1,
+  Executed = 2,
+  PreBoosted = 3,
+  Boosted = 4,
+  QuietEndingPeriod = 5,
 }
 
 export enum TransactionStates {

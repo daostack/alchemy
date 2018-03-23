@@ -209,6 +209,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
       }
 
       genesisProposal = {
+        beneficiary: contributionProposal.beneficiaryAddress,
         boostedTime: Number(proposalDetails[7]),
         boostedVotePeriodLimit: Number(proposalDetails[11]),
         preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
@@ -307,6 +308,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId, staker: currentAccountAddress });
 
     const genesisProposal: any = {
+      beneficiary: contributionProposal.beneficiaryAddress,
       boostedTime: Number(proposalDetails[7]),
       boostedVotePeriodLimit: Number(proposalDetails[11]),
       preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
@@ -518,7 +520,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       // Cast a Yes vote as the owner of the proposal?
       //const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote: VoteOptions.Yes});
 
-      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
+      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescriptionHash");
       const submittedTime = Math.round((new Date()).getTime() / 1000);
 
       // Save the proposal title, description and submitted time on the server
