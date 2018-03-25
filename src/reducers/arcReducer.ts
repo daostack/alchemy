@@ -240,18 +240,6 @@ const arcReducer = (state = initialState, action: any) => {
         proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } },
       });
     }
-
-    case ActionTypes.ARC_STAKE_CONFIRMED: {
-      return update(state, { daos: {
-        [payload.avatarAddress] : {
-          members: {
-            [payload.stakerAddress]: {
-              stakes : { [payload.proposalId] : { $set : payload }},
-            },
-          },
-        },
-      }});
-    }
   }
 
   return state;
