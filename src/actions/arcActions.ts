@@ -715,7 +715,6 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
   };
 }
 
-
 export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddress: string, vote: number, reputation: number) {
   return async (dispatch: any) => {
     const daoInstance = await Arc.DAO.at(avatarAddress);
