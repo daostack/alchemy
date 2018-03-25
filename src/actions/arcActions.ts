@@ -21,6 +21,7 @@ import { IAccountState,
          VoteOptions } from "reducers/arcReducer";
 
 import * as schemas from "../schemas";
+import BigNumber from "bignumber.js";
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -654,9 +655,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(currentAccountAddress);
 
-      const amount = web3.toWei(stake, "ether");
-      if (amount < minimumStakingFee) { throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`); }
-      if (amount > balance) { throw new Error(`Staked more than than the balance: ${balance}!`); }
+      const amount: BigNumber = new BigNumber(web3.toWei(stake, 'ether'));
+      if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Number(web3.fromWei(minimumStakingFee, 'ether'))}!`); }
+      if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Number(web3.fromWei(balance, 'ether'))}!`); }
 
       const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote: prediction, amount });
     } catch (err) {
