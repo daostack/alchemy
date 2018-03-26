@@ -3,9 +3,9 @@ import { BigNumber } from "bignumber.js";
 
 export default class Util {
 
-  public static fromWei(amount: BigNumber): number {
+  public static fromWei(amount: BigNumber): BigNumber {
     const web3 = Arc.Utils.getWeb3();
-    return Number(web3.fromWei(amount, "ether"));
+    return web3.fromWei(amount, "ether");
   }
 
   // TODO: should probably return a BigNumber instead of a string.

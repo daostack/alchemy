@@ -88,7 +88,7 @@ const cacheBlockchain = async () => {
       initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes[voteEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: voteEventArgs._proposalId,
-        reputation: Util.fromWei(voteEventArgs._reputation),
+        reputation: Util.fromWei(voteEventArgs._reputation).toNumber(),
         transactionState: TransactionStates.Confirmed,
         vote: Number(voteEventArgs._vote),
         voterAddress: voteEventArgs._voter
@@ -116,7 +116,7 @@ const cacheBlockchain = async () => {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: stakeEventArgs._proposalId,
         transactionState: TransactionStates.Confirmed,
-        stake: Util.fromWei(stakeEventArgs._amount),
+        stake: Util.fromWei(stakeEventArgs._amount).toNumber(),
         prediction: Number(stakeEventArgs._vote),
         stakerAddress: stakeEventArgs._voter
       }
