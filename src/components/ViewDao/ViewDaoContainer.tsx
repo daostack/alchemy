@@ -36,13 +36,15 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  confirmStake: typeof arcActions.confirmStake;
+  onStakeEvent: typeof arcActions.onStakeEvent;
+  onVoteEvent: typeof arcActions.onVoteEvent;
   getDAO: typeof arcActions.getDAO;
   getProposal: typeof arcActions.getProposal;
 }
 
 const mapDispatchToProps = {
-  confirmStake: arcActions.confirmStake,
+  onStakeEvent: arcActions.onStakeEvent,
+  onVoteEvent: arcActions.onVoteEvent,
   getDAO: arcActions.getDAO,
   getProposal: arcActions.getProposal,
 };
@@ -52,9 +54,10 @@ type IProps = IStateProps & IDispatchProps;
 class ViewDaoContainer extends React.Component<IProps, null> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
+  public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
 
   public async componentDidMount() {
-    const { confirmStake, currentAccountAddress, daoAddress, dao, getDAO, getProposal } = this.props;
+    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
@@ -74,9 +77,14 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     // Watch for new, confirmed stakes coming in for the current account
     // TODO: watch for all new stakes from anyone?
     const genesisProtocolInstance = await Arc.GenesisProtocol.deployed();
-    this.stakeEventWatcher = genesisProtocolInstance.Stake({ _voter: currentAccountAddress }, { fromBlock: "latest" });
+    this.stakeEventWatcher = genesisProtocolInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
-      confirmStake(daoAddress, result[0].args._proposalId, result[0].args._voter, result[0].args._vote, Util.fromWei(result[0].args._amount));
+      onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount));
+    });
+
+    this.voteEventWatcher = genesisProtocolInstance.VoteProposal({ }, { fromBlock: "latest" });
+    this.voteEventWatcher.watch((error, result) => {
+      onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation));
     });
   }
 
@@ -87,6 +95,10 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (this.stakeEventWatcher) {
       this.stakeEventWatcher.stopWatching();
+    }
+
+    if (this.voteEventWatcher) {
+      this.voteEventWatcher.stopWatching();
     }
   }
 
