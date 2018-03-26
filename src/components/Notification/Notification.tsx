@@ -31,6 +31,7 @@ export default class Notification extends React.Component<IProps, null> {
             <span>step {step} out of {totalSteps}</span>
           ) :
           <span>step {step}</span> }
+        <br/>
         <small className={css.timestamp}>{moment(timestamp).fromNow()}</small>
         <img
           src="/assets/images/Icon/Close.svg"
