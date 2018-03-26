@@ -21,6 +21,7 @@ import { IAccountState,
 
 import * as schemas from "../schemas";
 import BigNumber from "bignumber.js";
+import { IAsyncAction, AsyncActionSequence } from "reducers/operations";
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -613,24 +614,39 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
   };
 }
 
+export type StakeAction = IAsyncAction<'ARC_STAKE', {
+  avatarAddress: string,
+  proposalId: string,
+  stake: number,
+  prediction: VoteOptions,
+  stakerAddress: string,
+}, {
+  proposal: any,
+  stake: any,
+}>
+
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stake: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const web3: Web3 = Arc.Utils.getWeb3();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
+    const proposal: IProposalState = getState().arc.proposals[proposalId];
 
-    // TODO: num transactions pending...
-    let payload: any = {
-      stake: {
-        avatarAddress: daoAvatarAddress,
-        proposalId,
-        stake,
-        prediction,
-        stakerAddress: currentAccountAddress,
-        transactionState: TransactionStates.Unconfirmed,
-      },
+    const meta = {
+      avatarAddress: daoAvatarAddress,
+      proposalId,
+      stake,
+      prediction,
+      stakerAddress: currentAccountAddress,
     };
 
-    dispatch({ type: arcConstants.ARC_STAKE_PENDING, payload });
+    dispatch({
+      type: arcConstants.ARC_STAKE,
+      sequence: AsyncActionSequence.Pending,
+      operation: {
+        message: `Staking on "${proposal.title}" ...`
+      },
+      meta
+    } as StakeAction);
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
@@ -657,20 +673,20 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote: prediction, amount });
     } catch (err) {
       dispatch({
-        type: arcConstants.ARC_STAKE_REJECTED,
-        payload: {
-          avatarAddress: daoAvatarAddress,
-          stakerAddress: currentAccountAddress,
-          proposalId,
-          error: err.message
+        type: arcConstants.ARC_STAKE,
+        sequence: AsyncActionSequence.Failure,
+        meta,
+        operation: {
+          message: `Staking on "${proposal.title}" failed: ${err.message}`
         }
-      });
+      } as StakeAction);
     }
   };
 }
 
 export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAddress: string, prediction: number, stake: number) {
-  return async (dispatch: any) => {
+  return async (dispatch: any, getState: () => IRootState) => {
+    const proposal: IProposalState = getState().arc.proposals[proposalId];
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
@@ -686,6 +702,14 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
 
     const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
     const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
+
+    const meta = {
+      avatarAddress,
+      proposalId,
+      stake,
+      prediction,
+      stakerAddress,
+    }
 
     const payload = {
       daoAvatarAddress: avatarAddress,
@@ -706,7 +730,15 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
       },
     };
 
-    dispatch({ type: arcConstants.ARC_STAKE_FULFILLED, payload });
+    dispatch({
+      type: arcConstants.ARC_STAKE,
+      sequence: AsyncActionSequence.Success,
+      operation: {
+        message: `Staked on "${proposal.title}" successfully!`
+      },
+      meta,
+      payload
+    } as StakeAction);
   };
 }
 

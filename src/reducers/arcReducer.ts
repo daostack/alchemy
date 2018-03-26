@@ -1,5 +1,7 @@
 import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
+import { StakeAction } from "actions/arcActions";
+import { AsyncActionSequence } from "./operations";
 
 export enum ProposalStates {
   None = 0,
@@ -199,46 +201,56 @@ const arcReducer = (state = initialState, action: any) => {
       });
     }
 
-    case ActionTypes.ARC_STAKE_PENDING: {
-      return update(state, { daos: {
-        [payload.stake.avatarAddress] : {
-          members: {
-            [payload.stake.stakerAddress]: {
-              stakes : { [payload.stake.proposalId] : { $set : payload.stake }},
-            },
-          },
-        },
-      }});
-    }
+    case ActionTypes.ARC_STAKE: {
+      const { meta, sequence, payload } = action as StakeAction;
+      const { avatarAddress, stakerAddress, proposalId, prediction, stake } = meta;
 
-    case ActionTypes.ARC_STAKE_REJECTED: {
-      return update(state, { daos: {
-        [payload.avatarAddress] : {
-          members: {
-            [payload.stakerAddress]: {
-              stakes : { $unset : [payload.proposalId] },
+      switch (sequence) {
+        case AsyncActionSequence.Pending:
+          return update(state, { daos: {
+            [avatarAddress] : {
+              members: {
+                [stakerAddress]: {
+                  stakes : { [proposalId] : { $set : {
+                    avatarAddress,
+                    stakerAddress,
+                    proposalId,
+                    prediction,
+                    stake,
+                    transactionState: TransactionStates.Unconfirmed
+                  } }},
+                },
+              },
             },
-          },
-        },
-      }});
-    }
-
-    case ActionTypes.ARC_STAKE_FULFILLED: {
-      // Update the account that staked
-      state = update(state, { daos: {
-        [payload.daoAvatarAddress] : {
-          members: {
-            [payload.stake.stakerAddress]: {
-              stakes : { [payload.stake.proposalId] : { $set : payload.stake }},
+          }});
+        case AsyncActionSequence.Failure:
+          return update(state, { daos: {
+            [avatarAddress] : {
+              members: {
+                [stakerAddress]: {
+                  stakes : { $unset : [proposalId] },
+                },
+              },
             },
-          },
-        },
-      }});
+          }});
+        case AsyncActionSequence.Success: {
+          // Update the account that staked
+          state = update(state, { daos: {
+            [avatarAddress] : {
+              members: {
+                [stakerAddress]: {
+                  stakes : { [proposalId] : { $set : payload.stake }},
+                },
+              },
+            },
+          }});
 
-      // Merge in proposal
-      return update(state, {
-        proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } },
-      });
+          // Merge in proposal
+          return update(state, {
+            proposals: { [proposalId]: { $merge : action.payload.proposal } },
+          });
+        }
+      }
     }
   }
 
