@@ -1,7 +1,7 @@
 import * as moment from "moment";
 import * as React from "react";
 import * as css from "./Notification.scss";
-import { IOperation } from "reducers/operations";
+import { IOperation, OperationsStatus } from "reducers/operations";
 
 interface IProps {
   operation: IOperation;
@@ -33,11 +33,12 @@ export default class Notification extends React.Component<IProps, null> {
           <span>step {step}</span> }
         <br/>
         <small className={css.timestamp}>{moment(timestamp).fromNow()}</small>
-        <img
+        { operation.status !== OperationsStatus.Pending ? <img
           src="/assets/images/Icon/Close.svg"
           alt="close"
           className={css.close}
           onClick={this.handleClose}/>
+          : ''}
       </div>
     );
   }
