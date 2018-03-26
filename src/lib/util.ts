@@ -8,6 +8,7 @@ export default class Util {
     return Number(web3.fromWei(amount, "ether"));
   }
 
+  // TODO: should probably return a BigNumber instead of a string.
   public static toWei(amount: number): string {
     const web3 = Arc.Utils.getWeb3();
     return web3.toWei(amount, "ether");
