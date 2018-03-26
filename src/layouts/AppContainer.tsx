@@ -26,7 +26,6 @@ import HeaderContainer from "layouts/HeaderContainer";
 import * as css from "./App.scss";
 import { IOperationsState } from 'reducers/operations';
 
-
 interface IStateProps {
   arc: IArcState;
   connectionStatus: ConnectionStatus;
