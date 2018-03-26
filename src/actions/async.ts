@@ -17,6 +17,7 @@ export enum AsyncActionSequence {
 
 /**
  * Defines a type-safe action for async actions which can be pending, can fail or successeed and can be resetted/canceled.
+ * The `type` and `meta` should be the same accross actions which represent the same "operation".
  */
 export interface IAsyncAction<Type extends string, Meta, Payload> {
   type: Type;
