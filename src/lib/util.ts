@@ -3,9 +3,14 @@ import * as BigNumber from "bignumber.js";
 
 export default class Util {
 
-  public static fromWei(amount: BigNumber.BigNumber) {
+  public static fromWei(amount: BigNumber.BigNumber): number {
     const web3 = Arc.Utils.getWeb3();
     return Number(web3.fromWei(amount, "ether"));
+  }
+
+  public static toWei(amount: number): string {
+    const web3 = Arc.Utils.getWeb3();
+    return web3.toWei(amount, "ether");
   }
 
   public static networkName(id: number) {
