@@ -7,7 +7,6 @@ import * as Web3 from "web3";
 import { ActionTypes } from "constants/web3Constants";
 import Util from "lib/util";
 import { IWeb3State } from "reducers/web3Reducer";
-import { showAlert } from "./notificationsActions";
 
 export function initializeWeb3() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
@@ -21,7 +20,6 @@ export function initializeWeb3() {
         type: ActionTypes.WEB3_CONNECTION_REJECTED,
         action: "Can't connect to web3",
       };
-      dispatch(showAlert("Can't connect to web3"));
       dispatch(action);
       return;
     }
@@ -30,7 +28,6 @@ export function initializeWeb3() {
         type: ActionTypes.WEB3_CONNECTION_REJECTED,
         action: "Can't connect to web3",
       };
-      dispatch(showAlert("Can't connect to web3"));
       dispatch(action);
       return;
     }

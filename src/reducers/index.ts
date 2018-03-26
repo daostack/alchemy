@@ -2,19 +2,19 @@ import { routerReducer } from "react-router-redux";
 import { combineReducers, Reducer } from "redux";
 
 import arcReducer, { IArcState } from "./arcReducer";
-import { INotificationState, notificationsReducer } from "./notificationsReducer";
 import web3Reducer, { IWeb3State } from "./web3Reducer";
+import { IOperationsState, operationsReducer } from "./operations";
 
 export interface IRootState {
   arc: IArcState;
-  notifications: INotificationState;
+  operations: IOperationsState;
   web3: IWeb3State;
   router: any;
 }
 
 const reducers = {
   arc: arcReducer,
-  notifications: notificationsReducer,
+  operations: operationsReducer,
   web3: web3Reducer,
   router: routerReducer,
 };

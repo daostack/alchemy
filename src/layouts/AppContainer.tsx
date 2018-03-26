@@ -12,7 +12,7 @@ import store from "../configureStore";
 
 import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
-import * as notificationsActions from "actions/notificationsActions";
+import * as operationsActions from 'actions/operationsActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
@@ -23,33 +23,34 @@ import Notification from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import HeaderContainer from "layouts/HeaderContainer";
 
-import { INotificationState } from "reducers/notificationsReducer";
 import * as css from "./App.scss";
+import { IOperationsState } from 'reducers/operations';
+
 
 interface IStateProps {
   arc: IArcState;
   connectionStatus: ConnectionStatus;
   ethAccountAddress: string | null;
-  notifications: INotificationState;
+  operations: IOperationsState,
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
   arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
-  notifications: state.notifications,
+  operations: state.operations,
 });
 
 interface IDispatchProps {
   changeAccount: typeof web3Actions.changeAccount;
-  dismissAlert: typeof notificationsActions.dismissAlert;
+  dismissOperation: typeof operationsActions.dismissOperation;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
   changeAccount: web3Actions.changeAccount,
-  dismissAlert: notificationsActions.dismissAlert,
+  dismissOperation: operationsActions.dismissOperation,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
 };
@@ -92,7 +93,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, notifications, ethAccountAddress, dismissAlert } = this.props;
+    const { connectionStatus, operations, ethAccountAddress, dismissOperation } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending
@@ -115,13 +116,11 @@ class AppContainer extends React.Component<IProps, null> {
               </Switch>
             </div>
             <div className={css.notificationsWrapper}>
-              {notifications.map((n) =>
+              {Object.keys(operations).map((key) => ({key, operation: operations[key]})).map(({key, operation}) =>
                 (<Notification
-                  key={n.id}
-                  id={n.id}
-                  message={n.message}
-                  timestamp={n.timestamp}
-                  close={() => dismissAlert(n.id)}
+                  key={key}
+                  operation={operation}
+                  close={() => dismissOperation(key)}
                 />),
               )}
             </div>
