@@ -1,7 +1,7 @@
 import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
 import { StakeAction } from "actions/arcActions";
-import { AsyncActionSequence } from "./operations";
+import { AsyncActionSequence } from "actions/async";
 
 export enum ProposalStates {
   None = 0,

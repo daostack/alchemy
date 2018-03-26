@@ -21,7 +21,7 @@ import { IAccountState,
 
 import * as schemas from "../schemas";
 import BigNumber from "bignumber.js";
-import { IAsyncAction, AsyncActionSequence } from "reducers/operations";
+import { IAsyncAction, AsyncActionSequence } from "actions/async";
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
