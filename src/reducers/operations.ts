@@ -19,9 +19,18 @@ export interface IOperation {
   timestamp: number;
 }
 
+/**
+ * Each operation is given a stable key which is simply the hash of it's action's `type` and `meta`.
+ * This means that that actions with the same `type` and different `meta` will be treated as different.
+ */
 export interface IOperationsState {
   [hash: string]: IOperation
 }
+
+/**
+ * A reducer that keeps track of currently running operations.
+ * Multiple `pending` actions with the same key will increment the `step` until either a `failure`, a `succeess` or a `reset` happens.
+ */
 export const operationsReducer =
   (state: IOperationsState = {}, action: Action): IOperationsState => {
       if (isAsyncAction(action)) {
@@ -38,6 +47,7 @@ export const operationsReducer =
           timestamp: +moment() // TODO: this makes the reducer impure. figure out a better way.
         }
 
+        /* initialize with defaults if does not exist yet */
         if (!state[hash]) {
           state = update(state, {
             [hash]: {
@@ -82,6 +92,11 @@ export const operationsReducer =
       return state;
     };
 
+/**
+ * A middleware that resets a failed action after timeout.
+ * It respects AsyncAction.ttl if it's defined.
+ * @param ttl default timeout before resetting a failed action. zero means: do not reset.
+ */
 export const failureResetter =
   (ttl: number = 5000): Middleware =>
     (store) => (next) => (action: any) => {
@@ -90,13 +105,15 @@ export const failureResetter =
         const { operation } = action;
         const timeout = (operation && operation.ttl) || ttl;
 
-        setTimeout(() => {
-          store.dispatch({
-            type: action.type,
-            meta: action.meta,
-            sequence: AsyncActionSequence.Reset
-          } as IAsyncAction<any, any, any>);
-        }, timeout)
+        if (ttl) {
+          setTimeout(() => {
+            store.dispatch({
+              type: action.type,
+              meta: action.meta,
+              sequence: AsyncActionSequence.Reset
+            } as IAsyncAction<any, any, any>);
+          }, timeout)
+        }
       }
 
       return next(action);
