@@ -390,8 +390,8 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         member = members[i];
         founders[i] = {
           address: member.address,
-          tokens: web3.toWei(member.tokens, "ether"),
-          reputation: web3.toWei(member.reputation, "ether"),
+          tokens: Util.toWei(member.tokens),
+          reputation: Util.toWei(member.reputation),
         };
       }
 
@@ -438,7 +438,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       const contributionReward = await Arc.ContributionReward.deployed();
       const contributionRewardParamsHash = (await contributionReward.setParameters({
-        orgNativeTokenFee: web3.toWei(0, "ether"),
+        orgNativeTokenFee: Util.toWei(0),
         votingMachineAddress: votingMachine.contract.address,
         voteParametersHash: votingMachineParamsHash,
       })).result;
@@ -508,10 +508,10 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         avatar: daoAvatarAddress,
         beneficiaryAddress: beneficiary,
         description,
-        nativeTokenReward: web3.toWei(nativeTokenReward, "ether"),
+        nativeTokenReward: Util.toWei(nativeTokenReward),
         numberOfPeriods: 1,
         periodLength: 1,
-        reputationChange: web3.toWei(reputationReward, "ether"),
+        reputationChange: Util.toWei(reputationReward),
       });
 
       // TODO: error checking
@@ -655,7 +655,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(currentAccountAddress);
 
-      const amount: BigNumber = new BigNumber(web3.toWei(stake, 'ether'));
+      const amount: BigNumber = new BigNumber(Util.toWei(stake);
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Number(web3.fromWei(minimumStakingFee, 'ether'))}!`); }
       if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Number(web3.fromWei(balance, 'ether'))}!`); }
 
