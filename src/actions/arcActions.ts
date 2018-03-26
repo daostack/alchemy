@@ -655,9 +655,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(currentAccountAddress);
 
-      const amount: BigNumber = new BigNumber(Util.toWei(stake);
-      if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Number(web3.fromWei(minimumStakingFee, 'ether'))}!`); }
-      if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Number(web3.fromWei(balance, 'ether'))}!`); }
+      const amount: BigNumber = new BigNumber(Util.toWei(stake));
+      if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${web3.fromWei(minimumStakingFee, 'ether')}!`); }
+      if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${web3.fromWei(balance, 'ether')}!`); }
 
       const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote: prediction, amount });
     } catch (err) {
