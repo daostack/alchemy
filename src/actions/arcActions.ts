@@ -21,6 +21,7 @@ import { IAccountState,
          VoteOptions } from "reducers/arcReducer";
 
 import * as schemas from "../schemas";
+import BigNumber from "bignumber.js";
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -86,9 +87,9 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     proposals: [],
     proposalsLoaded: false,
     reputationAddress: await dao.reputation.address,
-    reputationCount: Util.fromWei(await dao.reputation.totalSupply()),
+    reputationCount: Util.fromWei(await dao.reputation.totalSupply()).toNumber(),
     tokenAddress: await dao.token.address,
-    tokenCount: Util.fromWei(await dao.token.totalSupply()),
+    tokenCount: Util.fromWei(await dao.token.totalSupply()).toNumber(),
     tokenName: await dao.getTokenName(),
     tokenSymbol: await dao.getTokenSymbol(),
   };
@@ -128,9 +129,9 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
       const address = memberAddresses[cnt];
       const member = { address, tokens: 0, reputation: 0, votes: {}, stakes: {} };
       const tokens = await dao.token.balanceOf.call(address);
-      member.tokens = Util.fromWei(tokens);
+      member.tokens = Util.fromWei(tokens).toNumber();
       const reputation = await dao.reputation.reputationOf.call(address);
-      member.reputation = Util.fromWei(reputation);
+      member.reputation = Util.fromWei(reputation).toNumber();
       members[address] = member;
     }
 
@@ -190,7 +191,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
         daoData.members[currentAccountAddress].votes[proposalId] = {
           avatarAddress,
           proposalId,
-          reputation: Util.fromWei(voterInfo.reputation),
+          reputation: Util.fromWei(voterInfo.reputation).toNumber(),
           transactionState: TransactionStates.Confirmed,
           vote: voterInfo.vote,
           voterAddress: currentAccountAddress,
@@ -201,7 +202,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
         daoData.members[currentAccountAddress].stakes[proposalId] = {
           avatarAddress,
           proposalId,
-          stake: Util.fromWei(stakerInfo.stake),
+          stake: Util.fromWei(stakerInfo.stake).toNumber(),
           prediction: stakerInfo.vote,
           stakerAddress: currentAccountAddress,
           transactionState: TransactionStates.Confirmed,
@@ -215,22 +216,22 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
         preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
         description,
         daoAvatarAddress: dao.avatar.address,
-        ethReward: Util.fromWei(contributionProposal.ethReward),
-        externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
-        nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
-        reputationChange: Util.fromWei(contributionProposal.reputationChange),
+        ethReward: Util.fromWei(contributionProposal.ethReward).toNumber(),
+        externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward).toNumber(),
+        nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward).toNumber(),
+        reputationChange: Util.fromWei(contributionProposal.reputationChange).toNumber(),
         proposer: proposalDetails[10],
-        stakesNo: Util.fromWei(noStakes),
-        stakesYes: Util.fromWei(yesStakes),
+        stakesNo: Util.fromWei(noStakes).toNumber(),
+        stakesYes: Util.fromWei(yesStakes).toNumber(),
         state,
         submittedTime: Number(proposalDetails[6]),
         title,
-        totalStakes: 0, //Util.fromWei(proposalDetails[8]),
-        totalVotes: Util.fromWei(proposalDetails[3]),
+        totalStakes: 0, //Util.fromWei(proposalDetails[8]).toNumber(),
+        totalVotes: Util.fromWei(proposalDetails[3]).toNumber(),
         totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
         transactionState: TransactionStates.Confirmed,
-        votesYes: Util.fromWei(yesVotes),
-        votesNo: Util.fromWei(noVotes),
+        votesYes: Util.fromWei(yesVotes).toNumber(),
+        votesNo: Util.fromWei(noVotes).toNumber(),
         winningVote: Number(proposalDetails[9]),
       };
 
@@ -240,7 +241,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
         const getExecuteProposalEvents = promisify(executeProposalEventFetcher.get.bind(executeProposalEventFetcher));
         const executeProposalEvents = await getExecuteProposalEvents();
         if (executeProposalEvents.length > 0) {
-          genesisProposal.reputationWhenExecuted = Util.fromWei(executeProposalEvents[0].args._totalReputation);
+          genesisProposal.reputationWhenExecuted = Util.fromWei(executeProposalEvents[0].args._totalReputation).toNumber();
         }
       }
 
@@ -314,22 +315,22 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
       description,
       daoAvatarAddress: dao.avatar.address,
-      ethReward: Util.fromWei(contributionProposal.ethReward),
-      externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
-      nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
-      reputationChange: Util.fromWei(contributionProposal.reputationChange),
+      ethReward: Util.fromWei(contributionProposal.ethReward).toNumber(),
+      externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward).toNumber(),
+      nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward).toNumber(),
+      reputationChange: Util.fromWei(contributionProposal.reputationChange).toNumber(),
       proposer: proposalDetails[10],
-      stakesNo: Util.fromWei(noStakes),
-      stakesYes: Util.fromWei(yesStakes),
+      stakesNo: Util.fromWei(noStakes).toNumber(),
+      stakesYes: Util.fromWei(yesStakes).toNumber(),
       state,
       submittedTime: Number(proposalDetails[6]),
       title,
-      totalStakes: 0, //Util.fromWei(proposalDetails[8]),
-      totalVotes: Util.fromWei(proposalDetails[3]),
+      totalStakes: 0, //Util.fromWei(proposalDetails[8]).toNumber(),
+      totalVotes: Util.fromWei(proposalDetails[3]).toNumber(),
       totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
       transactionState: TransactionStates.Confirmed,
-      votesYes: Util.fromWei(yesVotes),
-      votesNo: Util.fromWei(noVotes),
+      votesYes: Util.fromWei(yesVotes).toNumber(),
+      votesNo: Util.fromWei(noVotes).toNumber(),
       winningVote: Number(proposalDetails[9]),
     };
 
@@ -339,7 +340,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       await new Promise((resolve) => {
         eventFetcher.get((err, events) => {
           if (typeof err === "undefined" && events.length > 0) {
-            genesisProposal.reputationWhenExecuted = Util.fromWei((events[0].args as any)._totalReputation);
+            genesisProposal.reputationWhenExecuted = Util.fromWei((events[0].args as any).toNumber()._totalReputation);
           }
           resolve();
         });
@@ -350,21 +351,21 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const payload = normalize(proposal, schemas.proposalSchema);
     (payload as any).daoAvatarAddress = proposal.daoAvatarAddress;
 
-    if (Util.fromWei(voterInfo.reputation)) {
+    if (Util.fromWei(voterInfo.reputation).toNumber()) {
       (payload as any).vote = {
         avatarAddress,
         proposalId,
-        reputation: Util.fromWei(voterInfo.reputation),
+        reputation: Util.fromWei(voterInfo.reputation).toNumber(),
         transactionState: TransactionStates.Confirmed,
         vote: voterInfo.vote,
         voterAddress: currentAccountAddress,
       };
     }
-    if (Util.fromWei(stakerInfo.stake)) {
+    if (Util.fromWei(stakerInfo.stake).toNumber()) {
       (payload as any).stake = {
         avatarAddress,
         proposalId,
-        stake: Util.fromWei(stakerInfo.stake),
+        stake: Util.fromWei(stakerInfo.stake).toNumber(),
         prediction: stakerInfo.vote,
         stakerAddress: currentAccountAddress,
         transactionState: TransactionStates.Confirmed,
@@ -389,8 +390,8 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         member = members[i];
         founders[i] = {
           address: member.address,
-          tokens: web3.toWei(member.tokens, "ether"),
-          reputation: web3.toWei(member.reputation, "ether"),
+          tokens: Util.toWei(member.tokens),
+          reputation: Util.toWei(member.reputation),
         };
       }
 
@@ -437,7 +438,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       const contributionReward = await Arc.ContributionReward.deployed();
       const contributionRewardParamsHash = (await contributionReward.setParameters({
-        orgNativeTokenFee: web3.toWei(0, "ether"),
+        orgNativeTokenFee: Util.toWei(0),
         votingMachineAddress: votingMachine.contract.address,
         voteParametersHash: votingMachineParamsHash,
       })).result;
@@ -507,10 +508,10 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         avatar: daoAvatarAddress,
         beneficiaryAddress: beneficiary,
         description,
-        nativeTokenReward: web3.toWei(nativeTokenReward, "ether"),
+        nativeTokenReward: Util.toWei(nativeTokenReward),
         numberOfPeriods: 1,
         periodLength: 1,
-        reputationChange: web3.toWei(reputationReward, "ether"),
+        reputationChange: Util.toWei(reputationReward),
       });
 
       // TODO: error checking
@@ -654,9 +655,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
       const balance = await stakingToken.balanceOf(currentAccountAddress);
 
-      const amount = web3.toWei(stake, "ether");
-      if (amount < minimumStakingFee) { throw new Error(`Staked less than the minimum: ${minimumStakingFee}!`); }
-      if (amount > balance) { throw new Error(`Staked more than than the balance: ${balance}!`); }
+      const amount = new BigNumber(Util.toWei(stake));
+      if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
+      if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Util.fromWei(balance).toNumber()}!`); }
 
       const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote: prediction, amount });
     } catch (err) {
@@ -698,8 +699,8 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
         proposalId,
         state,
         boostedTime: Number(proposalDetails[7]),
-        stakesNo: Util.fromWei(noStakes),
-        stakesYes: Util.fromWei(yesStakes),
+        stakesNo: Util.fromWei(noStakes).toNumber(),
+        stakesYes: Util.fromWei(yesStakes).toNumber(),
       },
       stake: {
         avatarAddress,
@@ -739,19 +740,19 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
         proposalId,
         // reputationWhenExecuted,
         state: Number(await votingMachineInstance.getState({ proposalId })),
-        votesNo: Util.fromWei(noVotes),
-        votesYes: Util.fromWei(yesVotes),
+        votesNo: Util.fromWei(noVotes).toNumber(),
+        votesYes: Util.fromWei(yesVotes).toNumber(),
         winningVote,
       },
       // Update DAO total reputation and tokens
       dao: {
-        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
-        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
+        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply().toNumber()),
+        tokenCount: Util.fromWei(await daoInstance.token.totalSupply().toNumber()),
       },
       // Update voter tokens and reputation
       voter: {
-        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress)),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(voterAddress)),
+        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress).toNumber()),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(voterAddress).toNumber()),
       },
       // New vote made on the proposal
       vote: {

@@ -52,7 +52,7 @@ export function initializeWeb3() {
       payload.ethAccountAddress = await Utils.getDefaultAccount();
       const getBalance = promisify(web3.eth.getBalance);
       const balance = await getBalance(payload.ethAccountAddress);
-      payload.ethAccountBalance = Util.fromWei(balance).toFixed(2);
+      payload.ethAccountBalance = Util.fromWei(balance).toNumber().toFixed(2);
     } catch { }
 
     const action = {
@@ -75,7 +75,7 @@ export function changeAccount(accountAddress: string) {
 
     const getBalance = promisify(web3.eth.getBalance);
     const balance = await getBalance(payload.ethAccountAddress);
-    payload.ethAccountBalance = Util.fromWei(balance).toFixed(2);
+    payload.ethAccountBalance = Util.fromWei(balance).toNumber().toFixed(2);
 
     const action = {
       type: ActionTypes.WEB3_CHANGE_ACCOUNT,

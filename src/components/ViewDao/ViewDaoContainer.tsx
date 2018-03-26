@@ -79,12 +79,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     const genesisProtocolInstance = await Arc.GenesisProtocol.deployed();
     this.stakeEventWatcher = genesisProtocolInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
-      onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount));
+      onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount).toNumber());
     });
 
     this.voteEventWatcher = genesisProtocolInstance.VoteProposal({ }, { fromBlock: "latest" });
     this.voteEventWatcher.watch((error, result) => {
-      onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation));
+      onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation).toNumber());
     });
   }
 
