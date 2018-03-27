@@ -212,11 +212,7 @@ const arcReducer = (state = initialState, action: any) => {
               members: {
                 [stakerAddress]: {
                   stakes : { [proposalId] : { $set : {
-                    avatarAddress,
-                    stakerAddress,
-                    proposalId,
-                    prediction,
-                    stake,
+                    ...meta,
                     transactionState: TransactionStates.Unconfirmed
                   } }},
                 },
