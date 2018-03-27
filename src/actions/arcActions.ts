@@ -340,7 +340,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       await new Promise((resolve) => {
         eventFetcher.get((err, events) => {
           if (typeof err === "undefined" && events.length > 0) {
-            genesisProposal.reputationWhenExecuted = Util.fromWei((events[0].args as any).toNumber()._totalReputation);
+            genesisProposal.reputationWhenExecuted = Util.fromWei((events[0].args as any)._totalReputation).toNumber();
           }
           resolve();
         });
@@ -746,13 +746,13 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       },
       // Update DAO total reputation and tokens
       dao: {
-        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply().toNumber()),
-        tokenCount: Util.fromWei(await daoInstance.token.totalSupply().toNumber()),
+        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber(),
+        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()).toNumber(),
       },
       // Update voter tokens and reputation
       voter: {
-        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress).toNumber()),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(voterAddress).toNumber()),
+        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress)).toNumber(),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(voterAddress)).toNumber(),
       },
       // New vote made on the proposal
       vote: {
