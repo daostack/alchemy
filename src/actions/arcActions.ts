@@ -579,23 +579,40 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
   };
 }
 
+export type VoteAction = IAsyncAction<'ARC_VOTE', {
+  avatarAddress: string,
+  proposalId: string,
+  vote: VoteOptions,
+  voterAddress: string,
+}, {
+  proposal: any,
+  dao: any,
+  voter: any,
+  vote: any,
+}>
+
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const web3: Web3 = Arc.Utils.getWeb3();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
+    const proposal = getState().arc.proposals[proposalId];
 
-    // TODO: num transactions pending...
-    let payload: any = {
-      vote: {
-        avatarAddress: daoAvatarAddress,
-        proposalId,
-        transactionState: TransactionStates.Unconfirmed,
-        vote,
-        voterAddress: currentAccountAddress,
-      },
+    const meta = {
+      avatarAddress: daoAvatarAddress,
+      proposalId,
+      vote,
+      voterAddress: currentAccountAddress,
     };
 
-    dispatch({ type: arcConstants.ARC_VOTE_PENDING, payload });
+    dispatch({
+      type: arcConstants.ARC_VOTE,
+      sequence: AsyncActionSequence.Pending,
+      operation: {
+        message: `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${proposal.title}...`,
+        totalSteps: 1,
+      },
+      meta,
+    } as VoteAction);
     try {
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
@@ -609,9 +626,85 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
 
       const voteTransaction = await votingMachineInstance.vote({ proposalId, vote });
     } catch (err) {
-      dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
+      dispatch({
+        type: arcConstants.ARC_VOTE,
+        sequence: AsyncActionSequence.Failure,
+        operation: {
+          message: `Voting on "${proposal.title}" failed: ${err.message}`
+        },
+        meta,
+      } as VoteAction);
     }
   };
+}
+
+export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddress: string, vote: number, reputation: number) {
+  return async (dispatch: any, getState: () => IRootState) => {
+    const daoInstance = await Arc.DAO.at(avatarAddress);
+    const proposal: IProposalState = getState().arc.proposals[proposalId];
+    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+
+    // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
+    const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
+    const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
+
+    const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
+    const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+
+    const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
+    const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
+
+    const winningVote = await votingMachineInstance.getWinningVote({ proposalId });
+
+    const meta = {
+      avatarAddress,
+      proposalId,
+      vote,
+      voterAddress,
+    };
+
+    const payload = {
+      daoAvatarAddress: avatarAddress,
+      // Update the proposal
+      proposal: {
+        proposalId,
+        // reputationWhenExecuted,
+        state: Number(await votingMachineInstance.getState({ proposalId })),
+        votesNo: Util.fromWei(noVotes).toNumber(),
+        votesYes: Util.fromWei(yesVotes).toNumber(),
+        winningVote,
+      },
+      // Update DAO total reputation and tokens
+      dao: {
+        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply().toNumber()),
+        tokenCount: Util.fromWei(await daoInstance.token.totalSupply().toNumber()),
+      },
+      // Update voter tokens and reputation
+      voter: {
+        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress).toNumber()),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(voterAddress).toNumber()),
+      },
+      // New vote made on the proposal
+      vote: {
+        avatarAddress,
+        proposalId,
+        reputation,
+        vote,
+        voterAddress,
+      },
+      alert,
+    };
+
+    dispatch({
+      type: arcConstants.ARC_VOTE,
+      sequence: AsyncActionSequence.Success,
+      meta,
+      operation: {
+        message: `Voted on "${proposal.title}" successfully!`
+      },
+      payload
+    } as VoteAction);
+  }
 }
 
 export type StakeAction = IAsyncAction<'ARC_STAKE', {
@@ -643,7 +736,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       type: arcConstants.ARC_STAKE,
       sequence: AsyncActionSequence.Pending,
       operation: {
-        message: `Staking on "${proposal.title}" ...`
+        message: `Staking on "${proposal.title}" ...`,
+        totalSteps: 1,
       },
       meta
     } as StakeAction);
@@ -740,57 +834,4 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
       payload
     } as StakeAction);
   };
-}
-
-export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddress: string, vote: number, reputation: number) {
-  return async (dispatch: any) => {
-    const daoInstance = await Arc.DAO.at(avatarAddress);
-    const contributionRewardInstance = await Arc.ContributionReward.deployed();
-
-    // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
-    const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
-    const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
-
-    const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-    const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
-
-    const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
-    const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
-
-    const winningVote = await votingMachineInstance.getWinningVote({ proposalId });
-
-    const payload = {
-      daoAvatarAddress: avatarAddress,
-      // Update the proposal
-      proposal: {
-        proposalId,
-        // reputationWhenExecuted,
-        state: Number(await votingMachineInstance.getState({ proposalId })),
-        votesNo: Util.fromWei(noVotes).toNumber(),
-        votesYes: Util.fromWei(yesVotes).toNumber(),
-        winningVote,
-      },
-      // Update DAO total reputation and tokens
-      dao: {
-        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber(),
-        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()).toNumber(),
-      },
-      // Update voter tokens and reputation
-      voter: {
-        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress)).toNumber(),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(voterAddress)).toNumber(),
-      },
-      // New vote made on the proposal
-      vote: {
-        avatarAddress,
-        proposalId,
-        reputation,
-        vote,
-        voterAddress,
-      },
-      alert,
-    };
-
-    dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload });
-  }
 }

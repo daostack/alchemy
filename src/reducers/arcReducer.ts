@@ -1,6 +1,6 @@
 import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
-import { StakeAction } from "actions/arcActions";
+import { StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
 export enum ProposalStates {
@@ -169,36 +169,44 @@ const arcReducer = (state = initialState, action: any) => {
       return state;
     }
 
-    case ActionTypes.ARC_VOTE_PENDING: {
-      return update(state, { daos: {
-        [payload.vote.avatarAddress] : {
-          members: {
-            [payload.vote.voterAddress]: {
-              votes : { [payload.vote.proposalId] : { $set : payload.vote }},
-            },
-          },
-        },
-      }});
-    }
+    case ActionTypes.ARC_VOTE: {
+      const { meta, sequence, payload } = action as VoteAction;
+      const { avatarAddress, proposalId, vote, voterAddress } = meta;
 
-    case ActionTypes.ARC_VOTE_FULFILLED: {
-      // Update the account that voted
-      state = update(state, { daos: {
-        [payload.daoAvatarAddress] : {
-          members: {
-            [payload.vote.voterAddress]: {
-              $merge : payload.voter,
-              votes : { [payload.vote.proposalId] : { $set : payload.vote }},
+      switch (sequence) {
+        case AsyncActionSequence.Pending:
+          return update(state, { daos: {
+            [avatarAddress] : {
+              members: {
+                [voterAddress]: {
+                  votes : { [proposalId] : { $set : {
+                    ...meta,
+                    transactionState: TransactionStates.Unconfirmed
+                  } }},
+                },
+              },
             },
-          },
-        },
-      }});
+          }});
+        case AsyncActionSequence.Success: {
+          // Update the account that voted
+          state = update(state, { daos: {
+            [avatarAddress] : {
+              members: {
+                [voterAddress]: {
+                  $merge : payload.voter,
+                  votes : { [proposalId] : { $set : payload.vote }},
+                },
+              },
+            },
+          }});
 
-      // Merge in proposal and dao changes
-      return update(state, {
-        proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } },
-        daos: { [payload.daoAvatarAddress]: { $merge: action.payload.dao } },
-      });
+          // Merge in proposal and dao changes
+          return update(state, {
+            proposals: { [proposalId]: { $merge : payload.proposal } },
+            daos: { [avatarAddress]: { $merge: payload.dao } },
+          });
+        }
+      }
     }
 
     case ActionTypes.ARC_STAKE: {

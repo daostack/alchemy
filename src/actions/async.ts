@@ -24,7 +24,7 @@ export interface IAsyncAction<Type extends string, Meta, Payload> {
   meta: Meta;
   sequence: AsyncActionSequence;
   operation?: IOperationConfig
-  payload: Payload;
+  payload?: Payload;
 }
 
 export const isAsyncAction = (action: any): action is IAsyncAction<any, any, any> =>
