@@ -1,6 +1,6 @@
 import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
-import { StakeAction, VoteAction } from "actions/arcActions";
+import { StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
 export enum ProposalStates {
@@ -131,9 +131,25 @@ const arcReducer = (state = initialState, action: any) => {
       return update(state, { daosLoaded : { $set : true } });
     }
 
-    case ActionTypes.ARC_CREATE_PROPOSAL_FULFILLED: {
-      // Add the new proposal to the DAO's state
-      return update(state , { daos : { [action.payload.daoAvatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
+    case ActionTypes.ARC_CREATE_PROPOSAL: {
+      const { meta, sequence, payload } = action as CreateProposalAction;
+      const { avatarAddress } = meta;
+
+      switch (sequence) {
+        case AsyncActionSequence.Success:
+          // Add the new proposal to the DAO's state
+          return update(state , {
+            daos : {
+              [avatarAddress]: {
+                proposals: {
+                  $push : [action.payload.result]
+                }
+              }
+            }
+          });
+        default:
+          return state;
+      }
     }
 
     case ActionTypes.ARC_GET_PROPOSAL_FULFILLED: {

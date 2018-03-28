@@ -481,9 +481,23 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
   }; /* EO createDAO */
 }
 
+export type CreateProposalAction = IAsyncAction<'ARC_CREATE_PROPOSAL', { avatarAddress: string }, any>;
+
 export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, beneficiary: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_PENDING, payload: null });
+    const meta = {
+      avatarAddress: daoAvatarAddress
+    };
+
+    dispatch({
+      type: arcConstants.ARC_CREATE_PROPOSAL,
+      sequence: AsyncActionSequence.Pending,
+      operation: {
+        message: `Submitting proposal ...`,
+        totalSteps: 1
+      },
+      meta,
+    } as CreateProposalAction);
     try {
       const web3: Web3 = Arc.Utils.getWeb3();
 
@@ -571,10 +585,25 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const payload = normalize(proposal, schemas.proposalSchema);
       (payload as any).daoAvatarAddress = daoAvatarAddress;
 
-      dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_FULFILLED, payload });
+      dispatch({
+        type: arcConstants.ARC_CREATE_PROPOSAL,
+        sequence: AsyncActionSequence.Success,
+        operation: {
+          message: `Proposal submitted!`,
+        },
+        meta,
+        payload
+      } as CreateProposalAction);
       dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
-      dispatch({ type: arcConstants.ARC_CREATE_PROPOSAL_REJECTED, payload: err.message });
+      dispatch({
+        type: arcConstants.ARC_CREATE_PROPOSAL,
+        sequence: AsyncActionSequence.Failure,
+        operation: {
+          message: `Failed to submit proposal`,
+        },
+        meta,
+      } as CreateProposalAction);
     }
   };
 }
