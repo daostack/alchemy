@@ -9,7 +9,7 @@ export interface IOperationConfig {
 }
 
 export enum AsyncActionSequence {
-  Reset = 'reset',
+  Cancel = 'cancel',
   Pending = 'pending',
   Failure = 'failure',
   Success = 'success'

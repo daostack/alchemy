@@ -57,10 +57,10 @@ export const operationsReducer =
         }
 
         switch (action.sequence) {
-          case 'reset':
-          case 'success':
+          case AsyncActionSequence.Cancel:
+          case AsyncActionSequence.Success:
             return update(state, { $unset: [hash] });
-          case 'pending':
+          case AsyncActionSequence.Pending:
             return update(state, {
               [hash]: {
                 $merge: {
@@ -71,16 +71,16 @@ export const operationsReducer =
                 }
               }
             });
-          case 'failure':
-          return update(state, {
-            [hash]: {
-              $merge: {
-                status: OperationsStatus.Failure,
-                message: operationsConfig.message || state[hash].message,
-                timestamp: +moment(),
+          case AsyncActionSequence.Failure:
+            return update(state, {
+              [hash]: {
+                $merge: {
+                  status: OperationsStatus.Failure,
+                  message: operationsConfig.message || state[hash].message,
+                  timestamp: +moment(),
+                }
               }
-            }
-          });
+            });
         }
       }
 
@@ -110,7 +110,7 @@ export const failureResetter =
             store.dispatch({
               type: action.type,
               meta: action.meta,
-              sequence: AsyncActionSequence.Reset
+              sequence: AsyncActionSequence.Cancel
             } as IAsyncAction<any, any, any>);
           }, timeout)
         }
