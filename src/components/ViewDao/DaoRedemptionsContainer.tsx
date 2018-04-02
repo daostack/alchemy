@@ -10,7 +10,6 @@ import { IDaoState, IProposalState, IRedemptionState } from "reducers/arcReducer
 import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "../../schemas";
-import * as ReactTooltip from 'react-tooltip';
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 import DaoHeader from "./DaoHeader";

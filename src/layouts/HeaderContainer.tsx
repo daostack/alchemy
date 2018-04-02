@@ -52,6 +52,7 @@ const Fade = ({ children, ...props }: any) => (
     {children}
   </CSSTransition>
 );
+
 class HeaderContainer extends React.Component<IProps, null> {
 
   public handleChangeAccount = (e: any) => {

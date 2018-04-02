@@ -294,22 +294,22 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
     description,
     daoAvatarAddress: dao.avatar.address,
-    ethReward: Util.fromWei(contributionProposal.ethReward),
-    externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
-    nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
-    reputationChange: Util.fromWei(contributionProposal.reputationChange),
+    ethReward: Util.fromWei(contributionProposal.ethReward).toNumber(),
+    externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward).toNumber(),
+    nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward).toNumber(),
+    reputationChange: Util.fromWei(contributionProposal.reputationChange).toNumber(),
     proposer: proposalDetails[10],
-    stakesNo: Util.fromWei(noStakes),
-    stakesYes: Util.fromWei(yesStakes),
+    stakesNo: Util.fromWei(noStakes).toNumber(),
+    stakesYes: Util.fromWei(yesStakes).toNumber(),
     state,
     submittedTime: Number(proposalDetails[6]),
     title,
     totalStakes: 0, //Util.fromWei(proposalDetails[8]),
-    totalVotes: Util.fromWei(proposalDetails[3]),
+    totalVotes: Util.fromWei(proposalDetails[3]).toNumber(),
     totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
     transactionState: TransactionStates.Confirmed,
-    votesYes: Util.fromWei(yesVotes),
-    votesNo: Util.fromWei(noVotes),
+    votesYes: Util.fromWei(yesVotes).toNumber(),
+    votesNo: Util.fromWei(noVotes).toNumber(),
     winningVote: Number(proposalDetails[9]),
   }};
 
@@ -352,7 +352,7 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
       proposalId,
       stake: Util.fromWei(stakerInfo.stake).toNumber(),
       prediction: Number(stakerInfo.vote),
-      stakerAddress
+      stakerAddress,
       transactionState: TransactionStates.Confirmed,
     }
   } else {
@@ -819,14 +819,14 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         beneficiary: {
           address: accountAddress,
           // TODO: these can only be updated once the transaction if confirmed, so will have to watch for that
-          tokens: Util.fromWei(await daoInstance.token.balanceOf.call(accountAddress)),
-          reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(accountAddress)),
+          tokens: Util.fromWei(await daoInstance.token.balanceOf.call(accountAddress)).toNumber(),
+          reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(accountAddress)).toNumber(),
         },
         // Update DAO total reputation and tokens
         dao: {
           avatarAddress: daoAvatarAddress,
-          reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
-          tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
+          reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber(),
+          tokenCount: Util.fromWei(await daoInstance.token.totalSupply()).toNumber(),
         },
       };
 
