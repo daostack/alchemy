@@ -766,7 +766,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       sequence: AsyncActionSequence.Pending,
       operation: {
         message: `Staking on "${proposal.title}" ...`,
-        totalSteps: 1,
       },
       meta
     } as StakeAction);
