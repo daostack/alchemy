@@ -375,9 +375,18 @@ export function getProposal(avatarAddress: string, proposalId: string) {
   };
 }
 
+export type CreateDAOAction = IAsyncAction<'ARC_CREATE_DAO', {}, any>;
+
 export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: any): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    dispatch({ type: arcConstants.ARC_CREATE_DAO_PENDING, payload: null });
+    dispatch({
+      type: arcConstants.ARC_CREATE_DAO,
+      sequence: AsyncActionSequence.Pending,
+      operation: {
+        message: 'Creating new DAO...',
+        totalSteps: 4,
+      }
+    } as CreateDAOAction);
     try {
       const web3: Web3 = Arc.Utils.getWeb3();
 
@@ -420,6 +429,13 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       const votingMachine = await Arc.GenesisProtocol.deployed();
 
+      dispatch({
+        type: arcConstants.ARC_CREATE_DAO,
+        sequence: AsyncActionSequence.Pending,
+        operation: {
+          message: 'Setting voting machine parameters...',
+        }
+      } as CreateDAOAction);
       const votingMachineParamsHash = (await votingMachine.setParameters({
         preBoostedVoteRequiredPercentage: 50,
         preBoostedVotePeriodLimit: 5184000, // 2 months
@@ -436,6 +452,13 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       })).result;
 
       const contributionReward = await Arc.ContributionReward.deployed();
+      dispatch({
+        type: arcConstants.ARC_CREATE_DAO,
+        sequence: AsyncActionSequence.Pending,
+        operation: {
+          message: 'Setting contribution reward scheme parameters...',
+        }
+      } as CreateDAOAction);
       const contributionRewardParamsHash = (await contributionReward.setParameters({
         orgNativeTokenFee: Util.toWei(0),
         votingMachineAddress: votingMachine.contract.address,
@@ -446,6 +469,13 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       const initialSchemesParams = [contributionRewardParamsHash, votingMachineParamsHash];
       const initialSchemesPermissions = ["0x00000001", "0x00000000"];
 
+      dispatch({
+        type: arcConstants.ARC_CREATE_DAO,
+        sequence: AsyncActionSequence.Pending,
+        operation: {
+          message: 'Setting initial schemes...',
+        }
+      } as CreateDAOAction);
       // register the schemes with the dao
       const tx = await daoCreator.contract.setSchemes(
         avatarAddress,
@@ -473,10 +503,23 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         tokenSymbol,
       };
 
-      dispatch({ type: arcConstants.ARC_CREATE_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
+      dispatch({
+        type: arcConstants.ARC_CREATE_DAO,
+        sequence: AsyncActionSequence.Success,
+        operation: {
+          message: 'DAO Created!'
+        },
+        payload: normalize(daoData, schemas.daoSchema)
+      } as CreateDAOAction);
       dispatch(push("/dao/" + dao.avatar.address));
     } catch (err) {
-      dispatch({ type: arcConstants.ARC_CREATE_DAO_REJECTED, payload: err.message });
+      dispatch({
+        type: arcConstants.ARC_CREATE_DAO,
+        sequence: AsyncActionSequence.Failure,
+        operation: {
+          message: `Failed to create DAO: ${err.message}`
+        }
+      } as CreateDAOAction);
     }
   }; /* EO createDAO */
 }
