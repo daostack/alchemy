@@ -103,9 +103,9 @@ export const failureResetter =
 
       if (isAsyncAction(action) && action.sequence == AsyncActionSequence.Failure) {
         const { operation } = action;
-        const timeout = (operation && operation.ttl) || ttl;
+        const timeout = (operation && typeof operation.ttl === 'number') ? operation.ttl : ttl;
 
-        if (ttl) {
+        if (timeout <= 0) {
           setTimeout(() => {
             store.dispatch({
               type: action.type,

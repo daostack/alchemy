@@ -21,7 +21,7 @@ export enum AsyncActionSequence {
  */
 export interface IAsyncAction<Type extends string, Meta, Payload> {
   type: Type;
-  meta: Meta;
+  meta?: Meta;
   sequence: AsyncActionSequence;
   operation?: IOperationConfig
   payload?: Payload;

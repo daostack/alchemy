@@ -7,57 +7,63 @@ import * as Web3 from "web3";
 import { ActionTypes } from "constants/web3Constants";
 import Util from "lib/util";
 import { IWeb3State } from "reducers/web3Reducer";
+import { IAsyncAction, AsyncActionSequence } from "./async";
+
+export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, {
+  ethAccountAddress: string,
+  ethAccountBalance: string,
+  networkId: number;
+}>;
 
 export function initializeWeb3() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
-
-    let web3: Web3;
+    dispatch({
+      type: ActionTypes.WEB3_CONNECT,
+      sequence: AsyncActionSequence.Pending,
+      operation: {
+        message: 'Connecting...'
+      },
+    } as ConnectAction);
     try {
-      web3 = await Utils.getWeb3();
-    } catch (e) {
-      // No web3 accessible
-      const action = {
-        type: ActionTypes.WEB3_CONNECTION_REJECTED,
-        action: "Can't connect to web3",
-      };
-      dispatch(action);
-      return;
-    }
-    if (!web3.isConnected()) {
-      const action = {
-        type: ActionTypes.WEB3_CONNECTION_REJECTED,
-        action: "Can't connect to web3",
-      };
-      dispatch(action);
-      return;
-    }
+      const web3: Web3 = await Utils.getWeb3();
 
-    // TODO: actually check if we are connected to right chain
-    // TODO: is this presently needed?
-    const getNetwork = promisify(web3.version.getNetwork);
-    // await the network
-    const networkId = await getNetwork();
+      if (!web3.isConnected()) {
+        throw new Error('Could not connect to web3');
+      }
 
-    const payload: IWeb3State = {
-      ethAccountAddress: null,
-      ethAccountBalance: "",
-      networkId: Number(networkId),
-    };
+      const ethAccountAddress = await Utils.getDefaultAccount();
 
-    try {
-      // this throws an exception if default account isn't found
-      payload.ethAccountAddress = await Utils.getDefaultAccount();
       const getBalance = promisify(web3.eth.getBalance);
-      const balance = await getBalance(payload.ethAccountAddress);
-      payload.ethAccountBalance = Util.fromWei(balance).toNumber().toFixed(2);
-    } catch { }
+      const ethAccountBalance = Util.fromWei(await getBalance(ethAccountAddress)).toNumber().toFixed(2);
 
-    const action = {
-      type: ActionTypes.WEB3_CONNECTED,
-      payload,
-    };
+      const getNetwork = promisify(web3.version.getNetwork);
+      const networkId = Number(await getNetwork());
 
-    dispatch(action);
+      const payload = {
+        ethAccountAddress,
+        ethAccountBalance,
+        networkId,
+      };
+
+      dispatch({
+        type: ActionTypes.WEB3_CONNECT,
+        sequence: AsyncActionSequence.Success,
+        operation: {
+          message: 'Connected to web3!'
+        },
+        payload
+      } as ConnectAction);
+
+    } catch (e) {
+      dispatch({
+        type: ActionTypes.WEB3_CONNECT,
+        sequence: AsyncActionSequence.Failure,
+        operation: {
+          message: e.message,
+          ttl: 0 // no auto cancel
+        },
+      } as ConnectAction);
+    }
   };
 }
 
