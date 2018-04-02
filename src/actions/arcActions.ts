@@ -740,7 +740,6 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       // Update the proposal
       proposal: {
         proposalId,
-        // reputationWhenExecuted,
         state: Number(await votingMachineInstance.getState({ proposalId })),
         votesNo: Util.fromWei(noVotes).toNumber(),
         votesYes: Util.fromWei(yesVotes).toNumber(),
