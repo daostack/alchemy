@@ -69,7 +69,7 @@ export interface IAccountState {
   votes?: { [proposalId: string]: IVoteState };
 }
 
-export const emptyAccount : IAccountState = {
+export const emptyAccount: IAccountState = {
   redemptions: {},
   reputation: 0,
   stakes: {},

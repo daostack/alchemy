@@ -29,7 +29,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountRedemptions,
-    dao: dao,
+    dao,
     proposal,
   };
 };
@@ -78,7 +78,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       const daoAccount = dao.members[currentAccountAddress];
       let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
           currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
-          redemptionsTip : JSX.Element = null;
+          redemptionsTip: JSX.Element = null;
 
       if (daoAccount) {
         currentAccountReputation = daoAccount.reputation;

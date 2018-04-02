@@ -27,7 +27,7 @@ export default class DaoNav extends React.Component<IProps, null> {
   public render() {
     const { dao, redemptions } = this.props;
 
-    let redeemAllTip : JSX.Element | string = "", ethReward = 0, nativeReward = 0, reputationReward = 0;
+    let redeemAllTip: JSX.Element | string = "", ethReward = 0, nativeReward = 0, reputationReward = 0;
     if (redemptions.length > 0) {
       redemptions.forEach(async (redemption) => {
         ethReward += redemption.beneficiaryEth;

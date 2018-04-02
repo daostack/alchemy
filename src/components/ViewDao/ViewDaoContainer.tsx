@@ -31,7 +31,7 @@ interface IStateProps extends RouteComponentProps<any> {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc) as IDaoState;
-  let redemptionsList : IRedemptionState[] = [];
+  let redemptionsList: IRedemptionState[] = [];
 
   if (dao) {
     const redemptions = dao.members[state.web3.ethAccountAddress].redemptions;
