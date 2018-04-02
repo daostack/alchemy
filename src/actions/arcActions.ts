@@ -623,66 +623,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
 
       const voteTransaction = await votingMachineInstance.vote({ proposalId, vote });
-      const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
-      const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
-
-      let winningVote = 0, reputationVoted = 0, reputationWhenExecuted = 0;
-      let alert = "";
-      let redemptions: IRedemptionState | boolean = false;
-
-      try {
-        reputationVoted = Util.fromWei(voteTransaction.getValueFromTx("_reputation", "VoteProposal")).toNumber();
-      } catch (err) {
-        // No vote happened because the proposal was e.g. past voting date
-      }
-
-      try {
-        winningVote = Number(voteTransaction.getValueFromTx("_decision", "ExecuteProposal"));
-        reputationWhenExecuted = Util.fromWei(voteTransaction.getValueFromTx("_totalReputation", "ExecuteProposal")).toNumber();
-
-        // Did proposal pass?
-        if (winningVote == VoteOptions.Yes) {
-          alert = "Proposal passed!";
-          redemptions = await getRedemptions(daoAvatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
-        }
-      } catch (err) {
-        // The proposal was not executed
-      }
-
-      payload = {
-        daoAvatarAddress,
-        // Update the proposal
-        proposal: {
-          proposalId,
-          reputationWhenExecuted,
-          state: Number(await votingMachineInstance.getState({ proposalId })),
-          votesNo: Util.fromWei(noVotes).toNumber(),
-          votesYes: Util.fromWei(yesVotes).toNumber(),
-          winningVote,
-        },
-        // Update DAO total reputation and tokens
-        dao: {
-          reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber(),
-          tokenCount: Util.fromWei(await daoInstance.token.totalSupply()).toNumber(),
-        },
-        redemptions,
-        // Update voter tokens and reputation
-        voter: {
-          tokens: Util.fromWei(await daoInstance.token.balanceOf.call(currentAccountAddress)).toNumber(),
-          reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(currentAccountAddress)).toNumber(),
-        },
-        // New vote made on the proposal
-        vote: {
-          avatarAddress: daoAvatarAddress,
-          proposalId,
-          reputation: reputationVoted,
-          vote,
-          voterAddress: currentAccountAddress,
-        },
-        alert,
-      };
-
-      dispatch({ type: arcConstants.ARC_VOTE_FULFILLED, payload });
     } catch (err) {
       dispatch(showAlert(('Voting failed: ' + err.message)));
       dispatch({ type: arcConstants.ARC_VOTE_REJECTED, payload: err.message });
@@ -789,7 +729,11 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
 }
 
 export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddress: string, vote: number, reputation: number) {
-  return async (dispatch: any) => {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    // TODO: really not great to pull from the state in the action creator, should be passing this stuff in?
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
+    const proposal: IProposalState = getState().arc.proposals[proposalId];
+
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const contributionRewardInstance = await Arc.ContributionReward.deployed();
 
@@ -804,6 +748,14 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
 
     const winningVote = await votingMachineInstance.getWinningVote({ proposalId });
+
+    let redemptions: IRedemptionState | boolean = false;
+    let alert = "";
+
+    if (winningVote == VoteOptions.Yes) {
+      alert = "Proposal passed!";
+      redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
+    }
 
     const payload = {
       daoAvatarAddress: avatarAddress,
@@ -821,6 +773,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
         reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber(),
         tokenCount: Util.fromWei(await daoInstance.token.totalSupply()).toNumber(),
       },
+      redemptions,
       // Update voter tokens and reputation
       voter: {
         tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress)).toNumber(),
