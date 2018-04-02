@@ -8,7 +8,7 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState } from "reducers/arcReducer";
+import { IDaoState, IProposalState, IRedemptionState } from "reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "../../schemas";
 
@@ -18,6 +18,7 @@ import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoNav from "./DaoNav";
 import DaoProposalsContainer from "./DaoProposalsContainer";
+import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 
 import * as css from "./ViewDao.scss";
 
@@ -25,13 +26,27 @@ interface IStateProps extends RouteComponentProps<any> {
   currentAccountAddress: string;
   dao: IDaoState;
   daoAddress: string;
+  redemptions: IRedemptionState[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
+  const dao = denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc) as IDaoState;
+  let redemptionsList : IRedemptionState[] = [];
+
+  if (dao) {
+    const redemptions = dao.members[state.web3.ethAccountAddress].redemptions;
+    redemptionsList = Object.keys(redemptions).map((proposalId) => {
+      const redemption = redemptions[proposalId];
+      redemption.proposal = state.arc.proposals[proposalId];
+      return redemption;
+    });
+  }
+
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
-    dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
+    dao,
     daoAddress : ownProps.match.params.daoAddress,
+    redemptions: redemptionsList,
   };
 };
 
@@ -40,6 +55,7 @@ interface IDispatchProps {
   onVoteEvent: typeof arcActions.onVoteEvent;
   getDAO: typeof arcActions.getDAO;
   getProposal: typeof arcActions.getProposal;
+  redeemProposal: typeof arcActions.redeemProposal;
 }
 
 const mapDispatchToProps = {
@@ -47,6 +63,7 @@ const mapDispatchToProps = {
   onVoteEvent: arcActions.onVoteEvent,
   getDAO: arcActions.getDAO,
   getProposal: arcActions.getProposal,
+  redeemProposal: arcActions.redeemProposal,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -103,18 +120,19 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { dao } = this.props;
+    const { currentAccountAddress, dao, redeemProposal, redemptions } = this.props;
 
     if (dao) {
       return(
         <div className={css.wrapper}>
           <DaoHeader dao={dao} />
-          <DaoNav dao={dao} />
+          <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} redeemProposal={redeemProposal} redemptions={redemptions} />
 
           <Switch>
             <Route exact path="/dao/:daoAddress" component={DaoProposalsContainer} />
             <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
             <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
+            <Route exact path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
             <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
           </Switch>
         </div>

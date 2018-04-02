@@ -21,6 +21,13 @@ export enum VoteOptions {
   No = 2,
 }
 
+export enum ContributionRewardType {
+  Reputation = 0,
+  NativeToken = 1,
+  Eth = 2,
+  ExternalToken = 3,
+}
+
 export interface IVoteState {
   avatarAddress: string;
   proposalId: string;
@@ -39,12 +46,35 @@ export interface IStakeState {
   stakerAddress: string;
 }
 
+export interface IRedemptionState {
+  accountAddress: string;
+  beneficiaryEth: number;
+  beneficiaryNativeToken: number;
+  beneficiaryReputation: number;
+  proposalId: string;
+  stakerReputation: number;
+  stakerTokens: number;
+  proposerReputation: number;
+  proposal?: IProposalState;
+  voterTokens: number;
+  voterReputation: number;
+}
+
 export interface IAccountState {
   address?: string;
-  tokens: number;
+  redemptions: { [proposalId: string]: IRedemptionState };
   reputation: number;
-  votes?: { [proposalId: string]: IVoteState };
   stakes?: { [proposalId: string]: IStakeState };
+  tokens: number;
+  votes?: { [proposalId: string]: IVoteState };
+}
+
+export const emptyAccount : IAccountState = {
+  redemptions: {},
+  reputation: 0,
+  stakes: {},
+  tokens: 0,
+  votes: {}
 }
 
 export interface IProposalState {
@@ -157,8 +187,19 @@ const arcReducer = (state = initialState, action: any) => {
         state = update(state, { daos: {
           [payload.daoAvatarAddress] : {
             members: {
-              [payload.vote.voterAddress]: {
+              [payload.stake.stakerAddress]: {
                 stakes: { [payload.vote.proposalId] : { $set : payload.stake }},
+              },
+            },
+          },
+        }});
+      }
+      if (payload.redemptions) {
+        state = update(state, { daos: {
+          [payload.daoAvatarAddress] : {
+            members: {
+              [payload.redemptions.accountAddress]: {
+                redemptions: { [payload.redemptions.proposalId] : { $set : payload.redemptions }},
               },
             },
           },
@@ -192,6 +233,19 @@ const arcReducer = (state = initialState, action: any) => {
           },
         },
       }});
+
+      // Add redemptions if the proposal passed
+      if (payload.redemptions) {
+        state = update(state, { daos: {
+          [payload.daoAvatarAddress] : {
+            members: {
+              [payload.vote.voterAddress]: {
+                redemptions: { [payload.redemptions.proposalId] : { $set : payload.redemptions }},
+              },
+            },
+          },
+        }});
+      }
 
       // Merge in proposal and dao changes
       return update(state, {
@@ -239,6 +293,25 @@ const arcReducer = (state = initialState, action: any) => {
       // Merge in proposal
       return update(state, {
         proposals: { [payload.proposal.proposalId]: { $merge : action.payload.proposal } },
+      });
+    }
+
+    case ActionTypes.ARC_REDEEM_FULFILLED: {
+      // Update the beneficiary account
+      state = update(state, { daos: {
+        [payload.dao.avatarAddress] : {
+          members: {
+            [payload.beneficiary.address]: {
+              $merge : payload.beneficiary,
+              redemptions : { $unset: [payload.proposalId] },
+            },
+          },
+        },
+      }});
+
+      // Merge in dao changes
+      return update(state, {
+        daos: { [payload.dao.avatarAddress]: { $merge: action.payload.dao } },
       });
     }
   }

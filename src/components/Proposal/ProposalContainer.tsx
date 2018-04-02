@@ -1,12 +1,13 @@
 import * as classNames from "classnames";
 import * as moment from "moment";
+import Tooltip from 'rc-tooltip';
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import PredictionBox from "./PredictionBox";
@@ -16,25 +17,31 @@ import * as css from "./Proposal.scss";
 
 interface IStateProps {
   currentAccountAddress: string;
+  currentAccountRedemptions: IRedemptionState;
   dao: IDaoState;
   proposal: IProposalState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const proposal = state.arc.proposals[ownProps.proposalId];
+  const dao = state.arc.daos[proposal.daoAvatarAddress];
+  const currentAccountRedemptions = dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId];
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
-    dao: state.arc.daos[proposal.daoAvatarAddress],
+    currentAccountRedemptions,
+    dao: dao,
     proposal,
   };
 };
 
 interface IDispatchProps {
+  redeemProposal: typeof arcActions.redeemProposal;
   voteOnProposal: typeof arcActions.voteOnProposal;
   stakeProposal: typeof arcActions.stakeProposal;
 }
 
 const mapDispatchToProps = {
+  redeemProposal: arcActions.redeemProposal,
   voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal,
 };
@@ -43,8 +50,13 @@ type IProps = IStateProps & IDispatchProps;
 
 class ProposalContainer extends React.Component<IProps, null> {
 
+  public handleClickRedeem(event: any) {
+    const { currentAccountAddress, dao, proposal, redeemProposal } = this.props;
+    redeemProposal(dao.avatarAddress, proposal, currentAccountAddress);
+  }
+
   public render() {
-    const { dao, proposal, voteOnProposal, stakeProposal, currentAccountAddress } = this.props;
+    const { currentAccountAddress, currentAccountRedemptions, dao, proposal, stakeProposal, voteOnProposal } = this.props;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -52,6 +64,7 @@ class ProposalContainer extends React.Component<IProps, null> {
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
         [css.failedProposal]: proposal.winningVote == VoteOptions.No,
         [css.passedProposal]: proposal.winningVote == VoteOptions.Yes,
+        [css.redeemable]: !!currentAccountRedemptions,
         [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
       });
 
@@ -64,7 +77,9 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       const daoAccount = dao.members[currentAccountAddress];
       let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
-          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed;
+          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
+          redemptionsTip : JSX.Element = null;
+
       if (daoAccount) {
         currentAccountReputation = daoAccount.reputation;
         currentAccountTokens = daoAccount.tokens;
@@ -79,6 +94,19 @@ class ProposalContainer extends React.Component<IProps, null> {
           currentAccountStake = daoAccount.stakes[proposal.proposalId].stake;
           currentAccountStakeState = daoAccount.stakes[proposal.proposalId].transactionState;
         }
+      }
+
+      if (currentAccountRedemptions) {
+        redemptionsTip = <ul>
+          {currentAccountRedemptions.beneficiaryEth ? <li>Beneficiary ETH: {currentAccountRedemptions.beneficiaryEth}</li> : ""}
+          {currentAccountRedemptions.beneficiaryNativeToken ? <li>Beneficiary {dao.tokenSymbol} tokens: {currentAccountRedemptions.beneficiaryNativeToken}</li> : ""}
+          {currentAccountRedemptions.beneficiaryReputation ? <li>Beneficiary reputation: {currentAccountRedemptions.beneficiaryReputation}</li> : ""}
+          {currentAccountRedemptions.proposerReputation ? <li>Reputation for proposing: {currentAccountRedemptions.proposerReputation}</li> : ""}
+          {currentAccountRedemptions.voterReputation ? <li>Reputation for voting: {currentAccountRedemptions.voterReputation}</li> : ""}
+          {currentAccountRedemptions.stakerReputation ? <li>Reputation for staking: {currentAccountRedemptions.stakerReputation}</li> : ""}
+          {currentAccountRedemptions.voterTokens ? <li>{dao.tokenSymbol} tokens for voting: {currentAccountRedemptions.voterTokens}</li> : ""}
+          {currentAccountRedemptions.stakerTokens ? <li>{dao.tokenSymbol} tokens for staking:{currentAccountRedemptions.stakerTokens}</li> : ""}
+        </ul>;
       }
 
       const styles = {
@@ -208,16 +236,21 @@ class ProposalContainer extends React.Component<IProps, null> {
                   transactionState={currentAccountStakeState}
                 />
               </div>
-            : proposal.winningVote == VoteOptions.Yes ?
+            : proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed ?
               <div>
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
+                  { currentAccountRedemptions
+                    ? <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+                        <button onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
+                      </Tooltip>
+                    : ""
+                  }
+
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/>
                   </a>
                 </div>
               </div>
-            : proposal.winningVote == VoteOptions.No ?
-              ""
             : ""
 
           }

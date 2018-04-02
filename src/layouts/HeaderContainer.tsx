@@ -7,7 +7,7 @@ import { CSSTransition } from "react-transition-group";
 
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
+import { IDaoState, emptyAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import AccountBalance from "components/Account/AccountBalance";
@@ -66,7 +66,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 
     let member = dao ? dao.members[web3State.ethAccountAddress] : false;
     if (!member) {
-      member = { tokens : 0, reputation: 0 };
+      member = {...emptyAccount };
     }
 
     const accountOptionNodes = web3.eth.accounts.map((account: string) => (
