@@ -174,8 +174,8 @@ const arcReducer = (state = initialState, action: any) => {
         state = update(state, { daos: {
           [payload.daoAvatarAddress] : {
             members: {
-              [payload.vote.voterAddress]: {
-                stakes: { [payload.vote.proposalId] : { $set : payload.stake }},
+              [payload.stake.stakerAddress]: {
+                stakes: { [payload.stake.proposalId] : { $set : payload.stake }},
               },
             },
           },
