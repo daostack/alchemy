@@ -95,7 +95,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                     ? <div>
                         <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
                         &nbsp; | &nbsp;
-                        <span>{member.reputation} {dao.name} reputation</span>
+                        <span>{member.reputation.toFixed(2).toLocaleString()} {dao.name} reputation</span>
                       </div>
                     : ""
                   }

@@ -9,7 +9,7 @@ import * as css from "./Account.scss";
 
 interface Props {
   accountAddress: string;
-  balance: number | string;
+  balance: number;
   tokenSymbol: string;
 }
 
@@ -25,7 +25,7 @@ export default class Balance extends React.Component<Props, null>  {
     // <EtherscanLink address={ ethAddress } >{ ethBalance } ETH</EtherscanLink>
     return (
       <span className={css.accountBalance}>
-        {balance} {tokenSymbol}
+        {balance.toFixed(2).toLocaleString()} {tokenSymbol}
       </span>
     );
   }

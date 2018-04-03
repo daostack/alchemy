@@ -11,7 +11,7 @@ import { IAsyncAction, AsyncActionSequence } from "./async";
 
 export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, {
   ethAccountAddress: string,
-  ethAccountBalance: string,
+  ethAccountBalance: number,
   networkId: number;
 }>;
 
@@ -34,7 +34,7 @@ export function initializeWeb3() {
       const ethAccountAddress = await Utils.getDefaultAccount();
 
       const getBalance = promisify(web3.eth.getBalance);
-      const ethAccountBalance = Util.fromWei(await getBalance(ethAccountAddress)).toNumber().toFixed(2);
+      const ethAccountBalance = Util.fromWei(await getBalance(ethAccountAddress)).toNumber();
 
       const getNetwork = promisify(web3.version.getNetwork);
       const networkId = Number(await getNetwork());
@@ -73,12 +73,12 @@ export function changeAccount(accountAddress: string) {
 
     let payload = {
       ethAccountAddress: accountAddress,
-      ethAccountBalance: '0',
+      ethAccountBalance: 0,
     }
 
     const getBalance = promisify(web3.eth.getBalance);
     const balance = await getBalance(payload.ethAccountAddress);
-    payload.ethAccountBalance = Util.fromWei(balance).toNumber().toFixed(2);
+    payload.ethAccountBalance = Util.fromWei(balance).toNumber();
 
     const action = {
       type: ActionTypes.WEB3_CHANGE_ACCOUNT,
