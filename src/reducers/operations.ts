@@ -48,7 +48,7 @@ export const operationsReducer =
         }
 
         /* initialize with defaults if does not exist yet */
-        if (!state[hash]) {
+        if (!state[hash] && sequence === AsyncActionSequence.Pending) {
           state = update(state, {
             [hash]: {
               $set: defaults
@@ -56,40 +56,42 @@ export const operationsReducer =
           });
         }
 
-        switch (action.sequence) {
-          case AsyncActionSequence.Cancel:
-            return update(state, { $unset: [hash] });
-          case AsyncActionSequence.Pending:
-            return update(state, {
-              [hash]: {
-                $merge: {
-                  status: OperationsStatus.Pending,
-                  step: state[hash].status === OperationsStatus.Pending ? state[hash].step + 1 : 0,
-                  message: operationsConfig.message || state[hash].message,
-                  timestamp: +moment(),
+        if (state[hash]) {
+          switch (sequence) {
+            case AsyncActionSequence.Cancel:
+              return update(state, { $unset: [hash] });
+            case AsyncActionSequence.Pending:
+              return update(state, {
+                [hash]: {
+                  $merge: {
+                    status: OperationsStatus.Pending,
+                    step: state[hash].status === OperationsStatus.Pending ? state[hash].step + 1 : 0,
+                    message: operationsConfig.message || state[hash].message,
+                    timestamp: +moment(),
+                  }
                 }
-              }
-            });
-          case AsyncActionSequence.Failure:
-            return update(state, {
-              [hash]: {
-                $merge: {
-                  status: OperationsStatus.Failure,
-                  message: operationsConfig.message || state[hash].message,
-                  timestamp: +moment(),
+              });
+            case AsyncActionSequence.Failure:
+              return update(state, {
+                [hash]: {
+                  $merge: {
+                    status: OperationsStatus.Failure,
+                    message: operationsConfig.message || state[hash].message,
+                    timestamp: +moment(),
+                  }
                 }
-              }
-            });
-          case AsyncActionSequence.Success:
-            return update(state, {
-              [hash]: {
-                $merge: {
-                  status: OperationsStatus.Success,
-                  message: operationsConfig.message || state[hash].message,
-                  timestamp: +moment(),
+              });
+            case AsyncActionSequence.Success:
+              return update(state, {
+                [hash]: {
+                  $merge: {
+                    status: OperationsStatus.Success,
+                    message: operationsConfig.message || state[hash].message,
+                    timestamp: +moment(),
+                  }
                 }
-              }
-            });
+              });
+          }
         }
       }
 
