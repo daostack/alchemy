@@ -210,7 +210,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             : ""
           }
           <div className={css.addTransfer}>
-            <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} Token reward: </label>
+            <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} reward: </label>
             <input
               id="nativeTokenRewardInput"
               maxLength={10}

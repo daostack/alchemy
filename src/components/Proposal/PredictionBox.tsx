@@ -45,7 +45,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const { proposal, stakeProposal } = this.props;
     const amount = this.stakeInput.value;
     this.setState({ showStakeModal: 0 });
-    stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, amount);
+    stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, Number(amount));
   }
 
   public render() {
