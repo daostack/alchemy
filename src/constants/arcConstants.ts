@@ -22,6 +22,4 @@ export const ARC_VOTE = "ARC_VOTE";
 
 export const ARC_STAKE = "ARC_STAKE";
 
-export const ARC_REDEEM_PENDING = "ARC_REDEEM_PENDING";
-export const ARC_REDEEM_FULFILLED = "ARC_REDEEM_FULFILLED";
-export const ARC_REDEEM_REJECTED = "ARC_REDEEM_REJECTED";
+export const ARC_REDEEM = "ARC_REDEEM";

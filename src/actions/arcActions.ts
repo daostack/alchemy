@@ -924,11 +924,34 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
   };
 }
 
+export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
+  avatarAddress: string,
+  proposalId: string,
+  accountAddress: string,
+}, {
+  proposalId: string,
+  beneficiary: any,
+  dao: any
+}>
+
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const web3: Web3 = Arc.Utils.getWeb3();
 
-    dispatch({ type: arcConstants.ARC_REDEEM_PENDING, payload: null });
+    const meta = {
+      avatarAddress: daoAvatarAddress,
+      proposalId: proposal.proposalId,
+      accountAddress,
+    };
+
+    dispatch({
+      type: arcConstants.ARC_REDEEM,
+      sequence: AsyncActionSequence.Pending,
+      operation: {
+        message: `Redeeming rewards for proposal "${proposal.title}" ...`,
+      },
+      meta
+    } as RedeemAction);
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
@@ -961,17 +984,24 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         },
       };
 
-      dispatch({ type: arcConstants.ARC_REDEEM_FULFILLED, payload });
+      dispatch({
+        type: arcConstants.ARC_REDEEM,
+        sequence: AsyncActionSequence.Success,
+        operation: {
+          message: `Successfully redeemed rewards for proposal "${proposal.title}"!`
+        },
+        meta,
+        payload
+      } as RedeemAction);
     } catch (err) {
       dispatch({
-        type: arcConstants.ARC_REDEEM_REJECTED,
-        payload: {
-          avatarAddress: daoAvatarAddress,
-          accountAddress,
-          proposalId: proposal.proposalId,
-          error: err.message
+        type: arcConstants.ARC_REDEEM,
+        sequence: AsyncActionSequence.Failure,
+        meta,
+        operation: {
+          message: `Error redeeming rewards for proposal "${proposal.title}": ${err.message}`
         }
-      });
+      } as RedeemAction);
     }
   };
 }
