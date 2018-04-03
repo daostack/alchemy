@@ -82,7 +82,7 @@ class AppContainer extends React.Component<IProps, null> {
         clearInterval(this.accountInterval);
       }
 
-      this.accountInterval = setInterval(async function (accountAddress: string) {
+      this.accountInterval = setInterval(async function(accountAddress: string) {
         const newAccount = await Arc.Utils.getDefaultAccount();
         if (newAccount !== accountAddress) {
           this.props.changeAccount(newAccount);
@@ -123,7 +123,6 @@ class AppContainer extends React.Component<IProps, null> {
                       />
                       <br />
                     </div>
-
                   )}
                 </div>
                 <div className={css.background}></div>
