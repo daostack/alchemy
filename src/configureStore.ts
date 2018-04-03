@@ -7,7 +7,7 @@ import promiseMiddleware from "redux-promise-middleware";
 import thunkMiddleware from "redux-thunk";
 
 import reducers from "./reducers";
-import { failureResetter } from "reducers/operations";
+import { actionCanceler } from "reducers/operations";
 
 export const history = createHistory();
 
@@ -15,7 +15,7 @@ const store = createStore(
   reducers,
   composeWithDevTools(   // makes the store available to the Chrome redux dev tools
     applyMiddleware(
-      failureResetter(),
+      actionCanceler(),
       thunkMiddleware,
       promiseMiddleware(),
       routerMiddleware(history),
