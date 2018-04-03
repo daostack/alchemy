@@ -82,6 +82,18 @@ class ViewProposalContainer extends React.Component<IProps, null> {
         }
       }
 
+      let rewards = [];
+      if (proposal.nativeTokenReward) {
+        rewards.push(proposal.nativeTokenReward + " " + dao.tokenSymbol);
+      }
+      if (proposal.reputationChange) {
+        rewards.push(proposal.reputationChange + " reputation");
+      }
+      if (proposal.ethReward) {
+        rewards.push(proposal.ethReward + " ETH");
+      }
+      const rewardsString = rewards.join(" & ");
+
       const styles = {
         forBar: {
           width: yesPercentage + "%",
@@ -144,7 +156,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of</span>
-              <span className={css.transferAmount}>{proposal.nativeTokenReward} {dao.tokenSymbol} &amp; {proposal.reputationChange} Reputation</span>
+              <span className={css.transferAmount}>{rewardsString}</span>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
               <AccountPopupContainer
