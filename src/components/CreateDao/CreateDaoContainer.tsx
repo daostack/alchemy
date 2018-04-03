@@ -65,7 +65,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
     this.setState({
       name: newName,
       tokenName: newTokenName,
-      tokenSymbol: newTokenSymbol,
+      tokenSymbol: newTokenSymbol.toUpperCase(),
     });
   }
 
