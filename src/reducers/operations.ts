@@ -110,7 +110,7 @@ export const actionCanceler =
   (ttl: number = 5000): Middleware =>
     (store) => (next) => (action: any) => {
 
-      if (isAsyncAction(action) && (action.sequence === AsyncActionSequence.Failure || action.sequence === AsyncActionSequence.Success)) {
+      if (isAsyncAction(action) && action.sequence === AsyncActionSequence.Success) {
         const { operation } = action;
         const timeout = (operation && typeof operation.ttl === 'number') ? operation.ttl : ttl;
 
