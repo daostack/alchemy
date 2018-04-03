@@ -16,6 +16,7 @@ import * as operationsActions from 'actions/operationsActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
+import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
 import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
@@ -109,6 +110,7 @@ class AppContainer extends React.Component<IProps, null> {
               )} />
               <Switch>
                 <Route exact path="/" component={HomeContainer}/>
+                <Route exact path="/daos" component={DaoListContainer}/>
                 <Route exact path="/dao/create" component={CreateDaoContainer}/>
                 <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
                 <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>

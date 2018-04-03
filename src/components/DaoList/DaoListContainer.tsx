@@ -1,24 +1,37 @@
+import { denormalize } from "normalizr";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { connect, Dispatch } from "react-redux";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
 
+import * as schemas from "../../schemas";
+
 import * as css from "./DaoList.scss";
 
 interface IStateProps {
-  daosLoaded: boolean;
   daos: { [key: string]: IDaoState };
+  daosLoaded: boolean;
 }
+
+const mapStateToProps = (state: IRootState, ownProps: any) => ({
+  daos: denormalize(state.arc.daos, schemas.daoList, state.arc),
+  daosLoaded: state.arc.daosLoaded,
+});
 
 interface IDispatchProps {
   getDAOs: typeof arcActions.getDAOs;
 }
 
+const mapDispatchToProps = {
+  getDAOs: arcActions.getDAOs,
+};
+
 type IProps = IStateProps & IDispatchProps;
 
-export default class DaoList extends React.Component<IProps, null> {
+class DaoListContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     this.props.getDAOs();
@@ -56,3 +69,5 @@ export default class DaoList extends React.Component<IProps, null> {
     );
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(DaoListContainer);
