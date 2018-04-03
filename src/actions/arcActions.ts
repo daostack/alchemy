@@ -526,7 +526,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
 export type CreateProposalAction = IAsyncAction<'ARC_CREATE_PROPOSAL', { avatarAddress: string }, any>;
 
-export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, beneficiary: string): ThunkAction<any, IRootState, null> {
+export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, ethReward: number, beneficiary: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const meta = {
       avatarAddress: daoAvatarAddress
@@ -563,6 +563,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         avatar: daoAvatarAddress,
         beneficiaryAddress: beneficiary,
         description,
+        ethReward: Util.toWei(ethReward),
         nativeTokenReward: Util.toWei(nativeTokenReward),
         numberOfPeriods: 1,
         periodLength: 1,
@@ -601,7 +602,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         contributionDescriptionHash: descriptionHash,
         description,
         daoAvatarAddress,
-        ethReward: 0, // TODO
+        ethReward,
         executionTime: 0,
         externalToken: "0",
         externalTokenReward: 0,

@@ -113,6 +113,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
         this.state.description,
         Number(this.state.nativeTokenReward),
         Number(this.state.reputationReward),
+        Number(this.state.ethReward),
         this.state.beneficiary,
       );
     }
@@ -133,11 +134,13 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     const newDescription = (ReactDOM.findDOMNode(this.refs.descriptionNode) as HTMLInputElement).value;
     const newNativeTokenReward = (ReactDOM.findDOMNode(this.refs.nativeTokenRewardNode) as HTMLInputElement).value;
     const newReputationReward = (ReactDOM.findDOMNode(this.refs.reputationRewardNode) as HTMLInputElement).value;
+    const newEthReward = (ReactDOM.findDOMNode(this.refs.ethRewardNode) as HTMLInputElement).value;
     const newBenificiary = (ReactDOM.findDOMNode(this.refs.beneficiaryNode) as HTMLInputElement).value;
 
     this.setState({
       beneficiary: newBenificiary,
       description: newDescription,
+      ethReward: newEthReward,
       nativeTokenReward: newNativeTokenReward,
       reputationReward: newReputationReward,
       title: newTitle,
@@ -231,6 +234,16 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               required
               type="number"
               value={this.state.reputationReward}
+            />
+            <label htmlFor="ethRewardInput">ETH reward: </label>
+            <input
+              id="ethRewardInput"
+              maxLength={10}
+              onChange={this.handleChange}
+              placeholder="How much ETH to reward"
+              ref="ethRewardNode"
+              type="number"
+              value={this.state.ethReward}
             />
           </div>
           {/*

@@ -81,6 +81,18 @@ class ProposalContainer extends React.Component<IProps, null> {
         }
       }
 
+      let rewards = [];
+      if (proposal.nativeTokenReward) {
+        rewards.push(proposal.nativeTokenReward + " " + dao.tokenSymbol);
+      }
+      if (proposal.reputationChange) {
+        rewards.push(proposal.reputationChange + " reputation");
+      }
+      if (proposal.ethReward) {
+        rewards.push(proposal.ethReward + " ETH");
+      }
+      const rewardsString = rewards.join(" & ");
+
       const styles = {
         forBar: {
           width: yesPercentage + "%",
@@ -142,8 +154,8 @@ class ProposalContainer extends React.Component<IProps, null> {
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
             </h3>
             <div className={css.transferDetails}>
-              <span className={css.transferType}>Transfer of</span>
-              <span className={css.transferAmount}>{proposal.nativeTokenReward} {dao.tokenSymbol} &amp; {proposal.reputationChange} Reputation</span>
+              <span className={css.transferType}>Transfer of {rewardsString}</span>
+              <span className={css.transferAmount}></span>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
               <AccountPopupContainer
