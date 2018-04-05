@@ -40,6 +40,8 @@ interface IDispatchProps {
   onVoteEvent: typeof arcActions.onVoteEvent;
   getDAO: typeof arcActions.getDAO;
   getProposal: typeof arcActions.getProposal;
+  onTransferEvent: typeof arcActions.onTransferEvent;
+  onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
 }
 
 const mapDispatchToProps = {
@@ -47,6 +49,8 @@ const mapDispatchToProps = {
   onVoteEvent: arcActions.onVoteEvent,
   getDAO: arcActions.getDAO,
   getProposal: arcActions.getProposal,
+  onTransferEvent: arcActions.onTransferEvent,
+  onReputationChangeEvent: arcActions.onReputationChangeEvent,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -55,9 +59,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
+  public transferEventWatcher: any;
+  public mintEventWatcher: any;
+  public burnEventWatcher: any;
 
   public async componentDidMount() {
-    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal } = this.props;
+    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
@@ -86,6 +93,23 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.voteEventWatcher.watch((error, result) => {
       onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation).toNumber());
     });
+
+    const daoInstance = await Arc.DAO.at(daoAddress);
+
+    this.transferEventWatcher = daoInstance.token.Transfer({}, { fromBlock: "latest" });
+    this.transferEventWatcher.watch((error: any, result: any) => {
+      onTransferEvent(daoAddress, result.args.from, result.args.to);
+    });
+
+    this.mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: "latest" });
+    this.mintEventWatcher.watch((error: any, result: any) => {
+      onReputationChangeEvent(daoAddress, result.args._to);
+    });
+
+    this.burnEventWatcher = daoInstance.reputation.Burn({}, { fromBlock: "latest" });
+    this.burnEventWatcher.watch((error: any, result: any) => {
+      onReputationChangeEvent(daoAddress, result.args._from);
+    });
   }
 
   public componentWillUnmount() {
@@ -99,6 +123,18 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (this.voteEventWatcher) {
       this.voteEventWatcher.stopWatching();
+    }
+
+    if (this.transferEventWatcher) {
+      this.transferEventWatcher.stopWatching();
+    }
+
+    if (this.mintEventWatcher) {
+      this.mintEventWatcher.stopWatching();
+    }
+
+    if (this.burnEventWatcher) {
+      this.burnEventWatcher.stopWatching();
     }
   }
 

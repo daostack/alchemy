@@ -22,6 +22,7 @@ import { IAccountState,
 import * as schemas from "../schemas";
 import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
+import { Dispatch } from "redux";
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -845,4 +846,43 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
       payload
     } as StakeAction);
   };
+}
+
+export function onTransferEvent(avatarAddress: string, from: string, to: string) {
+  return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
+    const daoInstance = await Arc.DAO.at(avatarAddress);
+    const fromBalance = Util.fromWei(await daoInstance.token.balanceOf(from)).toNumber();
+    const toBalance = Util.fromWei(await daoInstance.token.balanceOf(to)).toNumber();
+    const totalTokens = Util.fromWei(await daoInstance.token.totalSupply()).toNumber();
+
+    dispatch({
+      type: arcConstants.ARC_ON_TRANSFER,
+      payload: {
+        avatarAddress,
+        from,
+        fromBalance,
+        to,
+        toBalance,
+        totalTokens
+      }
+    })
+  }
+}
+
+export function onReputationChangeEvent(avatarAddress: string, address: string) {
+  return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
+    const daoInstance = await Arc.DAO.at(avatarAddress);
+    const reputation = Util.fromWei(await daoInstance.reputation.reputationOf(address)).toNumber();
+    const totalReputation = Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber();
+
+    dispatch({
+      type: arcConstants.ARC_ON_REPUTATION_CHANGE,
+      payload: {
+        avatarAddress,
+        address,
+        reputation,
+        totalReputation
+      }
+    })
+  }
 }

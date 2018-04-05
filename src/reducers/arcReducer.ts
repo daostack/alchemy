@@ -272,6 +272,43 @@ const arcReducer = (state = initialState, action: any) => {
         }
       }
     }
+
+    case ActionTypes.ARC_ON_TRANSFER: {
+      const { avatarAddress, from, fromBalance, to, toBalance, totalTokens } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            tokenCount: { $set: totalTokens },
+            members: {
+              [from]: {
+                tokens: { $set: fromBalance }
+              },
+              [to]: {
+                tokens: { $set: toBalance }
+              }
+            },
+          }
+        }
+      });
+    }
+
+    case ActionTypes.ARC_ON_REPUTATION_CHANGE: {
+      const { avatarAddress, address, reputation, totalReputation } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            reputationCount: { $set: totalReputation },
+            members: {
+              [address]: {
+                reputation: { $set: reputation }
+              }
+            },
+          }
+        }
+      });
+    }
   }
 
   return state;
