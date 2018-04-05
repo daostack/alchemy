@@ -29,7 +29,7 @@ export interface IOperationsState {
 
 /**
  * A reducer that keeps track of currently running operations.
- * Multiple `pending` actions with the same key will increment the `step` until either a `failure`, a `succeess` or a `reset` happens.
+ * Multiple `pending` actions with the same key will increment the `step` until either a `failure`, a `succeess` or a `cancel` happens.
  */
 export const operationsReducer =
   (state: IOperationsState = {}, action: Action): IOperationsState => {
@@ -48,7 +48,7 @@ export const operationsReducer =
         }
 
         /* initialize with defaults if does not exist yet */
-        if (!state[hash]) {
+        if (!state[hash] && sequence === AsyncActionSequence.Pending) {
           state = update(state, {
             [hash]: {
               $set: defaults
@@ -56,31 +56,42 @@ export const operationsReducer =
           });
         }
 
-        switch (action.sequence) {
-          case AsyncActionSequence.Cancel:
-          case AsyncActionSequence.Success:
-            return update(state, { $unset: [hash] });
-          case AsyncActionSequence.Pending:
-            return update(state, {
-              [hash]: {
-                $merge: {
-                  status: OperationsStatus.Pending,
-                  step: state[hash].status === OperationsStatus.Pending ? state[hash].step + 1 : 0,
-                  message: operationsConfig.message || state[hash].message,
-                  timestamp: +moment(),
+        if (state[hash]) {
+          switch (sequence) {
+            case AsyncActionSequence.Cancel:
+              return update(state, { $unset: [hash] });
+            case AsyncActionSequence.Pending:
+              return update(state, {
+                [hash]: {
+                  $merge: {
+                    status: OperationsStatus.Pending,
+                    step: state[hash].status === OperationsStatus.Pending ? state[hash].step + 1 : 0,
+                    message: operationsConfig.message || state[hash].message,
+                    timestamp: +moment(),
+                  }
                 }
-              }
-            });
-          case AsyncActionSequence.Failure:
-            return update(state, {
-              [hash]: {
-                $merge: {
-                  status: OperationsStatus.Failure,
-                  message: operationsConfig.message || state[hash].message,
-                  timestamp: +moment(),
+              });
+            case AsyncActionSequence.Failure:
+              return update(state, {
+                [hash]: {
+                  $merge: {
+                    status: OperationsStatus.Failure,
+                    message: operationsConfig.message || state[hash].message,
+                    timestamp: +moment(),
+                  }
                 }
-              }
-            });
+              });
+            case AsyncActionSequence.Success:
+              return update(state, {
+                [hash]: {
+                  $merge: {
+                    status: OperationsStatus.Success,
+                    message: operationsConfig.message || state[hash].message,
+                    timestamp: +moment(),
+                  }
+                }
+              });
+          }
         }
       }
 
@@ -93,19 +104,19 @@ export const operationsReducer =
     };
 
 /**
- * A middleware that resets a failed action after timeout.
+ * A middleware that cancels a failed/successful action after timeout.
  * It respects AsyncAction.ttl if it's defined.
- * @param ttl default timeout before resetting a failed action. zero means: do not reset.
+ * @param ttl default timeout before cancelling a failed action. zero means: do not cancel.
  */
-export const failureResetter =
+export const actionCanceler =
   (ttl: number = 5000): Middleware =>
     (store) => (next) => (action: any) => {
 
-      if (isAsyncAction(action) && action.sequence == AsyncActionSequence.Failure) {
+      if (isAsyncAction(action) && action.sequence === AsyncActionSequence.Success) {
         const { operation } = action;
         const timeout = (operation && typeof operation.ttl === 'number') ? operation.ttl : ttl;
 
-        if (timeout <= 0) {
+        if (timeout > 0) {
           setTimeout(() => {
             store.dispatch({
               type: action.type,
