@@ -387,8 +387,8 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       }
     } as CreateDAOAction);
     try {
-      let founders: Arc.FounderConfig[] = [], member : IAccountState,
-          membersByAccount: { [key : string] : IAccountState } = {},
+      let founders: Arc.FounderConfig[] = [], member: IAccountState,
+          membersByAccount: { [key: string]: IAccountState } = {},
           totalReputation = 0, totalTokens = 0;
 
       members.sort((a: any, b: any) => {
