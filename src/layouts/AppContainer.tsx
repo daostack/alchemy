@@ -95,39 +95,40 @@ class AppContainer extends React.Component<IProps, null> {
     const { connectionStatus, operations, ethAccountAddress, dismissOperation } = this.props;
 
     return (
-      (connectionStatus === ConnectionStatus.Pending
-        ? <div className={css.loading}>Loading...</div>
-        : connectionStatus === ConnectionStatus.Failed
-          ? <NoWeb3Container />
-          : ethAccountAddress === null
-            ? <NoEthAccountContainer />
-            : connectionStatus == ConnectionStatus.Connected
-              ? <div className={css.outer}>
-                <div className={css.container}>
-                  <Route path="/dao/:daoAddress" children={(props) => (
-                    <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
-                  )} />
-                  <Switch>
-                    <Route exact path="/" component={HomeContainer} />
-                    <Route exact path="/dao/create" component={CreateDaoContainer} />
-                    <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
-                    <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer} />
-                  </Switch>
-                </div>
-                <div className={css.pendingTransactions}>
-                  {Object.keys(operations).map((k) =>
-                    <div key={k}>
-                      <Notification
-                        operation={operations[k]}
-                        close={() => dismissOperation(k)}
-                      />
-                      <br />
-                    </div>
-                  )}
-                </div>
-                <div className={css.background}></div>
+      (connectionStatus === ConnectionStatus.Pending ?
+        <div className={css.loading}>Loading...</div> :
+      connectionStatus === ConnectionStatus.Failed ?
+        <NoWeb3Container /> :
+      ethAccountAddress === null ?
+        <NoEthAccountContainer /> :
+      connectionStatus == ConnectionStatus.Connected ?
+        <div className={css.outer}>
+          <div className={css.container}>
+            <Route path="/dao/:daoAddress" children={(props) => (
+              <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
+            )} />
+            <Switch>
+              <Route exact path="/" component={HomeContainer} />
+              <Route exact path="/dao/create" component={CreateDaoContainer} />
+              <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
+              <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer} />
+            </Switch>
+          </div>
+          <div className={css.pendingTransactions}>
+            {Object.keys(operations).map((k) =>
+              <div key={k}>
+                <Notification
+                  operation={operations[k]}
+                  close={() => dismissOperation(k)}
+                />
+                <br />
               </div>
-              : <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
+            )}
+          </div>
+          <div className={css.background}></div>
+        </div>
+      :
+        <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
       )
     );
   }

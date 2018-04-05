@@ -10,15 +10,29 @@ interface IProps {
   close: () => any;
 }
 
-export default class Notification extends React.Component<IProps, { minimized: boolean }> {
-  constructor(props: any) {
+interface IState {
+  minimized: boolean
+}
+
+export default class Notification extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
     super(props);
     this.state = { minimized: false };
   }
 
-  public handleClose = (e: any) => {
+  public handleClose(e: any) {
     const { close } = this.props;
     close();
+  }
+
+  public handleClick(e: any) {
+    const { operation } = this.props;
+    const { status } = operation;
+    const { minimized } = this.state;
+
+    if (status === OperationsStatus.Pending && minimized) {
+      this.setState({minimized: false});
+    }
   }
 
   public render() {
@@ -35,8 +49,10 @@ export default class Notification extends React.Component<IProps, { minimized: b
       [css.minimized]: status === OperationsStatus.Pending && minimized,
     });
 
+    const stepInfo = <span>{totalSteps !== 1 ? `Step ${step}` : ''} {totalSteps && totalSteps !== 1 ? `OF ${totalSteps}` : ''}</span>;
+
     return (
-      <div className={transactionClass} onClick={() => status === OperationsStatus.Pending && minimized ? this.setState({minimized: false}) : null }>
+      <div className={transactionClass} onClick={(e) => this.handleClick(e)}>
         <div className={css.statusIcon}>
           <img className={css.pending} src="/assets/images/Icon/Loading-white.svg" />
           <img className={css.success} src="/assets/images/Icon/Success-notification.svg" />
@@ -50,8 +66,8 @@ export default class Notification extends React.Component<IProps, { minimized: b
               <span className={css.error}>TRANSACTION FAILED</span>
             </div>
             <div className={css.right}>
-              <span className={css.pending}>{totalSteps !== 1 ? `Step ${step}` : ''} {totalSteps && totalSteps !== 1 ? `OF ${totalSteps}` : ''}</span>
-              <span className={css.success}>{totalSteps !== 1 ? `Step ${step}` : ''} {totalSteps && totalSteps !== 1 ? `OF ${totalSteps}` : ''}</span>
+              <span className={css.pending}>{stepInfo}</span>
+              <span className={css.success}>{stepInfo}</span>
               <span className={css.error}>ERROR</span>
             </div>
           </div>
@@ -61,8 +77,8 @@ export default class Notification extends React.Component<IProps, { minimized: b
         </div>
         <div className={css.notificationControls}>
           <button className={css.pending} onClick={() => this.setState({minimized: true})}><img src="/assets/images/Icon/Minimize-notification.svg" /></button>
-          <button className={css.success} onClick={this.handleClose}><img src="/assets/images/Icon/Close.svg" /></button>
-          <button className={css.error} onClick={this.handleClose}><img src="/assets/images/Icon/Close.svg" /></button>
+          <button className={css.success} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
+          <button className={css.error} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
         </div>
       </div>
     );
