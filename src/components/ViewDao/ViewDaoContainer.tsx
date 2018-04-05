@@ -68,7 +68,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     }
 
     // Watch for new, confirmed proposals coming in
-    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: "latest" });
     this.proposalEventWatcher.watch((error, result) => {
       getProposal(daoAddress, result[0].args._proposalId);
@@ -76,7 +76,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     // Watch for new, confirmed stakes coming in for the current account
     // TODO: watch for all new stakes from anyone?
-    const genesisProtocolInstance = await Arc.GenesisProtocol.deployed();
+    const genesisProtocolInstance = await Arc.GenesisProtocolFactory.deployed();
     this.stakeEventWatcher = genesisProtocolInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
       onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount).toNumber());

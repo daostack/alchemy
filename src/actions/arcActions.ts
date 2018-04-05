@@ -40,7 +40,7 @@ export function getDAOs() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
 
-    const daoCreator = await Arc.DaoCreator.deployed();
+    const daoCreator = await Arc.DaoCreatorFactory.deployed();
 
     // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
     const newOrgEvents = daoCreator.InitialSchemesSet({}, { fromBlock: 0 });
@@ -118,7 +118,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
     eventsArray = await getMintReputationEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-      memberAddresses.push(eventsArray[cnt].args.to);
+      memberAddresses.push(eventsArray[cnt].args._to);
     }
 
     memberAddresses = [...new Set(memberAddresses)]; // Dedupe
@@ -127,9 +127,9 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
       const address = memberAddresses[cnt];
       const member = { address, tokens: 0, reputation: 0, votes: {}, stakes: {} };
-      const tokens = await dao.token.balanceOf.call(address);
+      const tokens = await dao.token.balanceOf(address);
       member.tokens = Util.fromWei(tokens).toNumber();
-      const reputation = await dao.reputation.reputationOf.call(address);
+      const reputation = await dao.reputation.reputationOf(address);
       member.reputation = Util.fromWei(reputation).toNumber();
       members[address] = member;
     }
@@ -137,11 +137,11 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     daoData.members = members;
 
     //**** Get all proposals ****//
-    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
     // Get the voting machine (GenesisProtocol)
     // TODO: pull the voting machine from the DAO to make sure we have the correct one
-    const votingMachineInstance = await Arc.GenesisProtocol.deployed();
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
     const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
 
@@ -264,13 +264,13 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const dao = await Arc.DAO.at(avatarAddress);
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
-    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
     // Get the voting machine (GenesisProtocol) TODO: update as Arc.js supports a better way to do this
     const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
     const votingMachineAddress = schemeParams[2];
-    const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
     const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
     const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
 
@@ -416,7 +416,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       //   schemes: schemes
       // });
 
-      const daoCreator = await Arc.DaoCreator.deployed();
+      const daoCreator = await Arc.DaoCreatorFactory.deployed();
       const daoTransaction = await daoCreator.forgeOrg({
         name: daoName,
         tokenName,
@@ -427,7 +427,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       const avatarAddress = daoTransaction.getValueFromTx("_avatar", "NewOrg");
       const dao = await Arc.DAO.at(avatarAddress);
 
-      const votingMachine = await Arc.GenesisProtocol.deployed();
+      const votingMachine = await Arc.GenesisProtocolFactory.deployed();
 
       dispatch({
         type: arcConstants.ARC_CREATE_DAO,
@@ -440,18 +440,18 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         preBoostedVoteRequiredPercentage: 50,
         preBoostedVotePeriodLimit: 5184000, // 2 months
         boostedVotePeriodLimit: 604800, // 1 week
-        thresholdConstA: 2, // Threshold effects how likely it is for a propoasl to get boosted
+        thresholdConstA: Util.toWei(2), // Threshold effects how likely it is for a propoasl to get boosted
         thresholdConstB: 10, //     based on how many proposals are already boosted
         minimumStakingFee: 0,
         quietEndingPeriod: 7200, // Two hours
-        proposingRepRewardConstA: 5, // baseline rep rewarded TODO: good for now but needs more thought
-        proposingRepRewardConstB: 5, // how much to weight strength of yes votes vs no votes in reward TODO: good for now but needs more thought
+        proposingRepRewardConstA: Util.toWei(5), // baseline rep rewarded TODO: good for now but needs more thought
+        proposingRepRewardConstB: Util.toWei(5), // how much to weight strength of yes votes vs no votes in reward TODO: good for now but needs more thought
         stakerFeeRatioForVoters: 1, // 1 percent of staker fee given to voters
         votersReputationLossRatio: 1, // 1 percent of rep lost by voting
         votersGainRepRatioFromLostRep: 80
       })).result;
 
-      const contributionReward = await Arc.ContributionReward.deployed();
+      const contributionReward = await Arc.ContributionRewardFactory.deployed();
       dispatch({
         type: arcConstants.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Pending,
@@ -511,6 +511,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         },
         payload: normalize(daoData, schemas.daoSchema)
       } as CreateDAOAction);
+
       dispatch(push("/dao/" + dao.avatar.address));
     } catch (err) {
       dispatch({
@@ -549,13 +550,13 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const ethAccountAddress: string = getState().web3.ethAccountAddress;
       const dao = await Arc.DAO.at(daoAvatarAddress);
 
-      const contributionRewardInstance = await Arc.ContributionReward.deployed();
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
       // Get the voting machine (GenesisProtocol) TODO: there will be a better way to do this in Arc.js soon
       const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2];
-      const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
       const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
       const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
 
@@ -689,13 +690,13 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     try {
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const contributionRewardInstance = await Arc.ContributionReward.deployed();
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
       // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
       const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-      const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       const voteTransaction = await votingMachineInstance.vote({ proposalId, vote });
     } catch (err) {
@@ -715,14 +716,14 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
   return async (dispatch: any, getState: () => IRootState) => {
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const proposal: IProposalState = getState().arc.proposals[proposalId];
-    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
     // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
     const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
 
     const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-    const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
     const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
@@ -753,8 +754,8 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       },
       // Update voter tokens and reputation
       voter: {
-        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(voterAddress)).toNumber(),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(voterAddress)).toNumber(),
+        tokens: Util.fromWei(await daoInstance.token.balanceOf(voterAddress)).toNumber(),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf(voterAddress)).toNumber(),
       },
       // New vote made on the proposal
       vote: {
@@ -815,13 +816,13 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const contributionRewardInstance = await Arc.ContributionReward.deployed();
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
       // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
       const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-      const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
@@ -854,13 +855,13 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     const proposal: IProposalState = getState().arc.proposals[proposalId];
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed()
 
     // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
     const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
     const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-    const votingMachineInstance = await Arc.GenesisProtocol.at(votingMachineAddress);
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
     const state = await votingMachineInstance.getState({ proposalId });
