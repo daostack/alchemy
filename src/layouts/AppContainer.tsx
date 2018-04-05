@@ -1,8 +1,11 @@
 import * as Arc from '@daostack/arc.js';
 import axios from "axios";
+import * as History from "history";
 import * as React from "react";
+import { withCookies, Cookies } from 'react-cookie';
 import { connect, Dispatch } from "react-redux";
 import { Route, Switch } from "react-router-dom";
+import { replace as routerReplace } from "react-router-redux";
 import { bindActionCreators } from "redux";
 
 import { IRootState } from "reducers";
@@ -30,14 +33,17 @@ import { IOperationsState } from 'reducers/operations';
 interface IStateProps {
   arc: IArcState;
   connectionStatus: ConnectionStatus;
+  cookies: Cookies;
   ethAccountAddress: string | null;
-  operations: IOperationsState,
+  history: History.History;
+  operations: IOperationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
   arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
+  history: ownProps.history,
   operations: state.operations,
 });
 
@@ -62,6 +68,16 @@ class AppContainer extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
+  }
+
+  public async componentWillMount() {
+    const { cookies, history } = this.props;
+
+    // If this person has not seen the disclaimer, show them the home page
+    if (!cookies.get('seen_disclaimer')) {
+      cookies.set('seen_disclaimer', "true", { path: '/' });
+      history.replace("/");
+    }
   }
 
   public async componentDidMount() {
@@ -93,7 +109,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, operations, ethAccountAddress, dismissOperation } = this.props;
+    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending
@@ -127,10 +143,10 @@ class AppContainer extends React.Component<IProps, null> {
             </div>
             <div className={css.background}></div>
           </div>
-        : <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
+      : <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
       )
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(withCookies(AppContainer));

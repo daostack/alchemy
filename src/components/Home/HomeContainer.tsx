@@ -39,7 +39,7 @@ class HomeContainer extends React.Component<IProps, null> {
     return (
       <div className={css.homeWrapper}>
         Welcome to Alchemy!
-        <Link to={'/daos'}>Go to the Genesis DAO</Link>
+        <Link to={'/daos'}>Go to the Genesis DAO (dao list for now)</Link>
       </div>
     );
   }
