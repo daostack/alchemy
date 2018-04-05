@@ -423,7 +423,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         votingMachineParams: {
           votingMachineName: "GenesisProtocol"
         }
-      } as any);
+      });
 
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
