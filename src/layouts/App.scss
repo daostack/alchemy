@@ -137,3 +137,13 @@ body {
   padding-top: 100px;
   text-align: center;
 }
+
+.pendingTransactions {
+  z-index: 1000000;
+  position: fixed;
+  bottom: 5px;
+  right: 0;
+  width: auto;
+  height: auto;
+  text-align: right;
+}

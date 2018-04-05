@@ -15,11 +15,11 @@ import * as arcActions from "actions/arcActions";
 import * as operationsActions from 'actions/operationsActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
+import Notification from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
 import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
-import Notification from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import HeaderContainer from "layouts/HeaderContainer";
 
@@ -64,7 +64,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { initializeWeb3, loadCachedState} = this.props;
+    const { initializeWeb3, loadCachedState } = this.props;
     initializeWeb3();
 
     // If not using local testnet then load cached blockchain data from S3
@@ -95,37 +95,40 @@ class AppContainer extends React.Component<IProps, null> {
     const { connectionStatus, operations, ethAccountAddress, dismissOperation } = this.props;
 
     return (
-      (connectionStatus === ConnectionStatus.Pending
-        ? <div className={css.loading}>Loading...</div>
-      : connectionStatus === ConnectionStatus.Failed
-        ? <NoWeb3Container />
-      : ethAccountAddress === null
-        ? <NoEthAccountContainer />
-      : connectionStatus == ConnectionStatus.Connected
-        ? <div className={css.outer}>
-            <div className={css.container}>
-              <Route path="/dao/:daoAddress" children={(props) => (
-                <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
-              )} />
-              <Switch>
-                <Route exact path="/" component={HomeContainer}/>
-                <Route exact path="/dao/create" component={CreateDaoContainer}/>
-                <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
-                <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
-              </Switch>
-            </div>
-            <div className={css.notificationsWrapper}>
-              {Object.keys(operations).map((key) => ({key, operation: operations[key]})).map(({key, operation}) =>
-                (<Notification
-                  key={key}
-                  operation={operation}
-                  close={() => dismissOperation(key)}
-                />),
-              )}
-            </div>
-            <div className={css.background}></div>
+      (connectionStatus === ConnectionStatus.Pending ?
+        <div className={css.loading}>Loading...</div> :
+      connectionStatus === ConnectionStatus.Failed ?
+        <NoWeb3Container /> :
+      ethAccountAddress === null ?
+        <NoEthAccountContainer /> :
+      connectionStatus == ConnectionStatus.Connected ?
+        <div className={css.outer}>
+          <div className={css.container}>
+            <Route path="/dao/:daoAddress" children={(props) => (
+              <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
+            )} />
+            <Switch>
+              <Route exact path="/" component={HomeContainer} />
+              <Route exact path="/dao/create" component={CreateDaoContainer} />
+              <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
+              <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer} />
+            </Switch>
           </div>
-        : <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
+          <div className={css.pendingTransactions}>
+            {Object.keys(operations).map((k) =>
+              <div key={k}>
+                <Notification
+                  operation={operations[k]}
+                  close={() => dismissOperation(k)}
+                />
+                <br />
+              </div>
+            )}
+          </div>
+          <div className={css.background}></div>
+        </div>
+      :
+        <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
       )
     );
   }
