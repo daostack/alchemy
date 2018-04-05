@@ -384,121 +384,60 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       sequence: AsyncActionSequence.Pending,
       operation: {
         message: 'Creating new DAO...',
-        totalSteps: 4,
       }
     } as CreateDAOAction);
     try {
-      const web3: Web3 = Arc.Utils.getWeb3();
+      let founders: Arc.FounderConfig[] = [], member : IAccountState,
+          membersByAccount: { [key : string] : IAccountState } = {},
+          totalReputation = 0, totalTokens = 0;
 
-      let founders: Arc.FounderConfig[] = [], member;
       members.sort((a: any, b: any) => {
         b.reputation - a.reputation;
       });
+
       for (let i = 0; i < members.length; i++) {
         member = members[i];
+        totalReputation += member.reputation;
+        totalTokens += member.tokens;
         founders[i] = {
           address: member.address,
           tokens: Util.toWei(member.tokens),
           reputation: Util.toWei(member.reputation),
         };
+        membersByAccount[member.address] = {...member, votes: {}, stakes: {}};
       }
 
-      /**** TODO: use Arc.DAO.new once it supports GenesisProtocol ****/
-      // let schemes = [{
-      //   name: "ContributionReward"
-      // }];
-
-      // let dao = await Arc.DAO.new({
-      //   name: daoName,
-      //   tokenName: tokenName,
-      //   tokenSymbol: tokenSymbol,
-      //   founders: founders,
-      //   schemes: schemes
-      // });
-
-      const daoCreator = await Arc.DaoCreatorFactory.deployed();
-      const daoTransaction = await daoCreator.forgeOrg({
+      const dao = await Arc.DAO.new({
         name: daoName,
         tokenName,
         tokenSymbol,
         founders,
-      });
-
-      const avatarAddress = daoTransaction.getValueFromTx("_avatar", "NewOrg");
-      const dao = await Arc.DAO.at(avatarAddress);
-
-      const votingMachine = await Arc.GenesisProtocolFactory.deployed();
-
-      dispatch({
-        type: arcConstants.ARC_CREATE_DAO,
-        sequence: AsyncActionSequence.Pending,
-        operation: {
-          message: 'Setting voting machine parameters...',
+        schemes: [
+          // TODO: add these
+          // { name: "SchemeRegistrar" },
+          // { name: "UpgradeScheme" },
+          // { name: "GlobalConstraintRegistrar" },
+          { name: "ContributionReward" },
+          { name: "GenesisProtocol" }
+        ],
+        votingMachineParams: {
+          votingMachineName: "GenesisProtocol"
         }
-      } as CreateDAOAction);
-      const votingMachineParamsHash = (await votingMachine.setParameters({
-        preBoostedVoteRequiredPercentage: 50,
-        preBoostedVotePeriodLimit: 5184000, // 2 months
-        boostedVotePeriodLimit: 604800, // 1 week
-        thresholdConstA: Util.toWei(2), // Threshold effects how likely it is for a propoasl to get boosted
-        thresholdConstB: 10, //     based on how many proposals are already boosted
-        minimumStakingFee: 0,
-        quietEndingPeriod: 7200, // Two hours
-        proposingRepRewardConstA: Util.toWei(5), // baseline rep rewarded TODO: good for now but needs more thought
-        proposingRepRewardConstB: Util.toWei(5), // how much to weight strength of yes votes vs no votes in reward TODO: good for now but needs more thought
-        stakerFeeRatioForVoters: 1, // 1 percent of staker fee given to voters
-        votersReputationLossRatio: 1, // 1 percent of rep lost by voting
-        votersGainRepRatioFromLostRep: 80
-      })).result;
-
-      const contributionReward = await Arc.ContributionRewardFactory.deployed();
-      dispatch({
-        type: arcConstants.ARC_CREATE_DAO,
-        sequence: AsyncActionSequence.Pending,
-        operation: {
-          message: 'Setting contribution reward scheme parameters...',
-        }
-      } as CreateDAOAction);
-      const contributionRewardParamsHash = (await contributionReward.setParameters({
-        orgNativeTokenFee: Util.toWei(0),
-        votingMachineAddress: votingMachine.contract.address,
-        voteParametersHash: votingMachineParamsHash,
-      })).result;
-
-      const initialSchemesSchemes = [contributionReward.contract.address, votingMachine.contract.address];
-      const initialSchemesParams = [contributionRewardParamsHash, votingMachineParamsHash];
-      const initialSchemesPermissions = ["0x00000001", "0x00000000"];
-
-      dispatch({
-        type: arcConstants.ARC_CREATE_DAO,
-        sequence: AsyncActionSequence.Pending,
-        operation: {
-          message: 'Setting initial schemes...',
-        }
-      } as CreateDAOAction);
-      // register the schemes with the dao
-      const tx = await daoCreator.contract.setSchemes(
-        avatarAddress,
-        initialSchemesSchemes,
-        initialSchemesParams,
-        initialSchemesPermissions,
-      );
-
-      /* EO creating DAO */
+      } as any);
 
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
         name: daoName,
-        members: {},
+        members: membersByAccount,
         rank: 1, // TODO
         promotedAmount: 0,
         proposals: [],
         proposalsLoaded: true,
         reputationAddress: dao.reputation.address,
-        reputationCount: 0,
+        reputationCount: totalReputation,
         tokenAddress: dao.token.address,
-        tokenCount: 0,
+        tokenCount: totalTokens,
         tokenName,
         tokenSymbol,
       };
