@@ -7,8 +7,11 @@ import { App } from "./App";
 
 import "./assets/styles/global.scss";
 
-function renderApp() {
-  Arc.InitializeArc();
+async function renderApp() {
+  try {
+    await Arc.InitializeArc();
+  } catch (e) {
+  }
 
   ReactDOM.render(
     <AppContainer>

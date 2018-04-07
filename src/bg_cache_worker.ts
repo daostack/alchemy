@@ -15,7 +15,6 @@ import { initialState as arcInitialState, IArcState, IDaoState, TransactionState
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
-Arc.InitializeArc();
 const arcjsNetwork = Arc.ConfigService.get('network');
 
 if (process.env.NODE_ENV == 'production') {
@@ -36,6 +35,8 @@ if (process.env.NODE_ENV == 'production') {
 }
 
 const cacheBlockchain = async () => {
+  await Arc.InitializeArc();
+
   // TODO: store last block checked somewhere (redis?) and only load new data since last check
   let lastBlock = 0;
 
