@@ -35,8 +35,6 @@ if (process.env.NODE_ENV == 'production') {
 }
 
 const cacheBlockchain = async () => {
-  await Arc.InitializeArc();
-
   // TODO: store last block checked somewhere (redis?) and only load new data since last check
   let lastBlock = 0;
 
@@ -46,7 +44,7 @@ const cacheBlockchain = async () => {
   let initialState: IArcState = arcInitialState;
   const daos = {} as { [key: string]: IDaoState };
 
-  const daoCreator = await Arc.DaoCreatorFactory.deployed();
+  const daoCreator = Arc.WrapperService.wrappers.DaoCreator;
 
   try {
     // Get the list of daos we populated on the blockchain during genesis by looking for InitialSchemesSet events
@@ -69,7 +67,7 @@ const cacheBlockchain = async () => {
   initialState.daos = normalizedData.entities.daos || {};
   initialState.proposals = normalizedData.entities.proposals || {};
 
-  const genesisProtocol = await Arc.GenesisProtocolFactory.deployed();
+  const genesisProtocol = Arc.WrapperService.wrappers.GenesisProtocol;
 
   let proposalDetails;
   try {
@@ -148,6 +146,12 @@ const cacheBlockchain = async () => {
       console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
     }
   });
+
+  setTimeout(cacheBlockchain, 1000);
 };
 
-cacheBlockchain();
+(async () => {
+  await Arc.InitializeArc();
+
+  cacheBlockchain();
+})();
