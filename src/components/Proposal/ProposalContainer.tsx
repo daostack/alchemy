@@ -179,7 +179,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <span>CLOSES {moment((proposal.boostedTime + proposal.boostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : ""
               }
-              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
+              {proposal.title}
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of {rewardsString}</span>

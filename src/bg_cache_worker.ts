@@ -44,7 +44,7 @@ const cacheBlockchain = async () => {
   let initialState: IArcState = arcInitialState;
   const daos = {} as { [key: string]: IDaoState };
 
-  const daoCreator = await Arc.DaoCreator.deployed();
+  const daoCreator = Arc.WrapperService.wrappers.DaoCreator;
 
   try {
     // Get the list of daos we populated on the blockchain during genesis by looking for InitialSchemesSet events
@@ -67,7 +67,7 @@ const cacheBlockchain = async () => {
   initialState.daos = normalizedData.entities.daos || {};
   initialState.proposals = normalizedData.entities.proposals || {};
 
-  const genesisProtocol = await Arc.GenesisProtocol.deployed();
+  const genesisProtocol = Arc.WrapperService.wrappers.GenesisProtocol;
 
   let proposalDetails;
   try {
@@ -150,4 +150,8 @@ const cacheBlockchain = async () => {
   setTimeout(cacheBlockchain, 1000);
 };
 
-cacheBlockchain();
+(async () => {
+  await Arc.InitializeArc();
+
+  cacheBlockchain();
+})();

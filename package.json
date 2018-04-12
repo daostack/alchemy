@@ -59,7 +59,7 @@
     "auto-start-ganache": "cross-env arcjs_network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.40",
+    "@daostack/arc.js": "0.0.0-alpha.47",
     "@types/object-hash": "^1.2.0",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",

@@ -278,6 +278,9 @@ const arcReducer = (state = initialState, action: any) => {
             daos: { [avatarAddress]: { $merge: payload.dao } },
           });
         }
+        default: {
+          return state;
+        }
       }
     } // EO ARC_VOTE
 
@@ -325,6 +328,9 @@ const arcReducer = (state = initialState, action: any) => {
           return update(state, {
             proposals: { [proposalId]: { $merge : action.payload.proposal } },
           });
+        }
+        default: {
+          return state;
         }
       }
     } // EO ARC_STAKE
@@ -378,6 +384,42 @@ const arcReducer = (state = initialState, action: any) => {
       }
     } // EO ARC_REDEEM
 
+    case ActionTypes.ARC_ON_TRANSFER: {
+      const { avatarAddress, from, fromBalance, to, toBalance, totalTokens } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            tokenCount: { $set: totalTokens },
+            members: {
+              [from]: {
+                tokens: { $set: fromBalance }
+              },
+              [to]: {
+                tokens: { $set: toBalance }
+              }
+            },
+          }
+        }
+      });
+    }
+
+    case ActionTypes.ARC_ON_REPUTATION_CHANGE: {
+      const { avatarAddress, address, reputation, totalReputation } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            reputationCount: { $set: totalReputation },
+            members: {
+              [address]: {
+                reputation: { $set: reputation }
+              }
+            },
+          }
+        }
+      });
+    }
   }
 
   return state;

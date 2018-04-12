@@ -56,6 +56,8 @@ interface IDispatchProps {
   getDAO: typeof arcActions.getDAO;
   getProposal: typeof arcActions.getProposal;
   redeemProposal: typeof arcActions.redeemProposal;
+  onTransferEvent: typeof arcActions.onTransferEvent;
+  onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
 }
 
 const mapDispatchToProps = {
@@ -64,6 +66,8 @@ const mapDispatchToProps = {
   getDAO: arcActions.getDAO,
   getProposal: arcActions.getProposal,
   redeemProposal: arcActions.redeemProposal,
+  onTransferEvent: arcActions.onTransferEvent,
+  onReputationChangeEvent: arcActions.onReputationChangeEvent,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -72,9 +76,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
+  public transferEventWatcher: any;
+  public mintEventWatcher: any;
+  public burnEventWatcher: any;
 
   public async componentDidMount() {
-    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal } = this.props;
+    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
@@ -85,7 +92,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     }
 
     // Watch for new, confirmed proposals coming in
-    const contributionRewardInstance = await Arc.ContributionReward.deployed();
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: "latest" });
     this.proposalEventWatcher.watch((error, result) => {
       getProposal(daoAddress, result[0].args._proposalId);
@@ -93,7 +100,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     // Watch for new, confirmed stakes coming in for the current account
     // TODO: watch for all new stakes from anyone?
-    const genesisProtocolInstance = await Arc.GenesisProtocol.deployed();
+    const genesisProtocolInstance = await Arc.GenesisProtocolFactory.deployed();
     this.stakeEventWatcher = genesisProtocolInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
       onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount).toNumber());
@@ -102,6 +109,23 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.voteEventWatcher = genesisProtocolInstance.VoteProposal({ }, { fromBlock: "latest" });
     this.voteEventWatcher.watch((error, result) => {
       onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation).toNumber());
+    });
+
+    const daoInstance = await Arc.DAO.at(daoAddress);
+
+    this.transferEventWatcher = daoInstance.token.Transfer({}, { fromBlock: "latest" });
+    this.transferEventWatcher.watch((error: any, result: any) => {
+      onTransferEvent(daoAddress, result.args.from, result.args.to);
+    });
+
+    this.mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: "latest" });
+    this.mintEventWatcher.watch((error: any, result: any) => {
+      onReputationChangeEvent(daoAddress, result.args._to);
+    });
+
+    this.burnEventWatcher = daoInstance.reputation.Burn({}, { fromBlock: "latest" });
+    this.burnEventWatcher.watch((error: any, result: any) => {
+      onReputationChangeEvent(daoAddress, result.args._from);
     });
   }
 
@@ -116,6 +140,18 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (this.voteEventWatcher) {
       this.voteEventWatcher.stopWatching();
+    }
+
+    if (this.transferEventWatcher) {
+      this.transferEventWatcher.stopWatching();
+    }
+
+    if (this.mintEventWatcher) {
+      this.mintEventWatcher.stopWatching();
+    }
+
+    if (this.burnEventWatcher) {
+      this.burnEventWatcher.stopWatching();
     }
   }
 
