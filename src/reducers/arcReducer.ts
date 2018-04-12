@@ -222,6 +222,9 @@ const arcReducer = (state = initialState, action: any) => {
             daos: { [avatarAddress]: { $merge: payload.dao } },
           });
         }
+        default: {
+          return state;
+        }
       }
     }
 
@@ -269,6 +272,9 @@ const arcReducer = (state = initialState, action: any) => {
           return update(state, {
             proposals: { [proposalId]: { $merge : action.payload.proposal } },
           });
+        }
+        default: {
+          return state;
         }
       }
     }
