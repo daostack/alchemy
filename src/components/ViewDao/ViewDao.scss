@@ -127,6 +127,23 @@ a.createProposal, .buyGen {
   border: 1px solid $accent-1;
 }
 
+.nav span.redemptionNotification {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background-color: $accent-1;
+  color: $white;
+  padding: 1px 1px 1px 1px;
+  text-align: center;
+  line-height: 13px;
+  border-radius: 28px;
+  font-size: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -15px;
+}
+
 .buyGen {
   font-size: $small;
 }
@@ -173,7 +190,7 @@ a.navItem:hover {
 .genBox {
   background: rgba(247, 247, 247, 1.000);
   border-radius: 3px;
-  padding: 12px 25px 12px 0;
+  padding: 12px 0;
   float: right;
 
   .small {

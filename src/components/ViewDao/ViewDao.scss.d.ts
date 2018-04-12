@@ -16,6 +16,7 @@ export const navItem: string;
 export const createProposal: string;
 export const buyGen: string;
 export const redeemAllRewardsButton: string;
+export const redemptionNotification: string;
 export const selected: string;
 export const daoAvatar: string;
 export const genBox: string;

@@ -65,6 +65,10 @@ body {
   .alchemyLogo {
     float: left;
     padding: 9px;
+
+    img {
+      height: 40px;
+    }
   }
 
   .version {
@@ -84,13 +88,21 @@ body {
   }
 
   .accountInfo {
-    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 60px;
 
     .holdings {
-      padding-top: 10px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 200px;
+      right: 50px;
       text-align: right;
       font-size: $small;
-      float: left;
+      z-index: 100;
+
 
       .holdingsLabel {
         color: $black-halftone;
@@ -104,8 +116,8 @@ body {
         width: 30px;
         height: 30px;
         border: 1px solid red;
-        right: 20px;
-        top: 15px;
+        right: -34px;
+        top: 3px;
         opacity: 0;
         cursor: pointer;
       }
@@ -114,8 +126,13 @@ body {
     .profileLink {
       border: none;
       background: transparent;
-      float: left;
-      padding: 13px 9px;
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      padding: 0;
+      margin: 0;
+      height: 32px;
     }
   }
 

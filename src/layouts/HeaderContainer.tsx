@@ -79,7 +79,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     return(
       <nav className={css.header}>
         <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
-        <span className={css.version}><b>{Util.networkName(web3State.networkId)}</b> | v.{VERSION}</span>
+        <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> | v.{VERSION}</span>
         { web3
           ? <div className={css.accountInfo}>
               <div className={css.holdings}>

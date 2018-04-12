@@ -253,7 +253,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
                   { currentAccountRedemptions
                     ? <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                        <button onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
+                        <button className={css.redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
                       </Tooltip>
                     : ""
                   }
