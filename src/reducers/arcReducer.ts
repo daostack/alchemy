@@ -381,6 +381,9 @@ const arcReducer = (state = initialState, action: any) => {
             daos: { [payload.dao.avatarAddress]: { $merge: action.payload.dao } },
           });
         }
+        default: {
+          return state;
+        }
       }
     } // EO ARC_REDEEM
 
