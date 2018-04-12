@@ -39,7 +39,7 @@
 
 # Regular end users - use MetaMask
 
-* Go to https://daostack-alchemy-client.herokuapp.com
+* Go to https://alchemy.daostack.io
 * Install [Metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) or the [Parity Chrome Extension](https://chrome.google.com/webstore/detail/himekenlppkgeaoeddcliojfddemadig)
 * In MetaMask switch to the desired network. Note that we are only deployed on Kovan right now.
 * Unlock your account
