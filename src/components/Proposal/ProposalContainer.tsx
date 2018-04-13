@@ -50,8 +50,8 @@ class ProposalContainer extends React.Component<IProps, null> {
       const proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
-        [css.failedProposal]: proposal.winningVote == VoteOptions.No,
-        [css.passedProposal]: proposal.winningVote == VoteOptions.Yes,
+        [css.failedProposal]: (proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed) && proposal.winningVote == VoteOptions.No,
+        [css.passedProposal]: (proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed) && proposal.winningVote == VoteOptions.Yes,
         [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
       });
 
