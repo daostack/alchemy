@@ -110,136 +110,138 @@ class ViewProposalContainer extends React.Component<IProps, null> {
       };
 
       return(
-        <div className={proposalClass + " " + css.clearfix}>
-          { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
-            <VoteBox
-              currentVote={currentAccountVote}
-              currentAccountReputation={daoAccount.reputation}
-              daoTotalReputation={dao.reputationCount}
-              proposal={proposal}
-              transactionState={currentAccountVoteState}
-              voteOnProposal={voteOnProposal}
-            />
-            : proposal.winningVote == VoteOptions.Yes ?
-              <div className={css.decidedProposal}>
-                  <div className={css.result}>
-                    <div>PASSED</div>
-                    <div><img src="/assets/images/Icon/Passed.svg"/></div>
-                    <div>{submittedTime.format("MMM DD, YYYY")}</div>
-                  </div>
-              </div>
-            : proposal.winningVote == VoteOptions.No ?
-              <div className={css.decidedProposal}>
-                  <div className={css.result}>
-                    <div>FAILED</div>
-                    <div><img src="/assets/images/Icon/Failed.svg"/></div>
-                    <div>{submittedTime.format("MMM DD, YYYY")}</div>
-                  </div>
-              </div>
-            : ""
-          }
-          <div className={css.proposalInfo}>
-            { proposal.state == ProposalStates.Executed ?
-              <div className={css.decisionGraph}>
-                <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
-                <div className={css.graph}>
-                  <div className={css.forBar} style={styles.forBar}></div>
-                  <div className={css.againstBar} style={styles.againstBar}></div>
-                  <div className={css.divider}></div>
+        <div className={css.singleProposal}>
+          <div className={proposalClass + " " + css.clearfix}>
+            { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
+              <VoteBox
+                currentVote={currentAccountVote}
+                currentAccountReputation={daoAccount.reputation}
+                daoTotalReputation={dao.reputationCount}
+                proposal={proposal}
+                transactionState={currentAccountVoteState}
+                voteOnProposal={voteOnProposal}
+              />
+              : proposal.winningVote == VoteOptions.Yes ?
+                <div className={css.decidedProposal}>
+                    <div className={css.result}>
+                      <div>PASSED</div>
+                      <div><img src="/assets/images/Icon/Passed.svg"/></div>
+                      <div>{submittedTime.format("MMM DD, YYYY")}</div>
+                    </div>
                 </div>
-                <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
-              </div>
+              : proposal.winningVote == VoteOptions.No ?
+                <div className={css.decidedProposal}>
+                    <div className={css.result}>
+                      <div>FAILED</div>
+                      <div><img src="/assets/images/Icon/Failed.svg"/></div>
+                      <div>{submittedTime.format("MMM DD, YYYY")}</div>
+                    </div>
+                </div>
               : ""
             }
-            <h3>
-              { proposal.state == ProposalStates.PreBoosted ?
-                <span>CLOSES IN 3 WEEKS</span>
-              : proposal.state == ProposalStates.Boosted ?
-                <span>5 DAYS</span>
-              : ""
+            <div className={css.proposalInfo}>
+              { proposal.state == ProposalStates.Executed ?
+                <div className={css.decisionGraph}>
+                  <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
+                  <div className={css.graph}>
+                    <div className={css.forBar} style={styles.forBar}></div>
+                    <div className={css.againstBar} style={styles.againstBar}></div>
+                    <div className={css.divider}></div>
+                  </div>
+                  <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
+                </div>
+                : ""
               }
-              {proposal.title}
-            </h3>
-            <div className={css.transferDetails}>
-              <span className={css.transferType}>Transfer of</span>
-              <span className={css.transferAmount}>{rewardsString}</span>
-              <img src="/assets/images/Icon/Transfer.svg"/>
+              <h3>
+                { proposal.state == ProposalStates.PreBoosted ?
+                  <span>CLOSES IN 3 WEEKS</span>
+                : proposal.state == ProposalStates.Boosted ?
+                  <span>5 DAYS</span>
+                : ""
+                }
+                {proposal.title}
+              </h3>
+              <div className={css.transferDetails}>
+                <span className={css.transferType}>Transfer of</span>
+                <span className={css.transferAmount}>{rewardsString}</span>
+                <img src="/assets/images/Icon/Transfer.svg"/>
 
-              <AccountPopupContainer
-                accountAddress={proposal.beneficiary}
-                daoAvatarAddress={proposal.daoAvatarAddress}
-              />
+                <AccountPopupContainer
+                  accountAddress={proposal.beneficiary}
+                  daoAvatarAddress={proposal.daoAvatarAddress}
+                />
+              </div>
             </div>
+            { proposal.state == ProposalStates.Boosted ?
+                <div>
+                  <div className={css.proposalDetails}>
+                    <div className={css.createdBy}>
+                      CREATED BY
+
+                      <AccountPopupContainer
+                        accountAddress={proposal.proposer}
+                        daoAvatarAddress={proposal.daoAvatarAddress}
+                      />
+
+                      ON {submittedTime.format("MMM DD, YYYY")}
+                    </div>
+
+                    <a href={proposal.description} target="_blank" className={css.viewProposal}>
+                      <img src="/assets/images/Icon/View.svg"/>
+                    </a>
+                  </div>
+
+                  <PredictionBox
+                    currentPrediction={currentAccountPrediction}
+                    currentStake={currentAccountStake}
+                    currentAccountTokens={daoAccount.tokens}
+                    proposal={proposal}
+                    stakeProposal={stakeProposal}
+                    transactionState={currentAccountStakeState}
+                  />
+                </div>
+              : proposal.state == ProposalStates.PreBoosted ?
+                <div>
+
+                  <div className={css.proposalDetails}>
+                    <div className={css.createdBy}>
+                      CREATED BY
+
+                      <AccountPopupContainer
+                        accountAddress={proposal.proposer}
+                        daoAvatarAddress={proposal.daoAvatarAddress}
+                      />
+                      ON {submittedTime.format("MMM DD, YYYY")}
+                    </div>
+
+                    <a href={proposal.description} target="_blank" className={css.viewProposal}>
+                      <img src="/assets/images/Icon/View.svg"/>
+                    </a>
+                  </div>
+
+                  <PredictionBox
+                    currentPrediction={currentAccountPrediction}
+                    currentStake={currentAccountStake}
+                    currentAccountTokens={daoAccount.tokens}
+                    proposal={proposal}
+                    stakeProposal={stakeProposal}
+                    transactionState={currentAccountStakeState}
+                  />
+                </div>
+              : proposal.winningVote == VoteOptions.Yes ?
+                <div>
+                  <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
+                    <a href={proposal.description} target="_blank" className={css.viewProposal}>
+                      <img src="/assets/images/Icon/View.svg"/>
+                    </a>
+                  </div>
+                </div>
+              : proposal.winningVote == VoteOptions.No ?
+                ""
+              : ""
+
+            }
           </div>
-          { proposal.state == ProposalStates.Boosted ?
-              <div>
-                <div className={css.proposalDetails}>
-                  <div className={css.createdBy}>
-                    CREATED BY
-
-                    <AccountPopupContainer
-                      accountAddress={proposal.proposer}
-                      daoAvatarAddress={proposal.daoAvatarAddress}
-                    />
-
-                    ON {submittedTime.format("MMM DD, YYYY")}
-                  </div>
-
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/>
-                  </a>
-                </div>
-
-                <PredictionBox
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStake}
-                  currentAccountTokens={daoAccount.tokens}
-                  proposal={proposal}
-                  stakeProposal={stakeProposal}
-                  transactionState={currentAccountStakeState}
-                />
-              </div>
-            : proposal.state == ProposalStates.PreBoosted ?
-              <div>
-
-                <div className={css.proposalDetails}>
-                  <div className={css.createdBy}>
-                    CREATED BY
-
-                    <AccountPopupContainer
-                      accountAddress={proposal.proposer}
-                      daoAvatarAddress={proposal.daoAvatarAddress}
-                    />
-                    ON {submittedTime.format("MMM DD, YYYY")}
-                  </div>
-
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/>
-                  </a>
-                </div>
-
-                <PredictionBox
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStake}
-                  currentAccountTokens={daoAccount.tokens}
-                  proposal={proposal}
-                  stakeProposal={stakeProposal}
-                  transactionState={currentAccountStakeState}
-                />
-              </div>
-            : proposal.winningVote == VoteOptions.Yes ?
-              <div>
-                <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/>
-                  </a>
-                </div>
-              </div>
-            : proposal.winningVote == VoteOptions.No ?
-              ""
-            : ""
-
-          }
         </div>
       );
     } else {

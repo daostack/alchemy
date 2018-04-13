@@ -301,7 +301,7 @@
 }
 
 .passedProposal .proposalInfo h3, .failedProposal .proposalInfo h3 {
-	margin: 0px 0px 4px 0px;
+	margin: 12px 0px 10px 0px;
 }
 
 .decisionGraph {
@@ -580,4 +580,11 @@
 /****** View Proposal Page ******/
 .viewProposalWrapper {
 	width: 100%;
+}
+
+.singleProposal {
+	width: 100%;
+	position: relative;
+	margin-top: 30px;
+	background-color: $white;
 }
