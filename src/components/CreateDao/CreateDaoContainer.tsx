@@ -80,7 +80,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
   public handleChangeMemberTokens = (index: number) => (event: any) => {
     const newMembers = this.state.members.map((member, sidx) => {
       if (index !== sidx) { return member; }
-      return { ...member, tokens: event.target.value };
+      return { ...member, tokens: Number(event.target.value) };
     });
     this.setState({ members: newMembers });
   }
@@ -88,7 +88,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
   public handleChangeMemberReputation = (index: number) => (event: any) => {
     const newMembers = this.state.members.map((member, sidx) => {
       if (index !== sidx) { return member; }
-      return { ...member, reputation: event.target.value };
+      return { ...member, reputation: Number(event.target.value) };
     });
     this.setState({ members: newMembers });
   }
