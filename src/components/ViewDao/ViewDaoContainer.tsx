@@ -33,7 +33,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc) as IDaoState;
   let numRedemptions = 0;
 
-  if (dao) {
+  if (dao && dao.members[state.web3.ethAccountAddress]) {
     numRedemptions = Object.keys(dao.members[state.web3.ethAccountAddress].redemptions).length;
   }
 
