@@ -282,17 +282,32 @@ const arcReducer = (state = initialState, action: any) => {
     case ActionTypes.ARC_ON_TRANSFER: {
       const { avatarAddress, from, fromBalance, to, toBalance, totalTokens } = payload;
 
+      // We see this from address when a DAO is created
+      if (from !== "0x0000000000000000000000000000000000000000") {
+        state = update(state, {
+          daos: {
+            [avatarAddress]: {
+              members: {
+                [from]: {
+                  tokens: { $set: fromBalance }
+                },
+              },
+            }
+          }
+        });
+      }
+
       return update(state, {
         daos: {
           [avatarAddress]: {
             tokenCount: { $set: totalTokens },
             members: {
-              [from]: {
-                tokens: { $set: fromBalance }
+              [to]: (member : any) => {
+                // If tokens are being given to a non member, add them as a member to this DAO
+                update(member || { address: to, tokens: 0, reputation: 0, votes: {}, stakes: {} }, {
+                  tokens: { $set: toBalance }
+                });
               },
-              [to]: {
-                tokens: { $set: toBalance }
-              }
             },
           }
         }
@@ -307,9 +322,12 @@ const arcReducer = (state = initialState, action: any) => {
           [avatarAddress]: {
             reputationCount: { $set: totalReputation },
             members: {
-              [address]: {
-                reputation: { $set: reputation }
-              }
+              [address]: (member : any) => {
+                // If reputation being given to a non member, add them as a member to this DAO
+                update(member || { address: address, tokens: 0, reputation: 0, votes: {}, stakes: {} }, {
+                  tokens: { $set: reputation }
+                }
+              },
             },
           }
         }
