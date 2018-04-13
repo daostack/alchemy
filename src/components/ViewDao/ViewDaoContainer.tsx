@@ -26,27 +26,22 @@ interface IStateProps extends RouteComponentProps<any> {
   currentAccountAddress: string;
   dao: IDaoState;
   daoAddress: string;
-  redemptions: IRedemptionState[];
+  numRedemptions: number;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc) as IDaoState;
-  let redemptionsList: IRedemptionState[] = [];
+  let numRedemptions = 0;
 
   if (dao) {
-    const redemptions = dao.members[state.web3.ethAccountAddress].redemptions;
-    redemptionsList = Object.keys(redemptions).map((proposalId) => {
-      const redemption = redemptions[proposalId];
-      redemption.proposal = state.arc.proposals[proposalId];
-      return redemption;
-    });
+    numRedemptions = Object.keys(dao.members[state.web3.ethAccountAddress].redemptions).length;
   }
 
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     dao,
     daoAddress : ownProps.match.params.daoAddress,
-    redemptions: redemptionsList,
+    numRedemptions,
   };
 };
 
@@ -55,7 +50,6 @@ interface IDispatchProps {
   onVoteEvent: typeof arcActions.onVoteEvent;
   getDAO: typeof arcActions.getDAO;
   getProposal: typeof arcActions.getProposal;
-  redeemProposal: typeof arcActions.redeemProposal;
   onTransferEvent: typeof arcActions.onTransferEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
 }
@@ -65,7 +59,6 @@ const mapDispatchToProps = {
   onVoteEvent: arcActions.onVoteEvent,
   getDAO: arcActions.getDAO,
   getProposal: arcActions.getProposal,
-  redeemProposal: arcActions.redeemProposal,
   onTransferEvent: arcActions.onTransferEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
 };
@@ -156,13 +149,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { currentAccountAddress, dao, redeemProposal, redemptions } = this.props;
+    const { currentAccountAddress, dao, numRedemptions } = this.props;
 
     if (dao) {
       return(
         <div className={css.wrapper}>
           <DaoHeader dao={dao} />
-          <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} redeemProposal={redeemProposal} redemptions={redemptions} />
+          <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
 
           <Switch>
             <Route exact path="/dao/:daoAddress" component={DaoProposalsContainer} />
