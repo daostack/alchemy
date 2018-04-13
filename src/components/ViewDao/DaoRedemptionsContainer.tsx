@@ -27,7 +27,7 @@ interface IStateProps extends RouteComponentProps<any> {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = state.arc.daos[ownProps.match.params.daoAddress];
-  let proposals : IProposalState[] = [];
+  let proposals: IProposalState[] = [];
   let redemptionsList: IRedemptionState[] = [];
 
   if (dao && dao.members.hasOwnProperty(state.web3.ethAccountAddress)) {
