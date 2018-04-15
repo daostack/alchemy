@@ -326,7 +326,7 @@ const arcReducer = (state = initialState, action: any) => {
                 // If reputation being given to a non member, add them as a member to this DAO
                 update(member || { address, tokens: 0, reputation: 0, votes: {}, stakes: {} }, {
                   tokens: { $set: reputation }
-                }
+                });
               },
             },
           }
