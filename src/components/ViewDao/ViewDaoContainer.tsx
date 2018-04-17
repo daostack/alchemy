@@ -61,7 +61,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
-  public executeProposalburnEventWatcher: Arc.EventFetcher<Arc.GenesisProtocolExecuteProposalEventResult>;
+  public executeProposalEventWatcher: Arc.EventFetcher<Arc.GenesisProtocolExecuteProposalEventResult>;
   public transferEventWatcher: any;
   public mintEventWatcher: any;
   public burnEventWatcher: any;
@@ -114,8 +114,8 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       onReputationChangeEvent(daoAddress, result.args._from);
     });
 
-    this.executeProposalburnEventWatcher = genesisProtocolInstance.ExecuteProposal({}, { fromBlock: "latest" });
-    this.executeProposalburnEventWatcher.watch((error, result) => {
+    this.executeProposalEventWatcher = genesisProtocolInstance.ExecuteProposal({}, { fromBlock: "latest" });
+    this.executeProposalEventWatcher.watch((error, result) => {
       const { _proposalId, _executionState, _decision, _totalReputation } = result[0].args;
       onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
     });
@@ -144,6 +144,10 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (this.burnEventWatcher) {
       this.burnEventWatcher.stopWatching();
+    }
+
+    if (this.executeProposalEventWatcher) {
+      this.executeProposalEventWatcher.stopWatching();
     }
   }
 
