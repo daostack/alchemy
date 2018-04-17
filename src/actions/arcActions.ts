@@ -874,7 +874,6 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
   proposalId: string,
   accountAddress: string,
 }, {
-  proposalId: string,
   beneficiary: any,
   dao: any
 }>
@@ -909,7 +908,14 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 
       // If current user is the beneficiary then redeem the contribution rewards too
       if (proposal.beneficiaryAddress == accountAddress) {
-        const rewardRedeemTransaction = await contributionRewardInstance.contract.redeem(proposal.proposalId, daoAvatarAddress, [true, true, true, true]);
+        const rewardRedeemTransaction = await contributionRewardInstance.redeemContributionReward({
+          proposalId: proposal.proposalId,
+          avatar: daoAvatarAddress,
+          ethers: true,
+          //externalTokens: true,
+          nativeTokens: true,
+          reputation: true,
+        });
       }
 
       let payload: any = {
