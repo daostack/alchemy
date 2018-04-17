@@ -151,7 +151,7 @@ const cacheBlockchain = async () => {
 };
 
 (async () => {
-  await Arc.InitializeArc();
+  await Arc.InitializeArcJs();
 
   cacheBlockchain();
 })();
