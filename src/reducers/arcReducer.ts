@@ -2,6 +2,7 @@ import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
 import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
+import { ExecutionState } from "@daostack/arc.js";
 
 export enum ProposalStates {
   None = 0,
@@ -390,17 +391,32 @@ const arcReducer = (state = initialState, action: any) => {
     case ActionTypes.ARC_ON_TRANSFER: {
       const { avatarAddress, from, fromBalance, to, toBalance, totalTokens } = payload;
 
+      // We see this from address when a DAO is created
+      if (from !== "0x0000000000000000000000000000000000000000") {
+        state = update(state, {
+          daos: {
+            [avatarAddress]: {
+              members: {
+                [from]: {
+                  tokens: { $set: fromBalance }
+                },
+              },
+            }
+          }
+        });
+      }
+
       return update(state, {
         daos: {
           [avatarAddress]: {
             tokenCount: { $set: totalTokens },
             members: {
-              [from]: {
-                tokens: { $set: fromBalance }
+              [to]: (member: any) => {
+                // If tokens are being given to a non member, add them as a member to this DAO
+                return update(member || { address: to, tokens: 0, reputation: 0, votes: {}, stakes: {} }, {
+                  tokens: { $set: toBalance }
+                });
               },
-              [to]: {
-                tokens: { $set: toBalance }
-              }
             },
           }
         }
@@ -415,13 +431,36 @@ const arcReducer = (state = initialState, action: any) => {
           [avatarAddress]: {
             reputationCount: { $set: totalReputation },
             members: {
-              [address]: {
-                reputation: { $set: reputation }
-              }
+              [address]: (member: any) => {
+                // If reputation being given to a non member, add them as a member to this DAO
+                return update(member || { address, tokens: 0, reputation: 0, votes: {}, stakes: {} }, {
+                  tokens: { $set: reputation }
+                });
+              },
             },
           }
         }
       });
+    }
+
+    case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
+      const { avatarAddress, proposalId, executionState, decision, reputationWhenExecuted } = payload;
+
+      if (executionState === ExecutionState.PreBoostedBarCrossed || executionState === ExecutionState.BoostedBarCrossed) {
+        return update(state, {
+          proposals: {
+            [proposalId]: {
+              $merge: {
+                reputationWhenExecuted,
+                winningVote: decision,
+                state: ProposalStates.Executed
+              }
+            }
+          }
+        });
+      } else {
+        return state;
+      }
     }
   }
 

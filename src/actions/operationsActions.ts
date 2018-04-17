@@ -1,5 +1,7 @@
 import { Action } from "redux";
 import { Dispatch } from "redux";
+import { OperationsStatus } from "reducers/operations";
+import { IOperationConfig } from "actions/async";
 
 export interface IDismissOperation {
   type: 'Operation/Dismiss';
@@ -18,3 +20,26 @@ export const dismissOperation =
       type: 'Operation/Dismiss',
       payload: { hash }
     } as IDismissOperation);
+
+export interface IShowOperation {
+  type: 'Operation/Show';
+  operation?: IOperationConfig;
+  payload: {
+    status: OperationsStatus;
+    message: string;
+  }
+}
+
+export const isShowOperation =
+  (action: Action): action is IShowOperation =>
+    action.type === 'Operation/Show';
+
+export const showOperation =
+  (status: OperationsStatus, message: string, operation?: IOperationConfig) => (dispatch: Dispatch<any>) =>
+    dispatch({
+      type: 'Operation/Show',
+      payload: {
+        status,
+        message
+      }
+    } as IShowOperation);

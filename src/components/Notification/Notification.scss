@@ -44,7 +44,7 @@
 
   .transactionMessage .left {
     font-size: $small;
-    color: $white-halftone;
+    color: $white;
   }
 
   .transactionMessage .right {
@@ -97,7 +97,7 @@
 }
 
 .pendingTransaction.success {
-  background-color: $accent-1-halftone;
+  background-color: $accent-1;
 }
 
 .pendingTransaction.error {

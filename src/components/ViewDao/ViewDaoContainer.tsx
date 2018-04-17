@@ -52,6 +52,7 @@ interface IDispatchProps {
   getProposal: typeof arcActions.getProposal;
   onTransferEvent: typeof arcActions.onTransferEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
+  onProposalExecuted: typeof arcActions.onProposalExecuted;
 }
 
 const mapDispatchToProps = {
@@ -61,6 +62,7 @@ const mapDispatchToProps = {
   getProposal: arcActions.getProposal,
   onTransferEvent: arcActions.onTransferEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
+  onProposalExecuted: arcActions.onProposalExecuted,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -69,12 +71,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
+  public executeProposalEventWatcher: Arc.EventFetcher<Arc.GenesisProtocolExecuteProposalEventResult>;
   public transferEventWatcher: any;
   public mintEventWatcher: any;
   public burnEventWatcher: any;
 
   public async componentDidMount() {
-    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent } = this.props;
+    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent, onProposalExecuted } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
@@ -120,6 +123,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.burnEventWatcher.watch((error: any, result: any) => {
       onReputationChangeEvent(daoAddress, result.args._from);
     });
+
+    this.executeProposalEventWatcher = genesisProtocolInstance.ExecuteProposal({}, { fromBlock: "latest" });
+    this.executeProposalEventWatcher.watch((error, result) => {
+      const { _proposalId, _executionState, _decision, _totalReputation } = result[0].args;
+      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
+    });
   }
 
   public componentWillUnmount() {
@@ -145,6 +154,10 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (this.burnEventWatcher) {
       this.burnEventWatcher.stopWatching();
+    }
+
+    if (this.executeProposalEventWatcher) {
+      this.executeProposalEventWatcher.stopWatching();
     }
   }
 
