@@ -24,6 +24,8 @@ import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
 import { ExecutionState } from "@daostack/arc.js";
+import { showOperation } from "./operationsActions";
+import { OperationsStatus } from "reducers/operations";
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -889,9 +891,9 @@ export function onReputationChangeEvent(avatarAddress: string, address: string) 
 }
 
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
-  // tslint:disable-next-line:no-console
-  console.log('onProposalExecuted', arguments);
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
+    const proposal = getState().arc.proposals[proposalId];
+
     dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
       payload: {
@@ -902,5 +904,6 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
         reputationWhenExecuted
       }
     })
+    showOperation(OperationsStatus.Success, `Proposal '${proposal.title}' Executed!`)(dispatch);
   }
 }
