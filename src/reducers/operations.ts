@@ -2,7 +2,7 @@ import { Action, Middleware } from "redux";
 import * as objectHash from 'object-hash';
 import * as update from "immutability-helper";
 import * as moment from 'moment';
-import { isDismissOperation } from 'actions/operationsActions';
+import { isDismissOperation, isShowOperation, IDismissOperation } from 'actions/operationsActions';
 import { AsyncActionSequence, IAsyncAction , isAsyncAction } from 'actions/async';
 
 export enum OperationsStatus {
@@ -100,6 +100,19 @@ export const operationsReducer =
         return update(state, {$unset: [hash]})
       }
 
+      if (isShowOperation(action)) {
+        const hash = objectHash(action.payload);
+        return update(state, {
+          [hash]: {
+            $set: {
+              ...action.payload,
+              step: 1,
+              timestamp: +moment()
+            }
+          }
+        })
+      }
+
       return state;
     };
 
@@ -112,17 +125,28 @@ export const actionCanceler =
   (ttl: number = 5000): Middleware =>
     (store) => (next) => (action: any) => {
 
-      if (isAsyncAction(action) && action.sequence === AsyncActionSequence.Success) {
+      if (isShowOperation(action) || (isAsyncAction(action) && action.sequence === AsyncActionSequence.Success)) {
         const { operation } = action;
         const timeout = (operation && typeof operation.ttl === 'number') ? operation.ttl : ttl;
 
-        if (timeout > 0) {
-          setTimeout(() => {
-            store.dispatch({
+        const cancelAction =
+          isAsyncAction(action) ?
+            {
               type: action.type,
               meta: action.meta,
               sequence: AsyncActionSequence.Cancel
-            } as IAsyncAction<any, any, any>);
+            } as IAsyncAction<any, any, any>
+          :
+            {
+              type: 'Operation/Dismiss',
+              payload: {
+                hash: objectHash(action.payload)
+              }
+            } as IDismissOperation;
+
+        if (timeout > 0) {
+          setTimeout(() => {
+            store.dispatch(cancelAction);
           }, timeout)
         }
       }

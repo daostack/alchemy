@@ -2,6 +2,7 @@ import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
 import { StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
+import { ExecutionState } from "@daostack/arc.js";
 
 export enum ProposalStates {
   None = 0,
@@ -332,6 +333,26 @@ const arcReducer = (state = initialState, action: any) => {
           }
         }
       });
+    }
+
+    case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
+      const { avatarAddress, proposalId, executionState, decision, reputationWhenExecuted } = payload;
+
+      if (executionState === ExecutionState.PreBoostedBarCrossed || executionState === ExecutionState.BoostedBarCrossed) {
+        return update(state, {
+          proposals: {
+            [proposalId]: {
+              $merge: {
+                reputationWhenExecuted,
+                winningVote: decision,
+                state: ProposalStates.Executed
+              }
+            }
+          }
+        });
+      } else {
+        return state;
+      }
     }
   }
 
