@@ -96,7 +96,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     return(
       <div>
         {redemptions.length > 0
-          ? <Tooltip placement="bottom" trigger={["hover"]} overlay={redeemAllTip}>
+          ? <Tooltip placement="left" trigger={["hover"]} overlay={redeemAllTip}>
               <button
                 className={css.redeemAllRewardsButton}
                 onClick={this.handleClickRedeem.bind(this)}
