@@ -9,7 +9,7 @@ import "./assets/styles/global.scss";
 
 async function renderApp() {
   try {
-    await Arc.InitializeArc();
+    await Arc.InitializeArcJs();
   } catch (e) {
   }
 
