@@ -461,7 +461,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         type: arcConstants.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Failed to create DAO: ${err.message}`
+          message: `Failed to create DAO`
         }
       } as CreateDAOAction);
     }
@@ -647,7 +647,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
         type: arcConstants.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Voting on "${proposal.title}" failed: ${err.message}`
+          message: `Voting on "${proposal.title}" failed`
         },
         meta,
       } as VoteAction);
@@ -786,7 +786,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Staking on "${proposal.title}" failed: ${err.message}`
+          message: `Staking on "${proposal.title}" failed`
         }
       } as StakeAction);
     }

@@ -59,7 +59,7 @@ export function initializeWeb3() {
         type: ActionTypes.WEB3_CONNECT,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: e.message,
+          message: `Failed to connect to web3`,
           ttl: 0 // no auto cancel
         },
       } as ConnectAction);
