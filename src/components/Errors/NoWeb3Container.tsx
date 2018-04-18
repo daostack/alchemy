@@ -48,7 +48,7 @@ class NoWeb3Container extends React.Component<IProps, null> {
         <div className={css.notification}>
           <img src="/assets/images/metamask.png"/>
           <h1>You are not connected to Web3. Please install MetaMask.</h1>
-          <a className={css.downloadMetamask} href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn">Add MetamMask from the Chrome Web Store</a>
+          <a className={css.downloadMetamask} href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn">Add MetaMask from the Chrome Web Store</a>
         </div>
       </div>
     );

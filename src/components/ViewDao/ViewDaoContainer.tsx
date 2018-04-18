@@ -8,7 +8,7 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState } from "reducers/arcReducer";
+import { IDaoState, IProposalState, IRedemptionState } from "reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "../../schemas";
 
@@ -18,6 +18,7 @@ import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoNav from "./DaoNav";
 import DaoProposalsContainer from "./DaoProposalsContainer";
+import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 
 import * as css from "./ViewDao.scss";
 
@@ -25,13 +26,22 @@ interface IStateProps extends RouteComponentProps<any> {
   currentAccountAddress: string;
   dao: IDaoState;
   daoAddress: string;
+  numRedemptions: number;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
+  const dao = denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc) as IDaoState;
+  let numRedemptions = 0;
+
+  if (dao && dao.members[state.web3.ethAccountAddress]) {
+    numRedemptions = Object.keys(dao.members[state.web3.ethAccountAddress].redemptions).length;
+  }
+
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
-    dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
+    dao,
     daoAddress : ownProps.match.params.daoAddress,
+    numRedemptions,
   };
 };
 
@@ -42,6 +52,7 @@ interface IDispatchProps {
   getProposal: typeof arcActions.getProposal;
   onTransferEvent: typeof arcActions.onTransferEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
+  onProposalExecuted: typeof arcActions.onProposalExecuted;
 }
 
 const mapDispatchToProps = {
@@ -51,6 +62,7 @@ const mapDispatchToProps = {
   getProposal: arcActions.getProposal,
   onTransferEvent: arcActions.onTransferEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
+  onProposalExecuted: arcActions.onProposalExecuted,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -59,12 +71,13 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
+  public executeProposalEventWatcher: Arc.EventFetcher<Arc.GenesisProtocolExecuteProposalEventResult>;
   public transferEventWatcher: any;
   public mintEventWatcher: any;
   public burnEventWatcher: any;
 
   public async componentDidMount() {
-    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent } = this.props;
+    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent, onProposalExecuted } = this.props;
     const web3 = Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
@@ -110,6 +123,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.burnEventWatcher.watch((error: any, result: any) => {
       onReputationChangeEvent(daoAddress, result.args._from);
     });
+
+    this.executeProposalEventWatcher = genesisProtocolInstance.ExecuteProposal({}, { fromBlock: "latest" });
+    this.executeProposalEventWatcher.watch((error, result) => {
+      const { _proposalId, _executionState, _decision, _totalReputation } = result[0].args;
+      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
+    });
   }
 
   public componentWillUnmount() {
@@ -136,21 +155,26 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     if (this.burnEventWatcher) {
       this.burnEventWatcher.stopWatching();
     }
+
+    if (this.executeProposalEventWatcher) {
+      this.executeProposalEventWatcher.stopWatching();
+    }
   }
 
   public render() {
-    const { dao } = this.props;
+    const { currentAccountAddress, dao, numRedemptions } = this.props;
 
     if (dao) {
       return(
         <div className={css.wrapper}>
           <DaoHeader dao={dao} />
-          <DaoNav dao={dao} />
+          <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
 
           <Switch>
             <Route exact path="/dao/:daoAddress" component={DaoProposalsContainer} />
             <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
             <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
+            <Route exact path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
             <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
           </Switch>
         </div>

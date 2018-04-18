@@ -34,7 +34,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
   public handleClickVote(vote: number, event: any) {
     const { proposal, transactionState, voteOnProposal } = this.props;
     this.setState({ currentVote: vote });
-    voteOnProposal(proposal.daoAvatarAddress, proposal.proposalId, vote);
+    voteOnProposal(proposal.daoAvatarAddress, proposal, vote);
   }
 
   public render() {

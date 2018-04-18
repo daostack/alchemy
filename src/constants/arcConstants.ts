@@ -22,6 +22,10 @@ export const ARC_VOTE = "ARC_VOTE";
 
 export const ARC_STAKE = "ARC_STAKE";
 
+export const ARC_REDEEM = "ARC_REDEEM";
+
 export const ARC_ON_TRANSFER = "ARC_ON_TRANSFER";
 
 export const ARC_ON_REPUTATION_CHANGE = "ARC_ON_REPUTATION_CHANGE";
+
+export const ARC_ON_PROPOSAL_EXECUTED = "ARC_ON_PROPOSAL_EXECUTED";
