@@ -146,8 +146,6 @@ const cacheBlockchain = async () => {
       console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
     }
   });
-
-  setTimeout(cacheBlockchain, 1000);
 };
 
 (async () => {
