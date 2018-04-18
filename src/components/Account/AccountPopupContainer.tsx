@@ -54,7 +54,6 @@ class AccountPopupContainer extends React.Component<IProps, null> {
             <div>{Math.round(reputation).toLocaleString()} <strong>{dao.name} Reputation</strong></div>
             <div>{Math.round(tokens).toLocaleString()} <strong>{dao.tokenSymbol}</strong></div>
           </div>
-          <button className={css.viewProfile}>View Profile</button>
         </div>
       </div>
     );

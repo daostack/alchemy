@@ -25,9 +25,6 @@ export default class DaoHeader extends React.Component<IProps, null> {
           <div className={css.daoDescription}>
             <div className={css.daoName}>
               {dao.name}
-              <button className={css.daoPrefs}>
-                <img src="/assets/images/configure-dao-icon.svg"/>
-              </button>
             </div>
             <div className={css.daoReputationInfo}>
               {Object.keys(dao.members).length} reputation holders with {Math.round(dao.reputationCount).toLocaleString()} {dao.name} reputation
@@ -46,11 +43,6 @@ export default class DaoHeader extends React.Component<IProps, null> {
               <div>{dao.tokenCount}</div>
               <div className={css.small}>IN CIRCULATION</div>
             </div>
-          </div>
-          <div className={css.buyGenContainer}>
-            <Link to={"/dao/" + dao.avatarAddress} className={css.buyGen}>
-              BUY
-            </Link>
           </div>
         </div>
       </div>
