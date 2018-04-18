@@ -303,6 +303,7 @@ a.navItem:hover {
   padding-bottom: 10px;
   color: $black-halftone;
   font-weight: $bold;
+  max-width: 380px;
 
   span {
     position: absolute;
@@ -331,6 +332,7 @@ a.navItem:hover {
     font-family: $heading-1-font;
     font-size: $jumbo;
     padding-top: 30px;
+    max-width: 100%;
   }
 
   .subheader {
