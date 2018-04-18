@@ -23,7 +23,7 @@ import * as schemas from "../schemas";
 import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
-import { ExecutionState } from "@daostack/arc.js";
+import { ExecutionState, TransactionService } from "@daostack/arc.js";
 import { showOperation } from "./operationsActions";
 import { OperationsStatus } from "reducers/operations";
 
@@ -383,13 +383,6 @@ export type CreateDAOAction = IAsyncAction<'ARC_CREATE_DAO', {}, any>;
 
 export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: any): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    dispatch({
-      type: arcConstants.ARC_CREATE_DAO,
-      sequence: AsyncActionSequence.Pending,
-      operation: {
-        message: 'Creating new DAO...',
-      }
-    } as CreateDAOAction);
     try {
       let founders: Arc.FounderConfig[] = [], member: IAccountState,
           membersByAccount: { [key: string]: IAccountState } = {},
@@ -411,7 +404,21 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         membersByAccount[member.address] = {...member, votes: {}, stakes: {}};
       }
 
+      const key = Arc.TransactionService.generateInvocationKey('NewDAO');
+      Arc.TransactionService.subscribe('txReceipts.DAO.new', (topic, txEventInfo) => {
+        if (txEventInfo.options.key === key && txEventInfo.tx) {
+          dispatch({
+            type: arcConstants.ARC_CREATE_DAO,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: 'Creating new DAO...',
+              totalSteps: txEventInfo.txCount
+            }
+          } as CreateDAOAction);
+        }
+      })
       const dao = await Arc.DAO.new({
+        key,
         name: daoName,
         tokenName,
         tokenSymbol,
@@ -427,7 +434,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         votingMachineParams: {
           votingMachineName: "GenesisProtocol"
         }
-      });
+      } as any);
 
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
@@ -476,15 +483,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       avatarAddress: daoAvatarAddress
     };
 
-    dispatch({
-      type: arcConstants.ARC_CREATE_PROPOSAL,
-      sequence: AsyncActionSequence.Pending,
-      operation: {
-        message: `Submitting proposal ...`,
-        totalSteps: 1
-      },
-      meta,
-    } as CreateProposalAction);
     try {
       const web3: Web3 = Arc.Utils.getWeb3();
 
@@ -503,7 +501,22 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
       const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
 
+      const key = Arc.TransactionService.generateInvocationKey('Propose');
+      Arc.TransactionService.subscribe('txReceipts.ContributionReward.proposeContributionReward', (topic, txEventInfo) => {
+        if (txEventInfo.options.key === key && txEventInfo.tx) {
+          dispatch({
+            type: arcConstants.ARC_CREATE_PROPOSAL,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: `Submitting proposal ...`,
+              totalSteps: txEventInfo.txCount
+            },
+            meta,
+          } as CreateProposalAction);
+        }
+      })
       const submitProposalTransaction = await contributionRewardInstance.proposeContributionReward({
+        key,
         avatar: daoAvatarAddress,
         beneficiaryAddress: beneficiary,
         description,
@@ -512,7 +525,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         numberOfPeriods: 1,
         periodLength: 1,
         reputationChange: Util.toWei(reputationReward),
-      });
+      } as any);
 
       // TODO: error checking
 
@@ -621,15 +634,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       voterAddress: currentAccountAddress,
     };
 
-    dispatch({
-      type: arcConstants.ARC_VOTE,
-      sequence: AsyncActionSequence.Pending,
-      operation: {
-        message: `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${proposal.title}...`,
-        totalSteps: 1,
-      },
-      meta,
-    } as VoteAction);
     try {
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
@@ -641,7 +645,21 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-      const voteTransaction = await votingMachineInstance.vote({ proposalId, vote });
+      const key = Arc.TransactionService.generateInvocationKey('Vote');
+      Arc.TransactionService.subscribe('txReceipts.GenesisProtocol.vote', (topic, txEventInfo) => {
+        if (txEventInfo.options.key === key && txEventInfo.tx) {
+          dispatch({
+            type: arcConstants.ARC_VOTE,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${proposal.title}...`,
+              totalSteps: txEventInfo.txCount,
+            },
+            meta,
+          } as VoteAction);
+        }
+      })
+      const voteTransaction = await votingMachineInstance.vote({ key, proposalId, vote } as any);
     } catch (err) {
       dispatch({
         type: arcConstants.ARC_VOTE,
@@ -748,15 +766,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       stakerAddress: currentAccountAddress,
     };
 
-    dispatch({
-      type: arcConstants.ARC_STAKE,
-      sequence: AsyncActionSequence.Pending,
-      operation: {
-        message: `Staking on "${proposal.title}" ...`,
-      },
-      meta
-    } as StakeAction);
-
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -779,7 +788,22 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
       if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Util.fromWei(balance).toNumber()}!`); }
 
-      const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote: prediction, amount });
+      const key = Arc.TransactionService.generateInvocationKey('Stake');
+      Arc.TransactionService.subscribe('txReceipts.GenesisProtocol.stake', (topic, txEventInfo) => {
+        if (txEventInfo.options.key === key && txEventInfo.tx) {
+          dispatch({
+            type: arcConstants.ARC_STAKE,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: `Staking on "${proposal.title}" ...`,
+              totalSteps: txEventInfo.txCount,
+            },
+            meta
+          } as StakeAction);
+        }
+      })
+      const stakeTransaction = await votingMachineInstance.stake({ key, proposalId, vote: prediction, amount } as any);
+
     } catch (err) {
       dispatch({
         type: arcConstants.ARC_STAKE,
