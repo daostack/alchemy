@@ -247,6 +247,21 @@ const arcReducer = (state = initialState, action: any) => {
               },
             },
           }});
+        case AsyncActionSequence.Failure: {
+          const { avatarAddress, proposalId, voterAddress } = meta;
+
+          return update(state, {
+            daos: {
+              [avatarAddress]: {
+                members: {
+                  [voterAddress]: {
+                    votes: {$unset: [proposalId]}
+                  }
+                }
+              }
+            }
+          })
+        }
         case AsyncActionSequence.Success: {
           // Update the account that voted
           state = update(state, { daos: {
