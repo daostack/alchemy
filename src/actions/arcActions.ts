@@ -406,7 +406,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       const key = Arc.TransactionService.generateInvocationKey('NewDAO');
       Arc.TransactionService.subscribe('txReceipts.DAO.new', (topic, txEventInfo) => {
-        if (txEventInfo.options.key === key && txEventInfo.tx) {
+        if (txEventInfo.options.key === key && (txEventInfo.tx || txEventInfo.txCount === 1)) {
           dispatch({
             type: arcConstants.ARC_CREATE_DAO,
             sequence: AsyncActionSequence.Pending,
@@ -503,7 +503,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
 
       const key = Arc.TransactionService.generateInvocationKey('Propose');
       Arc.TransactionService.subscribe('txReceipts.ContributionReward.proposeContributionReward', (topic, txEventInfo) => {
-        if (txEventInfo.options.key === key && txEventInfo.tx) {
+        if (txEventInfo.options.key === key && (txEventInfo.tx || txEventInfo.txCount === 1)) {
           dispatch({
             type: arcConstants.ARC_CREATE_PROPOSAL,
             sequence: AsyncActionSequence.Pending,
@@ -647,7 +647,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
 
       const key = Arc.TransactionService.generateInvocationKey('Vote');
       Arc.TransactionService.subscribe('txReceipts.GenesisProtocol.vote', (topic, txEventInfo) => {
-        if (txEventInfo.options.key === key && txEventInfo.tx) {
+        if (txEventInfo.options.key === key && (txEventInfo.tx || txEventInfo.txCount === 1)) {
           dispatch({
             type: arcConstants.ARC_VOTE,
             sequence: AsyncActionSequence.Pending,
@@ -790,7 +790,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 
       const key = Arc.TransactionService.generateInvocationKey('Stake');
       Arc.TransactionService.subscribe('txReceipts.GenesisProtocol.stake', (topic, txEventInfo) => {
-        if (txEventInfo.options.key === key && txEventInfo.tx) {
+        if (txEventInfo.options.key === key && (txEventInfo.tx || txEventInfo.txCount === 1)) {
           dispatch({
             type: arcConstants.ARC_STAKE,
             sequence: AsyncActionSequence.Pending,
