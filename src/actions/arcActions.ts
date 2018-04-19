@@ -467,12 +467,13 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       } as CreateDAOAction);
 
       dispatch(push("/dao/" + dao.avatar.address));
-    } catch (err) {
+    } catch (e) {
+      console.error(e);
       dispatch({
         type: arcConstants.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Failed to create DAO: ${err.message}`
+          message: `Failed to create DAO`
         }
       } as CreateDAOAction);
     }
@@ -594,7 +595,8 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         payload
       } as CreateProposalAction);
       dispatch(push("/dao/" + daoAvatarAddress));
-    } catch (err) {
+    } catch (e) {
+      console.error(e);
       dispatch({
         type: arcConstants.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
@@ -654,12 +656,13 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       const voteTransaction = await votingMachineInstance.vote({ proposalId, vote });
-    } catch (err) {
+    } catch (e) {
+      console.error(e);
       dispatch({
         type: arcConstants.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Voting on "${proposal.title}" failed: ${err.message}`
+          message: `Voting on "${proposal.title}" failed`
         },
         meta,
       } as VoteAction);
@@ -798,13 +801,14 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Util.fromWei(balance).toNumber()}!`); }
 
       const stakeTransaction = await votingMachineInstance.stake({ proposalId, vote: prediction, amount });
-    } catch (err) {
+    } catch (e) {
+      console.error(e);
       dispatch({
         type: arcConstants.ARC_STAKE,
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Staking on "${proposal.title}" failed: ${err.message}`
+          message: `Staking on "${proposal.title}" failed`
         }
       } as StakeAction);
     }
