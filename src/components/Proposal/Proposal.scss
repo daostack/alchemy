@@ -65,6 +65,10 @@
 	opacity: 0.5;
 }
 
+.redeemable {
+	position: relative;
+}
+
 .voteControls {
 	float: left;
 	width: 30px;
@@ -304,6 +308,7 @@
 	margin: 12px 0px 10px 0px;
 }
 
+
 .decisionGraph {
 	margin-top: -4px;
 
@@ -457,12 +462,17 @@
 .proposalDetails {
 	position: absolute;
 	right: 160px;
-	top: 11px;
+	height: 100%;
 }
 
 .createdBy {
 	font-size: $small;
 	color: $black-thirdtone;
+    position: absolute;
+    width: 165px;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
 
 	.targetAccount {
 		top: 7px;
@@ -482,8 +492,22 @@
 	padding: 8px 6px 6px 8px;
 	position: absolute;
 	right: 0;
-	top: 31px;
+	top: 50%;
+	transform: translateY(-50%);
 }
+
+.redeemRewards {
+	border: 1px solid $accent-1;
+	color: $accent-1;
+	border-radius: 3px;
+	background-color: transparent;
+	padding: 11px 6px;
+	position: absolute;
+	right: 50px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
 
 
 .proposalsContainer .proposal {
@@ -492,7 +516,8 @@
 
 .proposalDetails.concludedDecisionDetails {
 	right: 15px;
-	top: 0;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 .newPrediction {

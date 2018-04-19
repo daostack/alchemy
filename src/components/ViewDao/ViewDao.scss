@@ -123,6 +123,37 @@ a.createProposal, .buyGen {
   vertical-align: middle;
 }
 
+.redeemAllRewardsButton {
+    border: 1px solid #00d3a7;
+    float: right;
+    color: #00d3a7;
+    font-size: 12px;
+    padding: 8px 11px;
+    transition: all .25s ease;
+    background-color: rgba(0, 211, 167, 0);
+    border-radius: 3px;
+    vertical-align: middle;
+    float: right;
+    font-weight: none;
+}
+
+.nav span.redemptionNotification {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background-color: $accent-1;
+  color: $white;
+  padding: 1px 1px 1px 1px;
+  text-align: center;
+  line-height: 13px;
+  border-radius: 28px;
+  font-size: 10px;
+  position: absolute;
+  top: 51%;
+  transform: translateY(-50%);
+  right: -20px;
+}
+
 .buyGen {
   font-size: $small;
 }
@@ -169,7 +200,7 @@ a.navItem:hover {
 .genBox {
   background: rgba(247, 247, 247, 1.000);
   border-radius: 3px;
-  padding: 12px 25px 12px 0;
+  padding: 12px 0;
   float: right;
 
   .small {
@@ -272,6 +303,7 @@ a.navItem:hover {
   padding-bottom: 10px;
   color: $black-halftone;
   font-weight: $bold;
+  max-width: 380px;
 
   span {
     position: absolute;
@@ -300,6 +332,7 @@ a.navItem:hover {
     font-family: $heading-1-font;
     font-size: $jumbo;
     padding-top: 30px;
+    max-width: 100%;
   }
 
   .subheader {

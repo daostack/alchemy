@@ -167,7 +167,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
                 <img src="/assets/images/Icon/Transfer.svg"/>
 
                 <AccountPopupContainer
-                  accountAddress={proposal.beneficiary}
+                  accountAddress={proposal.beneficiaryAddress}
                   daoAvatarAddress={proposal.daoAvatarAddress}
                 />
               </div>
