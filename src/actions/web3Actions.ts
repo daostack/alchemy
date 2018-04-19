@@ -55,12 +55,12 @@ export function initializeWeb3() {
       } as ConnectAction);
 
     } catch (e) {
+      console.error(e);
       dispatch({
         type: ActionTypes.WEB3_CONNECT,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Failed to connect to web3`,
-          ttl: 0 // no auto cancel
+          message: `Failed to connect to web3`
         },
       } as ConnectAction);
     }

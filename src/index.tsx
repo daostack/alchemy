@@ -11,6 +11,7 @@ async function renderApp() {
   try {
     await Arc.InitializeArc();
   } catch (e) {
+    console.error(e);
   }
 
   ReactDOM.render(
