@@ -404,8 +404,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         membersByAccount[member.address] = {...member, votes: {}, stakes: {}};
       }
 
-      const key = Arc.TransactionService.generateInvocationKey('NewDAO');
-      Util.onPendingTransactions('txReceipts.DAO.new', key, (totalSteps) =>
+      const key = Util.onPendingTransactions('txReceipts.DAO.new', (totalSteps) =>
         dispatch({
           type: arcConstants.ARC_CREATE_DAO,
           sequence: AsyncActionSequence.Pending,
@@ -499,8 +498,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
       const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
 
-      const key = Arc.TransactionService.generateInvocationKey('Propose');
-      Util.onPendingTransactions('txReceipts.ContributionReward.proposeContributionReward', key, (totalSteps) =>
+      const key = Util.onPendingTransactions('txReceipts.ContributionReward.proposeContributionReward', (totalSteps) =>
         dispatch({
           type: arcConstants.ARC_CREATE_PROPOSAL,
           sequence: AsyncActionSequence.Pending,
@@ -641,8 +639,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-      const key = Arc.TransactionService.generateInvocationKey('Vote');
-      Util.onPendingTransactions('txReceipts.GenesisProtocol.vote', key, (totalSteps) =>
+      const key = Util.onPendingTransactions('txReceipts.GenesisProtocol.vote', (totalSteps) =>
         dispatch({
           type: arcConstants.ARC_VOTE,
           sequence: AsyncActionSequence.Pending,
@@ -782,8 +779,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
       if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Util.fromWei(balance).toNumber()}!`); }
 
-      const key = Arc.TransactionService.generateInvocationKey('Stake');
-      Util.onPendingTransactions('txReceipts.GenesisProtocol.stake', key, (totalSteps) =>
+      const key = Util.onPendingTransactions('txReceipts.GenesisProtocol.stake', (totalSteps) =>
         dispatch({
           type: arcConstants.ARC_STAKE,
           sequence: AsyncActionSequence.Pending,
