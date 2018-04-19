@@ -46,12 +46,12 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface FormErrors {
-  beneficiary?: string;
+  beneficiaryAddress?: string;
 }
 
 interface IState {
   avatarAddress: string;
-  beneficiary: string;
+  beneficiaryAddress: string;
   description: string;
   ethReward: number | string;
   externalTokenAddress: string;
@@ -70,7 +70,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
     this.state = {
       avatarAddress: this.props.daoAddress,
-      beneficiary: "",
+      beneficiaryAddress: "",
       description: "",
       ethReward: "",
       externalTokenAddress: null,
@@ -88,8 +88,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     const out: FormErrors = {};
     const web3: Web3 = Arc.Utils.getWeb3();
 
-    if (!web3.isAddress(state.beneficiary)) {
-      out.beneficiary = "Invalid address";
+    if (!web3.isAddress(state.beneficiaryAddress)) {
+      out.beneficiaryAddress = "Invalid address";
     }
 
     this.setState({...this.state, errors: out});
@@ -114,7 +114,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
         Number(this.state.nativeTokenReward),
         Number(this.state.reputationReward),
         Number(this.state.ethReward),
-        this.state.beneficiary,
+        this.state.beneficiaryAddress,
       );
     }
   }
@@ -138,7 +138,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     const newBenificiary = (ReactDOM.findDOMNode(this.refs.beneficiaryNode) as HTMLInputElement).value;
 
     this.setState({
-      beneficiary: newBenificiary,
+      beneficiaryAddress: newBenificiary,
       description: newDescription,
       ethReward: newEthReward,
       nativeTokenReward: newNativeTokenReward,
@@ -196,7 +196,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           </label>
           <input
             id="beneficiaryInput"
-            className={this.state.errors.beneficiary ? css.error : null}
+            className={this.state.errors.beneficiaryAddress ? css.error : null}
             maxLength={42}
             onChange={this.handleChange}
             onBlur={(e) => this.validate()}
@@ -204,11 +204,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             ref="beneficiaryNode"
             required
             type="text"
-            value={this.state.beneficiary}
+            value={this.state.beneficiaryAddress}
           />
-          {this.state.errors.beneficiary ?
+          {this.state.errors.beneficiaryAddress ?
             <span className={css.errorMessage}>
-              {this.state.errors.beneficiary}
+              {this.state.errors.beneficiaryAddress}
             </span>
             : ""
           }
@@ -259,7 +259,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     <span className={css.tokenAmount}>12.333 ETH </span>
                     monthly for 6 months
                     <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
-                    <AccountImage accountAddress={this.state.beneficiary} className={css.userAvatar} />
+                    <AccountImage accountAddress={this.state.beneficiaryAddress} className={css.userAvatar} />
                   </td>
                   <td className={css.transferTotals}>
                     <span className={css.tokenAmount}>79.98 ETH</span>
