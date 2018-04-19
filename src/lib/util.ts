@@ -32,4 +32,24 @@ export default class Util {
         return "Unknown network"
     }
   }
+
+  /**
+   * Subscribes to pending transactions for a specific operation.
+   * Unsubscribes automatically.
+   * @param topic Arc.js TransactionService topic
+   * @param key A unique `key` to look for in `txEventInfo.options`
+   * @param cb A callback to execute on each pending transaction.
+   */
+  public static onPendingTransactions(topic: string, key: symbol, cb: (txCount: number) => any) {
+    let count = 0;
+    const sub = Arc.TransactionService.subscribe(topic, (topic: string, txEventInfo: any) => {
+      if (txEventInfo.options.key === key && txEventInfo.tx) {
+        cb(txEventInfo.txCount);
+        count++;
+        if (count >= txEventInfo.txCount) {
+          sub.unsubscribe();
+        }
+      }
+    });
+  }
 }
