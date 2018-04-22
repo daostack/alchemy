@@ -57,7 +57,7 @@ export default class Util {
           } else {
             onPending(info.txCount);
             count++;
-            if (count >= info.txCount) {
+            if (count == info.txCount) {
               sub.unsubscribe();
             }
           }
