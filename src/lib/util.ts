@@ -36,41 +36,36 @@ export default class Util {
   /**
    * Performs an Arc.js action.
    * @param topic Arc.js TransactionService topic to listen to for pending transactions
-   * @param f action to perform
+   * @param action Function that will invoke the action to perform
    * @param opts options to pass to @f
    * @param onPending callback that's called on every pending transaction
    * @param onError callback that's called upon any error / failed transaction
    */
-  public static async performAction<T>(topic: string, f: (opts: any) => Promise<T>, opts: any, onPending: (txCount: number) => any, onError: (e: Error) => any): Promise<T> {
-    let sub: Arc.IEventSubscription;
-    let count = 0;
-    try {
-      const key = Arc.TransactionService.generateInvocationKey(`${topic}.pendingTransactions`);
-      sub = Arc.TransactionService.subscribe(topic, (topic, info) => {
-        if (info.options.key === key && info.tx) {
-          if (Arc.Utils.getWeb3().toDecimal(info.tx.receipt.status) !== 1) {
-            console.error(info.tx);
-            const err = new Error(`Transaction '${info.tx.receipt.transactionHash}' failed on '${topic}' with options '${JSON.stringify(opts, undefined, 2)}'`);
-            console.error(err);
-            onError(err);
-            sub.unsubscribe();
-          } else {
-            onPending(info.txCount);
-            count++;
-            if (count == info.txCount) {
-              sub.unsubscribe();
-            }
-          }
+  public static async performAction<T>(
+    topic: string,
+    action: (opts: any) => Promise<T>,
+    opts: any,
+    onPending: (txCount: number) => any,
+    onError: (e: Error) => any): Promise<T> {
+
+    const key = Arc.TransactionService.generateInvocationKey(`${topic}.pendingTransactions`);
+
+    let sub = Arc.TransactionService.subscribe(topic, (topic, info) => {
+      if (info.options.key === key && info.tx) {
+        if (Arc.Utils.getWeb3().toDecimal(info.tx.receipt.status) !== 1) {
+          console.error(info.tx);
+          const err = new Error(`Transaction '${info.tx.receipt.transactionHash}' failed on '${topic}' with options '${JSON.stringify(opts, undefined, 2)}'`);
+          console.error(err);
+          onError(err);
+          sub.unsubscribe();
+        } else {
+          onPending(info.txCount);
         }
-      });
-      const result = await f({...opts, key});
-      return result;
-    } catch (e) {
-      if (sub) {
-        sub.unsubscribe();
       }
-      console.error(e);
-      onError(e);
-    }
+    });
+
+    return action({ ...opts, key })
+      .catch((err) => { console.error(err); onError(err); })
+      .then((result: T) => { sub.unsubscribe(); return result; });
   }
 }
