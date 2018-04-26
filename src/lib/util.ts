@@ -1,5 +1,6 @@
 import * as Arc from "@daostack/arc.js";
 import { BigNumber } from "bignumber.js";
+import { IEventSubscription } from "@daostack/arc.js";
 
 export default class Util {
 
@@ -45,27 +46,31 @@ export default class Util {
     topic: string,
     action: (opts: any) => Promise<T>,
     opts: any,
-    onPending: (txCount: number) => any,
-    onError: (e: Error) => any): Promise<T> {
+    onPending: (txCount: number) => any
+  ): Promise<T> {
 
-    const key = Arc.TransactionService.generateInvocationKey(`${topic}.pendingTransactions`);
+    let sub: IEventSubscription;
+    const unsubscribe = () => {
+      if (sub) {
+        // workaround to get last transaction notification before unsubscribing.
+        setTimeout(sub.unsubscribe, 0);
+      }
+    }
 
-    let sub = Arc.TransactionService.subscribe(topic, (topic, info) => {
-      if (info.options.key === key && info.tx) {
-        // Handle failed transaction
-        if (Arc.Utils.getWeb3().toDecimal(info.tx.receipt.status) !== 1) {
-          const err = new Error(`Transaction '${info.tx.receipt.transactionHash}' failed on '${topic}' with options '${JSON.stringify(opts, undefined, 2)}'`);
-          console.error(err);
-          onError(err);
-          setTimeout(sub.unsubscribe, 0);
-        } else {
+    try {
+      const key = Arc.TransactionService.generateInvocationKey(`${topic}.pendingTransactions`);
+      sub = Arc.TransactionService.subscribe(topic, (topic, info) => {
+        if (info.options.key === key && info.tx) {
           onPending(info.txCount);
         }
-      }
-    });
-
-    return action({ ...opts, key })
-      .catch((err) => { console.error(err); onError(err); })
-      .then((result: T) => { setTimeout(sub.unsubscribe, 0); return result; });
+      });
+      const result = await action({ ...opts, key });
+      unsubscribe();
+      return result;
+    } catch (e) {
+      console.error(e);
+      unsubscribe();
+      throw e;
+    }
   }
 }

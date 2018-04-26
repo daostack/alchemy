@@ -394,16 +394,6 @@ export type CreateDAOAction = IAsyncAction<'ARC_CREATE_DAO', {}, any>;
 
 export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: any): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const onError =
-      (err: Error) =>
-        dispatch({
-          type: arcConstants.ARC_CREATE_DAO,
-          sequence: AsyncActionSequence.Failure,
-          operation: {
-            message: `Failed to create DAO: ${err.message}`
-          }
-        } as CreateDAOAction)
-
     try {
       let founders: Arc.FounderConfig[] = [], member: IAccountState,
           membersByAccount: { [key: string]: IAccountState } = {},
@@ -453,8 +443,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
               message: 'Creating new DAO...',
               totalSteps
             }
-          } as CreateDAOAction),
-          onError
+          } as CreateDAOAction)
       );
 
       const daoData: IDaoState = {
@@ -485,7 +474,13 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       dispatch(push("/dao/" + dao.avatar.address));
     } catch (err) {
-      onError(err)
+      dispatch({
+        type: arcConstants.ARC_CREATE_DAO,
+        sequence: AsyncActionSequence.Failure,
+        operation: {
+          message: `Failed to create DAO: ${err.message}`
+        }
+      } as CreateDAOAction)
     }
   }; /* EO createDAO */
 }
@@ -497,17 +492,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
     const meta = {
       avatarAddress: daoAvatarAddress
     };
-
-    const onError =
-      (err: Error) =>
-        dispatch({
-          type: arcConstants.ARC_CREATE_PROPOSAL,
-          sequence: AsyncActionSequence.Failure,
-          operation: {
-            message: `Failed to submit proposal`,
-          },
-          meta,
-        } as CreateProposalAction)
 
     try {
       const web3: Web3 = Arc.Utils.getWeb3();
@@ -549,8 +533,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
               totalSteps,
             },
             meta,
-          } as CreateProposalAction),
-        onError
+          } as CreateProposalAction)
       );
 
       // TODO: error checking
@@ -623,7 +606,14 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       } as CreateProposalAction);
       dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
-      onError(err);
+      dispatch({
+        type: arcConstants.ARC_CREATE_PROPOSAL,
+        sequence: AsyncActionSequence.Failure,
+        operation: {
+          message: `Failed to submit proposal`,
+        },
+        meta,
+      } as CreateProposalAction)
     }
   };
 }
@@ -654,17 +644,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       voterAddress: currentAccountAddress,
     };
 
-    const onError =
-      (err: Error) =>
-        dispatch({
-          type: arcConstants.ARC_VOTE,
-          sequence: AsyncActionSequence.Failure,
-          operation: {
-            message: `Voting on "${proposal.title}" failed: ${err.message}`
-          },
-          meta,
-        } as VoteAction)
-
     try {
 
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
@@ -676,7 +655,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-      Util.performAction(
+      await Util.performAction(
         'txReceipts.GenesisProtocol.vote',
         votingMachineInstance.vote.bind(votingMachineInstance),
         {
@@ -692,11 +671,17 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
               totalSteps,
             },
             meta,
-          } as VoteAction),
-        onError
+          } as VoteAction)
       );
     } catch (err) {
-      onError(err);
+      dispatch({
+        type: arcConstants.ARC_VOTE,
+        sequence: AsyncActionSequence.Failure,
+        operation: {
+          message: `Voting on "${proposal.title}" failed: ${err.message}`
+        },
+        meta,
+      } as VoteAction)
     }
   };
 }
@@ -800,17 +785,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       stakerAddress: currentAccountAddress,
     };
 
-    const onError =
-      (err: Error) =>
-        dispatch({
-          type: arcConstants.ARC_STAKE,
-          sequence: AsyncActionSequence.Failure,
-          meta,
-          operation: {
-            message: `Staking on "${proposal.title}" failed: ${err.message}`
-          }
-        } as StakeAction)
-
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -833,7 +807,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
       if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Util.fromWei(balance).toNumber()}!`); }
 
-      Util.performAction(
+      await Util.performAction(
         'txReceipts.GenesisProtocol.stake',
         votingMachineInstance.stake.bind(votingMachineInstance),
         {
@@ -850,11 +824,17 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
               totalSteps,
             },
             meta
-          } as StakeAction),
-        onError
+          } as StakeAction)
       );
     } catch (err) {
-      onError(err)
+      dispatch({
+        type: arcConstants.ARC_STAKE,
+        sequence: AsyncActionSequence.Failure,
+        meta,
+        operation: {
+          message: `Staking on "${proposal.title}" failed: ${err.message}`
+        }
+      } as StakeAction)
     }
   };
 }
