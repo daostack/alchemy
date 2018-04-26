@@ -21,7 +21,8 @@ export function initializeWeb3() {
       type: ActionTypes.WEB3_CONNECT,
       sequence: AsyncActionSequence.Pending,
       operation: {
-        message: 'Connecting...'
+        message: 'Connecting...',
+        totalSteps: 1,
       },
     } as ConnectAction);
     try {
