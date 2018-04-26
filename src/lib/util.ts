@@ -52,12 +52,12 @@ export default class Util {
 
     let sub = Arc.TransactionService.subscribe(topic, (topic, info) => {
       if (info.options.key === key && info.tx) {
+        // Handle failed transaction
         if (Arc.Utils.getWeb3().toDecimal(info.tx.receipt.status) !== 1) {
-          console.error(info.tx);
           const err = new Error(`Transaction '${info.tx.receipt.transactionHash}' failed on '${topic}' with options '${JSON.stringify(opts, undefined, 2)}'`);
           console.error(err);
           onError(err);
-          sub.unsubscribe();
+          setTimeout(sub.unsubscribe, 0);
         } else {
           onPending(info.txCount);
         }
@@ -66,6 +66,6 @@ export default class Util {
 
     return action({ ...opts, key })
       .catch((err) => { console.error(err); onError(err); })
-      .then((result: T) => { sub.unsubscribe(); return result; });
+      .then((result: T) => { setTimeout(sub.unsubscribe, 0); return result; });
   }
 }
