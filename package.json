@@ -10,7 +10,7 @@
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "engines": {
-    "node": ">=9.5"
+    "node": "9.5"
   },
   "jest": {
     "transform": {
