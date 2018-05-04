@@ -118,6 +118,7 @@ export interface IProposalState {
 export interface IDaoState {
   avatarAddress: string;
   controllerAddress: string;
+  ethCount: number;
   members: { [key: string]: IAccountState };
   name: string;
   rank: number;
@@ -127,8 +128,9 @@ export interface IDaoState {
   reputationAddress: string;
   reputationCount: number;
   tokenAddress: string;
-  tokenCount: number;
+  tokenCount: number; // How much is actually "owned" by the DAO
   tokenName: string;
+  tokenSupply: number; // total amount in circulation
   tokenSymbol: string;
 }
 

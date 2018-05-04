@@ -84,9 +84,12 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
   const web3 = Arc.Utils.getWeb3();
   const dao = await Arc.DAO.at(avatarAddress);
 
+  const getBalance = promisify(web3.eth.getBalance);
+
   const daoData: IDaoState = {
     avatarAddress,
     controllerAddress: "",
+    ethCount: Util.fromWei(await getBalance(avatarAddress)).toNumber(),
     name: await dao.getName(),
     members: {},
     rank: 1, // TODO
@@ -96,8 +99,9 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     reputationAddress: await dao.reputation.address,
     reputationCount: Util.fromWei(await dao.reputation.totalSupply()).toNumber(),
     tokenAddress: await dao.token.address,
-    tokenCount: Util.fromWei(await dao.token.totalSupply()).toNumber(),
+    tokenCount: Util.fromWei(await dao.token.balanceOf(avatarAddress)).toNumber(),
     tokenName: await dao.getTokenName(),
+    tokenSupply: Util.fromWei(await dao.token.totalSupply()).toNumber(),
     tokenSymbol: await dao.getTokenSymbol(),
   };
 
@@ -449,6 +453,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
+        ethCount: 0,
         name: daoName,
         members: membersByAccount,
         rank: 1, // TODO
@@ -458,7 +463,8 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         reputationAddress: dao.reputation.address,
         reputationCount: totalReputation,
         tokenAddress: dao.token.address,
-        tokenCount: totalTokens,
+        tokenCount: 0,
+        tokenSupply: totalTokens,
         tokenName,
         tokenSymbol,
       };
