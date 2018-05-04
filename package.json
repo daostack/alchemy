@@ -94,7 +94,7 @@
     "truffle-contract": "^3.0.1",
     "ts-node": "^5.0.1",
     "web3": "^0.20.4",
-    "web3-provider-engine": "^8.4.0",
+    "web3-provider-engine": "^14.0.5",
     "webpack": "^3.11.0",
     "zeppelin-solidity": "^1.2.0"
   },
