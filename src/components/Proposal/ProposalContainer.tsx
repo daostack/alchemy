@@ -17,15 +17,15 @@ import * as css from "./Proposal.scss";
 
 interface IStateProps {
   currentAccountAddress: string;
-  currentAccountRedemptions: IRedemptionState;
-  dao: IDaoState;
-  proposal: IProposalState;
+  currentAccountRedemptions?: IRedemptionState;
+  dao?: IDaoState;
+  proposal?: IProposalState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const proposal = state.arc.proposals[ownProps.proposalId];
-  const dao = state.arc.daos[proposal.daoAvatarAddress];
-  const currentAccountRedemptions = dao.members[state.web3.ethAccountAddress] ? dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId] : false;
+  const dao = proposal && state.arc.daos[proposal.daoAvatarAddress];
+  const currentAccountRedemptions = dao && dao.members[state.web3.ethAccountAddress] && dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId];
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountRedemptions,
