@@ -8,6 +8,7 @@ import { emptyAccount, IAccountState, IDaoState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import * as css from "./CreateDao.scss";
+import { Link } from "react-router-dom";
 
 interface IStateProps {
   web3: IWeb3State;
@@ -110,9 +111,11 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
         <h2>
           <img className={css.editIcon} src="/assets/images/Icon/Edit.svg"/>
           <span>Create DAO</span>
-          <button className={css.exitProposalCreation}>
-            <img src="/assets/images/Icon/Close.svg"/>
-          </button>
+          <Link to='/'>
+            <button className={css.exitProposalCreation}>
+              <img src="/assets/images/Icon/Close.svg"/>
+            </button>
+          </Link>
         </h2>
         <div className={css.inner}>
           <form onSubmit={this.handleSubmit}>

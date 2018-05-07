@@ -22,6 +22,8 @@ import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import HeaderContainer from "layouts/HeaderContainer";
+//@ts-ignore
+import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
 import { IOperationsState } from 'reducers/operations';
@@ -109,11 +111,26 @@ class AppContainer extends React.Component<IProps, null> {
               <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
             )} />
             <Switch>
-              <Route exact path="/" component={HomeContainer} />
-              <Route exact path="/dao/create" component={CreateDaoContainer} />
               <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
-              <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer} />
+              <Route path="/" component={HomeContainer} />
             </Switch>
+            <ModalRoute
+              exact
+              path='/create-dao'
+              parentPath='/'
+              component={CreateDaoContainer}
+            />
+            <ModalRoute
+              path='/dao/:daoAddress/proposals/create'
+              parentPath={(route: any) => `/dao/${route.params.daoAddress}`}
+              component={CreateProposalContainer}
+            />
+            <ModalContainer
+              modalClassName={css.modal}
+              backdropClassName={css.backdrop}
+              containerClassName={css.modalContainer}
+              bodyModalClassName={css.modalBody}
+            />
           </div>
           <div className={css.pendingTransactions}>
             {Object.keys(operations).map((k) =>

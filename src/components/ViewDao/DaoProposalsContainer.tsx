@@ -92,7 +92,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
                     No upcoming proposals
                   </div>
                   <div className={css.cta}>
-                    <Link to={"/proposal/create/" + this.props.daoAddress}>Create a proposal</Link>
+                    <Link to={`/dao/${this.props.daoAddress}/proposals/create`}>Create a proposal</Link>
                   </div>
                 </div>
               : ""

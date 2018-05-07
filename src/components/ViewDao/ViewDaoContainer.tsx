@@ -171,11 +171,11 @@ class ViewDaoContainer extends React.Component<IProps, null> {
           <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
 
           <Switch>
-            <Route exact path="/dao/:daoAddress" component={DaoProposalsContainer} />
-            <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
-            <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
-            <Route exact path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
-            <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
+            <Route path="/dao/:daoAddress" component={DaoProposalsContainer} />
+            <Route path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
+            <Route path="/dao/:daoAddress/members" component={DaoMembersContainer} />
+            <Route path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
+            <Route path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
           </Switch>
         </div>
       );
