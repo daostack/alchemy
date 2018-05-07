@@ -114,12 +114,18 @@ class ProposalContainer extends React.Component<IProps, null> {
         rewards.push(proposal.nativeTokenReward + " " + dao.tokenSymbol);
       }
       if (proposal.reputationChange) {
-        rewards.push(proposal.reputationChange + " reputation");
+        rewards.push(
+          <Tooltip placement="top" trigger={["hover"]} overlay={<span style={{minHeight: 'inherit !important'}}>{proposal.reputationChange} reputation</span>}>
+            <span style={{cursor: 'pointer'}}>
+              {(100 * proposal.reputationChange / totalReputation).toFixed(1)}% reputation
+            </span>
+          </Tooltip>
+        );
       }
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = rewards.join(" & ");
+      const rewardsString = rewards.reduce((acc, v) => [acc, " & ", v] as any);
 
       const styles = {
         forBar: {
