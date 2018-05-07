@@ -1,17 +1,18 @@
 import * as Arc from "@daostack/arc.js";
 import { BigNumber } from "bignumber.js";
 import { IEventSubscription } from "@daostack/arc.js";
+import * as Web3 from "web3";
 
 export default class Util {
 
   public static fromWei(amount: BigNumber): BigNumber {
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = new Web3();
     return web3.fromWei(amount, "ether");
   }
 
   // TODO: should probably return a BigNumber instead of a string.
   public static toWei(amount: number): string {
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = new Web3();
     return web3.toWei(amount, "ether");
   }
 
