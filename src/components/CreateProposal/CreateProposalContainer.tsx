@@ -86,7 +86,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   public validate(): FormErrors {
     const state = this.state;
     const out: FormErrors = {};
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
 
     if (!web3.isAddress(state.beneficiaryAddress)) {
       out.beneficiaryAddress = "Invalid address";

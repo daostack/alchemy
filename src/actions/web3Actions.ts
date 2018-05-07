@@ -21,7 +21,8 @@ export function initializeWeb3() {
       type: ActionTypes.WEB3_CONNECT,
       sequence: AsyncActionSequence.Pending,
       operation: {
-        message: 'Connecting...'
+        message: 'Connecting...',
+        totalSteps: 1,
       },
     } as ConnectAction);
     try {
@@ -69,7 +70,7 @@ export function initializeWeb3() {
 
 export function changeAccount(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
-    const web3 = Utils.getWeb3();
+    const web3 = await Utils.getWeb3();
 
     let payload = {
       ethAccountAddress: accountAddress,

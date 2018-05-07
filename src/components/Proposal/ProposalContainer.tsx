@@ -25,7 +25,7 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const proposal = state.arc.proposals[ownProps.proposalId];
   const dao = state.arc.daos[proposal.daoAvatarAddress];
-  const currentAccountRedemptions = dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId];
+  const currentAccountRedemptions = dao.members[state.web3.ethAccountAddress] ? dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId] : false;
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountRedemptions,

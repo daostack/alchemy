@@ -10,7 +10,7 @@
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "engines": {
-    "node": ">=9.5"
+    "node": "=9.5"
   },
   "jest": {
     "transform": {
@@ -59,7 +59,7 @@
     "auto-start-ganache": "cross-env arcjs_network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.48",
+    "@daostack/arc.js": "0.0.0-alpha.50",
     "@types/object-hash": "^1.2.0",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
@@ -94,7 +94,7 @@
     "truffle-contract": "^3.0.1",
     "ts-node": "^5.0.1",
     "web3": "^0.20.4",
-    "web3-provider-engine": "^8.4.0",
+    "web3-provider-engine": "^14.0.5",
     "webpack": "^3.11.0",
     "zeppelin-solidity": "^1.2.0"
   },
