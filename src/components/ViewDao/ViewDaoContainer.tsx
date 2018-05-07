@@ -78,7 +78,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
   public async componentDidMount() {
     const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent, onProposalExecuted } = this.props;
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = await Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
     //       to make sure we dont overwrite all proposals after creating an unconfirmed proposal

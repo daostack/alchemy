@@ -75,9 +75,9 @@ class AppContainer extends React.Component<IProps, null> {
     }
   }
 
-  public componentWillReceiveProps(props: IProps) {
+  public async componentWillReceiveProps(props: IProps) {
     // If we are connected to an account through MetaMask then watch for account changes in MetaMask
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = await Arc.Utils.getWeb3();
     if (props.ethAccountAddress && (web3.currentProvider as any).isMetaMask === true ) {
       // Setup an interval to check for the account to change
       // First clear the old interval
