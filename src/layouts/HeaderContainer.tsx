@@ -62,9 +62,9 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.props.changeAccount(newAddress);
   }
 
-  public render() {
+  public async render() {
     const { dao, web3State } = this.props;
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = await Arc.Utils.getWeb3();
 
     let member = dao ? dao.members[web3State.ethAccountAddress] : false;
     if (!member) {

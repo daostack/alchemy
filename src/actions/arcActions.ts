@@ -81,7 +81,7 @@ export function getDAO(avatarAddress: string) {
 }
 
 export async function getDAOData(avatarAddress: string, getDetails: boolean = false, currentAccountAddress: string = null) {
-  const web3 = Arc.Utils.getWeb3();
+  const web3 = await Arc.Utils.getWeb3();
   const dao = await Arc.DAO.at(avatarAddress);
 
   const daoData: IDaoState = {
@@ -212,7 +212,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: arcConstants.ARC_GET_PROPOSAL_PENDING, payload: null });
 
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = await Arc.Utils.getWeb3();
     const dao = await Arc.DAO.at(avatarAddress);
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
@@ -494,7 +494,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
     };
 
     try {
-      const web3: Web3 = Arc.Utils.getWeb3();
+      const web3: Web3 = await Arc.Utils.getWeb3();
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
 
@@ -633,7 +633,7 @@ export type VoteAction = IAsyncAction<'ARC_VOTE', {
 
 export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalState, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const proposalId = proposal.proposalId;
 
@@ -773,7 +773,7 @@ export type StakeAction = IAsyncAction<'ARC_STAKE', {
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stake: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const proposal: IProposalState = getState().arc.proposals[proposalId];
 
@@ -908,7 +908,7 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
 
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
 
     const meta = {
       avatarAddress: daoAvatarAddress,
