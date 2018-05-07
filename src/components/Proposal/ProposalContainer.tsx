@@ -115,7 +115,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       }
       if (proposal.reputationChange) {
         rewards.push(
-          <Tooltip placement="top" trigger={["hover"]} overlay={<span style={{minHeight: 'inherit !important'}}>{proposal.reputationChange} reputation</span>}>
+          <Tooltip placement="top" trigger={["hover"]} overlay={<span>{proposal.reputationChange} reputation</span>}>
             <span>
               {(100 * proposal.reputationChange / totalReputation).toFixed(1)}% reputation
             </span>

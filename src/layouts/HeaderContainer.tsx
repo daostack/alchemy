@@ -97,7 +97,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                     ? <div>
                         <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
                         &nbsp; | &nbsp;
-                        <Tooltip placement="bottom" trigger={["hover"]} overlay={<span style={{minHeight: 'inherit !important'}}>{member.reputation} reputation</span>}>
+                        <Tooltip placement="bottom" trigger={["hover"]} overlay={<span>{member.reputation} reputation</span>}>
                           <span>
                             {(100 * member.reputation / dao.reputationCount).toFixed(1)}% reputation
                           </span>
