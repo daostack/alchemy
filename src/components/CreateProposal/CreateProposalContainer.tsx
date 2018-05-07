@@ -83,7 +83,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     };
   }
 
-  public validate(): FormErrors {
+  public async validate(): Promise<FormErrors> {
     const state = this.state;
     const out: FormErrors = {};
     const web3: Web3 = await Arc.Utils.getWeb3();
@@ -199,7 +199,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             className={this.state.errors.beneficiaryAddress ? css.error : null}
             maxLength={42}
             onChange={this.handleChange}
-            onBlur={(e) => this.validate()}
+            onBlur={async (e) => await this.validate()}
             placeholder="Recipient's address public key"
             ref="beneficiaryNode"
             required
