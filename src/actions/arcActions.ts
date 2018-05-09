@@ -6,7 +6,7 @@ import { normalize } from "normalizr";
 import { push } from "react-router-redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
-import * as Web3 from "web3";
+import { Web3 } from "web3";
 
 import * as arcConstants from "constants/arcConstants";
 import Util from "lib/util";

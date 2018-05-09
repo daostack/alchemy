@@ -4,7 +4,7 @@ import { denormalize } from "normalizr";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect, Dispatch } from "react-redux";
-import * as Web3 from "web3";
+import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
