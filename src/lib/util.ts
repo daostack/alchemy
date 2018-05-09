@@ -1,7 +1,11 @@
 import * as Arc from "@daostack/arc.js";
 import { BigNumber } from "bignumber.js";
 import { IEventSubscription } from "@daostack/arc.js";
-import * as Web3 from "web3";
+
+// haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
+// v1.0 may improve on this entire Web3 typings experience
+/* tslint:disable-next-line:no-var-requires */
+const Web3 = require("web3");
 
 export default class Util {
 
