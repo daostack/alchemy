@@ -44,11 +44,11 @@
     "cache-arc-prod": "cross-env NODE_ENV=production arcjs_network=kovan ts-node src/bg_cache_worker.ts",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "heroku-postbuild": "npm run build",
-    "ganache": "npm explore @daostack/arc.js -- npm start test.ganache.run",
-    "ganacheDb": "npm explore @daostack/arc.js -- npm start test.ganacheDb.run",
-    "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start test.ganacheDb.clean",
-    "ganacheDb-save": "npm explore @daostack/arc.js -- npm start test.ganacheDb.zip",
-    "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start test.ganacheDb.restoreFromZip",
+    "ganache": "npm explore @daostack/arc.js -- npm start ganache.run",
+    "ganacheDb": "npm explore @daostack/arc.js -- npm start ganacheDb.run",
+    "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start ganacheDb.clean",
+    "ganacheDb-save": "npm explore @daostack/arc.js -- npm start ganacheDb.zip",
+    "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start ganacheDb.restoreFromZip",
     "migrate-ganache": "cross-env arcjs_network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
     "lint": "tslint --project .",
     "test": "jest --coverage",
@@ -59,8 +59,7 @@
     "auto-start-ganache": "cross-env arcjs_network=ganache run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.50",
-    "@types/object-hash": "^1.2.0",
+    "@daostack/arc.js": "0.0.0-alpha.51",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
@@ -105,6 +104,7 @@
     "@types/jest": "^22.2.0",
     "@types/lodash": "^4.14.74",
     "@types/node": "^8.0.26",
+    "@types/object-hash": "^1.2.0",
     "@types/rc-tooltip": "^3.4.11",
     "@types/react": "^16.0.35",
     "@types/react-dom": "^16.0.3",
@@ -135,7 +135,6 @@
     "typescript": "^2.7",
     "typings-for-css-modules-loader": "^1.5.0",
     "uglifyjs-webpack-plugin": "^1.2.2",
-    "web3-typescript-typings": "^0.6.0",
     "webpack-dev-server": "^2.7.1",
     "webpack-merge": "^4.1.0"
   }
