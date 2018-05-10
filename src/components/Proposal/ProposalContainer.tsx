@@ -77,9 +77,7 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       const daoAccount = dao.members[currentAccountAddress];
       let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
-          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
-          redemptionsTip: JSX.Element = null;
-
+          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed, redemptionsTip: JSX.Element = null;
       if (daoAccount) {
         currentAccountReputation = daoAccount.reputation;
         currentAccountTokens = daoAccount.tokens;
@@ -185,7 +183,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <span>CLOSES {moment((proposal.boostedTime + proposal.boostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
               : ""
               }
-              {proposal.title}
+              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of {rewardsString}</span>
