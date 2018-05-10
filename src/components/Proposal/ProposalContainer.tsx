@@ -17,15 +17,15 @@ import * as css from "./Proposal.scss";
 
 interface IStateProps {
   currentAccountAddress: string;
-  currentAccountRedemptions: IRedemptionState;
-  dao: IDaoState;
-  proposal: IProposalState;
+  currentAccountRedemptions?: IRedemptionState;
+  dao?: IDaoState;
+  proposal?: IProposalState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const proposal = state.arc.proposals[ownProps.proposalId];
-  const dao = state.arc.daos[proposal.daoAvatarAddress];
-  const currentAccountRedemptions = dao.members[state.web3.ethAccountAddress] ? dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId] : false;
+  const dao = proposal && state.arc.daos[proposal.daoAvatarAddress];
+  const currentAccountRedemptions = dao && dao.members[state.web3.ethAccountAddress] && dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId];
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountRedemptions,
@@ -77,9 +77,7 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       const daoAccount = dao.members[currentAccountAddress];
       let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
-          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
-          redemptionsTip: JSX.Element = null;
-
+          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed, redemptionsTip: JSX.Element = null;
       if (daoAccount) {
         currentAccountReputation = daoAccount.reputation;
         currentAccountTokens = daoAccount.tokens;
@@ -114,12 +112,18 @@ class ProposalContainer extends React.Component<IProps, null> {
         rewards.push(proposal.nativeTokenReward + " " + dao.tokenSymbol);
       }
       if (proposal.reputationChange) {
-        rewards.push(proposal.reputationChange + " reputation");
+        rewards.push(
+          <Tooltip placement="top" trigger={["hover"]} overlay={<span>{proposal.reputationChange} reputation</span>}>
+            <span>
+              {(100 * proposal.reputationChange / totalReputation).toFixed(1)}% reputation
+            </span>
+          </Tooltip>
+        );
       }
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = rewards.join(" & ");
+      const rewardsString = rewards.reduce((acc, v) => [acc, " & ", v] as any);
 
       const styles = {
         forBar: {
