@@ -38,6 +38,7 @@ export const showOperation =
   (status: OperationsStatus, message: string, operation?: IOperationConfig) => (dispatch: Dispatch<any>) =>
     dispatch({
       type: 'Operation/Show',
+      operation,
       payload: {
         status,
         message
