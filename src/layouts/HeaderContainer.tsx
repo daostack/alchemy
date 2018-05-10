@@ -6,6 +6,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
 import * as web3Actions from "actions/web3Actions";
+import * as operationsActions from "actions/operationsActions";
 import { IRootState } from "reducers";
 import { IDaoState, emptyAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
@@ -16,6 +17,7 @@ import AccountImage from "components/Account/AccountImage";
 import * as css from "./App.scss";
 import Util from "lib/util";
 import Tooltip from "rc-tooltip";
+import { OperationsStatus } from "reducers/operations";
 
 interface IStateProps {
   dao: IDaoState;
@@ -31,10 +33,12 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   changeAccount: typeof web3Actions.changeAccount;
+  showOperation: typeof operationsActions.showOperation;
 }
 
 const mapDispatchToProps = {
   changeAccount: web3Actions.changeAccount,
+  showOperation: operationsActions.showOperation
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -55,6 +59,26 @@ const Fade = ({ children, ...props }: any) => (
 );
 
 class HeaderContainer extends React.Component<IProps, null> {
+
+  constructor(props: IProps) {
+    super(props);
+
+    this.copyAddress = this.copyAddress.bind(this);
+  }
+
+  public copyAddress() {
+    const { showOperation, web3State: { ethAccountAddress } } = this.props;
+
+    // Copy the address to clipboard
+    const el = document.createElement('textarea');
+    el.value = ethAccountAddress;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    showOperation(OperationsStatus.Success, `Copied to clipboard!`, {totalSteps: 1});
+  }
 
   public handleChangeAccount = (e: any) => {
     const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
@@ -83,13 +107,13 @@ class HeaderContainer extends React.Component<IProps, null> {
         <div className={css.accountInfo}>
           <div className={css.holdings}>
             <div>
-              <span className={css.holdingsLabel}>Current account</span>
+              <span className={css.holdingsLabel}>Current account: <b style={{cursor: 'pointer'}} onClick={this.copyAddress}>{web3State.ethAccountAddress.slice(0, 8)}...(copy)</b></span>
               <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
                 {accountOptionNodes}
               </select>
             </div>
             <div>
-              <span className={css.holdingsLabel}>Account Balances: </span>
+              <span className={css.holdingsLabel}>ETH Balance: </span>
               <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />
               { dao
                 ? <div>
