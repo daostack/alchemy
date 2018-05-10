@@ -35,7 +35,7 @@ export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_PENDING, payload: null });
     try {
-      const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/daostack-alchemy/initialArcState-' + Arc.ConfigService.get('network') + '.json');
+      const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/' + process.env.S3_BUCKET + '/initialArcState-' + Arc.ConfigService.get('network') + '.json');
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: cachedState.data });
     } catch (e) {
       console.error(e);
@@ -412,7 +412,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
           tokens: Util.toWei(member.tokens),
           reputation: Util.toWei(member.reputation),
         };
-        membersByAccount[member.address] = {...member, votes: {}, stakes: {}};
+        membersByAccount[member.address] = {...emptyAccount, ...member};
       }
 
       const dao = await Util.performAction(
