@@ -61,9 +61,9 @@ export default class Notification extends React.Component<IProps, IState> {
         <div className={css.transactionMessage}>
           <div className={css.clearfix}>
             <div className={css.left}>
-              <span className={css.pending}>PENDING TRANSACTION</span>
-              <span className={css.success}>TRANSACTION SUCCESSFUL</span>
-              <span className={css.error}>TRANSACTION FAILED</span>
+              <span className={css.pending}>PENDING OPERATION</span>
+              <span className={css.success}>OPERATION SUCCESSFUL</span>
+              <span className={css.error}>OPERATION FAILED</span>
             </div>
             <div className={css.right}>
               <span className={css.pending}>{stepInfo}</span>
