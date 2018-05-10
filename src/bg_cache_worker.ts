@@ -86,7 +86,7 @@ const cacheBlockchain = async () => {
 
       // If voter not already added as a member on the DAO set them up (this should not happen right?)
       if (!initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter]) {
-        initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter] = { address: voteEventArgs._voter, ...emptyAccount};
+        initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter] = { ...emptyAccount, address: voteEventArgs._voter };
       }
       // TODO: use arcReducer to add this.
       initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes[voteEventArgs._proposalId] = {
@@ -114,7 +114,7 @@ const cacheBlockchain = async () => {
 
       // If staker not already added as a member on the DAO set them up (this should not happen right?)
       if (!initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter]) {
-        initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter] = { address: stakeEventArgs._voter, ...emptyAccount };
+        initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter] = { ...emptyAccount, address: stakeEventArgs._voter };
       }
       initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes[stakeEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,

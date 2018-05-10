@@ -412,7 +412,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
           tokens: Util.toWei(member.tokens),
           reputation: Util.toWei(member.reputation),
         };
-        membersByAccount[member.address] = {...member, votes: {}, stakes: {}};
+        membersByAccount[member.address] = {...emptyAccount, ...member};
       }
 
       const dao = await Util.performAction(

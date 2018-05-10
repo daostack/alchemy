@@ -428,7 +428,7 @@ const arcReducer = (state = initialState, action: any) => {
             members: {
               [to]: (member: any) => {
                 // If tokens are being given to a non member, add them as a member to this DAO
-                return update(member || { address: to, tokens: 0, reputation: 0, votes: {}, stakes: {} }, {
+                return update(member || { ...emptyAccount, address: to }, {
                   tokens: { $set: toBalance }
                 });
               },
@@ -448,7 +448,7 @@ const arcReducer = (state = initialState, action: any) => {
             members: {
               [address]: (member: any) => {
                 // If reputation being given to a non member, add them as a member to this DAO
-                return update(member || { address, tokens: 0, reputation: 0, votes: {}, stakes: {} }, {
+                return update(member || { ...emptyAccount, address }, {
                   tokens: { $set: reputation }
                 });
               },
