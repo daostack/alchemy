@@ -50,7 +50,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
           <div className={css.memberHoldings}>
             {dao.tokenSymbol}s: <span>{Math.round(member.tokens).toLocaleString()}</span>
             <div className={css.verticalDivider}></div>
-            Reputation: <span>{Math.round(member.reputation).toLocaleString()}</span>
+            Reputation: <span>{Math.round(member.reputation).toLocaleString()} ({(100 * member.reputation / dao.reputationCount).toFixed(1)}%)</span>
           </div>
         </div>
       );

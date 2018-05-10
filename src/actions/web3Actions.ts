@@ -48,7 +48,7 @@ export function initializeWeb3() {
     const networkId = Number(await getNetwork());
 
     const payload = {
-      accounts: [] as string[],
+      accounts: web3.eth.accounts,
       ethAccountAddress: null as string,
       ethAccountBalance: 0,
       networkId,
