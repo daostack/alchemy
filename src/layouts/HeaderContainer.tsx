@@ -15,6 +15,7 @@ import AccountImage from "components/Account/AccountImage";
 
 import * as css from "./App.scss";
 import Util from "lib/util";
+import Tooltip from "rc-tooltip";
 
 interface IStateProps {
   dao: IDaoState;
@@ -94,7 +95,11 @@ class HeaderContainer extends React.Component<IProps, null> {
                 ? <div>
                     <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
                     &nbsp; | &nbsp;
-                    <span>{member.reputation.toFixed(2).toLocaleString()} {dao.name} reputation</span>
+                    <Tooltip placement="bottom" trigger={["hover"]} overlay={<span>{member.reputation} reputation</span>}>
+                      <span>
+                        {(100 * member.reputation / dao.reputationCount).toFixed(1)}% reputation
+                      </span>
+                    </Tooltip>
                   </div>
                 : ""
               }
