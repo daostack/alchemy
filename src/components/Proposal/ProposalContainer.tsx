@@ -113,7 +113,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       }
       if (proposal.reputationChange) {
         rewards.push(
-          <Tooltip placement="top" trigger={["hover"]} overlay={<span>{proposal.reputationChange} reputation</span>}>
+          <Tooltip key={proposal.proposalId + "_reputation_reward"} placement="top" trigger={["hover"]} overlay={<span>{proposal.reputationChange} reputation</span>}>
             <span>
               {(100 * proposal.reputationChange / totalReputation).toFixed(1)}% reputation
             </span>
@@ -123,7 +123,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = rewards.reduce((acc, v) => [acc, " & ", v] as any);
+      const rewardsString = <span>{rewards.reduce((acc, v) => [acc, " & ", v] as any)}</span>;
 
       const styles = {
         forBar: {
