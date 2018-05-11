@@ -97,7 +97,7 @@
       padding-top: 30px;
       text-align: center;
 
-      span {
+      &>span {
         font-size: $small;
         color: $white-halftone;
       }
