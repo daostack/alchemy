@@ -52,6 +52,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const { currentPrediction, currentStake, currentAccountTokens, proposal, transactionState } = this.props;
     const { showStakeModal } = this.state;
 
+    const stakingLeftToBoost = proposal.threshold - (proposal.stakesYes - proposal.stakesNo);
+
     let wrapperClass = classNames({
       [css.predictions] : true,
       [css.unconfirmedPrediction] : transactionState == TransactionStates.Unconfirmed,
@@ -98,6 +100,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         </div>
         <div>
           <span>PREDICTIONS</span>
+          {stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} GEN UNTIL BOOSTED</b></span> : ''}
           <table>
             <tbody>
               <tr className={stakeUpClass}>

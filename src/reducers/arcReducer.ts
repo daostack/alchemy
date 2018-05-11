@@ -113,6 +113,7 @@ export interface IProposalState {
   votesYes: number;
   votesNo: number;
   winningVote: VoteOptions;
+  threshold: number;
 }
 
 export interface IDaoState {
