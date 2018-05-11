@@ -123,7 +123,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = <span>{rewards.reduce((acc, v) => [acc, " & ", v] as any)}</span>;
+      const rewardsString = <span>{rewards.reduce((acc, v) => <React.Fragment>{acc} & {v}</React.Fragment>)}</span>;
 
       const styles = {
         forBar: {
