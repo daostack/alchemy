@@ -12,9 +12,9 @@ export default class ReputationView extends React.Component<IProps, null> {
     const { daoName, reputation, totalReputation } = this.props;
 
     return (
-      <Tooltip overlay={<span>{reputation} {daoName || ''} Reputation in total</span>}>
+      <Tooltip overlay={<span>{reputation.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} {daoName || ''} Reputation in total</span>}>
         <span>
-          {(totalReputation > 0 ? 100 * reputation / totalReputation : 0).toFixed(1)}% Reputation
+          {(totalReputation > 0 ? 100 * reputation / totalReputation : 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}% Reputation
         </span>
       </Tooltip>
     );
