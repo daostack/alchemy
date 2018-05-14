@@ -475,11 +475,12 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       dispatch(push("/dao/" + dao.avatar.address));
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Failed to create DAO: ${err.message}`
+          message: `Failed to create DAO`
         }
       } as CreateDAOAction)
     }
@@ -608,6 +609,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       } as CreateProposalAction);
       dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
@@ -676,11 +678,12 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
           } as VoteAction)
       );
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Voting on "${proposal.title}" failed: ${err.message}`
+          message: `Voting on "${proposal.title}" failed`
         },
         meta,
       } as VoteAction)
@@ -829,12 +832,13 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
           } as StakeAction)
       );
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_STAKE,
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Staking on "${proposal.title}" failed: ${err.message}`
+          message: `Staking on "${proposal.title}" failed`
         }
       } as StakeAction)
     }
@@ -975,12 +979,13 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         payload
       } as RedeemAction);
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_REDEEM,
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Error redeeming rewards for proposal "${proposal.title}": ${err.message}`
+          message: `Error redeeming rewards for proposal "${proposal.title}"`
         }
       } as RedeemAction);
     }
