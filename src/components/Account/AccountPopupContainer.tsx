@@ -7,8 +7,10 @@ import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
 
 import AccountImage from "components/Account/AccountImage";
+import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./Account.scss";
+import Tooltip from "rc-tooltip";
 
 interface IStateProps {
   accountAddress: string;
@@ -51,7 +53,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>
-            <div>{Math.round(reputation).toLocaleString()} <strong>{dao.name} Reputation</strong></div>
+            <div><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={reputation}/></div>
             <div>{Math.round(tokens).toLocaleString()} <strong>{dao.tokenSymbol}</strong></div>
           </div>
         </div>
