@@ -29,8 +29,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAddress: ownProps.match.params.daoAddress,
     proposalsLoaded: state.arc.daos[ownProps.match.params.daoAddress].proposalsLoaded,
-    proposalsBoosted: selectors.makeDaoBoostedProposalsSelector()(state, ownProps),
-    proposalsPreBoosted: selectors.makeDaoPreBoostedProposalsSelector()(state, ownProps),
+    proposalsBoosted: selectors.boostedProposals(state, ownProps),
+    proposalsPreBoosted: selectors.preBoostedProposals(state, ownProps),
     web3: state.web3,
   };
 };

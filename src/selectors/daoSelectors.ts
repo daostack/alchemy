@@ -4,6 +4,7 @@ import { createSelector } from "reselect";
 import { IRootState } from "reducers";
 import { IProposalState, ProposalStates } from "reducers/arcReducer";
 import * as schemas from "../schemas";
+import * as moment from 'moment';
 
 const getArcEntities = (state: IRootState) => state.arc;
 const getDaos = (state: IRootState) => state.arc.daos;
@@ -19,26 +20,31 @@ const getDaoProposals = createSelector(
   },
 );
 
-export const makeDaoBoostedProposalsSelector = () => {
-  return createSelector(
-    [ getDaoProposals ],
-    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == ProposalStates.Boosted)),
-  );
-};
+export const boostedProposals = createSelector(
+  [ getDaoProposals ],
+  (proposals) => proposals.filter((proposal: IProposalState) =>
+    proposal.state === ProposalStates.Boosted && (+moment() / 1000) <= proposal.boostedTime + proposal.boostedVotePeriodLimit
+  )
+);
 
-export const makeDaoPreBoostedProposalsSelector = () => {
-  return createSelector(
-    [ getDaoProposals ],
-    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == ProposalStates.PreBoosted)),
-  );
-};
+export const preBoostedProposals = createSelector(
+  [ getDaoProposals ],
+  (proposals) => proposals.filter((proposal: IProposalState) =>
+    proposal.state === ProposalStates.PreBoosted && (+moment() / 1000) <= proposal.submittedTime + proposal.preBoostedVotePeriodLimit
+  ),
+);
 
-export const makeDaoExecutedProposalsSelector = () => {
-  return createSelector(
-    [ getDaoProposals ],
-    (proposals) => proposals.filter((proposal: IProposalState) => (proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed)),
-  );
-};
+export const historyProposals = createSelector(
+  [ getDaoProposals ],
+  (proposals) => proposals.filter((proposal: IProposalState) =>
+    (
+      proposal.state === ProposalStates.Executed ||
+      proposal.state === ProposalStates.Closed ||
+      proposal.state === ProposalStates.Boosted && (+moment() / 1000) > proposal.boostedTime + proposal.boostedVotePeriodLimit ||
+      proposal.state === ProposalStates.PreBoosted && (+moment() / 1000) > proposal.submittedTime + proposal.preBoostedVotePeriodLimit
+    )
+  )
+);
 
 // export const makeTotalDaoReputationSelector = () => {
 //   return createSelector(
