@@ -72,12 +72,12 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     const passPrediction = classNames({
       [css.passPrediction]: true,
-      [css.disabled]: !currentAccountTokens,
+      [css.disabled]: !currentAccountTokens || currentPrediction === VoteOptions.No,
     });
 
     const failPrediction = classNames({
       [css.failPrediction]: true,
-      [css.disabled]: !currentAccountTokens,
+      [css.disabled]: !currentAccountTokens || currentPrediction === VoteOptions.Yes,
     });
 
     return (
