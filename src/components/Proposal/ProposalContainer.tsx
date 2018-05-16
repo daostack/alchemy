@@ -10,6 +10,7 @@ import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import ReputationView from "components/Account/ReputationView";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
 
@@ -113,11 +114,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       }
       if (proposal.reputationChange) {
         rewards.push(
-          <Tooltip key={proposal.proposalId + "_reputation_reward"} placement="top" trigger={["hover"]} overlay={<span>{proposal.reputationChange} reputation</span>}>
-            <span>
-              {(100 * proposal.reputationChange / totalReputation).toFixed(1)}% reputation
-            </span>
-          </Tooltip>
+          <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
         );
       }
       if (proposal.ethReward) {
@@ -147,6 +144,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             <VoteBox
               currentVote={currentAccountVote}
               currentAccountReputation={currentAccountReputation}
+              daoName={dao.name}
               daoTotalReputation={dao.reputationCount}
               proposal={proposal}
               transactionState={currentAccountVoteState}
