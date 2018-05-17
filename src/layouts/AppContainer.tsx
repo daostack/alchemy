@@ -129,6 +129,7 @@ class AppContainer extends React.Component<IProps, null> {
             )} />
             <Switch>
               <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
+              <Route exact path="/daos" component={DaoListContainer}/>
               <Route path="/" component={HomeContainer} />
             </Switch>
             <ModalRoute
