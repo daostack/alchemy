@@ -21,7 +21,7 @@
   width: 22px;
   height: 22px;
   overflow: visible;
-  margin-top: -5px;
+  margin-top: -14px;
   transition: all .25s ease;
   top: 6px;
   margin-right: 13px;
@@ -97,7 +97,7 @@
       padding-top: 30px;
       text-align: center;
 
-      span {
+      &>span {
         font-size: $small;
         color: $white-halftone;
       }

@@ -4,10 +4,11 @@ import { connect, Dispatch } from "react-redux";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState } from "reducers/arcReducer";
+import { emptyAccount, IAccountState, IDaoState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import * as css from "./CreateDao.scss";
+import { Link } from "react-router-dom";
 
 interface IStateProps {
   web3: IWeb3State;
@@ -47,7 +48,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
       name: "",
       tokenName: "",
       tokenSymbol: "",
-      members: [ { address: this.props.web3.ethAccountAddress, tokens: 1000, reputation: 1000 }],
+      members: [ { ...emptyAccount, address: this.props.web3.ethAccountAddress, tokens: 1000, reputation: 1000 }],
     };
   }
 
@@ -80,7 +81,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
   public handleChangeMemberTokens = (index: number) => (event: any) => {
     const newMembers = this.state.members.map((member, sidx) => {
       if (index !== sidx) { return member; }
-      return { ...member, tokens: event.target.value };
+      return { ...member, tokens: Number(event.target.value) };
     });
     this.setState({ members: newMembers });
   }
@@ -88,7 +89,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
   public handleChangeMemberReputation = (index: number) => (event: any) => {
     const newMembers = this.state.members.map((member, sidx) => {
       if (index !== sidx) { return member; }
-      return { ...member, reputation: event.target.value };
+      return { ...member, reputation: Number(event.target.value) };
     });
     this.setState({ members: newMembers });
   }
@@ -100,7 +101,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
 
   public handleAddMember = (event: any) => {
     this.setState({
-      members: this.state.members.concat([{ address: "", tokens: 1000, reputation: 1000 }]),
+      members: this.state.members.concat([{...emptyAccount, address: "", tokens: 1000, reputation: 1000 }]),
     });
   }
 
@@ -110,9 +111,11 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
         <h2>
           <img className={css.editIcon} src="/assets/images/Icon/Edit.svg"/>
           <span>Create DAO</span>
-          <button className={css.exitProposalCreation}>
-            <img src="/assets/images/Icon/Close.svg"/>
-          </button>
+          <Link to='/'>
+            <button className={css.exitProposalCreation}>
+              <img src="/assets/images/Icon/Close.svg"/>
+            </button>
+          </Link>
         </h2>
         <div className={css.inner}>
           <form onSubmit={this.handleSubmit}>

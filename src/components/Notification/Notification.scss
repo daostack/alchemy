@@ -1,24 +1,134 @@
-.notification {
-  padding: 1em;
-  margin: 0.5em;
-  border-radius: 0.5em;
-  background: dimgray;
-  color: lightgrey;
-  position: relative;
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
-  .message {
-    font-weight: bold;
-    color: lightgrey;
+.pendingTransaction {
+  padding: 10px 0;
+  display: inline-block;
+  background-color: $black-halftone;
+  min-width: 240px;
+  border-radius: 3px;
+  box-shadow: $shadow-2;
+  margin: 3px 10px;
+
+  .pending, .success, .error {
+    display: none;
   }
 
-  .timestamp {
-    color: lightgrey;
+  .statusIcon {
+    width: 50px;
+    text-align: center;
+    vertical-align: middle;
   }
 
-  .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 1em;
+  .statusIcon .pending {
+    height: 40px;
+    margin-top: -15px;
+    margin-bottom: -7px;
+    position: relative;
+    top: 9px;
   }
+
+  .statusIcon .success, .statusIcon .error {
+    height: 20px;
+    position: relative;
+    top: 5px;
+  }
+
+  .transactionMessage {
+    min-width: 170px;
+    text-align: left;
+  }
+
+  .transactionMessage .left {
+    font-size: $small;
+    color: $white;
+  }
+
+  .transactionMessage .right {
+    font-size: $small;
+    color: $white;
+    font-weight: $bold;
+  }
+
+  a {
+    color: $white;
+    text-decoration: underline;
+  }
+
+  button {
+    border: none;
+    background: none;
+  }
+
+  .notificationControls {
+    width: 50px;
+    text-align: center;
+  }
+
+  .notificationControls .pending {
+    position: relative;
+    top: 2px;
+  }
+
+  .notificationControls .success, .notificationControls .error {
+    position: relative;
+    top: 3px;
+  }
+}
+
+.pendingTransaction.success .success, .pendingTransaction.pending .pending, .pendingTransaction.error .error {
+  display: inline;
+}
+
+.pendingTransaction.minimized {
+  min-width: 50px;
+  width: 50px;
+
+  .statusIcon .pending {
+    top: 6px;
+  }
+
+  .transactionMessage, .notificationControls {
+    display: none;
+  }
+}
+
+.pendingTransaction.success {
+  background-color: $accent-1;
+}
+
+.pendingTransaction.error {
+  background-color: $accent-3-halftone;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.statusIcon {
+  float: left;
+}
+
+.transactionMessage {
+  float: left;
+}
+
+.notificationControls {
+  float: left;
+}
+
+.notificationMessage {
+  font-size: $caption;
+  color: $white;
+}
+
+.transactionWrapper {
+  display: inline;
 }

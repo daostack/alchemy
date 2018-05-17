@@ -18,14 +18,16 @@ import * as arcActions from "actions/arcActions";
 import * as operationsActions from 'actions/operationsActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
+import Notification from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
 import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
-import Notification from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import HeaderContainer from "layouts/HeaderContainer";
+//@ts-ignore
+import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
 import { IOperationsState } from 'reducers/operations';
@@ -81,7 +83,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { initializeWeb3, loadCachedState} = this.props;
+    const { initializeWeb3, loadCachedState } = this.props;
     initializeWeb3();
 
     // If not using local testnet then load cached blockchain data from S3
@@ -90,10 +92,11 @@ class AppContainer extends React.Component<IProps, null> {
     }
   }
 
-  public componentWillReceiveProps(props: IProps) {
-    // If we are connected to an account through web3
-    if (props.ethAccountAddress) {
-      // Setup an interval to check for the account to change (e.g. via MetaMask)
+  public async componentWillReceiveProps(props: IProps) {
+    // If we are connected to an account through MetaMask then watch for account changes in MetaMask
+    const web3 = await Arc.Utils.getWeb3();
+    if (props.ethAccountAddress && (web3.currentProvider as any).isMetaMask === true ) {
+      // Setup an interval to check for the account to change
       // First clear the old interval
       if (this.accountInterval) {
         clearInterval(this.accountInterval);
@@ -112,38 +115,55 @@ class AppContainer extends React.Component<IProps, null> {
     const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
 
     return (
-      (connectionStatus === ConnectionStatus.Pending
-        ? <div className={css.loading}>Loading...</div>
-      : connectionStatus === ConnectionStatus.Failed
-        ? <NoWeb3Container />
-      : ethAccountAddress === null
-        ? <NoEthAccountContainer />
-      : connectionStatus == ConnectionStatus.Connected
-        ? <div className={css.outer}>
-            <div className={css.container}>
-              <Route path="/dao/:daoAddress" children={(props) => (
-                <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
-              )} />
-              <Switch>
-                <Route exact path="/" component={HomeContainer}/>
-                <Route exact path="/daos" component={DaoListContainer}/>
-                <Route exact path="/dao/create" component={CreateDaoContainer}/>
-                <Route path="/dao/:daoAddress" component={ViewDaoContainer}/>
-                <Route exact path="/proposal/create/:daoAddress" component={CreateProposalContainer}/>
-              </Switch>
-            </div>
-            <div className={css.notificationsWrapper}>
-              {Object.keys(operations).map((key) => ({key, operation: operations[key]})).map(({key, operation}) =>
-                (<Notification
-                  key={key}
-                  operation={operation}
-                  close={() => dismissOperation(key)}
-                />),
-              )}
-            </div>
-            <div className={css.background}></div>
+      (connectionStatus === ConnectionStatus.Pending ?
+        <div className={css.loading}>Loading...</div> :
+      connectionStatus === ConnectionStatus.Failed ?
+        <NoWeb3Container /> :
+      ethAccountAddress === null ?
+        <NoEthAccountContainer /> :
+      connectionStatus == ConnectionStatus.Connected ?
+        <div className={css.outer}>
+          <div className={css.container}>
+            <Route path="/dao/:daoAddress" children={(props) => (
+              <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
+            )} />
+            <Switch>
+              <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
+              <Route path="/" component={HomeContainer} />
+            </Switch>
+            <ModalRoute
+              exact
+              path='/create-dao'
+              parentPath='/'
+              component={CreateDaoContainer}
+            />
+            <ModalRoute
+              path='/dao/:daoAddress/proposals/create'
+              parentPath={(route: any) => `/dao/${route.params.daoAddress}`}
+              component={CreateProposalContainer}
+            />
+            <ModalContainer
+              modalClassName={css.modal}
+              backdropClassName={css.backdrop}
+              containerClassName={css.modalContainer}
+              bodyModalClassName={css.modalBody}
+            />
           </div>
-      : <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
+          <div className={css.pendingTransactions}>
+            {Object.keys(operations).map((k) =>
+              <div key={k}>
+                <Notification
+                  operation={operations[k]}
+                  close={() => dismissOperation(k)}
+                />
+                <br />
+              </div>
+            )}
+          </div>
+          <div className={css.background}></div>
+        </div>
+      :
+        <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
       )
     );
   }

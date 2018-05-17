@@ -16,3 +16,8 @@ export const profileLink: string;
 export const etherBalance: string;
 export const notificationsWrapper: string;
 export const loading: string;
+export const pendingTransactions: string;
+export const modal: string;
+export const modalContainer: string;
+export const backdrop: string;
+export const modalBody: string;

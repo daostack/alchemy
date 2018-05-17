@@ -1,3 +1,4 @@
+import * as Arc from '@daostack/arc.js';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
@@ -6,7 +7,13 @@ import { App } from "./App";
 
 import "./assets/styles/global.scss";
 
-function renderApp() {
+async function renderApp() {
+  try {
+    await Arc.InitializeArcJs();
+  } catch (e) {
+    console.error(e);
+  }
+
   ReactDOM.render(
     <AppContainer>
       <App />
