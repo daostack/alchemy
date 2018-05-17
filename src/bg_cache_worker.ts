@@ -8,7 +8,11 @@ import * as aws from 'aws-sdk';
 import { normalize } from "normalizr";
 import promisify = require("es6-promisify");
 import HDWalletProvider from "./lib/truffle-hdwallet-provider";
-import Web3 = require("web3");
+
+// haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
+// v1.0 may improve on this entire Web3 typings experience
+/* tslint:disable-next-line:no-var-requires */
+const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
 import { initialState as arcInitialState, emptyAccount, IArcState, IDaoState, TransactionStates, IVoteState } from "./reducers/arcReducer";
@@ -82,7 +86,7 @@ const cacheBlockchain = async () => {
 
       // If voter not already added as a member on the DAO set them up (this should not happen right?)
       if (!initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter]) {
-        initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter] = { address: voteEventArgs._voter, ...emptyAccount};
+        initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter] = { ...emptyAccount, address: voteEventArgs._voter };
       }
       // TODO: use arcReducer to add this.
       initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes[voteEventArgs._proposalId] = {
@@ -110,7 +114,7 @@ const cacheBlockchain = async () => {
 
       // If staker not already added as a member on the DAO set them up (this should not happen right?)
       if (!initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter]) {
-        initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter] = { address: stakeEventArgs._voter, ...emptyAccount };
+        initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter] = { ...emptyAccount, address: stakeEventArgs._voter };
       }
       initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes[stakeEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,

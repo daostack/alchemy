@@ -10,6 +10,7 @@ import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import ReputationView from "components/Account/ReputationView";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
 
@@ -17,15 +18,15 @@ import * as css from "./Proposal.scss";
 
 interface IStateProps {
   currentAccountAddress: string;
-  currentAccountRedemptions: IRedemptionState;
-  dao: IDaoState;
-  proposal: IProposalState;
+  currentAccountRedemptions?: IRedemptionState;
+  dao?: IDaoState;
+  proposal?: IProposalState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const proposal = state.arc.proposals[ownProps.proposalId];
-  const dao = state.arc.daos[proposal.daoAvatarAddress];
-  const currentAccountRedemptions = dao.members[state.web3.ethAccountAddress] ? dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId] : false;
+  const dao = proposal && state.arc.daos[proposal.daoAvatarAddress];
+  const currentAccountRedemptions = dao && dao.members[state.web3.ethAccountAddress] && dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId];
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountRedemptions,
@@ -77,9 +78,7 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       const daoAccount = dao.members[currentAccountAddress];
       let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
-          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
-          redemptionsTip: JSX.Element = null;
-
+          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed, redemptionsTip: JSX.Element = null;
       if (daoAccount) {
         currentAccountReputation = daoAccount.reputation;
         currentAccountTokens = daoAccount.tokens;
@@ -114,12 +113,14 @@ class ProposalContainer extends React.Component<IProps, null> {
         rewards.push(proposal.nativeTokenReward + " " + dao.tokenSymbol);
       }
       if (proposal.reputationChange) {
-        rewards.push(proposal.reputationChange + " reputation");
+        rewards.push(
+          <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
+        );
       }
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = rewards.join(" & ");
+      const rewardsString = <span>{rewards.reduce((acc, v) => <React.Fragment>{acc} & {v}</React.Fragment>)}</span>;
 
       const styles = {
         forBar: {
@@ -130,12 +131,20 @@ class ProposalContainer extends React.Component<IProps, null> {
         },
       };
 
+      const closingTime = (proposal: IProposalState) => {
+        const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit } = proposal;
+        const start = state === ProposalStates.Boosted ? boostedTime : submittedTime;
+        const duration = state === ProposalStates.Boosted ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
+        return moment((start + duration) * 1000);
+      }
+
       return (
         <div className={proposalClass + " " + css.clearfix}>
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
             <VoteBox
               currentVote={currentAccountVote}
               currentAccountReputation={currentAccountReputation}
+              daoName={dao.name}
               daoTotalReputation={dao.reputationCount}
               proposal={proposal}
               transactionState={currentAccountVoteState}
@@ -173,13 +182,13 @@ class ProposalContainer extends React.Component<IProps, null> {
               : ""
             }
             <h3>
-              { proposal.state == ProposalStates.PreBoosted ?
-                <span>CLOSES {moment((proposal.submittedTime + proposal.preBoostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
-              : proposal.state == ProposalStates.Boosted ?
-                <span>CLOSES {moment((proposal.boostedTime + proposal.boostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
-              : ""
-              }
-              {proposal.title}
+              <span>
+                { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
+                  `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
+                  : ""
+                }
+              </span>
+              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of {rewardsString}</span>

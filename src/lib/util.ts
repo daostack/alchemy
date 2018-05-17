@@ -2,16 +2,21 @@ import * as Arc from "@daostack/arc.js";
 import { BigNumber } from "bignumber.js";
 import { IEventSubscription } from "@daostack/arc.js";
 
+// haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
+// v1.0 may improve on this entire Web3 typings experience
+/* tslint:disable-next-line:no-var-requires */
+const Web3 = require("web3");
+
 export default class Util {
 
   public static fromWei(amount: BigNumber): BigNumber {
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = new Web3();
     return web3.fromWei(amount, "ether");
   }
 
   // TODO: should probably return a BigNumber instead of a string.
   public static toWei(amount: number): string {
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = new Web3();
     return web3.toWei(amount, "ether");
   }
 

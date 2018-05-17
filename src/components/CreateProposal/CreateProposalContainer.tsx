@@ -4,7 +4,7 @@ import { denormalize } from "normalizr";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect, Dispatch } from "react-redux";
-import * as Web3 from "web3";
+import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
@@ -83,10 +83,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     };
   }
 
-  public validate(): FormErrors {
+  public async validate(): Promise<FormErrors> {
     const state = this.state;
     const out: FormErrors = {};
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
 
     if (!web3.isAddress(state.beneficiaryAddress)) {
       out.beneficiaryAddress = "Invalid address";
@@ -199,7 +199,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             className={this.state.errors.beneficiaryAddress ? css.error : null}
             maxLength={42}
             onChange={this.handleChange}
-            onBlur={(e) => this.validate()}
+            onBlur={async (e) => await this.validate()}
             placeholder="Recipient's address public key"
             ref="beneficiaryNode"
             required

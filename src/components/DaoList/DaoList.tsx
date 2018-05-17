@@ -48,7 +48,7 @@ export default class DaoList extends React.Component<IProps, null> {
       <div className={css.wrapper}>
         <div className={css.daoListHeader + " " + css.clearfix}>
           <h2>All DAOs</h2>
-{/*          <Link to='/dao/create'>Create a New DAO</Link>*/}
+{/*          <Link to='/create-dao'>Create a New DAO</Link>*/}
         </div>
         {daoNodes ? daoNodes : "None"}
         {!daosLoaded ? <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div> : ""}

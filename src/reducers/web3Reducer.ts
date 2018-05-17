@@ -10,6 +10,7 @@ export enum ConnectionStatus {
 }
 
 export interface IWeb3State {
+  accounts: string[];
   ethAccountBalance: number;
   ethAccountAddress: string | null;
   connectionStatus?: ConnectionStatus;
@@ -17,6 +18,7 @@ export interface IWeb3State {
 }
 
 export const initialState: IWeb3State = {
+  accounts: [],
   ethAccountBalance: 0,
   ethAccountAddress: null,
   connectionStatus: ConnectionStatus.Pending,

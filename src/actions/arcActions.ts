@@ -6,7 +6,7 @@ import { normalize } from "normalizr";
 import { push } from "react-router-redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
-import * as Web3 from "web3";
+import { Web3 } from "web3";
 
 import * as arcConstants from "constants/arcConstants";
 import Util from "lib/util";
@@ -35,7 +35,7 @@ export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_PENDING, payload: null });
     try {
-      const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/daostack-alchemy/initialArcState-' + Arc.ConfigService.get('network') + '.json');
+      const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/' + process.env.S3_BUCKET + '/initialArcState-' + Arc.ConfigService.get('network') + '.json');
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: cachedState.data });
     } catch (e) {
       console.error(e);
@@ -81,7 +81,7 @@ export function getDAO(avatarAddress: string) {
 }
 
 export async function getDAOData(avatarAddress: string, getDetails: boolean = false, currentAccountAddress: string = null) {
-  const web3 = Arc.Utils.getWeb3();
+  const web3 = await Arc.Utils.getWeb3();
   const dao = await Arc.DAO.at(avatarAddress);
 
   const getBalance = promisify(web3.eth.getBalance);
@@ -216,7 +216,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: arcConstants.ARC_GET_PROPOSAL_PENDING, payload: null });
 
-    const web3 = Arc.Utils.getWeb3();
+    const web3 = await Arc.Utils.getWeb3();
     const dao = await Arc.DAO.at(avatarAddress);
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
@@ -318,6 +318,7 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     votesYes: Util.fromWei(yesVotes).toNumber(),
     votesNo: Util.fromWei(noVotes).toNumber(),
     winningVote: Number(proposalDetails[9]),
+    threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId}))).toNumber()
   }};
 
   if (state == ProposalStates.Executed) {
@@ -368,6 +369,10 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
 }
 
 async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalState, accountAddress: string): Promise<IRedemptionState | boolean> {
+  if (proposal.state != ProposalStates.Executed) {
+    return false;
+  }
+
   const proposalId = proposal.proposalId;
 
   const redemptions = {
@@ -416,7 +421,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
           tokens: Util.toWei(member.tokens),
           reputation: Util.toWei(member.reputation),
         };
-        membersByAccount[member.address] = {...member, votes: {}, stakes: {}};
+        membersByAccount[member.address] = {...emptyAccount, ...member};
       }
 
       const dao = await Util.performAction(
@@ -480,11 +485,12 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       dispatch(push("/dao/" + dao.avatar.address));
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Failed to create DAO: ${err.message}`
+          message: `Failed to create DAO`
         }
       } as CreateDAOAction)
     }
@@ -500,7 +506,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
     };
 
     try {
-      const web3: Web3 = Arc.Utils.getWeb3();
+      const web3: Web3 = await Arc.Utils.getWeb3();
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
 
@@ -596,6 +602,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         votesYes: 0,
         votesNo: 0,
         winningVote: 0,
+        threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId}))).toNumber()
       } as IProposalState;
 
       const payload = normalize(proposal, schemas.proposalSchema);
@@ -612,6 +619,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       } as CreateProposalAction);
       dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
@@ -639,7 +647,7 @@ export type VoteAction = IAsyncAction<'ARC_VOTE', {
 
 export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalState, vote: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const proposalId = proposal.proposalId;
 
@@ -680,11 +688,12 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
           } as VoteAction)
       );
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
         operation: {
-          message: `Voting on "${proposal.title}" failed: ${err.message}`
+          message: `Voting on "${proposal.title}" failed`
         },
         meta,
       } as VoteAction)
@@ -719,7 +728,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     };
 
     let redemptions: IRedemptionState | boolean = false;
-    if (winningVote == VoteOptions.Yes) {
+    if (proposal.state == ProposalStates.Executed && winningVote == VoteOptions.Yes) {
       redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
     }
 
@@ -779,7 +788,7 @@ export type StakeAction = IAsyncAction<'ARC_STAKE', {
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stake: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const proposal: IProposalState = getState().arc.proposals[proposalId];
 
@@ -833,12 +842,13 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
           } as StakeAction)
       );
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_STAKE,
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Staking on "${proposal.title}" failed: ${err.message}`
+          message: `Staking on "${proposal.title}" failed`
         }
       } as StakeAction)
     }
@@ -914,7 +924,7 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
 
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const web3: Web3 = Arc.Utils.getWeb3();
+    const web3: Web3 = await Arc.Utils.getWeb3();
 
     const meta = {
       avatarAddress: daoAvatarAddress,
@@ -979,12 +989,13 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         payload
       } as RedeemAction);
     } catch (err) {
+      console.error(err);
       dispatch({
         type: arcConstants.ARC_REDEEM,
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Error redeeming rewards for proposal "${proposal.title}": ${err.message}`
+          message: `Error redeeming rewards for proposal "${proposal.title}"`
         }
       } as RedeemAction);
     }

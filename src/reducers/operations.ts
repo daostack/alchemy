@@ -95,7 +95,7 @@ export const operationsReducer =
         }
       }
 
-      if (isDismissOperation(action) && state[action.payload.hash].status !== OperationsStatus.Pending) {
+      if (isDismissOperation(action)) {
         const { hash } = action.payload;
         return update(state, {$unset: [hash]})
       }

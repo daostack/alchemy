@@ -210,6 +210,7 @@
 				margin-top: 30px;
 				opacity: .5;
 				text-align: center;
+				text-transform: uppercase;
 			}
 		}
 	}
@@ -305,7 +306,7 @@
 }
 
 .passedProposal .proposalInfo h3, .failedProposal .proposalInfo h3 {
-	margin: 12px 0px 12px 0px;
+	margin: 12px 0px 10px 0px;
 }
 
 
@@ -605,4 +606,11 @@
 /****** View Proposal Page ******/
 .viewProposalWrapper {
 	width: 100%;
+}
+
+.singleProposal {
+	width: 100%;
+	position: relative;
+	margin-top: 15px;
+	background-color: $white;
 }
