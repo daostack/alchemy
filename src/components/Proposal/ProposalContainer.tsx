@@ -131,6 +131,13 @@ class ProposalContainer extends React.Component<IProps, null> {
         },
       };
 
+      const closingTime = (proposal: IProposalState) => {
+        const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit } = proposal;
+        const start = state === ProposalStates.Boosted ? boostedTime : submittedTime;
+        const duration = state === ProposalStates.Boosted ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
+        return moment((start + duration) * 1000);
+      }
+
       return (
         <div className={proposalClass + " " + css.clearfix}>
           { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
@@ -175,12 +182,12 @@ class ProposalContainer extends React.Component<IProps, null> {
               : ""
             }
             <h3>
-              { proposal.state == ProposalStates.PreBoosted ?
-                <span>CLOSES {moment((proposal.submittedTime + proposal.preBoostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
-              : proposal.state == ProposalStates.Boosted ?
-                <span>CLOSES {moment((proposal.boostedTime + proposal.boostedVotePeriodLimit) * 1000).fromNow().toUpperCase()}</span>
-              : ""
-              }
+              <span>
+                { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
+                  `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
+                  : ""
+                }
+              </span>
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
             </h3>
             <div className={css.transferDetails}>

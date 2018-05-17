@@ -24,7 +24,7 @@ interface IStateProps extends RouteComponentProps<any> {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    proposalsExecuted: selectors.makeDaoExecutedProposalsSelector()(state, ownProps),
+    proposalsExecuted: selectors.createHistoryProposalsSelector()(state, ownProps),
     web3: state.web3,
   };
 };
