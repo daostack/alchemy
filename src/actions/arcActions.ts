@@ -365,6 +365,10 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
 }
 
 async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalState, accountAddress: string): Promise<IRedemptionState | boolean> {
+  if (proposal.state != ProposalStates.Executed) {
+    return false;
+  }
+
   const proposalId = proposal.proposalId;
 
   const redemptions = {
@@ -718,7 +722,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     };
 
     let redemptions: IRedemptionState | boolean = false;
-    if (winningVote == VoteOptions.Yes) {
+    if (proposal.state == ProposalStates.Executed && winningVote == VoteOptions.Yes) {
       redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
     }
 
