@@ -102,35 +102,44 @@ class HeaderContainer extends React.Component<IProps, null> {
     ));
 
     return(
-      <nav className={css.header}>
-        <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
-        <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> | v.{VERSION}</span>
-        <div className={css.accountInfo}>
-          <div className={css.holdings}>
-            <div>
-              <span className={css.holdingsLabel}>Current account: <b style={{cursor: 'pointer'}} onClick={this.copyAddress}>{web3State.ethAccountAddress.slice(0, 8)}...(copy)</b></span>
-              <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
-                {accountOptionNodes}
-              </select>
-            </div>
-            <div>
-              <span className={css.holdingsLabel}>ETH Balance: </span>
-              <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />
-              { dao
-                ? <div>
-                    <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
-                    &nbsp; | &nbsp;
-                    <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={member.reputation}/>
-                  </div>
-                : ""
-              }
-            </div>
+      <div>
+        <div className={css.notice}>
+          <div>
+            <img src="/assets/images/Icon/Alert.svg"/>
+            Alchemy and the Genesis Alpha arc release are in Alpha. There will be BUGS! All reputation accumulated will be reset. We don't guarantee complete security. <b>**Play at your own risk**</b>
           </div>
-          <button className={css.profileLink}>
-            <AccountImage accountAddress={web3State.ethAccountAddress} />
-          </button>
+          <a className={css.reportBugs} href="mailto:engineering@daostack.io">REPORT BUGS</a>
         </div>
-      </nav>
+        <nav className={css.header}>
+          <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
+          <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> <span> v.{VERSION}</span></span>
+          <div className={css.accountInfo}>
+            <div className={css.holdings}>
+              <div>
+                <span className={css.holdingsLabel}>Current account: <b style={{cursor: 'pointer'}} onClick={this.copyAddress}>{web3State.ethAccountAddress.slice(0, 8)}...(copy)</b></span>
+                <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
+                  {accountOptionNodes}
+                </select>
+              </div>
+              <div>
+                <span className={css.holdingsLabel}>ETH Balance: </span>
+                <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />
+                { dao
+                  ? <div>
+                      <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
+                      &nbsp; | &nbsp;
+                      <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={member.reputation}/>
+                    </div>
+                  : ""
+                }
+              </div>
+            </div>
+            <button className={css.profileLink}>
+              <AccountImage accountAddress={web3State.ethAccountAddress} />
+            </button>
+          </div>
+        </nav>
+      </div>
     );
   }
 }
