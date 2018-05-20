@@ -393,6 +393,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     voterReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
     voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
   };
+
   if (proposal.beneficiaryAddress == accountAddress) {
     redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
     redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
@@ -951,6 +952,10 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       // TODO: should pull from the DAO
       const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+
+      if (proposalEnded(proposal) && proposal.state !== ProposalStates.Executed) {
+        await votingMachineInstance.contract.execute(proposal.proposalId);
+      }
 
       const redeemTransaction = await votingMachineInstance.redeem({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
 
