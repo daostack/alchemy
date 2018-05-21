@@ -30,6 +30,16 @@ import { Dispatch } from "redux";
 import { ExecutionState, TransactionService } from "@daostack/arc.js";
 import { showOperation } from "./operationsActions";
 import { OperationsStatus } from "reducers/operations";
+import * as moment from "moment";
+
+function proposalEnded(proposal: IProposalState) {
+  const res = (
+    proposal.state == ProposalStates.Executed ||
+    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) ||
+    (proposal.state == ProposalStates.PreBoosted && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000)
+  );
+  return res;
+}
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -192,7 +202,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
         }
 
         // If executed, look for any redemptions the current account has for this proposal
-        if (proposal.state == ProposalStates.Executed) {
+        if (proposalEnded(proposal) && proposal.winningVote === VoteOptions.Yes) {
           redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress)
           if (redemptions) {
             daoData.members[currentAccountAddress].redemptions[proposalId] = redemptions as IRedemptionState;
@@ -253,7 +263,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       (payload as any).stake = stakerInfo;
     }
 
-    if (proposal.state == ProposalStates.Executed) {
+    if (proposalEnded(proposal) && proposal.winningVote === VoteOptions.Yes) {
       const redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
       if (redemptions) {
         (payload as any).redemptions = redemptions;
@@ -365,7 +375,7 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
 }
 
 async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalState, accountAddress: string): Promise<IRedemptionState | boolean> {
-  if (proposal.state != ProposalStates.Executed) {
+  if (!proposalEnded(proposal)) {
     return false;
   }
 
@@ -383,6 +393,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     voterReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
     voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
   };
+
   if (proposal.beneficiaryAddress == accountAddress) {
     redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
     redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
@@ -722,7 +733,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     };
 
     let redemptions: IRedemptionState | boolean = false;
-    if (proposal.state == ProposalStates.Executed && winningVote == VoteOptions.Yes) {
+    if (proposalEnded(proposal) && winningVote == VoteOptions.Yes) {
       redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
     }
 
@@ -941,6 +952,10 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       // TODO: should pull from the DAO
       const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+
+      if (proposalEnded(proposal) && proposal.state !== ProposalStates.Executed) {
+        await votingMachineInstance.contract.execute(proposal.proposalId);
+      }
 
       const redeemTransaction = await votingMachineInstance.redeem({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
 

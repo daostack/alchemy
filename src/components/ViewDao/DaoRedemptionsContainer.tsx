@@ -76,7 +76,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     let redeemAllTip: JSX.Element | string = "", ethReward = 0, nativeReward = 0, reputationReward = 0;
     if (redemptions.length > 0) {
-      redemptions.forEach(async (redemption) => {
+      redemptions.forEach((redemption) => {
         ethReward += redemption.beneficiaryEth;
         nativeReward += redemption.voterTokens + redemption.stakerTokens + redemption.beneficiaryNativeToken;
         reputationReward += redemption.voterReputation + redemption.stakerReputation + redemption.beneficiaryReputation + redemption.proposerReputation;
