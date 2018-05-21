@@ -187,9 +187,7 @@
 					color: $accent-1;
 					font-weight: $bold;
 
-					span {
-						font-weight: $normal;
-					}
+					text-transform: uppercase;
 				}
 
 				.againstLabel {
@@ -197,9 +195,7 @@
 					float: right;
 					font-weight: $bold;
 
-					span {
-						font-weight: $normal;
-					}
+					text-transform: uppercase;
 				}
 			}
 
