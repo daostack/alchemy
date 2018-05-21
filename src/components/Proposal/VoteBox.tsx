@@ -112,8 +112,20 @@ export default class VoteBox extends React.Component<IProps, IState> {
               {/* TODO: <span className={css.description}>{proposal.totalVoters} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
               <div className={css.turnoutGraph}>
                 <div className={css.turnoutStats}>
-                  <span className={css.forLabel}>{proposal.votesYes} <span>FOR</span></span>
-                  <span className={css.againstLabel}>{proposal.votesNo} <span>AGAINST</span></span>
+                  <span className={css.forLabel}>
+                    <ReputationView
+                      daoName={daoName}
+                      totalReputation={daoTotalReputation}
+                      reputation={proposal.votesYes}
+                    /> for
+                  </span>
+                  <span className={css.againstLabel}>
+                    <ReputationView
+                      daoName={daoName}
+                      totalReputation={daoTotalReputation}
+                      reputation={proposal.votesNo}
+                    /> against
+                  </span>
                 </div>
 
                 <div className={css.graph}>
