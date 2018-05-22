@@ -324,7 +324,7 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     votesYes: Util.fromWei(yesVotes).toNumber(),
     votesNo: Util.fromWei(noVotes).toNumber(),
     winningVote: Number(proposalDetails[9]),
-    threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId}))).toNumber()
+    threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId})).toNumber()
   }};
 
   if (state == ProposalStates.Executed) {
