@@ -607,7 +607,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         votesYes: 0,
         votesNo: 0,
         winningVote: 0,
-        threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId}))).toNumber()
+        threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId})).toNumber()
       } as IProposalState;
 
       const payload = normalize(proposal, schemas.proposalSchema);
