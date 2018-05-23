@@ -324,7 +324,7 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     votesYes: Util.fromWei(yesVotes).toNumber(),
     votesNo: Util.fromWei(noVotes).toNumber(),
     winningVote: Number(proposalDetails[9]),
-    threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId})).toNumber()
+    threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId}))).toNumber()
   }};
 
   if (state == ProposalStates.Executed) {
@@ -380,7 +380,6 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
   }
 
   const proposalId = proposal.proposalId;
-
   const redemptions = {
     accountAddress,
     proposalId,
@@ -390,6 +389,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     proposerReputation: 0,
     stakerReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationStaker({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
     stakerTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensStaker({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
+    stakerBountyTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
     voterReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
     voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
   };
@@ -402,7 +402,17 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
   if (proposal.proposer == accountAddress) {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId })).toNumber();
   }
-  const anyRedemptions = redemptions.beneficiaryEth || redemptions.beneficiaryReputation || redemptions.beneficiaryNativeToken || redemptions.proposerReputation || redemptions.stakerReputation || redemptions.stakerTokens || redemptions.voterReputation || redemptions.voterTokens;
+  const anyRedemptions = (
+    redemptions.beneficiaryEth ||
+    redemptions.beneficiaryReputation ||
+    redemptions.beneficiaryNativeToken ||
+    redemptions.proposerReputation ||
+    redemptions.stakerReputation ||
+    redemptions.stakerTokens ||
+    redemptions.stakerBountyTokens ||
+    redemptions.voterReputation ||
+    redemptions.voterTokens
+  );
   return anyRedemptions ? redemptions : false;
 }
 
@@ -607,7 +617,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         votesYes: 0,
         votesNo: 0,
         winningVote: 0,
-        threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId})).toNumber()
+        threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId}))).toNumber()
       } as IProposalState;
 
       const payload = normalize(proposal, schemas.proposalSchema);
@@ -957,6 +967,9 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         await votingMachineInstance.contract.execute(proposal.proposalId);
       }
 
+      alert('redeeming bounty');
+      const redeemBountyTransaction = await votingMachineInstance.redeemDaoBounty({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
+      alert('redeemed bounty!');
       const redeemTransaction = await votingMachineInstance.redeem({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
 
       // If current user is the beneficiary then redeem the contribution rewards too
