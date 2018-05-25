@@ -213,17 +213,19 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             : ""
           }
           <div className={css.addTransfer}>
-            <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} reward: </label>
-            <input
-              id="nativeTokenRewardInput"
-              maxLength={10}
-              onChange={this.handleChange}
-              placeholder="How many tokens to reward"
-              ref="nativeTokenRewardNode"
-              required
-              type="number"
-              value={this.state.nativeTokenReward}
-            />
+            <div style={{display: 'none'}}>
+              <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} reward: </label>
+              <input
+                id="nativeTokenRewardInput"
+                maxLength={10}
+                onChange={this.handleChange}
+                placeholder="How many tokens to reward"
+                ref="nativeTokenRewardNode"
+                // required
+                type="number"
+                value={this.state.nativeTokenReward}
+              />
+            </div>
             <label htmlFor="reputationRewardInput">Reputation reward: </label>
             <input
               id="reputationRewardInput"
