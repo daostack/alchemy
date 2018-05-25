@@ -32,9 +32,10 @@ import { showOperation } from "./operationsActions";
 import { OperationsStatus } from "reducers/operations";
 import * as moment from "moment";
 
-function proposalEnded(proposal: IProposalState) {
+export function proposalEnded(proposal: IProposalState) {
   const res = (
     proposal.state == ProposalStates.Executed ||
+    proposal.state == ProposalStates.Closed ||
     (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) ||
     (proposal.state == ProposalStates.PreBoosted && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000)
   );
