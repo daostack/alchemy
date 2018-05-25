@@ -325,7 +325,7 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     votesYes: Util.fromWei(yesVotes).toNumber(),
     votesNo: Util.fromWei(noVotes).toNumber(),
     winningVote: Number(proposalDetails[9]),
-    threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId}))).toNumber()
+    threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId})).toNumber()
   }};
 
   if (state == ProposalStates.Executed) {
@@ -625,7 +625,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         votesYes: 0,
         votesNo: 0,
         winningVote: 0,
-        threshold: Util.fromWei(new BigNumber(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId}))).toNumber()
+        threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId})).toNumber()
       } as IProposalState;
 
       const payload = normalize(proposal, schemas.proposalSchema);
