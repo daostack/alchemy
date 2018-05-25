@@ -116,7 +116,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
         { proposalsPreBoosted.length > 0 ?
           <div>
             <div className={css.proposalsHeader}>
-              All Proposals
+              Regular Proposals
             </div>
             <div className={css.proposalsContainer}>
               {preBoostedProposalsHTML}

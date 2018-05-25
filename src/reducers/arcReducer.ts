@@ -59,6 +59,7 @@ export interface IRedemptionState {
   proposal?: IProposalState;
   stakerReputation: number;
   stakerTokens: number;
+  stakerBountyTokens: number;
   transactionState?: TransactionStates;
   voterTokens: number;
   voterReputation: number;
