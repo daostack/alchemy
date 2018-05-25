@@ -78,7 +78,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     if (redemptions.length > 0) {
       redemptions.forEach((redemption) => {
         ethReward += redemption.beneficiaryEth;
-        nativeReward += redemption.voterTokens + redemption.stakerTokens + redemption.beneficiaryNativeToken;
+        nativeReward += redemption.voterTokens + redemption.stakerTokens + redemption.stakerBountyTokens + redemption.beneficiaryNativeToken;
         reputationReward += redemption.voterReputation + redemption.stakerReputation + redemption.beneficiaryReputation + redemption.proposerReputation;
       });
 
