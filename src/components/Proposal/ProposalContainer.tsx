@@ -106,6 +106,7 @@ class ProposalContainer extends React.Component<IProps, null> {
           {currentAccountRedemptions.stakerReputation ? <li>Reputation for staking: {currentAccountRedemptions.stakerReputation}</li> : ""}
           {currentAccountRedemptions.voterTokens ? <li>{dao.tokenSymbol} tokens for voting: {currentAccountRedemptions.voterTokens}</li> : ""}
           {currentAccountRedemptions.stakerTokens ? <li>{dao.tokenSymbol} tokens for staking:{currentAccountRedemptions.stakerTokens}</li> : ""}
+          {currentAccountRedemptions.stakerBountyTokens ? <li>{dao.tokenSymbol} tokens due to staking bounty:{currentAccountRedemptions.stakerBountyTokens}</li> : ""}
         </ul>;
       }
 
