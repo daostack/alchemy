@@ -382,7 +382,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
 
   const proposalId = proposal.proposalId;
 
-  const avatarStakingTokenBalance = Util.fromWei((await votingMachineInstance.getTokenBalances()).stakingTokenBalance).toNumber();
+  const avatarStakingTokenBalance = Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance).toNumber();
 
   const bounty = Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress })).toNumber()
 
