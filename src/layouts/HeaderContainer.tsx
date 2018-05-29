@@ -103,7 +103,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             <img src="/assets/images/Icon/Alert.svg"/>
             Alchemy and the Genesis Alpha arc release are in Alpha. There will be BUGS! All reputation accumulated will be reset. We don't guarantee complete security. <b>**Play at your own risk**</b>
           </div>
-          <a className={css.reportBugs} href="mailto:engineering@daostack.io">REPORT BUGS</a>
+          <a className={css.reportBugs} href="mailto:bugs@daostack.io">REPORT BUGS</a>
         </div>
         <nav className={css.header}>
           <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
