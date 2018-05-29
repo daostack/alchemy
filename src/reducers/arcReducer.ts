@@ -363,7 +363,7 @@ const arcReducer = (state = initialState, action: any) => {
             [avatarAddress] : {
               members: {
                 [accountAddress]: {
-                  redemptions : { [proposalId] : { $set : {
+                  redemptions : { [proposalId] : { $merge : {
                     ...meta,
                     transactionState: TransactionStates.Unconfirmed
                   } }},
