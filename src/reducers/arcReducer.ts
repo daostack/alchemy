@@ -371,16 +371,6 @@ const arcReducer = (state = initialState, action: any) => {
               },
             },
           }});
-        case AsyncActionSequence.Failure:
-          return update(state, { daos: {
-            [avatarAddress] : {
-              members: {
-                [accountAddress]: {
-                  redemptions : { $unset : [proposalId] },
-                },
-              },
-            },
-          }});
         case AsyncActionSequence.Success: {
           state = update(state, { daos: {
             [avatarAddress] : {
