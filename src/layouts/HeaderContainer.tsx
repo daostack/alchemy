@@ -19,6 +19,8 @@ import Util from "lib/util";
 import Tooltip from "rc-tooltip";
 import { OperationsStatus } from "reducers/operations";
 import ReputationView from "components/Account/ReputationView";
+import { FilterResult } from "web3";
+import promisify = require("es6-promisify");
 
 interface IStateProps {
   dao: IDaoState;
@@ -34,11 +36,13 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   changeAccount: typeof web3Actions.changeAccount;
+  onBalanceChanged: typeof web3Actions.onBalanceChanged;
   showOperation: typeof operationsActions.showOperation;
 }
 
 const mapDispatchToProps = {
   changeAccount: web3Actions.changeAccount,
+  onBalanceChanged: web3Actions.onBalanceChanged,
   showOperation: operationsActions.showOperation
 };
 
@@ -61,10 +65,26 @@ const Fade = ({ children, ...props }: any) => (
 
 class HeaderContainer extends React.Component<IProps, null> {
 
+  private ethBalanceWatcher: FilterResult;
   constructor(props: IProps) {
     super(props);
 
     this.copyAddress = this.copyAddress.bind(this);
+  }
+
+  public async componentDidMount() {
+    const { web3State: { ethAccountAddress }, onBalanceChanged } = this.props;
+    const web3 = await Arc.Utils.getWeb3();
+    this.ethBalanceWatcher = web3.eth.filter('latest');
+    this.ethBalanceWatcher.watch(async (err, res) => {
+      if (!err && res) {
+        onBalanceChanged(Util.fromWei(await promisify(web3.eth.getBalance)(ethAccountAddress)).toNumber());
+      }
+    })
+  }
+
+  public componentWillUnmount() {
+    this.ethBalanceWatcher.stopWatching();
   }
 
   public copyAddress() {
