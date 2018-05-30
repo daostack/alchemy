@@ -71,12 +71,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     const { showOperation, web3State: { ethAccountAddress } } = this.props;
 
     // Copy the address to clipboard
-    const el = document.createElement('textarea');
-    el.value = ethAccountAddress;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
+    Util.copyToClipboard(ethAccountAddress);
 
     showOperation(OperationsStatus.Success, `Copied to clipboard!`, {totalSteps: 1});
   }

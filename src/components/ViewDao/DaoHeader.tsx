@@ -19,9 +19,11 @@ export default class DaoHeader extends React.Component<IProps, null> {
     return (
       <div className={css.daoHeader + " " + css.clearfix}>
         <div className={css.daoInfo}>
-          <div className={css.daoAvatar}>
-            <img src="/assets/images/daostack-logo.png"/>
-          </div>
+          <Link to={"/dao/" + dao.avatarAddress}>
+            <div className={css.daoAvatar}>
+              <img src="/assets/images/daostack-logo.png"/>
+            </div>
+          </Link>
           <div className={css.daoDescription}>
             <div className={css.daoName}>
               {dao.name}
