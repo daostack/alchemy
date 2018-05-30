@@ -197,21 +197,19 @@ a.navItem:hover {
   }
 }
 
-.genBox {
-  background: rgba(247, 247, 247, 1.000);
-  border-radius: 3px;
-  padding: 12px 0;
+.holdings {
   float: right;
+  width: 140px;
+  text-align: right;
+  font-size: 14px;
 
-  .small {
-    color: $black-halftone;
+  h4 {
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-top: 30px;
   }
-
-  .buyGenContainer {
-    padding-top: 10px;
-    float: left;
-    position: relative;
-    top:  -3px;
+  div {
+    opacity: 0.75;
   }
 }
 
