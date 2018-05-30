@@ -42,13 +42,16 @@ const web3Reducer = (state = initialState, action: any) => {
             }
           };
         case AsyncActionSequence.Success:
-        return {
-          ...state,
-          ...payload,
-          ...{
-            connectionStatus : ConnectionStatus.Connected
-          }
-        };
+          return {
+            ...state,
+            ...payload,
+            ...{
+              connectionStatus : ConnectionStatus.Connected
+            }
+          };
+        default: {
+          return state;
+        }
       }
     }
 
@@ -58,6 +61,9 @@ const web3Reducer = (state = initialState, action: any) => {
 
     case ActionTypes.WEB3_CHANGE_ACCOUNT:
       return {...state, ...action.payload };
+
+    case ActionTypes.WEB3_ON_BALANCE_CHANGE:
+      return {...state, ethAccountBalance: action.payload };
 
     default: {
       return state;
