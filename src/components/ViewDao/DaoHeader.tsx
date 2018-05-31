@@ -33,19 +33,9 @@ export default class DaoHeader extends React.Component<IProps, null> {
             </div>
           </div>
         </div>
-        <div className={css.genBox + " " + css.clearfix}>
-          <div className={css.centered + " " + css.small}>
-            PREDICTION TOKEN
-          </div>
-          <div className={css.genTitle}>
-            {dao.tokenSymbol}
-          </div>
-          <div className={css.genStats}>
-            <div className={css.caption + " " + css.leftAlign}>
-              <div>{dao.tokenCount}</div>
-              <div className={css.small}>IN CIRCULATION</div>
-            </div>
-          </div>
+        <div className={css.holdings + " " + css.clearfix}>
+          <h4>HOLDINGS</h4>
+          <div>{dao.ethCount} ETH</div>
         </div>
       </div>
     );
