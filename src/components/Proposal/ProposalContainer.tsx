@@ -15,6 +15,7 @@ import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
 
 import * as css from "./Proposal.scss";
+import { proposalEnded } from "actions/arcActions";
 
 interface IStateProps {
   currentAccountAddress: string;
@@ -63,8 +64,8 @@ class ProposalContainer extends React.Component<IProps, null> {
       const proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
-        [css.failedProposal]: (proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed) && proposal.winningVote == VoteOptions.No,
-        [css.passedProposal]: (proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed) && proposal.winningVote == VoteOptions.Yes,
+        [css.failedProposal]: proposalEnded(proposal) && proposal.winningVote == VoteOptions.No,
+        [css.passedProposal]: proposalEnded(proposal) && proposal.winningVote == VoteOptions.Yes,
         [css.redeemable]: !!currentAccountRedemptions,
         [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
       });
@@ -105,6 +106,7 @@ class ProposalContainer extends React.Component<IProps, null> {
           {currentAccountRedemptions.stakerReputation ? <li>Reputation for staking: {currentAccountRedemptions.stakerReputation}</li> : ""}
           {currentAccountRedemptions.voterTokens ? <li>{dao.tokenSymbol} tokens for voting: {currentAccountRedemptions.voterTokens}</li> : ""}
           {currentAccountRedemptions.stakerTokens ? <li>{dao.tokenSymbol} tokens for staking:{currentAccountRedemptions.stakerTokens}</li> : ""}
+          {currentAccountRedemptions.stakerBountyTokens ? <li>{dao.tokenSymbol} tokens due to staking bounty:{currentAccountRedemptions.stakerBountyTokens}</li> : ""}
         </ul>;
       }
 
@@ -140,7 +142,7 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
-          { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
+          { !proposalEnded(proposal) ?
             <VoteBox
               currentVote={currentAccountVote}
               currentAccountReputation={currentAccountReputation}
@@ -169,7 +171,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             : ""
           }
           <div className={css.proposalInfo}>
-            { proposal.state == ProposalStates.Executed ?
+            { proposalEnded(proposal) ?
               <div className={css.decisionGraph}>
                 <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
                 <div className={css.graph}>
@@ -183,7 +185,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             }
             <h3>
               <span>
-                { proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted ?
+                { !proposalEnded(proposal) ?
                   `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
                   : ""
                 }
@@ -201,7 +203,7 @@ class ProposalContainer extends React.Component<IProps, null> {
               />
             </div>
           </div>
-          { proposal.state == ProposalStates.Boosted ?
+          { !proposalEnded(proposal) && proposal.state == ProposalStates.Boosted ?
               <div>
                 <div className={css.proposalDetails}>
                   <div className={css.createdBy}>
@@ -229,7 +231,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   transactionState={currentAccountStakeState}
                 />
               </div>
-            : proposal.state == ProposalStates.PreBoosted ?
+            : !proposalEnded(proposal) && proposal.state == ProposalStates.PreBoosted ?
               <div>
 
                 <div className={css.proposalDetails}>
@@ -257,7 +259,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   transactionState={currentAccountStakeState}
                 />
               </div>
-            : proposal.state == ProposalStates.Executed || proposal.state == ProposalStates.Closed ?
+            : proposalEnded(proposal) ?
               <div>
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
                   { currentAccountRedemptions

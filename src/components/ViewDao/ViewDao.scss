@@ -124,17 +124,18 @@ a.createProposal, .buyGen {
 }
 
 .redeemAllRewardsButton {
-    border: 1px solid #00d3a7;
-    float: right;
-    color: #00d3a7;
-    font-size: 12px;
-    padding: 8px 11px;
-    transition: all .25s ease;
-    background-color: rgba(0, 211, 167, 0);
-    border-radius: 3px;
-    vertical-align: middle;
-    float: right;
-    font-weight: none;
+  border: 1px solid #00d3a7;
+  float: right;
+  color: #00d3a7;
+  font-size: 12px;
+  padding: 8px 11px;
+  transition: all .25s ease;
+  background-color: rgba(0, 211, 167, 0);
+  border-radius: 3px;
+  vertical-align: middle;
+  float: right;
+  font-weight: none;
+  cursor: pointer;
 }
 
 .nav span.redemptionNotification {

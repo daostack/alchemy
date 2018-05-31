@@ -103,3 +103,12 @@ export function changeAccount(accountAddress: string) {
     dispatch(action);
   };
 }
+
+export function onBalanceChanged(balance: Number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
+    dispatch({
+      type: ActionTypes.WEB3_ON_BALANCE_CHANGE,
+      payload: balance
+    });
+  };
+}

@@ -19,6 +19,8 @@ import Util from "lib/util";
 import Tooltip from "rc-tooltip";
 import { OperationsStatus } from "reducers/operations";
 import ReputationView from "components/Account/ReputationView";
+import { FilterResult } from "web3";
+import promisify = require("es6-promisify");
 
 interface IStateProps {
   dao: IDaoState;
@@ -34,11 +36,13 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   changeAccount: typeof web3Actions.changeAccount;
+  onBalanceChanged: typeof web3Actions.onBalanceChanged;
   showOperation: typeof operationsActions.showOperation;
 }
 
 const mapDispatchToProps = {
   changeAccount: web3Actions.changeAccount,
+  onBalanceChanged: web3Actions.onBalanceChanged,
   showOperation: operationsActions.showOperation
 };
 
@@ -61,10 +65,26 @@ const Fade = ({ children, ...props }: any) => (
 
 class HeaderContainer extends React.Component<IProps, null> {
 
+  private ethBalanceWatcher: FilterResult;
   constructor(props: IProps) {
     super(props);
 
     this.copyAddress = this.copyAddress.bind(this);
+  }
+
+  public async componentDidMount() {
+    const { web3State: { ethAccountAddress }, onBalanceChanged } = this.props;
+    const web3 = await Arc.Utils.getWeb3();
+    this.ethBalanceWatcher = web3.eth.filter('latest');
+    this.ethBalanceWatcher.watch(async (err, res) => {
+      if (!err && res) {
+        onBalanceChanged(Util.fromWei(await promisify(web3.eth.getBalance)(ethAccountAddress)).toNumber());
+      }
+    })
+  }
+
+  public componentWillUnmount() {
+    this.ethBalanceWatcher.stopWatching();
   }
 
   public copyAddress() {
@@ -97,35 +117,44 @@ class HeaderContainer extends React.Component<IProps, null> {
     ));
 
     return(
-      <nav className={css.header}>
-        <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
-        <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> | v.{VERSION}</span>
-        <div className={css.accountInfo}>
-          <div className={css.holdings}>
-            <div>
-              <span className={css.holdingsLabel}>Current account: <b style={{cursor: 'pointer'}} onClick={this.copyAddress}>{web3State.ethAccountAddress.slice(0, 8)}...(copy)</b></span>
-              <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
-                {accountOptionNodes}
-              </select>
-            </div>
-            <div>
-              <span className={css.holdingsLabel}>ETH Balance: </span>
-              <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />
-              { dao
-                ? <div>
-                    <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
-                    &nbsp; | &nbsp;
-                    <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={member.reputation}/>
-                  </div>
-                : ""
-              }
-            </div>
+      <div>
+        <div className={css.notice}>
+          <div>
+            <img src="/assets/images/Icon/Alert.svg"/>
+            Alchemy and the Genesis Alpha arc release are in Alpha. There will be BUGS! All reputation accumulated will be reset. We don't guarantee complete security. <b>**Play at your own risk**</b>
           </div>
-          <button className={css.profileLink}>
-            <AccountImage accountAddress={web3State.ethAccountAddress} />
-          </button>
+          <a className={css.reportBugs} href="mailto:bugs@daostack.io">REPORT BUGS</a>
         </div>
-      </nav>
+        <nav className={css.header}>
+          <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
+          <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> <span> v.{VERSION}</span></span>
+          <div className={css.accountInfo}>
+            <div className={css.holdings}>
+              <div>
+                <span className={css.holdingsLabel}>Current account: <b style={{cursor: 'pointer'}} onClick={this.copyAddress}>{web3State.ethAccountAddress.slice(0, 8)}...(copy)</b></span>
+                <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
+                  {accountOptionNodes}
+                </select>
+              </div>
+              <div>
+                <span className={css.holdingsLabel}>ETH Balance: </span>
+                <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />
+                { dao
+                  ? <div>
+                      <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
+                      &nbsp; | &nbsp;
+                      <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={member.reputation}/>
+                    </div>
+                  : ""
+                }
+              </div>
+            </div>
+            <button className={css.profileLink}>
+              <AccountImage accountAddress={web3State.ethAccountAddress} />
+            </button>
+          </div>
+        </nav>
+      </div>
     );
   }
 }
