@@ -406,7 +406,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
   };
 
-  // Benficiary rewards
+  // Beneficiary rewards
   if (proposal.beneficiaryAddress == accountAddress) {
     if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
       // Boosted proposal that passed by expiring with more yes votes than no
