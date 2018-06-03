@@ -17,6 +17,7 @@ import DaoHeader from "./DaoHeader";
 import DaoNav from "./DaoNav";
 
 import * as css from "./ViewDao.scss";
+import ReputationView from "components/Account/ReputationView";
 
 interface IStateProps extends RouteComponentProps<any> {
   currentAccountAddress: string;
@@ -84,11 +85,11 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
       redeemAllTip =
         <div>
-          {redemptions.length} proposals with rewards waiting:
+          Total rewards to redeem from {redemptions.length} propposal/s: <br/>
           <ul>
-            {ethReward > 0 ? <li>ETH reward: {ethReward}</li> : ""}
-            {nativeReward > 0 ? <li>{dao.tokenSymbol} token reward: {nativeReward}</li> : ""}
-            {reputationReward > 0 ? <li>{dao.name} reputation reward: {reputationReward}</li> : ""}
+            {ethReward > 0 ? <li>ETH: {ethReward}</li> : ""}
+            {nativeReward > 0 ? <li>GEN: {nativeReward}</li> : ""}
+            {reputationReward > 0 ? <li><ReputationView reputation={reputationReward} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
           </ul>
         </div>;
     }
