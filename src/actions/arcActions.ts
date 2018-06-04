@@ -411,8 +411,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
       // Boosted proposal that passed by expiring with more yes votes than no
       //   have to manually calculate beneficiary rewards
-      const propDetails = await proposalInstance.contract.organizationsProposals(avatarAddress, proposalId);
-      const numberOfPeriods = propDetails[8].toNumber();
+      const numberOfPeriods = (await proposalInstance.getDaoProposals({ proposalId, avatar: avatarAddress }))[0].numberOfPeriods;
       redemptions.beneficiaryEth = numberOfPeriods * proposal.ethReward;
       redemptions.beneficiaryNativeToken = numberOfPeriods * proposal.nativeTokenReward;
       redemptions.beneficiaryReputation = numberOfPeriods * proposal.reputationChange;

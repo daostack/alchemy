@@ -76,8 +76,8 @@ class ProposalContainer extends React.Component<IProps, null> {
       const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
       const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
       const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
-      const passedByDecision = totalReputation ? proposal.votesYes / totalReputation > 0.5 : false;
-      const failedByDecision = totalReputation ? proposal.votesNo / totalReputation > 0.5 : false;
+      const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
+      const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
       const daoAccount = dao.members[currentAccountAddress];
       let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
