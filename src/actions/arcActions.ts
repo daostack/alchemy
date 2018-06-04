@@ -406,14 +406,25 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
   };
 
+  // Beneficiary rewards
   if (proposal.beneficiaryAddress == accountAddress) {
-    redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
-    redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
-    redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+    if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
+      // Boosted proposal that passed by expiring with more yes votes than no
+      //   have to manually calculate beneficiary rewards
+      const numberOfPeriods = (await proposalInstance.getDaoProposals({ proposalId, avatar: avatarAddress }))[0].numberOfPeriods;
+      redemptions.beneficiaryEth = numberOfPeriods * proposal.ethReward;
+      redemptions.beneficiaryNativeToken = numberOfPeriods * proposal.nativeTokenReward;
+      redemptions.beneficiaryReputation = numberOfPeriods * proposal.reputationChange;
+    } else {
+      redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
+      redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
+      redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+    }
   }
   if (proposal.proposer == accountAddress) {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId })).toNumber();
   }
+
   const anyRedemptions = (
     redemptions.beneficiaryEth ||
     redemptions.beneficiaryReputation ||
