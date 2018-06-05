@@ -1,7 +1,8 @@
 import * as ActionTypes from "constants/arcConstants";
 import * as update from "immutability-helper";
-import { StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
+import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
+import { ExecutionState } from "@daostack/arc.js";
 
 export enum ProposalStates {
   None = 0,
@@ -23,6 +24,13 @@ export enum VoteOptions {
   No = 2,
 }
 
+export enum ContributionRewardType {
+  Reputation = 0,
+  NativeToken = 1,
+  Eth = 2,
+  ExternalToken = 3,
+}
+
 export interface IVoteState {
   avatarAddress: string;
   proposalId: string;
@@ -41,16 +49,41 @@ export interface IStakeState {
   stakerAddress: string;
 }
 
+export interface IRedemptionState {
+  accountAddress: string;
+  beneficiaryEth: number;
+  beneficiaryNativeToken: number;
+  beneficiaryReputation: number;
+  proposalId: string;
+  proposerReputation: number;
+  proposal?: IProposalState;
+  stakerReputation: number;
+  stakerTokens: number;
+  stakerBountyTokens: number;
+  transactionState?: TransactionStates;
+  voterTokens: number;
+  voterReputation: number;
+}
+
 export interface IAccountState {
   address?: string;
-  tokens: number;
+  redemptions: { [proposalId: string]: IRedemptionState };
   reputation: number;
-  votes?: { [proposalId: string]: IVoteState };
   stakes?: { [proposalId: string]: IStakeState };
+  tokens: number;
+  votes?: { [proposalId: string]: IVoteState };
+}
+
+export const emptyAccount: IAccountState = {
+  redemptions: {},
+  reputation: 0,
+  stakes: {},
+  tokens: 0,
+  votes: {}
 }
 
 export interface IProposalState {
-  beneficiary: string;
+  beneficiaryAddress: string;
   boostedTime: number;
   boostedVotePeriodLimit: number;
   preBoostedVotePeriodLimit: number;
@@ -66,6 +99,7 @@ export interface IProposalState {
   periodLength: number;
   proposalId: string;
   proposer: string;
+  redeemedPeriods?: number[];
   reputationChange: number;
   reputationWhenExecuted?: number;
   stakesNo: number;
@@ -80,11 +114,13 @@ export interface IProposalState {
   votesYes: number;
   votesNo: number;
   winningVote: VoteOptions;
+  threshold: number;
 }
 
 export interface IDaoState {
   avatarAddress: string;
   controllerAddress: string;
+  ethCount: number;
   members: { [key: string]: IAccountState };
   name: string;
   rank: number;
@@ -94,8 +130,9 @@ export interface IDaoState {
   reputationAddress: string;
   reputationCount: number;
   tokenAddress: string;
-  tokenCount: number;
+  tokenCount: number; // How much is actually "owned" by the DAO
   tokenName: string;
+  tokenSupply: number; // total amount in circulation
   tokenSymbol: string;
 }
 
@@ -181,6 +218,17 @@ const arcReducer = (state = initialState, action: any) => {
           },
         }});
       }
+      if (payload.redemptions) {
+        state = update(state, { daos: {
+          [payload.daoAvatarAddress] : {
+            members: {
+              [payload.redemptions.accountAddress]: {
+                redemptions: { [payload.redemptions.proposalId] : { $set : payload.redemptions }},
+              },
+            },
+          },
+        }});
+      }
 
       return state;
     }
@@ -203,6 +251,21 @@ const arcReducer = (state = initialState, action: any) => {
               },
             },
           }});
+        case AsyncActionSequence.Failure: {
+          const { avatarAddress, proposalId, voterAddress } = meta;
+
+          return update(state, {
+            daos: {
+              [avatarAddress]: {
+                members: {
+                  [voterAddress]: {
+                    votes: {$unset: [proposalId]}
+                  }
+                }
+              }
+            }
+          })
+        }
         case AsyncActionSequence.Success: {
           // Update the account that voted
           state = update(state, { daos: {
@@ -216,14 +279,30 @@ const arcReducer = (state = initialState, action: any) => {
             },
           }});
 
+          // Add redemptions if the proposal passed
+          if (payload.redemptions) {
+            state = update(state, { daos: {
+              [avatarAddress] : {
+                members: {
+                  [voterAddress]: {
+                    redemptions: { [proposalId] : { $set : payload.redemptions }},
+                  },
+                },
+              },
+            }});
+          }
+
           // Merge in proposal and dao changes
           return update(state, {
             proposals: { [proposalId]: { $merge : payload.proposal } },
             daos: { [avatarAddress]: { $merge: payload.dao } },
           });
         }
+        default: {
+          return state;
+        }
       }
-    }
+    } // EO ARC_VOTE
 
     case ActionTypes.ARC_STAKE: {
       const { meta, sequence, payload } = action as StakeAction;
@@ -270,6 +349,126 @@ const arcReducer = (state = initialState, action: any) => {
             proposals: { [proposalId]: { $merge : action.payload.proposal } },
           });
         }
+        default: {
+          return state;
+        }
+      }
+    } // EO ARC_STAKE
+
+    case ActionTypes.ARC_REDEEM: {
+      const { meta, sequence, payload } = action as RedeemAction;
+      const { avatarAddress, accountAddress, proposalId } = meta;
+
+      switch (sequence) {
+        case AsyncActionSequence.Pending:
+          return update(state, { daos: {
+            [avatarAddress] : {
+              members: {
+                [accountAddress]: {
+                  redemptions : { [proposalId] : { $merge : {
+                    ...meta,
+                    transactionState: TransactionStates.Unconfirmed
+                  } }},
+                },
+              },
+            },
+          }});
+        case AsyncActionSequence.Success: {
+          state = update(state, { daos: {
+            [avatarAddress] : {
+              members: {
+                [accountAddress]: {
+                  $merge : payload.beneficiary,
+                  // remove pending redemptions from this account
+                  redemptions : { $unset: [proposalId] },
+                },
+              },
+            },
+          }});
+
+          // Merge in dao changes
+          return update(state, {
+            daos: { [payload.dao.avatarAddress]: { $merge: action.payload.dao } },
+          });
+        }
+        default: {
+          return state;
+        }
+      }
+    } // EO ARC_REDEEM
+
+    case ActionTypes.ARC_ON_TRANSFER: {
+      const { avatarAddress, from, fromBalance, to, toBalance, totalTokens } = payload;
+
+      // We see this from address when a DAO is created
+      if (from !== "0x0000000000000000000000000000000000000000") {
+        state = update(state, {
+          daos: {
+            [avatarAddress]: {
+              members: {
+                [from]: {
+                  tokens: { $set: fromBalance }
+                },
+              },
+            }
+          }
+        });
+      }
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            tokenCount: { $set: totalTokens },
+            members: {
+              [to]: (member: any) => {
+                // If tokens are being given to a non member, add them as a member to this DAO
+                return update(member || { ...emptyAccount, address: to }, {
+                  tokens: { $set: toBalance }
+                });
+              },
+            },
+          }
+        }
+      });
+    }
+
+    case ActionTypes.ARC_ON_REPUTATION_CHANGE: {
+      const { avatarAddress, address, reputation, totalReputation } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            reputationCount: { $set: totalReputation },
+            members: {
+              [address]: (member: any) => {
+                // If reputation being given to a non member, add them as a member to this DAO
+                return update(member || { ...emptyAccount, address }, {
+                  tokens: { $set: reputation }
+                });
+              },
+            },
+          }
+        }
+      });
+    }
+
+    case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
+      const { avatarAddress, proposalId, executionState, decision, reputationWhenExecuted } = payload;
+
+      if (executionState === ExecutionState.PreBoostedBarCrossed || executionState === ExecutionState.BoostedBarCrossed) {
+        return update(state, {
+          proposals: {
+            [proposalId]: {
+              $merge: {
+                reputationWhenExecuted,
+                winningVote: decision,
+                state: ProposalStates.Executed
+              }
+            }
+          }
+        });
+      } else {
+        return state;
       }
     }
   }

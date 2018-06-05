@@ -6,14 +6,10 @@
     "module": "commonjs",
     "target": "es6",
     "jsx": "react",
-    "baseUrl": "src",
-    "paths": {
-      "@daostack/arc.js": ["../node_modules/@daostack/arc.js"]
-    }
+    "baseUrl": "src"
   },
   "include": [
     "./src/**/*",
-    "./node_modules/web3-typescript-typings/index.d.ts",
     "./typings/*"
   ]
 }

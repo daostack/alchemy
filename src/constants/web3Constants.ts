@@ -25,5 +25,6 @@ export const CURRENT_CHAIN_ID = currentChainId;
 export enum ActionTypes {
   WEB3_CONNECT = "WEB3_CONNECT",
   WEB3_CHANGE_ACCOUNT = "WEB3_CHANGE_ACCOUNT",
+  WEB3_ON_BALANCE_CHANGE = "WEB3_ON_BALANCE_CHANGE",
   OTHER_ACTION = "__any_other_action_type__",
 }

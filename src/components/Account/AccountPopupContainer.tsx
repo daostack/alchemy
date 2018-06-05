@@ -1,12 +1,17 @@
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
+import * as operationsActions from "actions/operationsActions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
+import { OperationsStatus } from "reducers/operations";
+import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
+import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./Account.scss";
 
@@ -28,13 +33,23 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   };
 };
 
-interface IDispatchProps {}
+interface IDispatchProps {
+  showOperation: typeof operationsActions.showOperation;
+}
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  showOperation: operationsActions.showOperation
+};
 
 type IProps = IStateProps & IDispatchProps;
 
 class AccountPopupContainer extends React.Component<IProps, null> {
+
+  public copyAddress = () => {
+    const { showOperation, accountAddress } = this.props;
+    Util.copyToClipboard(accountAddress);
+    showOperation(OperationsStatus.Success, `Copied to clipboard!`, {totalSteps: 1});
+  }
 
   public render() {
     const { accountAddress, dao, reputation, tokens } = this.props;
@@ -47,14 +62,13 @@ class AccountPopupContainer extends React.Component<IProps, null> {
         <div className={css.accountInfo}>
           <div className={css.beneficiaryAddress}>
             <span>{accountAddress}</span>
-            <button><img src="/assets/images/Icon/Copy-white.svg"/></button>
+            <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-white.svg"/></button>
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>
-            <div>{Math.round(reputation).toLocaleString()} <strong>{dao.name} Reputation</strong></div>
+            <div><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={reputation}/></div>
             <div>{Math.round(tokens).toLocaleString()} <strong>{dao.tokenSymbol}</strong></div>
           </div>
-          <button className={css.viewProfile}>View Profile</button>
         </div>
       </div>
     );

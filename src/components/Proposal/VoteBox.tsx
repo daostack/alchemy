@@ -7,10 +7,12 @@ import { IRootState } from "reducers";
 import { IProposalState, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
 import * as css from "./Proposal.scss";
+import ReputationView from "components/Account/ReputationView";
 
 interface IProps {
   currentVote: number;
   currentAccountReputation: number;
+  daoName: string;
   daoTotalReputation: number;
   proposal: IProposalState;
   transactionState: TransactionStates;
@@ -34,11 +36,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
   public handleClickVote(vote: number, event: any) {
     const { proposal, transactionState, voteOnProposal } = this.props;
     this.setState({ currentVote: vote });
-    voteOnProposal(proposal.daoAvatarAddress, proposal.proposalId, vote);
+    voteOnProposal(proposal.daoAvatarAddress, proposal, vote);
   }
 
   public render() {
-    const { currentVote, currentAccountReputation, proposal, daoTotalReputation, transactionState } = this.props;
+    const { currentVote, currentAccountReputation, proposal, daoName, daoTotalReputation, transactionState, } = this.props;
 
     const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
     const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
@@ -110,8 +112,20 @@ export default class VoteBox extends React.Component<IProps, IState> {
               {/* TODO: <span className={css.description}>{proposal.totalVoters} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
               <div className={css.turnoutGraph}>
                 <div className={css.turnoutStats}>
-                  <span className={css.forLabel}>{proposal.votesYes} <span>FOR</span></span>
-                  <span className={css.againstLabel}>{proposal.votesNo} <span>AGAINST</span></span>
+                  <span className={css.forLabel}>
+                    <ReputationView
+                      daoName={daoName}
+                      totalReputation={daoTotalReputation}
+                      reputation={proposal.votesYes}
+                    /> for
+                  </span>
+                  <span className={css.againstLabel}>
+                    <ReputationView
+                      daoName={daoName}
+                      totalReputation={daoTotalReputation}
+                      reputation={proposal.votesNo}
+                    /> against
+                  </span>
                 </div>
 
                 <div className={css.graph}>
@@ -120,7 +134,13 @@ export default class VoteBox extends React.Component<IProps, IState> {
                   <div className={css.againstBar} style={styles.againstBar}></div>
                 </div>
 
-                <div className={css.reputationThreshold}>{(daoTotalReputation / 2).toLocaleString()} REPUTATION NEEDED FOR DECISION BY VOTE</div>
+                <div className={css.reputationThreshold}>
+                  <ReputationView
+                    daoName={daoName}
+                    totalReputation={daoTotalReputation}
+                    reputation={daoTotalReputation / 2}
+                  /> NEEDED FOR DECISION BY VOTE
+                </div>
 
               </div>
             </div>

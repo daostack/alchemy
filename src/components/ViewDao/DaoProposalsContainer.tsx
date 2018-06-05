@@ -29,8 +29,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAddress: ownProps.match.params.daoAddress,
     proposalsLoaded: state.arc.daos[ownProps.match.params.daoAddress].proposalsLoaded,
-    proposalsBoosted: selectors.makeDaoBoostedProposalsSelector()(state, ownProps),
-    proposalsPreBoosted: selectors.makeDaoPreBoostedProposalsSelector()(state, ownProps),
+    proposalsBoosted: selectors.createBoostedProposalsSelector()(state, ownProps),
+    proposalsPreBoosted: selectors.createPreBoostedProposalsSelector()(state, ownProps),
     web3: state.web3,
   };
 };
@@ -92,7 +92,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
                     No upcoming proposals
                   </div>
                   <div className={css.cta}>
-                    <Link to={"/proposal/create/" + this.props.daoAddress}>Create a proposal</Link>
+                    <Link to={`/dao/${this.props.daoAddress}/proposals/create`}>Create a proposal</Link>
                   </div>
                 </div>
               : ""
@@ -116,7 +116,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
         { proposalsPreBoosted.length > 0 ?
           <div>
             <div className={css.proposalsHeader}>
-              All Proposals
+              Regular Proposals
             </div>
             <div className={css.proposalsContainer}>
               {preBoostedProposalsHTML}

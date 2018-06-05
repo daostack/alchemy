@@ -10,6 +10,7 @@ export enum ConnectionStatus {
 }
 
 export interface IWeb3State {
+  accounts: string[];
   ethAccountBalance: number;
   ethAccountAddress: string | null;
   connectionStatus?: ConnectionStatus;
@@ -17,6 +18,7 @@ export interface IWeb3State {
 }
 
 export const initialState: IWeb3State = {
+  accounts: [],
   ethAccountBalance: 0,
   ethAccountAddress: null,
   connectionStatus: ConnectionStatus.Pending,
@@ -40,13 +42,16 @@ const web3Reducer = (state = initialState, action: any) => {
             }
           };
         case AsyncActionSequence.Success:
-        return {
-          ...state,
-          ...payload,
-          ...{
-            connectionStatus : ConnectionStatus.Connected
-          }
-        };
+          return {
+            ...state,
+            ...payload,
+            ...{
+              connectionStatus : ConnectionStatus.Connected
+            }
+          };
+        default: {
+          return state;
+        }
       }
     }
 
@@ -56,6 +61,9 @@ const web3Reducer = (state = initialState, action: any) => {
 
     case ActionTypes.WEB3_CHANGE_ACCOUNT:
       return {...state, ...action.payload };
+
+    case ActionTypes.WEB3_ON_BALANCE_CHANGE:
+      return {...state, ethAccountBalance: action.payload };
 
     default: {
       return state;

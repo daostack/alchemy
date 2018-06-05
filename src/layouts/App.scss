@@ -58,6 +58,7 @@ body {
 
 .header {
   width: 100%;
+  position: relative;
   vertical-align: middle;
   background-image: linear-gradient(-180deg, rgba(12,0,51,0.00) 0%, rgba(12,0,51,0.11) 97%);
   height: 60px;
@@ -65,11 +66,19 @@ body {
   .alchemyLogo {
     float: left;
     padding: 9px;
+
+    img {
+      height: 40px;
+    }
   }
 
   .version {
-    color: grey;
+    color: rgba(0,0,0,.8);
     line-height: 60px;
+
+    span {
+      color: rgba(0,0,0,.3);
+    }
   }
 
   .alert {
@@ -84,13 +93,21 @@ body {
   }
 
   .accountInfo {
-    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 60px;
 
     .holdings {
-      padding-top: 10px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 200px;
+      right: 50px;
       text-align: right;
       font-size: $small;
-      float: left;
+      z-index: 100;
+
 
       .holdingsLabel {
         color: $black-halftone;
@@ -104,8 +121,8 @@ body {
         width: 30px;
         height: 30px;
         border: 1px solid red;
-        right: 20px;
-        top: 15px;
+        right: -34px;
+        top: 3px;
         opacity: 0;
         cursor: pointer;
       }
@@ -114,8 +131,13 @@ body {
     .profileLink {
       border: none;
       background: transparent;
-      float: left;
-      padding: 13px 9px;
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      padding: 0;
+      margin: 0;
+      height: 32px;
     }
   }
 
@@ -146,4 +168,90 @@ body {
   width: auto;
   height: auto;
   text-align: right;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal-container {
+  position: fixed;
+  z-index: 1000
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0,0,0,0.5)
+}
+
+.modal-body {
+  overflow: hidden;
+}
+
+.notice {
+  background-color: rgba(0,0,0,1);
+  padding: 11px 8px;
+  color: rgba(255,255,255,.6);
+  position: relative;
+  font-size: 12px;
+
+  div {
+    margin-right: 120px;
+    margin-left: 25px;
+
+    b {
+      color: $accent-3;
+    }
+  }
+  
+  img {
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+  }
+
+  .reportBugs {
+    border: 2px solid rgba(255,255,255,1);
+    color: rgba(255,255,255,1);
+    font-size: 14px;
+    position: absolute;
+    display: inline-block;
+    padding: 0 8px;
+    transform: translateY(-50%);
+    top: 50%;
+    line-height: 23px;
+    right: 8px;
+  }
+
+  .notice::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+}
+
+@media only screen and (max-device-width: 1024px) {
+  .modal-body {
+    position: fixed;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  .modal-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translate3d(0, 0, 0)
+  }
 }
