@@ -967,6 +967,7 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const redemption = getState().arc.daos[daoAvatarAddress].members[accountAddress].redemptions[proposal.proposalId];
+    const dao = getState().arc.daos[daoAvatarAddress];
     const web3: Web3 = await Arc.Utils.getWeb3();
 
     const meta = {
@@ -1011,7 +1012,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         const rewardRedeemTransaction = await contributionRewardInstance.redeemContributionReward({
           proposalId: proposal.proposalId,
           avatar: daoAvatarAddress,
-          ethers: true,
+          ethers: dao.ethCount >= redemption.beneficiaryEth ? true : false,
           //externalTokens: true,
           nativeTokens: true,
           reputation: true,

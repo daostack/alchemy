@@ -100,7 +100,12 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       if (currentAccountRedemptions) {
         redemptionsTip = <ul>
-          {currentAccountRedemptions.beneficiaryEth ? <li>Beneficiary ETH: {currentAccountRedemptions.beneficiaryEth}</li> : ""}
+          {currentAccountRedemptions.beneficiaryEth
+            ? <li>
+                Beneficiary ETH: {currentAccountRedemptions.beneficiaryEth}
+                {dao.ethCount < currentAccountRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
+              </li>
+            : ""}
           {currentAccountRedemptions.beneficiaryNativeToken ? <li>Beneficiary {dao.tokenSymbol} tokens: {currentAccountRedemptions.beneficiaryNativeToken}</li> : ""}
           {currentAccountRedemptions.beneficiaryReputation ? <li>Beneficiary reputation: {currentAccountRedemptions.beneficiaryReputation}</li> : ""}
           {currentAccountRedemptions.proposerReputation ? <li>Reputation for proposing: {currentAccountRedemptions.proposerReputation}</li> : ""}
