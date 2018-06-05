@@ -55,7 +55,7 @@ export function initializeWeb3() {
     };
 
     try {
-      payload.ethAccountAddress = await Utils.getDefaultAccount();
+      payload.ethAccountAddress = (await Utils.getDefaultAccount()).toLowerCase();
     } catch (e) {
       dispatch({
         type: ActionTypes.WEB3_CONNECT,
