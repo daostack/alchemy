@@ -85,7 +85,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
       redeemAllTip =
         <div>
-          Total rewards to redeem from {redemptions.length} propposal/s: <br/>
+          Total rewards to redeem from {redemptions.length} proposal/s: <br/>
           <ul>
             {ethReward > 0 ? <li>ETH: {ethReward}</li> : ""}
             {nativeReward > 0 ? <li>GEN: {nativeReward}</li> : ""}
