@@ -100,15 +100,14 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       if (currentAccountRedemptions) {
         redemptionsTip = <ul>
-          {currentAccountRedemptions.beneficiaryEth ? <li>Beneficiary ETH: {currentAccountRedemptions.beneficiaryEth}</li> : ""}
-          {currentAccountRedemptions.beneficiaryNativeToken ? <li>Beneficiary {dao.tokenSymbol} tokens: {currentAccountRedemptions.beneficiaryNativeToken}</li> : ""}
-          {currentAccountRedemptions.beneficiaryReputation ? <li>Beneficiary reputation: {currentAccountRedemptions.beneficiaryReputation}</li> : ""}
-          {currentAccountRedemptions.proposerReputation ? <li>Reputation for proposing: {currentAccountRedemptions.proposerReputation}</li> : ""}
-          {currentAccountRedemptions.voterReputation ? <li>Reputation for voting: {currentAccountRedemptions.voterReputation}</li> : ""}
-          {currentAccountRedemptions.stakerReputation ? <li>Reputation for staking: {currentAccountRedemptions.stakerReputation}</li> : ""}
-          {currentAccountRedemptions.voterTokens ? <li>{dao.tokenSymbol} tokens for voting: {currentAccountRedemptions.voterTokens}</li> : ""}
-          {currentAccountRedemptions.stakerTokens ? <li>{dao.tokenSymbol} tokens for staking:{currentAccountRedemptions.stakerTokens}</li> : ""}
-          {currentAccountRedemptions.stakerBountyTokens ? <li>{dao.tokenSymbol} tokens due to staking bounty:{currentAccountRedemptions.stakerBountyTokens}</li> : ""}
+          {currentAccountRedemptions.beneficiaryEth ? <li>Beneficiary reward: {currentAccountRedemptions.beneficiaryEth} ETH</li> : ""}
+          {currentAccountRedemptions.beneficiaryReputation ? <li>Beneficiary reward: <ReputationView reputation={currentAccountRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+          {currentAccountRedemptions.proposerReputation ? <li>Proposer reward: <ReputationView reputation={currentAccountRedemptions.proposerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+          {currentAccountRedemptions.voterReputation ? <li>Voter reward: <ReputationView reputation={currentAccountRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+          {currentAccountRedemptions.voterTokens ? <li>Voter reward: {currentAccountRedemptions.voterTokens} GEN</li> : ""}
+          {currentAccountRedemptions.stakerTokens ? <li>Prediction reward: {currentAccountRedemptions.stakerTokens} GEN</li> : ""}
+          {currentAccountRedemptions.stakerBountyTokens ? <li>Prediction bounty: {currentAccountRedemptions.stakerBountyTokens} GEN</li> : ""}
+          {currentAccountRedemptions.stakerReputation ? <li>Prediction reputation: <ReputationView reputation={currentAccountRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
         </ul>;
       }
 
