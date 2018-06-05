@@ -60,7 +60,6 @@
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.58",
-    "@types/prop-types": "^15.5.3",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
@@ -107,6 +106,7 @@
     "@types/lodash": "^4.14.74",
     "@types/node": "^8.0.26",
     "@types/object-hash": "^1.2.0",
+    "@types/prop-types": "^15.5.3",
     "@types/rc-tooltip": "^3.4.11",
     "@types/react": "^16.0.35",
     "@types/react-dom": "^16.0.3",
