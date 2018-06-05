@@ -76,6 +76,8 @@ class ProposalContainer extends React.Component<IProps, null> {
       const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
       const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
       const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
+      const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
+      const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
       const daoAccount = dao.members[currentAccountAddress];
       let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
@@ -154,7 +156,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             : proposal.winningVote == VoteOptions.Yes ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
-                    <div>PASSED</div>
+                    <div>PASSED {passedByDecision ? "BY DECISION" : "BY TIMEOUT"}</div>
                     <div><img src="/assets/images/Icon/Passed.svg"/></div>
                     <div>{submittedTime.format("MMM DD, YYYY")}</div>
                   </div>
@@ -162,7 +164,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             : proposal.winningVote == VoteOptions.No ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
-                    <div>FAILED</div>
+                    <div>FAILED {failedByDecision ? "BY DECISION" : "BY TIMEOUT"}</div>
                     <div><img src="/assets/images/Icon/Failed.svg"/></div>
                     <div>{submittedTime.format("MMM DD, YYYY")}</div>
                   </div>

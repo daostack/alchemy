@@ -127,21 +127,21 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     const getMintTokenEvents = promisify(mintTokenEvents.get.bind(mintTokenEvents));
     let eventsArray = await getMintTokenEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-      memberAddresses.push(eventsArray[cnt].args.to);
+      memberAddresses.push(eventsArray[cnt].args.to.toLowerCase());
     }
 
     const transferTokenEvents = dao.token.Transfer({}, { fromBlock: 0 });
     const getTransferTokenEvents = promisify(transferTokenEvents.get.bind(transferTokenEvents));
     eventsArray = await getTransferTokenEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-      memberAddresses.push(eventsArray[cnt].args.to);
+      memberAddresses.push(eventsArray[cnt].args.to.toLowerCase());
     }
 
     const mintReputationEvents = dao.reputation.Mint({}, { fromBlock: 0 });
     const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
     eventsArray = await getMintReputationEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
-      memberAddresses.push(eventsArray[cnt].args._to);
+      memberAddresses.push(eventsArray[cnt].args._to.toLowerCase());
     }
 
     memberAddresses = [...new Set(memberAddresses)]; // Dedupe
@@ -306,7 +306,7 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
   }
 
   const proposal: IProposalState = {...contributionProposal, ...{
-    beneficiaryAddress: contributionProposal.beneficiaryAddress,
+    beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
     boostedTime: Number(proposalDetails[7]),
     boostedVotePeriodLimit: Number(proposalDetails[11]),
     preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
@@ -406,14 +406,25 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })).toNumber(),
   };
 
+  // Beneficiary rewards
   if (proposal.beneficiaryAddress == accountAddress) {
-    redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
-    redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
-    redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+    if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
+      // Boosted proposal that passed by expiring with more yes votes than no
+      //   have to manually calculate beneficiary rewards
+      const numberOfPeriods = (await proposalInstance.getDaoProposals({ proposalId, avatar: avatarAddress }))[0].numberOfPeriods;
+      redemptions.beneficiaryEth = numberOfPeriods * proposal.ethReward;
+      redemptions.beneficiaryNativeToken = numberOfPeriods * proposal.nativeTokenReward;
+      redemptions.beneficiaryReputation = numberOfPeriods * proposal.reputationChange;
+    } else {
+      redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
+      redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
+      redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+    }
   }
   if (proposal.proposer == accountAddress) {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId })).toNumber();
   }
+
   const anyRedemptions = (
     redemptions.beneficiaryEth ||
     redemptions.beneficiaryReputation ||
@@ -443,6 +454,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       for (let i = 0; i < members.length; i++) {
         member = members[i];
+        member.address = member.address.toLowerCase();
         totalReputation += member.reputation;
         totalTokens += member.tokens;
         founders[i] = {
@@ -538,6 +550,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const web3: Web3 = await Arc.Utils.getWeb3();
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
+      beneficiaryAddress = beneficiaryAddress.toLowerCase();
 
       const ethAccountAddress: string = getState().web3.ethAccountAddress;
       const dao = await Arc.DAO.at(daoAvatarAddress);
