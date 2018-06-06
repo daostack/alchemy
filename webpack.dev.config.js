@@ -4,6 +4,7 @@ const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.base.config.js');
 
+// tslint:disable-next-line:no-var-requires
 require('dotenv').config();
 
 module.exports = merge(baseConfig, {
