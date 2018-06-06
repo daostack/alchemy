@@ -4,6 +4,8 @@ const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.base.config.js');
 
+require('dotenv').config();
+
 module.exports = merge(baseConfig, {
   devtool: 'cheap-module-eval-source-map',
 
