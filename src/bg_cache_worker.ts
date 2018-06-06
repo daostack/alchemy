@@ -19,6 +19,9 @@ import { initialState as arcInitialState, emptyAccount, IArcState, IDaoState, Tr
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
+// tslint:disable-next-line:no-var-requires
+require('dotenv').config();
+
 const arcjsNetwork = Arc.ConfigService.get('network');
 
 if (process.env.NODE_ENV == 'production') {
