@@ -197,7 +197,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
               <Field
                 autoFocus
                 id="titleInput"
-                maxlength={120}
+                maxLength={120}
                 placeholder="Summarize your propsoal"
                 name='title'
                 type="text"

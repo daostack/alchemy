@@ -94,6 +94,7 @@ export function getDAO(avatarAddress: string) {
 export async function getDAOData(avatarAddress: string, getDetails: boolean = false, currentAccountAddress: string = null) {
   const web3 = await Arc.Utils.getWeb3();
   const dao = await Arc.DAO.at(avatarAddress);
+  const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
   const getBalance = promisify(web3.eth.getBalance);
 
@@ -101,6 +102,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     avatarAddress,
     controllerAddress: "",
     ethCount: Util.fromWei(await getBalance(avatarAddress)).toNumber(),
+    genCount: Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance).toNumber(),
     name: await dao.getName(),
     members: {},
     rank: 1, // TODO
@@ -500,6 +502,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
         ethCount: 0,
+        genCount: 0,
         name: daoName,
         members: membersByAccount,
         rank: 1, // TODO
@@ -856,9 +859,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
       const minimumStakingFee = votingMachineParam[5]; // 5 is the index of minimumStakingFee in the Parameters struct.
 
-      const StandardToken = await Arc.Utils.requireContract("StandardToken");
-      const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
-      const balance = await stakingToken.balanceOf(currentAccountAddress);
+      const balance = (await votingMachineInstance.getTokenBalances({avatarAddress: daoAvatarAddress})).stakingTokenBalance;
 
       const amount = new BigNumber(Util.toWei(stake));
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
