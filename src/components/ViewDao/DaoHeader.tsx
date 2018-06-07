@@ -36,6 +36,7 @@ export default class DaoHeader extends React.Component<IProps, null> {
         <div className={css.holdings + " " + css.clearfix}>
           <h4>HOLDINGS</h4>
           <div>{dao.ethCount} ETH</div>
+          <div>{dao.genCount} GEN</div>
         </div>
       </div>
     );

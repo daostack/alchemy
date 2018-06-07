@@ -1,4 +1,5 @@
 import * as classNames from "classnames";
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { Link } from "react-router-dom";
 
@@ -15,7 +16,7 @@ interface IState {
 interface IProps {
   currentPrediction: number;
   currentStake: number;
-  currentAccountTokens: number;
+  currentAccountGens: number;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   transactionState: TransactionStates;
@@ -49,7 +50,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { currentPrediction, currentStake, currentAccountTokens, proposal, transactionState } = this.props;
+    const { currentPrediction, currentStake, currentAccountGens, proposal, transactionState } = this.props;
     const { showStakeModal } = this.state;
 
     const stakingLeftToBoost = proposal.threshold - (proposal.stakesYes - proposal.stakesNo);
@@ -70,15 +71,21 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       [css.predicted]: currentPrediction == VoteOptions.No,
     });
 
+    const disableStakePass = !currentAccountGens || currentPrediction === VoteOptions.No;
+    const disableStakeFail = !currentAccountGens || currentPrediction === VoteOptions.Yes;
+
     const passPrediction = classNames({
       [css.passPrediction]: true,
-      [css.disabled]: !currentAccountTokens || currentPrediction === VoteOptions.No,
+      [css.disabled]: disableStakePass,
     });
 
     const failPrediction = classNames({
       [css.failPrediction]: true,
-      [css.disabled]: !currentAccountTokens || currentPrediction === VoteOptions.Yes,
+      [css.disabled]: disableStakeFail
     });
+
+    const passTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.No ? "Can't change prediction" : "";
+    const failTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.Yes ? "Can't change prediction" : "";
 
     return (
       <div className={wrapperClass}>
@@ -106,7 +113,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <tr className={stakeUpClass}>
                 <td className={passPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
-                    ? <button onClick={this.showModal.bind(this, 1)}>PASS +</button>
+                    ? <Tooltip placement="left" trigger={disableStakePass ? ["hover"] : []} overlay={passTip}>
+                        <button onClick={disableStakePass ? "" : this.showModal.bind(this, 1)}>PASS +</button>
+                      </Tooltip>
                     : "PASS"
                   }
                 </td>
@@ -115,7 +124,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <tr className={stakeDownClass} >
                 <td className={failPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
-                    ? <button onClick={this.showModal.bind(this, 2)}>FAIL +</button>
+                    ? <Tooltip placement="left" trigger={disableStakeFail ? ["hover"] : []} overlay={failTip}>
+                        <button onClick={disableStakeFail ? "" : this.showModal.bind(this, 2)}>FAIL +</button>
+                      </Tooltip>
                     : "FAIL"
                   }
                 </td>
