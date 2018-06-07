@@ -121,6 +121,7 @@ export interface IDaoState {
   avatarAddress: string;
   controllerAddress: string;
   ethCount: number;
+  genCount: number;
   members: { [key: string]: IAccountState };
   name: string;
   rank: number;

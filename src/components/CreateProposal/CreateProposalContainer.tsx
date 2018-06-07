@@ -17,6 +17,8 @@ import * as css from "./CreateProposal.scss";
 import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
 
+import { Formik, Field } from 'formik';
+
 interface IStateProps {
   dao: IDaoState;
   daoAddress: string;
@@ -45,78 +47,53 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-interface FormErrors {
-  beneficiaryAddress?: string;
-}
-
-interface IState {
-  avatarAddress: string;
+interface FormValues {
   beneficiaryAddress: string;
   description: string;
-  ethReward: number | string;
-  externalTokenAddress: string;
-  externalTokenReward: number | string;
-  nativeTokenReward: number | string;
-  reputationReward: number | string;
+  ethReward: number;
+  externalTokenReward: number;
+  nativeTokenReward: number;
+  reputationReward: number;
   title: string;
-  buttonEnabled: boolean;
-  errors: FormErrors;
+
+  [key: string]: any;
 }
 
-class CreateProposalContainer extends React.Component<IProps, IState> {
-
+class CreateProposalContainer extends React.Component<IProps, null> {
+  private web3: Web3;
   constructor(props: IProps) {
     super(props);
-
-    this.state = {
-      avatarAddress: this.props.daoAddress,
-      beneficiaryAddress: "",
-      description: "",
-      ethReward: "",
-      externalTokenAddress: null,
-      externalTokenReward: "",
-      nativeTokenReward: "",
-      reputationReward: "",
-      title: "",
-      buttonEnabled : true,
-      errors: {},
-    };
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  public async validate(): Promise<FormErrors> {
-    const state = this.state;
-    const out: FormErrors = {};
-    const web3: Web3 = await Arc.Utils.getWeb3();
-
-    if (!web3.isAddress(state.beneficiaryAddress)) {
-      out.beneficiaryAddress = "Invalid address";
-    }
-
-    this.setState({...this.state, errors: out});
-    return out;
-  }
-
-  public componentDidMount() {
+  public async componentDidMount() {
     if (!this.props.dao) {
       this.props.getDAO(this.props.daoAddress);
     }
+
+    this.web3 = await Arc.Utils.getWeb3();
   }
 
-  public handleSubmit = (event: any) => {
-    event.preventDefault();
+  public handleSubmit(values: FormValues) {
+    const { createProposal, dao: { avatarAddress } } = this.props;
+    const {
+      title,
+      description,
+      nativeTokenReward,
+      reputationReward,
+      ethReward,
+      beneficiaryAddress,
+    } = values;
 
-    if (!Object.keys(this.state.errors).length) {
-      this.setState({...this.state, buttonEnabled: false });
-      this.props.createProposal(
-        this.state.avatarAddress,
-        this.state.title,
-        this.state.description,
-        Number(this.state.nativeTokenReward),
-        Number(this.state.reputationReward),
-        Number(this.state.ethReward),
-        this.state.beneficiaryAddress,
-      );
-    }
+    createProposal(
+      avatarAddress,
+      title,
+      description,
+      nativeTokenReward,
+      reputationReward,
+      ethReward,
+      beneficiaryAddress,
+    );
   }
 
   public goBack() {
@@ -129,27 +106,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public handleChange = (event: any) => {
-    const newTitle = (ReactDOM.findDOMNode(this.refs.titleNode) as HTMLInputElement).value;
-    const newDescription = (ReactDOM.findDOMNode(this.refs.descriptionNode) as HTMLInputElement).value;
-    const newNativeTokenReward = (ReactDOM.findDOMNode(this.refs.nativeTokenRewardNode) as HTMLInputElement).value;
-    const newReputationReward = (ReactDOM.findDOMNode(this.refs.reputationRewardNode) as HTMLInputElement).value;
-    const newEthReward = (ReactDOM.findDOMNode(this.refs.ethRewardNode) as HTMLInputElement).value;
-    const newBenificiary = (ReactDOM.findDOMNode(this.refs.beneficiaryNode) as HTMLInputElement).value;
-
-    this.setState({
-      beneficiaryAddress: newBenificiary,
-      description: newDescription,
-      ethReward: newEthReward,
-      nativeTokenReward: newNativeTokenReward,
-      reputationReward: newReputationReward,
-      title: newTitle,
-    });
-  }
-
   public render() {
     const { dao } = this.props;
-
     return(
       dao ? <div className={css.createProposalWrapper}>
         <h2>
@@ -159,125 +117,189 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             <img src="/assets/images/Icon/Close.svg"/>
           </button>
         </h2>
-        <form onSubmit={this.handleSubmit}>
-          <label htmlFor="titleInput">
-            Title (120 characters)
-            <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-          </label>
-          <input
-            autoFocus
-            id="titleInput"
-            onChange={this.handleChange}
-            placeholder="Summarize your propsoal"
-            ref="titleNode"
-            required
-            type="text"
-            value={this.state.title}
-          />
-          <label htmlFor="descriptionInput">
-            Description (URL)
-            <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
-              Recommended template
-            </a>
-            <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-          </label>
-          <input
-            id="descriptionInput"
-            onChange={this.handleChange}
-            placeholder="Proposal description URL"
-            ref="descriptionNode"
-            required
-            type="text"
-            value={this.state.description}
-          />
-          <label htmlFor="beneficiaryInput">
-            Target Address
-            <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-          </label>
-          <input
-            id="beneficiaryInput"
-            className={this.state.errors.beneficiaryAddress ? css.error : null}
-            maxLength={42}
-            onChange={this.handleChange}
-            onBlur={async (e) => await this.validate()}
-            placeholder="Recipient's address public key"
-            ref="beneficiaryNode"
-            required
-            type="text"
-            value={this.state.beneficiaryAddress}
-          />
-          {this.state.errors.beneficiaryAddress ?
-            <span className={css.errorMessage}>
-              {this.state.errors.beneficiaryAddress}
-            </span>
-            : ""
-          }
-          <div className={css.addTransfer}>
-            <div style={{display: 'none'}}>
-              <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} reward: </label>
-              <input
-                id="nativeTokenRewardInput"
-                maxLength={10}
-                onChange={this.handleChange}
-                placeholder="How many tokens to reward"
-                ref="nativeTokenRewardNode"
-                // required
-                type="number"
-                value={this.state.nativeTokenReward}
-              />
-            </div>
-            <label htmlFor="reputationRewardInput">Reputation reward: </label>
-            <input
-              id="reputationRewardInput"
-              maxLength={10}
-              onChange={this.handleChange}
-              placeholder="How much reputation to reward"
-              ref="reputationRewardNode"
-              required
-              type="number"
-              value={this.state.reputationReward}
-            />
-            <label htmlFor="ethRewardInput">ETH reward: </label>
-            <input
-              id="ethRewardInput"
-              maxLength={10}
-              onChange={this.handleChange}
-              placeholder="How much ETH to reward"
-              ref="ethRewardNode"
-              type="number"
-              value={this.state.ethReward}
-            />
-          </div>
-          {/*
-          <div className={css.transactionList}>
-            <h3 className={css.transactionListHeader}>
-              Transactions
-              <span>TOTAL</span>
-            </h3>
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <span className={css.tokenAmount}>12.333 ETH </span>
-                    monthly for 6 months
-                    <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
-                    <AccountImage accountAddress={this.state.beneficiaryAddress} className={css.userAvatar} />
-                  </td>
-                  <td className={css.transferTotals}>
-                    <span className={css.tokenAmount}>79.98 ETH</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>*/}
+        <Formik
+          initialValues={{
+            beneficiaryAddress: '',
+            description: '',
+            ethReward: 0,
+            externalTokenReward: 0,
+            nativeTokenReward: 0,
+            reputationReward: 0,
+            title: ''
+          } as FormValues}
+          validate={(values: FormValues) => {
+            const {
+              beneficiaryAddress,
+              description,
+              ethReward,
+              externalTokenReward,
+              nativeTokenReward,
+              reputationReward,
+              title
+            } = values;
+            const errors: any = {};
 
-          <div className={css.alignCenter}>
-            <button className={css.submitProposal} type="submit" disabled={!this.state.buttonEnabled || !!Object.keys(this.state.errors).length}>
-              <img src="/assets/images/Icon/Send.svg"/>
-              Submit proposal
-            </button>
-          </div>
-        </form>
+            const require = (name: string) => {
+              if (!(values as any)[name]) {
+                errors[name] = 'Required';
+              }
+            };
+
+            const nonNegative = (name: string) => {
+              if ((values as any)[name] < 0) {
+                errors[name] = 'Please enter a non-negative reward';
+              }
+            };
+
+            if (title.length > 120) {
+              errors.title = 'Title is too long (max 120 characters)';
+            }
+
+            if (!this.web3.isAddress(beneficiaryAddress)) {
+              errors.beneficiaryAddress = 'Invalid address';
+            }
+
+            if (!/^(ftp|http|https):\/\/[^ "]+$/.test(description)) {
+              errors.description = 'Invalid URL';
+            }
+
+            nonNegative('ethReward');
+            nonNegative('externalTokenReward');
+            nonNegative('nativeTokenReward');
+            nonNegative('reputationReward');
+
+            require('description');
+            require('title');
+            require('beneficiaryAddress');
+
+            if (!ethReward && !reputationReward) {
+              errors.rewards = 'Please select at least some reward';
+            }
+
+            return errors;
+          }}
+          onSubmit={this.handleSubmit}
+          render={({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isSubmitting,
+            isValid,
+          }) =>
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="titleInput">
+                Title (120 characters)
+                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+              </label>
+              <Field
+                autoFocus
+                id="titleInput"
+                maxLength={120}
+                placeholder="Summarize your propsoal"
+                name='title'
+                type="text"
+                className={touched.title && errors.title ? css.error : null}
+              />
+              {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
+              <label htmlFor="descriptionInput">
+                Description (URL)
+                <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
+                  Recommended template
+                </a>
+                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+              </label>
+              <Field
+                id="descriptionInput"
+                placeholder="Proposal description URL"
+                name='description'
+                type="text"
+                className={touched.description && errors.description ? css.error : null}
+              />
+              {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
+              <label htmlFor="beneficiaryInput">
+                Target Address
+                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+              </label>
+              <Field
+                id="beneficiaryInput"
+                maxLength={42}
+                placeholder="Recipient's address public key"
+                name='beneficiaryAddress'
+                type="text"
+                className={touched.beneficiaryAddress && errors.beneficiaryAddress ? css.error : null}
+              />
+              {touched.beneficiaryAddress && errors.beneficiaryAddress && <span className={css.errorMessage}>{errors.beneficiaryAddress}</span>}
+              <div className={css.addTransfer}>
+                <div style={{display: 'none'}}>
+                  <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} reward: </label>
+                  <Field
+                    id="nativeTokenRewardInput"
+                    maxLength={10}
+                    placeholder="How many tokens to reward"
+                    name='nativeTokenReward'
+                    type="number"
+                    className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
+                  />
+                  {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                </div>
+                <label htmlFor="reputationRewardInput">Reputation reward: </label>
+                <Field
+                  id="reputationRewardInput"
+                  placeholder="How much reputation to reward"
+                  name='reputationReward'
+                  type="number"
+                  className={touched.reputationReward && errors.reputationReward ? css.error : null}
+                  min={0}
+                />
+                {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
+                <label htmlFor="ethRewardInput">ETH reward: </label>
+                <Field
+                  id="ethRewardInput"
+                  placeholder="How much ETH to reward"
+                  name='ethReward'
+                  type="number"
+                  className={touched.ethReward && errors.ethReward ? css.error : null}
+                  min={0}
+                />
+                {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
+
+                {touched.ethReward && touched.reputationReward && errors.rewards && <span className={css.errorMessage}><br/> {errors.rewards}</span>}
+              </div>
+              {/*
+              <div className={css.transactionList}>
+                <h3 className={css.transactionListHeader}>
+                  Transactions
+                  <span>TOTAL</span>
+                </h3>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <span className={css.tokenAmount}>12.333 ETH </span>
+                        monthly for 6 months
+                        <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
+                        <AccountImage accountAddress={this.state.beneficiaryAddress} className={css.userAvatar} />
+                      </td>
+                      <td className={css.transferTotals}>
+                        <span className={css.tokenAmount}>79.98 ETH</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>*/}
+              <div className={css.alignCenter}>
+                <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                  <img src="/assets/images/Icon/Send.svg"/>
+                  Submit proposal
+                </button>
+              </div>
+            </form>
+          }
+        />
+
       </div>
       : "Loading..."
     );
