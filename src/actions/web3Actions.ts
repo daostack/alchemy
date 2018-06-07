@@ -42,7 +42,7 @@ export function initializeWeb3() {
     const getNetwork = promisify(web3.version.getNetwork);
     const networkId = Number(await getNetwork());
 
-    const payload : IWeb3State = {
+    const payload: IWeb3State = {
       accounts: web3.eth.accounts,
       currentAccountGenBalance: 0,
       ethAccountAddress: null as string,
