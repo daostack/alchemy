@@ -36,13 +36,15 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   changeAccount: typeof web3Actions.changeAccount;
-  onBalanceChanged: typeof web3Actions.onBalanceChanged;
+  onEthBalanceChanged: typeof web3Actions.onEthBalanceChanged;
+  onGenBalanceChanged: typeof web3Actions.onGenBalanceChanged;
   showOperation: typeof operationsActions.showOperation;
 }
 
 const mapDispatchToProps = {
   changeAccount: web3Actions.changeAccount,
-  onBalanceChanged: web3Actions.onBalanceChanged,
+  onEthBalanceChanged: web3Actions.onEthBalanceChanged,
+  onGenBalanceChanged: web3Actions.onGenBalanceChanged,
   showOperation: operationsActions.showOperation
 };
 
@@ -73,12 +75,24 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { web3State: { ethAccountAddress }, onBalanceChanged } = this.props;
+    const { web3State: { currentAccountGenBalance, ethAccountAddress, ethAccountBalance }, onEthBalanceChanged, onGenBalanceChanged } = this.props;
     const web3 = await Arc.Utils.getWeb3();
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
+    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
+
     this.ethBalanceWatcher = web3.eth.filter('latest');
     this.ethBalanceWatcher.watch(async (err, res) => {
       if (!err && res) {
-        onBalanceChanged(Util.fromWei(await promisify(web3.eth.getBalance)(ethAccountAddress)).toNumber());
+        const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(ethAccountAddress)).toNumber();
+        if (ethAccountBalance != newEthBalance) {
+          onEthBalanceChanged(newEthBalance);
+        }
+
+        const newGenBalance = Util.fromWei(await stakingToken.balanceOf(ethAccountAddress)).toNumber();
+        if (currentAccountGenBalance != newGenBalance) {
+          onGenBalanceChanged(newGenBalance);
+        }
       }
     })
   }
@@ -137,8 +151,9 @@ class HeaderContainer extends React.Component<IProps, null> {
                 </select>
               </div>
               <div>
-                <span className={css.holdingsLabel}>ETH Balance: </span>
-                <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />
+                <span className={css.holdingsLabel}>Wallet: </span>
+                <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />&nbsp;&amp;&nbsp;
+                <AccountBalance tokenSymbol="GEN" balance={web3State.currentAccountGenBalance} accountAddress={web3State.ethAccountAddress} />
                 { dao
                   ? <div>
                       <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />

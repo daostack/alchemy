@@ -19,6 +19,7 @@ import { proposalEnded } from "actions/arcActions";
 
 interface IStateProps {
   currentAccountAddress: string;
+  currentAccountGens: number;
   currentAccountRedemptions?: IRedemptionState;
   dao?: IDaoState;
   proposal?: IProposalState;
@@ -30,6 +31,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const currentAccountRedemptions = dao && dao.members[state.web3.ethAccountAddress] && dao.members[state.web3.ethAccountAddress].redemptions[proposal.proposalId];
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
+    currentAccountGens: state.web3.currentAccountGenBalance,
     currentAccountRedemptions,
     dao,
     proposal,
@@ -58,7 +60,7 @@ class ProposalContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { currentAccountAddress, currentAccountRedemptions, dao, proposal, stakeProposal, voteOnProposal } = this.props;
+    const { currentAccountAddress, currentAccountGens, currentAccountRedemptions, dao, proposal, stakeProposal, voteOnProposal } = this.props;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -80,11 +82,10 @@ class ProposalContainer extends React.Component<IProps, null> {
       const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
       const daoAccount = dao.members[currentAccountAddress];
-      let currentAccountReputation = 0, currentAccountTokens = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
+      let currentAccountReputation = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStake = 0,
           currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed, redemptionsTip: JSX.Element = null;
       if (daoAccount) {
         currentAccountReputation = daoAccount.reputation;
-        currentAccountTokens = daoAccount.tokens;
 
         if (daoAccount.votes[proposal.proposalId]) {
           currentAccountVote = daoAccount.votes[proposal.proposalId].vote;
@@ -226,7 +227,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
-                  currentAccountTokens={currentAccountTokens}
+                  currentAccountGens={currentAccountGens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
@@ -254,7 +255,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
-                  currentAccountTokens={currentAccountTokens}
+                  currentAccountGens={currentAccountGens}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   transactionState={currentAccountStakeState}
