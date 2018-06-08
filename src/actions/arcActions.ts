@@ -716,7 +716,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
         message: `Proposal successfully created!`,
       },
       meta,
-      payload: payload
+      payload
     } as CreateProposalAction);
   }
 }
