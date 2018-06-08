@@ -49,7 +49,7 @@ interface IDispatchProps {
   onStakeEvent: typeof arcActions.onStakeEvent;
   onVoteEvent: typeof arcActions.onVoteEvent;
   getDAO: typeof arcActions.getDAO;
-  getProposal: typeof arcActions.getProposal;
+  onProposalCreateEvent: typeof arcActions.onProposalCreateEvent;
   onTransferEvent: typeof arcActions.onTransferEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
   onProposalExecuted: typeof arcActions.onProposalExecuted;
@@ -59,7 +59,7 @@ const mapDispatchToProps = {
   onStakeEvent: arcActions.onStakeEvent,
   onVoteEvent: arcActions.onVoteEvent,
   getDAO: arcActions.getDAO,
-  getProposal: arcActions.getProposal,
+  onProposalCreateEvent: arcActions.onProposalCreateEvent,
   onTransferEvent: arcActions.onTransferEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
   onProposalExecuted: arcActions.onProposalExecuted,
@@ -77,7 +77,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public burnEventWatcher: any;
 
   public async componentDidMount() {
-    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, getProposal, onTransferEvent, onReputationChangeEvent, onProposalExecuted } = this.props;
+    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, onProposalCreateEvent, onTransferEvent, onReputationChangeEvent, onProposalExecuted } = this.props;
     const web3 = await Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
@@ -91,7 +91,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: "latest" });
     this.proposalEventWatcher.watch((error, result) => {
-      getProposal(daoAddress, result[0].args._proposalId);
+      onProposalCreateEvent(result[0].args);
     });
 
     // Watch for new, confirmed stakes coming in for the current account
