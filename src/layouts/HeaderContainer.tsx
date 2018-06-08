@@ -75,7 +75,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { web3State: { currentAccountGenBalance, ethAccountAddress, ethAccountBalance }, onEthBalanceChanged, onGenBalanceChanged } = this.props;
+    const { web3State: { ethAccountAddress }, onEthBalanceChanged, onGenBalanceChanged } = this.props;
     const web3 = await Arc.Utils.getWeb3();
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
@@ -85,14 +85,9 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.ethBalanceWatcher.watch(async (err, res) => {
       if (!err && res) {
         const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(ethAccountAddress)).toNumber();
-        if (ethAccountBalance != newEthBalance) {
-          onEthBalanceChanged(newEthBalance);
-        }
-
+        onEthBalanceChanged(newEthBalance);
         const newGenBalance = Util.fromWei(await stakingToken.balanceOf(ethAccountAddress)).toNumber();
-        if (currentAccountGenBalance != newGenBalance) {
-          onGenBalanceChanged(newGenBalance);
-        }
+        onGenBalanceChanged(newGenBalance);
       }
     })
   }

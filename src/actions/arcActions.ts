@@ -1117,3 +1117,37 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
     showOperation(OperationsStatus.Success, `Proposal '${proposal.title}' Executed!`)(dispatch);
   }
 }
+
+export function onDAOEthBalanceChanged(avatarAddress: string, balance: Number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const dao = getState().arc.daos[avatarAddress];
+    const { ethCount } = dao;
+
+    if (ethCount != balance) {
+      dispatch({
+        type: arcConstants.ARC_ON_DAO_ETH_BALANCE_CHANGE,
+        payload: {
+          avatarAddress,
+          balance
+        }
+      });
+    }
+  };
+}
+
+export function onDAOGenBalanceChanged(avatarAddress: string, balance: Number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const dao = getState().arc.daos[avatarAddress];
+    const { genCount } = dao;
+
+    if (genCount != balance) {
+      dispatch({
+        type: arcConstants.ARC_ON_DAO_GEN_BALANCE_CHANGE,
+        payload: {
+          avatarAddress,
+          balance
+        }
+      });
+    }
+  };
+}

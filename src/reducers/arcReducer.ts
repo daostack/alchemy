@@ -472,6 +472,30 @@ const arcReducer = (state = initialState, action: any) => {
         return state;
       }
     }
+
+    case ActionTypes.ARC_ON_DAO_ETH_BALANCE_CHANGE: {
+      const { avatarAddress, balance } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            ethCount: { $set: balance || state.daos[avatarAddress].ethCount}
+          }
+        }
+      })
+    }
+
+    case ActionTypes.ARC_ON_DAO_GEN_BALANCE_CHANGE: {
+      const { avatarAddress, balance } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            genCount: { $set: balance || state.daos[avatarAddress].genCount}
+          }
+        }
+      })
+    }
   }
 
   return state;
