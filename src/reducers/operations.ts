@@ -40,7 +40,7 @@ export const operationsReducer =
         const operationsConfig = operation || {};
 
         const defaults: IOperation = {
-          status: OperationsStatus.Pending,
+          status: action.sequence == AsyncActionSequence.Pending ? OperationsStatus.Pending : OperationsStatus.Failure,
           message: operationsConfig.message || `Operation #${hash.substr(0, 4)}`,
           step: 0,
           totalSteps: operationsConfig.totalSteps,
@@ -48,7 +48,7 @@ export const operationsReducer =
         }
 
         /* initialize with defaults if does not exist yet */
-        if (!state[hash] && sequence === AsyncActionSequence.Pending) {
+        if (!state[hash] && (sequence === AsyncActionSequence.Pending || sequence === AsyncActionSequence.Failure)) {
           state = update(state, {
             [hash]: {
               $set: defaults
