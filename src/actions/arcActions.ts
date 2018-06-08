@@ -859,7 +859,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
       const minimumStakingFee = votingMachineParam[5]; // 5 is the index of minimumStakingFee in the Parameters struct.
 
-      const balance = (await votingMachineInstance.getTokenBalances({avatarAddress: daoAvatarAddress})).stakingTokenBalance;
+      const StandardToken = await Arc.Utils.requireContract("StandardToken");
+      const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
+      const balance = await stakingToken.balanceOf(currentAccountAddress);
 
       const amount = new BigNumber(Util.toWei(stake));
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
