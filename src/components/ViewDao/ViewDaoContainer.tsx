@@ -19,6 +19,7 @@ import DaoMembersContainer from "./DaoMembersContainer";
 import DaoNav from "./DaoNav";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
+import promisify = require("es6-promisify");
 
 import * as css from "./ViewDao.scss";
 
@@ -53,6 +54,8 @@ interface IDispatchProps {
   onTransferEvent: typeof arcActions.onTransferEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
   onProposalExecuted: typeof arcActions.onProposalExecuted;
+  onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
+  onDAOGenBalanceChanged: typeof arcActions.onDAOGenBalanceChanged;
 }
 
 const mapDispatchToProps = {
@@ -63,6 +66,8 @@ const mapDispatchToProps = {
   onTransferEvent: arcActions.onTransferEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
   onProposalExecuted: arcActions.onProposalExecuted,
+  onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
+  onDAOGenBalanceChanged: arcActions.onDAOGenBalanceChanged,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -72,12 +77,26 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
   public executeProposalEventWatcher: Arc.EventFetcher<Arc.GenesisProtocolExecuteProposalEventResult>;
+  public balanceWatcher: any;
   public transferEventWatcher: any;
   public mintEventWatcher: any;
   public burnEventWatcher: any;
 
   public async componentDidMount() {
-    const { onStakeEvent, onVoteEvent , currentAccountAddress, daoAddress, dao, getDAO, onProposalCreateEvent, onTransferEvent, onReputationChangeEvent, onProposalExecuted } = this.props;
+    const {
+      onStakeEvent,
+      onVoteEvent ,
+      currentAccountAddress,
+      daoAddress,
+      dao,
+      getDAO,
+      onProposalCreateEvent,
+      onTransferEvent,
+      onReputationChangeEvent,
+      onProposalExecuted,
+      onDAOEthBalanceChanged,
+      onDAOGenBalanceChanged
+    } = this.props;
     const web3 = await Arc.Utils.getWeb3();
 
     // TODO: we should probably always load the up to date DAO data, but this is kind of a hack
@@ -129,6 +148,20 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       const { _proposalId, _executionState, _decision, _totalReputation } = result[0].args;
       onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
     });
+
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
+    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
+
+    this.balanceWatcher = web3.eth.filter('latest');
+    this.balanceWatcher.watch(async (err: any, res: any) => {
+      if (!err && res) {
+        const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAddress)).toNumber();
+        onDAOEthBalanceChanged(daoAddress, newEthBalance);
+        const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAddress)).toNumber();
+        onDAOGenBalanceChanged(daoAddress, newGenBalance);
+      }
+    })
   }
 
   public componentWillUnmount() {
@@ -158,6 +191,10 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (this.executeProposalEventWatcher) {
       this.executeProposalEventWatcher.stopWatching();
+    }
+
+    if (this.balanceWatcher) {
+      this.balanceWatcher.stopWatching();
     }
   }
 
