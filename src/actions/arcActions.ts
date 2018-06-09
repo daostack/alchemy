@@ -568,7 +568,23 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
       const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
 
-      const submitProposalTransaction: any = await Util.performAction(
+      const descriptionHash = Arc.Utils.SHA3(description);
+      const submittedTime = Math.round((new Date()).getTime() / 1000);
+
+      // Save the proposal title, description and submitted time on the server
+      try {
+        const response = await axios.post(process.env.API_URL + "/api/proposals", {
+          daoAvatarAddress,
+          descriptionHash,
+          description,
+          submittedAt: submittedTime,
+          title,
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      const submitProposalTransaction: any = Util.performAction(
         'txReceipts.ContributionReward.proposeContributionReward',
         contributionRewardInstance.proposeContributionReward.bind(contributionRewardInstance),
         {
@@ -593,75 +609,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
           } as CreateProposalAction)
       );
 
-      // TODO: error checking
-
-      const proposalId = submitProposalTransaction.proposalId;
-
-      // Cast a Yes vote as the owner of the proposal?
-      //const voteTransaction = await votingMachineInstance.vote({ proposalId: proposalId, vote: VoteOptions.Yes});
-
-      const descriptionHash = submitProposalTransaction.getValueFromTx("_contributionDescription");
-      const submittedTime = Math.round((new Date()).getTime() / 1000);
-
-      // Save the proposal title, description and submitted time on the server
-      try {
-        const response = await axios.post(process.env.API_URL + "/api/proposals", {
-          arcId: proposalId,
-          daoAvatarAddress,
-          descriptionHash,
-          description,
-          submittedAt: submittedTime,
-          title,
-        });
-      } catch (e) {
-        console.error(e);
-      }
-
-      const proposal = {
-        beneficiaryAddress,
-        boostedTime: 0,
-        boostedVotePeriodLimit: Number(votingMachineParams[2]),
-        preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
-        contributionDescriptionHash: descriptionHash,
-        description,
-        daoAvatarAddress,
-        ethReward,
-        executionTime: 0,
-        externalToken: "0",
-        externalTokenReward: 0,
-        nativeTokenReward,
-        numberOfPeriods: 1,
-        periodLength: 1,
-        proposalId,
-        proposer: ethAccountAddress,
-        reputationChange: reputationReward,
-        stakesNo: 0,
-        stakesYes: 0,
-        state: ProposalStates.PreBoosted, // TODO: update if we do vote
-        submittedTime,
-        title,
-        totalStakes: 0,
-        totalVotes: 0,
-        totalVoters: 0,
-        transactionState: TransactionStates.Unconfirmed,
-        votesYes: 0,
-        votesNo: 0,
-        winningVote: 0,
-        threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: daoAvatarAddress, proposalId})).toNumber()
-      } as IProposalState;
-
-      const payload = normalize(proposal, schemas.proposalSchema);
-      (payload as any).daoAvatarAddress = daoAvatarAddress;
-
-      dispatch({
-        type: arcConstants.ARC_CREATE_PROPOSAL,
-        sequence: AsyncActionSequence.Success,
-        operation: {
-          message: `Proposal submitted!`,
-        },
-        meta,
-        payload
-      } as CreateProposalAction);
       dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
       console.error(err);
@@ -674,7 +621,104 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         meta,
       } as CreateProposalAction)
     }
-  };
+  }
+}
+
+// TODO: lots of duplicate code from getProposal here, could reuse?
+export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEventResult) {
+  return async (dispatch: any, getState: () => IRootState) => {
+    const proposalId = eventResult._proposalId;
+    const avatarAddress = eventResult._avatar;
+    const dao = await Arc.DAO.at(eventResult._avatar);
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+    const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
+    const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
+    const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
+
+    // Look for title and description from the server by the description hash
+    let response, serverProposal;
+    let description = "";
+    let title = "[no title]";
+    try {
+      // First see if this proposalId is already stored in the database, and if so load from there (TODO: no need to because will already be in the UI?)
+      response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '", "arcId":"' + proposalId + '"}}');
+      if (response.data.length > 0) {
+        serverProposal = response.data[0];
+        description = serverProposal.description;
+        title = serverProposal.title;
+      } else {
+        // Look for proposal object that doesn't have the arcId from the confirmed proposal yet
+        response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"arcId":null, "daoAvatarAddress":"' + avatarAddress + '", "descriptionhash":"' + eventResult._contributionDescription + '"}}');
+        if (response.data.length > 0) {
+          const serverProposal = response.data[0];
+          description = serverProposal.description;
+          title = serverProposal.title;
+
+          // Update the database with the proposalId
+          response = await axios.patch(process.env.API_URL + '/api/proposals/' + serverProposal.id, {
+            arcId: proposalId,
+            daoAvatarAddress: avatarAddress,
+            descriptionHash: eventResult._contributionDescription,
+            description,
+            submittedAt: Number(proposalDetails[6]),
+            title
+          });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    const proposal = {
+      beneficiaryAddress: eventResult._beneficiary,
+      boostedTime: 0,
+      boostedVotePeriodLimit: Number(votingMachineParams[2]),
+      preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
+      contributionDescriptionHash: eventResult._contributionDescription,
+      description,
+      daoAvatarAddress: avatarAddress,
+      ethReward: Util.fromWei(eventResult._rewards[1]).toNumber(),
+      executionTime: 0,
+      externalToken: "0",
+      externalTokenReward: Util.fromWei(eventResult._rewards[2]).toNumber(),
+      nativeTokenReward: Util.fromWei(eventResult._rewards[0]).toNumber(),
+      numberOfPeriods: 1,
+      periodLength: 1,
+      proposalId,
+      proposer: proposalDetails[10],
+      reputationChange: Util.fromWei(eventResult._reputationChange).toNumber(),
+      stakesNo: 0,
+      stakesYes: 0,
+      state: ProposalStates.PreBoosted,
+      submittedTime: Number(proposalDetails[6]),
+      title,
+      totalStakes: 0,
+      totalVotes: 0,
+      totalVoters: 0,
+      transactionState: TransactionStates.Confirmed,
+      votesYes: 0,
+      votesNo: 0,
+      winningVote: 0,
+      threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: avatarAddress, proposalId})).toNumber()
+    } as IProposalState;
+
+    const payload = normalize(proposal, schemas.proposalSchema);
+    (payload as any).daoAvatarAddress = avatarAddress;
+
+    const meta = {
+      avatarAddress
+    };
+
+    dispatch({
+      type: arcConstants.ARC_CREATE_PROPOSAL,
+      sequence: AsyncActionSequence.Success,
+      operation: {
+        message: `Proposal successfully created!`,
+      },
+      meta,
+      payload
+    } as CreateProposalAction);
+  }
 }
 
 export type VoteAction = IAsyncAction<'ARC_VOTE', {
@@ -859,13 +903,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
       const minimumStakingFee = votingMachineParam[5]; // 5 is the index of minimumStakingFee in the Parameters struct.
 
-      const StandardToken = await Arc.Utils.requireContract("StandardToken");
-      const stakingToken = await StandardToken.at(await votingMachineInstance.contract.stakingToken());
-      const balance = await stakingToken.balanceOf(currentAccountAddress);
-
       const amount = new BigNumber(Util.toWei(stake));
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
-      if (amount.gt(balance)) { throw new Error(`Staked more than than the balance: ${Util.fromWei(balance).toNumber()}!`); }
 
       await Util.performAction(
         'txReceipts.GenesisProtocol.stake',
