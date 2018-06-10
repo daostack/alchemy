@@ -926,6 +926,16 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
               totalSteps,
             },
             meta
+          } as StakeAction),
+        (txInfo: any) =>
+          dispatch({
+            type: arcConstants.ARC_STAKE,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: `Staking on "${proposal.title}" ...`,
+              totalSteps: txInfo.txCount,
+            },
+            meta
           } as StakeAction)
       );
     } catch (err) {

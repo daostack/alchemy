@@ -42,7 +42,7 @@ export const operationsReducer =
         const defaults: IOperation = {
           status: action.sequence == AsyncActionSequence.Pending ? OperationsStatus.Pending : OperationsStatus.Failure,
           message: operationsConfig.message || `Operation #${hash.substr(0, 4)}`,
-          step: 0,
+          step: -1,
           totalSteps: operationsConfig.totalSteps,
           timestamp: +moment() // TODO: this makes the reducer impure. figure out a better way.
         }
