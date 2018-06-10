@@ -584,7 +584,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         console.error(e);
       }
 
-      const submitProposalTransaction: any = Util.performAction(
+      const submitProposalTransaction: any = await Util.performAction(
         'txReceipts.ContributionReward.proposeContributionReward',
         contributionRewardInstance.proposeContributionReward.bind(contributionRewardInstance),
         {
