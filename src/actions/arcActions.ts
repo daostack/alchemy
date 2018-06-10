@@ -446,9 +446,9 @@ export type CreateDAOAction = IAsyncAction<'ARC_CREATE_DAO', {}, any>;
 export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: any): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     try {
-      let founders: Arc.FounderConfig[] = [], member: IAccountState,
-          membersByAccount: { [key: string]: IAccountState } = {},
-          totalReputation = 0, totalTokens = 0;
+      let founders: Arc.FounderConfig[] = [], member: IAccountState;
+      let membersByAccount: { [key: string]: IAccountState } = {};
+      let totalReputation = 0, totalTokens = 0;
 
       members.sort((a: any, b: any) => {
         b.reputation - a.reputation;
@@ -494,6 +494,15 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
             operation: {
               message: 'Creating new DAO...',
               totalSteps
+            }
+          } as CreateDAOAction),
+        (txInfo: any) =>
+          dispatch({
+            type: arcConstants.ARC_CREATE_DAO,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: 'Creating new DAO...',
+              totalSteps: txInfo.txCount
             }
           } as CreateDAOAction)
       );
@@ -597,7 +606,8 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
           periodLength: 1,
           reputationChange: Util.toWei(reputationReward),
         },
-        (totalSteps: number) =>
+        // Kickoff event
+        (totalSteps: number) => {
           dispatch({
             type: arcConstants.ARC_CREATE_PROPOSAL,
             sequence: AsyncActionSequence.Pending,
@@ -606,10 +616,12 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
               totalSteps,
             },
             meta,
-          } as CreateProposalAction)
-      );
+          } as CreateProposalAction);
 
-      dispatch(push("/dao/" + daoAvatarAddress));
+          // Go back to home page while action create proposal operation gets carried out
+          dispatch(push("/dao/" + daoAvatarAddress));
+        }
+      );
     } catch (err) {
       console.error(err);
       dispatch({
@@ -921,6 +933,16 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
             operation: {
               message: `Staking on "${proposal.title}" ...`,
               totalSteps,
+            },
+            meta
+          } as StakeAction),
+        (txInfo: any) =>
+          dispatch({
+            type: arcConstants.ARC_STAKE,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: `Staking on "${proposal.title}" ...`,
+              totalSteps: txInfo.txCount,
             },
             meta
           } as StakeAction)
