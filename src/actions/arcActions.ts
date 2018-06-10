@@ -446,9 +446,9 @@ export type CreateDAOAction = IAsyncAction<'ARC_CREATE_DAO', {}, any>;
 export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: any): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     try {
-      let founders: Arc.FounderConfig[] = [], member: IAccountState,
-          membersByAccount: { [key: string]: IAccountState } = {},
-          totalReputation = 0, totalTokens = 0;
+      let founders: Arc.FounderConfig[] = [], member: IAccountState;
+      let membersByAccount: { [key: string]: IAccountState } = {};
+      let totalReputation = 0, totalTokens = 0;
 
       members.sort((a: any, b: any) => {
         b.reputation - a.reputation;
@@ -494,6 +494,15 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
             operation: {
               message: 'Creating new DAO...',
               totalSteps
+            }
+          } as CreateDAOAction),
+        (txInfo: any) =>
+          dispatch({
+            type: arcConstants.ARC_CREATE_DAO,
+            sequence: AsyncActionSequence.Pending,
+            operation: {
+              message: 'Creating new DAO...',
+              totalSteps: txInfo.txCount
             }
           } as CreateDAOAction)
       );
