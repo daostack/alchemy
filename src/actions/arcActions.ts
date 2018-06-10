@@ -597,7 +597,8 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
           periodLength: 1,
           reputationChange: Util.toWei(reputationReward),
         },
-        (totalSteps: number) =>
+        // Kickoff event
+        (totalSteps: number) => {
           dispatch({
             type: arcConstants.ARC_CREATE_PROPOSAL,
             sequence: AsyncActionSequence.Pending,
@@ -606,10 +607,12 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
               totalSteps,
             },
             meta,
-          } as CreateProposalAction)
-      );
+          } as CreateProposalAction);
 
-      dispatch(push("/dao/" + daoAvatarAddress));
+          // Go back to home page while action create proposal operation gets carried out
+          dispatch(push("/dao/" + daoAvatarAddress));
+        }
+      );
     } catch (err) {
       console.error(err);
       dispatch({
