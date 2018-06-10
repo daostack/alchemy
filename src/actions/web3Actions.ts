@@ -8,6 +8,7 @@ import { ActionTypes } from "constants/web3Constants";
 import Util from "lib/util";
 import { IWeb3State } from "reducers/web3Reducer";
 import { IAsyncAction, AsyncActionSequence } from "./async";
+import { IRootState } from "reducers";
 
 export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, IWeb3State>;
 
@@ -112,19 +113,25 @@ export function changeAccount(accountAddress: string) {
 }
 
 export function onEthBalanceChanged(balance: Number) {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
-    dispatch({
-      type: ActionTypes.WEB3_ON_ETH_BALANCE_CHANGE,
-      payload: balance
-    });
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const ethBalance = getState().web3.ethAccountBalance;
+    if (ethBalance !== balance) {
+      dispatch({
+        type: ActionTypes.WEB3_ON_ETH_BALANCE_CHANGE,
+        payload: balance
+      });
+    }
   };
 }
 
 export function onGenBalanceChanged(balance: Number) {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
-    dispatch({
-      type: ActionTypes.WEB3_ON_GEN_BALANCE_CHANGE,
-      payload: balance
-    });
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const genBalance = getState().web3.currentAccountGenBalance;
+    if (genBalance !== balance) {
+      dispatch({
+        type: ActionTypes.WEB3_ON_GEN_BALANCE_CHANGE,
+        payload: balance
+      });
+    }
   };
 }
