@@ -60,24 +60,110 @@ body {
   width: 100%;
   position: relative;
   vertical-align: middle;
-  background-image: linear-gradient(-180deg, rgba(12,0,51,0.00) 0%, rgba(12,0,51,0.11) 97%);
-  height: 60px;
+  background-color: rgba(68, 68, 68, 1.000);
+  height: 50px;
+  z-index: 10000;
+  color: rgba(255,255,255,1);
+
+  .logoContainer {
+    margin: 0 auto;
+    width: 230px;
+  }
+
+  .menu {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    transition: all .25s ease;
+
+    img {
+      position: absolute;
+      z-index: 100;
+      left: 15px;
+      top: 17px;
+      opacity: 0.7;
+      transition: all .25s ease;
+    }
+
+    .menuWrapper {
+      top: 0;
+      left: 0;
+      transition: all .25s ease;
+      opacity: 0;
+      overflow: hidden;
+
+      .backgroundBlock {
+        top: 0;
+        left: 0;
+        width: 55px;
+        background-color: rgba(42, 42, 42, 1.000);
+        height: 50px;
+      }
+
+      ul {
+        position: absolute;
+        top: 50px;
+        width: 200px;
+        margin: 0;
+        transition: all .25s ease;
+        left: -200px;
+        padding: 0;
+
+        li {
+          list-style: none;
+          margin: 0;
+
+          a {
+            color: rgba(255,255,255,1);
+            text-decoration: none;
+            padding: 15px;
+            width: 170px;
+            display: block;
+            background-color: rgba(42, 42, 42, 1.000);
+          }
+
+          a:hover {
+            background-color: black;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  .menu:hover {
+    cursor: pointer;
+
+    img {
+      opacity: 1;
+    }
+
+    .menuWrapper {
+      opacity: 1;
+      height: 355px;
+      overflow: visible;
+    }
+
+    ul {
+      left: 0;
+    }
+  }
 
   .alchemyLogo {
     float: left;
     padding: 9px;
 
     img {
-      height: 40px;
+      height: 30px;
     }
   }
 
   .version {
-    color: rgba(0,0,0,.8);
-    line-height: 60px;
+    color: rgba(255, 255, 255, .8);
+    line-height: 50px;
 
     span {
-      color: rgba(0,0,0,.3);
+      color: rgba(255, 255, 255, .3);
     }
   }
 
@@ -96,17 +182,16 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    height: 60px;
+    height: 50px;
 
     .holdings {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 50px;
       width: 200px;
-      right: 50px;
-      text-align: right;
+      right: 0px;
       font-size: $small;
       z-index: 100;
+      background-color: rgba(42, 42, 42, 1.000);
 
 
       .holdingsLabel {
@@ -137,7 +222,12 @@ body {
       transform: translateY(-50%);
       padding: 0;
       margin: 0;
-      height: 32px;
+      height: 24px;
+      
+      img {
+        width: 24px;
+        transform: rotate(45deg);
+      }
     }
   }
 

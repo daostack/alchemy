@@ -140,8 +140,25 @@ class HeaderContainer extends React.Component<IProps, null> {
           <a className={css.reportBugs} href="mailto:bugs@daostack.io">REPORT BUGS</a>
         </div>
         <nav className={css.header}>
-          <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo.svg"/></Link>
-          <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> <span> v.{VERSION}</span></span>
+          <div className={css.menu}>
+            <img src="/assets/images/Icon/Menu.svg"/>
+            <div className={css.menuWrapper}>
+              <div className={css.backgroundBlock}></div>
+              <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">DAOs</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Alchemy 101</a></li>
+                <li><a href="#">About DAOstack</a></li>
+                <li><a href="#">About the Genesis DAO</a></li>
+                <li><a href="#">Get involved</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className={css.logoContainer}>
+            <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo-white.svg"/></Link>
+            <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> <span> v.{VERSION}</span></span>
+          </div>
           <div className={css.accountInfo}>
             <div className={css.holdings}>
               <div>
@@ -164,9 +181,9 @@ class HeaderContainer extends React.Component<IProps, null> {
                 }
               </div>
             </div>
-            <button className={css.profileLink}>
+            <div className={css.profileLink}>
               <AccountImage accountAddress={web3State.ethAccountAddress} />
-            </button>
+            </div>
           </div>
         </nav>
       </div>

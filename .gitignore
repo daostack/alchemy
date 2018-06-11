@@ -4,7 +4,7 @@ coverage/
 kovan_pass.txt
 ropsten_pass.txt
 PRIVATE_README.md
-
+.DS_Store
 *.log*
 *sublime*
 yarn*
