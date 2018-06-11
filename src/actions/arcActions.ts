@@ -246,7 +246,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
 
     let serverProposal: any = false;
     try {
-      let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '", "arcId":"' + proposalId + '"}}');
+      let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
       if (response.data.length > 0) {
         serverProposal = response.data[0];
       }
@@ -285,6 +285,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
 // TODO: put in a lib/util class somewhere?
 async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string): Promise<IProposalState> {
   const proposalId = contributionProposal.proposalId;
+  let descriptionHash = contributionProposal.contributionDescriptionHash.toString(); //XXX: this is sometimes being returned as a BigNumber which is weird
 
   const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
   const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
@@ -306,17 +307,17 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     title = serverProposal.title;
   } else {
     // If we didn't find the proposal by proposalId, see if there is one that matches by description hash that doesnt yet have a proposalId added to it
-    let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"arcId":null, "daoAvatarAddress":"' + dao.avatar + '", "descriptionhash":"' + contributionProposal.contributionDescriptionHash + '"}}');
+    let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + dao.avatar.address + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
     if (response.data.length > 0) {
       serverProposal = response.data[0];
       description = serverProposal.description;
       title = serverProposal.title;
 
       // If we found one, then update the database with the proposalId
-      response = await axios.patch(process.env.API_URL + '/api/proposals/' + proposalId, {
+      response = await axios.patch(process.env.API_URL + '/api/proposals/' + serverProposal.id, {
         arcId: proposalId,
-        daoAvatarAddress: dao.avatar,
-        descriptionHash: contributionProposal.contributionDescriptionHash,
+        daoAvatarAddress: dao.avatar.address,
+        descriptionHash: descriptionHash,
         description,
         submittedAt: Number(proposalDetails[6]),
         title
@@ -664,7 +665,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     let serverProposal: any = false;
     try {
       // See if this proposalId is already stored in the database, and if so load title and description data from there
-      const response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '", "arcId":"' + proposalId + '"}}');
+      const response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
       if (response.data.length > 0) {
         serverProposal = response.data[0];
       }
