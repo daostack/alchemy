@@ -203,17 +203,20 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     if (dao) {
       return(
-        <div className={css.wrapper}>
-          <DaoHeader dao={dao} />
-          <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
-
-          <Switch>
-            <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
-            <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
-            <Route exact path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
-            <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
-            <Route path="/dao/:daoAddress" component={DaoProposalsContainer} />
-          </Switch>
+        <div className={css.outer}>
+          <div className={css.top}>
+            <DaoHeader dao={dao} />
+            <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
+          </div>
+          <div className={css.wrapper}>
+            <Switch>
+              <Route exact path="/dao/:daoAddress/history" component={DaoHistoryContainer} />
+              <Route exact path="/dao/:daoAddress/members" component={DaoMembersContainer} />
+              <Route exact path="/dao/:daoAddress/redemptions" component={DaoRedemptionsContainer} />
+              <Route exact path="/dao/:daoAddress/proposal/:proposalId" component={ViewProposalContainer} />
+              <Route path="/dao/:daoAddress" component={DaoProposalsContainer} />
+            </Switch>
+          </div>
         </div>
       );
     } else {

@@ -152,28 +152,44 @@ class HeaderContainer extends React.Component<IProps, null> {
           </div>
           <div className={css.logoContainer}>
             <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo-white.svg"/></Link>
-            <span className={css.version}><b>Alchemy {Util.networkName(web3State.networkId)}</b> <span> v.{VERSION}</span></span>
+            <span className={css.version}><em>Alchemy {Util.networkName(web3State.networkId)}</em> <span> v.{VERSION}</span></span>
           </div>
           <div className={css.accountInfo}>
             <div className={css.holdings}>
-              <div>
-                <span className={css.holdingsLabel}>Current account: <b style={{cursor: 'pointer'}} onClick={this.copyAddress}>{web3State.ethAccountAddress.slice(0, 8)}...(copy)</b></span>
-                <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
-                  {accountOptionNodes}
-                </select>
+              <div className={css.pointer}></div>
+              <div className={css.walletDetails}>
+                <div className={css.holdingsLabel}>Your wallet</div>
+                <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
+                  <span>{web3State.ethAccountAddress.slice(0, 40)}</span>
+                  <img src="/assets/images/Icon/copy-white.svg"/>
+                  <div className={css.fade}></div>
+                </div>
               </div>
-              <div>
-                <span className={css.holdingsLabel}>Wallet: </span>
-                <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />&nbsp;&amp;&nbsp;
-                <AccountBalance tokenSymbol="GEN" balance={web3State.currentAccountGenBalance} accountAddress={web3State.ethAccountAddress} />
+              <div className={css.balances}>
+                <div className={css.userBalance}>
+                  <div>
+                    <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />
+                  </div>
+                  <div>
+                    <AccountBalance tokenSymbol="GEN" balance={web3State.currentAccountGenBalance} accountAddress={web3State.ethAccountAddress} />
+                  </div>
+                </div>
                 { dao
-                  ? <div>
+                  ? <div className={css.daoBalance}>
+                      <h3>Genesis Alpha</h3>
                       <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />
-                      &nbsp; | &nbsp;
+                      <label>NATIVE TOKEN</label>
                       <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={member.reputation}/>
+                      <label>REPUTATION</label>
                     </div>
                   : ""
                 }
+              </div>
+              <div className={css.testAccounts}>
+                <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
+                  {accountOptionNodes}
+                </select>
+                <button className={css.selectTestAccount}>Switch accounts</button>
               </div>
             </div>
             <div className={css.profileLink}>
