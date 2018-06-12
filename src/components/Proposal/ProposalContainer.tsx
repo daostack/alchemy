@@ -112,7 +112,12 @@ class ProposalContainer extends React.Component<IProps, null> {
           {currentAccountRedemptions.voterReputation ? <li>Voter reward: <ReputationView reputation={currentAccountRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
           {currentAccountRedemptions.voterTokens ? <li>Voter reward: {currentAccountRedemptions.voterTokens} GEN</li> : ""}
           {currentAccountRedemptions.stakerTokens ? <li>Prediction reward: {currentAccountRedemptions.stakerTokens} GEN</li> : ""}
-          {currentAccountRedemptions.stakerBountyTokens ? <li>Prediction bounty: {currentAccountRedemptions.stakerBountyTokens} GEN</li> : ""}
+          {currentAccountRedemptions.stakerBountyTokens
+            ? <li>
+                Prediction bounty: {currentAccountRedemptions.stakerBountyTokens} GEN
+                {dao.genCount < currentAccountRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
+              </li>
+            : ""}
           {currentAccountRedemptions.stakerReputation ? <li>Prediction reward: <ReputationView reputation={currentAccountRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
         </ul>;
       }

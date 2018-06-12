@@ -1065,7 +1065,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         eventWatcher.stopWatching()
       }
 
-      if (redemption.stakerBountyTokens) {
+      if (redemption.stakerBountyTokens && dao.genCount >= redemption.stakerBountyTokens) {
         const redeemDaoBountyTx = await votingMachineInstance.redeemDaoBounty({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
       }
 
