@@ -285,7 +285,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
 // TODO: put in a lib/util class somewhere?
 async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string): Promise<IProposalState> {
   const proposalId = contributionProposal.proposalId;
-  let descriptionHash = contributionProposal.contributionDescriptionHash.toString(); //XXX: this is sometimes being returned as a BigNumber which is weird
+  const descriptionHash = contributionProposal.contributionDescriptionHash;
 
   const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
   const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
