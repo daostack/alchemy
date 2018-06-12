@@ -317,7 +317,7 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
       response = await axios.patch(process.env.API_URL + '/api/proposals/' + serverProposal.id, {
         arcId: proposalId,
         daoAvatarAddress: dao.avatar.address,
-        descriptionHash: descriptionHash,
+        descriptionHash,
         description,
         submittedAt: Number(proposalDetails[6]),
         title
