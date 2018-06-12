@@ -190,7 +190,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             isSubmitting,
             isValid,
           }) =>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <label htmlFor="titleInput">
                 Title (120 characters)
                 <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
@@ -254,6 +254,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   type="number"
                   className={touched.reputationReward && errors.reputationReward ? css.error : null}
                   min={0}
+                  step={0.1}
                 />
                 {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
                 <label htmlFor="ethRewardInput">ETH reward: </label>
@@ -264,6 +265,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   type="number"
                   className={touched.ethReward && errors.ethReward ? css.error : null}
                   min={0}
+                  step={0.1}
                 />
                 {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
 
