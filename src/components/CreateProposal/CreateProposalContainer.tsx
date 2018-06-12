@@ -159,7 +159,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
               errors.beneficiaryAddress = 'Invalid address';
             }
 
-            if (!/^(ftp|http|https):\/\/[^ "]+$/.test(description)) {
+            const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
+            if (!pattern.test(description)) {
               errors.description = 'Invalid URL';
             }
 
