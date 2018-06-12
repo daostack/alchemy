@@ -8,7 +8,7 @@ import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
+import { IDaoState, IProposalState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as schemas from "../../schemas";
 
@@ -108,6 +108,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
+    const proposalDescriptions = dao.proposals.map((proposal) => (proposal as IProposalState).description);
+
     return(
       dao ? <div className={css.createProposalWrapper}>
         <h2>
@@ -153,6 +155,10 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
             if (title.length > 120) {
               errors.title = 'Title is too long (max 120 characters)';
+            }
+
+            if (proposalDescriptions.indexOf(description) !== -1) {
+              errors.description = 'Descriptions must be unique';
             }
 
             if (!this.web3.isAddress(beneficiaryAddress)) {
