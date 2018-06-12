@@ -406,11 +406,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
 
   const proposalId = proposal.proposalId;
 
-  const avatarStakingTokenBalance = Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance).toNumber();
-
-  const bounty = Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress })).toNumber()
-
-  const stakerBountyTokens = bounty <= avatarStakingTokenBalance ? bounty : 0;
+  const stakerBountyTokens = Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress })).toNumber();
 
   const redemptions = {
     accountAddress,
@@ -1007,6 +1003,7 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const redemption = getState().arc.daos[daoAvatarAddress].members[accountAddress].redemptions[proposal.proposalId];
+    const dao = getState().arc.daos[daoAvatarAddress];
     const web3: Web3 = await Arc.Utils.getWeb3();
 
     const meta = {
@@ -1040,7 +1037,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         eventWatcher.stopWatching()
       }
 
-      if (redemption.stakerBountyTokens) {
+      if (redemption.stakerBountyTokens && dao.genCount >= redemption.stakerBountyTokens) {
         const redeemDaoBountyTx = await votingMachineInstance.redeemDaoBounty({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
       }
 
@@ -1051,7 +1048,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         const rewardRedeemTransaction = await contributionRewardInstance.redeemContributionReward({
           proposalId: proposal.proposalId,
           avatar: daoAvatarAddress,
-          ethers: true,
+          ethers: dao.ethCount >= redemption.beneficiaryEth ? true : false,
           //externalTokens: true,
           nativeTokens: true,
           reputation: true,
