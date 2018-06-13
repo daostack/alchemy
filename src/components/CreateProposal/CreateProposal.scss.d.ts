@@ -4,6 +4,7 @@ export const exitProposalCreation: string;
 export const infoTooltip: string;
 export const error: string;
 export const errorMessage: string;
+export const someReward: string;
 export const addTransfer: string;
 export const recommendedTemplate: string;
 export const transactionList: string;
