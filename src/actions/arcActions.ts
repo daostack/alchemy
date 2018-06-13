@@ -244,9 +244,9 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address, proposalId });
     const contributionProposal = proposals[0];
 
-    let serverProposal = false;
+    let serverProposal: any = false;
     try {
-      const response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '", "arcId":"' + proposalId + '"}}');
+      let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
       if (response.data.length > 0) {
         serverProposal = response.data[0];
       }
@@ -283,8 +283,9 @@ export function getProposal(avatarAddress: string, proposalId: string) {
 
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
 // TODO: put in a lib/util class somewhere?
-async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionProposal: Arc.ContributionProposal, dbProposal: any, currentAccountAddress: string) {
+async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string): Promise<IProposalState> {
   const proposalId = contributionProposal.proposalId;
+  const descriptionHash = contributionProposal.contributionDescriptionHash;
 
   const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
   const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
@@ -298,13 +299,30 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
   const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
   const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
 
-  // Title and description from the server
-  // Default to showing the description hash if we don't have better description on the server
-  let description = contributionProposal.contributionDescriptionHash;
+  // Use title and description from the server
+  let description = "";
   let title = "[no title]";
-  if (dbProposal) {
-    description = dbProposal.description;
-    title = dbProposal.title;
+  if (serverProposal) {
+    description = serverProposal.description;
+    title = serverProposal.title;
+  } else {
+    // If we didn't find the proposal by proposalId, see if there is one that matches by description hash that doesnt yet have a proposalId added to it
+    let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + dao.avatar.address + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
+    if (response.data.length > 0) {
+      serverProposal = response.data[0];
+      description = serverProposal.description;
+      title = serverProposal.title;
+
+      // If we found one, then update the database with the proposalId
+      response = await axios.patch(process.env.API_URL + '/api/proposals/' + serverProposal.id, {
+        arcId: proposalId,
+        daoAvatarAddress: dao.avatar.address,
+        descriptionHash,
+        description,
+        submittedAt: Number(proposalDetails[6]),
+        title
+      });
+    }
   }
 
   const proposal: IProposalState = {...contributionProposal, ...{
@@ -388,11 +406,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
 
   const proposalId = proposal.proposalId;
 
-  const avatarStakingTokenBalance = Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance).toNumber();
-
-  const bounty = Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress })).toNumber()
-
-  const stakerBountyTokens = bounty <= avatarStakingTokenBalance ? bounty : 0;
+  const stakerBountyTokens = Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress })).toNumber();
 
   const redemptions = {
     accountAddress,
@@ -636,83 +650,41 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
   }
 }
 
-// TODO: lots of duplicate code from getProposal here, could reuse?
 export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEventResult) {
   return async (dispatch: any, getState: () => IRootState) => {
     const proposalId = eventResult._proposalId;
     const avatarAddress = eventResult._avatar;
     const dao = await Arc.DAO.at(eventResult._avatar);
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-    const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
-    const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
-    const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
-    // Look for title and description from the server by the description hash
-    let response, serverProposal;
-    let description = "";
-    let title = "[no title]";
+    let serverProposal: any = false;
     try {
-      // First see if this proposalId is already stored in the database, and if so load from there (TODO: no need to because will already be in the UI?)
-      response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '", "arcId":"' + proposalId + '"}}');
+      // See if this proposalId is already stored in the database, and if so load title and description data from there
+      const response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
       if (response.data.length > 0) {
         serverProposal = response.data[0];
-        description = serverProposal.description;
-        title = serverProposal.title;
-      } else {
-        // Look for proposal object that doesn't have the arcId from the confirmed proposal yet
-        response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"arcId":null, "daoAvatarAddress":"' + avatarAddress + '", "descriptionhash":"' + eventResult._contributionDescription + '"}}');
-        if (response.data.length > 0) {
-          const serverProposal = response.data[0];
-          description = serverProposal.description;
-          title = serverProposal.title;
-
-          // Update the database with the proposalId
-          response = await axios.patch(process.env.API_URL + '/api/proposals/' + serverProposal.id, {
-            arcId: proposalId,
-            daoAvatarAddress: avatarAddress,
-            descriptionHash: eventResult._contributionDescription,
-            description,
-            submittedAt: Number(proposalDetails[6]),
-            title
-          });
-        }
       }
     } catch (e) {
       console.error(e);
     }
 
-    const proposal = {
+    // Translate the event results into a ContributionProposal to send to getProposalDetails
+    const contributionProposal: Arc.ContributionProposal = {
+      proposalId: eventResult._proposalId,
       beneficiaryAddress: eventResult._beneficiary,
-      boostedTime: 0,
-      boostedVotePeriodLimit: Number(votingMachineParams[2]),
-      preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
       contributionDescriptionHash: eventResult._contributionDescription,
-      description,
-      daoAvatarAddress: avatarAddress,
-      ethReward: Util.fromWei(eventResult._rewards[1]).toNumber(),
+      ethReward: eventResult._rewards[1],
       executionTime: 0,
       externalToken: "0",
-      externalTokenReward: Util.fromWei(eventResult._rewards[2]).toNumber(),
-      nativeTokenReward: Util.fromWei(eventResult._rewards[0]).toNumber(),
+      externalTokenReward: eventResult._rewards[2],
+      nativeTokenReward: eventResult._rewards[0],
       numberOfPeriods: 1,
       periodLength: 1,
-      proposalId,
-      proposer: proposalDetails[10],
-      reputationChange: Util.fromWei(eventResult._reputationChange).toNumber(),
-      stakesNo: 0,
-      stakesYes: 0,
-      state: ProposalStates.PreBoosted,
-      submittedTime: Number(proposalDetails[6]),
-      title,
-      totalStakes: 0,
-      totalVotes: 0,
-      totalVoters: 0,
-      transactionState: TransactionStates.Confirmed,
-      votesYes: 0,
-      votesNo: 0,
-      winningVote: 0,
-      threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: avatarAddress, proposalId})).toNumber()
-    } as IProposalState;
+      reputationChange: eventResult._reputationChange
+    }
+
+    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionProposal, serverProposal, currentAccountAddress);
 
     const payload = normalize(proposal, schemas.proposalSchema);
     (payload as any).daoAvatarAddress = avatarAddress;
@@ -1031,6 +1003,7 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const redemption = getState().arc.daos[daoAvatarAddress].members[accountAddress].redemptions[proposal.proposalId];
+    const dao = getState().arc.daos[daoAvatarAddress];
     const web3: Web3 = await Arc.Utils.getWeb3();
 
     const meta = {
@@ -1064,7 +1037,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         eventWatcher.stopWatching()
       }
 
-      if (redemption.stakerBountyTokens) {
+      if (redemption.stakerBountyTokens && dao.genCount >= redemption.stakerBountyTokens) {
         const redeemDaoBountyTx = await votingMachineInstance.redeemDaoBounty({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
       }
 
@@ -1075,7 +1048,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         const rewardRedeemTransaction = await contributionRewardInstance.redeemContributionReward({
           proposalId: proposal.proposalId,
           avatar: daoAvatarAddress,
-          ethers: true,
+          ethers: dao.ethCount >= redemption.beneficiaryEth ? true : false,
           //externalTokens: true,
           nativeTokens: true,
           reputation: true,
