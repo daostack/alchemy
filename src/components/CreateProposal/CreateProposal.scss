@@ -136,18 +136,17 @@
     }
   }
   .submitProposal {
-    background-color: $accent-4;
-    border-radius: 3px;
+    border: 1px solid $accent-4;
     height: 40px;
     display: inline-block;
     line-height: 30px;
     margin: 0 auto;
-    color: $white;
-    font-weight: bold;
-    border: none;
+    color: $accent-4;
+    font-weight: normal;
     font-size: $body;
-    box-shadow: $shadow-1;
     padding: 0 15px;
+    font-family: $body-font;
+
     img {
       position: relative;
       top: 4px;
