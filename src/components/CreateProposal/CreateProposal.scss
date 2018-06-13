@@ -71,6 +71,10 @@
       &.error {
         border-bottom: 2px solid red;
       }
+      &:focus {
+        outline: none;
+        border-bottom: 2px solid rgba(46, 168, 122, 1.000);
+      }
     }
     .errorMessage {
       position: relative;

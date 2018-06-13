@@ -7,18 +7,22 @@
 .loading {
 	display: none;
 	position: absolute;
-	width: 80%;
-	height: 80%;
-	top: 10%;
-	left: 10%;
+	width: 70%;
+	height: 70%;
+	top: 15%;
+	left: 15%;
 	text-align: center;
 	z-index: 100000;
-	box-shadow: $shadow-3;
+	box-shadow: $shadow-2;
 	border-radius: 3px;
 	background-color: $white;
 
 	img {
-		height: 68px;
+	    height: 35px;
+	    top: 50%;
+	    transform: translateY(-50%);
+	    position: absolute;
+	    left: 0;
 	}
 }
 
@@ -62,6 +66,7 @@
 
 .disabled {
 	opacity: 0.5;
+	pointer-events: none;
 }
 .disabled button {
 	cursor: not-allowed !important;
@@ -78,9 +83,11 @@
 	margin-left: 9px;
 	text-align: center;
 	position: relative;
+	height: 70px;
 
 	button {
-		position: relative;
+		position: absolute;
+		left: 0;
 		border: none;
 		width: 24px;
 		height: 24px;
@@ -98,12 +105,20 @@
 
 	}
 
-	button:nth-child(1) {
-		top: 0px;
+	.voteUp button {
+		top: -3px;
 	}
 
-	button:nth-child(3) {
-		top: 9px;
+	.voteDown button {
+		bottom: -3px;
+	}
+
+	.voteGraphs {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		z-index: 1000;
+		transform: translateY(-50%);
 	}
 
 	.upvote, .downvote {
@@ -121,20 +136,17 @@
 	}
 
 	button:hover .upvote.upvoted, button:hover .downvote.downvoted, button.voted .upvote.upvoted, button.voted .downvote.downvoted {
-		opacity: 1;
 		cursor: pointer;
 		height: 18px;
 		top: 2px;
 		left: 2px;
-		opacity: 0.5;
+		opacity: 1;
 	}
 
 	.voteDivider {
-		width: 4px;
-		height: 4px;
+		width: 24px;
 		position: absolute;
-		left: 13px;
-		top: 14px;
+		top: 50%;
 	}
 }
 
@@ -152,12 +164,12 @@
 
 
 	.header {
-		background-image: linear-gradient(-124deg, #3DCEF9 0%, #1EA2F2 100%);
-		color: $white;
-		font-size: $small;
-		padding: 12px;
+		color: $black;
+		font-size: $body;
+		padding: 12px 12px 0 12px;
 		text-align: center;
 		border-radius: 3px 3px 0 0;
+		font-weight: bold;
 	}
 
 	.tooltipPointer {
@@ -205,7 +217,7 @@
 			.reputationThreshold {
 				font-size: $small;
 				font-weight: $bold;
-				margin-top: 30px;
+				margin-top: 15px;
 				opacity: .5;
 				text-align: center;
 				text-transform: uppercase;
@@ -270,7 +282,7 @@
 .voteBox {
 	position: relative;
 	float: left;
-	padding: 20px 0 14px 0;
+	padding: 15px 0 14px 0;
 }
 
 .voteBox.unconfirmedVote {
@@ -278,7 +290,7 @@
 }
 
 .proposalInfo {
-	left: 130px;
+	left: 50px;
 	top: 50%;
 	font-size: $body;
 	transform: translateY(-50%);
@@ -327,12 +339,22 @@
 .transferAmount {
 	font-weight: $bold;
 	color: $accent-1;
-	margin: 0 6px;
+	margin: 0 3px;
 }
 
 .transferType {
 	display: inline-block;
 	color: $black-halftone;
+
+	strong { 
+		color: $black-septone;
+
+		em {
+			color: $black-halftone;
+			font-style: normal;
+			font-weight: normal;
+		}
+	}
 }
 
 .decisionGraph .graph {
@@ -343,8 +365,7 @@
 
 .voteGraphs:hover .reputationTurnout {
 	opacity: 1;
-	left: 80px;
-	z-index: 1000000;
+	left: 40px;
 	transform: translateY(-50%) scale(1);
 }
 
@@ -355,22 +376,20 @@
 }
 
 .voteGraphs {
-	width: 67px;
-	float: left;
 	position: relative;
 
 	.voteGraph {
-		width: 20px;
+		width: 9px;
 		background-color: rgba(239, 239, 239, 1.000);
 		position: relative;
-		border-radius: 3px;
+		border-radius: 2px;
 		display: inline-block;
-		margin-left: 6px;
-		height: 56px;
+		margin-left: 3px;
+		height: 27px;
 
 		.dividing-line {
 			height: 50%;
-			border-bottom: 1px dashed $black-tenthtone;
+			border-bottom: 1px dotted $black-halftone;
 		}
 	}
 
@@ -394,7 +413,8 @@
 	position: absolute;
 	right: 0;
 	font-size: $caption;
-	background-image: linear-gradient(90deg, #EEEEEE 2%, #FCFCFC 16%, #FFFFFF 98%);	height: 100%;
+	background-color: rgba(248, 248, 248, 1.000);
+	height: 100%;
 	width: 140px;
 
 	div {
@@ -414,9 +434,9 @@
 	button {
 		font-weight: $bold;
 		background-color: transparent;
-		border-radius: 3px;
-		padding: 3px 6px 4px 6px;
+		padding: 1px 4px 2px 4px;
 		transition: all .25s ease;
+		width: 60px;
 	}
 
 	button:hover {
@@ -434,24 +454,37 @@
 
 		.passPrediction {
 			text-align: right;
-			color: $accent-1-halftone;
+			color: $black-halftone;
 
 			button {
-				border: 1px solid $accent-1-halftone;
-				color: $accent-1;
+				border: 1px solid $black-tenthtone;
+				color: $black-halftone;
+
+				strong {
+					color: $accent-1;
+				}
 			}
 		}
 
 		.failPrediction {
-			color: $accent-2-halftone;
+			color: $black-halftone;
 			text-align: right;
 
 			button {
-				color: $accent-2;
-				border: 1px solid $accent-2-halftone;
+				color: $black-halftone;
+				border: 1px solid $black-tenthtone;
+
+				strong {
+					color: $accent-2;
+				}
 			}
 		}
 	}
+}
+
+.boostedAmount {
+	display: block;
+	margin-bottom: 3px;
 }
 
 .predictions.unconfirmedPrediction {
@@ -468,10 +501,12 @@
 	font-size: $small;
 	color: $black-thirdtone;
     position: absolute;
-    width: 165px;
-    right: 50px;
-    top: 50%;
+    width: 175px;
+    right: 0;
+    text-align: right;
+    top: 25px;
     transform: translateY(-50%);
+    text-transform: uppercase;
 
 	.targetAccount {
 		top: 7px;
@@ -484,15 +519,26 @@
 	}
 }
 
-.viewProposal {
-	border: $gray-border-halftone;
-	border-radius: 3px;
+a.viewProposal {
+	color: rgba(174, 174, 174, 1.000);
 	background-color: transparent;
-	padding: 8px 6px 6px 8px;
+	padding: 5px 6px 5px 8px;
 	position: absolute;
+	font-size: $caption;
+	width: 100px;
 	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
+    bottom: 15px;
+    text-align: right;
+
+	img {
+		margin-right: 5px;
+	}
+
+	span {
+		text-decoration: underline;
+		position: relative;
+		top: -3px;
+	}
 }
 
 .redeemRewards {
@@ -524,7 +570,6 @@
 	display: none;
 	background-color: $white;
 	box-shadow: $shadow-3;
-	border-radius: 3px;
 	position: absolute;
 	top: -5px;
 	left: -5px;
@@ -546,30 +591,40 @@
 	}
 
 	.predictionAmount {
-		border: 1px solid rgba(199, 208, 212, 1.000);
-		padding: 6px 25px 6px 8px;
-		border-radius: 3px;
-		width: 90px;
-		margin: 4px auto;
-		display: block;
+		width: 55px;
+		display: inline-block;
+		border: none;
+		background-color: transparent;
+		border-bottom: 2px solid rgba(75, 75, 75, 1.000);
+		font-size: $body;
+		padding: 8px 0;
+		float: left;
+		font-family: $body-font;
+
+		&:focus {
+			outline: none;
+			border-bottom: 2px solid $accent-4;
+		}
+	}
+
+	.formGroup {
+		line-height: 24px;
+		position: relative;
+		top: auto;
+		left: auto;
+		right: auto;
+		transform: none;
+		text-align: center;
 	}
 
 	.genLabel {
-		position: absolute;
-		top: 43px;
-		right: 25px;
-	}
-
-	.cancelPrediction {
-		margin: 0 2px 0 8px;
-		border: 1px solid rgba(199, 208, 212, 1.000);
 		float: left;
-		display: inline;
-		padding: 8px 8px 6px 8px;
 	}
 
 	.placePrediction {
-		padding: 8px 10px;
+		padding: 4px;
+		width: 120px;
+		margin-top: 8px;
 		border: 1px solid $accent-1;
 		color: $accent-1;
 	}
@@ -583,6 +638,21 @@
 		text-align: center;
 		transform: none;
 	}
+}
+
+
+button.cancelPrediction {
+    display: block;
+    z-index: 1000;
+    width: 16px;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    border: none;
+
+    img {
+    	width: 12px;
+    }
 }
 
 .newPassPrediction {

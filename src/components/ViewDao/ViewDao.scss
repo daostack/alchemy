@@ -18,6 +18,14 @@
   background-color: $white;
 }
 
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+
 .loading img {
   margin: 0 auto;
   display: block;
@@ -397,19 +405,23 @@ a.navItem:hover {
     padding-top: 50px;
 
     a {
-      background-color: $accent-4;
-      border-radius: 3px;
+      border: 1px solid $accent-4;
       height: 40px;
+      background-color: $accent-4-transparent;
+      transition: all .25s ease;
       display: inline-block;
       line-height: 30px;
       margin: 0 auto;
-      color: $white;
+      color: $accent-4;
       font-weight: bold;
-      border: none;
       font-size: $body;
-      box-shadow: $shadow-1;
       padding: 7px 15px 0 15px;
       text-decoration: none;
+
+      &:hover {
+        background-color: $accent-4;
+        color: $white;
+      }
     }
   }
 }

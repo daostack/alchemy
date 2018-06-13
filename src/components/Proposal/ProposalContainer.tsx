@@ -124,7 +124,7 @@ class ProposalContainer extends React.Component<IProps, null> {
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = <span>{rewards.reduce((acc, v) => <React.Fragment>{acc} & {v}</React.Fragment>)}</span>;
+      const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>)}</strong>;
 
       const styles = {
         forBar: {
@@ -196,7 +196,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of {rewardsString}</span>
-              <span className={css.transferAmount}></span>
+              <strong className={css.transferAmount}></strong>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
               <AccountPopupContainer
@@ -220,7 +220,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </div>
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/>
+                    <img src="/assets/images/Icon/View.svg"/> View proposal
                   </a>
                 </div>
 
@@ -249,6 +249,7 @@ class ProposalContainer extends React.Component<IProps, null> {
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/>
+                    <span>View proposal</span>
                   </a>
                 </div>
 
@@ -272,7 +273,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   }
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/>
+                    <img src="/assets/images/Icon/View.svg"/> View proposal
                   </a>
                 </div>
               </div>
