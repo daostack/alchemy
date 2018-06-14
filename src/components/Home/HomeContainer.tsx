@@ -38,7 +38,8 @@ class HomeContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.homeWrapper}>
-        Welcome to Alchemy!
+        <div className={css.leftTriangle}><img src="/assets/Images/Home/LeftTriangle.svg"></div>
+        <div className={css.topTriangle}><img src="/assets/Images/Home/TopTriangle.svg"></div>
         <Link to={'/daos'}>Go to the Genesis DAO (dao list for now)</Link>
       </div>
     );
