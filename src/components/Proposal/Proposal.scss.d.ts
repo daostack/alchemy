@@ -74,3 +74,4 @@ export const newPassPrediction: string;
 export const newFailPrediction: string;
 export const viewProposalWrapper: string;
 export const singleProposal: string;
+export const preapproveWrapper: string;

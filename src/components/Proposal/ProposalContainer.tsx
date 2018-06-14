@@ -6,6 +6,7 @@ import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
+import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
@@ -21,6 +22,7 @@ interface IStateProps {
   currentAccountAddress: string;
   currentAccountGens: number;
   currentAccountRedemptions?: IRedemptionState;
+  currentAccountGenStakingAllowance: number,
   dao?: IDaoState;
   proposal?: IProposalState;
 }
@@ -32,6 +34,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountGens: state.web3.currentAccountGenBalance,
+    currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
     currentAccountRedemptions,
     dao,
     proposal,
@@ -39,12 +42,14 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
 };
 
 interface IDispatchProps {
+  approveStakingGens: typeof web3Actions.approveStakingGens;
   redeemProposal: typeof arcActions.redeemProposal;
   voteOnProposal: typeof arcActions.voteOnProposal;
   stakeProposal: typeof arcActions.stakeProposal;
 }
 
 const mapDispatchToProps = {
+  approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
   voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal,
@@ -60,7 +65,7 @@ class ProposalContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { currentAccountAddress, currentAccountGens, currentAccountRedemptions, dao, proposal, stakeProposal, voteOnProposal } = this.props;
+    const { currentAccountAddress, currentAccountGens, currentAccountRedemptions, currentAccountGenStakingAllowance, dao, proposal, approveStakingGens, stakeProposal, voteOnProposal } = this.props;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -101,14 +106,24 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       if (currentAccountRedemptions) {
         redemptionsTip = <ul>
-          {currentAccountRedemptions.beneficiaryEth ? <li>Beneficiary reward: {currentAccountRedemptions.beneficiaryEth} ETH</li> : ""}
+          {currentAccountRedemptions.beneficiaryEth
+            ? <li>
+                Beneficiary reward: {currentAccountRedemptions.beneficiaryEth} ETH
+                {dao.ethCount < currentAccountRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
+              </li>
+            : ""}
           {currentAccountRedemptions.beneficiaryReputation ? <li>Beneficiary reward: <ReputationView reputation={currentAccountRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
           {currentAccountRedemptions.proposerReputation ? <li>Proposer reward: <ReputationView reputation={currentAccountRedemptions.proposerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
           {currentAccountRedemptions.voterReputation ? <li>Voter reward: <ReputationView reputation={currentAccountRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
           {currentAccountRedemptions.voterTokens ? <li>Voter reward: {currentAccountRedemptions.voterTokens} GEN</li> : ""}
           {currentAccountRedemptions.stakerTokens ? <li>Prediction reward: {currentAccountRedemptions.stakerTokens} GEN</li> : ""}
-          {currentAccountRedemptions.stakerBountyTokens ? <li>Prediction bounty: {currentAccountRedemptions.stakerBountyTokens} GEN</li> : ""}
-          {currentAccountRedemptions.stakerReputation ? <li>Prediction reputation: <ReputationView reputation={currentAccountRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+          {currentAccountRedemptions.stakerBountyTokens
+            ? <li>
+                Prediction bounty: {currentAccountRedemptions.stakerBountyTokens} GEN
+                {dao.genCount < currentAccountRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
+              </li>
+            : ""}
+          {currentAccountRedemptions.stakerReputation ? <li>Prediction reward: <ReputationView reputation={currentAccountRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
         </ul>;
       }
 
@@ -244,8 +259,10 @@ class ProposalContainer extends React.Component<IProps, null> {
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
+                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
+                  approveStakingGens={approveStakingGens}
                   transactionState={currentAccountStakeState}
                 />
               </div>
@@ -272,8 +289,10 @@ class ProposalContainer extends React.Component<IProps, null> {
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
+                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
+                  approveStakingGens={approveStakingGens}
                   transactionState={currentAccountStakeState}
                 />
               </div>
