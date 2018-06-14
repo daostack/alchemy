@@ -143,7 +143,7 @@ export function onGenBalanceChanged(balance: Number) {
 export function onGenStakingAllowanceChanged(balance: Number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
   const genAllowance = getState().web3.currentAccountGenStakingAllowance;
-    if (genAllowance !== balance) {
+  if (genAllowance !== balance) {
       dispatch({
         type: ActionTypes.WEB3_ON_GEN_STAKING_ALLOWANCE_CHANGE,
         payload: balance
@@ -200,7 +200,6 @@ export function onApprovedStakingGens(numTokensApproved: number) {
 
     const meta = { accountAddress: currentAccountAddress };
     const payload = { numTokensApproved }
-    console.log("approved", numTokensApproved);
 
     dispatch({
       type: ActionTypes.APPROVE_STAKING_GENS,
