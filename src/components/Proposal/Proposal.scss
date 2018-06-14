@@ -7,7 +7,7 @@
 .loading {
 	display: none;
 	position: absolute;
-	width: 70%;
+	width: 80%;
 	height: 70%;
 	top: 15%;
 	left: 15%;
@@ -45,18 +45,16 @@
 }
 
 .failedProposal {
-  border-left: 4px solid $accent-2;
 
   .proposalInfo {
-  	left: 117px;
+  	left: 60px;
   }
 }
 
 .passedProposal {
-	border-left: 4px solid $accent-1;
 
 	.proposalInfo {
-	  	left: 105px;
+	  	left: 60px;
 	}
 }
 
@@ -231,19 +229,18 @@
 .graph {
 	background-color: rgba(235, 235, 235, 1.000);
 	box-shadow: inset 0 0 8px 0 rgba(0,0,0,0.10);
-	border-radius: 3px;
-	height: 10px;
+	height: 8px;
 	position: relative;
 
 	.forBar {
 		background-color: $accent-1;
-		height: 10px;
+		height: 8px;
 		border-radius: 3px 0 0 3px;
 	}
 
 	.againstBar {
 		background-color: $accent-2;
-		height: 10px;
+		height: 8px;
 		position: absolute;
 		right: 0;
 		top: 0;
@@ -251,19 +248,19 @@
 	}
 
 	.divider {
-		height: 24px;
-		width: 1px;
-		border-left: 1px dashed rgba(151, 151, 151, .5);
-		position: absolute;
-		left: 50%;
-		top: -7px;
+		height: 8px;
+	    width: 1px;
+	    border-left: 1px dotted rgba(151, 151, 151, 0.5);
+	    position: absolute;
+	    left: 50%;
+	    top: 0;
 	}
 }
 
 .decidedProposal {
 	position: relative;
-	padding: 20px 20px 20px 10px;
-	width: 80px;
+	padding: 30px 20px 30px 10px;
+	width: 40px;
 	float: left;
 
 	.result {
@@ -279,6 +276,14 @@
 	}
 }
 
+.passedBy {
+	color: $accent-1;
+}
+
+.failedBy {
+	color: $accent-2;
+}
+
 .voteBox {
 	position: relative;
 	float: left;
@@ -286,7 +291,9 @@
 }
 
 .voteBox.unconfirmedVote {
-	.loading { display: block; }
+	.loading { 
+		display: block; 
+	}
 }
 
 .proposalInfo {
@@ -295,6 +302,13 @@
 	font-size: $body;
 	transform: translateY(-50%);
 	position: absolute;
+
+	.proposalPassInfo, .proposalFailInfo {
+		font-size: $small;
+		text-transform: uppercase;
+		opacity: .7;
+		float: left;
+	}
 
 	a {
 		color: $black;
@@ -316,23 +330,24 @@
 }
 
 .passedProposal .proposalInfo h3, .failedProposal .proposalInfo h3 {
-	margin: 12px 0px 10px 0px;
+	margin: 24px 0px 10px 0px;
 }
 
 
 .decisionGraph {
-	margin-top: -4px;
+	position: relative;
+	top: -5px;
+	left: 10px;
+	float: left;
 
 	.forLabel {
 		color: $accent-1;
-		font-weight: $bold;
-		font-size: $caption;
+		font-size: $small;
 	}
 
 	.againstLabel {
-		font-size: $caption;
+		font-size: $small;
 		color: $accent-2;
-		font-weight: $bold;
 	}
 }
 
@@ -358,7 +373,7 @@
 }
 
 .decisionGraph .graph {
-	width: 200px;
+	width: 70px;
 	display: inline-block;
 	margin: 0 8px;
 }
@@ -522,7 +537,7 @@
 a.viewProposal {
 	color: rgba(174, 174, 174, 1.000);
 	background-color: transparent;
-	padding: 5px 6px 5px 8px;
+	padding: 5px 0 5px 8px;
 	position: absolute;
 	font-size: $caption;
 	width: 100px;
@@ -542,16 +557,17 @@ a.viewProposal {
 }
 
 .redeemRewards {
-	border: 1px solid $accent-1;
+	border: 1px solid $black-tenthtone;
 	color: $accent-1;
-	border-radius: 3px;
 	background-color: transparent;
-	padding: 11px 6px;
+	padding: 5px 8px;
 	position: absolute;
-	right: 50px;
-	top: 50%;
+	right: 0px;
+	top: 30px;
 	transform: translateY(-50%);
 	cursor: pointer;
+	margin-top: -2px;
+	font-weight: bold;
 }
 
 
@@ -583,7 +599,6 @@ a.viewProposal {
 		font-size: $caption;
 		text-align: center;
 		color: $black;
-		padding-bottom: 6px;
 		position: relative;
 		top: auto;
 		left: auto;
@@ -597,7 +612,8 @@ a.viewProposal {
 		background-color: transparent;
 		border-bottom: 2px solid rgba(75, 75, 75, 1.000);
 		font-size: $body;
-		padding: 8px 0;
+		padding: 9px 0 3px 0;
+		margin: 0 5px;
 		float: left;
 		font-family: $body-font;
 
@@ -615,6 +631,12 @@ a.viewProposal {
 		right: auto;
 		transform: none;
 		text-align: center;
+		padding-left: 8px;
+
+		span {
+			font-size: $body;
+			padding-top: 5px;
+		}
 	}
 
 	.genLabel {
@@ -646,8 +668,8 @@ button.cancelPrediction {
     z-index: 1000;
     width: 16px;
     position: absolute;
-    right: 5px;
-    top: 5px;
+    left: 5px;
+    top: 10px;
     border: none;
 
     img {

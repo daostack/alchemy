@@ -82,29 +82,21 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         nativeReward += redemption.voterTokens + redemption.stakerTokens + redemption.stakerBountyTokens + redemption.beneficiaryNativeToken;
         reputationReward += redemption.voterReputation + redemption.stakerReputation + redemption.beneficiaryReputation + redemption.proposerReputation;
       });
-
-      redeemAllTip =
-        <div>
-          Total rewards to redeem from {redemptions.length} proposal/s: <br/>
-          <ul>
-            {ethReward > 0 ? <li>ETH: {ethReward}</li> : ""}
-            {nativeReward > 0 ? <li>GEN: {nativeReward}</li> : ""}
-            {reputationReward > 0 ? <li><ReputationView reputation={reputationReward} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
-          </ul>
-        </div>;
     }
 
     return(
       <div>
-        {redemptions.length > 0
-          ? <Tooltip placement="left" trigger={["hover"]} overlay={redeemAllTip}>
-              <button
-                className={css.redeemAllRewardsButton}
-                onClick={this.handleClickRedeem.bind(this)}
-              >
+        {redemptions.length > 0 ?
+            <div className={css.clearfix + " " + css.redeemAllContainer}>
+              <button className={css.redeemAllRewardsButton} onClick={this.handleClickRedeem.bind(this)}>
                 Redeem All Rewards
               </button>
-            </Tooltip>
+              <div className={css.pendingRewards}>
+                Pending: {ethReward > 0 ? <strong>ETH: {ethReward} - </strong> : ""}
+                {nativeReward > 0 ? <strong>GEN: {nativeReward} - </strong> : ""}
+                {reputationReward > 0 ? <strong><ReputationView reputation={reputationReward} totalReputation={dao.reputationCount} daoName={dao.name}/> - </strong> : ""}
+              </div>
+            </div>
           : ""
         }
         <div className={css.proposalsHeader}>

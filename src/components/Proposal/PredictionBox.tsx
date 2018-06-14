@@ -99,11 +99,11 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <div className={css.newPredictionTitle}>
             Predict this will <strong>{showStakeModal == VoteOptions.Yes ? "pass" : "pass"}</strong>
           </div>
-          <div className={css.formGroup}>
+          <div className={css.formGroup + " " + css.clearfix}>
             <span className={css.genLabel}>Stake</span>
             <input type="number" min="1" ref={(input) => { this.stakeInput = input; }} className={css.predictionAmount}/>
+            <span className={css.genLabel}>GEN</span>
           </div>
-          <span className={css.genLabel}>GEN</span>
           <div className={css.clearfix}>
             <button className={css.placePrediction} onClick={this.handleClickStake.bind(this, showStakeModal)}>Place stake</button>
           </div>

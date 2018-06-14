@@ -157,32 +157,48 @@ class ProposalContainer extends React.Component<IProps, null> {
             : proposal.winningVote == VoteOptions.Yes ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
-                    <div>PASSED {passedByDecision ? "BY DECISION" : "BY TIMEOUT"}</div>
                     <div><img src="/assets/images/Icon/Passed.svg"/></div>
-                    <div>{submittedTime.format("MMM DD, YYYY")}</div>
                   </div>
               </div>
             : proposal.winningVote == VoteOptions.No ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
-                    <div>FAILED {failedByDecision ? "BY DECISION" : "BY TIMEOUT"}</div>
                     <div><img src="/assets/images/Icon/Failed.svg"/></div>
-                    <div>{submittedTime.format("MMM DD, YYYY")}</div>
                   </div>
               </div>
             : ""
           }
           <div className={css.proposalInfo}>
-            { proposalEnded(proposal) ?
-              <div className={css.decisionGraph}>
-                <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
-                <div className={css.graph}>
-                  <div className={css.forBar} style={styles.forBar}></div>
-                  <div className={css.againstBar} style={styles.againstBar}></div>
-                  <div className={css.divider}></div>
+            { proposalEnded(proposal) && proposal.winningVote == VoteOptions.Yes ?
+                <div className="css.clearfix">
+                  <div className={css.proposalPassInfo}>
+                    <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {submittedTime.format("MMM DD, YYYY")}
+                  </div>
+                  <div className={css.decisionGraph}>
+                      <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
+                      <div className={css.graph}>
+                        <div className={css.forBar} style={styles.forBar}></div>
+                        <div className={css.againstBar} style={styles.againstBar}></div>
+                        <div className={css.divider}></div>
+                      </div>
+                      <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
+                  </div>
                 </div>
-                <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
-              </div>
+              :  proposalEnded(proposal) && proposal.winningVote == VoteOptions.No ?
+                <div className="css.clearfix">
+                  <div className={css.proposalFailInfo}>
+                    <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {submittedTime.format("MMM DD, YYYY")}
+                  </div>
+                  <div className={css.decisionGraph}>
+                      <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
+                      <div className={css.graph}>
+                        <div className={css.forBar} style={styles.forBar}></div>
+                        <div className={css.againstBar} style={styles.againstBar}></div>
+                        <div className={css.divider}></div>
+                      </div>
+                      <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
+                  </div>
+                </div>
               : ""
             }
             <h3>
@@ -220,7 +236,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </div>
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> View proposal
+                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
                   </a>
                 </div>
 
@@ -248,8 +264,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </div>
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/>
-                    <span>View proposal</span>
+                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
                   </a>
                 </div>
 
@@ -273,7 +288,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   }
 
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> View proposal
+                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
                   </a>
                 </div>
               </div>

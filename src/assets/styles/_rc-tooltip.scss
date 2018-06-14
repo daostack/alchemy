@@ -124,6 +124,12 @@
   background-color: $black-halftone;
   border-radius: none;
   box-shadow: $shadow-2;
+
+  ul {
+    margin-left: 0;
+    position: relative;
+    left: -15px;
+  }
 }
 .rc-tooltip-arrow,
 .rc-tooltip-arrow-inner {

@@ -18,6 +18,8 @@ export const navItem: string;
 export const navRedemption: string;
 export const createProposal: string;
 export const redeemAllRewardsButton: string;
+export const redeemAllContainer: string;
+export const pendingRewards: string;
 export const redemptionNotification: string;
 export const buyGen: string;
 export const selected: string;
