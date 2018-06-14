@@ -22,7 +22,7 @@ interface IStateProps {
   currentAccountAddress: string;
   currentAccountGens: number;
   currentAccountRedemptions?: IRedemptionState;
-  currentAccountGenStakingAllowance: number,
+  currentAccountGenStakingAllowance: number;
   dao?: IDaoState;
   proposal?: IProposalState;
 }
@@ -241,7 +241,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <div className={css.proposalDetails}>
                   <div className={css.createdBy}>
                     CREATED BY
-
                     <AccountPopupContainer
                       accountAddress={proposal.proposer}
                       daoAvatarAddress={proposal.daoAvatarAddress}
@@ -254,7 +253,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
                   </a>
                 </div>
-
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
@@ -268,11 +266,9 @@ class ProposalContainer extends React.Component<IProps, null> {
               </div>
             : !proposalEnded(proposal) && proposal.state == ProposalStates.PreBoosted ?
               <div>
-
                 <div className={css.proposalDetails}>
                   <div className={css.createdBy}>
                     CREATED BY
-
                     <AccountPopupContainer
                       accountAddress={proposal.proposer}
                       daoAvatarAddress={proposal.daoAvatarAddress}
@@ -284,7 +280,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
                   </a>
                 </div>
-
                 <PredictionBox
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
@@ -305,7 +300,6 @@ class ProposalContainer extends React.Component<IProps, null> {
                       </Tooltip>
                     : ""
                   }
-
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
                   </a>

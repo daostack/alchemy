@@ -205,12 +205,15 @@ class HeaderContainer extends React.Component<IProps, null> {
                   : ""
                 }
               </div>
-              <div className={css.testAccounts}>
-                <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
-                  {accountOptionNodes}
-                </select>
-                <button className={css.selectTestAccount}>Switch accounts</button>
-              </div>
+              { web3State.accounts.length > 1 ?
+                <div className={css.testAccounts}>
+                  <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={web3State.ethAccountAddress}>
+                    {accountOptionNodes}
+                  </select>
+                  <button className={css.selectTestAccount}>Switch accounts</button>
+                </div>
+              : ""
+              }
             </div>
             <div className={css.profileLink}>
               <AccountImage accountAddress={web3State.ethAccountAddress} />

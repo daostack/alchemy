@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1400px" height="313px" viewBox="0 0 1400 313" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Path 3</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="1400" height="313"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="homepage" transform="translate(0.000000, -1101.000000)">
+            <g id="Path-3" transform="translate(0.000000, 1101.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#F2F2F2" xlink:href="#path-1"></use>
+                <polygon fill="#383838" mask="url(#mask-2)" points="1400 0 2.66106581e-15 305.471672 0 931.650501 1400 931.650501"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
