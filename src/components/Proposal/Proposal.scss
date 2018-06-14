@@ -424,6 +424,18 @@
 	}
 }
 
+.predictions.enablePredictions button {
+	width: 100px;
+	display: block;
+	margin: 0 auto;
+}
+
+.predictions.enablePredictions span {
+	display: block;
+	margin-top: 25px;
+	margin-bottom: 8px;
+}
+
 .predictions {
 	position: absolute;
 	right: 0;
@@ -708,9 +720,42 @@ button.cancelPrediction {
 
 
 /**** Pre-approve *****/
+.preApproval {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.preapproveBackdrop {
+	position: fixed;
+	z-index: 0;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: $black-halftone;
+}
+
 .preapproveWrapper {
   position: relative;
   background-color: white;
-  width: 400px;
-  height: 400px;
+  width: 280px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  padding: 0 20px 20px 20px;
+
+  button {
+  	display: block;
+  	width: 100px;
+  	margin: 0 auto;
+  	border: 1px solid $black-halftone;
+  	padding: 5px 8px;
+  	text-align: center;
+  	font-weight: bold;
+  	font-size: $body;
+  }
 }

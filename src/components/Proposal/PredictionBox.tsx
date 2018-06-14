@@ -76,19 +76,22 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     if (showApproveModal) {
       return (<Modal onBackdropClick={this.closeApprovalModal.bind(this)}>
-        <div className={css.preapproveWrapper}>
-          <p>
-            In order to activate predictions, you must authorize our smart
-            contract to receive GENs from you. Upon activation, the smart contract
-            will be authorized to receive up to 1000 GENs. This transaction will not
-            cost you GEN or commit you in any way to spending your GENs in the future.
-          </p>
-          <p>
-            Once you click the button below, we will pop-up a MetaMask dialogue.
-            This dialogue will ask you to approve the transaction, including a small ETH cost.
-          </p>
-          <div>
-            <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+        <div className={css.preApproval}>
+          <div className={css.preapproveBackdrop}></div>
+          <div className={css.preapproveWrapper}>
+            <p>
+              In order to activate predictions, you must authorize our smart
+              contract to receive GENs from you. Upon activation, the smart contract
+              will be authorized to receive up to 1000 GENs. This transaction will not
+              cost you GEN or commit you in any way to spending your GENs in the future.
+            </p>
+            <p>
+              Once you click the button below, we will pop-up a MetaMask dialogue.
+              This dialogue will ask you to approve the transaction, including a small ETH cost.
+            </p>
+            <div>
+              <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+            </div>
           </div>
         </div>
       </Modal>);
@@ -97,7 +100,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     // If don't have any staking allowance, replace with button to pre-approve
     if (currentAccountGenStakingAllowance == 0) {
       return (
-        <div className={css.predictions}>
+        <div className={css.predictions + " " + css.enablePredictions}>
+          <span>0 PRE-APPROVED GEN</span>
           <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
         </div>
       );

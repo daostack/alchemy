@@ -56,6 +56,25 @@
   }
 }
 
+.columnHeader {
+  width: 100%;
+  font-size: $small;
+  text-transform: uppercase;
+  opacity: 0.5;
+
+  .votes {
+    float: left;
+    width: 60px;
+    text-align: center;
+  }
+
+  .predictions {
+    width: 140px;
+    text-align: center;
+    float: right;
+  }
+}
+
 .membersContainer {
   margin: 10px 0;
 }
