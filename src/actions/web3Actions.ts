@@ -46,6 +46,7 @@ export function initializeWeb3() {
     const payload: IWeb3State = {
       accounts: web3.eth.accounts,
       currentAccountGenBalance: 0,
+      currentAccountGenStakingAllowance: 0,
       ethAccountAddress: null as string,
       ethAccountBalance: 0,
       networkId,
@@ -73,6 +74,7 @@ export function initializeWeb3() {
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
     payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(payload.ethAccountAddress)).toNumber();
+    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(payload.ethAccountAddress, votingMachineInstance.address)).toNumber();
 
     dispatch({
       type: ActionTypes.WEB3_CONNECT,
@@ -91,6 +93,7 @@ export function changeAccount(accountAddress: string) {
 
     let payload = {
       currentAccountGenBalance: 0,
+      currentAccountGenStakingAllowance: 0,
       ethAccountAddress: accountAddress,
       ethAccountBalance: 0,
     }
@@ -103,6 +106,7 @@ export function changeAccount(accountAddress: string) {
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
     payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(payload.ethAccountAddress)).toNumber();
+    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(payload.ethAccountAddress, votingMachineInstance.address)).toNumber();
 
     const action = {
       type: ActionTypes.WEB3_CHANGE_ACCOUNT,
@@ -134,4 +138,78 @@ export function onGenBalanceChanged(balance: Number) {
       });
     }
   };
+}
+
+export function onGenStakingAllowanceChanged(balance: Number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  const genAllowance = getState().web3.currentAccountGenStakingAllowance;
+    if (genAllowance !== balance) {
+      dispatch({
+        type: ActionTypes.WEB3_ON_GEN_STAKING_ALLOWANCE_CHANGE,
+        payload: balance
+      });
+    }
+  };
+}
+
+export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
+  accountAddress: string
+}, {
+  numTokensApproved: number
+}>
+
+// Approve transfer of 1000 GENs from accountAddress to the GenesisProtocol contract for use in staking
+export function approveStakingGens() {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
+
+    const meta = { accountAddress: currentAccountAddress };
+
+    dispatch({
+      type: ActionTypes.APPROVE_STAKING_GENS,
+      sequence: AsyncActionSequence.Pending,
+      operation: {
+        message: `Approving tokens for staking...`,
+      },
+      meta
+    } as ApproveAction);
+
+    try {
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+      const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
+      const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
+      await stakingToken.approve(votingMachineInstance.address, Util.toWei(1000));
+    } catch (err) {
+      console.error(err);
+      dispatch({
+        type: ActionTypes.APPROVE_STAKING_GENS,
+        sequence: AsyncActionSequence.Failure,
+        meta,
+        operation: {
+          message: `Approving tokens for staking failed`
+        }
+      } as ApproveAction)
+    }
+  }
+}
+
+// GEN transfer approval confirmed
+export function onApprovedStakingGens(numTokensApproved: number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const currentAccountAddress: string = getState().web3.ethAccountAddress;
+
+    const meta = { accountAddress: currentAccountAddress };
+    const payload = { numTokensApproved }
+    console.log("approved", numTokensApproved);
+
+    dispatch({
+      type: ActionTypes.APPROVE_STAKING_GENS,
+      sequence: AsyncActionSequence.Success,
+      operation: {
+        message: `Approving tokens for staking succeeded!`,
+      },
+      meta,
+      payload
+    } as ApproveAction);
+  }
 }
