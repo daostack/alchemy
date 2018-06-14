@@ -3,7 +3,6 @@ import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
-import DaoList from "components/DaoList/DaoList";
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
 
@@ -39,7 +38,9 @@ class HomeContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.homeWrapper}>
-        <DaoList daos={daos} daosLoaded={daosLoaded} getDAOs={getDAOs} />
+        <div className={css.leftTriangle}><img src="/assets/Images/Home/LeftTriangle.svg"></div>
+        <div className={css.topTriangle}><img src="/assets/Images/Home/TopTriangle.svg"></div>
+        <Link to={'/daos'}>Go to the Genesis DAO (dao list for now)</Link>
       </div>
     );
   }
