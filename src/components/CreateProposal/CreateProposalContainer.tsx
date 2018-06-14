@@ -109,8 +109,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
-    const proposalDescriptions = dao.proposals
-      .map((proposal) => proposal as IProposalState)
+    const proposalDescriptions = (dao.proposals as IProposalState[])
       .filter((proposal) => !proposalEnded(proposal))
       .map((proposal) => proposal.description);
 
