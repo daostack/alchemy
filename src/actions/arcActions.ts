@@ -239,7 +239,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, avatarAddress);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
     const votingMachineAddress = schemeParams[2];
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address, proposalId });
     const contributionProposal = proposals[0];
@@ -587,7 +587,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2];
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
       const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
       const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
 
@@ -881,7 +881,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
       const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
       const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
