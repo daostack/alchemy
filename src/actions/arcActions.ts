@@ -873,6 +873,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       stakerAddress: currentAccountAddress,
     };
 
+    // We currently requires already pre-approving a bunch of GENs to stake with, so we don't do the approve call again
+    Arc.ConfigService.set("autoApproveTokenTransfers", false);
+
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
