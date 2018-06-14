@@ -36,15 +36,19 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   changeAccount: typeof web3Actions.changeAccount;
+  onApprovedStakingGens: typeof web3Actions.onApprovedStakingGens;
   onEthBalanceChanged: typeof web3Actions.onEthBalanceChanged;
   onGenBalanceChanged: typeof web3Actions.onGenBalanceChanged;
+  onGenStakingAllowanceChanged: typeof web3Actions.onGenStakingAllowanceChanged;
   showOperation: typeof operationsActions.showOperation;
 }
 
 const mapDispatchToProps = {
   changeAccount: web3Actions.changeAccount,
+  onApprovedStakingGens: web3Actions.onApprovedStakingGens,
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
   onGenBalanceChanged: web3Actions.onGenBalanceChanged,
+  onGenStakingAllowanceChanged: web3Actions.onGenStakingAllowanceChanged,
   showOperation: operationsActions.showOperation
 };
 
@@ -68,6 +72,8 @@ const Fade = ({ children, ...props }: any) => (
 class HeaderContainer extends React.Component<IProps, null> {
 
   private ethBalanceWatcher: FilterResult;
+  private approvalWatcher: FilterResult;
+
   constructor(props: IProps) {
     super(props);
 
@@ -75,7 +81,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { web3State: { ethAccountAddress }, onEthBalanceChanged, onGenBalanceChanged } = this.props;
+    const { web3State: { ethAccountAddress }, onApprovedStakingGens, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged } = this.props;
     const web3 = await Arc.Utils.getWeb3();
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
@@ -88,12 +94,23 @@ class HeaderContainer extends React.Component<IProps, null> {
         onEthBalanceChanged(newEthBalance);
         const newGenBalance = Util.fromWei(await stakingToken.balanceOf(ethAccountAddress)).toNumber();
         onGenBalanceChanged(newGenBalance);
+        const newGenStakingAllowance = Util.fromWei(await stakingToken.allowance(ethAccountAddress, votingMachineInstance.address)).toNumber();
+        onGenStakingAllowanceChanged(newGenStakingAllowance);
       }
-    })
+    });
+
+    // Watch for approval of GEN token tranfers
+    this.approvalWatcher = stakingToken.Approval({ owner: ethAccountAddress }, { fromBlock: "latest" });
+    this.approvalWatcher.watch((error: any, result: any) => {
+      if (!error && result) {
+        onApprovedStakingGens(result.args.value.toNumber());
+      }
+    });
   }
 
   public componentWillUnmount() {
     this.ethBalanceWatcher.stopWatching();
+    this.approvalWatcher.stopWatching();
   }
 
   public copyAddress() {
@@ -149,6 +166,8 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <span className={css.holdingsLabel}>Wallet: </span>
                 <AccountBalance tokenSymbol="ETH" balance={web3State.ethAccountBalance} accountAddress={web3State.ethAccountAddress} />&nbsp;&amp;&nbsp;
                 <AccountBalance tokenSymbol="GEN" balance={web3State.currentAccountGenBalance} accountAddress={web3State.ethAccountAddress} />
+                <br/>
+                {web3State.currentAccountGenStakingAllowance} GEN approved for staking
                 { dao
                   ? <div>
                       <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={web3State.ethAccountAddress} />

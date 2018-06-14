@@ -7,16 +7,13 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IProposalState } from "reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "../../schemas";
 
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
-import PredictionBox from "./PredictionBox";
-import VoteBox from "./VoteBox";
+import ProposalContainer from "./ProposalContainer";
 
 import * as css from "./Proposal.scss";
-import ProposalContainer from "./ProposalContainer";
 import * as daoCss from "../ViewDao/ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
