@@ -740,7 +740,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
       const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
       await Util.performAction(
         'txReceipts.GenesisProtocol.vote',
@@ -786,7 +786,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
 
     const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
     const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
@@ -947,7 +947,7 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
     const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
     const state = await votingMachineInstance.getState({ proposalId });
