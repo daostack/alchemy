@@ -64,7 +64,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, Number(amount));
   }
 
-  public handleClickPreApprove(event:any) {
+  public handleClickPreApprove(event: any) {
     const { approveStakingGens } = this.props;
     approveStakingGens();
     this.setState({ showApproveModal: false });
