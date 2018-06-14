@@ -18,6 +18,7 @@ import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
 
 import { Formik, Field } from 'formik';
+import { proposalEnded } from "actions/arcActions";
 
 interface IStateProps {
   dao: IDaoState;
@@ -108,7 +109,10 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
-    const proposalDescriptions = dao.proposals.map((proposal) => (proposal as IProposalState).description);
+    const proposalDescriptions = dao.proposals
+      .map((proposal) => proposal as IProposalState)
+      .filter((proposal) => !proposalEnded(proposal))
+      .map((proposal) => proposal.description);
 
     return(
       dao ? <div className={css.createProposalWrapper}>
