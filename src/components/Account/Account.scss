@@ -9,10 +9,11 @@
 }
 
 :global .membersPage {
-  border-radius: 8px;
-  height: 50px;
-  width: 50px;
+  transform: rotate(45deg);
+  height: 40px;
+  width: 40px;
   float: left;
+  margin: 3px 15px 0 15px;
 }
 
 .targetAccount {
