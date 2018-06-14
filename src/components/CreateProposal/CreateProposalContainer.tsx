@@ -111,7 +111,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     return(
       dao ? <div className={css.createProposalWrapper}>
         <h2>
-          <img className={css.editIcon} src="/assets/images/Icon/Edit.svg"/>
+          <img className={css.editIcon} src="/assets/images/Icon/Draft-white.svg"/>
           <span>Create proposal</span>
           <button className={css.exitProposalCreation} onClick={this.goBack.bind(this)}>
             <img src="/assets/images/Icon/Close.svg"/>
@@ -190,10 +190,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             isValid,
           }) =>
             <form onSubmit={handleSubmit}>
-              <label htmlFor="titleInput">
-                Title (120 characters)
-                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-              </label>
+
               <Field
                 autoFocus
                 id="titleInput"
@@ -203,13 +200,10 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                 type="text"
                 className={touched.title && errors.title ? css.error : null}
               />
-              {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
-              <label htmlFor="descriptionInput">
-                Description (URL)
-                <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
-                  Recommended template
-                </a>
+              <label htmlFor="titleInput">
+                Title (120 characters)
                 <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
               </label>
               <Field
                 id="descriptionInput"
@@ -218,10 +212,13 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                 type="text"
                 className={touched.description && errors.description ? css.error : null}
               />
-              {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
-              <label htmlFor="beneficiaryInput">
-                Target Address
+              <label htmlFor="descriptionInput">
+                Description (URL)
+                <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
+                  Recommended template
+                </a>
                 <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
               </label>
               <Field
                 id="beneficiaryInput"
@@ -231,10 +228,13 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                 type="text"
                 className={touched.beneficiaryAddress && errors.beneficiaryAddress ? css.error : null}
               />
-              {touched.beneficiaryAddress && errors.beneficiaryAddress && <span className={css.errorMessage}>{errors.beneficiaryAddress}</span>}
+              <label htmlFor="beneficiaryInput">
+                Target Address
+                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                {touched.beneficiaryAddress && errors.beneficiaryAddress && <span className={css.errorMessage}>{errors.beneficiaryAddress}</span>}
+              </label>
               <div className={css.addTransfer}>
                 <div style={{display: 'none'}}>
-                  <label htmlFor="nativeTokenRewardInput">{dao.tokenSymbol} reward: </label>
                   <Field
                     id="nativeTokenRewardInput"
                     maxLength={10}
@@ -243,9 +243,11 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                     type="number"
                     className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
                   />
-                  {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                  <label htmlFor="nativeTokenRewardInput">
+                    {dao.tokenSymbol} reward:
+                    {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                  </label>
                 </div>
-                <label htmlFor="reputationRewardInput">Reputation reward: </label>
                 <Field
                   id="reputationRewardInput"
                   placeholder="How much reputation to reward"
@@ -254,8 +256,10 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   className={touched.reputationReward && errors.reputationReward ? css.error : null}
                   min={0}
                 />
-                {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
-                <label htmlFor="ethRewardInput">ETH reward: </label>
+                <label htmlFor="reputationRewardInput">
+                  Reputation reward:
+                  {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
+                </label>
                 <Field
                   id="ethRewardInput"
                   placeholder="How much ETH to reward"
@@ -264,9 +268,12 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   className={touched.ethReward && errors.ethReward ? css.error : null}
                   min={0}
                 />
-                {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
+                <label htmlFor="ethRewardInput">
+                  ETH reward:
+                  {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
+                </label>
 
-                {touched.ethReward && touched.reputationReward && errors.rewards && <span className={css.errorMessage}><br/> {errors.rewards}</span>}
+                {touched.ethReward && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
               </div>
               {/*
               <div className={css.transactionList}>

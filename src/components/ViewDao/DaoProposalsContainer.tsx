@@ -118,6 +118,14 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
             <div className={css.proposalsHeader}>
               Regular Proposals
             </div>
+            <div className={css.columnHeader + " " + css.clearfix}>
+              <div className={css.votes}>
+                VOTES
+              </div>
+              <div className={css.predictions}>
+                PREDICTIONS
+              </div>
+            </div>
             <div className={css.proposalsContainer}>
               {preBoostedProposalsHTML}
             </div>

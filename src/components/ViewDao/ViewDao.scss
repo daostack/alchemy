@@ -7,7 +7,24 @@
 .wrapper {
   max-width: $max-width;
   margin: 0 auto;
-  padding: 0 30px;
+  position: relative;
+}
+
+.outer {
+  position: relative;
+}
+
+.top {
+  width: 100%;
+  background-color: $white;
+}
+
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
 }
 
 .loading img {
@@ -16,14 +33,12 @@
 }
 
 .daoHeader {
-  padding: 30px 0;
-  width: 100%;
+  padding: 30px 30px 5px 30px;
 }
 
 .nav {
-  width: 100%;
+  padding: 0 30px;
   position: relative;
-  padding-bottom: 40px;
 
   span {
     padding: 10px;
@@ -35,8 +50,28 @@
     position: absolute;
     background-color: rgba(216, 216, 216, 1.000);
     z-index: 0;
-    top: 51px;
+    bottom: 0;
+    left: 0;
     opacity: .4;
+  }
+}
+
+.columnHeader {
+  width: 100%;
+  font-size: $small;
+  text-transform: uppercase;
+  opacity: 0.5;
+
+  .votes {
+    float: left;
+    width: 60px;
+    text-align: center;
+  }
+
+  .predictions {
+    width: 140px;
+    text-align: center;
+    float: right;
   }
 }
 
@@ -99,51 +134,102 @@ a {
 a.navItem {
   font-size: $body;
   color: $black-halftone;
-  padding: 20px 0;
+  padding: 10px 0;
   position: relative;
   z-index: 100;
   transition: all .25s ease;
-  margin: 10px 30px;
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: middle;
+  margin: 0 30px;
   border-bottom: 3px solid $accent-4-transparent;
+}
+
+a.navRedemption {
+  font-size: $body;
+  color: rgba(34, 159, 110, 1.000);
+  padding: 10px 0;
+  position: relative;
+  z-index: 100;
+  transition: all .25s ease;
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: middle;
+  margin: 0 0 0 30px;
+  border-bottom: 3px solid $accent-4-transparent;
+  float: right;
+}
+
+a.navRedemption:hover {
+  font-size: $headline-2;
+  color: rgba(34, 159, 110, 1.000);
+  border-bottom: 3px solid rgba(34, 159, 110, 1.000);
 }
 
 .nav a.navItem:nth-child(1) {
   margin-left: 0;
 }
 
-a.createProposal, .buyGen {
-  border: 1px solid $accent-1;
-  float: right;
-  color: $accent-1;
-  font-size: $caption;
-  padding: $button-padding;
-  transition: all .25s ease;
-  background-color: $accent-1-transparent;
-  border-radius: $button-border-radius;
-  vertical-align: middle;
+a.createProposal {
+  transform: rotate(-45deg);
+  background-image: linear-gradient(-206deg, #6CDBEA 0%, #3AB4D0 95%);
+  box-shadow: 0 10px 15px 0 rgba(0,0,0,0.16);
+  width: 42px;
+  height: 42px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 10000;
+
+  img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%) rotate(45deg);
+    margin-left: 3px;
+    margin-top: 2px;
+  }
 }
 
 .redeemAllRewardsButton {
-  border: 1px solid #00d3a7;
+  border: 1px solid $accent-1;
+  font-weight: bold;
   float: right;
-  color: #00d3a7;
-  font-size: 12px;
+  color: $accent-1;
+  font-size: $body;
   padding: 8px 11px;
   transition: all .25s ease;
   background-color: rgba(0, 211, 167, 0);
-  border-radius: 3px;
   vertical-align: middle;
   float: right;
-  font-weight: none;
   cursor: pointer;
+  position: relative;
+  top: 30px;
 }
+
+.redeemAllContainer {
+  position: absolute;
+  right: 30px;
+}
+
+.pendingRewards {
+  float: right;
+  position: relative;
+  top: 38px;
+  font-size: $body;
+  right: 10px;
+}
+
 
 .nav span.redemptionNotification {
   display: inline-block;
   width: 14px;
   height: 14px;
-  background-color: $accent-1;
-  color: $white;
+  background: none;
+  border: 1px solid rgba(34, 159, 110, 1.000);
+  color: rgba(34, 159, 110, 1.000);
   padding: 1px 1px 1px 1px;
   text-align: center;
   line-height: 13px;
@@ -152,7 +238,7 @@ a.createProposal, .buyGen {
   position: absolute;
   top: 51%;
   transform: translateY(-50%);
-  right: -20px;
+  left: -24px;
 }
 
 .buyGen {
@@ -166,35 +252,34 @@ a.createProposal:hover {
 
 a.navItem.selected {
   font-size: $headline-2;
-  font-weight: $bold;
   color: $black;
-  border-bottom: 3px solid $accent-4;
+  border-bottom: 3px solid rgba(67, 67, 67, 1.000);
 }
 
 a.navItem:hover {
   font-size: $headline-2;
-  font-weight: $bold;
   color: $black;
-  border-bottom: 3px solid $accent-4;
+  border-bottom: 3px solid rgba(67, 67, 67, 1.000);
 }
 
 .daoAvatar {
   background-color: $white;
-  box-shadow: $shadow-3;
-  width: 90px;
-  float: left;
-  height: 90px;
-  border-radius: 90px;
+  box-shadow: $shadow-2;
+  width: 50px;
+  height: 50px;
   text-align: center;
-  position: relative;
+  transform: rotate(45deg);
+  position: absolute;
+  top: 0;
+  left: 13px;
 
   img {
-    max-width: 40px;
-    max-height: 40px;
+    max-width: 30px;
+    max-height: 30px;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%) rotate(-45deg);
   }
 }
 
@@ -203,11 +288,12 @@ a.navItem:hover {
   width: 140px;
   text-align: right;
   font-size: 14px;
+  margin-top: 7px;
 
   h4 {
     font-weight: bold;
     margin-bottom: 0;
-    margin-top: 30px;
+    margin-top: -7px;
   }
   div {
     opacity: 0.75;
@@ -215,23 +301,35 @@ a.navItem:hover {
 }
 
 .daoDescription {
-  float: left;
-  width: 360px;
-  padding-left: 20px;
-  padding-top: 10px;
+    float: left;
+    width: 360px;
+    padding-left: 90px;
+    margin-top: -13px;
 }
 
 .daoInfo {
   max-width: 500px;
+  position: relative;
   float: left;
 
   .daoReputationInfo {
     font-size: $caption;
     color: $black-halftone;
 
+    img {
+      position: relative;
+      top: 4px;
+      margin-right: 5px;
+    }
+
     a {
-      font-weight: $bold;
+      opacity: .5;
       text-decoration: underline;
+      color: $black-septone;
+    }
+
+    a:visited {
+      color: $black-halftone;
     }
   }
 
@@ -296,9 +394,9 @@ a.navItem:hover {
 }
 
 .proposalsHeader {
-  font-size: $title;
+  font-size: $subheader;
   position: relative;
-  padding-top: 10px;
+  padding-top: 40px;
   padding-bottom: 10px;
   color: $black-halftone;
   font-weight: $bold;
@@ -343,19 +441,23 @@ a.navItem:hover {
     padding-top: 50px;
 
     a {
-      background-color: $accent-4;
-      border-radius: 3px;
+      border: 1px solid $accent-4;
       height: 40px;
+      background-color: $accent-4-transparent;
+      transition: all .25s ease;
       display: inline-block;
       line-height: 30px;
       margin: 0 auto;
-      color: $white;
+      color: $accent-4;
       font-weight: bold;
-      border: none;
       font-size: $body;
-      box-shadow: $shadow-1;
       padding: 7px 15px 0 15px;
       text-decoration: none;
+
+      &:hover {
+        background-color: $accent-4;
+        color: $white;
+      }
     }
   }
 }
@@ -376,4 +478,12 @@ a.navItem:hover {
 .fadeExit.fadeExitActive {
   opacity: 0.01;
   transition: opacity 1000ms ease-in;
+}
+
+@media only screen and (min-width: 768px) {
+  .wrapper {
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
 }

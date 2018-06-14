@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
-    <title>Shape Copy 4</title>
+<svg width="22px" height="15px" viewBox="0 0 22 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="MVP-Failed-decision---Settings-change" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-31.000000, -49.000000)">
-        <g id="Group-Copy" fill-rule="nonzero" stroke="#FFC000">
-            <path d="M42.908834,65.3332026 C42.908834,65.5135108 42.836948,65.669812 42.6929373,65.8021791 C42.549643,65.9338165 42.378884,66 42.1818544,66 L37.8173496,66 C37.6209568,66 37.4504366,65.9341083 37.3062666,65.8021791 C37.1624151,65.6703228 37.0905291,65.5140216 37.0905291,65.3337134 L37.0905291,58.0000365 L32.7267408,58.0000365 C32.5143468,58.0000365 32.3404831,57.9376474 32.204274,57.8126502 C32.0680648,57.6875801 32,57.5277034 32,57.333458 C32,57.1667951 32.0752295,56.9999863 32.2266438,56.8333235 L39.4771749,50.1873863 C39.6133841,50.0623891 39.7874866,50 39.999801,50 C40.2120357,50 40.3861383,50.062681 40.5225863,50.1873863 L47.7955668,56.8539739 C47.9320148,56.978971 48,57.1387747 48,57.3331661 C48,57.5136932 47.928114,57.6698485 47.7841033,57.8018507 C47.6402518,57.9338529 47.4697316,57.9997446 47.2727816,57.9997446 L42.908834,57.9997446 L42.908834,65.3332026 Z" id="Shape-Copy-4" transform="translate(40.000000, 58.000000) rotate(-180.000000) translate(-40.000000, -58.000000) "></path>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.800000012">
+        <g id="History" transform="translate(-13.000000, -391.000000)" fill="#F2AF5A">
+            <g id="Group-2-Copy" transform="translate(23.606602, 395.606602) rotate(-225.000000) translate(-23.606602, -395.606602) translate(16.106602, 388.106602)">
+                <g id="Group" transform="translate(-0.000000, 0.000000)">
+                    <path d="M14.4076886,2.16752837 L14.4076886,14.4076886 L12.2401602,14.4076886 L12.2401602,2.16752837 L0,2.16752837 L0,0 L14.4076886,0 L14.4076886,2.16752837 Z" id="Combined-Shape"></path>
+                    <path d="M10.9651435,5.7375751 L10.9651435,14.4076886 L8.79761516,14.4076886 L8.79761516,5.7375751 L0,5.7375751 L0,3.57004673 L10.9651435,3.57004673 L10.9651435,5.7375751 Z" id="Combined-Shape-Copy" opacity="0.400000006"></path>
+                </g>
+            </g>
         </g>
     </g>
 </svg>

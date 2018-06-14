@@ -22,14 +22,15 @@ export default class DaoNav extends React.Component<IProps, null> {
       <div className={css.nav}>
         <NavLink exact className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress}>Proposals</NavLink>
         <NavLink className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress + "/history/"}>History</NavLink>
-        <NavLink className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress + "/members/"}>Members</NavLink>
         {numRedemptions > 0
-          ? <NavLink className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress + "/redemptions/"}>
+          ? <NavLink className={css.navRedemption} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress + "/redemptions/"}>
               Redemptions <span className={css.redemptionNotification}>{numRedemptions}</span>
             </NavLink>
           : ""
         }
-        <NavLink className={css.createProposal} activeClassName={css.selected} to={`/dao/${dao.avatarAddress}/proposals/create`}>Create proposal</NavLink>
+        <NavLink className={css.createProposal} activeClassName={css.selected} to={`/dao/${dao.avatarAddress}/proposals/create`}>
+          <img src="/assets/images/Icon/Draft-white.svg"/>
+        </NavLink>
         <div className={css.borderBottom}></div>
       </div>
     );

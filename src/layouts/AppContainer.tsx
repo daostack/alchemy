@@ -1,8 +1,11 @@
 import * as Arc from '@daostack/arc.js';
 import axios from "axios";
+import * as History from "history";
 import * as React from "react";
+import { withCookies, Cookies } from 'react-cookie';
 import { connect, Dispatch } from "react-redux";
 import { Route, Switch } from "react-router-dom";
+import { replace as routerReplace } from "react-router-redux";
 import { bindActionCreators } from "redux";
 
 import { IRootState } from "reducers";
@@ -17,6 +20,7 @@ import * as operationsActions from 'actions/operationsActions';
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import Notification from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
+import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
 import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
@@ -31,14 +35,17 @@ import { IOperationsState } from 'reducers/operations';
 interface IStateProps {
   arc: IArcState;
   connectionStatus: ConnectionStatus;
+  cookies: Cookies;
   ethAccountAddress: string | null;
-  operations: IOperationsState,
+  history: History.History;
+  operations: IOperationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
   arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
+  history: ownProps.history,
   operations: state.operations,
 });
 
@@ -63,6 +70,16 @@ class AppContainer extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
+  }
+
+  public async componentWillMount() {
+    const { cookies, history } = this.props;
+
+    // If this person has not seen the disclaimer, show them the home page
+    if (!cookies.get('seen_disclaimer')) {
+      cookies.set('seen_disclaimer', "true", { path: '/' });
+      history.replace("/");
+    }
   }
 
   public async componentDidMount() {
@@ -95,7 +112,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, operations, ethAccountAddress, dismissOperation } = this.props;
+    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending ?
@@ -112,6 +129,7 @@ class AppContainer extends React.Component<IProps, null> {
             )} />
             <Switch>
               <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
+              <Route exact path="/daos" component={DaoListContainer}/>
               <Route path="/" component={HomeContainer} />
             </Switch>
             <ModalRoute
@@ -152,4 +170,4 @@ class AppContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(withCookies(AppContainer));

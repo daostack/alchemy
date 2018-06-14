@@ -76,19 +76,22 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     if (showApproveModal) {
       return (<Modal onBackdropClick={this.closeApprovalModal.bind(this)}>
-        <div className={css.preapproveWrapper}>
-          <p>
-            In order to activate predictions, you must authorize our smart
-            contract to receive GENs from you. Upon activation, the smart contract
-            will be authorized to receive up to 1000 GENs. This transaction will not
-            cost you GEN or commit you in any way to spending your GENs in the future.
-          </p>
-          <p>
-            Once you click the button below, we will pop-up a MetaMask dialogue.
-            This dialogue will ask you to approve the transaction, including a small ETH cost.
-          </p>
-          <div>
-            <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+        <div className={css.preApproval}>
+          <div className={css.preapproveBackdrop}></div>
+          <div className={css.preapproveWrapper}>
+            <p>
+              In order to activate predictions, you must authorize our smart
+              contract to receive GENs from you. Upon activation, the smart contract
+              will be authorized to receive up to 1000 GENs. This transaction will not
+              cost you GEN or commit you in any way to spending your GENs in the future.
+            </p>
+            <p>
+              Once you click the button below, we will pop-up a MetaMask dialogue.
+              This dialogue will ask you to approve the transaction, including a small ETH cost.
+            </p>
+            <div>
+              <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+            </div>
           </div>
         </div>
       </Modal>);
@@ -97,7 +100,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     // If don't have any staking allowance, replace with button to pre-approve
     if (currentAccountGenStakingAllowance == 0) {
       return (
-        <div className={css.predictions}>
+        <div className={css.predictions + " " + css.enablePredictions}>
+          <span>0 PRE-APPROVED GEN</span>
           <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
         </div>
       );
@@ -143,28 +147,32 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
         <div className={predictionModalClass}>
+          <button className={css.cancelPrediction} onClick={this.closeModal.bind(this)}>
+            <img src="/assets/images/Icon/Close-black.svg"/>
+          </button>
           <div className={css.newPredictionTitle}>
-            NEW <strong>{showStakeModal == VoteOptions.Yes ? "PASS" : "FAIL"}</strong> STAKE
+            Predict this will <strong>{showStakeModal == VoteOptions.Yes ? "pass" : "pass"}</strong>
           </div>
-          <input type="number" min="1" ref={(input) => { this.stakeInput = input; }} className={css.predictionAmount}/>
-          <span className={css.genLabel}>GEN</span>
+          <div className={css.formGroup + " " + css.clearfix}>
+            <span className={css.genLabel}>Stake</span>
+            <input type="number" min="1" ref={(input) => { this.stakeInput = input; }} className={css.predictionAmount}/>
+            <span className={css.genLabel}>GEN</span>
+          </div>
           <div className={css.clearfix}>
-            <button className={css.cancelPrediction} onClick={this.closeModal.bind(this)}>
-              <img src="/assets/images/Icon/Close-black.svg"/>
-            </button>
             <button className={css.placePrediction} onClick={this.handleClickStake.bind(this, showStakeModal)}>Place stake</button>
           </div>
         </div>
         <div>
-          <span>PREDICTIONS</span>
-          {stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} GEN UNTIL BOOSTED</b></span> : ''}
+          <span className={css.boostedAmount}>
+            {stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ''}
+          </span>
           <table>
             <tbody>
               <tr className={stakeUpClass}>
                 <td className={passPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
                     ? <Tooltip placement="left" trigger={disableStakePass ? ["hover"] : []} overlay={passTip}>
-                        <button onClick={disableStakePass ? "" : this.showModal.bind(this, 1)}>PASS +</button>
+                        <button onClick={disableStakePass ? "" : this.showModal.bind(this, 1)}>PASS <strong>+</strong></button>
                       </Tooltip>
                     : "PASS"
                   }
@@ -175,7 +183,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                 <td className={failPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
                     ? <Tooltip placement="left" trigger={disableStakeFail ? ["hover"] : []} overlay={failTip}>
-                        <button onClick={disableStakeFail ? "" : this.showModal.bind(this, 2)}>FAIL +</button>
+                        <button onClick={disableStakeFail ? "" : this.showModal.bind(this, 2)}>FAIL <strong>+</strong></button>
                       </Tooltip>
                     : "FAIL"
                   }

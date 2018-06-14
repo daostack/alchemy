@@ -3,35 +3,43 @@
   border-radius: 3px;
   background-color: $white;
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  bottom: 20px;
+  right: 97px;
   box-shadow: $shadow-3;
+
   h2 {
-    background-image: linear-gradient(-136deg, #3ECFFA 0%, #1DA1F2 100%);
+    background-color: rgba(75, 75, 75, 1.000);
     position: relative;
     margin: 0;
     padding: 0;
     color: $white;
-    height: 50px;
+    height: 40px;
     font-weight: $normal;
-    border-radius: 3px 3px 0 0;
+
     span {
       position: relative;
-      top: -18px;
-      font-size: $subheader;
+      top: -15px;
+      font-size: $body;
+      font-weight: bold;
     }
     .editIcon {
       display: inline-block;
-      margin: 14px;
+      margin: 10px;
     }
     .exitProposalCreation {
-      position: absolute;
-      right: 12px;
-      border: none;
-      background: transparent;
-      top: 14px;
       cursor: pointer;
+      background-color: black;
+      width: 42px;
+      height: 42px;
+      transform: rotate(45deg);
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      border: none;
+
+      img {
+        transform: rotate(-45deg);
+      }
     }
   }
   form {
@@ -40,8 +48,9 @@
       color: $black-halftone;
       display: block;
       width: 372px;
-      font-size: $body;
-      padding: 20px 0 8px;
+      font-size: $small;
+      text-transform: uppercase;
+      padding: 5px 0 0 0;
       position: relative;
       .infoTooltip {
         position: absolute;
@@ -50,26 +59,42 @@
       }
     }
     input {
-      width: 372px;
-      border: $form-field-outline;
+      margin-top: 20px;
+      width: 388px;
       display: block;
-      border-radius: 3px;
+      border: none;
+      background-color: transparent;
+      border-bottom: 2px solid rgba(75, 75, 75, 1.000);
       font-size: $subheader;
-      padding: 8px;
+      padding: 8px 0;
       font-family: $body-font;
       &.error {
-        border: 1px solid red;
+        border-bottom: 2px solid red;
+      }
+      &:focus {
+        outline: none;
+        border-bottom: 2px solid rgba(46, 168, 122, 1.000);
       }
     }
     .errorMessage {
+      position: relative;
+      left: 10px;
       color: red
+    }
+
+    .errorMessage.someReward {
+      display: block;
+      text-align: center;
+      text-transform: uppercase;
+      left: 0;
+      font-size: $small;
     }
     .addTransfer {
       background-color: rgba(247, 247, 247, 1.000);
       width: 100%;
       position: relative;
       left: -30px;
-      padding: 0 30px 30px 30px;
+      padding: 1px 30px 30px 30px;
       margin-top: 30px;
     }
   }
@@ -81,6 +106,7 @@
     position: relative;
     top: 0px;
     left: 10px;
+    margin-right: 10px;
     padding: 1px;
   }
   .transactionList {
@@ -131,18 +157,17 @@
     }
   }
   .submitProposal {
-    background-color: $accent-4;
-    border-radius: 3px;
+    border: 1px solid $accent-4;
     height: 40px;
     display: inline-block;
     line-height: 30px;
     margin: 0 auto;
-    color: $white;
-    font-weight: bold;
-    border: none;
+    color: $accent-4;
+    font-weight: normal;
     font-size: $body;
-    box-shadow: $shadow-1;
     padding: 0 15px;
+    font-family: $body-font;
+
     img {
       position: relative;
       top: 4px;

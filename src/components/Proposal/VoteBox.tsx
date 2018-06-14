@@ -85,68 +85,74 @@ export default class VoteBox extends React.Component<IProps, IState> {
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
         <div className={voteControls}>
-          <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
-            <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
-            <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
-          </button>
+          <div className={css.voteUp}>
+            <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
+              <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
+            </button>
+          </div>
           <div className={css.voteDivider}>
-            <img src="/assets/images/vote-divider.svg"/>
-          </div>
-          <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-            <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
-            <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
-          </button>
-        </div>
-        <div className={css.voteGraphs}>
-          <div className={css.upvoteGraph + " " + css.voteGraph}>
-            <div className={css.dividingLine}></div>
-            <div className={css.voteMeasurement} style={styles.yesGraph}></div>
-          </div>
-          <div className={css.downvoteGraph + " " + css.voteGraph}>
-            <div className={css.dividingLine}></div>
-            <div className={css.voteMeasurement} style={styles.noGraph}></div>
-          </div>
-          <div className={css.reputationTurnout}>
-            <div className={css.header}>REPUTATION TURNOUT</div>
-            <div className={css.turnoutInfo}>
-              {/* TODO: <span className={css.description}>{proposal.totalVoters} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
-              <div className={css.turnoutGraph}>
-                <div className={css.turnoutStats}>
-                  <span className={css.forLabel}>
-                    <ReputationView
-                      daoName={daoName}
-                      totalReputation={daoTotalReputation}
-                      reputation={proposal.votesYes}
-                    /> for
-                  </span>
-                  <span className={css.againstLabel}>
-                    <ReputationView
-                      daoName={daoName}
-                      totalReputation={daoTotalReputation}
-                      reputation={proposal.votesNo}
-                    /> against
-                  </span>
-                </div>
 
-                <div className={css.graph}>
-                  <div className={css.forBar} style={styles.forBar}></div>
-                  <div className={css.divider}></div>
-                  <div className={css.againstBar} style={styles.againstBar}></div>
-                </div>
+            <div className={css.voteGraphs}>
+              <div className={css.upvoteGraph + " " + css.voteGraph}>
+                <div className={css.dividingLine}></div>
+                <div className={css.voteMeasurement} style={styles.yesGraph}></div>
+              </div>
+              <div className={css.downvoteGraph + " " + css.voteGraph}>
+                <div className={css.dividingLine}></div>
+                <div className={css.voteMeasurement} style={styles.noGraph}></div>
+              </div>
+              <div className={css.reputationTurnout}>
+                <div className={css.header}>Reputation turnout</div>
+                <div className={css.turnoutInfo}>
+                  {/* TODO: <span className={css.description}>{proposal.totalVoters} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
+                  <div className={css.turnoutGraph}>
+                    <div className={css.turnoutStats}>
+                      <span className={css.forLabel}>
+                        <ReputationView
+                          daoName={daoName}
+                          totalReputation={daoTotalReputation}
+                          reputation={proposal.votesYes}
+                        /> for
+                      </span>
+                      <span className={css.againstLabel}>
+                        <ReputationView
+                          daoName={daoName}
+                          totalReputation={daoTotalReputation}
+                          reputation={proposal.votesNo}
+                        /> against
+                      </span>
+                    </div>
 
-                <div className={css.reputationThreshold}>
-                  <ReputationView
-                    daoName={daoName}
-                    totalReputation={daoTotalReputation}
-                    reputation={daoTotalReputation / 2}
-                  /> NEEDED FOR DECISION BY VOTE
-                </div>
+                    <div className={css.graph}>
+                      <div className={css.forBar} style={styles.forBar}></div>
+                      <div className={css.divider}></div>
+                      <div className={css.againstBar} style={styles.againstBar}></div>
+                    </div>
 
+                    <div className={css.reputationThreshold}>
+                      <ReputationView
+                        daoName={daoName}
+                        totalReputation={daoTotalReputation}
+                        reputation={daoTotalReputation / 2}
+                      /> NEEDED FOR DECISION BY VOTE
+                    </div>
+
+                  </div>
+                </div>
+                <div className={css.tooltipPointer}>
+                  <img src="/assets/images/tooltip-pointer.svg"/>
+                </div>
               </div>
             </div>
-            <div className={css.tooltipPointer}>
-              <img src="/assets/images/tooltip-pointer.svg"/>
-            </div>
+
+
+          </div>
+          <div className={css.voteDown}>
+            <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
+              <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
+            </button>
           </div>
         </div>
       </div>
