@@ -8,7 +8,7 @@ import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
+import { IDaoState, IProposalState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as schemas from "../../schemas";
 
@@ -18,6 +18,7 @@ import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
 
 import { Formik, Field } from 'formik';
+import { proposalEnded } from "actions/arcActions";
 
 interface IStateProps {
   dao: IDaoState;
@@ -108,6 +109,10 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
+    const proposalDescriptions = (dao.proposals as IProposalState[])
+      .filter((proposal) => !proposalEnded(proposal))
+      .map((proposal) => proposal.description);
+
     return(
       dao ? <div className={css.createProposalWrapper}>
         <h2>
@@ -155,11 +160,16 @@ class CreateProposalContainer extends React.Component<IProps, null> {
               errors.title = 'Title is too long (max 120 characters)';
             }
 
+            if (proposalDescriptions.indexOf(description) !== -1) {
+              errors.description = 'Descriptions must be unique';
+            }
+
             if (!this.web3.isAddress(beneficiaryAddress)) {
               errors.beneficiaryAddress = 'Invalid address';
             }
 
-            if (!/^(ftp|http|https):\/\/[^ "]+$/.test(description)) {
+            const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
+            if (!pattern.test(description)) {
               errors.description = 'Invalid URL';
             }
 
@@ -189,7 +199,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             isSubmitting,
             isValid,
           }) =>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
               <label htmlFor="titleInput">
                 Title (120 characters)
                 <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
@@ -253,6 +263,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   type="number"
                   className={touched.reputationReward && errors.reputationReward ? css.error : null}
                   min={0}
+                  step={0.1}
                 />
                 {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
                 <label htmlFor="ethRewardInput">ETH reward: </label>
@@ -263,6 +274,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   type="number"
                   className={touched.ethReward && errors.ethReward ? css.error : null}
                   min={0}
+                  step={0.1}
                 />
                 {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
 
