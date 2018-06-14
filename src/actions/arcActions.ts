@@ -238,7 +238,6 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     // Get the voting machine (GenesisProtocol) TODO: update as Arc.js supports a better way to do this
     const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, avatarAddress);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
-    const votingMachineAddress = schemeParams[2];
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address, proposalId });
@@ -586,7 +585,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       // Get the voting machine (GenesisProtocol) TODO: there will be a better way to do this in Arc.js soon
       const schemeParamsHash = await dao.controller.getSchemeParameters(contributionRewardInstance.contract.address, dao.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
-      const votingMachineAddress = schemeParams[2];
       const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
       const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
       const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
@@ -739,7 +737,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
       const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
-      const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
       await Util.performAction(
@@ -785,7 +782,6 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
 
-    const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
@@ -883,7 +879,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
       const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
       const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
-      const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
       const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
       const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
@@ -946,7 +941,6 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     // TODO: clean this up once Arc.js makes it easier to get the votingMachine instance for a scheme/controller combo
     const schemeParamsHash = await daoInstance.controller.getSchemeParameters(contributionRewardInstance.contract.address, daoInstance.avatar.address);
     const schemeParams = await contributionRewardInstance.contract.parameters(schemeParamsHash);
-    const votingMachineAddress = schemeParams[2]; // 2 is the index of the votingMachine address for the ContributionReward scheme
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
