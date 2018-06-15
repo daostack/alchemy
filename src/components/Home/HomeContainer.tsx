@@ -65,7 +65,6 @@ class HomeContainer extends React.Component<IProps, null> {
             <p>Alchemy is currently in its Alpha version. To join our first experiment and be part of Genesis DAO, sign up here:</p>
             <div className={css.bottomCta}>
               <a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target='_blank'>Join our pilot</a>
-              <a href="#">About the Genesis DAO</a>
             </div>
           </div>
         </div>
