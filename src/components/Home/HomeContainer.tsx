@@ -46,7 +46,7 @@ class HomeContainer extends React.Component<IProps, null> {
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
             <a href="">Join our pilot</a>
-            <Link to='/daos'>View Alchemy</Link>
+            <a href='https://alchemy.daostack.io/#/dao/0x7b11dfb29504abc8c0dfa60dc7e0aa2aae836db0'>View Alchemy</a>
           </div>
         </div>
         <div className={css.aboutAlchemy + " " + css.clearfix}>
