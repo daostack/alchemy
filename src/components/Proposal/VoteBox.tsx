@@ -145,8 +145,6 @@ export default class VoteBox extends React.Component<IProps, IState> {
                 </div>
               </div>
             </div>
-
-
           </div>
           <div className={css.voteDown}>
             <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
