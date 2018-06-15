@@ -161,7 +161,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             }
 
             if (proposalDescriptions.indexOf(description) !== -1) {
-              errors.description = 'Descriptions must be unique';
+              errors.description = 'Cannot submit URL of an already existing proposal';
             }
 
             if (!this.web3.isAddress(beneficiaryAddress)) {
