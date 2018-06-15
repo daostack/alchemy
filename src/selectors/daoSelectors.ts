@@ -16,7 +16,17 @@ const getDaoProposals = createSelector(
     if (!dao) {
       return [];
     }
-    return denormalize(dao.proposals, schemas.proposalList, entities);
+    let proposals = denormalize(dao.proposals, schemas.proposalList, entities);
+
+    // Hide test proposals and proposals created outside of Alchemy when on production
+    if (process.env.NODE_ENV == 'production') {
+      proposals = proposals.filter((proposal: IProposalState) => {
+        const title = proposal.title.toLowerCase();
+        return title != "test" && title != "testy" && title != "[no title]";
+      });
+    }
+
+    return proposals;
   },
 );
 
