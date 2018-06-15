@@ -115,7 +115,10 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     // Watch for new, confirmed stakes coming in for the current account
     // TODO: watch for all new stakes from anyone?
-    const genesisProtocolInstance = await Arc.GenesisProtocolFactory.deployed();
+    const daoInstance = await Arc.DAO.at(daoAddress);
+    const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
+    const genesisProtocolInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
     this.stakeEventWatcher = genesisProtocolInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
       onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount).toNumber());
@@ -125,8 +128,6 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     this.voteEventWatcher.watch((error, result) => {
       onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation).toNumber());
     });
-
-    const daoInstance = await Arc.DAO.at(daoAddress);
 
     this.transferEventWatcher = daoInstance.token.Transfer({}, { fromBlock: "latest" });
     this.transferEventWatcher.watch((error: any, result: any) => {
@@ -149,8 +150,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
       onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
     });
 
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
+    const stakingTokenAddress = await genesisProtocolInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
 
     this.balanceWatcher = web3.eth.filter('latest');

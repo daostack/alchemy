@@ -70,6 +70,7 @@ export function initializeWeb3() {
     const getBalance = promisify(web3.eth.getBalance);
     payload.ethAccountBalance = Util.fromWei(await getBalance(payload.ethAccountAddress)).toNumber();
 
+    //TODO: how to choose the staking token we want.
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;

@@ -83,6 +83,8 @@ class HeaderContainer extends React.Component<IProps, null> {
   public async componentDidMount() {
     const { web3State: { ethAccountAddress }, onApprovedStakingGens, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged } = this.props;
     const web3 = await Arc.Utils.getWeb3();
+
+    // TODO: how to choose which GenesisProtocol/Staking Token we want to use?
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
