@@ -106,6 +106,14 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
              {/* <span>Available funds: <span>13,000 ETH - 327 KIN</span></span> */}
 
             </div>
+            <div className={css.columnHeader + " " + css.clearfix}>
+              <div className={css.votes}>
+                VOTES
+              </div>
+              <div className={css.predictions}>
+                PREDICTIONS
+              </div>
+            </div>
             <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
               {boostedProposalsHTML}
             </div>
