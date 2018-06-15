@@ -41,7 +41,7 @@ class HomeContainer extends React.Component<IProps, null> {
         <div className={css.leftTriangle}></div>
         <div className={css.topTriangle}><img src="/assets/Images/Home/TopTriangle.png"/></div>
         <div className={css.hero}>
-          <img src="/assets/Images/Home/Alchemy-logo-home.svg"/>
+          <img src="/assets/Images/Home/AlchemyLogoHome.svg"/>
           <h1>Alchemy</h1>
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
