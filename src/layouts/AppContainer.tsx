@@ -97,7 +97,7 @@ class AppContainer extends React.Component<IProps, null> {
     const web3 = await Arc.Utils.getWeb3();
     if (props.ethAccountAddress && (web3.currentProvider as any).isMetaMask === true ) {
       // Setup an interval to check for the account to change
-      // First clear the old interval
+      // First clear old one
       if (this.accountInterval) {
         clearInterval(this.accountInterval);
       }
@@ -105,6 +105,8 @@ class AppContainer extends React.Component<IProps, null> {
       this.accountInterval = setInterval(async function(accountAddress: string) {
         const newAccount = await Arc.Utils.getDefaultAccount();
         if (newAccount !== accountAddress) {
+          // Clear this interval so next one can be setup with new account address
+          clearInterval(this.accountInterval);
           this.props.changeAccount(newAccount);
         }
       }.bind(this, props.ethAccountAddress), 400);
