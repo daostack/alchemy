@@ -37,7 +37,7 @@
 }
 
 .proposal:hover {
-	z-index: 100000;
+	z-index: 1000;
 }
 
 .openProposal {
@@ -291,8 +291,8 @@
 }
 
 .voteBox.unconfirmedVote {
-	.loading { 
-		display: block; 
+	.loading {
+		display: block;
 	}
 }
 
@@ -361,7 +361,7 @@
 	display: inline-block;
 	color: $black-halftone;
 
-	strong { 
+	strong {
 		color: $black-septone;
 
 		em {
@@ -530,6 +530,7 @@
     position: absolute;
     width: 175px;
     right: 0;
+    z-index: 100;
     text-align: right;
     top: 25px;
     transform: translateY(-50%);
@@ -757,5 +758,6 @@ button.cancelPrediction {
   	text-align: center;
   	font-weight: bold;
   	font-size: $body;
+  	cursor: pointer;
   }
 }

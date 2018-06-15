@@ -83,6 +83,8 @@ class HeaderContainer extends React.Component<IProps, null> {
   public async componentDidMount() {
     const { web3State: { ethAccountAddress }, onApprovedStakingGens, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged } = this.props;
     const web3 = await Arc.Utils.getWeb3();
+
+    // TODO: how to choose which GenesisProtocol/Staking Token we want to use?
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
@@ -157,13 +159,12 @@ class HeaderContainer extends React.Component<IProps, null> {
             <div className={css.menuWrapper}>
               <div className={css.backgroundBlock}></div>
               <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">DAOs</a></li>
-                <li><a href="#">FAQ</a></li>
-                <li><a href="#">Alchemy 101</a></li>
-                <li><a href="#">About DAOstack</a></li>
-                <li><a href="#">About the Genesis DAO</a></li>
-                <li><a href="#">Get involved</a></li>
+                <li><Link to='/'>Home</Link></li>
+                <li><Link to='/daos/'>DAOs</Link></li>
+                <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target='_blank'>FAQ</a></li>
+                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target='_blank'>Alchemy 101</a></li>
+                <li><a href="https://www.daostack.io/" target='_blank'>About DAOstack</a></li>
+                <li><a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target='_blank'>Get involved</a></li>
               </ul>
             </div>
           </div>

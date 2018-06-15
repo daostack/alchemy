@@ -70,6 +70,7 @@ export function initializeWeb3() {
     const getBalance = promisify(web3.eth.getBalance);
     payload.ethAccountBalance = Util.fromWei(await getBalance(payload.ethAccountAddress)).toNumber();
 
+    //TODO: how to choose the staking token we want.
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
@@ -143,7 +144,7 @@ export function onGenBalanceChanged(balance: Number) {
 export function onGenStakingAllowanceChanged(balance: Number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
   const genAllowance = getState().web3.currentAccountGenStakingAllowance;
-    if (genAllowance !== balance) {
+  if (genAllowance !== balance) {
       dispatch({
         type: ActionTypes.WEB3_ON_GEN_STAKING_ALLOWANCE_CHANGE,
         payload: balance
@@ -200,7 +201,6 @@ export function onApprovedStakingGens(numTokensApproved: number) {
 
     const meta = { accountAddress: currentAccountAddress };
     const payload = { numTokensApproved }
-    console.log("approved", numTokensApproved);
 
     dispatch({
       type: ActionTypes.APPROVE_STAKING_GENS,
