@@ -46,7 +46,7 @@ class HomeContainer extends React.Component<IProps, null> {
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
             <a href="">Join our pilot</a>
-            <a href="#">View Alchemy</a>
+            <Link to='/daos'>View Alchemy</Link>
           </div>
         </div>
         <div className={css.aboutAlchemy + " " + css.clearfix}>
@@ -70,13 +70,12 @@ class HomeContainer extends React.Component<IProps, null> {
           </div>
         </div>
         <div className={css.footer}>
-          <a href="#">Home</a>
-          <a href="#">DAOs</a>
-          <a href="#">FAQ</a>
-          <a href="#">Alchemy 101</a>
-          <a href="#">About DAOstack</a>
-          <a href="#">About the Genesis DAO</a>
-          <a href="#">Get involved</a>
+          <Link to='/'>View Alchemy</Link>
+          <Link to='/daos'>View Alchemy</Link>
+          <a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target='_blank'>FAQ</a>
+          <a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target='_blank'>Alchemy 101</a>
+          <a href="https://www.daostack.io/" target='_blank'>About DAOstack</a>
+          <a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target='_blank'>Get involved</a>
         </div>
       </div>
     );
