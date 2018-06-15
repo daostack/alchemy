@@ -1,6 +1,7 @@
 import * as classNames from "classnames";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import Tooltip from 'rc-tooltip';
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
@@ -79,6 +80,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.disabled]: !currentAccountReputation
     });
 
+    const passTipContent = currentAccountReputation ? "Vote for" : "Voting requires reputation in " + daoName;
+    const failTipContent = currentAccountReputation ? "Vote against" : "Voting requires reputation in " + daoName;
+
     return (
       <div className={wrapperClass}>
         <div className={css.loading}>
@@ -86,13 +90,14 @@ export default class VoteBox extends React.Component<IProps, IState> {
         </div>
         <div className={voteControls}>
           <div className={css.voteUp}>
-            <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
-              <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
-              <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
-            </button>
+            <Tooltip placement="right" trigger={["hover"]} overlay={passTipContent} overlayClassName={css.voteTooltip}>
+              <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
+                <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
+              </button>
+            </Tooltip>
           </div>
           <div className={css.voteDivider}>
-
             <div className={css.voteGraphs}>
               <div className={css.upvoteGraph + " " + css.voteGraph}>
                 <div className={css.dividingLine}></div>
@@ -123,13 +128,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
                         /> against
                       </span>
                     </div>
-
                     <div className={css.graph}>
                       <div className={css.forBar} style={styles.forBar}></div>
                       <div className={css.divider}></div>
                       <div className={css.againstBar} style={styles.againstBar}></div>
                     </div>
-
                     <div className={css.reputationThreshold}>
                       <ReputationView
                         daoName={daoName}
@@ -137,7 +140,6 @@ export default class VoteBox extends React.Component<IProps, IState> {
                         reputation={daoTotalReputation / 2}
                       /> NEEDED FOR DECISION BY VOTE
                     </div>
-
                   </div>
                 </div>
                 <div className={css.tooltipPointer}>
@@ -147,10 +149,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.voteDown}>
-            <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-              <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
-              <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
-            </button>
+            <Tooltip placement="right" trigger={["hover"]} overlay={failTipContent} overlayClassName={css.voteTooltip}>
+              <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
+                <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
+              </button>
+            </Tooltip>
           </div>
         </div>
       </div>

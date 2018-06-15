@@ -41,11 +41,10 @@ class HomeContainer extends React.Component<IProps, null> {
         <div className={css.leftTriangle}></div>
         <div className={css.topTriangle}><img src="/assets/Images/Home/TopTriangle.png"/></div>
         <div className={css.hero}>
-          <img src="/assets/Images/Home/Alchemy-logo-home.svg"/>
+          <img src="/assets/Images/Home/AlchemyLogoHome.svg"/>
           <h1>Alchemy</h1>
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
-            <a href="">Join our pilot</a>
             <a href='https://alchemy.daostack.io/#/dao/0x7b11dfb29504abc8c0dfa60dc7e0aa2aae836db0'>View Alchemy</a>
           </div>
         </div>

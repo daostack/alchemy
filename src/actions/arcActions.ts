@@ -730,10 +730,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
     };
 
     try {
-
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
       const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
@@ -869,7 +866,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
       const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
@@ -928,8 +924,6 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     const proposal: IProposalState = getState().arc.proposals[proposalId];
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed()
-
     const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 

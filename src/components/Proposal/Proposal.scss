@@ -64,7 +64,6 @@
 
 .disabled {
 	opacity: 0.5;
-	pointer-events: none;
 }
 .disabled button {
 	cursor: not-allowed !important;
@@ -72,6 +71,10 @@
 
 .redeemable {
 	position: relative;
+}
+
+.voteTooltip {
+	transform: translateX(25px);
 }
 
 .voteControls {
@@ -87,7 +90,7 @@
 		position: absolute;
 		left: 0;
 		border: none;
-		width: 24px;
+		width: 30px;
 		height: 24px;
 		background-color: transparent;
 		outline: none;
@@ -98,7 +101,6 @@
 			padding: 0;
 			left: 3px;
 			top: 3px;
-			transition: all .25s ease;
 		}
 
 	}
@@ -133,13 +135,21 @@
 		opacity: 0;
 	}
 
-	button:hover .upvote.upvoted, button:hover .downvote.downvoted, button.voted .upvote.upvoted, button.voted .downvote.downvoted {
+	button:hover .downvote.downvoted, button.voted .downvote.downvoted {
+		cursor: pointer;
+		height: 18px;
+		top: 2px;
+		left: 0px;
+		opacity: 1;
+	}
+
+	 button.voted .upvote.upvoted, button:hover .upvote.upvoted {
 		cursor: pointer;
 		height: 18px;
 		top: 2px;
 		left: 2px;
 		opacity: 1;
-	}
+	 }
 
 	.voteDivider {
 		width: 24px;
@@ -325,6 +335,7 @@
 			font-size: $small;
 			color: $black-halftone;
 			margin: 0 0 6px 0;
+			top: -3px;
 		}
 	}
 }
@@ -409,9 +420,8 @@
 	}
 
 	.voteGraph .voteMeasurement {
-		width: 20px;
+		width: 9px;
 		position: absolute;
-		border-radius: 0 0 3px 3px;
 		bottom: 0;
 	}
 
@@ -555,7 +565,7 @@ a.viewProposal {
 	font-size: $caption;
 	width: 100px;
 	right: 0;
-    bottom: 15px;
+    bottom: 12px;
     text-align: right;
 
 	img {
