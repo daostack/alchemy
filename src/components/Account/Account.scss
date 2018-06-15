@@ -77,10 +77,11 @@
 
       span {
         display: inline-block;
-        width: 135px;
+        width: 115px;
+        padding-left: 10px;
         text-overflow: ellipsis;
         overflow: hidden;
-        whitespace: nowrap;
+        white-space: nowrap;
       }
 
       button {

@@ -385,7 +385,7 @@ body {
   left: 0;
 }
 
-.modal-container {
+.modalContainer {
   position: fixed;
   z-index: 100000;
 }
@@ -398,7 +398,7 @@ body {
   height: 0;
 }
 
-.modal-body {
+.modalBody {
   overflow: hidden;
 }
 
@@ -448,12 +448,12 @@ body {
 }
 
 @media only screen and (max-device-width: 1024px) {
-  .modal-body {
+  .modalBody {
     position: fixed;
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
   }
-  .modal-container {
+  .modalContainer {
     position: absolute;
     top: 0;
     left: 0;

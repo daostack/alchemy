@@ -26,15 +26,25 @@
 	position: absolute;
 	left: -380px;
 	top: 200px;
+	z-index: 0;
 	background-color: $white;
+}
+
+p {
+	padding: 15px 30px;
 }
 
 h2 {
 	font-family: $heading-1-font;
-	font-size: 24px;
+	font-size: 36px;
+	font-weight: normal;
+	margin-bottom: 0px;
+	padding: 0 30px;
 }
 
 .hero {
+	position: relative;
+	z-index: 10;
 	width: 100%;
 	text-align: center;
 	padding-top: 100px;
@@ -49,6 +59,8 @@ h2 {
 
 	h2 {
 		margin-bottom: 50px;
+		font-size: 24px;
+		opacity: 0.5;
 	}
 
 	.topCta {
@@ -57,23 +69,36 @@ h2 {
 		a {
 			color: rgba(255,255,255,1);
 			background-color: rgba(43, 171, 204, 1.000);
-			font-size: 18px;
-			margin: 0 8px;
+			font-size: 14px;
+			margin: 0 15px;
 			text-decoration: none;
 			padding: 8px 15px;
+			transition: all .25s ease;
+
+			&:hover {
+				background-color: rgba(34, 159, 110, 1.000);
+			}
 		}
 	}
 }
 
 .aboutAlchemy {
-	height: 400px;
+	height: auto;
+	position: relative;
+	z-index: 11;
+	padding-bottom: 150px;
 
 	.column {
-		width: 50%;
-		float: left;
+		display: block;
 		
 		h2 {
-			padding-top: 100px;
+			padding-top: 30px;
+		}
+
+		img {
+			margin: 0 auto;
+			display: block;
+			width: 80%;
 		}
 	}
 
@@ -86,7 +111,7 @@ h2 {
 	text-align: center;
 	color: $white;
 	background-repeat: no-repeat;
-	background-width: 100%;
+	background-size: 100%;
 	padding-bottom: 350px;
 
 	div {
@@ -95,14 +120,20 @@ h2 {
 
 		.bottomCta {
 			text-align: center;
+			margin-top: 50px;
 
 			a {
 				color: rgba(255,255,255,1);
 				background-color: rgba(43, 171, 204, 1.000);
 				font-size: 18px;
 				text-decoration: none;
-				margin: 0 8px;
+				margin: 0 15px;
 				padding: 8px 15px;
+				transition: all .25s ease;
+
+				&:hover {
+					background-color: rgba(34, 159, 110, 1.000);
+				}
 			}
 		}
 	}
@@ -112,11 +143,55 @@ h2 {
 	text-align: center;
 	background-color: rgba(56, 56, 56, 1.000);
 	text-align: center;
+	padding: 50px;
 
 	a {
 		color: $white;
 		text-decoration: none;
 		display: inline-block;
-		margin: 0 5px;
+		margin: 15px;
+		opacity: .5;
+		display: block;
+		transition: all .25s ease;
+
+		&:hover {
+			opacity: 1;
+			text-decoration: underline;
+		}
+	}
+}
+
+@media only screen and (min-width: 768px) {
+	.footer a {
+		margin: 0 15px;
+		display: inline;
+	}
+
+	.hero .topCta a {
+		font-size: 18px;
+	}
+
+	.aboutAlchemy {
+		height: 400px;
+
+		.column {
+			width: 50%;
+			float: left;
+
+			h2 {
+				padding-top: 0px;
+			}
+		}
+	}
+}
+
+@media only screen and (min-width: 1000px) {
+	.aboutAlchemy .column {
+		h2 {
+			padding-top: 100px;
+		}
+		img {
+			width: auto;
+		}
 	}
 }
