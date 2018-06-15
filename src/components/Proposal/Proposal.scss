@@ -65,7 +65,7 @@
 .disabled {
 	opacity: 0.5;
 }
-.disabled button {
+.disabled button, button.disabled {
 	cursor: not-allowed !important;
 }
 
@@ -131,20 +131,22 @@
 		z-index: 100;
 	}
 
-	button:hover .upvote, button:hover .downvote, button.voted .upvote, button.voted .downvote {
+	button:hover:not(.disabled) {
+		cursor: pointer;
+	}
+
+	button:hover:not(.disabled) .upvote, button:hover:not(.disabled) .downvote, button.voted .upvote, button.voted .downvote {
 		opacity: 0;
 	}
 
-	button:hover .downvote.downvoted, button.voted .downvote.downvoted {
-		cursor: pointer;
+	button:hover:not(.disabled) .downvote.downvoted, button.voted .downvote.downvoted {
 		height: 18px;
 		top: 2px;
 		left: 0px;
 		opacity: 1;
 	}
 
-	 button.voted .upvote.upvoted, button:hover .upvote.upvoted {
-		cursor: pointer;
+	 button.voted .upvote.upvoted, button:hover:not(.disabled) .upvote.upvoted {
 		height: 18px;
 		top: 2px;
 		left: 2px;

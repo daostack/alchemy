@@ -35,8 +35,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public handleClickVote(vote: number, event: any) {
-    const { currentAccountReputation, proposal, transactionState, voteOnProposal } = this.props;
-    if (currentAccountReputation) {
+    const { currentAccountReputation, currentVote, proposal, transactionState, voteOnProposal } = this.props;
+    if (currentAccountReputation && !currentVote) {
       this.setState({ currentVote: vote });
       voteOnProposal(proposal.daoAvatarAddress, proposal, vote);
     }
@@ -82,8 +82,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.disabled]: !currentAccountReputation
     });
 
-    const passTipContent = currentAccountReputation ? "Vote for" : "Voting requires reputation in " + daoName;
-    const failTipContent = currentAccountReputation ? "Vote against" : "Voting requires reputation in " + daoName;
+    const passTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote for") : "Voting requires reputation in " + daoName;
+    const failTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote against") : "Voting requires reputation in " + daoName;
 
     return (
       <div className={wrapperClass}>
