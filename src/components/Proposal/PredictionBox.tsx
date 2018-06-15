@@ -153,7 +153,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             <img src="/assets/images/Icon/Close-black.svg"/>
           </button>
           <div className={css.newPredictionTitle}>
-            Predict this will <strong>{showStakeModal == VoteOptions.Yes ? "pass" : "pass"}</strong>
+            Predict this will <strong>{showStakeModal == VoteOptions.Yes ? "pass" : "fail"}</strong>
           </div>
           <div className={css.formGroup + " " + css.clearfix}>
             <span className={css.genLabel}>Stake</span>

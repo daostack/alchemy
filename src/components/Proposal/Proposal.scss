@@ -335,6 +335,7 @@
 			font-size: $small;
 			color: $black-halftone;
 			margin: 0 0 6px 0;
+			top: -3px;
 		}
 	}
 }
@@ -564,7 +565,7 @@ a.viewProposal {
 	font-size: $caption;
 	width: 100px;
 	right: 0;
-    bottom: 15px;
+    bottom: 12px;
     text-align: right;
 
 	img {
