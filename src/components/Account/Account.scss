@@ -56,13 +56,13 @@
     opacity: 0;
     left: 50%;
     top: -150px;
-    padding: 60px 30px 30px 30px;
+    padding: 60px 0 0 0;
     width: 190px;
     font-size: $caption;
-    color: $white;
+    color: $black;
     z-index: 0;
     transform: translateX(-50%) scale(0);
-    background-image: linear-gradient(-222deg, #FDB93E 0%, #1CBDF7 100%);
+    background-color: $white;
     border-radius: 3px;
     transition: all .25s ease;
     box-shadow: $shadow-3;
@@ -85,7 +85,7 @@
 
       button {
         position: absolute;
-        top: 5px;
+        top: 0;
         right: 0;
         border: none;
         outline: none;
@@ -95,12 +95,14 @@
     }
 
     .holdings {
-      padding-top: 30px;
+      padding: 20px 0;
+      margin-top: 20px;
       text-align: center;
+      background-color: rgba(242, 242, 242, 1.000);
 
       &>span {
         font-size: $small;
-        color: $white-halftone;
+        color: $black-halftone;
       }
     }
 
@@ -121,9 +123,6 @@
   .avatar {
     width: 80px;
     height: 80px;
-    border-radius: 100px;
-    background-color: $white;
-    box-shadow: $shadow-1;
 
     img {
       width: 50px;
@@ -132,7 +131,7 @@
   }
   .accountInfo {
     opacity: 1;
-    top: 15px;
+    top: 10px;
     transform: translateX(-50%) scale(1);
   }
 }

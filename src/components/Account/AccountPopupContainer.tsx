@@ -62,7 +62,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
         <div className={css.accountInfo}>
           <div className={css.beneficiaryAddress}>
             <span>{accountAddress}</span>
-            <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-white.svg"/></button>
+            <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>

@@ -37,7 +37,7 @@
 }
 
 .proposal:hover {
-	z-index: 100000;
+	z-index: 1000;
 }
 
 .openProposal {
@@ -530,6 +530,7 @@
     position: absolute;
     width: 175px;
     right: 0;
+    z-index: 100;
     text-align: right;
     top: 25px;
     transform: translateY(-50%);
