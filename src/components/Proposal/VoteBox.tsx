@@ -80,6 +80,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.disabled]: !currentAccountReputation
     });
 
+    const passTipContent = currentAccountReputation ? "Vote for" : "Voting requires reputation in " + daoName;
+    const failTipContent = currentAccountReputation ? "Vote against" : "Voting requires reputation in " + daoName;
+
     return (
       <div className={wrapperClass}>
         <div className={css.loading}>
@@ -87,7 +90,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
         </div>
         <div className={voteControls}>
           <div className={css.voteUp}>
-            <Tooltip placement="right" trigger={["hover"]} overlay="Vote to pass" overlayClassName={css.voteTooltip}>
+            <Tooltip placement="right" trigger={["hover"]} overlay={passTipContent} overlayClassName={css.voteTooltip}>
               <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
                 <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
                 <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
@@ -146,7 +149,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.voteDown}>
-            <Tooltip placement="right" trigger={["hover"]} overlay="Vote to fail" overlayClassName={css.voteTooltip}>
+            <Tooltip placement="right" trigger={["hover"]} overlay={failTipContent} overlayClassName={css.voteTooltip}>
               <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
                 <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
                 <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
