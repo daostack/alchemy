@@ -95,7 +95,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     }
 
     // If don't have any staking allowance, replace with button to pre-approve
-    if (currentAccountGenStakingAllowance == 0) {
+    if (currentAccountGenStakingAllowance < 1) {
       return (
         <div className={css.predictions}>
           <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
