@@ -62,10 +62,7 @@
 	opacity: .5;
 }
 
-.disabled {
-	opacity: 0.5;
-}
-.disabled button, button.disabled {
+button.disabled {
 	cursor: not-allowed !important;
 }
 

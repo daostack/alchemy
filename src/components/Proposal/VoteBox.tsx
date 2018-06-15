@@ -70,16 +70,15 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
     let voteUpButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.Yes,
-      [css.disabled]: !!currentVote
+      [css.disabled]: !currentAccountReputation || !!currentVote
     });
     let voteDownButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.No,
-      [css.disabled]: !!currentVote
+      [css.disabled]: !currentAccountReputation || !!currentVote
     });
 
     const voteControls = classNames({
-      [css.voteControls]: true,
-      [css.disabled]: !currentAccountReputation
+      [css.voteControls]: true
     });
 
     const passTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote for") : "Voting requires reputation in " + daoName;
