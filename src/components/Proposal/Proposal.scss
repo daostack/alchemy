@@ -74,6 +74,10 @@
 	position: relative;
 }
 
+.voteTooltip {
+	transform: translateX(15px);
+}
+
 .voteControls {
 	float: left;
 	width: 30px;
@@ -409,9 +413,8 @@
 	}
 
 	.voteGraph .voteMeasurement {
-		width: 20px;
+		width: 9px;
 		position: absolute;
-		border-radius: 0 0 3px 3px;
 		bottom: 0;
 	}
 

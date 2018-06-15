@@ -9,6 +9,7 @@ export const passedProposal: string;
 export const unconfirmedProposal: string;
 export const disabled: string;
 export const redeemable: string;
+export const voteTooltip: string;
 export const voteControls: string;
 export const voteUp: string;
 export const voteDown: string;

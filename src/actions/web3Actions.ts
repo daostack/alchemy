@@ -171,6 +171,7 @@ export function approveStakingGens() {
       sequence: AsyncActionSequence.Pending,
       operation: {
         message: `Approving tokens for staking...`,
+        totalSteps: 1
       },
       meta
     } as ApproveAction);
