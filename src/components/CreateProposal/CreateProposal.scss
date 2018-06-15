@@ -15,6 +15,7 @@
     color: $white;
     height: 40px;
     opacity: 1;
+    font-family: $body-font;
     font-weight: $normal;
 
     span {
@@ -53,9 +54,11 @@
       text-transform: uppercase;
       padding: 5px 0 0 0;
       position: relative;
+      
       .infoTooltip {
         position: absolute;
         right: 0;
+        display: none;
         right: -17px;
       }
     }
@@ -168,6 +171,10 @@
     font-size: $body;
     padding: 0 15px;
     font-family: $body-font;
+
+    &:hover {
+      cursor: pointer;
+    }
 
     img {
       position: relative;
