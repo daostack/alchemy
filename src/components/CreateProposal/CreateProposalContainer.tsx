@@ -200,10 +200,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             isValid,
           }) =>
             <form onSubmit={handleSubmit} noValidate>
-              <label htmlFor="titleInput">
-                Title (120 characters)
-                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-              </label>
               <Field
                 autoFocus
                 id="titleInput"
