@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="98px" height="113px" viewBox="0 0 98 113" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Alchemy logotype with mark</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="113" height="113"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="homepage" transform="translate(-927.000000, -198.000000)">
+            <g id="Alchemy-logotype-with-mark" transform="translate(920.000000, 198.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Mask"></g>
+                <g mask="url(#mask-2)" id="Group-9">
+                    <g transform="translate(-10.000000, -1.000000)">
+                        <g>
+                            <path d="M55.8239939,46.5019458 L84.83411,75.5093943 L113.844426,46.5019458 L84.83411,17.4946969 L55.8239939,46.5019458 Z M84.83411,80.4865527 L50.8465773,46.5019458 L84.83411,12.5171395 L118.821842,46.5019458 L84.83411,80.4865527 Z" id="Fill-68-Copy" fill="#434343" fill-rule="nonzero" transform="translate(84.834210, 46.501846) rotate(-30.000000) translate(-84.834210, -46.501846) "></path>
+                            <path d="M36.8071042,79.3426128 L65.8172204,108.350061 L94.8275361,79.3426128 L65.8172204,50.3353639 L36.8071042,79.3426128 Z M65.8172204,113.32722 L31.8296876,79.3426128 L65.8172204,45.3578064 L99.8049527,79.3426128 L65.8172204,113.32722 Z" id="Fill-68-Copy-3" fill="#434343" fill-rule="nonzero"></path>
+                            <path d="M17.5204715,46.5019458 L46.5305876,75.5093943 L75.5409033,46.5019458 L46.5305876,17.4946969 L17.5204715,46.5019458 Z M46.5305876,80.4865527 L12.5430549,46.5019458 L46.5305876,12.5171395 L80.5183199,46.5019458 L46.5305876,80.4865527 Z" id="Fill-68-Copy-2" fill="#434343" fill-rule="nonzero" transform="translate(46.530687, 46.501846) rotate(-60.000000) translate(-46.530687, -46.501846) "></path>
+                            <path d="M37.3465905,35.0615495 L66.3567066,64.068998 L95.3670223,35.0615495 L66.3567066,6.05430072 L37.3465905,35.0615495 Z M66.3567066,69.0461564 L32.3691738,35.0615495 L66.3567066,1.07674318 L100.344439,35.0615495 L66.3567066,69.0461564 Z" id="Fill-68-Copy" fill="#434343" fill-rule="nonzero" transform="translate(66.356806, 35.061450) rotate(-90.000000) translate(-66.356806, -35.061450) "></path>
+                            <path d="M56.2286086,67.9022165 L85.2387247,96.909665 L114.24904,67.9022165 L85.2387247,38.8949676 L56.2286086,67.9022165 Z M85.2387247,101.886823 L51.2511919,67.9022165 L85.2387247,33.9174102 L119.226457,67.9022165 L85.2387247,101.886823 Z" id="Fill-68-Copy-3" fill="#434343" fill-rule="nonzero" transform="translate(85.238824, 67.902117) rotate(-60.000000) translate(-85.238824, -67.902117) "></path>
+                            <path d="M18.3297008,68.1714023 L47.3398169,97.1788508 L76.3501327,68.1714023 L47.3398169,39.1641534 L18.3297008,68.1714023 Z M47.3398169,102.156009 L13.3522842,68.1714023 L47.3398169,34.186596 L81.3275493,68.1714023 L47.3398169,102.156009 Z" id="Fill-68-Copy-2" fill="#434343" fill-rule="nonzero" transform="translate(47.339917, 68.171303) rotate(-120.000000) translate(-47.339917, -68.171303) "></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
