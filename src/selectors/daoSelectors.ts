@@ -22,7 +22,7 @@ const getDaoProposals = createSelector(
     if (process.env.NODE_ENV == 'production') {
       proposals = proposals.filter((proposal: IProposalState) => {
         const title = proposal.title.toLowerCase();
-        return title != "test" && title != "testy" && title != "[no title]";
+        return title != "test" && title != "testing" && title != "testy" && title != "[no title]";
       });
     }
 
