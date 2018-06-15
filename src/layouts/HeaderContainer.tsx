@@ -179,7 +179,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <div className={css.holdingsLabel}>Your wallet</div>
                 <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
                   <span>{web3State.ethAccountAddress.slice(0, 40)}</span>
-                  <img src="/assets/images/Icon/copy-white.svg"/>
+                  <img src="/assets/images/Icon/Copy-white.svg"/>
                   <div className={css.fade}></div>
                 </div>
               </div>
