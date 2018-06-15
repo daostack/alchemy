@@ -39,9 +39,9 @@ class HomeContainer extends React.Component<IProps, null> {
     return (
       <div className={css.homeWrapper}>
         <div className={css.leftTriangle}></div>
-        <div className={css.topTriangle}><img src="/assets/Images/Home/TopTriangle.png"/></div>
+        <div className={css.topTriangle}><img src="/assets/images/Home/TopTriangle.png"/></div>
         <div className={css.hero}>
-          <img src="/assets/Images/Home/AlchemyLogoHome.svg"/>
+          <img src="/assets/images/Home/AlchemyLogoHome.svg"/>
           <h1>Alchemy</h1>
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
@@ -50,7 +50,7 @@ class HomeContainer extends React.Component<IProps, null> {
         </div>
         <div className={css.aboutAlchemy + " " + css.clearfix}>
           <div className={css.column}>
-            <img src="/assets/Images/Home/AlphaGenesisDao.png"/>
+            <img src="/assets/images/Home/AlphaGenesisDao.png"/>
           </div>
           <div className={css.column}>
             <h2>Distributed Governance At Scale</h2>
