@@ -75,26 +75,28 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const { showApproveModal, showStakeModal } = this.state;
 
     if (showApproveModal) {
-      return (<Modal onBackdropClick={this.closeApprovalModal.bind(this)}>
-        <div className={css.preApproval}>
-          <div className={css.preapproveBackdrop}></div>
-          <div className={css.preapproveWrapper}>
-            <p>
-              In order to activate predictions, you must authorize our smart
-              contract to receive GENs from you. Upon activation, the smart contract
-              will be authorized to receive up to 1000 GENs. This transaction will not
-              cost you GEN or commit you in any way to spending your GENs in the future.
-            </p>
-            <p>
-              Once you click the button below, we will pop-up a MetaMask dialogue.
-              This dialogue will ask you to approve the transaction, including a small ETH cost.
-            </p>
-            <div>
-              <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+      return (
+        <Modal onBackdropClick={this.closeApprovalModal.bind(this)}>
+          <div className={css.preApproval}>
+            <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal.bind(this)}></div>
+            <div className={css.preapproveWrapper}>
+              <p>
+                In order to activate predictions, you must authorize our smart
+                contract to receive GENs from you. Upon activation, the smart contract
+                will be authorized to receive up to 1000 GENs. This transaction will not
+                cost you GEN or commit you in any way to spending your GENs in the future.
+              </p>
+              <p>
+                Once you click the button below, we will pop-up a MetaMask dialogue.
+                This dialogue will ask you to approve the transaction, including a small ETH cost.
+              </p>
+              <div>
+                <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+              </div>
             </div>
           </div>
-        </div>
-      </Modal>);
+        </Modal>
+      );
     }
 
     // If don't have any staking allowance, replace with button to pre-approve

@@ -291,8 +291,8 @@
 }
 
 .voteBox.unconfirmedVote {
-	.loading { 
-		display: block; 
+	.loading {
+		display: block;
 	}
 }
 
@@ -361,7 +361,7 @@
 	display: inline-block;
 	color: $black-halftone;
 
-	strong { 
+	strong {
 		color: $black-septone;
 
 		em {
@@ -758,5 +758,6 @@ button.cancelPrediction {
   	text-align: center;
   	font-weight: bold;
   	font-size: $body;
+  	cursor: pointer;
   }
 }
