@@ -92,14 +92,17 @@ const cacheBlockchain = async () => {
         initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter] = { ...emptyAccount, address: voteEventArgs._voter };
       }
       // TODO: use arcReducer to add this.
-      initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes[voteEventArgs._proposalId] = {
+      // XXX: copying the object is required here or else it adds this vote to every member in the DAO somehow
+      const memberVotes = Object.assign({}, initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes);
+      memberVotes[voteEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: voteEventArgs._proposalId,
         reputation: Util.fromWei(voteEventArgs._reputation).toNumber(),
         transactionState: TransactionStates.Confirmed,
         vote: Number(voteEventArgs._vote),
         voterAddress: voteEventArgs._voter
-      }
+      };
+      initialState.daos[proposalDetails.daoAvatarAddress].members[voteEventArgs._voter].votes = memberVotes;
     }
   } catch (e) {
     console.error("Error getting votes: ", e)
@@ -119,7 +122,8 @@ const cacheBlockchain = async () => {
       if (!initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter]) {
         initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter] = { ...emptyAccount, address: stakeEventArgs._voter };
       }
-      initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes[stakeEventArgs._proposalId] = {
+      const memberStakes = Object.assign({}, initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes);
+      memberStakes[stakeEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: stakeEventArgs._proposalId,
         transactionState: TransactionStates.Confirmed,
@@ -127,6 +131,7 @@ const cacheBlockchain = async () => {
         prediction: Number(stakeEventArgs._vote),
         stakerAddress: stakeEventArgs._voter
       }
+      initialState.daos[proposalDetails.daoAvatarAddress].members[stakeEventArgs._voter].stakes = memberStakes;
     }
   } catch (e) {
     console.error("Error getting stakes: ", e);
