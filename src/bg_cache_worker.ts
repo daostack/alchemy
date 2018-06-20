@@ -1,12 +1,16 @@
+// tslint:disable:no-var-requires
+// tslint:disable:no-console
+
 // Hack to be able to find all our modules with relative paths
 process.env.NODE_PATH = __dirname;
-// tslint:disable-next-line:no-var-requires
 require('module').Module._initPaths();
 
 import * as Arc from "@daostack/arc.js";
 import * as aws from 'aws-sdk';
-import { normalize } from "normalizr";
 import promisify = require("es6-promisify");
+import { normalize } from "normalizr";
+import * as Redis from 'redis';
+import * as Redux from 'redux';
 import HDWalletProvider from "./lib/truffle-hdwallet-provider";
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
@@ -15,11 +19,11 @@ import HDWalletProvider from "./lib/truffle-hdwallet-provider";
 const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
-import { initialState as arcInitialState, emptyAccount, IArcState, IDaoState, TransactionStates, IVoteState } from "./reducers/arcReducer";
+import { default as arcReducer, initialState as arcInitialState, emptyAccount, IArcState, IDaoState, TransactionStates, IVoteState } from "./reducers/arcReducer";
+import * as ActionTypes from "constants/arcConstants";
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
-// tslint:disable-next-line:no-var-requires
 require('dotenv').config();
 
 (async () => {
@@ -47,10 +51,25 @@ require('dotenv').config();
   // TODO: store last block checked somewhere (redis?) and only load new data since last check
   let lastBlock = 0;
 
-  // tslint:disable-next-line:no-console
+  // Get last block cached from redis, otherwise start over from block 0
+  const redisGet = promisify(redisClient.get.bind(redisClient));
+  const lastBlock = (await redisGet('alchemy-last-block-' + arcjsNetwork)) || 0;
+
+  console.log("Pulling current cached state from S3");
+  let initialState: IArcState = arcInitialState;
+  let store = Redux.createStore(arcReducer);
+
+  try {
+    const s3Get = promisify(s3.getObject.bind(s3));
+    const resp = await s3Get({Bucket: process.env.S3_BUCKET || 'daostack-alchemy', Key: s3FileName})
+    initialState = JSON.parse(resp.Body.toString('utf-8'));
+    console.log("now initiail = ", initialState);
+  } catch(e) {
+    console.log("error = ", e);
+  }
+
   console.log("Starting to cache the blockchain from block ", lastBlock);
 
-  let initialState: IArcState = arcInitialState;
   const daos = {} as { [key: string]: IDaoState };
 
   const daoCreator = Arc.WrapperService.wrappers.DaoCreator;
@@ -75,9 +94,12 @@ require('dotenv').config();
   initialState.daosLoaded = true;
 
   const normalizedData = normalize(daos, schemas.daoList);
-  // TODO: use arcReducer to handle this adding
-  initialState.daos = normalizedData.entities.daos || {};
-  initialState.proposals = normalizedData.entities.proposals || {};
+
+  // // TODO: use arcReducer to handle this adding
+  // initialState.daos = normalizedData.entities.daos || {};
+  // initialState.proposals = normalizedData.entities.proposals || {};
+  initialState = arcReducer(initialState, { type: null, entities: normalizedData.entities });
+  console.log("after getting DAOs, ", initialState);
 
   const genesisProtocol = Arc.WrapperService.wrappers.GenesisProtocol;
 
@@ -143,16 +165,12 @@ require('dotenv').config();
   }
 
   // Write cached blockchain data to S3
-  aws.config.region = 'us-west-2';
-  const s3 = new aws.S3();
-  const fileName = 'initialArcState-' + arcjsNetwork + '.json';
-  const fileType = 'application/json';
   const s3Params = {
     Body: JSON.stringify(initialState),
     Bucket: process.env.S3_BUCKET || 'daostack-alchemy',
-    Key: fileName,
+    Key: s3FileName,
     //Expires: 60,
-    ContentType: fileType,
+    ContentType: s3FileType,
     ACL: 'public-read'
   };
   s3.putObject(s3Params, (err, data) => {

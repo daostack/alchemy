@@ -9,7 +9,7 @@ import { showNotification, NotificationStatus } from 'reducers/notifications'
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IDaoState, emptyAccount } from "reducers/arcReducer";
+import { IAccountState, IDaoState, emptyAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import AccountBalance from "components/Account/AccountBalance";
@@ -26,8 +26,9 @@ interface IStateProps {
   accounts: string[];
   currentAccountGenBalance: number;
   currentAccountGenStakingAllowance: number;
+  currentAccount: IAccountState;
   dao: IDaoState;
-  daoAddress: string;
+  daoAvatarAddress: string;
   ethAccountAddress: string | null;
   ethAccountBalance: number;
   networkId: number;
@@ -36,10 +37,11 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     accounts: state.web3.accounts,
+    currentAccount: state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.daoAvatarAddress}`],
     currentAccountGenBalance: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
-    dao: state.arc.daos[ownProps.daoAddress],
-    daoAddress: ownProps.daoAddress,
+    dao: state.arc.daos[ownProps.daoAvatarAddress],
+    daoAvatarAddress: ownProps.daoAvatarAddress,
     ethAccountAddress: state.web3.ethAccountAddress,
     ethAccountBalance: state.web3.ethAccountBalance,
     networkId: state.web3.networkId
@@ -96,15 +98,15 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { accounts, currentAccountGenStakingAllowance, currentAccountGenBalance, dao, daoAddress, ethAccountAddress, ethAccountBalance, networkId, onApprovedStakingGens, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged, setCurrentAccount } = this.props;
+    const { accounts, currentAccountGenStakingAllowance, currentAccountGenBalance, dao, daoAvatarAddress, ethAccountAddress, ethAccountBalance, networkId, onApprovedStakingGens, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged, setCurrentAccount } = this.props;
     const web3 = await Arc.Utils.getWeb3();
 
-    await setCurrentAccount(ethAccountAddress, daoAddress ? daoAddress : null);
+    await setCurrentAccount(ethAccountAddress, daoAvatarAddress ? daoAvatarAddress : null);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
-    if (daoAddress) {
+    if (daoAvatarAddress) {
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
     } else {
       votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
@@ -153,7 +155,7 @@ class HeaderContainer extends React.Component<IProps, null> {
         if (newAccount !== accountAddress) {
           // Clear this interval so next one can be setup with new account address
           clearInterval(this.accountInterval);
-          this.props.setCurrentAccount(newAccount, props.daoAddress ? props.daoAddress : null);
+          this.props.setCurrentAccount(newAccount, props.daoAvatarAddress ? props.daoAvatarAddress : null);
         }
       }.bind(this, props.ethAccountAddress), 400);
     }
@@ -171,7 +173,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   public handleChangeAccount = (e: any) => {
     const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
     const newAddress = selectElement.value;
-    this.props.setCurrentAccount(newAddress, this.props.daoAddress ? this.props.daoAddress : null);
+    this.props.setCurrentAccount(newAddress, this.props.daoAvatarAddress ? this.props.daoAvatarAddress : null);
   }
 
   public handleClickTour = (e: any) => {
@@ -180,11 +182,10 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accounts, currentAccountGenBalance, currentAccountGenStakingAllowance, dao, ethAccountAddress, ethAccountBalance, networkId, showTour } = this.props;
+    let { accounts, currentAccount, currentAccountGenBalance, currentAccountGenStakingAllowance, dao, ethAccountAddress, ethAccountBalance, networkId, showTour } = this.props;
 
-    let member = dao ? dao.members[ethAccountAddress] : false;
-    if (!member) {
-      member = {...emptyAccount };
+    if (!currentAccount) {
+      currentAccount = {...emptyAccount };
     }
 
     const accountOptionNodes = accounts.map((account: string) => (
@@ -250,9 +251,9 @@ class HeaderContainer extends React.Component<IProps, null> {
                 { dao
                   ? <div className={css.daoBalance}>
                       <h3>Genesis Alpha</h3>
-                      <AccountBalance tokenSymbol={dao.tokenSymbol} balance={member.tokens} accountAddress={ethAccountAddress} />
+                      <AccountBalance tokenSymbol={dao.tokenSymbol} balance={currentAccount.tokens} accountAddress={ethAccountAddress} />
                       <label>NATIVE TOKEN</label>
-                      <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={member.reputation}/>
+                      <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccount.reputation}/>
                       <label>REPUTATION</label>
                     </div>
                   : ""

@@ -9,7 +9,7 @@ import { IRootState } from "reducers";
 import { IDaoState, IProposalState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 import DaoHeader from "./DaoHeader";
