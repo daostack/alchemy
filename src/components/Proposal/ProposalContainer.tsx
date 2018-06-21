@@ -258,6 +258,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
                   currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+                  daoAddress={dao.avatarAddress}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   approveStakingGens={approveStakingGens}
@@ -285,6 +286,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
                   currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+                  daoAddress={dao.avatarAddress}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   approveStakingGens={approveStakingGens}
