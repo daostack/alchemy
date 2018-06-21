@@ -72,7 +72,10 @@ export function getDAOs() {
 
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
-        daos[event.args._avatar] = await getDAOData(event.args._avatar, true);
+        const daoData = await getDAOData(event.args._avatar, true);
+        if (daoData) {
+          daos[event.args._avatar] = daoData;
+        }
       }
 
       dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: normalize(daos, schemas.daoList) });
@@ -86,8 +89,11 @@ export function getDAO(avatarAddress: string) {
 
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const daoData = await getDAOData(avatarAddress, true, currentAccountAddress);
-
-    dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
+    if (daoData) {
+      dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
+    } else {
+      dispatch({ type: arcConstants.ARC_GET_DAO_REJECTED, payload: "Not a valid DAO" });
+    }
   };
 }
 
@@ -95,8 +101,26 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+
   const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
+  if (votingMachineAddress == "0x0000000000000000000000000000000000000000") {
+    // This DAO has no GenesisProtocol, so lets ignore it
+    return false;
+  }
+
   const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+  if (!votingMachineInstance) {
+    // This DAO has no GenesisProtocol, so lets ignore it
+    return false;
+  }
+
+  const deployedWrapperWant = Arc.WrapperService.wrappers["GenesisProtocol"];
+  const byteCodeWant = await promisify((callback: any): void => web3.eth.getCode(deployedWrapperWant.address, callback))();
+  const byteCodeFound = await promisify((callback: any): void => web3.eth.getCode(votingMachineInstance.address, callback))();
+  if (byteCodeWant !== byteCodeFound) {
+    // The voting machine found is not GenesisProtocol, so ignore this DAO
+    return false;
+  }
 
   const getBalance = promisify(web3.eth.getBalance);
 
