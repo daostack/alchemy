@@ -72,7 +72,10 @@ export function getDAOs() {
 
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
-        daos[event.args._avatar] = await getDAOData(event.args._avatar, true);
+        const daoData = await getDAOData(event.args._avatar, true);
+        if (daoData) {
+          daos[event.args._avatar] = daoData;
+        }
       }
 
       dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload: normalize(daos, schemas.daoList) });
@@ -86,8 +89,11 @@ export function getDAO(avatarAddress: string) {
 
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const daoData = await getDAOData(avatarAddress, true, currentAccountAddress);
-
-    dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
+    if (daoData) {
+      dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
+    } else {
+      dispatch({ type: arcConstants.ARC_GET_DAO_REJECTED, payload: "Not a valid DAO" });
+    }
   };
 }
 
@@ -95,8 +101,26 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+
   const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
+  if (votingMachineAddress == "0x0000000000000000000000000000000000000000") {
+    // This DAO has no GenesisProtocol, so lets ignore it
+    return false;
+  }
+
   const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+  if (!votingMachineInstance) {
+    // This DAO has no GenesisProtocol, so lets ignore it
+    return false;
+  }
+
+  const deployedWrapperWant = Arc.WrapperService.wrappers.GenesisProtocol;
+  const byteCodeWant = await promisify((callback: any): void => web3.eth.getCode(deployedWrapperWant.address, callback))();
+  const byteCodeFound = await promisify((callback: any): void => web3.eth.getCode(votingMachineInstance.address, callback))();
+  if (byteCodeWant !== byteCodeFound) {
+    // The voting machine found is not GenesisProtocol, so ignore this DAO
+    return false;
+  }
 
   const getBalance = promisify(web3.eth.getBalance);
 
@@ -163,6 +187,11 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
 
     daoData.members = members;
 
+    // If the current account is not a "member" of this DAO populate an empty account object
+    if (currentAccountAddress !== null && !daoData.members[currentAccountAddress]) {
+      daoData.members[currentAccountAddress] = { address: currentAccountAddress, ...emptyAccount };
+    }
+
     //**** Get all proposals ****//
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
@@ -194,11 +223,6 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
 
       // Look for votes and stakes the current account did on this proposal
       if (currentAccountAddress !== null) {
-        // If the current account is not a "member" of this DAO populate an empty account object
-        if (!daoData.members[currentAccountAddress]) {
-          daoData.members[currentAccountAddress] = { address: currentAccountAddress, ...emptyAccount };
-        }
-
         // Check if current account voted on this proposal
         voterInfo = await getVoterInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress)
         if (voterInfo) {
@@ -211,8 +235,8 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
           daoData.members[currentAccountAddress].stakes[proposalId] = stakerInfo as IStakeState;
         }
 
-        // If executed, look for any redemptions the current account has for this proposal
-        if (proposalEnded(proposal) && proposal.winningVote === VoteOptions.Yes) {
+        // If proposal closed, look for any redemptions the current account has for this proposal
+        if (proposalEnded(proposal)) {
           redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress)
           if (redemptions) {
             daoData.members[currentAccountAddress].redemptions[proposalId] = redemptions as IRedemptionState;
@@ -270,7 +294,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       (payload as any).stake = stakerInfo;
     }
 
-    if (proposalEnded(proposal) && proposal.winningVote === VoteOptions.Yes) {
+    if (proposalEnded(proposal)) {
       const redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
       if (redemptions) {
         (payload as any).redemptions = redemptions;
@@ -792,7 +816,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     };
 
     let redemptions: IRedemptionState | boolean = false;
-    if (proposalEnded(proposal) && winningVote == VoteOptions.Yes) {
+    if (proposalEnded(proposal)) {
       redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
     }
 

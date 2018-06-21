@@ -202,7 +202,10 @@ class HeaderContainer extends React.Component<IProps, null> {
               <div className={css.backgroundBlock}></div>
               <ul>
                 <li><Link to='/'>Home</Link></li>
-                <li><a href='https://alchemy.daostack.io/#/dao/0x7b11dfb29504abc8c0dfa60dc7e0aa2aae836db0'>Genesis Alpha</a></li>
+                { process.env.NODE_ENV == 'production'
+                  ? <li><a href='https://alchemy.daostack.io/#/dao/0x7b11dfb29504abc8c0dfa60dc7e0aa2aae836db0'>Genesis Alpha</a></li>
+                  : <li><Link to='/daos'>View DAOs</Link></li>
+                }
                 <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target='_blank'>FAQ</a></li>
                 <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target='_blank'>Alchemy 101</a></li>
                 <li><a href="https://www.daostack.io/" target='_blank'>About DAOstack</a></li>

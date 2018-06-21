@@ -61,7 +61,10 @@ const cacheBlockchain = async () => {
     const newDaoEvents = await getNewDaoEvents();
     for (let index = 0; index < newDaoEvents.length; index++) {
       const event = newDaoEvents[index];
-      daos[event.args._avatar] = await arcActions.getDAOData(event.args._avatar, true);
+      const daoData = await arcActions.getDAOData(event.args._avatar, true);
+      if (daoData) {
+        daos[event.args._avatar] = daoData;
+      }
     }
   } catch (e) {
     console.error("Error getting DAOs: ", e);
