@@ -63,7 +63,7 @@ const web3Reducer = (state = initialState, action: any) => {
     //   console.log('received account', action);
     //   return state;
 
-    case ActionTypes.WEB3_CHANGE_ACCOUNT:
+    case ActionTypes.WEB3_SET_ACCOUNT:
       return {...state, ...action.payload };
 
     case ActionTypes.WEB3_ON_ETH_BALANCE_CHANGE:
