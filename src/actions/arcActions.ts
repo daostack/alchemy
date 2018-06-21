@@ -163,6 +163,11 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
 
     daoData.members = members;
 
+    // If the current account is not a "member" of this DAO populate an empty account object
+    if (currentAccountAddress !== null && !daoData.members[currentAccountAddress]) {
+      daoData.members[currentAccountAddress] = { address: currentAccountAddress, ...emptyAccount };
+    }
+
     //**** Get all proposals ****//
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
@@ -194,11 +199,6 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
 
       // Look for votes and stakes the current account did on this proposal
       if (currentAccountAddress !== null) {
-        // If the current account is not a "member" of this DAO populate an empty account object
-        if (!daoData.members[currentAccountAddress]) {
-          daoData.members[currentAccountAddress] = { address: currentAccountAddress, ...emptyAccount };
-        }
-
         // Check if current account voted on this proposal
         voterInfo = await getVoterInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress)
         if (voterInfo) {
@@ -211,8 +211,8 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
           daoData.members[currentAccountAddress].stakes[proposalId] = stakerInfo as IStakeState;
         }
 
-        // If executed, look for any redemptions the current account has for this proposal
-        if (proposalEnded(proposal) && proposal.winningVote === VoteOptions.Yes) {
+        // If proposal closed, look for any redemptions the current account has for this proposal
+        if (proposalEnded(proposal)) {
           redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress)
           if (redemptions) {
             daoData.members[currentAccountAddress].redemptions[proposalId] = redemptions as IRedemptionState;
@@ -270,7 +270,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
       (payload as any).stake = stakerInfo;
     }
 
-    if (proposalEnded(proposal) && proposal.winningVote === VoteOptions.Yes) {
+    if (proposalEnded(proposal)) {
       const redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
       if (redemptions) {
         (payload as any).redemptions = redemptions;
@@ -792,7 +792,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     };
 
     let redemptions: IRedemptionState | boolean = false;
-    if (proposalEnded(proposal) && winningVote == VoteOptions.Yes) {
+    if (proposalEnded(proposal)) {
       redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
     }
 
