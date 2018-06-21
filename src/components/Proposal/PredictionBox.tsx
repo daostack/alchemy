@@ -22,6 +22,7 @@ interface IProps {
   currentStake: number;
   currentAccountGens: number;
   currentAccountGenStakingAllowance: number;
+  daoAddress: string;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   approveStakingGens: typeof web3Actions.approveStakingGens;
@@ -66,7 +67,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
   public handleClickPreApprove(event: any) {
     const { approveStakingGens } = this.props;
-    approveStakingGens();
+    approveStakingGens(this.props.daoAddress);
     this.setState({ showApproveModal: false });
   }
 

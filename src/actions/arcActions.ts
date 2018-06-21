@@ -93,8 +93,9 @@ export function getDAO(avatarAddress: string) {
 
 export async function getDAOData(avatarAddress: string, getDetails: boolean = false, currentAccountAddress: string = null) {
   const web3 = await Arc.Utils.getWeb3();
-  const dao = await Arc.DAO.at(avatarAddress);
-  const votingMachineAddress = (await dao.getSchemes("GenesisProtocol"))[0].address;
+  const daoInstance = await Arc.DAO.at(avatarAddress);
+  const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+  const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
   const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
   const getBalance = promisify(web3.eth.getBalance);
@@ -104,19 +105,19 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     controllerAddress: "",
     ethCount: Util.fromWei(await getBalance(avatarAddress)).toNumber(),
     genCount: Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance).toNumber(),
-    name: await dao.getName(),
+    name: await daoInstance.getName(),
     members: {},
     rank: 1, // TODO
     promotedAmount: 0,
     proposals: [],
     proposalsLoaded: false,
-    reputationAddress: await dao.reputation.address,
-    reputationCount: Util.fromWei(await dao.reputation.totalSupply()).toNumber(),
-    tokenAddress: await dao.token.address,
-    tokenCount: Util.fromWei(await dao.token.balanceOf(avatarAddress)).toNumber(),
-    tokenName: await dao.getTokenName(),
-    tokenSupply: Util.fromWei(await dao.token.totalSupply()).toNumber(),
-    tokenSymbol: await dao.getTokenSymbol(),
+    reputationAddress: await daoInstance.reputation.address,
+    reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber(),
+    tokenAddress: await daoInstance.token.address,
+    tokenCount: Util.fromWei(await daoInstance.token.balanceOf(avatarAddress)).toNumber(),
+    tokenName: await daoInstance.getTokenName(),
+    tokenSupply: Util.fromWei(await daoInstance.token.totalSupply()).toNumber(),
+    tokenSymbol: await daoInstance.getTokenSymbol(),
   };
 
   // See if want to get all the details for the DAO like members and proposals...
@@ -126,21 +127,21 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     // TODO: don't load fromBlock = 0 every time, store the last block we loaded in the client and only add new info since then
     let memberAddresses: string[] = [];
 
-    const mintTokenEvents = dao.token.Mint({}, { fromBlock: 0 });
+    const mintTokenEvents = daoInstance.token.Mint({}, { fromBlock: 0 });
     const getMintTokenEvents = promisify(mintTokenEvents.get.bind(mintTokenEvents));
     let eventsArray = await getMintTokenEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
       memberAddresses.push(eventsArray[cnt].args.to.toLowerCase());
     }
 
-    const transferTokenEvents = dao.token.Transfer({}, { fromBlock: 0 });
+    const transferTokenEvents = daoInstance.token.Transfer({}, { fromBlock: 0 });
     const getTransferTokenEvents = promisify(transferTokenEvents.get.bind(transferTokenEvents));
     eventsArray = await getTransferTokenEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
       memberAddresses.push(eventsArray[cnt].args.to.toLowerCase());
     }
 
-    const mintReputationEvents = dao.reputation.Mint({}, { fromBlock: 0 });
+    const mintReputationEvents = daoInstance.reputation.Mint({}, { fromBlock: 0 });
     const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
     eventsArray = await getMintReputationEvents();
     for (let cnt = 0; cnt < eventsArray.length; cnt++) {
@@ -153,9 +154,9 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
       const address = memberAddresses[cnt];
       const member = { address, ...emptyAccount};
-      const tokens = await dao.token.balanceOf(address);
+      const tokens = await daoInstance.token.balanceOf(address);
       member.tokens = Util.fromWei(tokens).toNumber();
-      const reputation = await dao.reputation.reputationOf(address);
+      const reputation = await daoInstance.reputation.reputationOf(address);
       member.reputation = Util.fromWei(reputation).toNumber();
       members[address] = member;
     }
@@ -166,13 +167,13 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
     // Get the voting machine (GenesisProtocol)
-    const votingMachineAddress = (await dao.getSchemes("GenesisProtocol"))[0].address;
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-    const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address);
+    const votingMachineParamsHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
     const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
 
-    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address });
+    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: daoInstance.avatar.address });
 
     // Get all proposals' details like title and description from the server
     let serverProposals: { [key: string]: any } = {};
@@ -188,7 +189,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
       contributionProposal = proposals[cnt];
       proposalId = contributionProposal.proposalId;
       serverProposal = serverProposals[proposalId] || false;
-      proposal = await getProposalDetails(dao, votingMachineInstance, contributionProposal, serverProposal, currentAccountAddress);
+      proposal = await getProposalDetails(daoInstance, votingMachineInstance, contributionProposal, serverProposal, currentAccountAddress);
       daoData.proposals.push(proposal);
 
       // Look for votes and stakes the current account did on this proposal
@@ -237,7 +238,7 @@ export function getProposal(avatarAddress: string, proposalId: string) {
 
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
-    const votingMachineAddress = (await dao.getSchemes("GenesisProtocol"))[0].address;
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address, proposalId });
@@ -582,7 +583,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
 
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
-      const votingMachineAddress = (await dao.getSchemes("GenesisProtocol"))[0].address;
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
       const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
       const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
@@ -651,7 +652,8 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     const proposalId = eventResult._proposalId;
     const avatarAddress = eventResult._avatar;
     const dao = await Arc.DAO.at(eventResult._avatar);
-    const votingMachineAddress = (await dao.getSchemes("GenesisProtocol"))[0].address;
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
@@ -731,7 +733,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       await Util.performAction(
@@ -773,7 +776,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
-    const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
@@ -866,7 +869,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
@@ -924,7 +928,8 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     const proposal: IProposalState = getState().arc.proposals[proposalId];
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const proposalDetails = await votingMachineInstance.contract.proposals(proposalId);
@@ -1004,11 +1009,9 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 
     try {
       const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-
-      const votingMachineAddress = (await daoInstance.getSchemes("GenesisProtocol"))[0].address;
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       if (proposalEnded(proposal) && proposal.state !== ProposalStates.Executed) {
         const executeTx = await votingMachineInstance.contract.execute(proposal.proposalId);

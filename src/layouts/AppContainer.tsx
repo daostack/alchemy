@@ -50,14 +50,12 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
 });
 
 interface IDispatchProps {
-  changeAccount: typeof web3Actions.changeAccount;
   dismissOperation: typeof operationsActions.dismissOperation;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
-  changeAccount: web3Actions.changeAccount,
   dismissOperation: operationsActions.dismissOperation,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
@@ -66,7 +64,6 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
-  public accountInterval: any;
 
   constructor(props: IProps) {
     super(props);
@@ -89,27 +86,6 @@ class AppContainer extends React.Component<IProps, null> {
     // If not using local testnet then load cached blockchain data from S3
     if (Arc.ConfigService.get('network') !== 'ganache') {
       loadCachedState();
-    }
-  }
-
-  public async componentWillReceiveProps(props: IProps) {
-    // If we are connected to an account through MetaMask then watch for account changes in MetaMask
-    const web3 = await Arc.Utils.getWeb3();
-    if (props.ethAccountAddress && (web3.currentProvider as any).isMetaMask === true ) {
-      // Setup an interval to check for the account to change
-      // First clear old one
-      if (this.accountInterval) {
-        clearInterval(this.accountInterval);
-      }
-
-      this.accountInterval = setInterval(async function(accountAddress: string) {
-        const newAccount = await Arc.Utils.getDefaultAccount();
-        if (newAccount !== accountAddress) {
-          // Clear this interval so next one can be setup with new account address
-          clearInterval(this.accountInterval);
-          this.props.changeAccount(newAccount);
-        }
-      }.bind(this, props.ethAccountAddress), 400);
     }
   }
 

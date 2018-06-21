@@ -314,12 +314,15 @@ const arcReducer = (state = initialState, action: any) => {
           return update(state, { daos: {
             [avatarAddress] : {
               members: {
-                [stakerAddress]: {
-                  stakes : { [proposalId] : { $set : {
-                    ...meta,
-                    transactionState: TransactionStates.Unconfirmed
-                  } }},
-                },
+                [stakerAddress]: (member: any) => {
+                  // If a non member is staking, add them as a member to this DAO
+                  return update(member || { ...emptyAccount, address: stakerAddress }, {
+                    stakes : { [proposalId] : { $set : {
+                      ...meta,
+                      transactionState: TransactionStates.Unconfirmed
+                    }}}
+                  })
+                }
               },
             },
           }});

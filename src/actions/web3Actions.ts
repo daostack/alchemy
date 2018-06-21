@@ -70,13 +70,6 @@ export function initializeWeb3() {
     const getBalance = promisify(web3.eth.getBalance);
     payload.ethAccountBalance = Util.fromWei(await getBalance(payload.ethAccountAddress)).toNumber();
 
-    //TODO: how to choose the staking token we want.
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-    payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(payload.ethAccountAddress)).toNumber();
-    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(payload.ethAccountAddress, votingMachineInstance.address)).toNumber();
-
     dispatch({
       type: ActionTypes.WEB3_CONNECT,
       sequence: AsyncActionSequence.Success,
@@ -88,7 +81,7 @@ export function initializeWeb3() {
   };
 }
 
-export function changeAccount(accountAddress: string) {
+export function setCurrentAccount(accountAddress: string, daoAddress: string = null) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const web3 = await Arc.Utils.getWeb3();
 
@@ -100,17 +93,24 @@ export function changeAccount(accountAddress: string) {
     }
 
     const getBalance = promisify(web3.eth.getBalance);
-    const balance = await getBalance(payload.ethAccountAddress);
+    const balance = await getBalance(accountAddress);
     payload.ethAccountBalance = Util.fromWei(balance).toNumber();
 
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+    let votingMachineInstance: Arc.GenesisProtocolWrapper;
+    if (daoAddress !== null) {
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
+      votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+    } else {
+      votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+    }
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-    payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(payload.ethAccountAddress)).toNumber();
-    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(payload.ethAccountAddress, votingMachineInstance.address)).toNumber();
+    payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress)).toNumber();
+    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address)).toNumber();
 
     const action = {
-      type: ActionTypes.WEB3_CHANGE_ACCOUNT,
+      type: ActionTypes.WEB3_SET_ACCOUNT,
       payload
     };
     dispatch(action);
@@ -160,7 +160,7 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
 }>
 
 // Approve transfer of 1000 GENs from accountAddress to the GenesisProtocol contract for use in staking
-export function approveStakingGens() {
+export function approveStakingGens(daoAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
@@ -177,7 +177,9 @@ export function approveStakingGens() {
     } as ApproveAction);
 
     try {
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
       const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
       const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
       await stakingToken.approve(votingMachineInstance.address, Util.toWei(1000));
