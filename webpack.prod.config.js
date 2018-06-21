@@ -72,7 +72,7 @@ module.exports = merge(baseConfig, {
     ]),
     new UglifyJsPlugin({
       test: /\.js($|\?)/i,
-      sourceMap: true,
+      sourceMap: false,
       extractComments: true,
       parallel: true,
       uglifyOptions: {
