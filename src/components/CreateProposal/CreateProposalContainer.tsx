@@ -176,7 +176,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             nonNegative('ethReward');
             nonNegative('externalTokenReward');
             nonNegative('nativeTokenReward');
-            nonNegative('reputationReward');
 
             require('description');
             require('title');
@@ -263,7 +262,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   name='reputationReward'
                   type="number"
                   className={touched.reputationReward && errors.reputationReward ? css.error : null}
-                  min={0}
                   step={0.1}
                 />
                 <label htmlFor="reputationRewardInput">
