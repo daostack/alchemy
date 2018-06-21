@@ -114,7 +114,7 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     return false;
   }
 
-  const deployedWrapperWant = Arc.WrapperService.wrappers["GenesisProtocol"];
+  const deployedWrapperWant = Arc.WrapperService.wrappers.GenesisProtocol;
   const byteCodeWant = await promisify((callback: any): void => web3.eth.getCode(deployedWrapperWant.address, callback))();
   const byteCodeFound = await promisify((callback: any): void => web3.eth.getCode(votingMachineInstance.address, callback))();
   if (byteCodeWant !== byteCodeFound) {
