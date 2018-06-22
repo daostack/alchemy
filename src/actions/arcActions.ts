@@ -27,7 +27,7 @@ import * as schemas from "../schemas";
 import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
-import { ExecutionState, TransactionService } from "@daostack/arc.js";
+import { ExecutionState } from "@daostack/arc.js";
 import { showOperation } from "./operationsActions";
 import { OperationsStatus } from "reducers/operations";
 import * as moment from "moment";
@@ -638,7 +638,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         console.error(e);
       }
 
-      const submitProposalTransaction: any = await Util.performAction(
+      await Util.performAction(
         'TxTracking.ContributionReward.proposeContributionReward',
         contributionRewardInstance.proposeContributionReward.bind(contributionRewardInstance),
         {
