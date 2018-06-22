@@ -516,7 +516,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       }
 
       const dao = await Util.performAction(
-        'txReceipts.DAO.new',
+        'TxTracking.DAO.new',
         Arc.DAO.new,
         {
           name: daoName,
@@ -639,7 +639,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       }
 
       const submitProposalTransaction: any = await Util.performAction(
-        'txReceipts.ContributionReward.proposeContributionReward',
+        'TxTracking.ContributionReward.proposeContributionReward',
         contributionRewardInstance.proposeContributionReward.bind(contributionRewardInstance),
         {
           avatar: daoAvatarAddress,
@@ -772,7 +772,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       await Util.performAction(
-        'txReceipts.GenesisProtocol.vote',
+        'TxTracking.GenesisProtocol.vote',
         votingMachineInstance.vote.bind(votingMachineInstance),
         {
           proposalId,
@@ -915,7 +915,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
 
       await Util.performAction(
-        'txReceipts.GenesisProtocol.stake',
+        'TxTracking.GenesisProtocol.stake',
         votingMachineInstance.stake.bind(votingMachineInstance),
         {
           proposalId,
