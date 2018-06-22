@@ -110,7 +110,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ _avatar: daoAddress }, { fromBlock: "latest" });
     this.proposalEventWatcher.watch((error, result) => {
-      onProposalCreateEvent(result[0].args);
+      onProposalCreateEvent(result.args);
     });
 
     // Watch for new, confirmed stakes coming in for the current account
@@ -121,12 +121,12 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
-      onStakeEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._amount).toNumber());
+      onStakeEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
     });
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: "latest" });
     this.voteEventWatcher.watch((error, result) => {
-      onVoteEvent(daoAddress, result[0].args._proposalId, result[0].args._voter, Number(result[0].args._vote), Util.fromWei(result[0].args._reputation).toNumber());
+      onVoteEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation).toNumber());
     });
 
     this.transferEventWatcher = daoInstance.token.Transfer({}, { fromBlock: "latest" });
@@ -146,7 +146,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
     this.executeProposalEventWatcher = votingMachineInstance.ExecuteProposal({}, { fromBlock: "latest" });
     this.executeProposalEventWatcher.watch((error, result) => {
-      const { _proposalId, _executionState, _decision, _totalReputation } = result[0].args;
+      const { _proposalId, _executionState, _decision, _totalReputation } = result.args;
       onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
     });
 

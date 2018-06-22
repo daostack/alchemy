@@ -202,7 +202,9 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     const votingMachineParamsHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
     const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
 
-    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: daoInstance.avatar.address });
+    const votableProposals = await (await contributionRewardInstance.getVotableProposals(daoInstance.avatar.address))({}, {fromBlock: 0}).get();
+    const executedProposals = await (await contributionRewardInstance.getExecutedProposals(daoInstance.avatar.address))({}, {fromBlock: 0}).get();
+    const proposals = [...votableProposals, ...executedProposals];
 
     // Get all proposals' details like title and description from the server
     let serverProposals: { [key: string]: any } = {};
@@ -265,7 +267,10 @@ export function getProposal(avatarAddress: string, proposalId: string) {
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-    const proposals = await contributionRewardInstance.getDaoProposals({ avatar: dao.avatar.address, proposalId });
+    const votableProposals = await (await contributionRewardInstance.getVotableProposals(dao.avatar.address))({proposalId}, {fromBlock: 0}).get();
+    const executedProposals = await (await contributionRewardInstance.getExecutedProposals(dao.avatar.address))({proposalId}, {fromBlock: 0}).get();
+    const proposals = [...votableProposals, ...executedProposals];
+
     const contributionProposal = proposals[0];
 
     let serverProposal: any = false;
@@ -451,7 +456,12 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
       // Boosted proposal that passed by expiring with more yes votes than no
       //   have to manually calculate beneficiary rewards
-      const numberOfPeriods = (await proposalInstance.getDaoProposals({ proposalId, avatar: avatarAddress }))[0].numberOfPeriods;
+
+      const votableProposals = await (await proposalInstance.getVotableProposals(avatarAddress))({proposalId}, {fromBlock: 0}).get();
+      const executedProposals = await (await proposalInstance.getExecutedProposals(avatarAddress))({proposalId}, {fromBlock: 0}).get();
+      const proposals = [...votableProposals, ...executedProposals];
+      const numberOfPeriods = proposals[0].numberOfPeriods;
+
       redemptions.beneficiaryEth = numberOfPeriods * proposal.ethReward;
       redemptions.beneficiaryNativeToken = numberOfPeriods * proposal.nativeTokenReward;
       redemptions.beneficiaryReputation = numberOfPeriods * proposal.reputationChange;
