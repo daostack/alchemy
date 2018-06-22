@@ -30,6 +30,10 @@ import HeaderContainer from "layouts/HeaderContainer";
 import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
+import 'intro.js/introjs.css';
+
+import { Steps, Hints } from 'intro.js-react';
+
 import { IOperationsState } from 'reducers/operations';
 
 interface IStateProps {
@@ -102,6 +106,12 @@ class AppContainer extends React.Component<IProps, null> {
       connectionStatus == ConnectionStatus.Connected ?
         <div className={css.outer}>
           <div className={css.container}>
+            <Steps
+              enabled={stepsEnabled}
+              steps={steps}
+              initialStep={initialStep}
+              onExit={this.onExit}
+            />
             <Route path="/dao/:daoAddress" children={(props) => (
               <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
             )} />
