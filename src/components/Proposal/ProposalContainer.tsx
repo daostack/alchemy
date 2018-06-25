@@ -164,7 +164,7 @@ class ProposalContainer extends React.Component<IProps, null> {
               <div className={css.modalWindow}>
                 <div className={css.transaction + " " + css.clearfix}>
                   <div className={css.transactionIcon}>
-                    <img src="/assets/images/Tour/Upvote.svg"/>
+                    <img src="/assets/images/Tx/Upvote.svg"/>
                   </div>
                   <div className={css.transactionInfo}>
                     <div className={css.transactionType}>
@@ -200,7 +200,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </div>
                   <div className={css.closeTransactionContainer}>
                     <button>
-                      <img src="/assets/images/Tour/Close.svg"/>
+                      <img src="/assets/images/Tx/Close.svg"/>
                     </button>
                   </div>
                 </div>
@@ -223,7 +223,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                     It will set a default gas limit and price. It's fine to stick with these defaults.
                   </p>
                   <button className={css.launchMetaMask}>
-                    <img src="/assets/images/Tour/MetaMask.svg"/>
+                    <img src="/assets/images/Tx/MetaMask.svg"/>
                     Launch MetaMask
                   </button>
                 </div>
