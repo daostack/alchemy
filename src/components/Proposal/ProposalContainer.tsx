@@ -159,6 +159,76 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
+            <div className={css.metaMaskModal}>
+              <div className={css.bg}></div>
+              <div className={css.modalWindow}>
+                <div className={css.transaction + " " + css.clearfix}>
+                  <div className={css.transactionIcon}>
+                    <img src="/assets/images/Tour/Upvote.svg"/>
+                  </div>
+                  <div className={css.transactionInfo}>
+                    <div className={css.transactionType}>
+                        <span>New <strong className={css.passVote}>pass</strong> vote</span>
+
+                      {/* 
+                        <span>New <strong className={css.failVote}>fail</strong> vote</span>
+                        <span>New <strong className={css.redeem}>redemption</strong></span>
+                        <span>Creating a <strong className={css.redeem}>new proposal</strong></span>
+                        <span>Redeem rewards for</span>
+                        <span>Enable redeeming for</span>
+                        <span>Enable staking</span>
+                        <span>New <strong className={css.passVote}>pass</strong> prediction</span>
+                        <span>New <strong className={css.passVote}>fail</strong> prediction</span>
+                    
+                      */}
+                    </div>
+                    <div className={css.transactionTitle}>
+                      <strong>{proposal.title}</strong>
+                    {/*
+                      <strong>Pre-approve GENs to enable staking within {dao.name}</strong>
+                     */}
+                    </div>
+                    <div className={css.transactionEffect}>
+                        <span>You are about to vote with <strong>1.25% (3,253) Reputation</strong></span>
+                        {/*
+                        <span>Pre-approve up to 10,000 GENs for staking</span> 
+                        <span>You will receive X_REWARDS for X_ACTION</span>
+                        <span>Enabling redeeming on this proposal will unlock X_REWARDS</span>
+                        <span>You are about to stake X_GEN that this proposal will PASS/FAIL</span>
+                         */}
+                    </div>
+                  </div>
+                  <div className={css.closeTransactionContainer}>
+                    <button>
+                      <img src="/assets/images/Tour/Close.svg"/>
+                    </button>
+                  </div>
+                </div>
+                { !proposalEnded(proposal) ?
+                  <div className={css.decisionGraph}>
+                      <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%) PASS</span>
+                      <div className={css.graph}>
+                        <div className={css.forBar} style={styles.forBar}></div>
+                        <div className={css.againstBar} style={styles.againstBar}></div>
+                        <div className={css.divider}></div>
+                      </div>
+                      <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%) FAIL</span>
+                  </div>
+                  : ""
+                }
+                <div className={css.transactionInstructions}>
+                  <p>
+                    When you click "Launch MetaMask" we will pop up a Metamask dialogue.
+                    This dialogue will ask you to approve your transaction, including a small ETH cost.
+                    It will set a default gas limit and price. It's fine to stick with these defaults.
+                  </p>
+                  <button className={css.launchMetaMask}>
+                    <img src="/assets/images/Tour/MetaMask.svg"/>
+                    Launch MetaMask
+                  </button>
+                </div>
+              </div>
+            </div>
           { !proposalEnded(proposal) ?
             <VoteBox
               currentVote={currentAccountVote}
