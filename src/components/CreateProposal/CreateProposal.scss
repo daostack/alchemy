@@ -171,6 +171,8 @@
     font-size: $body;
     padding: 0 15px;
     font-family: $body-font;
+    transition: all .25s ease;
+    background-color: rgba(200,200,200,0);
 
     &:hover {
       cursor: pointer;
@@ -181,9 +183,24 @@
       top: 4px;
       margin-right: 8px;
     }
+
+    .loading {  
+      width: 18px;
+      display: none;
+    }
   }
+  .submitProposal:disabled .loading {
+    display: inline-block;
+  }
+
   .submitProposal:disabled {
-    background-color: gray;
+    background-color: rgba(200,200,200,.5);
+    border: 1px solid rgba(200,200,200,1);
+    color: rgba(75,75,75,1);
+  }
+
+  .submitProposal:disabled .sendIcon {
+    display: none;
   }
   .alignCenter {
     text-align: center;
