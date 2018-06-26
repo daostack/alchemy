@@ -2,6 +2,7 @@ import * as Arc from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import * as React from "react";
+import Joyride from 'react-joyride';
 import { connect, Dispatch } from "react-redux";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
@@ -28,6 +29,7 @@ interface IStateProps extends RouteComponentProps<any> {
   dao: IDaoState;
   daoAddress: string;
   numRedemptions: number;
+  showTour: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -43,6 +45,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao,
     daoAddress : ownProps.match.params.daoAddress,
     numRedemptions,
+    showTour: state.ui.showTour
   };
 };
 
@@ -71,6 +74,14 @@ const mapDispatchToProps = {
 };
 
 type IProps = IStateProps & IDispatchProps;
+
+const tourSteps = [
+  {
+    target: "." + css.proposalsContainer,
+    content: 'test 1',
+    placement: 'bottom',
+  }
+];
 
 class ViewDaoContainer extends React.Component<IProps, null> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
@@ -198,12 +209,25 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     }
   }
 
+  public handleJoyrideCallback = (data: any) => {
+    const { type } = data;
+
+    console.group(type);
+    console.log(data); //eslint-disable-line no-console
+    console.groupEnd();
+  };
+
   public render() {
-    const { currentAccountAddress, dao, numRedemptions } = this.props;
+    const { currentAccountAddress, dao, numRedemptions, showTour } = this.props;
 
     if (dao) {
       return(
         <div className={css.outer}>
+          <Joyride
+            steps={tourSteps}
+            run={showTour}
+            callback={this.handleJoyrideCallback}
+          />
           <div className={css.top}>
             <DaoHeader dao={dao} />
             <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
