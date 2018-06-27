@@ -64,7 +64,7 @@ export default class Util {
     }
 
     try {
-      const key = Arc.TransactionService.generateInvocationKey(`${topic}.pendingTransactions`);
+      const key = Arc.TransactionService.generateInvocationKey();
       sub = Arc.TransactionService.subscribe(topic, (topic, info) => {
         if (info.options.key === key && info.tx == null) {
           onKickoff(info.txCount);
