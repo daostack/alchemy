@@ -223,6 +223,8 @@ class ViewDaoContainer extends React.Component<IProps, null> {
             steps={tourSteps}
             run={showTour}
             callback={this.handleJoyrideCallback}
+            continuous
+            showProgress
           />
           <div className={css.top}>
             <DaoHeader dao={dao} />
