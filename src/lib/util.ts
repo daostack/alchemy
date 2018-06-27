@@ -1,6 +1,6 @@
 import * as Arc from "@daostack/arc.js";
 import { BigNumber } from "bignumber.js";
-import { IEventSubscription } from "@daostack/arc.js";
+import { IEventSubscription, TransactionReceiptsEventInfo } from "@daostack/arc.js";
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
 // v1.0 may improve on this entire Web3 typings experience
@@ -65,7 +65,7 @@ export default class Util {
 
     try {
       const key = Arc.TransactionService.generateInvocationKey();
-      sub = Arc.TransactionService.subscribe(topic, (topic, info) => {
+      sub = Arc.TransactionService.subscribe([`${topic}.kickoff`, `${topic}.mined`], (topic, info: TransactionReceiptsEventInfo) => {
         if (info.options.key === key && info.tx == null) {
           onKickoff(info.txCount);
         }

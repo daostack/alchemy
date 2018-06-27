@@ -50,7 +50,7 @@
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start ganacheDb.clean",
     "ganacheDb-save": "npm explore @daostack/arc.js -- npm start ganacheDb.zip",
     "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start ganacheDb.restoreFromZip",
-    "migrate-ganache": "cross-env arcjs_network=ganache npm explore @daostack/arc.js -- npm start migrateContracts",
+    "migrate-ganache": "cross-env arcjs_network=ganache npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
     "lint": "tslint --project .",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
