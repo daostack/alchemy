@@ -211,10 +211,6 @@ class ViewDaoContainer extends React.Component<IProps, null> {
 
   public handleJoyrideCallback = (data: any) => {
     const { type } = data;
-
-    console.group(type);
-    console.log(data); //eslint-disable-line no-console
-    console.groupEnd();
   };
 
   public render() {
