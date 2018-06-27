@@ -178,17 +178,17 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </div>
                   <div className={css.transactionInfo}>
                     <div className={css.transactionType}>
-                        <span>New <strong className={css.passVote}>pass</strong> vote</span>
+                        <span><strong className={css.passVote}>Pass</strong> vote</span>
 
                       {/* 
-                        <span>New <strong className={css.failVote}>fail</strong> vote</span>
-                        <span>New <strong className={css.redeem}>redemption</strong></span>
-                        <span>Creating a <strong className={css.redeem}>new proposal</strong></span>
-                        <span>Redeem rewards for</span>
-                        <span>Enable redeeming for</span>
-                        <span>Enable staking</span>
-                        <span>New <strong className={css.passVote}>pass</strong> prediction</span>
-                        <span>New <strong className={css.passVote}>fail</strong> prediction</span>
+                        <span><strong className={css.failVote}>Fail</strong> vote</span>
+                        <span><strong className={css.redeem}>redemption</strong></span>
+                        <span>Create <strong className={css.redeem}>proposal</strong></span>
+                        <span>Redeem rewards</span>
+                        <span>Activate redeeming</span>
+                        <span>Activate predictions</span>
+                        <span><strong className={css.passVote}>Pass</strong> prediction</span>
+                        <span><strong className={css.passVote}>Fail</strong> prediction</span>
                     
                       */}
                     </div>
@@ -199,12 +199,17 @@ class ProposalContainer extends React.Component<IProps, null> {
                      */}
                     </div>
                     <div className={css.transactionEffect}>
-                        <span>You are about to vote with <strong>1.25% (3,253) Reputation</strong></span>
+                        <span>Your influence: <strong>1.25% (3,253) Reputation</strong></span>
                         {/*
-                        <span>Pre-approve up to 10,000 GENs for staking</span> 
-                        <span>You will receive X_REWARDS for X_ACTION</span>
-                        <span>Enabling redeeming on this proposal will unlock X_REWARDS</span>
-                        <span>You are about to stake X_GEN that this proposal will PASS/FAIL</span>
+                        <span>In order to activate predictions, you must authorize our smart contract to receive GENs from you. Upon activation, the smart contract will be authorized to receive up to 1000 GENs. This transaction will not cost you GEN or commit you in any way to spending your GENs in the future.</span> 
+                        <span>
+                          For {reward type}, you will receive:<br/>
+                          - {number of tokens or % of token if reputation} {type of token}<br/>
+                          - {number of tokens or % of token if reputation} {type of token}
+                        </span>
+                        <span>Budget: {Proposal reputation requested %} % Rep and {Proposal ETH requested} ETH</span>
+                        <span>In order to allow everyone to redeem their rewards, you must authorize our smart contract to execute the proposal</span>
+                        <span>Prediction amount: {GEN} Gens<br/>You are predicting the proposal will be [accepted/rejected] by the DAO</span>
                          */}
                     </div>
                   </div>
