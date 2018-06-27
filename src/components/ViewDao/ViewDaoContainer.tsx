@@ -24,6 +24,7 @@ import promisify = require("es6-promisify");
 
 import * as css from "./ViewDao.scss";
 import * as appCss from "layouts/App.scss";
+import * as proposalCss from "../Proposal/Proposal.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
   currentAccountAddress: string;
@@ -85,7 +86,37 @@ const tourSteps = [
   {
     target: "." + appCss.accountInfo,
     content: "Your wallet: Check here to see how much reputation you have and see your token balance",
-    placement: "bottom",
+    placement: "bottom"
+  },
+  {
+    target: ".css" + css.holdings,
+    content: "DAO Budget: Members collectively decide how to manage the DAO’s budget. The amount in ETH represents available budget for funding proposals. The GEN amount indicates how much the DAO has to reward voters and predictors.",
+    placement: "left"
+  },
+  {
+    target: "." + css.createProposal,
+    content: "Create proposal: Do you have an initiative to improve DAOstack? Create a proposal to get it funded. If the proposal passes, the funds would be transferred to the target account automatically and you will be rewarded with additional reputation and GEN. If a proposal fails, there is no penalty for the proposer.",
+    placement: "top"
+  },
+  {
+    target: "." + css.proposalsContainer,
+    content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. If the time runs out before a regular proposal gets a 50% majority, it will fail.",
+    placement: "top"
+  },
+  {
+    target: "." + css.boostedProposalsContainer + "." + css.proposalsContainer,
+    content: "Urgent proposals are called Boosted proposal. At the end of the 3 day voting period, the proposal will pass or fail depending on which side gets the most votes. Unlike regular proposals, there is no need for a 50% majority. Regular proposal become boosted proposal once enough GENs are used to predict they will pass.",
+    placement: "top"
+  },
+  {
+    target: "." + proposalCss.voteControls,
+    content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), you will receive reputation and GEN reward.",
+    placement: "right"
+  },
+  {
+    target: "." + proposalCss.predictions,
+    content: "Predictions: Participation in decisions isn’t limited to members only. Anyone can direct the DAO attention by using GEN to place a prediction whether a proposal will pass or fail. When enough GEN are placed in predicting a proposal will pass, it will become a boosted proposal. If you correctly predict the outcome of a proposal you will be rewarded with GEN and reputation.",
+    placement: "left"
   }
 ];
 
