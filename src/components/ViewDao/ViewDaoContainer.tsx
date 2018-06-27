@@ -23,6 +23,7 @@ import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 import promisify = require("es6-promisify");
 
 import * as css from "./ViewDao.scss";
+import * as appCss from "layouts/App.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
   currentAccountAddress: string;
@@ -77,9 +78,14 @@ type IProps = IStateProps & IDispatchProps;
 
 const tourSteps = [
   {
-    target: "." + css.proposalsContainer,
-    content: 'test 1',
-    placement: 'bottom',
+    target: "." + css.daoInfo,
+    content: "Alchemy is used for making budget decisions within Genesis Alpha. Decisions are made by people who have been given reputation within it. Genesis Alpha has 39 Members with 1,352 Reputation",
+    placement: "right"
+  },
+  {
+    target: "." + appCss.accountInfo,
+    content: "Your wallet: Check here to see how much reputation you have and see your token balance",
+    placement: "bottom",
   }
 ];
 
@@ -219,6 +225,28 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     if (dao) {
       return(
         <div className={css.outer}>
+          <div className={css.tourModal}>
+            <div className={css.bg}></div>
+            <div className={css.accessTour}>
+              <button><img src="/assets/images/Tour/TourButton.svg"/></button>
+              <div>Access the tour later! <img src="/assets/images/Tour/Arrow.svg"/></div>
+            </div>
+            <div className={css.tourStart}>
+              <h1>Welcome to Alchemy!</h1>
+              <span>Decentralized budgeting powered by <img src="/assets/images/Tour/DAOstackLogo.svg"/> DAOstack.</span>
+              <p>New to Alchemy? Take this tour to learn how <strong>voting, reputation, predictions,</strong> and <strong>proposals</strong> work within Alchemy.</p>
+              <div>
+                <button><img src="/assets/images/Tour/SkipTour.svg"/> Skip the tour</button>
+                <button className={css.start}><img src="/assets/images/Tour/StartTour.svg"/> Start the tour</button>
+              </div>
+            </div>
+            <div className={css.tourEnd}>
+              <h1>You’re done!</h1>
+              <p>Thanks for taking the time to learn about Alchemy. 
+For additional information check out our <a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/edit">FAQ</a> and our <a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23">Intro to Alchemy</a> blog post.</p>
+              <button className={css.start}><img src="/assets/images/Tour/StartTour.svg"/> Start using Alchemy</button>
+            </div>
+          </div>
           <Joyride
             steps={tourSteps}
             run={showTour}

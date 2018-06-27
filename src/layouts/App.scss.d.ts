@@ -1,6 +1,7 @@
 export const outer: string;
 export const container: string;
 export const background: string;
+export const openTour: string;
 export const fadeEnter: string;
 export const fadeEnterActive: string;
 export const fadeExit: string;

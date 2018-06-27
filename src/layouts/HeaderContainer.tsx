@@ -269,14 +269,14 @@ class HeaderContainer extends React.Component<IProps, null> {
               : ""
               }
             </div>
-            { dao
-                ? <button onClick={this.handleClickTour}>Help</button>
-                : ""
-            }
             <div className={css.profileLink}>
               <AccountImage accountAddress={ethAccountAddress} />
             </div>
           </div>
+          { dao
+            ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
+            : ""
+          }
         </nav>
       </div>
     );
