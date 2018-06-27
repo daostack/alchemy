@@ -165,6 +165,16 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <div className={css.transaction + " " + css.clearfix}>
                   <div className={css.transactionIcon}>
                     <img src="/assets/images/Tx/Upvote.svg"/>
+
+                  {/*
+                    <img src="/assets/images/Tx/Downvote.svg"/>
+                    <img src="/assets/images/Tx/EnablePredictions.svg"/>
+                    <img src="/assets/images/Tx/NewProposal.svg"/>
+                    <img src="/assets/images/Tx/Redemption.svg"/>
+                    <img src="/assets/images/Tx/StakeFail.svg"/>
+                    <img src="/assets/images/Tx/StakePass.svg"/>
+
+                  */}
                   </div>
                   <div className={css.transactionInfo}>
                     <div className={css.transactionType}>
