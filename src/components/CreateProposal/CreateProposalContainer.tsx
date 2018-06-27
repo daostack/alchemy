@@ -237,7 +237,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                 className={touched.beneficiaryAddress && errors.beneficiaryAddress ? css.error : null}
               />
               <label htmlFor="beneficiaryInput">
-                Target Address
+                Target Address - Please make sure that the target ETH address can work with Metamask (no hardware wallets, no exchanges)
                 <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                 {touched.beneficiaryAddress && errors.beneficiaryAddress && <span className={css.errorMessage}>{errors.beneficiaryAddress}</span>}
               </label>
@@ -278,7 +278,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   step={0.1}
                 />
                 <label htmlFor="ethRewardInput">
-                  ETH reward:
+                  Proposal budget (ETH):
                   {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
                 </label>
 
