@@ -83,6 +83,31 @@ export interface IShowNotification extends Action {
   }
 }
 
+export const showNotification =
+  (
+    status: NotificationStatus,
+    message: string,
+    id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
+    timestamp: number = +moment()
+  ) => (dispatch: Dispatch<any>) =>
+    dispatch({
+      type: 'Operations/Show',
+      payload: {
+        id,
+        status,
+        message,
+        timestamp
+      }
+    } as IShowNotification);
+
+export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
+  dispatch({
+    type: 'Operations/Dismiss',
+    payload: {
+      id
+    }
+  } as IDismissOperation);
+
 export type OperationsAction = IUpdateTransaction | IDismissOperation | IShowNotification
 
 export const isOperationsAction = (action: Action): action is OperationsAction =>
@@ -110,11 +135,14 @@ const reducer =
       if (a.type === 'Operations/Dismiss') {
         const action = a as IDismissOperation;
         const {
-          notifications: {[a.payload.id]: _},
-          transactions: {[a.payload.id]: __},
-          ...rest
+          notifications: {[a.payload.id]: _, ...restNotifications},
+          transactions: {[a.payload.id]: __, ...restTransactions},
         } = state;
-        return rest;
+
+        return {
+          notifications: restNotifications,
+          transactions: restTransactions
+        };
       }
 
       if (a.type === 'Operations/Show') {
@@ -224,9 +252,9 @@ export const transactionsTracker: Middleware =
             message: error ? error.message : message,
             error: error ? errorType(error) : undefined,
             status:
-              txStage == Arc.TransactionStage.sent ?
+              txStage === Arc.TransactionStage.sent ?
                 TransactionStatus.Sent :
-              txStage == Arc.TransactionStage.mined ?
+              txStage === Arc.TransactionStage.mined || txStage === Arc.TransactionStage.confirmed ?
                 TransactionStatus.Mined :
                 TransactionStatus.Started
           }
@@ -243,9 +271,8 @@ export const transactionsTracker: Middleware =
         const state = action.payload as IOperationsState;
 
         if (state) {
-          Object.keys(state).forEach(async (k: string) => {
-            const id = parseInt(k, 10);
-            if (!isNaN(id) && state.transactions[id].status === TransactionStatus.Sent) {
+          Object.keys(state.transactions).forEach(async (id: string) => {
+            if (state.transactions[id].status === TransactionStatus.Sent) {
               try {
                 const receipt = await Arc.TransactionService.watchForMinedTransaction(state.transactions[id].txHash);
                 dispatch({

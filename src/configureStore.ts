@@ -8,7 +8,7 @@ import thunkMiddleware from "redux-thunk";
 
 import reducers from "./reducers";
 import { actionCanceler } from "reducers/operations";
-import { transactionsTracker } from "reducers/operations2";
+import { transactionsTracker, successDismisser } from "reducers/operations2";
 import { persistStore, createTransform } from 'redux-persist';
 
 export const history = createHistory();
@@ -19,6 +19,7 @@ const store = createStore(
     applyMiddleware(
       actionCanceler(),
       transactionsTracker,
+      successDismisser(),
       thunkMiddleware,
       promiseMiddleware(),
       routerMiddleware(history),
