@@ -49,10 +49,10 @@ export interface INotification {
 
 export interface IOperationsState {
   notifications: {
-    [id: number]: INotification
+    [id: string]: INotification
   },
   transactions: {
-    [id: number]: ITransaction;
+    [id: string]: ITransaction;
   }
 }
 
@@ -61,7 +61,7 @@ export interface IOperationsState {
 export interface IUpdateTransaction extends Action {
   type: 'Operations/Update',
   payload: {
-    id: number;
+    id: string;
     transaction: ITransaction;
   }
 }
@@ -69,14 +69,14 @@ export interface IUpdateTransaction extends Action {
 export interface IDismissOperation extends Action {
   type: 'Operations/Dismiss',
   payload: {
-    id: number;
+    id: string;
   }
 }
 
 export interface IShowNotification extends Action {
   type: 'Operations/Show',
   payload: {
-    id: number;
+    id: string;
     status: NotificationStatus
     message: string;
     timestamp: number;
@@ -217,7 +217,7 @@ export const transactionsTracker: Middleware =
       dispatch(filterUndefined({
         type: 'Operations/Update',
         payload: {
-          id: invocationKey,
+          id: `${invocationKey}`,
           transaction: {
             timestamp: +moment(),
             txHash: tx,
@@ -251,7 +251,7 @@ export const transactionsTracker: Middleware =
                 dispatch({
                   type: 'Operations/Update',
                   payload: {
-                    id,
+                    id: `${id}`,
                     transaction: {
                       status: TransactionStatus.Mined
                     }
@@ -261,7 +261,7 @@ export const transactionsTracker: Middleware =
                 dispatch({
                   type: 'Operations/Update',
                   payload: {
-                    id,
+                    id: `${id}`,
                     transaction: {
                       message: e.message,
                       error: errorType(e)
