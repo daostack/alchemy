@@ -59,7 +59,6 @@ export function loadCachedState() {
 export function getDAOs() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
-
     const daoCreator = await Arc.DaoCreatorFactory.deployed();
 
     // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events

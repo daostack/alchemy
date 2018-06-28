@@ -8,6 +8,8 @@ import thunkMiddleware from "redux-thunk";
 
 import reducers from "./reducers";
 import { actionCanceler } from "reducers/operations";
+import { transactionsTracker } from "reducers/operations2";
+import { persistStore, createTransform } from 'redux-persist';
 
 export const history = createHistory();
 
@@ -16,6 +18,7 @@ const store = createStore(
   composeWithDevTools(   // makes the store available to the Chrome redux dev tools
     applyMiddleware(
       actionCanceler(),
+      transactionsTracker,
       thunkMiddleware,
       promiseMiddleware(),
       routerMiddleware(history),
@@ -23,5 +26,7 @@ const store = createStore(
     ),
   ),
 );
+
+const persistor = persistStore(store);
 
 export default store;
