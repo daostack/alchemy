@@ -30,7 +30,7 @@ import HeaderContainer from "layouts/HeaderContainer";
 import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
-import { IOperationsState } from 'reducers/operations';
+import { IOperationsState, NotificationStatus, dismissOperation, TransactionStatus, TransactionError } from 'reducers/operations2';
 
 interface IStateProps {
   arc: IArcState;
@@ -38,7 +38,7 @@ interface IStateProps {
   cookies: Cookies;
   ethAccountAddress: string | null;
   history: History.History;
-  operations: IOperationsState;
+  operations2: IOperationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
@@ -46,17 +46,17 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
-  operations: state.operations,
+  operations2: state.operations2,
 });
 
 interface IDispatchProps {
-  dismissOperation: typeof operationsActions.dismissOperation;
+  dismissOperation: typeof dismissOperation;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
-  dismissOperation: operationsActions.dismissOperation,
+  dismissOperation,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
 };
@@ -90,7 +90,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
+    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations2 } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending ?
@@ -129,15 +129,75 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {Object.keys(operations).map((k) =>
-              <div key={k}>
-                <Notification
-                  operation={operations[k]}
-                  close={() => dismissOperation(k)}
-                />
-                <br />
-              </div>
-            )}
+            {Object.keys(operations2.notifications).map((k) => {
+              const {status, message, timestamp} = operations2.notifications[k];
+              return (
+                <div key={k}>
+                  <Notification
+                    title={
+                      status === NotificationStatus.Failure ?
+                        'FAILURE' :
+                      status === NotificationStatus.Success ?
+                        'SUCCESS' :
+                        'PENDING'
+                    }
+                    status={
+                      status === NotificationStatus.Failure ?
+                        'failure' :
+                      status === NotificationStatus.Success ?
+                        'success' :
+                        'pending'
+                    }
+                    message={message}
+                    timestamp={timestamp}
+                    dismiss={() => dismissOperation(k)}
+                  />
+                  <br />
+                </div>
+              );
+            })}
+            {Object.keys(operations2.transactions).map((k) => {
+              const {error, txHash, status, message, timestamp} = operations2.transactions[k];
+              return (
+                <div key={k}>
+                  <Notification
+                    title={
+                      error ?
+                        'TRANSCATION FAILED' :
+                      status === TransactionStatus.Started ?
+                        'WAITING FOR SIGNATURE' :
+                      status === TransactionStatus.Sent ?
+                        'TRANSACTION SENT' :
+                        'TRANSACTION MINED'
+                    }
+                    status={
+                      error ?
+                        'failure' :
+                      status === TransactionStatus.Mined ?
+                        'success' :
+                        'pending'
+                    }
+                    message={
+                      error ?
+                        (
+                          error === TransactionError.Canceled ?
+                            'The transaction was canceled.' :
+                          error === TransactionError.Reverted ?
+                            'The transaction errored.' :
+                          error === TransactionError.OutOfGas ?
+                            'The transaction ran out of gas, please try again with a higher gas limit.' :
+                            ''
+                        ) :
+                        message
+                      }
+                    timestamp={timestamp}
+                    url={txHash ? `https://etherscan.io/tx/${txHash}` : undefined}
+                    dismiss={() => dismissOperation(k)}
+                  />
+                  <br />
+                </div>
+              );
+            })}
           </div>
           <div className={css.background}></div>
         </div>

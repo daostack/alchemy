@@ -5,9 +5,12 @@ import { IOperation, OperationsStatus } from "reducers/operations";
 import classNames = require("classnames");
 
 interface IProps {
-  operation: IOperation;
-
-  close: () => any;
+  title: string;
+  status: 'pending' | 'failure' | 'success'
+  message: string;
+  timestamp: number;
+  url?: string;
+  dismiss: () => any;
 }
 
 interface IState {
@@ -21,35 +24,36 @@ export default class Notification extends React.Component<IProps, IState> {
   }
 
   public handleClose(e: any) {
-    const { close } = this.props;
-    close();
+    const { dismiss } = this.props;
+    dismiss();
   }
 
   public handleClick(e: any) {
-    const { operation } = this.props;
-    const { status } = operation;
+    const { status } = this.props;
     const { minimized } = this.state;
 
-    if (status === OperationsStatus.Pending && minimized) {
+    if (status === 'pending' && minimized) {
       this.setState({minimized: false});
     }
   }
 
   public render() {
-    const { operation } = this.props;
-    const { message, status, totalSteps, timestamp, step } = operation;
+    const { title, message, timestamp, status, url } = this.props;
     const { minimized } = this.state;
 
     const transactionClass = classNames({
       [css.pendingTransaction]: true,
       [css.clearfix]: true,
-      [css.pending]: status === OperationsStatus.Pending,
-      [css.error]: status === OperationsStatus.Failure,
-      [css.success]: status === OperationsStatus.Success,
-      [css.minimized]: status === OperationsStatus.Pending && minimized,
+      [css.pending]: status === 'pending',
+      [css.error]: status === 'failure',
+      [css.success]: status === 'success',
+      [css.minimized]: status === 'pending' && minimized,
     });
 
-    const stepInfo = <span>{totalSteps !== 1 ? `Step ${step}` : ''} {totalSteps && totalSteps !== 1 ? `OF ${totalSteps}` : ''}</span>;
+    const titleContent =
+      url ?
+        <a href={url}>{title}</a> :
+        title;
 
     return (
       <div className={transactionClass} onClick={(e) => this.handleClick(e)}>
@@ -61,13 +65,15 @@ export default class Notification extends React.Component<IProps, IState> {
         <div className={css.transactionMessage}>
           <div className={css.clearfix}>
             <div className={css.left}>
-              <span className={css.pending}>PENDING OPERATION</span>
-              <span className={css.success}>OPERATION SUCCESSFUL</span>
-              <span className={css.error}>OPERATION FAILED</span>
+              <span className={css.pending}>{titleContent}</span>
+              <span className={css.success}>{titleContent}</span>
+              <span className={css.error}>{titleContent}</span>
+              {url ?
+                <span><a href={url}><img src="/assets/images/Icon/View.svg" /></a></span>
+                : ''
+              }
             </div>
             <div className={css.right}>
-              <span className={css.pending}>{stepInfo}</span>
-              <span className={css.success}>{stepInfo}</span>
               <span className={css.error}>ERROR</span>
             </div>
           </div>
