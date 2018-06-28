@@ -968,7 +968,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       if (proposalEnded(proposal) && proposal.state !== ProposalStates.Executed) {
-        const executeTx = await votingMachineInstance.contract.execute(proposal.proposalId);
+        const executeTx = await votingMachineInstance.execute({proposalId: proposal.proposalId});
 
         // Wait until actually executes (This is somehow needed...)
         const eventWatcher = votingMachineInstance.ExecuteProposal({_proposalId: proposal.proposalId, _avatar: daoAvatarAddress, _executionState: [ProposalStates.Executed, ProposalStates.Closed]}, {fromBlock: 'latest'})

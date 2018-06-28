@@ -205,8 +205,16 @@ const messages: {[key: string]: (state: IRootState, options: any) => string} = {
     `Voting "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
   'GenesisProtocol.stake': (state, {vote, proposalId, amount}: Arc.StakeConfig) =>
     `Staking ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
+  'GenesisProtocol.execute': (state, {proposalId}: Arc.ProposalIdOption) =>
+    `Exeuting "${state.arc.proposals[proposalId].title}"`,
+  'GenesisProtocol.redeem': (state, {proposalId}: Arc.RedeemConfig) =>
+    `Redeeming rewards for "${state.arc.proposals[proposalId].title}"`,
+  'GenesisProtocol.redeemDaoBounty': (state, {proposalId}: Arc.RedeemConfig) =>
+    `Redeeming bounty rewards for "${state.arc.proposals[proposalId].title}"`,
   'ContributionReward.proposeContributionReward': (state, {}: Arc.ProposeContributionRewardParams) =>
     `Creating proposal`,
+  'ContributionReward.redeemContributionReward': (state, {proposalId}: Arc.ContributionRewardRedeemParams) =>
+    `Redeeming contribution reward for "${state.arc.proposals[proposalId].title}"`,
   'DAO.new': (state, {}: Arc.NewDaoConfig) =>
     `Creating a new DAO`
 }
