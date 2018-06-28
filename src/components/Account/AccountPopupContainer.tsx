@@ -4,10 +4,9 @@ import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
-import * as operationsActions from "actions/operationsActions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
-import { NotificationStatus, showNotification } from "reducers/operations2";
+import { NotificationStatus, showNotification } from "reducers/operations";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";

@@ -6,8 +6,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
 import * as web3Actions from "actions/web3Actions";
-import * as operationsActions from "actions/operationsActions";
-import { NotificationStatus, showNotification } from 'reducers/operations2'
+import { NotificationStatus, showNotification } from 'reducers/operations'
 import { IRootState } from "reducers";
 import { IDaoState, emptyAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
@@ -18,7 +17,6 @@ import AccountImage from "components/Account/AccountImage";
 import * as css from "./App.scss";
 import Util from "lib/util";
 import Tooltip from "rc-tooltip";
-import { OperationsStatus } from "reducers/operations";
 import ReputationView from "components/Account/ReputationView";
 import { FilterResult } from "web3";
 import promisify = require("es6-promisify");

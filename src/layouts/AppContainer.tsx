@@ -15,7 +15,6 @@ import store from "../configureStore";
 
 import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
-import * as operationsActions from 'actions/operationsActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import Notification from "components/Notification/Notification";
@@ -30,7 +29,7 @@ import HeaderContainer from "layouts/HeaderContainer";
 import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
-import { IOperationsState, NotificationStatus, dismissOperation, TransactionStatus, TransactionError } from 'reducers/operations2';
+import { IOperationsState, NotificationStatus, dismissOperation, TransactionStatus, TransactionError } from 'reducers/operations';
 
 interface IStateProps {
   arc: IArcState;
@@ -38,7 +37,7 @@ interface IStateProps {
   cookies: Cookies;
   ethAccountAddress: string | null;
   history: History.History;
-  operations2: IOperationsState;
+  operations: IOperationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
@@ -46,7 +45,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
-  operations2: state.operations2,
+  operations: state.operations,
 });
 
 interface IDispatchProps {
@@ -90,7 +89,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations2 } = this.props;
+    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending ?
@@ -129,8 +128,8 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {Object.keys(operations2.notifications).map((k) => {
-              const {status, message, timestamp} = operations2.notifications[k];
+            {Object.keys(operations.notifications).map((k) => {
+              const {status, message, timestamp} = operations.notifications[k];
               return (
                 <div key={k}>
                   <Notification
@@ -156,8 +155,8 @@ class AppContainer extends React.Component<IProps, null> {
                 </div>
               );
             })}
-            {Object.keys(operations2.transactions).map((k) => {
-              const {error, txHash, status, message, timestamp} = operations2.transactions[k];
+            {Object.keys(operations.transactions).map((k) => {
+              const {error, txHash, status, message, timestamp} = operations.transactions[k];
               return (
                 <div key={k}>
                   <Notification

@@ -1,7 +1,6 @@
 import * as moment from "moment";
 import * as React from "react";
 import * as css from "./Notification.scss";
-import { IOperation, OperationsStatus } from "reducers/operations";
 import classNames = require("classnames");
 
 interface IProps {
