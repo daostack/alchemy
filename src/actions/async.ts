@@ -1,29 +1,17 @@
-
-/**
- * Defines different optional features that affect how the `operationsReducer` will treat the action.
- */
-export interface IOperationConfig {
-  ttl?: number;
-  message?: string;
-  totalSteps?: number;
-}
-
 export enum AsyncActionSequence {
-  Cancel = 'cancel',
   Pending = 'pending',
   Failure = 'failure',
   Success = 'success'
 }
 
 /**
- * Defines a type-safe action for async actions which can be pending, can fail or successeed and can be resetted/canceled.
+ * Defines a type-safe action for async actions which can be pending, can fail or successeed.
  * The `type` and `meta` should be the same accross actions which represent the same "operation".
  */
 export interface IAsyncAction<Type extends string, Meta, Payload> {
   type: Type;
   meta?: Meta;
   sequence: AsyncActionSequence;
-  operation?: IOperationConfig
   payload?: Payload;
 }
 

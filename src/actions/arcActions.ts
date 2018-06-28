@@ -537,20 +537,12 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         (totalSteps: number) =>
           dispatch({
             type: arcConstants.ARC_CREATE_DAO,
-            sequence: AsyncActionSequence.Pending,
-            operation: {
-              message: 'Creating new DAO...',
-              totalSteps
-            }
+            sequence: AsyncActionSequence.Pending
           } as CreateDAOAction),
         (txInfo: any) =>
           dispatch({
             type: arcConstants.ARC_CREATE_DAO,
-            sequence: AsyncActionSequence.Pending,
-            operation: {
-              message: 'Creating new DAO...',
-              totalSteps: txInfo.txCount
-            }
+            sequence: AsyncActionSequence.Pending
           } as CreateDAOAction)
       );
 
@@ -577,9 +569,6 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       dispatch({
         type: arcConstants.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Success,
-        operation: {
-          message: 'DAO Created!'
-        },
         payload: normalize(daoData, schemas.daoSchema)
       } as CreateDAOAction);
 
@@ -589,9 +578,6 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       dispatch({
         type: arcConstants.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure,
-        operation: {
-          message: `Failed to create DAO`
-        }
       } as CreateDAOAction)
     }
   }; /* EO createDAO */
@@ -655,10 +641,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
           dispatch({
             type: arcConstants.ARC_CREATE_PROPOSAL,
             sequence: AsyncActionSequence.Pending,
-            operation: {
-              message: `Submitting proposal ...`,
-              totalSteps,
-            },
             meta,
           } as CreateProposalAction);
 
@@ -671,9 +653,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       dispatch({
         type: arcConstants.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
-        operation: {
-          message: `Failed to submit proposal`,
-        },
         meta,
       } as CreateProposalAction)
     }
@@ -729,9 +708,6 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     dispatch({
       type: arcConstants.ARC_CREATE_PROPOSAL,
       sequence: AsyncActionSequence.Success,
-      operation: {
-        message: `Proposal successfully created!`,
-      },
       meta,
       payload
     } as CreateProposalAction);
@@ -781,10 +757,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
           dispatch({
             type: arcConstants.ARC_VOTE,
             sequence: AsyncActionSequence.Pending,
-            operation: {
-              message: `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${proposal.title}...`,
-              totalSteps,
-            },
             meta,
           } as VoteAction)
       );
@@ -793,9 +765,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       dispatch({
         type: arcConstants.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
-        operation: {
-          message: `Voting on "${proposal.title}" failed`
-        },
         meta,
       } as VoteAction)
     }
@@ -864,9 +833,6 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       type: arcConstants.ARC_VOTE,
       sequence: AsyncActionSequence.Success,
       meta,
-      operation: {
-        message: `Voted on "${proposal.title}" successfully!`
-      },
       payload
     } as VoteAction);
   }
@@ -925,20 +891,12 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
           dispatch({
             type: arcConstants.ARC_STAKE,
             sequence: AsyncActionSequence.Pending,
-            operation: {
-              message: `Staking on "${proposal.title}" ...`,
-              totalSteps,
-            },
             meta
           } as StakeAction),
         (txInfo: any) =>
           dispatch({
             type: arcConstants.ARC_STAKE,
             sequence: AsyncActionSequence.Pending,
-            operation: {
-              message: `Staking on "${proposal.title}" ...`,
-              totalSteps: txInfo.txCount,
-            },
             meta
           } as StakeAction)
       );
@@ -948,9 +906,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
         type: arcConstants.ARC_STAKE,
         sequence: AsyncActionSequence.Failure,
         meta,
-        operation: {
-          message: `Staking on "${proposal.title}" failed`
-        }
       } as StakeAction)
     }
   };
@@ -1001,9 +956,6 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     dispatch({
       type: arcConstants.ARC_STAKE,
       sequence: AsyncActionSequence.Success,
-      operation: {
-        message: `Staked on "${proposal.title}" successfully!`
-      },
       meta,
       payload
     } as StakeAction);
@@ -1034,9 +986,6 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     dispatch({
       type: arcConstants.ARC_REDEEM,
       sequence: AsyncActionSequence.Pending,
-      operation: {
-        message: `Redeeming rewards for proposal "${proposal.title}" ...`,
-      },
       meta
     } as RedeemAction);
 
@@ -1093,9 +1042,6 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       dispatch({
         type: arcConstants.ARC_REDEEM,
         sequence: AsyncActionSequence.Success,
-        operation: {
-          message: `Successfully redeemed rewards for proposal "${proposal.title}"!`
-        },
         meta,
         payload
       } as RedeemAction);
@@ -1105,9 +1051,6 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         type: arcConstants.ARC_REDEEM,
         sequence: AsyncActionSequence.Failure,
         meta,
-        operation: {
-          message: `Error redeeming rewards for proposal "${proposal.title}"`
-        }
       } as RedeemAction);
     }
   };
