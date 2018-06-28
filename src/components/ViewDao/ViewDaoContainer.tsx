@@ -99,12 +99,12 @@ const tourSteps = [
     placement: "top"
   },
   {
-    target: "." + css.proposalsContainer,
+    target: "." + css.regularContainer,
     content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. If the time runs out before a regular proposal gets a 50% majority, it will fail.",
     placement: "top"
   },
   {
-    target: "." + css.boostedProposalsContainer + "." + css.proposalsContainer,
+    target: "." + css.boostedContainer,
     content: "Urgent proposals are called Boosted proposal. At the end of the 3 day voting period, the proposal will pass or fail depending on which side gets the most votes. Unlike regular proposals, there is no need for a 50% majority. Regular proposal become boosted proposal once enough GENs are used to predict they will pass.",
     placement: "top"
   },

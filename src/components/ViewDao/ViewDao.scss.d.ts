@@ -40,6 +40,8 @@ export const centered: string;
 export const small: string;
 export const leftAlign: string;
 export const rightAlign: string;
+export const boostedContainer: string;
+export const regularContainer: string;
 export const proposalsHeader: string;
 export const noDecisions: string;
 export const relax: string;

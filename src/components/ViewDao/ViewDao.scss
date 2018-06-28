@@ -395,6 +395,10 @@ a.navItem:hover {
   text-align: right;
 }
 
+.boostedContainer, .regularContainer {
+  position: relative;
+}
+
 .proposalsHeader {
   font-size: $subheader;
   position: relative;
