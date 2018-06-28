@@ -182,10 +182,10 @@ class AppContainer extends React.Component<IProps, null> {
                           error === TransactionError.Canceled ?
                             'The transaction was canceled.' :
                           error === TransactionError.Reverted ?
-                            'The transaction errored.' :
+                            'The transaction errored (reverted).' :
                           error === TransactionError.OutOfGas ?
                             'The transaction ran out of gas, please try again with a higher gas limit.' :
-                            ''
+                            `The transaction unexpectedly failed with: ${message}`
                         ) :
                         message
                       }
