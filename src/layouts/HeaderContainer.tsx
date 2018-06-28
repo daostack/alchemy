@@ -7,6 +7,7 @@ import { CSSTransition } from "react-transition-group";
 
 import * as web3Actions from "actions/web3Actions";
 import * as operationsActions from "actions/operationsActions";
+import { NotificationStatus, showNotification } from 'reducers/operations2'
 import { IRootState } from "reducers";
 import { IDaoState, emptyAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
@@ -52,7 +53,7 @@ interface IDispatchProps {
   onEthBalanceChanged: typeof web3Actions.onEthBalanceChanged;
   onGenBalanceChanged: typeof web3Actions.onGenBalanceChanged;
   onGenStakingAllowanceChanged: typeof web3Actions.onGenStakingAllowanceChanged;
-  showOperation: typeof operationsActions.showOperation;
+  showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
@@ -61,7 +62,7 @@ const mapDispatchToProps = {
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
   onGenBalanceChanged: web3Actions.onGenBalanceChanged,
   onGenStakingAllowanceChanged: web3Actions.onGenStakingAllowanceChanged,
-  showOperation: operationsActions.showOperation
+  showNotification
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -158,12 +159,12 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public copyAddress() {
-    const { showOperation, ethAccountAddress } = this.props;
+    const { showNotification, ethAccountAddress } = this.props;
 
     // Copy the address to clipboard
     Util.copyToClipboard(ethAccountAddress);
 
-    showOperation(OperationsStatus.Success, `Copied to clipboard!`, {totalSteps: 1});
+    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
   }
 
   public handleChangeAccount = (e: any) => {

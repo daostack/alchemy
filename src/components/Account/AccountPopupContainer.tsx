@@ -7,7 +7,7 @@ import * as arcActions from "actions/arcActions";
 import * as operationsActions from "actions/operationsActions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
-import { OperationsStatus } from "reducers/operations";
+import { NotificationStatus, showNotification } from "reducers/operations2";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
@@ -34,11 +34,11 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  showOperation: typeof operationsActions.showOperation;
+  showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
-  showOperation: operationsActions.showOperation
+  showNotification
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -46,9 +46,9 @@ type IProps = IStateProps & IDispatchProps;
 class AccountPopupContainer extends React.Component<IProps, null> {
 
   public copyAddress = () => {
-    const { showOperation, accountAddress } = this.props;
+    const { showNotification, accountAddress } = this.props;
     Util.copyToClipboard(accountAddress);
-    showOperation(OperationsStatus.Success, `Copied to clipboard!`, {totalSteps: 1});
+    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
   }
 
   public render() {

@@ -28,7 +28,7 @@ import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
 import { ExecutionState } from "@daostack/arc.js";
-import { showOperation } from "./operationsActions";
+import { NotificationStatus, showNotification } from "reducers/operations2";
 import { OperationsStatus } from "reducers/operations";
 import * as moment from "moment";
 
@@ -1167,7 +1167,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
         reputationWhenExecuted
       }
     })
-    showOperation(OperationsStatus.Success, `Proposal '${proposal.title}' Executed!`)(dispatch);
+    showNotification(NotificationStatus.Success, `Proposal '${proposal.title}' Executed!`)(dispatch);
   }
 }
 
