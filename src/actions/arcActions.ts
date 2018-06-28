@@ -514,37 +514,28 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         membersByAccount[member.address] = {...emptyAccount, ...member};
       }
 
-      const dao = await Util.performAction(
-        'TxTracking.DAO.new',
-        Arc.DAO.new,
-        {
-          name: daoName,
-          tokenName,
-          tokenSymbol,
-          founders,
-          schemes: [
-            // TODO: add these
-            // { name: "SchemeRegistrar" },
-            // { name: "UpgradeScheme" },
-            // { name: "GlobalConstraintRegistrar" },
-            { name: "ContributionReward" },
-            { name: "GenesisProtocol" }
-          ],
-          votingMachineParams: {
-            votingMachineName: "GenesisProtocol"
-          }
-        },
-        (totalSteps: number) =>
-          dispatch({
-            type: arcConstants.ARC_CREATE_DAO,
-            sequence: AsyncActionSequence.Pending
-          } as CreateDAOAction),
-        (txInfo: any) =>
-          dispatch({
-            type: arcConstants.ARC_CREATE_DAO,
-            sequence: AsyncActionSequence.Pending
-          } as CreateDAOAction)
-      );
+      dispatch({
+        type: arcConstants.ARC_CREATE_DAO,
+        sequence: AsyncActionSequence.Pending
+      } as CreateDAOAction);
+
+      const dao = await Arc.DAO.new({
+        name: daoName,
+        tokenName,
+        tokenSymbol,
+        founders,
+        schemes: [
+          // TODO: add these
+          // { name: "SchemeRegistrar" },
+          // { name: "UpgradeScheme" },
+          // { name: "GlobalConstraintRegistrar" },
+          { name: "ContributionReward" },
+          { name: "GenesisProtocol" }
+        ],
+        votingMachineParams: {
+          votingMachineName: "GenesisProtocol"
+        }
+      })
 
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
@@ -623,31 +614,26 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         console.error(e);
       }
 
-      await Util.performAction(
-        'TxTracking.ContributionReward.proposeContributionReward',
-        contributionRewardInstance.proposeContributionReward.bind(contributionRewardInstance),
-        {
-          avatar: daoAvatarAddress,
-          beneficiaryAddress,
-          description,
-          ethReward: Util.toWei(ethReward),
-          nativeTokenReward: Util.toWei(nativeTokenReward),
-          numberOfPeriods: 1,
-          periodLength: 1,
-          reputationChange: Util.toWei(reputationReward),
-        },
-        // Kickoff event
-        (totalSteps: number) => {
-          dispatch({
-            type: arcConstants.ARC_CREATE_PROPOSAL,
-            sequence: AsyncActionSequence.Pending,
-            meta,
-          } as CreateProposalAction);
+      dispatch({
+        type: arcConstants.ARC_CREATE_PROPOSAL,
+        sequence: AsyncActionSequence.Pending,
+        meta,
+      } as CreateProposalAction);
 
-          // Go back to home page while action create proposal operation gets carried out
-          dispatch(push("/dao/" + daoAvatarAddress));
-        }
-      );
+      // Go back to home page while action create proposal operation gets carried out
+      dispatch(push("/dao/" + daoAvatarAddress));
+
+      await contributionRewardInstance.proposeContributionReward({
+        avatar: daoAvatarAddress,
+        beneficiaryAddress,
+        description,
+        ethReward: Util.toWei(ethReward),
+        nativeTokenReward: Util.toWei(nativeTokenReward),
+        numberOfPeriods: 1,
+        periodLength: 1,
+        reputationChange: Util.toWei(reputationReward),
+      });
+
     } catch (err) {
       console.error(err);
       dispatch({
@@ -746,20 +732,17 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-      await Util.performAction(
-        'TxTracking.GenesisProtocol.vote',
-        votingMachineInstance.vote.bind(votingMachineInstance),
-        {
-          proposalId,
-          vote
-        },
-        (totalSteps: number) =>
-          dispatch({
-            type: arcConstants.ARC_VOTE,
-            sequence: AsyncActionSequence.Pending,
-            meta,
-          } as VoteAction)
-      );
+      dispatch({
+        type: arcConstants.ARC_VOTE,
+        sequence: AsyncActionSequence.Pending,
+        meta,
+      } as VoteAction)
+
+      await votingMachineInstance.vote({
+        proposalId,
+        vote
+      });
+
     } catch (err) {
       console.error(err);
       dispatch({
@@ -879,27 +862,16 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const amount = new BigNumber(Util.toWei(stake));
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee).toNumber()}!`); }
 
-      await Util.performAction(
-        'TxTracking.GenesisProtocol.stake',
-        votingMachineInstance.stake.bind(votingMachineInstance),
-        {
-          proposalId,
-          vote: prediction,
-          amount
-        },
-        (totalSteps: number) =>
-          dispatch({
-            type: arcConstants.ARC_STAKE,
-            sequence: AsyncActionSequence.Pending,
-            meta
-          } as StakeAction),
-        (txInfo: any) =>
-          dispatch({
-            type: arcConstants.ARC_STAKE,
-            sequence: AsyncActionSequence.Pending,
-            meta
-          } as StakeAction)
-      );
+      dispatch({
+        type: arcConstants.ARC_STAKE,
+        sequence: AsyncActionSequence.Pending,
+        meta
+      } as StakeAction)
+      await votingMachineInstance.stake({
+        proposalId,
+        vote: prediction,
+        amount
+      })
     } catch (err) {
       console.error(err);
       dispatch({
