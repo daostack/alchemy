@@ -125,6 +125,7 @@ const reducer =
           transactions: {
             ...state.transactions,
             [action.payload.id]: {
+              message: '',
               ...state.transactions[action.payload.id],
               ...action.payload.transaction
             }
