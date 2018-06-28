@@ -284,6 +284,51 @@ For additional information check out our <a href="https://docs.google.com/docume
             callback={this.handleJoyrideCallback}
             continuous
             showProgress
+            styles={{
+              options: {
+                arrowColor: '#fff',
+                backgroundColor: '#fff',
+                primaryColor: '#000',
+                borderRadius: 0,
+                textColor: 'rgba(20, 20, 20, 1.000)',
+                overlayColor: 'rgba(0,0,0,.7)',
+              },
+              tooltip: {
+                borderRadius: 0,
+                fontSize: "16px"
+              },
+              beaconInner: {
+                borderRadius: 0,
+                backgroundColor: "rgba(255, 0, 72, 1.000)"
+              },
+              beaconOuter: {
+                borderRadius: 0,
+                backgroundColor: "rgba(255, 0, 72, .2)",
+                border: "2px solid rgba(255, 0, 72, 1.000)"
+              },
+              beacon: {
+                transform: "rotate(45deg)"
+              },
+              buttonNext: {
+                borderRadius: 0,
+                border: "1px solid rgba(58, 180, 208, 1.000)",
+                color: "rgba(58, 180, 208, 1.000)",
+                background: "none"
+              },
+              buttonBack: {
+                borderRadius: 0,
+                border: "1px solid rgba(0,0,0,.3)",
+                color: "rgba(0,0,0,.6)",
+                background: "none",
+                opacity: ".7"
+              },
+              buttonSkip: {
+                borderRadius: 0,
+                border: "1px solid rgba(0,0,0,1)",
+                color: "rgba(0,0,0,1)",
+                background: "none"
+              }
+            }}
           />
           <div className={css.top}>
             <DaoHeader dao={dao} />
