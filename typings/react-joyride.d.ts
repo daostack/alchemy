@@ -132,6 +132,8 @@ declare module 'react-joyride' {
          */
         debug?: boolean;
 
+        styles?: any;
+
         /**
          * It will be called when the tour's state changes.
          */
