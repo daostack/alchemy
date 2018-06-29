@@ -9,6 +9,7 @@ import "./assets/styles/global.scss";
 
 async function renderApp() {
   try {
+    Arc.ConfigService.set("estimateGas", true);
     await Arc.InitializeArcJs();
     // Silence 240 sec error
     Arc.ContractWrappers.AbsoluteVote.contract.constructor.synchronization_timeout = 0;

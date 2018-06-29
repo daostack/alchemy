@@ -167,7 +167,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         </div>
         <div>
           <span className={css.boostedAmount}>
-            {proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ''}
+            {proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
           </span>
           <table>
             <tbody>
