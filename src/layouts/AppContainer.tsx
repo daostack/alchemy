@@ -162,7 +162,7 @@ class AppContainer extends React.Component<IProps, null> {
                   <Notification
                     title={
                       error ?
-                        'TRANSCATION FAILED' :
+                        'TRANSACTION FAILED' :
                       status === TransactionStatus.Started ?
                         'WAITING FOR SIGNATURE' :
                       status === TransactionStatus.Sent ?
