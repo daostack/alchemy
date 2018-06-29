@@ -3,9 +3,15 @@ import * as React from "react";
 import * as css from "./Notification.scss";
 import classNames = require("classnames");
 
+export enum NotificationViewStatus {
+  Pending = 'Pending',
+  Failure = 'Failure',
+  Success = 'Success'
+}
+
 interface IProps {
   title: string;
-  status: 'pending' | 'failure' | 'success'
+  status: NotificationViewStatus;
   message: string;
   timestamp: number;
   url?: string;
@@ -31,7 +37,7 @@ export default class Notification extends React.Component<IProps, IState> {
     const { status } = this.props;
     const { minimized } = this.state;
 
-    if (status === 'pending' && minimized) {
+    if (status === NotificationViewStatus.Pending && minimized) {
       this.setState({minimized: false});
     }
   }
@@ -43,10 +49,10 @@ export default class Notification extends React.Component<IProps, IState> {
     const transactionClass = classNames({
       [css.pendingTransaction]: true,
       [css.clearfix]: true,
-      [css.pending]: status === 'pending',
-      [css.error]: status === 'failure',
-      [css.success]: status === 'success',
-      [css.minimized]: status === 'pending' && minimized,
+      [css.pending]: status === NotificationViewStatus.Pending,
+      [css.error]: status === NotificationViewStatus.Failure,
+      [css.success]: status === NotificationViewStatus.Success,
+      [css.minimized]: status === NotificationViewStatus.Pending && minimized,
     });
 
     const titleContent =

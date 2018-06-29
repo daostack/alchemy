@@ -17,7 +17,7 @@ import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
-import Notification from "components/Notification/Notification";
+import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
@@ -142,10 +142,10 @@ class AppContainer extends React.Component<IProps, null> {
                     }
                     status={
                       status === NotificationStatus.Failure ?
-                        'failure' :
+                        NotificationViewStatus.Failure :
                       status === NotificationStatus.Success ?
-                        'success' :
-                        'pending'
+                        NotificationViewStatus.Success :
+                        NotificationViewStatus.Pending
                     }
                     message={message}
                     timestamp={timestamp}
@@ -171,10 +171,10 @@ class AppContainer extends React.Component<IProps, null> {
                     }
                     status={
                       error ?
-                        'failure' :
+                        NotificationViewStatus.Failure :
                       status === TransactionStatus.Mined ?
-                        'success' :
-                        'pending'
+                        NotificationViewStatus.Success :
+                        NotificationViewStatus.Pending
                     }
                     message={
                       error ?
