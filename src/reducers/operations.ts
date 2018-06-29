@@ -217,7 +217,9 @@ const messages: {[key: string]: (state: IRootState, options: any) => string} = {
   'ContributionReward.redeemContributionReward': (state, {proposalId}: Arc.ContributionRewardRedeemParams) =>
     `Redeeming contribution reward for "${state.arc.proposals[proposalId].title}"`,
   'DAO.new': (state, {}: Arc.NewDaoConfig) =>
-    `Creating a new DAO`
+    `Creating a new DAO`,
+  'StandardToken.approve': (state, {amount}: Arc.StandardTokenApproveOptions) =>
+    `Approving ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for staking`
 }
 
 const errorType = (error: Error) => {

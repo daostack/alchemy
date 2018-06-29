@@ -67,10 +67,6 @@ export default class Notification extends React.Component<IProps, IState> {
               <span className={css.pending}>{titleContent}</span>
               <span className={css.success}>{titleContent}</span>
               <span className={css.error}>{titleContent}</span>
-              {url ?
-                <span><a href={url}><img src="/assets/images/Icon/View.svg" /></a></span>
-                : ''
-              }
             </div>
             <div className={css.right}>
               <span className={css.error}>ERROR</span>
