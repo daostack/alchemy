@@ -30,6 +30,7 @@ import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
 import { IOperationsState, NotificationStatus, dismissOperation, TransactionStatus, TransactionError } from 'reducers/operations';
+import { sortedOperations, LabeledOperation } from '../selectors/operations';
 
 interface IStateProps {
   arc: IArcState;
@@ -37,7 +38,7 @@ interface IStateProps {
   cookies: Cookies;
   ethAccountAddress: string | null;
   history: History.History;
-  operations: IOperationsState;
+  sortedOperations: LabeledOperation[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
@@ -45,7 +46,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
-  operations: state.operations,
+  sortedOperations: sortedOperations()(state),
 });
 
 interface IDispatchProps {
@@ -89,7 +90,7 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
+    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, sortedOperations } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending ?
@@ -128,75 +129,66 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {Object.keys(operations.notifications).map((k) => {
-              const {status, message, timestamp} = operations.notifications[k];
-              return (
-                <div key={k}>
+            {sortedOperations.map((op) => (
+              <div key={op.id}>
+                {op.type === 'notification' ?
                   <Notification
                     title={
-                      status === NotificationStatus.Failure ?
+                      op.status === NotificationStatus.Failure ?
                         'FAILURE' :
-                      status === NotificationStatus.Success ?
+                      op.status === NotificationStatus.Success ?
                         'SUCCESS' :
                         'PENDING'
                     }
                     status={
-                      status === NotificationStatus.Failure ?
+                      op.status === NotificationStatus.Failure ?
                         NotificationViewStatus.Failure :
-                      status === NotificationStatus.Success ?
+                      op.status === NotificationStatus.Success ?
                         NotificationViewStatus.Success :
                         NotificationViewStatus.Pending
                     }
-                    message={message}
-                    timestamp={timestamp}
-                    dismiss={() => dismissOperation(k)}
-                  />
-                  <br />
-                </div>
-              );
-            })}
-            {Object.keys(operations.transactions).map((k) => {
-              const {error, txHash, status, message, timestamp} = operations.transactions[k];
-              return (
-                <div key={k}>
+                    message={op.message}
+                    timestamp={op.timestamp}
+                    dismiss={() => dismissOperation(op.id)}
+                  /> :
                   <Notification
                     title={
-                      error ?
+                      op.error ?
                         'TRANSACTION FAILED' :
-                      status === TransactionStatus.Started ?
+                      op.status === TransactionStatus.Started ?
                         'WAITING FOR SIGNATURE' :
-                      status === TransactionStatus.Sent ?
+                      op.status === TransactionStatus.Sent ?
                         'TRANSACTION SENT' :
                         'TRANSACTION MINED'
                     }
                     status={
-                      error ?
+                      op.error ?
                         NotificationViewStatus.Failure :
-                      status === TransactionStatus.Mined ?
+                      op.status === TransactionStatus.Mined ?
                         NotificationViewStatus.Success :
                         NotificationViewStatus.Pending
                     }
                     message={
-                      error ?
+                      op.error ?
                         (
-                          error === TransactionError.Canceled ?
+                          op.error === TransactionError.Canceled ?
                             'The transaction was canceled.' :
-                          error === TransactionError.Reverted ?
+                          op.error === TransactionError.Reverted ?
                             'The transaction errored (reverted).' :
-                          error === TransactionError.OutOfGas ?
+                          op.error === TransactionError.OutOfGas ?
                             'The transaction ran out of gas, please try again with a higher gas limit.' :
-                            `The transaction unexpectedly failed with: ${message}`
+                            `The transaction unexpectedly failed with: ${op.message}`
                         ) :
-                        message
+                        op.message
                       }
-                    timestamp={timestamp}
-                    url={txHash ? `https://etherscan.io/tx/${txHash}` : undefined}
-                    dismiss={() => dismissOperation(k)}
+                    timestamp={op.timestamp}
+                    url={op.txHash ? `https://etherscan.io/tx/${op.txHash}` : undefined}
+                    dismiss={() => dismissOperation(op.id)}
                   />
-                  <br />
-                </div>
-              );
-            })}
+                }
+                <br/>
+              </div>
+            ))}
           </div>
           <div className={css.background}></div>
         </div>
