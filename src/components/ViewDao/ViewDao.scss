@@ -486,8 +486,11 @@ a.navItem:hover {
   transition: opacity 1000ms ease-in;
 }
 
-.tourModal {
+.hidden {
   display: none;
+}
+
+.tourModal {
   position: fixed;
   top: 0;
   left: 0;
@@ -527,13 +530,7 @@ a.navItem:hover {
     background-color: rgba(0,0,0,.7);
   }
 
-  .tourEnd {
-    display: none;
-  }
-
   .tourStart {
-    display: none;
-
     h1 {
       margin-bottom: 0;
       line-height: 24px;
@@ -579,10 +576,11 @@ a.navItem:hover {
       }
     }
 
-    button.start {
+    button.startButton {
       color: $black;
       background-color: $white;
       font-weight: bold;
+      cursor: pointer;
     }
 
     h1 {

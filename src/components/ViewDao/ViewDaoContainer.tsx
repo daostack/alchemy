@@ -84,7 +84,13 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-class ViewDaoContainer extends React.Component<IProps, null> {
+interface IState {
+  showTourIntro: boolean;
+  showTourOutro: boolean;
+  tourCount: number;
+}
+
+class ViewDaoContainer extends React.Component<IProps, IState> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
@@ -94,13 +100,23 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public mintEventWatcher: any;
   public burnEventWatcher: any;
 
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      showTourIntro: false,
+      showTourOutro: false,
+      tourCount: 0
+    };
+  }
+
   public async componentWillMount() {
     const { cookies, showTour } = this.props;
 
     // If this person has not seen the disclaimer, show them the home page
     if (!cookies.get('seen_tour')) {
       cookies.set('seen_tour', "true", { path: '/' });
-      showTour();
+      this.setState({ showTourIntro: true });
     }
   }
 
@@ -220,8 +236,29 @@ class ViewDaoContainer extends React.Component<IProps, null> {
     }
   }
 
+  public handleClickStartTour = (e: any) => {
+    const { showTour } = this.props;
+    this.setState({ showTourIntro: false });
+    showTour();
+  };
+
+  public handleClickSkipTour = (e: any) => {
+    this.setState({ showTourIntro: false });
+  };
+
+  public handleClickEndTour = (e: any) => {
+    this.setState({ showTourOutro: false });
+  };
+
   public handleJoyrideCallback = (data: any) => {
     const { hideTour } = this.props;
+    console.log(data);
+    if (data.type == 'tour:end') {
+      this.setState({
+        showTourOutro: true,
+        tourCount: this.state.tourCount + 1
+      });
+    }
     if (data.action == 'close' || data.type == 'tour:end') {
       hideTour();
     }
@@ -282,35 +319,51 @@ class ViewDaoContainer extends React.Component<IProps, null> {
         }
       ];
 
+      const tourModalClass = classNames({
+        [css.tourModal]: true,
+        [css.hidden]: !this.state.showTourIntro && !this.state.showTourOutro
+      });
+
+      const tourStartClass = classNames({
+        [css.tourStart]: true,
+        [css.hidden]: !this.state.showTourIntro
+      });
+
+      const tourEndClass = classNames({
+        [css.tourEnd]: true,
+        [css.hidden]: !this.state.showTourOutro
+      });
+
       return(
         <div className={css.outer}>
-          <div className={css.tourModal}>
+          <div className={tourModalClass}>
             <div className={css.bg}></div>
             <div className={css.accessTour}>
               <button><img src="/assets/images/Tour/TourButton.svg"/></button>
               <div>Access the tour later! <img src="/assets/images/Tour/Arrow.svg"/></div>
             </div>
-            <div className={css.tourStart}>
+            <div className={tourStartClass}>
               <h1>Welcome to Alchemy!</h1>
               <span>Decentralized budgeting powered by <img src="/assets/images/Tour/DAOstackLogo.svg"/> DAOstack.</span>
               <p>New to Alchemy? Take this tour to learn how <strong>voting, reputation, predictions,</strong> and <strong>proposals</strong> work within Alchemy.</p>
               <div>
-                <button><img src="/assets/images/Tour/SkipTour.svg"/> Skip the tour</button>
-                <button className={css.start}><img src="/assets/images/Tour/StartTour.svg"/> Start the tour</button>
+                <button onClick={this.handleClickSkipTour}><img src="/assets/images/Tour/SkipTour.svg"/> Skip the tour</button>
+                <button className={css.startButton} onClick={this.handleClickStartTour}><img src="/assets/images/Tour/StartTour.svg"/> Start the tour</button>
               </div>
             </div>
-            <div className={css.tourEnd}>
+            <div className={tourEndClass}>
               <h1>You’re done!</h1>
               <p>Thanks for taking the time to learn about Alchemy.
 For additional information check out our <a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/edit">FAQ</a> and our <a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23">Intro to Alchemy</a> blog post.</p>
-              <button className={css.start}><img src="/assets/images/Tour/StartTour.svg"/> Start using Alchemy</button>
+              <button className={css.startButton} onClick={this.handleClickEndTour}><img src="/assets/images/Tour/StartTour.svg"/> Start using Alchemy</button>
             </div>
           </div>
           <Joyride
-            steps={tourSteps}
-            run={tourVisible}
             callback={this.handleJoyrideCallback}
             continuous
+            key={'joyride_' + this.state.tourCount /* This is a hack to get the tour to reset after it ends, so it can be shown again */}
+            run={tourVisible}
+            steps={tourSteps}
             showProgress
             styles={{
               options: {
