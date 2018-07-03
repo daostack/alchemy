@@ -22,26 +22,28 @@ import Util from "./lib/util";
 // tslint:disable-next-line:no-var-requires
 require('dotenv').config();
 
-const arcjsNetwork = Arc.ConfigService.get('network');
+(async () => {
+  const arcjsNetwork = (await Arc.Utils.getNetworkName()).toLowerCase();
 
-if (process.env.NODE_ENV == 'production') {
-  // Use Infura on production
-  const infuraNetwork = arcjsNetwork == 'live' ? 'mainnet' : arcjsNetwork;
+  if (process.env.NODE_ENV == 'production') {
+    // Use Infura on production
+    const infuraNetwork = arcjsNetwork == 'live' ? 'mainnet' : arcjsNetwork;
 
-  // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
-  const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
-  const infuraKey = process.env.INFURA_KEY;
-  const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/" + infuraKey);
+    // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
+    const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
+    const infuraKey = process.env.INFURA_KEY;
+    const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/" + infuraKey);
 
-  // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
-  global.web3 = new Web3(provider.engine);
+    // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
+    global.web3 = new Web3(provider.engine);
 
-  process.env.API_URL = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
-} else {
-  process.env.API_URL = process.env.API_URL || "http://127.0.0.1:3001";
-}
+    process.env.API_URL = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
+  } else {
+    process.env.API_URL = process.env.API_URL || "http://127.0.0.1:3001";
+  }
 
-const cacheBlockchain = async () => {
+  await Arc.InitializeArcJs();
+
   // TODO: store last block checked somewhere (redis?) and only load new data since last check
   let lastBlock = 0;
 
@@ -161,10 +163,4 @@ const cacheBlockchain = async () => {
       console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
     }
   });
-};
-
-(async () => {
-  await Arc.InitializeArcJs();
-
-  cacheBlockchain();
 })();
