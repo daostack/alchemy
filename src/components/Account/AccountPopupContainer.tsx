@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
-import { NotificationStatus, showNotification } from "reducers/operations";
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";

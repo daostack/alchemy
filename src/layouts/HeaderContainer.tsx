@@ -6,7 +6,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
 import * as web3Actions from "actions/web3Actions";
-import { NotificationStatus, showNotification } from 'reducers/operations'
+import { showNotification, NotificationStatus } from 'reducers/notifications'
 import { IRootState } from "reducers";
 import { IDaoState, emptyAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";

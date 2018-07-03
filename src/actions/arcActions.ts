@@ -28,7 +28,7 @@ import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
 import { ExecutionState } from "@daostack/arc.js";
-import { NotificationStatus, showNotification } from "reducers/operations";
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as moment from "moment";
 
 export function proposalEnded(proposal: IProposalState) {

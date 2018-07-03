@@ -29,8 +29,9 @@ import HeaderContainer from "layouts/HeaderContainer";
 import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
-import { IOperationsState, NotificationStatus, dismissOperation, TransactionStatus, TransactionError } from 'reducers/operations';
 import { sortedOperations, LabeledOperation } from '../selectors/operations';
+import { dismissNotification, NotificationStatus } from 'reducers/notifications';
+import { dismissTransaction, TransactionStatus, TransactionError } from 'reducers/transactions';
 
 interface IStateProps {
   arc: IArcState;
@@ -50,13 +51,15 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
 });
 
 interface IDispatchProps {
-  dismissOperation: typeof dismissOperation;
+  dismissNotification: typeof dismissNotification;
+  dismissTransaction: typeof dismissTransaction;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
-  dismissOperation,
+  dismissNotification,
+  dismissTransaction,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
 };
@@ -90,7 +93,14 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, sortedOperations } = this.props;
+    const {
+      connectionStatus,
+      cookies,
+      dismissNotification,
+      dismissTransaction,
+      ethAccountAddress,
+      sortedOperations
+    } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending ?
@@ -149,7 +159,7 @@ class AppContainer extends React.Component<IProps, null> {
                     }
                     message={op.message}
                     timestamp={op.timestamp}
-                    dismiss={() => dismissOperation(op.id)}
+                    dismiss={() => dismissNotification(op.id)}
                   /> :
                   <Notification
                     title={
@@ -183,7 +193,7 @@ class AppContainer extends React.Component<IProps, null> {
                       }
                     timestamp={op.timestamp}
                     url={op.txHash ? `https://etherscan.io/tx/${op.txHash}` : undefined}
-                    dismiss={() => dismissOperation(op.id)}
+                    dismiss={() => dismissTransaction(op.id)}
                   />
                 }
                 <br/>

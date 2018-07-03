@@ -1,16 +1,13 @@
-import { Action, MiddlewareAPI } from "redux";
-import { Dispatch } from "react-redux";
-import { IRootState } from "../reducers";
 import * as Arc from '@daostack/arc.js';
-import { TransactionReceiptsEventInfo } from "@daostack/arc.js";
+import { TransactionReceiptsEventInfo } from '@daostack/arc.js';
+import { Action, Dispatch, Middleware } from 'redux';
 import * as moment from 'moment';
 import { REHYDRATE, RehydrateAction, persistReducer, createTransform } from "redux-persist";
-import { Middleware } from "redux";
-import { errorMessage } from "components/CreateProposal/CreateProposal.scss";
-import { VoteOptions } from "./arcReducer";
-import Util from "lib/util";
-import BigNumber from "bignumber.js";
+import Util from "../lib/util";
 import storage from "redux-persist/lib/storage";
+import { IRootState } from "../reducers";
+import BigNumber from "bignumber.js";
+import { VoteOptions } from "./arcReducer";
 
 /** -- Model -- */
 
@@ -35,169 +32,66 @@ export interface ITransaction {
   timestamp: number;
 }
 
-export enum NotificationStatus {
-  Pending = 'Pending',
-  Failure = 'Failure',
-  Success = 'Success'
-}
-
-export interface INotification {
-  status: NotificationStatus
-  message: string;
-  timestamp: number;
-}
-
-export interface IOperationsState {
-  notifications: {
-    [id: string]: INotification
-  },
-  transactions: {
-    [id: string]: ITransaction;
-  }
+export interface ITransactionsState {
+  [id: string]: ITransaction;
 }
 
 /** -- Actions -- */
 
 export interface IUpdateTransaction extends Action {
-  type: 'Operations/Update',
+  type: 'Transactions/Update',
   payload: {
     id: string;
     transaction: ITransaction;
   }
 }
 
-export interface IDismissOperation extends Action {
-  type: 'Operations/Dismiss',
+export interface IDismissTransaction extends Action {
+  type: 'Transactions/Dismiss',
   payload: {
     id: string;
   }
 }
 
-export interface IShowNotification extends Action {
-  type: 'Operations/Show',
-  payload: {
-    id: string;
-    status: NotificationStatus
-    message: string;
-    timestamp: number;
-  }
-}
-
-export const showNotification =
-  (
-    status: NotificationStatus,
-    message: string,
-    id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
-    timestamp: number = +moment()
-  ) => (dispatch: Dispatch<any>) =>
-    dispatch({
-      type: 'Operations/Show',
-      payload: {
-        id,
-        status,
-        message,
-        timestamp
-      }
-    } as IShowNotification);
-
-export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
+export const dismissTransaction = (id: string) => (dispatch: Dispatch<any>) =>
   dispatch({
-    type: 'Operations/Dismiss',
+    type: 'Transactions/Dismiss',
     payload: {
       id
     }
-  } as IDismissOperation);
+  } as IDismissTransaction);
 
-export type OperationsAction = IUpdateTransaction | IDismissOperation | IShowNotification
+export type TransactionsAction = IUpdateTransaction | IDismissTransaction
 
-export const isOperationsAction = (action: Action): action is OperationsAction =>
-  typeof action.type === 'string' && action.type.startsWith('Operations/');
+export const isTransactionsAction = (action: Action): action is TransactionsAction =>
+  typeof action.type === 'string' && action.type.startsWith('Transactions/');
 
 /** -- Reducer -- */
 
-const reducer =
-  (state: IOperationsState = {notifications: {}, transactions: {}}, a: Action) => {
-    if (isOperationsAction(a)) {
-      if (a.type === 'Operations/Update') {
+export const transactionsReducer =
+  (state: ITransactionsState = {}, a: Action) => {
+    if (isTransactionsAction(a)) {
+      if (a.type === 'Transactions/Update') {
         const action = a as IUpdateTransaction;
         return {
           ...state,
-          transactions: {
-            ...state.transactions,
-            [action.payload.id]: {
-              message: '',
-              ...state.transactions[action.payload.id],
-              ...action.payload.transaction
-            }
+          [action.payload.id]: {
+            message: '',
+            ...state[action.payload.id],
+            ...action.payload.transaction
           }
         };
       }
 
-      if (a.type === 'Operations/Dismiss') {
-        const action = a as IDismissOperation;
-        const {
-          notifications: {[a.payload.id]: _, ...restNotifications},
-          transactions: {[a.payload.id]: __, ...restTransactions},
-        } = state;
-
-        return {
-          notifications: restNotifications,
-          transactions: restTransactions
-        };
-      }
-
-      if (a.type === 'Operations/Show') {
-        const action = a as IShowNotification;
-        const { status, message, timestamp } = action.payload;
-        const id = action.payload.id;
-        return {
-          ...state,
-          notifications: {
-            ...state.notifications,
-            [id]: {
-              ...state.notifications[id],
-              status,
-              message,
-              timestamp
-            }
-          }
-        };
+      if (a.type === 'Transactions/Dismiss') {
+        const action = a as IDismissTransaction;
+        const {[a.payload.id]: _, ...rest} = state;
+        return rest;
       }
     }
 
     return state;
   }
-
-/**
- * Only persist pending transactions
- */
-const filterPending = createTransform(
-  (state, key) => {
-    if (key === 'transactions') {
-      const out = {...state} as {[id: number]: ITransaction};
-      const keys = Object.keys(out);
-      for (let i = 0; i < keys.length; i++) {
-        const k = keys[i] as any as number;
-        if (out[k].error || (out[k].status && out[k].status !== TransactionStatus.Sent)) {
-          delete out[k];
-        }
-      }
-      return out;
-    }
-    return state
-  },
-  (raw, key) => raw
-)
-
-/**
- * Persist the pending transactions
- */
-export const operationsReducer = persistReducer({
-  key: 'operations',
-  storage,
-  transforms: [filterPending],
-  whitelist: ['transactions']
-}, reducer);
 
 /** -- Effects -- */
 
@@ -254,7 +148,7 @@ export const transactionsTracker: Middleware =
 
       const message = messages[functionName] && messages[functionName](getState() as any as IRootState, options)
       dispatch(filterUndefined({
-        type: 'Operations/Update',
+        type: 'Transactions/Update',
         payload: {
           id: `${invocationKey}`,
           transaction: {
@@ -279,15 +173,15 @@ export const transactionsTracker: Middleware =
          * Resubscribe to sent transactions after rehydrating.
          */
         const action = a as RehydrateAction;
-        const state = action.payload as IOperationsState;
+        const state = action.payload as ITransactionsState;
 
         if (state) {
-          Object.keys(state.transactions).forEach(async (id: string) => {
-            if (state.transactions[id].status === TransactionStatus.Sent) {
+          Object.keys(state).forEach(async (id: string) => {
+            if (state[id].status && state[id].status === TransactionStatus.Sent) {
               try {
-                const receipt = await Arc.TransactionService.watchForMinedTransaction(state.transactions[id].txHash);
+                const receipt = await Arc.TransactionService.watchForMinedTransaction(state[id].txHash);
                 dispatch({
-                  type: 'Operations/Update',
+                  type: 'Transactions/Update',
                   payload: {
                     id: `${id}`,
                     transaction: {
@@ -297,7 +191,7 @@ export const transactionsTracker: Middleware =
                 } as IUpdateTransaction);
               } catch (e) {
                 dispatch({
-                  type: 'Operations/Update',
+                  type: 'Transactions/Update',
                   payload: {
                     id: `${id}`,
                     transaction: {
@@ -318,7 +212,7 @@ export const transactionsTracker: Middleware =
 ;
 
 /**
- * Automatically dismisses a succeseeded notification/transaction after a timeout.
+ * Automatically dismisses a succeseeded transaction after a timeout.
  * @param timeout timout before dismissal in milliseconds
  */
 export const successDismisser =
@@ -326,18 +220,15 @@ export const successDismisser =
   ({ getState, dispatch }) =>
   (next) =>
   (action: any) => {
-    if (isOperationsAction(action)) {
-      if (
-        (action.type === 'Operations/Show' && (action as IShowNotification).payload.status === NotificationStatus.Success) ||
-        (action.type === 'Operations/Update' && (action as IUpdateTransaction).payload.transaction.status === TransactionStatus.Mined)
-      ) {
+    if (isTransactionsAction(action)) {
+      if (action.type === 'Transactions/Update' && (action as IUpdateTransaction).payload.transaction.status === TransactionStatus.Mined) {
         setTimeout(() => {
           dispatch({
-            type: 'Operations/Dismiss',
+            type: 'Transactions/Dismiss',
             payload: {
               id: action.payload.id
             }
-          } as IDismissOperation)
+          } as IDismissTransaction)
         }, timeout)
       }
     }
