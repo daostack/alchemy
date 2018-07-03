@@ -252,7 +252,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
   public handleJoyrideCallback = (data: any) => {
     const { hideTour } = this.props;
-    console.log(data);
+
     if (data.type == 'tour:end') {
       this.setState({
         showTourOutro: true,
