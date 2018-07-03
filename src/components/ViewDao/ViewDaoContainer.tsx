@@ -2,11 +2,13 @@ import * as Arc from "@daostack/arc.js";
 import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import * as React from "react";
+import { withCookies, Cookies } from 'react-cookie';
 import Joyride from 'react-joyride';
 import { connect, Dispatch } from "react-redux";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
+import * as uiActions from "actions/uiActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, IRedemptionState } from "reducers/arcReducer";
@@ -27,11 +29,12 @@ import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
+  cookies: Cookies;
   currentAccountAddress: string;
   dao: IDaoState;
   daoAddress: string;
   numRedemptions: number;
-  showTour: boolean;
+  tourVisible: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -47,7 +50,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao,
     daoAddress : ownProps.match.params.daoAddress,
     numRedemptions,
-    showTour: state.ui.showTour
+    tourVisible: state.ui.tourVisible
   };
 };
 
@@ -61,6 +64,8 @@ interface IDispatchProps {
   onProposalExecuted: typeof arcActions.onProposalExecuted;
   onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
   onDAOGenBalanceChanged: typeof arcActions.onDAOGenBalanceChanged;
+  hideTour: typeof uiActions.hideTour;
+  showTour: typeof uiActions.showTour;
 }
 
 const mapDispatchToProps = {
@@ -73,6 +78,8 @@ const mapDispatchToProps = {
   onProposalExecuted: arcActions.onProposalExecuted,
   onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
   onDAOGenBalanceChanged: arcActions.onDAOGenBalanceChanged,
+  hideTour: uiActions.hideTour,
+  showTour: uiActions.showTour,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -86,6 +93,16 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   public transferEventWatcher: any;
   public mintEventWatcher: any;
   public burnEventWatcher: any;
+
+  public async componentWillMount() {
+    const { cookies, showTour } = this.props;
+
+    // If this person has not seen the disclaimer, show them the home page
+    if (!cookies.get('seen_tour')) {
+      cookies.set('seen_tour', "true", { path: '/' });
+      showTour();
+    }
+  }
 
   public async componentDidMount() {
     const {
@@ -204,11 +221,15 @@ class ViewDaoContainer extends React.Component<IProps, null> {
   }
 
   public handleJoyrideCallback = (data: any) => {
-    const { type } = data;
+    const { hideTour } = this.props;
+    console.log(data);
+    if (data.action == 'close' || data.type == 'tour:end') {
+      hideTour();
+    }
   };
 
   public render() {
-    const { currentAccountAddress, dao, numRedemptions, showTour } = this.props;
+    const { currentAccountAddress, dao, numRedemptions, tourVisible } = this.props;
 
     if (dao) {
       const tourSteps = [
@@ -225,7 +246,7 @@ class ViewDaoContainer extends React.Component<IProps, null> {
           disableBeacon: true
         },
         {
-          target: ".css" + css.holdings,
+          target: "." + css.holdings,
           content: "DAO Budget: Members collectively decide how to manage the DAO’s budget. The amount in ETH represents available budget for funding proposals. The GEN amount indicates how much the DAO has to reward voters and predictors.",
           placement: "left",
           disableBeacon: true
@@ -288,7 +309,7 @@ For additional information check out our <a href="https://docs.google.com/docume
           </div>
           <Joyride
             steps={tourSteps}
-            run={showTour}
+            run={tourVisible}
             callback={this.handleJoyrideCallback}
             continuous
             showProgress
@@ -321,20 +342,23 @@ For additional information check out our <a href="https://docs.google.com/docume
                 borderRadius: 0,
                 border: "1px solid rgba(58, 180, 208, 1.000)",
                 color: "rgba(58, 180, 208, 1.000)",
-                background: "none"
+                background: "none",
+                cursor: "pointer"
               },
               buttonBack: {
                 borderRadius: 0,
                 border: "1px solid rgba(0,0,0,.3)",
                 color: "rgba(0,0,0,.6)",
                 background: "none",
-                opacity: ".7"
+                opacity: ".7",
+                cursor: "pointer"
               },
               buttonSkip: {
                 borderRadius: 0,
                 border: "1px solid rgba(0,0,0,1)",
                 color: "rgba(0,0,0,1)",
-                background: "none"
+                background: "none",
+                cursor: "pointer"
               }
             }}
           />
@@ -359,4 +383,4 @@ For additional information check out our <a href="https://docs.google.com/docume
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewDaoContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(withCookies(ViewDaoContainer));

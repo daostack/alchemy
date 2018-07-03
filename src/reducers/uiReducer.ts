@@ -4,11 +4,11 @@ export enum ActionTypes {
 }
 
 export interface IUIState {
-  showTour: boolean;
+  tourVisible: boolean;
 }
 
 export const initialState: IUIState = {
-  showTour: false
+  tourVisible: false
 };
 
 // TODO: make all action types explicit?
@@ -16,10 +16,10 @@ const uiReducer = (state = initialState, action: any) => {
   switch (action.type) {
 
     case ActionTypes.SHOW_TOUR:
-      return {...state, showTour: true  };
+      return {...state, tourVisible: true  };
 
     case ActionTypes.HIDE_TOUR:
-      return {...state, showTour: false };
+      return {...state, tourVisible: false };
 
     default: {
       return state;
