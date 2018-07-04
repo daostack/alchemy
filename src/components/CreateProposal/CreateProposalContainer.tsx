@@ -109,12 +109,16 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
+    if (!dao) {
+      return "Loading...";
+    }
+
     const proposalDescriptions = (dao.proposals as IProposalState[])
       .filter((proposal) => !proposalEnded(proposal))
       .map((proposal) => proposal.description);
 
-    return(
-      dao ? <div className={css.createProposalWrapper}>
+    return (
+      <div className={css.createProposalWrapper}>
         <h2>
           <img className={css.editIcon} src="/assets/images/Icon/Draft-white.svg"/>
           <span>Create proposal</span>
@@ -318,7 +322,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
         />
 
       </div>
-      : "Loading..."
     );
   }
 }
