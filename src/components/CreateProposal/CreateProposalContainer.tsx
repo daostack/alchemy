@@ -309,7 +309,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
               <div className={css.alignCenter}>
                 <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                   <img className={css.sendIcon} src="/assets/images/Icon/Send.svg"/>
-                  <img className={css.loading} src="/assets/images/Icon/Loading-Black.svg"/>
+                  <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
                   Submit proposal
                 </button>
               </div>
