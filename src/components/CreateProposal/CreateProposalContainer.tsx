@@ -18,7 +18,7 @@ import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
 
 import { Formik, Field } from 'formik';
-import { proposalEnded } from "actions/arcActions";
+import { proposalEnded } from "reducers/arcReducer";
 
 interface IStateProps {
   dao: IDaoState;
