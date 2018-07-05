@@ -19,6 +19,7 @@ import { ContributionRewardType,
          IProposalState,
          IStakeState,
          IVoteState,
+         proposalEnded,
          ProposalStates,
          TransactionStates,
          VoteOptions } from "reducers/arcReducer";
@@ -30,17 +31,6 @@ import { Dispatch } from "redux";
 import { ExecutionState } from "@daostack/arc.js";
 import { showOperation } from "./operationsActions";
 import { OperationsStatus } from "reducers/operations";
-import * as moment from "moment";
-
-export function proposalEnded(proposal: IProposalState) {
-  const res = (
-    proposal.state == ProposalStates.Executed ||
-    proposal.state == ProposalStates.Closed ||
-    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) ||
-    (proposal.state == ProposalStates.PreBoosted && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000)
-  );
-  return res;
-}
 
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
