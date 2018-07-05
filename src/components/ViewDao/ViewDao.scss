@@ -605,3 +605,11 @@ a.navItem:hover {
     padding: 0 30px;
   }
 }
+
+@media only screen and (min-width: 1130px) {
+  .tourModal {
+    .accessTour {
+      top: 47px;
+    }
+  }
+}
