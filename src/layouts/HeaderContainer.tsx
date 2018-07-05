@@ -5,8 +5,9 @@ import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
-import * as web3Actions from "actions/web3Actions";
 import { showNotification, NotificationStatus } from 'reducers/notifications'
+import * as uiActions from "actions/uiActions";
+import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState, emptyAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
@@ -52,6 +53,7 @@ interface IDispatchProps {
   onGenBalanceChanged: typeof web3Actions.onGenBalanceChanged;
   onGenStakingAllowanceChanged: typeof web3Actions.onGenStakingAllowanceChanged;
   showNotification: typeof showNotification;
+  showTour: typeof uiActions.showTour;
 }
 
 const mapDispatchToProps = {
@@ -60,7 +62,8 @@ const mapDispatchToProps = {
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
   onGenBalanceChanged: web3Actions.onGenBalanceChanged,
   onGenStakingAllowanceChanged: web3Actions.onGenStakingAllowanceChanged,
-  showNotification
+  showNotification,
+  showTour: uiActions.showTour
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -171,8 +174,13 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.props.setCurrentAccount(newAddress, this.props.daoAddress ? this.props.daoAddress : null);
   }
 
+  public handleClickTour = (e: any) => {
+    const { showTour } = this.props;
+    showTour();
+  }
+
   public render() {
-    const { accounts, currentAccountGenBalance, currentAccountGenStakingAllowance, dao, ethAccountAddress, ethAccountBalance, networkId } = this.props;
+    const { accounts, currentAccountGenBalance, currentAccountGenStakingAllowance, dao, ethAccountAddress, ethAccountBalance, networkId, showTour } = this.props;
 
     let member = dao ? dao.members[ethAccountAddress] : false;
     if (!member) {
@@ -264,6 +272,10 @@ class HeaderContainer extends React.Component<IProps, null> {
               <AccountImage accountAddress={ethAccountAddress} />
             </div>
           </div>
+          { dao
+            ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
+            : ""
+          }
         </nav>
       </div>
     );

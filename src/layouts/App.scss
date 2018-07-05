@@ -38,6 +38,19 @@ body {
   background-color: rgba(244, 244, 244, 1.000);
 }
 
+.openTour {
+  position: absolute;
+  right: 65px;
+  top: 9px;
+  border: none;
+  outline: none;
+  background: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .fadeEnter {
   opacity: 0.01;
 }
