@@ -99,7 +99,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
         }
 
         { proposalsBoosted.length > 0 ?
-          <div>
+          <div className={css.boostedContainer}>
             <div className={css.proposalsHeader}>
               Boosted Proposals
 
@@ -122,7 +122,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
         }
 
         { proposalsPreBoosted.length > 0 ?
-          <div>
+          <div className={css.regularContainer}>
             <div className={css.proposalsHeader}>
               Regular Proposals
             </div>
