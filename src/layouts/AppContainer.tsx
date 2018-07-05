@@ -29,9 +29,9 @@ import HeaderContainer from "layouts/HeaderContainer";
 import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
-import { sortedOperations, LabeledOperation } from '../selectors/operations';
-import { dismissNotification, NotificationStatus } from 'reducers/notifications';
-import { dismissTransaction, TransactionStatus, TransactionError } from 'reducers/transactions';
+import { sortedNotifications } from '../selectors/notifications';
+import { dismissNotification, NotificationStatus, INotificationsState } from 'reducers/notifications';
+import { OperationStatus, OperationError } from 'reducers/operations';
 
 interface IStateProps {
   arc: IArcState;
@@ -39,7 +39,7 @@ interface IStateProps {
   cookies: Cookies;
   ethAccountAddress: string | null;
   history: History.History;
-  sortedOperations: LabeledOperation[];
+  sortedNotifications: INotificationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
@@ -47,19 +47,17 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
-  sortedOperations: sortedOperations()(state),
+  sortedNotifications: sortedNotifications()(state),
 });
 
 interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
-  dismissTransaction: typeof dismissTransaction;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
   dismissNotification,
-  dismissTransaction,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
 };
@@ -97,9 +95,8 @@ class AppContainer extends React.Component<IProps, null> {
       connectionStatus,
       cookies,
       dismissNotification,
-      dismissTransaction,
       ethAccountAddress,
-      sortedOperations
+      sortedNotifications
     } = this.props;
 
     return (
@@ -139,63 +136,21 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {sortedOperations.map((op) => (
-              <div key={op.id}>
-                {op.type === 'notification' ?
-                  <Notification
-                    title={
-                      op.status === NotificationStatus.Failure ?
-                        'FAILURE' :
-                      op.status === NotificationStatus.Success ?
-                        'SUCCESS' :
-                        'PENDING'
-                    }
+            {sortedNotifications.map(({id, status, title, message, timestamp}) => (
+              <div key={id}>
+                <Notification
+                    title={(title || status).toUpperCase()}
                     status={
-                      op.status === NotificationStatus.Failure ?
+                      status === NotificationStatus.Failure ?
                         NotificationViewStatus.Failure :
-                      op.status === NotificationStatus.Success ?
+                      status === NotificationStatus.Success ?
                         NotificationViewStatus.Success :
                         NotificationViewStatus.Pending
                     }
-                    message={op.message}
-                    timestamp={op.timestamp}
-                    dismiss={() => dismissNotification(op.id)}
-                  /> :
-                  <Notification
-                    title={
-                      op.error ?
-                        'TRANSACTION FAILED' :
-                      op.status === TransactionStatus.Started ?
-                        'WAITING FOR SIGNATURE' :
-                      op.status === TransactionStatus.Sent ?
-                        'TRANSACTION SENT' :
-                        'TRANSACTION MINED'
-                    }
-                    status={
-                      op.error ?
-                        NotificationViewStatus.Failure :
-                      op.status === TransactionStatus.Mined ?
-                        NotificationViewStatus.Success :
-                        NotificationViewStatus.Pending
-                    }
-                    message={
-                      op.error ?
-                        (
-                          op.error === TransactionError.Canceled ?
-                            'The transaction was canceled.' :
-                          op.error === TransactionError.Reverted ?
-                            'The transaction errored (reverted).' :
-                          op.error === TransactionError.OutOfGas ?
-                            'The transaction ran out of gas, please try again with a higher gas limit.' :
-                            `The transaction unexpectedly failed with: ${op.message}`
-                        ) :
-                        op.message
-                      }
-                    timestamp={op.timestamp}
-                    url={op.txHash ? `https://etherscan.io/tx/${op.txHash}` : undefined}
-                    dismiss={() => dismissTransaction(op.id)}
+                    message={message}
+                    timestamp={timestamp}
+                    dismiss={() => dismissNotification(id)}
                   />
-                }
                 <br/>
               </div>
             ))}

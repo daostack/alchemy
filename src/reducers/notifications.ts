@@ -1,5 +1,11 @@
 import { Action, Dispatch, Middleware } from 'redux';
 import * as moment from 'moment';
+import { isOperationsAction, OperationStatus, OperationError } from './operations';
+import { IRootState } from 'reducers';
+import { VoteOptions } from 'reducers/arcReducer';
+import BigNumber from 'bignumber.js';
+import Util from 'lib/util';
+import * as Arc from '@daostack/arc.js';
 
 /** -- Model -- */
 
@@ -10,14 +16,14 @@ export enum NotificationStatus {
 }
 
 export interface INotification {
-  status: NotificationStatus
+  id: string;
+  status: NotificationStatus;
+  title?: string;
   message: string;
   timestamp: number;
 }
 
-export interface INotificationsState {
-  [id: string]: INotification
-}
+export type INotificationsState = INotification[]
 
 /** -- Actions -- */
 
@@ -32,7 +38,8 @@ export interface IShowNotification extends Action {
   type: 'Notifications/Show',
   payload: {
     id: string;
-    status: NotificationStatus
+    status: NotificationStatus;
+    title?: string;
     message: string;
     timestamp: number;
   }
@@ -42,6 +49,7 @@ export const showNotification =
   (
     status: NotificationStatus,
     message: string,
+    title?: string,
     id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
     timestamp: number = +moment()
   ) => (dispatch: Dispatch<any>) =>
@@ -50,6 +58,7 @@ export const showNotification =
       payload: {
         id,
         status,
+        title,
         message,
         timestamp
       }
@@ -71,27 +80,18 @@ export const isNotificationsAction = (action: Action): action is NotificationsAc
 /** -- Reducer -- */
 
 export const notificationsReducer =
-  (state: INotificationsState = {}, a: Action) => {
+  (state: INotificationsState = [], a: Action) => {
     if (isNotificationsAction(a)) {
       if (a.type === 'Notifications/Dismiss') {
         const action = a as IDismissNotification;
-        const {[a.payload.id]: _, ...rest} = state;
-        return rest;
+        return state.filter((x) => x.id !== action.payload.id);
       }
 
       if (a.type === 'Notifications/Show') {
         const action = a as IShowNotification;
-        const { status, message, timestamp } = action.payload;
+        const { status, title, message, timestamp } = action.payload;
         const id = action.payload.id;
-        return {
-          ...state,
-          [id]: {
-            ...state[id],
-            status,
-            message,
-            timestamp
-          }
-        };
+        return [...state, action.payload];
       }
     }
 
@@ -124,3 +124,71 @@ export const successDismisser =
 
     return next(action);
   };
+
+/**
+ * A map of messages to show for each type of action.
+ */
+const messages: {[key: string]: (state: IRootState, options: any) => string} = {
+  'GenesisProtocol.vote': (state, {vote, proposalId}: Arc.VoteOptions) =>
+    `Voting "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
+  'GenesisProtocol.stake': (state, {vote, proposalId, amount}: Arc.StakeConfig) =>
+    `Staking ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
+  'GenesisProtocol.execute': (state, {proposalId}: Arc.ProposalIdOption) =>
+    `Exeuting "${state.arc.proposals[proposalId].title}"`,
+  'GenesisProtocol.redeem': (state, {proposalId}: Arc.RedeemConfig) =>
+    `Redeeming rewards for "${state.arc.proposals[proposalId].title}"`,
+  'GenesisProtocol.redeemDaoBounty': (state, {proposalId}: Arc.RedeemConfig) =>
+    `Redeeming bounty rewards for "${state.arc.proposals[proposalId].title}"`,
+  'ContributionReward.proposeContributionReward': (state, {}: Arc.ProposeContributionRewardParams) =>
+    `Creating proposal`,
+  'ContributionReward.redeemContributionReward': (state, {proposalId}: Arc.ContributionRewardRedeemParams) =>
+    `Redeeming contribution reward for "${state.arc.proposals[proposalId].title}"`,
+  'DAO.new': (state, {}: Arc.NewDaoConfig) =>
+    `Creating a new DAO`,
+  'StandardToken.approve': (state, {amount}: Arc.StandardTokenApproveOptions) =>
+    `Approving ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for staking`
+}
+
+/**
+ * Effect for automatically showing and updating notifications based on transaction updates.
+ */
+export const notificationUpdater: Middleware =
+  ({ getState, dispatch }) =>
+  (next) => (action: any) => {
+    if (isOperationsAction(action) && action.type === 'Operations/Update') {
+      const {id, operation: {error, status, functionName, options}} = action.payload;
+
+      /**
+       * Translate a transaction update into a notification.
+       */
+      showNotification(
+        error ?
+          NotificationStatus.Failure :
+        status === OperationStatus.Mined ?
+          NotificationStatus.Success :
+          NotificationStatus.Pending,
+        error ?
+          (
+            error === OperationError.Canceled ?
+              'The transaction was canceled.' :
+            error === OperationError.Reverted ?
+              'The transaction errored (reverted).' :
+            error === OperationError.OutOfGas ?
+              'The transaction ran out of gas, please try again with a higher gas limit.' :
+              `The transaction unexpectedly failed with: ${error}`
+          ) :
+          messages[functionName] && messages[functionName](getState() as any as IRootState, options),
+        error ?
+          'transaction failed' :
+        status === OperationStatus.Started ?
+          'waiting for signature' :
+        status === OperationStatus.Sent ?
+          'transaction sent' :
+          'transaction mined',
+        id,
+        +moment()
+      )(dispatch)
+    }
+
+    return next(action);
+  }

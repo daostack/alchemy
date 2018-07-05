@@ -7,8 +7,8 @@ import promiseMiddleware from "redux-promise-middleware";
 import thunkMiddleware from "redux-thunk";
 
 import reducers from "./reducers";
-import { transactionsTracker, successDismisser as transactionsSuccessDismisser } from "reducers/transactions";
-import { successDismisser as notificationsSuccessDismisser } from "reducers/notifications";
+import { operationsTracker } from "reducers/operations";
+import { successDismisser, notificationUpdater } from "reducers/notifications";
 import { persistStore, createTransform } from 'redux-persist';
 
 export const history = createHistory();
@@ -17,9 +17,9 @@ const store = createStore(
   reducers,
   composeWithDevTools(   // makes the store available to the Chrome redux dev tools
     applyMiddleware(
-      transactionsTracker,
-      notificationsSuccessDismisser(),
-      transactionsSuccessDismisser(),
+      operationsTracker,
+      notificationUpdater,
+      successDismisser(),
       thunkMiddleware,
       promiseMiddleware(),
       routerMiddleware(history),
