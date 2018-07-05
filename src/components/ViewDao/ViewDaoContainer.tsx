@@ -185,7 +185,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     this.executeProposalEventWatcher = votingMachineInstance.ExecuteProposal({}, { fromBlock: "latest" });
     this.executeProposalEventWatcher.watch((error, result) => {
       const { _proposalId, _executionState, _decision, _totalReputation } = result.args;
-      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Number(_totalReputation));
+      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Util.fromWei(_totalReputation).toNumber());
     });
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
