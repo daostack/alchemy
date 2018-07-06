@@ -4,10 +4,15 @@
   clear: both;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 .wrapper {
   max-width: $max-width;
   margin: 0 auto;
   position: relative;
+  background-color: #f2f2f2;
 }
 
 .outer {
@@ -533,6 +538,7 @@ a.navItem:hover {
     h1 {
       margin-bottom: 0;
       line-height: 24px;
+      font-size: 34px;
     }
     span {
       font-size: $body;
@@ -550,6 +556,7 @@ a.navItem:hover {
     text-align: center;
     padding: 30px;
     position: absolute;
+    width: 480px;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
@@ -584,7 +591,7 @@ a.navItem:hover {
 
     h1 {
       font-family: $heading-1-font;
-      font-size: 48px;
+      font-size: 34px;
     }
 
     p {
@@ -605,6 +612,20 @@ a.navItem:hover {
     padding: 0 30px;
   }
 }
+
+
+@media only screen and (min-width: 850px) {
+  .wrapper {
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+
+  .tourModal .tourStart h1, .tourModal .tourEnd h1 {
+    font-size: 48px;
+  }
+}
+
 
 @media only screen and (min-width: 1130px) {
   .tourModal {
