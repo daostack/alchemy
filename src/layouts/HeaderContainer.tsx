@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
-import * as operationsActions from "actions/operationsActions";
+import { showNotification, NotificationStatus } from 'reducers/notifications'
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
@@ -18,7 +18,6 @@ import AccountImage from "components/Account/AccountImage";
 import * as css from "./App.scss";
 import Util from "lib/util";
 import Tooltip from "rc-tooltip";
-import { OperationsStatus } from "reducers/operations";
 import ReputationView from "components/Account/ReputationView";
 import { FilterResult } from "web3";
 import promisify = require("es6-promisify");
@@ -53,7 +52,7 @@ interface IDispatchProps {
   onEthBalanceChanged: typeof web3Actions.onEthBalanceChanged;
   onGenBalanceChanged: typeof web3Actions.onGenBalanceChanged;
   onGenStakingAllowanceChanged: typeof web3Actions.onGenStakingAllowanceChanged;
-  showOperation: typeof operationsActions.showOperation;
+  showNotification: typeof showNotification;
   showTour: typeof uiActions.showTour;
 }
 
@@ -63,7 +62,7 @@ const mapDispatchToProps = {
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
   onGenBalanceChanged: web3Actions.onGenBalanceChanged,
   onGenStakingAllowanceChanged: web3Actions.onGenStakingAllowanceChanged,
-  showOperation: operationsActions.showOperation,
+  showNotification,
   showTour: uiActions.showTour
 };
 
@@ -161,12 +160,12 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public copyAddress() {
-    const { showOperation, ethAccountAddress } = this.props;
+    const { showNotification, ethAccountAddress } = this.props;
 
     // Copy the address to clipboard
     Util.copyToClipboard(ethAccountAddress);
 
-    showOperation(OperationsStatus.Success, `Copied to clipboard!`, {totalSteps: 1});
+    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
   }
 
   public handleChangeAccount = (e: any) => {
