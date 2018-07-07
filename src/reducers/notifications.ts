@@ -1,11 +1,12 @@
 import { Action, Dispatch, Middleware } from 'redux';
 import * as moment from 'moment';
-import { isOperationsAction, OperationStatus, OperationError } from './operations';
+import { isOperationsAction, OperationStatus, OperationError, IOperationsState } from './operations';
 import { IRootState } from 'reducers';
 import { VoteOptions } from 'reducers/arcReducer';
 import BigNumber from 'bignumber.js';
 import Util from 'lib/util';
 import * as Arc from '@daostack/arc.js';
+import { REHYDRATE, RehydrateAction } from 'redux-persist';
 
 /** -- Model -- */
 
@@ -45,6 +46,10 @@ export interface IShowNotification extends Action {
   }
 }
 
+const filterUndefined = (obj: any): any => {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 export const showNotification =
   (
     status: NotificationStatus,
@@ -53,7 +58,7 @@ export const showNotification =
     id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
     timestamp: number = +moment()
   ) => (dispatch: Dispatch<any>) =>
-    dispatch({
+    dispatch(filterUndefined({
       type: 'Notifications/Show',
       payload: {
         id,
@@ -62,7 +67,7 @@ export const showNotification =
         message,
         timestamp
       }
-    } as IShowNotification);
+    }) as IShowNotification);
 
 export const dismissNotification = (id: string) => (dispatch: Dispatch<any>) =>
   dispatch({
@@ -91,7 +96,24 @@ export const notificationsReducer =
         const action = a as IShowNotification;
         const { status, title, message, timestamp } = action.payload;
         const id = action.payload.id;
-        return [...state, action.payload];
+
+        if (state.map((n) => n.id).indexOf(id) === -1) {
+          return [
+            ...state,
+            {
+              message: '',
+              ...action.payload
+            }
+          ]
+        } else {
+          return state.map((n) =>
+            n.id !== id ? n : {
+              message: '',
+              ...n,
+              ...action.payload
+            }
+          )
+        }
       }
     }
 
@@ -155,6 +177,7 @@ const messages: {[key: string]: (state: IRootState, options: any) => string} = {
 export const notificationUpdater: Middleware =
   ({ getState, dispatch }) =>
   (next) => (action: any) => {
+
     if (isOperationsAction(action) && action.type === 'Operations/Update') {
       const {id, operation: {error, status, functionName, options}} = action.payload;
 

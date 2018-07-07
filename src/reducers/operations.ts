@@ -85,10 +85,6 @@ const errorType = (error: Error) => {
   }
 }
 
-const filterUndefined = (obj: any): any => {
-  return JSON.parse(JSON.stringify(obj));
-}
-
 export const operationsTracker: Middleware =
   ({ getState, dispatch }) =>
   (next) => {
@@ -104,7 +100,7 @@ export const operationsTracker: Middleware =
       // discard the `txEventContext` property since it's not serializable and irelevent.
       const {txEventContext: _,  ...options} = info.options;
 
-      dispatch(filterUndefined({
+      dispatch({
         type: 'Operations/Update',
         payload: {
           id: `${invocationKey}`,
@@ -121,7 +117,7 @@ export const operationsTracker: Middleware =
             options,
           }
         }
-      } as IUpdateOperation))
+      } as IUpdateOperation)
     });
 
     return (a: any) => {
@@ -130,7 +126,7 @@ export const operationsTracker: Middleware =
          * Resubscribe to sent Operations after rehydrating.
          */
         const action = a as RehydrateAction;
-        const state = action.payload as IOperationsState;
+        const state = action.payload.operations as IOperationsState;
 
         if (state) {
           Object.keys(state).forEach(async (id: string) => {

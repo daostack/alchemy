@@ -6,7 +6,7 @@ import uiReducer, { IUIState } from './uiReducer';
 import web3Reducer, { IWeb3State } from "./web3Reducer";
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from "redux-persist/lib/storage";
-import { INotificationsState, notificationsReducer } from "./notifications";
+import { INotificationsState, notificationsReducer, NotificationStatus } from "./notifications";
 import { IOperationsState, operationsReducer, OperationStatus } from "./operations";
 
 export interface IRootState {
@@ -28,20 +28,13 @@ const reducers = {
 };
 
 /**
- * Only persist pending transactions
+ * Only persist pending notifications
  */
-const filterPending = createTransform(
+const filterPendingNotifications = createTransform(
   (state, key) => {
-    if (key === 'operations') {
-      const out = {...state} as IOperationsState;
-      const keys = Object.keys(out);
-      for (let i = 0; i < keys.length; i++) {
-        const k = keys[i] as any as number;
-        if (out[k].error || (out[k].status && out[k].status !== OperationStatus.Sent)) {
-          delete out[k];
-        }
-      }
-      return out;
+    if (key === 'notifications') {
+      return (state as INotificationsState)
+        .filter((n) => n.status === NotificationStatus.Pending)
     }
     return state
   },
@@ -49,8 +42,8 @@ const filterPending = createTransform(
 )
 
 export default persistReducer({
-  key: 'operations',
-  transforms: [filterPending],
-  whitelist: ['operations'],
+  key: 'state',
+  transforms: [filterPendingNotifications],
+  whitelist: ['operations', 'notifications'],
   storage,
 }, combineReducers(reducers));
