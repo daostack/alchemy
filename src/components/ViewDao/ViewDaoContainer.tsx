@@ -283,7 +283,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
         },
         {
           target: "." + css.holdings,
-          content: "DAO Budget: Members collectively decide how to manage the DAO’s budget. The amount in ETH represents available budget for funding proposals. The GEN amount indicates how much the DAO has to reward voters and predictors.",
+          content: "DAO Budget: Reputation holders collectively decide how to manage the DAO’s budget. The amount in ETH represents available budget for funding proposals. The GEN amount indicates how much the DAO has to reward voters and predictors.",
           placement: "left",
           disableBeacon: true
         },
@@ -294,26 +294,26 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
           disableBeacon: true
         },
         {
+          target: "." + proposalCss.voteControls,
+          content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), You will be rewarded with reputation and GEN.",
+          placement: "right",
+          disableBeacon: true
+        },
+        {
           target: "." + css.regularContainer,
-          content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. If the time runs out before a regular proposal gets a 50% majority, it will fail.",
+          content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. If proposal closes (time runs out) before a regular proposal gets more than 50% yes votes, it will fail.",
           placement: "top",
           disableBeacon: true
         },
         {
           target: "." + css.boostedContainer,
-          content: "Urgent proposals are called Boosted proposal. At the end of the 3 day voting period, the proposal will pass or fail depending on which side gets the most votes. Unlike regular proposals, there is no need for a 50% majority. Regular proposal become boosted proposal once enough GENs are used to predict they will pass.",
+          content: "Urgent proposals are called Boosted proposals. At the end of a three day voting period, the proposal will pass or fail depending on which side gets the most votes. Unlike regular proposals, there is no need for a 50% majority. Regular proposal become boosted proposal once enough GENs are used to predict they will pass.",
           placement: "top",
           disableBeacon: true
         },
         {
-          target: "." + proposalCss.voteControls,
-          content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), you will receive reputation and GEN reward.",
-          placement: "right",
-          disableBeacon: true
-        },
-        {
           target: "." + proposalCss.predictions,
-          content: "Predictions: Participation in decisions isn’t limited to members only. Anyone can direct the DAO attention by using GEN to place a prediction whether a proposal will pass or fail. When enough GEN are placed in predicting a proposal will pass, it will become a boosted proposal. If you correctly predict the outcome of a proposal you will be rewarded with GEN and reputation.",
+          content: "Predictions: Influencing proposals isn’t limited to reputation holders only. Anyone can direct the attention of the DAO by using GEN to place a prediction whether a proposal will pass or fail. When enough GEN are placed in predicting a proposal will pass, it will become a boosted proposal. If you correctly predict the outcome of a proposal you will be rewarded with GEN and reputation.",
           placement: "left",
           disableBeacon: true
         }
