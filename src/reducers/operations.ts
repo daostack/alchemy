@@ -126,9 +126,10 @@ export const operationsTracker: Middleware =
          * Resubscribe to sent Operations after rehydrating.
          */
         const action = a as RehydrateAction;
-        const state = action.payload.operations as IOperationsState;
+        const payload = action.payload;
 
-        if (state) {
+        if (payload) {
+          const state = payload.operations as IOperationsState
           Object.keys(state).forEach(async (id: string) => {
             if (state[id].status && state[id].status === OperationStatus.Sent) {
               try {
