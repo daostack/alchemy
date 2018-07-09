@@ -370,6 +370,8 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId})).toNumber()
   }};
 
+  delete (proposal as any).votingMachine;
+
   if (state == ProposalStates.Executed) {
     // For executed proposals load the reputation at time of execution
     const executeProposalEventFetcher = await votingMachineInstance.ExecuteProposal({ _proposalId: proposalId }, { fromBlock: 0 });
