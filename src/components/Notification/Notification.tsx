@@ -2,6 +2,9 @@ import * as moment from "moment";
 import * as React from "react";
 import * as css from "./Notification.scss";
 import classNames = require("classnames");
+import Util from "lib/util";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import Linkify from 'react-linkify';
 
 export enum NotificationViewStatus {
   Pending = 'Pending',
@@ -13,9 +16,11 @@ interface IProps {
   title: string;
   status: NotificationViewStatus;
   message: string;
+  fullErrorMessage?: string;
   timestamp: number;
   url?: string;
   dismiss: () => any;
+  showNotification: typeof showNotification;
 }
 
 interface IState {
@@ -26,6 +31,10 @@ export default class Notification extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = { minimized: false };
+
+    this.handleClose = this.handleClose.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.copyToClipboard = this.copyToClipboard.bind(this);
   }
 
   public handleClose(e: any) {
@@ -42,8 +51,14 @@ export default class Notification extends React.Component<IProps, IState> {
     }
   }
 
+  public copyToClipboard(message: string) {
+    const { showNotification } = this.props;
+    Util.copyToClipboard(message);
+    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+  }
+
   public render() {
-    const { title, message, timestamp, status, url } = this.props;
+    const { title, message, timestamp, status, url, fullErrorMessage } = this.props;
     const { minimized } = this.state;
 
     const transactionClass = classNames({
@@ -79,7 +94,12 @@ export default class Notification extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.notificationMessage}>
-            {message}
+            <Linkify>{message}</Linkify>
+            {
+              fullErrorMessage ?
+                <span style={{cursor: 'pointer'}} onClick={() => this.copyToClipboard(fullErrorMessage)}>&nbsp;(copy full error)</span>
+                : ''
+            }
           </div>
         </div>
         <div className={css.notificationControls}>

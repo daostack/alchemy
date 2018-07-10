@@ -21,6 +21,7 @@ export interface INotification {
   status: NotificationStatus;
   title?: string;
   message: string;
+  fullErrorMessage?: string;
   timestamp: number;
 }
 
@@ -42,6 +43,7 @@ export interface IShowNotification extends Action {
     status: NotificationStatus;
     title?: string;
     message: string;
+    fullErrorMessage?: string;
     timestamp: number;
   }
 }
@@ -54,9 +56,10 @@ export const showNotification =
   (
     status: NotificationStatus,
     message: string,
+    fullErrorMessage?: string,
     title?: string,
     id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
-    timestamp: number = +moment()
+    timestamp: number = +moment(),
   ) => (dispatch: Dispatch<any>) =>
     dispatch(filterUndefined({
       type: 'Notifications/Show',
@@ -65,6 +68,7 @@ export const showNotification =
         status,
         title,
         message,
+        fullErrorMessage,
         timestamp
       }
     }) as IShowNotification);
@@ -152,17 +156,17 @@ export const successDismisser =
  */
 const messages: {[key: string]: (state: IRootState, options: any) => string} = {
   'GenesisProtocol.vote': (state, {vote, proposalId}: Arc.VoteOptions) =>
-    `Voting "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
+    `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${state.arc.proposals[proposalId].title}`,
   'GenesisProtocol.stake': (state, {vote, proposalId, amount}: Arc.StakeConfig) =>
-    `Staking ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
+    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${state.arc.proposals[proposalId].title} with ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN`,
   'GenesisProtocol.execute': (state, {proposalId}: Arc.ProposalIdOption) =>
     `Exeuting "${state.arc.proposals[proposalId].title}"`,
   'GenesisProtocol.redeem': (state, {proposalId}: Arc.RedeemConfig) =>
     `Redeeming rewards for "${state.arc.proposals[proposalId].title}"`,
   'GenesisProtocol.redeemDaoBounty': (state, {proposalId}: Arc.RedeemConfig) =>
     `Redeeming bounty rewards for "${state.arc.proposals[proposalId].title}"`,
-  'ContributionReward.proposeContributionReward': (state, {}: Arc.ProposeContributionRewardParams) =>
-    `Creating proposal`,
+  'ContributionReward.proposeContributionReward': (state, {title}: Arc.ProposeContributionRewardParams & {title: string}) =>
+    `Creating proposal ${title}`,
   'ContributionReward.redeemContributionReward': (state, {proposalId}: Arc.ContributionRewardRedeemParams) =>
     `Redeeming contribution reward for "${state.arc.proposals[proposalId].title}"`,
   'DAO.new': (state, {}: Arc.NewDaoConfig) =>
@@ -181,6 +185,25 @@ export const notificationUpdater: Middleware =
     if (isOperationsAction(action) && action.type === 'Operations/Update') {
       const {id, operation: {error, status, functionName, options}} = action.payload;
 
+      const actionMessage = messages[functionName] && messages[functionName](getState() as any as IRootState, options);
+      const errorReason = error ?
+        (
+          error === OperationError.Canceled ?
+            'you canceled the tx' :
+          error === OperationError.Reverted ?
+            'the tx was reverted' :
+          error === OperationError.OutOfGas ?
+            'of insufficient gas' :
+            `of unknown reason, contact us at https://discord.gg/3d5C2y7`
+        ) : '';
+
+      let fullErrorMessage;
+      if (error && error !== OperationError.Canceled && error !== OperationError.Canceled && error !== OperationError.Canceled) {
+        fullErrorMessage = error;
+      }
+
+      const message = actionMessage && `${actionMessage} ${error ? `failed because ${errorReason}` : ''}`;
+
       /**
        * Translate a transaction update into a notification.
        */
@@ -190,17 +213,8 @@ export const notificationUpdater: Middleware =
         status === OperationStatus.Mined ?
           NotificationStatus.Success :
           NotificationStatus.Pending,
-        error ?
-          (
-            error === OperationError.Canceled ?
-              'The transaction was canceled.' :
-            error === OperationError.Reverted ?
-              'The transaction errored (reverted).' :
-            error === OperationError.OutOfGas ?
-              'The transaction ran out of gas, please try again with a higher gas limit.' :
-              `The transaction unexpectedly failed with: ${error}`
-          ) :
-          messages[functionName] && messages[functionName](getState() as any as IRootState, options),
+        message,
+        fullErrorMessage,
         error ?
           'transaction failed' :
         status === OperationStatus.Started ?

@@ -30,7 +30,7 @@ import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
 import { sortedNotifications } from '../selectors/notifications';
-import { dismissNotification, NotificationStatus, INotificationsState } from 'reducers/notifications';
+import { dismissNotification, NotificationStatus, INotificationsState, showNotification } from 'reducers/notifications';
 import { OperationStatus, OperationError } from 'reducers/operations';
 
 interface IStateProps {
@@ -52,12 +52,14 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
 
 interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
+  showNotification: typeof showNotification;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
   dismissNotification,
+  showNotification,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
 };
@@ -95,6 +97,7 @@ class AppContainer extends React.Component<IProps, null> {
       connectionStatus,
       cookies,
       dismissNotification,
+      showNotification,
       ethAccountAddress,
       sortedNotifications
     } = this.props;
@@ -136,7 +139,7 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {sortedNotifications.map(({id, status, title, message, timestamp}) => (
+            {sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp}) => (
               <div key={id}>
                 <Notification
                     title={(title || status).toUpperCase()}
@@ -148,8 +151,10 @@ class AppContainer extends React.Component<IProps, null> {
                         NotificationViewStatus.Pending
                     }
                     message={message}
+                    fullErrorMessage={fullErrorMessage}
                     timestamp={timestamp}
                     dismiss={() => dismissNotification(id)}
+                    showNotification={showNotification}
                   />
                 <br/>
               </div>
