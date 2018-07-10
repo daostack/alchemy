@@ -295,7 +295,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
         },
         {
           target: "." + proposalCss.voteControls,
-          content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), You will be rewarded with reputation and GEN.",
+          content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), you will be rewarded with reputation and GEN.",
           placement: "right",
           disableBeacon: true
         },
