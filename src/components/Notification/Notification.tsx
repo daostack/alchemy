@@ -70,11 +70,6 @@ export default class Notification extends React.Component<IProps, IState> {
       [css.minimized]: status === NotificationViewStatus.Pending && minimized,
     });
 
-    const titleContent =
-      url ?
-        <a href={url}>{title}</a> :
-        title;
-
     return (
       <div className={transactionClass} onClick={(e) => this.handleClick(e)}>
         <div className={css.statusIcon}>
@@ -85,9 +80,9 @@ export default class Notification extends React.Component<IProps, IState> {
         <div className={css.transactionMessage}>
           <div className={css.clearfix}>
             <div className={css.left}>
-              <span className={css.pending}>{titleContent}</span>
-              <span className={css.success}>{titleContent}</span>
-              <span className={css.error}>{titleContent}</span>
+              <span className={css.pending}>{title}</span>
+              <span className={css.success}>{title}</span>
+              <span className={css.error}>{title}</span>
             </div>
             <div className={css.right}>
               <span className={css.error}>ERROR</span>
@@ -99,6 +94,11 @@ export default class Notification extends React.Component<IProps, IState> {
               fullErrorMessage ?
                 <span style={{cursor: 'pointer'}} onClick={() => this.copyToClipboard(fullErrorMessage)}>&nbsp;(copy full error)</span>
                 : ''
+            }
+            {
+              url ?
+              <span><br/><a href={url}>See in etherscan</a></span>
+              : ''
             }
           </div>
         </div>
