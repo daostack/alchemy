@@ -130,6 +130,30 @@ button.disabled {
 		z-index: 0;
 	}
 
+	.downvotePending .downvotePendingIcon {
+		opacity: 1;
+	}
+
+	.upvotePending .upvotePendingIcon {
+		opacity: 1;
+	}
+
+	.downvotePendingIcon, .upvotePendingIcon {
+	    left: 0;
+	    opacity: 0;
+	    position: absolute;
+		width: 28px;
+	    height: 15px;
+	}
+
+	.downvotePendingIcon {
+	    top: 2px;
+	}
+
+	.upvotePendingIcon {
+		top: 3px;
+	}
+
 	.upvote.upvoted, .downvote.downvoted {
 		opacity: 0;
 		z-index: 100;
@@ -139,7 +163,7 @@ button.disabled {
 		cursor: pointer;
 	}
 
-	button:hover:not(.disabled) .upvote, button:hover:not(.disabled) .downvote, button.voted .upvote, button.voted .downvote {
+	button:hover:not(.disabled) .upvote, button:hover:not(.disabled) .downvote, button.voted .upvote, button.voted .downvote, .upvotePending .upvote, .downvotePending .downvote {
 		opacity: 0;
 	}
 
@@ -163,6 +187,30 @@ button.disabled {
 		top: 50%;
 	}
 }
+
+@keyframes verifying {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+}
+
+.verifyMask {
+    transform: translateY(30px);
+    opacity: 0;
+    animation: verifying 1s linear infinite;
+}
+
+
+
 
 .reputationTurnout {
 	background-color: $white;
