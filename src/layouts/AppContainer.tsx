@@ -139,7 +139,7 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp}) => (
+            {sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
               <div key={id}>
                 <Notification
                     title={(title || status).toUpperCase()}
@@ -152,6 +152,7 @@ class AppContainer extends React.Component<IProps, null> {
                     }
                     message={message}
                     fullErrorMessage={fullErrorMessage}
+                    url={url}
                     timestamp={timestamp}
                     dismiss={() => dismissNotification(id)}
                     showNotification={showNotification}

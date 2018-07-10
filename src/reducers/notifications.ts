@@ -22,6 +22,7 @@ export interface INotification {
   title?: string;
   message: string;
   fullErrorMessage?: string;
+  url?: string;
   timestamp: number;
 }
 
@@ -44,6 +45,7 @@ export interface IShowNotification extends Action {
     title?: string;
     message: string;
     fullErrorMessage?: string;
+    url?: string;
     timestamp: number;
   }
 }
@@ -58,6 +60,7 @@ export const showNotification =
     message: string,
     fullErrorMessage?: string,
     title?: string,
+    url?: string,
     id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
     timestamp: number = +moment(),
   ) => (dispatch: Dispatch<any>) =>
@@ -67,6 +70,7 @@ export const showNotification =
         id,
         status,
         title,
+        url,
         message,
         fullErrorMessage,
         timestamp
@@ -151,24 +155,28 @@ export const successDismisser =
     return next(action);
   };
 
+function elipsis(str: string, n: number) {
+  return str.length < n - 3 ? str : str.slice(0, n - 3) + '...';
+}
+
 /**
  * A map of messages to show for each type of action.
  */
 const messages: {[key: string]: (state: IRootState, options: any) => string} = {
   'GenesisProtocol.vote': (state, {vote, proposalId}: Arc.VoteOptions) =>
-    `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${state.arc.proposals[proposalId].title}`,
+    `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${elipsis(state.arc.proposals[proposalId].title, 22)}`,
   'GenesisProtocol.stake': (state, {vote, proposalId, amount}: Arc.StakeConfig) =>
-    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${state.arc.proposals[proposalId].title} with ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN`,
+    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(state.arc.proposals[proposalId].title, 22)} with ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN`,
   'GenesisProtocol.execute': (state, {proposalId}: Arc.ProposalIdOption) =>
-    `Exeuting "${state.arc.proposals[proposalId].title}"`,
+    `Exeuting "${elipsis(state.arc.proposals[proposalId].title, 22)}"`,
   'GenesisProtocol.redeem': (state, {proposalId}: Arc.RedeemConfig) =>
-    `Redeeming rewards for "${state.arc.proposals[proposalId].title}"`,
+    `Redeeming rewards for "${elipsis(state.arc.proposals[proposalId].title, 22)}"`,
   'GenesisProtocol.redeemDaoBounty': (state, {proposalId}: Arc.RedeemConfig) =>
-    `Redeeming bounty rewards for "${state.arc.proposals[proposalId].title}"`,
+    `Redeeming bounty rewards for "${elipsis(state.arc.proposals[proposalId].title, 22)}"`,
   'ContributionReward.proposeContributionReward': (state, {title}: Arc.ProposeContributionRewardParams & {title: string}) =>
-    `Creating proposal ${title}`,
+    `Creating proposal ${elipsis(title, 22)}`,
   'ContributionReward.redeemContributionReward': (state, {proposalId}: Arc.ContributionRewardRedeemParams) =>
-    `Redeeming contribution reward for "${state.arc.proposals[proposalId].title}"`,
+    `Redeeming contribution reward for "${elipsis(state.arc.proposals[proposalId].title, 22)}"`,
   'DAO.new': (state, {}: Arc.NewDaoConfig) =>
     `Creating a new DAO`,
   'StandardToken.approve': (state, {amount}: Arc.StandardTokenApproveOptions) =>
@@ -181,9 +189,11 @@ const messages: {[key: string]: (state: IRootState, options: any) => string} = {
 export const notificationUpdater: Middleware =
   ({ getState, dispatch }) =>
   (next) => (action: any) => {
+    const state = getState() as any as IRootState;
+    const network = Util.networkName(state.web3.networkId).toLowerCase();
 
     if (isOperationsAction(action) && action.type === 'Operations/Update') {
-      const {id, operation: {error, status, functionName, options}} = action.payload;
+      const {id, operation: {error, status, functionName, options, txHash}} = action.payload;
 
       const actionMessage = messages[functionName] && messages[functionName](getState() as any as IRootState, options);
       const errorReason = error ?
@@ -222,6 +232,7 @@ export const notificationUpdater: Middleware =
         status === OperationStatus.Sent ?
           'transaction sent' :
           'transaction mined',
+        txHash && `https://${network !== 'mainnet' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
         id,
         +moment()
       )(dispatch)
