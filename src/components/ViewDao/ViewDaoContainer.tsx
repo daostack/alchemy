@@ -301,7 +301,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
         },
         {
           target: "." + css.regularContainer,
-          content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. If proposal closes (time runs out) before a regular proposal gets more than 50% yes votes, it will fail.",
+          content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. In other words, you need 50% of all reputation to vote Yes on a regular proposal for it to pass.",
           placement: "top",
           disableBeacon: true
         },
