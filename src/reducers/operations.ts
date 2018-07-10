@@ -131,7 +131,7 @@ export const operationsTracker: Middleware =
         if (payload) {
           const state = payload.operations as IOperationsState
           Object.keys(state).forEach(async (id: string) => {
-            if (state[id].status && state[id].status === OperationStatus.Sent) {
+            if (state[id].status && state[id].status === OperationStatus.Sent && !state[id].error) {
               try {
                 const receipt = await Arc.TransactionService.watchForMinedTransaction(state[id].txHash);
                 dispatch({
@@ -144,6 +144,7 @@ export const operationsTracker: Middleware =
                   }
                 } as IUpdateOperation);
               } catch (e) {
+                console.error('Resub', e)
                 dispatch({
                   type: 'Operations/Update',
                   payload: {
