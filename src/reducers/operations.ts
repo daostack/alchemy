@@ -29,6 +29,7 @@ export interface IOperation {
   status: OperationStatus;
   functionName: string;
   options: any;
+  proposalTitle?: string;
 }
 
 export interface IOperationsState {
@@ -100,6 +101,11 @@ export const operationsTracker: Middleware =
       // discard the `txEventContext` property since it's not serializable and irelevent.
       const {txEventContext: _,  ...options} = info.options;
 
+      let proposalTitle = options.title;
+      if (options.proposalId) {
+        proposalTitle = (getState() as any as IRootState).arc.proposals[options.proposalId].title;
+      }
+
       dispatch({
         type: 'Operations/Update',
         payload: {
@@ -115,6 +121,7 @@ export const operationsTracker: Middleware =
                 OperationStatus.Started,
             functionName,
             options,
+            proposalTitle
           }
         }
       } as IUpdateOperation)
@@ -144,7 +151,7 @@ export const operationsTracker: Middleware =
                   }
                 } as IUpdateOperation);
               } catch (e) {
-                console.error('Resub', e)
+                console.error(e)
                 dispatch({
                   type: 'Operations/Update',
                   payload: {
