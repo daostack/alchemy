@@ -4,10 +4,15 @@
   clear: both;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
 .wrapper {
   max-width: $max-width;
   margin: 0 auto;
   position: relative;
+  background-color: #f2f2f2;
 }
 
 .outer {
@@ -159,7 +164,6 @@ a.navRedemption {
   vertical-align: middle;
   margin: 0 0 0 30px;
   border-bottom: 3px solid $accent-4-transparent;
-  float: right;
 }
 
 a.navRedemption:hover {
@@ -395,6 +399,10 @@ a.navItem:hover {
   text-align: right;
 }
 
+.boostedContainer, .regularContainer {
+  position: relative;
+}
+
 .proposalsHeader {
   font-size: $subheader;
   position: relative;
@@ -482,10 +490,147 @@ a.navItem:hover {
   transition: opacity 1000ms ease-in;
 }
 
+.hidden {
+  display: none;
+}
+
+.tourModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000000;
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+
+  .accessTour {
+    position: absolute;
+    z-index: 100;
+    right: 66px;
+    top: 61px;
+
+    button {
+      position: absolute;
+      right: 0;
+      border: none;
+      background: none;
+      outline: none;
+    }
+
+    div {
+      color: white;
+      position: relative;
+      top: 47px;
+    }
+  }
+
+  .bg {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.7);
+  }
+
+  .tourStart {
+    h1 {
+      margin-bottom: 0;
+      line-height: 24px;
+      font-size: 34px;
+    }
+    span {
+      font-size: $body;
+      opacity: .7;
+
+      img {
+        position: relative;
+        top: 6px;
+        margin-left: 5px;
+      }
+    }
+  }
+
+  .tourStart, .tourEnd {
+    text-align: center;
+    padding: 30px;
+    position: absolute;
+    width: 480px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 100;
+    color: $white;
+
+    button {
+      font-size: $subheader;
+      color: $white;
+      border: 1px solid $white;
+      margin: 0 10px;
+      background-color: rgba(255,255,255,0);
+      padding: 10px 15px;
+      line-height: $subheader;
+      font-family: $body-font;
+
+      img {
+        margin-right: 8px;
+      }
+
+      &:hover {
+        background-color: $white-halftone;
+      }
+    }
+
+    button.startButton {
+      color: $black;
+      background-color: $white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    h1 {
+      font-family: $heading-1-font;
+      font-size: 34px;
+    }
+
+    p {
+      margin: 30px 0;
+    }
+
+    a {
+      color: $white;
+      text-decoration: underline;
+    }
+  }
+}
+
 @media only screen and (min-width: 768px) {
   .wrapper {
     max-width: $max-width;
     margin: 0 auto;
     padding: 0 30px;
+  }
+}
+
+
+@media only screen and (min-width: 850px) {
+  .wrapper {
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: 0 30px;
+  }
+
+  .tourModal .tourStart h1, .tourModal .tourEnd h1 {
+    font-size: 48px;
+  }
+}
+
+
+@media only screen and (min-width: 1130px) {
+  .tourModal {
+    .accessTour {
+      top: 47px;
+    }
   }
 }

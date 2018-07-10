@@ -18,7 +18,7 @@ import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
 
 import { Formik, Field } from 'formik';
-import { proposalEnded } from "actions/arcActions";
+import { proposalEnded } from "reducers/arcReducer";
 
 interface IStateProps {
   dao: IDaoState;
@@ -109,12 +109,16 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
+    if (!dao) {
+      return "Loading...";
+    }
+
     const proposalDescriptions = (dao.proposals as IProposalState[])
       .filter((proposal) => !proposalEnded(proposal))
       .map((proposal) => proposal.description);
 
-    return(
-      dao ? <div className={css.createProposalWrapper}>
+    return (
+      <div className={css.createProposalWrapper}>
         <h2>
           <img className={css.editIcon} src="/assets/images/Icon/Draft-white.svg"/>
           <span>Create proposal</span>
@@ -237,7 +241,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                 className={touched.beneficiaryAddress && errors.beneficiaryAddress ? css.error : null}
               />
               <label htmlFor="beneficiaryInput">
-                Target Address
+                Target Address - Please make sure that the target ETH address can work with Metamask (no hardware wallets, no exchanges)
                 <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                 {touched.beneficiaryAddress && errors.beneficiaryAddress && <span className={css.errorMessage}>{errors.beneficiaryAddress}</span>}
               </label>
@@ -278,7 +282,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   step={0.1}
                 />
                 <label htmlFor="ethRewardInput">
-                  ETH reward:
+                  Proposal budget (ETH):
                   {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
                 </label>
 
@@ -308,7 +312,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
               </div>*/}
               <div className={css.alignCenter}>
                 <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  <img src="/assets/images/Icon/Send.svg"/>
+                  <img className={css.sendIcon} src="/assets/images/Icon/Send.svg"/>
+                  <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
                   Submit proposal
                 </button>
               </div>
@@ -317,7 +322,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
         />
 
       </div>
-      : "Loading..."
     );
   }
 }

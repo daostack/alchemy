@@ -110,6 +110,13 @@ button.disabled {
 		bottom: -3px;
 	}
 
+	button:hover:not(.disabled) .downvote.downvoted {
+	    left: 0px;
+	    top: 1px;
+	    height: 18px;
+	    opacity: 1;
+	}
+
 	.voteGraphs {
 		position: absolute;
 		top: 50%;
@@ -136,7 +143,7 @@ button.disabled {
 		opacity: 0;
 	}
 
-	button:hover:not(.disabled) .downvote.downvoted, button.voted .downvote.downvoted {
+	button.voted .downvote.downvoted {
 		height: 18px;
 		top: 2px;
 		left: 0px;

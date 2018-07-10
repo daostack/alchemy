@@ -16,7 +16,7 @@ import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
 
 import * as css from "./Proposal.scss";
-import { proposalEnded } from "actions/arcActions";
+import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 
 interface IStateProps {
   currentAccountAddress: string;
@@ -71,8 +71,8 @@ class ProposalContainer extends React.Component<IProps, null> {
       const proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
-        [css.failedProposal]: proposalEnded(proposal) && proposal.winningVote == VoteOptions.No,
-        [css.passedProposal]: proposalEnded(proposal) && proposal.winningVote == VoteOptions.Yes,
+        [css.failedProposal]: proposalFailed(proposal),
+        [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: !!currentAccountRedemptions,
         [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
       });
@@ -254,13 +254,13 @@ class ProposalContainer extends React.Component<IProps, null> {
               transactionState={currentAccountVoteState}
               voteOnProposal={voteOnProposal}
             />
-            : proposal.winningVote == VoteOptions.Yes ?
+            : proposalPassed(proposal) ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
                     <div><img src="/assets/images/Icon/Passed.svg"/></div>
                   </div>
               </div>
-            : proposal.winningVote == VoteOptions.No ?
+            : proposalFailed(proposal) ?
               <div className={css.decidedProposal}>
                   <div className={css.result}>
                     <div><img src="/assets/images/Icon/Failed.svg"/></div>
@@ -269,7 +269,7 @@ class ProposalContainer extends React.Component<IProps, null> {
             : ""
           }
           <div className={css.proposalInfo}>
-            { proposalEnded(proposal) && proposal.winningVote == VoteOptions.Yes ?
+            { proposalPassed(proposal) ?
                 <div className="css.clearfix">
                   <div className={css.proposalPassInfo}>
                     <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {submittedTime.format("MMM DD, YYYY")}
@@ -284,7 +284,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                       <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
                   </div>
                 </div>
-              :  proposalEnded(proposal) && proposal.winningVote == VoteOptions.No ?
+              :  proposalFailed(proposal) ?
                 <div className="css.clearfix">
                   <div className={css.proposalFailInfo}>
                     <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {submittedTime.format("MMM DD, YYYY")}

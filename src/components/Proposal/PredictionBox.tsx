@@ -15,6 +15,7 @@ import * as css from "./Proposal.scss";
 interface IState {
   showStakeModal: number;
   showApproveModal: boolean;
+  stakeAmount: number;
 }
 
 interface IProps {
@@ -31,13 +32,13 @@ interface IProps {
 
 export default class PredictionBox extends React.Component<IProps, IState> {
   public stakeInput: any;
-
   constructor(props: IProps) {
     super(props);
 
     this.state = {
       showStakeModal: 0,
-      showApproveModal: false
+      showApproveModal: false,
+      stakeAmount: 0
     };
   }
 
@@ -60,9 +61,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
   public handleClickStake(prediction: number, stake: number, event: any) {
     const { proposal, stakeProposal } = this.props;
-    const amount = this.stakeInput.value;
+    const { stakeAmount } = this.state;
     this.setState({ showStakeModal: 0 });
-    stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, Number(amount));
+    stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, Number(stakeAmount));
   }
 
   public handleClickPreApprove(event: any) {
@@ -158,16 +159,36 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           </div>
           <div className={css.formGroup + " " + css.clearfix}>
             <span className={css.genLabel}>Stake</span>
-            <input type="number" min="1" ref={(input) => { this.stakeInput = input; }} className={css.predictionAmount}/>
+            <input
+              type="number"
+              min="1"
+              ref={(input) => { this.stakeInput = input; }}
+              className={css.predictionAmount}
+              onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
+              value={this.state.stakeAmount}
+            />
             <span className={css.genLabel}>GEN</span>
           </div>
           <div className={css.clearfix}>
-            <button className={css.placePrediction} onClick={this.handleClickStake.bind(this, showStakeModal)}>Place stake</button>
+            {
+              this.state.stakeAmount <= 0 || this.state.stakeAmount > currentAccountGens ?
+                <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
+                  <button
+                    className={classNames({[css.placePrediction]: true, [css.disabled]: true})}
+                    disabled={true}
+                  >
+                    Place stake
+                  </button>
+                </Tooltip> :
+                <button className={css.placePrediction}onClick={this.handleClickStake.bind(this, showStakeModal)}>
+                  Place stake
+                </button>
+            }
           </div>
         </div>
         <div>
           <span className={css.boostedAmount}>
-            {proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ''}
+            {proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
           </span>
           <table>
             <tbody>

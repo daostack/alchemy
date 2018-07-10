@@ -181,8 +181,8 @@ export function approveStakingGens(daoAddress: string) {
       const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
       const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-      const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-      await stakingToken.approve(votingMachineInstance.address, Util.toWei(1000));
+      const stakingToken = await Arc.StandardTokenFactory.at(stakingTokenAddress);
+      await stakingToken.approve({spender: votingMachineAddress, amount: Util.toWei(1000)})
     } catch (err) {
       console.error(err);
       dispatch({
