@@ -39,50 +39,6 @@ export default class Util {
     }
   }
 
-  /**
-   * Performs an Arc.js action.
-   * @param topic Arc.js TransactionService topic to listen to for pending transactions
-   * @param action Function that will invoke the action to perform
-   * @param opts options to pass to @f
-   * @param onKickoff callback that's called before starting any transactions. It gets passed the total transaction count
-   * @param onTransaction callback that's called after every transaction completes. It gets passed the info about the transaction
-   */
-  public static async performAction<T>(
-    topic: string,
-    action: (opts: any) => Promise<T>,
-    opts: any,
-    onKickoff: (txCount: number) => any,
-    onTransaction?: (tx: any) => any
-  ): Promise<T> {
-
-    let sub: IEventSubscription;
-    const unsubscribe = () => {
-      if (sub) {
-        // workaround to get last transaction notification before unsubscribing.
-        setTimeout(sub.unsubscribe, 0);
-      }
-    }
-
-    try {
-      const key = Arc.TransactionService.generateInvocationKey();
-      sub = Arc.TransactionService.subscribe([`${topic}.kickoff`, `${topic}.mined`], (topic, info: TransactionReceiptsEventInfo) => {
-        if (info.options.key === key && info.tx == null) {
-          onKickoff(info.txCount);
-        }
-        if (info.options.key === key && info.tx && onTransaction) {
-          onTransaction(info);
-        }
-      });
-      const result = await action({ ...opts, key });
-      unsubscribe();
-      return result;
-    } catch (e) {
-      console.error("Error performing operation " + topic + ": ", e);
-      unsubscribe();
-      throw e;
-    }
-  }
-
   public static copyToClipboard(value: any) {
     const el = document.createElement('textarea');
     el.value = value;

@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
   "license": "GPL-3.0",
@@ -91,6 +91,7 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-logger": "^3.0.6",
+    "redux-persist": "5.9.1",
     "redux-promise-middleware": "^4.4.1",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",

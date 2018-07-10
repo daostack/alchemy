@@ -15,10 +15,9 @@ import store from "../configureStore";
 
 import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
-import * as operationsActions from 'actions/operationsActions';
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
-import Notification from "components/Notification/Notification";
+import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
@@ -30,7 +29,9 @@ import HeaderContainer from "layouts/HeaderContainer";
 import { ModalContainer, ModalRoute } from 'react-router-modal';
 
 import * as css from "./App.scss";
-import { IOperationsState } from 'reducers/operations';
+import { sortedNotifications } from '../selectors/notifications';
+import { dismissNotification, NotificationStatus, INotificationsState } from 'reducers/notifications';
+import { OperationStatus, OperationError } from 'reducers/operations';
 
 interface IStateProps {
   arc: IArcState;
@@ -38,7 +39,7 @@ interface IStateProps {
   cookies: Cookies;
   ethAccountAddress: string | null;
   history: History.History;
-  operations: IOperationsState;
+  sortedNotifications: INotificationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
@@ -46,17 +47,17 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
   connectionStatus: state.web3.connectionStatus,
   ethAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
-  operations: state.operations,
+  sortedNotifications: sortedNotifications()(state),
 });
 
 interface IDispatchProps {
-  dismissOperation: typeof operationsActions.dismissOperation;
+  dismissNotification: typeof dismissNotification;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
 }
 
 const mapDispatchToProps = {
-  dismissOperation: operationsActions.dismissOperation,
+  dismissNotification,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
 };
@@ -90,7 +91,13 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { connectionStatus, cookies, dismissOperation, ethAccountAddress, operations } = this.props;
+    const {
+      connectionStatus,
+      cookies,
+      dismissNotification,
+      ethAccountAddress,
+      sortedNotifications
+    } = this.props;
 
     return (
       (connectionStatus === ConnectionStatus.Pending ?
@@ -129,15 +136,24 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {Object.keys(operations).map((k) =>
-              <div key={k}>
+            {sortedNotifications.map(({id, status, title, message, timestamp}) => (
+              <div key={id}>
                 <Notification
-                  operation={operations[k]}
-                  close={() => dismissOperation(k)}
-                />
-                <br />
+                    title={(title || status).toUpperCase()}
+                    status={
+                      status === NotificationStatus.Failure ?
+                        NotificationViewStatus.Failure :
+                      status === NotificationStatus.Success ?
+                        NotificationViewStatus.Success :
+                        NotificationViewStatus.Pending
+                    }
+                    message={message}
+                    timestamp={timestamp}
+                    dismiss={() => dismissNotification(id)}
+                  />
+                <br/>
               </div>
-            )}
+            ))}
           </div>
           <div className={css.background}></div>
         </div>
