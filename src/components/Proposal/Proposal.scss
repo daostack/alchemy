@@ -500,6 +500,31 @@ button.disabled {
 	margin-bottom: 8px;
 }
 
+@keyframes pendingPassPrediction {
+	0% {
+		border: 1px solid $black-tenthtone;
+	}
+	50% {
+
+		border: 1px solid $accent-1;
+	}
+	100% {
+		border: 1px solid $black-tenthtone;
+	}
+}
+@keyframes pendingFailPrediction {
+	0% {
+		border: 1px solid $black-tenthtone;
+	}
+	50% {
+
+		border: 1px solid $accent-2;
+	}
+	100% {
+		border: 1px solid $black-tenthtone;
+	}
+}
+
 .predictions {
 	position: absolute;
 	right: 0;
@@ -527,7 +552,30 @@ button.disabled {
 		background-color: transparent;
 		padding: 1px 4px 2px 4px;
 		transition: all .25s ease;
+		position: relative;
 		width: 60px;
+
+		strong {
+			opacity: 1;
+			transition: all .25s ease;
+		}
+
+		img {
+			opacity: 0;
+			position: absolute;
+			width: 12px;
+		}
+	}
+
+	button.pendingPrediction {
+
+		strong {
+			opacity: 0;
+		}
+
+		img {
+			opacity: 1;
+		}
 	}
 
 	button:hover {
@@ -550,10 +598,25 @@ button.disabled {
 			button {
 				border: 1px solid $black-tenthtone;
 				color: $black-halftone;
+				transition: all .25s ease;
+
+				&:hover {
+					color: $accent-1;
+					border: 1px solid $accent-1;
+				}
 
 				strong {
 					color: $accent-1;
 				}
+
+				img {
+					top: 2px;
+					right: 6px;
+				}
+			}
+
+			button.pendingPrediction {
+				animation: pendingPassPrediction 2s ease infinite;
 			}
 		}
 
@@ -564,14 +627,30 @@ button.disabled {
 			button {
 				color: $black-halftone;
 				border: 1px solid $black-tenthtone;
+				transition: all .25s ease;
+
+				&:hover {
+					color: $accent-2;
+					border: 1px solid $accent-2;
+				}
 
 				strong {
 					color: $accent-2;
 				}
+
+				img {
+					right: 9px;
+					top: 2px;
+				}
+			}
+
+			button.pendingPrediction {
+				animation: pendingFailPrediction 2s ease infinite;
 			}
 		}
 	}
 }
+
 
 .boostedAmount {
 	display: block;
