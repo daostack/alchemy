@@ -1,6 +1,6 @@
 import { Action, Dispatch, Middleware } from 'redux';
 import * as moment from 'moment';
-import { isOperationsAction, OperationStatus, OperationError, IOperationsState } from './operations';
+import { isOperationsAction, OperationStatus, OperationError, IOperationsState, IOperation } from './operations';
 import { IRootState } from 'reducers';
 import { VoteOptions } from 'reducers/arcReducer';
 import BigNumber from 'bignumber.js';
@@ -21,6 +21,8 @@ export interface INotification {
   status: NotificationStatus;
   title?: string;
   message: string;
+  fullErrorMessage?: string;
+  url?: string;
   timestamp: number;
 }
 
@@ -42,6 +44,8 @@ export interface IShowNotification extends Action {
     status: NotificationStatus;
     title?: string;
     message: string;
+    fullErrorMessage?: string;
+    url?: string;
     timestamp: number;
   }
 }
@@ -54,9 +58,11 @@ export const showNotification =
   (
     status: NotificationStatus,
     message: string,
+    fullErrorMessage?: string,
     title?: string,
+    url?: string,
     id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
-    timestamp: number = +moment()
+    timestamp: number = +moment(),
   ) => (dispatch: Dispatch<any>) =>
     dispatch(filterUndefined({
       type: 'Notifications/Show',
@@ -64,7 +70,9 @@ export const showNotification =
         id,
         status,
         title,
+        url,
         message,
+        fullErrorMessage,
         timestamp
       }
     }) as IShowNotification);
@@ -147,27 +155,31 @@ export const successDismisser =
     return next(action);
   };
 
+function elipsis(str: string, n: number) {
+  return str.length <= n - 3 ? str : str.slice(0, n - 3) + '...';
+}
+
 /**
  * A map of messages to show for each type of action.
  */
-const messages: {[key: string]: (state: IRootState, options: any) => string} = {
-  'GenesisProtocol.vote': (state, {vote, proposalId}: Arc.VoteOptions) =>
-    `Voting "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
-  'GenesisProtocol.stake': (state, {vote, proposalId, amount}: Arc.StakeConfig) =>
-    `Staking ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for "${vote === VoteOptions.Yes ? 'Yes' : 'No'}" on "${state.arc.proposals[proposalId].title}"`,
-  'GenesisProtocol.execute': (state, {proposalId}: Arc.ProposalIdOption) =>
-    `Exeuting "${state.arc.proposals[proposalId].title}"`,
-  'GenesisProtocol.redeem': (state, {proposalId}: Arc.RedeemConfig) =>
-    `Redeeming rewards for "${state.arc.proposals[proposalId].title}"`,
-  'GenesisProtocol.redeemDaoBounty': (state, {proposalId}: Arc.RedeemConfig) =>
-    `Redeeming bounty rewards for "${state.arc.proposals[proposalId].title}"`,
-  'ContributionReward.proposeContributionReward': (state, {}: Arc.ProposeContributionRewardParams) =>
-    `Creating proposal`,
-  'ContributionReward.redeemContributionReward': (state, {proposalId}: Arc.ContributionRewardRedeemParams) =>
-    `Redeeming contribution reward for "${state.arc.proposals[proposalId].title}"`,
-  'DAO.new': (state, {}: Arc.NewDaoConfig) =>
+const messages: {[key: string]: (proposalTitle: string | undefined, options: any) => string} = {
+  'GenesisProtocol.vote': (proposalTitle, {vote, proposalId}: Arc.VoteOptions) =>
+    `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${elipsis(proposalTitle, 22)}`,
+  'GenesisProtocol.stake': (proposalTitle, {vote, proposalId, amount}: Arc.StakeConfig) =>
+    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN`,
+  'GenesisProtocol.execute': (proposalTitle, {proposalId}: Arc.ProposalIdOption) =>
+    `Exeuting "${elipsis(proposalTitle, 22)}"`,
+  'GenesisProtocol.redeem': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
+    `Redeeming rewards for "${elipsis(proposalTitle, 22)}"`,
+  'GenesisProtocol.redeemDaoBounty': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
+    `Redeeming bounty rewards for "${elipsis(proposalTitle, 22)}"`,
+  'ContributionReward.proposeContributionReward': (proposalTitle, {}: Arc.ProposeContributionRewardParams) =>
+    `Creating proposal ${elipsis(proposalTitle, 22)}`,
+  'ContributionReward.redeemContributionReward': (proposalTitle, {proposalId}: Arc.ContributionRewardRedeemParams) =>
+    `Redeeming contribution reward for "${elipsis(proposalTitle, 22)}"`,
+  'DAO.new': (proposalTitle, {}: Arc.NewDaoConfig) =>
     `Creating a new DAO`,
-  'StandardToken.approve': (state, {amount}: Arc.StandardTokenApproveOptions) =>
+  'StandardToken.approve': (proposalTitle, {amount}: Arc.StandardTokenApproveOptions) =>
     `Approving ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for staking`
 }
 
@@ -176,10 +188,26 @@ const messages: {[key: string]: (state: IRootState, options: any) => string} = {
  */
 export const notificationUpdater: Middleware =
   ({ getState, dispatch }) =>
-  (next) => (action: any) => {
+  (next) => {
+    const transaction2Notification = (network: string, id: string, {error, status, functionName, options, txHash, proposalTitle}: IOperation) => {
+      const actionMessage = messages[functionName] && messages[functionName](proposalTitle, options);
+      const errorReason = error ?
+        (
+          error === OperationError.Canceled ?
+            'you canceled the tx' :
+          error === OperationError.Reverted ?
+            'the tx was reverted' :
+          error === OperationError.OutOfGas ?
+            'of insufficient gas' :
+            `of unknown reason, contact us at https://discord.gg/3d5C2y7`
+        ) : '';
 
-    if (isOperationsAction(action) && action.type === 'Operations/Update') {
-      const {id, operation: {error, status, functionName, options}} = action.payload;
+      let fullErrorMessage;
+      if (error && error !== OperationError.Canceled && error !== OperationError.Reverted && error !== OperationError.OutOfGas) {
+        fullErrorMessage = error;
+      }
+
+      const message = actionMessage && `${actionMessage} ${error ? `failed because ${errorReason}` : ''}`;
 
       /**
        * Translate a transaction update into a notification.
@@ -190,17 +218,8 @@ export const notificationUpdater: Middleware =
         status === OperationStatus.Mined ?
           NotificationStatus.Success :
           NotificationStatus.Pending,
-        error ?
-          (
-            error === OperationError.Canceled ?
-              'The transaction was canceled.' :
-            error === OperationError.Reverted ?
-              'The transaction errored (reverted).' :
-            error === OperationError.OutOfGas ?
-              'The transaction ran out of gas, please try again with a higher gas limit.' :
-              `The transaction unexpectedly failed with: ${error}`
-          ) :
-          messages[functionName] && messages[functionName](getState() as any as IRootState, options),
+        message,
+        fullErrorMessage,
         error ?
           'transaction failed' :
         status === OperationStatus.Started ?
@@ -208,10 +227,33 @@ export const notificationUpdater: Middleware =
         status === OperationStatus.Sent ?
           'transaction sent' :
           'transaction mined',
+        txHash && `https://${network !== 'mainnet' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
         id,
         +moment()
       )(dispatch)
     }
 
-    return next(action);
+    return (action: any) => {
+      const state = getState() as any as IRootState;
+      const network = Util.networkName(state.web3.networkId).toLowerCase();
+
+      if (action.type === REHYDRATE) {
+        const a = action as RehydrateAction;
+        if (a.payload) {
+          const operations = a.payload.operations as IOperationsState;
+          Object.keys(operations).forEach((id) => {
+            if (operations[id].status === OperationStatus.Sent && !operations[id].error) {
+              transaction2Notification(network, id, operations[id]);
+            }
+          })
+        }
+      }
+
+      if (isOperationsAction(action) && action.type === 'Operations/Update') {
+        const {id, operation} = action.payload;
+        transaction2Notification(network, id, operation)
+      }
+
+      return next(action);
+    }
   }
