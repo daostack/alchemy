@@ -79,7 +79,7 @@ export default class Notification extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.notificationMessage}>
-            <span title={message}>{message.length < 50 ? message : message.slice(0, 47) + '...'}</span>
+            {message}
           </div>
         </div>
         <div className={css.notificationControls}>
