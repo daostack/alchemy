@@ -203,7 +203,7 @@ export const notificationUpdater: Middleware =
         ) : '';
 
       let fullErrorMessage;
-      if (error && error !== OperationError.Canceled && error !== OperationError.Canceled && error !== OperationError.Canceled) {
+      if (error && error !== OperationError.Canceled && error !== OperationError.Reverted && error !== OperationError.OutOfGas) {
         fullErrorMessage = error;
       }
 
