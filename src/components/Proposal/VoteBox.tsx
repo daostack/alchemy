@@ -18,6 +18,8 @@ interface IProps {
   proposal: IProposalState;
   transactionState: TransactionStates;
   voteOnProposal: typeof arcActions.voteOnProposal;
+  isVotingNo: boolean;
+  isVotingYes: boolean;
 }
 
 interface IState {
@@ -43,7 +45,16 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { currentVote, currentAccountReputation, proposal, daoName, daoTotalReputation, transactionState, } = this.props;
+    const {
+      currentVote,
+      currentAccountReputation,
+      proposal,
+      daoName,
+      daoTotalReputation,
+      transactionState,
+      isVotingNo,
+      isVotingYes
+    } = this.props;
 
     const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
     const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
@@ -70,11 +81,13 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
     let voteUpButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.Yes,
-      [css.disabled]: !currentAccountReputation || !!currentVote
+      [css.disabled]: !currentAccountReputation || !!currentVote,
+      [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.No,
-      [css.disabled]: !currentAccountReputation || !!currentVote
+      [css.disabled]: !currentAccountReputation || !!currentVote,
+      [css.downvotePending]: isVotingNo,
     });
 
     const voteControls = classNames({

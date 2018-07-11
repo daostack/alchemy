@@ -9,6 +9,7 @@ import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { isStakePending, isVotePending } from "selectors/operations";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import ReputationView from "components/Account/ReputationView";
@@ -25,6 +26,10 @@ interface IStateProps {
   currentAccountGenStakingAllowance: number;
   dao?: IDaoState;
   proposal?: IProposalState;
+  isVotingYes: boolean;
+  isVotingNo: boolean;
+  isPredictingPass: boolean;
+  isPredictingFail: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
@@ -38,6 +43,10 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
     currentAccountRedemptions,
     dao,
     proposal,
+    isVotingYes: isVotePending(proposal.proposalId, VoteOptions.Yes)(state),
+    isVotingNo: isVotePending(proposal.proposalId, VoteOptions.No)(state),
+    isPredictingPass: isStakePending(proposal.proposalId, VoteOptions.Yes)(state),
+    isPredictingFail: isStakePending(proposal.proposalId, VoteOptions.No)(state),
   };
 };
 
@@ -65,7 +74,21 @@ class ProposalContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { currentAccountAddress, currentAccountGens, currentAccountRedemptions, currentAccountGenStakingAllowance, dao, proposal, approveStakingGens, stakeProposal, voteOnProposal } = this.props;
+    const {
+      currentAccountAddress,
+      currentAccountGens,
+      currentAccountRedemptions,
+      currentAccountGenStakingAllowance,
+      dao,
+      proposal,
+      approveStakingGens,
+      stakeProposal,
+      voteOnProposal,
+      isPredictingFail,
+      isPredictingPass,
+      isVotingNo,
+      isVotingYes
+    } = this.props;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -161,6 +184,8 @@ class ProposalContainer extends React.Component<IProps, null> {
         <div className={proposalClass + " " + css.clearfix}>
           { !proposalEnded(proposal) ?
             <VoteBox
+              isVotingNo={isVotingNo}
+              isVotingYes={isVotingYes}
               currentVote={currentAccountVote}
               currentAccountReputation={currentAccountReputation}
               daoName={dao.name}
@@ -254,6 +279,8 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </a>
                 </div>
                 <PredictionBox
+                  isPredictingFail={isPredictingFail}
+                  isPredictingPass={isPredictingPass}
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
@@ -282,6 +309,8 @@ class ProposalContainer extends React.Component<IProps, null> {
                   </a>
                 </div>
                 <PredictionBox
+                  isPredictingFail={isPredictingFail}
+                  isPredictingPass={isPredictingPass}
                   currentPrediction={currentAccountPrediction}
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
