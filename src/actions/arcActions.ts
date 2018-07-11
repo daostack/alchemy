@@ -619,6 +619,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       dispatch(push("/dao/" + daoAvatarAddress));
 
       await contributionRewardInstance.proposeContributionReward({
+        title,
         avatar: daoAvatarAddress,
         beneficiaryAddress,
         description,
@@ -627,7 +628,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         numberOfPeriods: 1,
         periodLength: 1,
         reputationChange: Util.toWei(reputationReward),
-      });
+      } as any);
 
     } catch (err) {
       console.error(err);

@@ -27,23 +27,9 @@ const reducers = {
   web3: web3Reducer,
 };
 
-/**
- * Only persist pending notifications
- */
-const filterPendingNotifications = createTransform(
-  (state, key) => {
-    if (key === 'notifications') {
-      return (state as INotificationsState)
-        .filter((n) => n.status === NotificationStatus.Pending)
-    }
-    return state
-  },
-  (raw, key) => raw
-)
-
 export default persistReducer({
   key: 'state',
-  transforms: [filterPendingNotifications],
-  whitelist: ['operations', 'notifications'],
+  transforms: [],
+  whitelist: ['operations'],
   storage,
 }, combineReducers(reducers));
