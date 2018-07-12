@@ -242,7 +242,7 @@ export const notificationUpdater: Middleware =
         if (a.payload) {
           const operations = a.payload.operations as IOperationsState;
           Object.keys(operations).forEach((id) => {
-            if (operations[id].status === OperationStatus.Sent && !operations[id].error) {
+            if (operations[id].status === OperationStatus.Sent || operations[id].error) {
               transaction2Notification(network, id, operations[id]);
             }
           })
