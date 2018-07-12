@@ -79,7 +79,7 @@ const errorType = (error: Error) => {
     return OperationError.Canceled;
   } else if (message.includes('revert')) {
     return OperationError.Reverted;
-  } else if (message.includes('out of gas') || message.includes('base fee exceeds gas limit')) {
+  } else if (message.includes('gas')) {
     return OperationError.OutOfGas;
   } else {
     return error.message;
