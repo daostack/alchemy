@@ -166,7 +166,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'GenesisProtocol.vote': (proposalTitle, {vote, proposalId}: Arc.VoteOptions) =>
     `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${elipsis(proposalTitle, 22)}`,
   'GenesisProtocol.stake': (proposalTitle, {vote, proposalId, amount}: Arc.StakeConfig) =>
-    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN`,
+    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Number(Util.fromWei(new BigNumber(amount)))} GEN`,
   'GenesisProtocol.execute': (proposalTitle, {proposalId}: Arc.ProposalIdOption) =>
     `Exeuting "${elipsis(proposalTitle, 22)}"`,
   'GenesisProtocol.redeem': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
@@ -180,7 +180,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'DAO.new': (proposalTitle, {}: Arc.NewDaoConfig) =>
     `Creating a new DAO`,
   'StandardToken.approve': (proposalTitle, {amount}: Arc.StandardTokenApproveOptions) =>
-    `Approving ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for staking`
+    `Approving ${Number(Util.fromWei(new BigNumber(amount)))} GEN for staking`
 }
 
 /**

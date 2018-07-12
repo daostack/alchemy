@@ -102,7 +102,7 @@ require('dotenv').config();
       memberVotes[voteEventArgs._proposalId] = {
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: voteEventArgs._proposalId,
-        reputation: Util.fromWei(voteEventArgs._reputation).toNumber(),
+        reputation: Number(Util.fromWei(voteEventArgs._reputation)),
         transactionState: TransactionStates.Confirmed,
         vote: Number(voteEventArgs._vote),
         voterAddress: voteEventArgs._voter
@@ -132,7 +132,7 @@ require('dotenv').config();
         avatarAddress: proposalDetails.daoAvatarAddress,
         proposalId: stakeEventArgs._proposalId,
         transactionState: TransactionStates.Confirmed,
-        stake: Util.fromWei(stakeEventArgs._amount).toNumber(),
+        stake: Number(Util.fromWei(stakeEventArgs._amount)),
         prediction: Number(stakeEventArgs._vote),
         stakerAddress: stakeEventArgs._voter
       }

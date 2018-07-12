@@ -115,11 +115,11 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.ethBalanceWatcher = web3.eth.filter('latest');
     this.ethBalanceWatcher.watch(async (err, res) => {
       if (!err && res) {
-        const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(ethAccountAddress)).toNumber();
+        const newEthBalance = Number(Util.fromWei(await promisify(web3.eth.getBalance)(ethAccountAddress)));
         onEthBalanceChanged(newEthBalance);
-        const newGenBalance = Util.fromWei(await stakingToken.balanceOf(ethAccountAddress)).toNumber();
+        const newGenBalance = Number(Util.fromWei(await stakingToken.balanceOf(ethAccountAddress)));
         onGenBalanceChanged(newGenBalance);
-        const newGenStakingAllowance = Util.fromWei(await stakingToken.allowance(ethAccountAddress, votingMachineInstance.address)).toNumber();
+        const newGenStakingAllowance = Number(Util.fromWei(await stakingToken.allowance(ethAccountAddress, votingMachineInstance.address)));
         onGenStakingAllowanceChanged(newGenStakingAllowance);
       }
     });
