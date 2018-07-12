@@ -33,22 +33,12 @@ export default class Notification extends React.Component<IProps, IState> {
     this.state = { minimized: false };
 
     this.handleClose = this.handleClose.bind(this);
-    this.handleClick = this.handleClick.bind(this);
     this.copyToClipboard = this.copyToClipboard.bind(this);
   }
 
   public handleClose(e: any) {
     const { dismiss } = this.props;
     dismiss();
-  }
-
-  public handleClick(e: any) {
-    const { status } = this.props;
-    const { minimized } = this.state;
-
-    if (status === NotificationViewStatus.Pending && minimized) {
-      this.setState({minimized: false});
-    }
   }
 
   public copyToClipboard(message: string) {
@@ -71,9 +61,9 @@ export default class Notification extends React.Component<IProps, IState> {
     });
 
     return (
-      <div className={transactionClass} onClick={(e) => this.handleClick(e)}>
+      <div className={transactionClass}>
         <div className={css.statusIcon}>
-          <img className={css.pending} src="/assets/images/Icon/Loading-white.svg" />
+          <img className={css.pending} style={{cursor: minimized && 'pointer'}} onClick={() => this.setState({minimized: false})} src="/assets/images/Icon/Loading-white.svg" />
           <img className={css.success} src="/assets/images/Icon/Success-notification.svg" />
           <img className={css.error} src="/assets/images/Icon/Error-notification.svg" />
         </div>
