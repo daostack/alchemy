@@ -97,7 +97,7 @@ export default class Notification extends React.Component<IProps, IState> {
             }
             {
               url ?
-              <span><br/><a href={url}>See in etherscan</a></span>
+              <span><br/><a href={url} target='_blank'>See in etherscan</a></span>
               : ''
             }
           </div>
