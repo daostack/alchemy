@@ -94,7 +94,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
-  public executeProposalEventWatcher: Arc.EventFetcher<Arc.GenesisProtocolExecuteProposalEventResult>;
+  public executeProposalEventWatcher: Arc.EntityFetcher<Arc.ExecutedGenesisProposal, Arc.ExecuteProposalEventResult>;
   public balanceWatcher: any;
   public transferEventWatcher: any;
   public mintEventWatcher: any;
@@ -159,7 +159,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
-      onStakeEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
+      onStakeEvent(daoAddress, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
     });
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: "latest" });
@@ -182,10 +182,10 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       onReputationChangeEvent(daoAddress, result.args._from);
     });
 
-    this.executeProposalEventWatcher = votingMachineInstance.ExecuteProposal({}, { fromBlock: "latest" });
+    this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: "latest" });
     this.executeProposalEventWatcher.watch((error, result) => {
-      const { _proposalId, _executionState, _decision, _totalReputation } = result.args;
-      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Util.fromWei(_totalReputation).toNumber());
+      const { proposalId, decision, totalReputation, executionState } = result;
+      onProposalExecuted(daoAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation).toNumber());
     });
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
