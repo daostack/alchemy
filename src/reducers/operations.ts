@@ -46,10 +46,25 @@ export interface IUpdateOperation extends Action {
   }
 }
 
-type OperationsAction = IUpdateOperation
+export interface IDismissOperation extends Action {
+  type: 'Operations/Dismiss',
+  payload: {
+    id: string;
+  }
+}
+
+type OperationsAction = IUpdateOperation | IDismissOperation
 
 export const isOperationsAction = (action: Action): action is OperationsAction =>
   typeof action.type === 'string' && action.type.startsWith('Operations/');
+
+export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
+  dispatch({
+    type: 'Operations/Dismiss',
+    payload: {
+      id
+    }
+  } as IDismissOperation);
 
 /** -- Reducer -- */
 
@@ -65,6 +80,12 @@ export const operationsReducer =
             ...action.payload.operation
           }
         };
+      }
+
+      if (a.type === 'Operations/Dismiss') {
+        const action = a as IDismissOperation;
+        const {[a.payload.id]: _, ...rest } = state;
+        return rest;
       }
     }
 

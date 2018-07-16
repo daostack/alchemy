@@ -1,6 +1,6 @@
 import { Action, Dispatch, Middleware } from 'redux';
 import * as moment from 'moment';
-import { isOperationsAction, OperationStatus, OperationError, IOperationsState, IOperation } from './operations';
+import { isOperationsAction, OperationStatus, OperationError, IOperationsState, IOperation, dismissOperation, IUpdateOperation } from './operations';
 import { IRootState } from 'reducers';
 import { VoteOptions } from 'reducers/arcReducer';
 import BigNumber from 'bignumber.js';
@@ -250,8 +250,14 @@ export const notificationUpdater: Middleware =
       }
 
       if (isOperationsAction(action) && action.type === 'Operations/Update') {
-        const {id, operation} = action.payload;
+        const {payload: {id, operation}} = action as IUpdateOperation;
         transaction2Notification(network, id, operation)
+      }
+
+      // also dismiss the corrosponding operation if it exists.
+      if (isNotificationsAction(action) && action.type === 'Notifications/Dismiss') {
+        const {payload: {id}} = action as IDismissNotification;
+        dismissOperation(action.payload.id)(dispatch);
       }
 
       return next(action);
