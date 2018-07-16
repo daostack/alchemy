@@ -40,8 +40,7 @@ export function initializeWeb3() {
       return;
     }
 
-    const getNetwork = promisify(web3.version.getNetwork);
-    const networkId = Number(await getNetwork());
+    const networkId = Number(await Arc.Utils.getNetworkId());
 
     const payload: IWeb3State = {
       accounts: web3.eth.accounts,
