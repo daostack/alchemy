@@ -28,7 +28,7 @@ import * as schemas from "../schemas";
 import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
-import { ExecutionState } from "@daostack/arc.js";
+import { ExecutionState, GenesisProtocolFactory } from "@daostack/arc.js";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 
 export function loadCachedState() {
@@ -116,8 +116,8 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
   const daoData: IDaoState = {
     avatarAddress,
     controllerAddress: "",
-    ethCount: Number(Util.fromWei(await getBalance(avatarAddress))),
-    genCount: Number(Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance)),
+    ethCount: Util.fromWei(await getBalance(avatarAddress)),
+    genCount: Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance),
     name: await daoInstance.getName(),
     members: {},
     rank: 1, // TODO
@@ -125,11 +125,11 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
     proposals: [],
     proposalsLoaded: false,
     reputationAddress: await daoInstance.reputation.address,
-    reputationCount: Number(Util.fromWei(await daoInstance.reputation.totalSupply())),
+    reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
     tokenAddress: await daoInstance.token.address,
-    tokenCount: Number(Util.fromWei(await daoInstance.token.balanceOf(avatarAddress))),
+    tokenCount: Util.fromWei(await daoInstance.token.balanceOf(avatarAddress)),
     tokenName: await daoInstance.getTokenName(),
-    tokenSupply: Number(Util.fromWei(await daoInstance.token.totalSupply())),
+    tokenSupply: Util.fromWei(await daoInstance.token.totalSupply()),
     tokenSymbol: await daoInstance.getTokenSymbol(),
   };
 
@@ -168,9 +168,9 @@ export async function getDAOData(avatarAddress: string, getDetails: boolean = fa
       const address = memberAddresses[cnt];
       const member = { address, ...emptyAccount};
       const tokens = await daoInstance.token.balanceOf(address);
-      member.tokens = Number(Util.fromWei(tokens));
+      member.tokens = Util.fromWei(tokens);
       const reputation = await daoInstance.reputation.reputationOf(address);
-      member.reputation = Number(Util.fromWei(reputation));
+      member.reputation = Util.fromWei(reputation);
       members[address] = member;
     }
 
@@ -350,27 +350,27 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
     description,
     daoAvatarAddress: dao.avatar.address,
-    ethReward: Number(Util.fromWei(contributionProposal.ethReward)),
-    externalTokenReward: Number(Util.fromWei(contributionProposal.externalTokenReward)),
+    ethReward: Util.fromWei(contributionProposal.ethReward),
+    externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
     executionTime: Number(contributionProposal.executionTime),
-    nativeTokenReward: Number(Util.fromWei(contributionProposal.nativeTokenReward)),
+    nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
     numberOfPeriods: Number(contributionProposal.numberOfPeriods),
-    reputationChange: Number(Util.fromWei(contributionProposal.reputationChange)),
+    reputationChange: Util.fromWei(contributionProposal.reputationChange),
     periodLength: Number(contributionProposal.periodLength),
     proposer: proposalDetails[10],
-    stakesNo: Number(Util.fromWei(noStakes)),
-    stakesYes: Number(Util.fromWei(yesStakes)),
+    stakesNo: Util.fromWei(noStakes),
+    stakesYes: Util.fromWei(yesStakes),
     state,
     submittedTime: Number(proposalDetails[6]),
     title,
     totalStakes: 0, //Util.fromWei(proposalDetails[8]),
-    totalVotes: Number(Util.fromWei(proposalDetails[3])),
+    totalVotes: Util.fromWei(proposalDetails[3]),
     totalVoters: Number(proposalDetails[14] ? proposalDetails[14].length : 0), // TODO: this does not work
     transactionState: TransactionStates.Confirmed,
-    votesYes: Number(Util.fromWei(yesVotes)),
-    votesNo: Number(Util.fromWei(noVotes)),
+    votesYes: Util.fromWei(yesVotes),
+    votesNo: Util.fromWei(noVotes),
     winningVote: Number(proposalDetails[9]),
-    threshold: Number(Util.fromWei(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId})))
+    threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: dao.avatar.address, proposalId}))
   }};
 
   delete (proposal as any).votingMachine;
@@ -381,7 +381,7 @@ async function getProposalDetails(dao: Arc.DAO, votingMachineInstance: Arc.Genes
     const getExecuteProposalEvents = promisify(executeProposalEventFetcher.get.bind(executeProposalEventFetcher));
     const executeProposalEvents = await getExecuteProposalEvents();
     if (executeProposalEvents.length > 0) {
-      proposal.reputationWhenExecuted = Number(Util.fromWei(executeProposalEvents[0].args._totalReputation));
+      proposal.reputationWhenExecuted = Util.fromWei(executeProposalEvents[0].args._totalReputation);
     }
   }
 
@@ -395,7 +395,7 @@ async function getVoterInfo(avatarAddress: string, votingMachineInstance: Arc.Ge
     return {
       avatarAddress,
       proposalId,
-      reputation: Number(Util.fromWei(voterInfo.reputation)),
+      reputation: Util.fromWei(voterInfo.reputation),
       transactionState: TransactionStates.Confirmed,
       vote: Number(voterInfo.vote),
       voterAddress
@@ -412,7 +412,7 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
     return {
       avatarAddress,
       proposalId,
-      stake: Number(Util.fromWei(stakerInfo.stake)),
+      stake: Util.fromWei(stakerInfo.stake),
       prediction: Number(stakerInfo.vote),
       stakerAddress,
       transactionState: TransactionStates.Confirmed,
@@ -429,7 +429,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
 
   const proposalId = proposal.proposalId;
 
-  const stakerBountyTokens = Number(Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress })));
+  const stakerBountyTokens = Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress }));
 
   const redemptions = {
     accountAddress,
@@ -438,11 +438,11 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     beneficiaryNativeToken: 0,
     beneficiaryReputation: 0,
     proposerReputation: 0,
-    stakerReputation: Number(Util.fromWei(await votingMachineInstance.getRedeemableReputationStaker({ proposalId, beneficiaryAddress: accountAddress }))),
-    stakerTokens: Number(Util.fromWei(await votingMachineInstance.getRedeemableTokensStaker({ proposalId, beneficiaryAddress: accountAddress }))),
+    stakerReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationStaker({ proposalId, beneficiaryAddress: accountAddress })),
+    stakerTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensStaker({ proposalId, beneficiaryAddress: accountAddress })),
     stakerBountyTokens,
-    voterReputation: Number(Util.fromWei(await votingMachineInstance.getRedeemableReputationVoter({ proposalId, beneficiaryAddress: accountAddress }))),
-    voterTokens: Number(Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress }))),
+    voterReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationVoter({ proposalId, beneficiaryAddress: accountAddress })),
+    voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })),
   };
 
   // Beneficiary rewards
@@ -466,7 +466,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     }
   }
   if (proposal.proposer == accountAddress) {
-    redemptions.proposerReputation = Number(Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId })));
+    redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
 
   const anyRedemptions = (
@@ -783,20 +783,20 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       proposal: {
         proposalId,
         state: Number(await votingMachineInstance.getState({ proposalId })),
-        votesNo: Number(Util.fromWei(noVotes)),
-        votesYes: Number(Util.fromWei(yesVotes)),
+        votesNo: Util.fromWei(noVotes),
+        votesYes: Util.fromWei(yesVotes),
         winningVote,
       },
       // Update DAO total reputation and tokens
       dao: {
-        reputationCount: Number(Util.fromWei(await daoInstance.reputation.totalSupply())),
-        tokenCount: Number(Util.fromWei(await daoInstance.token.totalSupply())),
+        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
+        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
       },
       redemptions,
       // Update voter tokens and reputation
       voter: {
-        tokens: Number(Util.fromWei(await daoInstance.token.balanceOf(voterAddress))),
-        reputation: Number(Util.fromWei(await daoInstance.reputation.reputationOf(voterAddress))),
+        tokens: Util.fromWei(await daoInstance.token.balanceOf(voterAddress)),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf(voterAddress)),
       },
       // New vote made on the proposal
       vote: {
@@ -856,7 +856,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const minimumStakingFee = votingMachineParam[5]; // 5 is the index of minimumStakingFee in the Parameters struct.
 
       const amount = new BigNumber(Util.toWei(stake));
-      if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Number(Util.fromWei(minimumStakingFee))}!`); }
+      if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee)}!`); }
 
       dispatch({
         type: arcConstants.ARC_STAKE,
@@ -908,8 +908,8 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
         proposalId,
         state,
         boostedTime: Number(proposalDetails[7]),
-        stakesNo: Number(Util.fromWei(noStakes)),
-        stakesYes: Number(Util.fromWei(yesStakes)),
+        stakesNo: Util.fromWei(noStakes),
+        stakesYes: Util.fromWei(yesStakes),
       },
       stake: {
         avatarAddress,
@@ -995,15 +995,15 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         // Update account of the beneficiary
         beneficiary: {
           address: accountAddress,
-          tokens: Number(Util.fromWei(await daoInstance.token.balanceOf.call(accountAddress))),
-          reputation: Number(Util.fromWei(await daoInstance.reputation.reputationOf.call(accountAddress))),
+          tokens: Util.fromWei(await daoInstance.token.balanceOf.call(accountAddress)),
+          reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(accountAddress)),
         },
         // Update DAO total reputation and tokens
         //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
         dao: {
           avatarAddress: daoAvatarAddress,
-          reputationCount: Number(Util.fromWei(await daoInstance.reputation.totalSupply())),
-          tokenCount: Number(Util.fromWei(await daoInstance.token.totalSupply())),
+          reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
+          tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
         },
       };
 
@@ -1027,9 +1027,9 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 export function onTransferEvent(avatarAddress: string, from: string, to: string) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const fromBalance = Number(Util.fromWei(await daoInstance.token.balanceOf(from)));
-    const toBalance = Number(Util.fromWei(await daoInstance.token.balanceOf(to)));
-    const totalTokens = Number(Util.fromWei(await daoInstance.token.totalSupply()));
+    const fromBalance = Util.fromWei(await daoInstance.token.balanceOf(from));
+    const toBalance = Util.fromWei(await daoInstance.token.balanceOf(to));
+    const totalTokens = Util.fromWei(await daoInstance.token.totalSupply());
 
     dispatch({
       type: arcConstants.ARC_ON_TRANSFER,
@@ -1048,8 +1048,8 @@ export function onTransferEvent(avatarAddress: string, from: string, to: string)
 export function onReputationChangeEvent(avatarAddress: string, address: string) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const reputation = Number(Util.fromWei(await daoInstance.reputation.reputationOf(address)));
-    const totalReputation = Number(Util.fromWei(await daoInstance.reputation.totalSupply()));
+    const reputation = Util.fromWei(await daoInstance.reputation.reputationOf(address));
+    const totalReputation = Util.fromWei(await daoInstance.reputation.totalSupply());
 
     dispatch({
       type: arcConstants.ARC_ON_REPUTATION_CHANGE,
@@ -1066,7 +1066,6 @@ export function onReputationChangeEvent(avatarAddress: string, address: string) 
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     const proposal = getState().arc.proposals[proposalId];
-
     dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
       payload: {

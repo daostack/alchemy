@@ -68,7 +68,7 @@ export function initializeWeb3() {
     }
 
     const getBalance = promisify(web3.eth.getBalance);
-    payload.ethAccountBalance = Number(Util.fromWei(await getBalance(payload.ethAccountAddress)));
+    payload.ethAccountBalance = Util.fromWei(await getBalance(payload.ethAccountAddress));
 
     dispatch({
       type: ActionTypes.WEB3_CONNECT,
@@ -94,7 +94,7 @@ export function setCurrentAccount(accountAddress: string, daoAddress: string = n
 
     const getBalance = promisify(web3.eth.getBalance);
     const balance = await getBalance(accountAddress);
-    payload.ethAccountBalance = Number(Util.fromWei(balance));
+    payload.ethAccountBalance = Util.fromWei(balance);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
     if (daoAddress !== null) {
@@ -106,8 +106,8 @@ export function setCurrentAccount(accountAddress: string, daoAddress: string = n
     }
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-    payload.currentAccountGenBalance = Number(Util.fromWei(await stakingToken.balanceOf(accountAddress)));
-    payload.currentAccountGenStakingAllowance = Number(Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address)));
+    payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress));
+    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address));
 
     const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
