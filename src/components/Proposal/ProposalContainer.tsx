@@ -13,6 +13,7 @@ import { isStakePending, isVotePending } from "selectors/operations";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import ReputationView from "components/Account/ReputationView";
+import PreTransactionModal from "components/Shared/PreTransactionModal";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
 
@@ -66,11 +67,27 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-class ProposalContainer extends React.Component<IProps, null> {
+interface IState {
+  preRedeemModalOpen: boolean;
+}
+
+class ProposalContainer extends React.Component<IProps, IState> {
+
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      preRedeemModalOpen: false
+    };
+  }
 
   public handleClickRedeem(event: any) {
     const { currentAccountAddress, dao, proposal, redeemProposal } = this.props;
     redeemProposal(dao.avatarAddress, proposal, currentAccountAddress);
+  }
+
+  public closePreRedeemModal(event: any) {
+    this.setState({ preRedeemModalOpen: false });
   }
 
   public render() {
@@ -182,99 +199,13 @@ class ProposalContainer extends React.Component<IProps, null> {
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
-            <div className={css.metaMaskModal}>
-              <div className={css.bg}></div>
-              <div className={css.modalWindow}>
-                <div className={css.transaction + " " + css.clearfix}>
-                  <div className={css.transactionIcon}>
-                    <img src="/assets/images/Tx/Upvote.svg"/>
-
-                  {/*
-                    <img src="/assets/images/Tx/Downvote.svg"/>
-                    <img src="/assets/images/Tx/EnablePredictions.svg"/>
-                    <img src="/assets/images/Tx/NewProposal.svg"/>
-                    <img src="/assets/images/Tx/Redemption.svg"/>
-                    <img src="/assets/images/Tx/StakeFail.svg"/>
-                    <img src="/assets/images/Tx/StakePass.svg"/>
-
-                  */}
-                  </div>
-                  <div className={css.transactionInfo}>
-                    <div className={css.transactionType}>
-                        <span><strong className={css.passVote}>Pass</strong> vote</span>
-
-                      {/* 
-                        <span><strong className={css.failVote}>Fail</strong> vote</span>
-                        <span><strong className={css.redeem}>redemption</strong></span>
-                        <span>Create <strong className={css.redeem}>proposal</strong></span>
-                        <span>Redeem rewards</span>
-                        <span>Activate redeeming</span>
-                        <span>Activate predictions</span>
-                        <span><strong className={css.passVote}>Pass</strong> prediction</span>
-                        <span><strong className={css.passVote}>Fail</strong> prediction</span>
-                    
-                      */}
-                    </div>
-                    <div className={css.transactionTitle}>
-                      <strong>{proposal.title}</strong>
-                    {/*
-                      <strong>Pre-approve GENs to enable staking within {dao.name}</strong>
-                     */}
-                    </div>
-                    <div className={css.transactionEffect}>
-                        <span>Your influence: <strong>1.25% (3,253) Reputation</strong></span>
-                        {/*
-                        <span>In order to activate predictions, you must authorize our smart contract to receive GENs from you. Upon activation, the smart contract will be authorized to receive up to 1000 GENs. This transaction will not cost you GEN or commit you in any way to spending your GENs in the future.</span> 
-                        <span>
-                          For {reward type}, you will receive:<br/>
-                          - {number of tokens or % of token if reputation} {type of token}<br/>
-                          - {number of tokens or % of token if reputation} {type of token}
-                        </span>
-                        <span>Budget: {Proposal reputation requested %} % Rep and {Proposal ETH requested} ETH</span>
-                        <span>In order to allow everyone to redeem their rewards, you must authorize our smart contract to execute the proposal</span>
-                        <span>Prediction amount: {GEN} Gens<br/>You are predicting the proposal will be [accepted/rejected] by the DAO</span>
-                         */}
-                    </div>
-                  </div>
-                  <div className={css.closeTransactionContainer}>
-                    <button>
-                      <img src="/assets/images/Tx/Close.svg"/>
-                    </button>
-                  </div>
-                </div>
-                { !proposalEnded(proposal) ?
-                  <div className={css.decisionGraph}>
-                      <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%) PASS</span>
-                      <div className={css.graph}>
-                        <div className={css.forBar} style={styles.forBar}></div>
-                        <div className={css.againstBar} style={styles.againstBar}></div>
-                        <div className={css.divider}></div>
-                      </div>
-                      <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%) FAIL</span>
-                  </div>
-                  : ""
-                }
-                <div className={css.transactionInstructions}>
-                  <p>
-                    When you click "Launch MetaMask" we will pop up a Metamask dialogue.
-                    This dialogue will ask you to approve your transaction, including a small ETH cost.
-                    It will set a default gas limit and price. It's fine to stick with these defaults.
-                  </p>
-                  <button className={css.launchMetaMask}>
-                    <img src="/assets/images/Tx/MetaMask.svg"/>
-                    Launch MetaMask
-                  </button>
-                </div>
-              </div>
-            </div>
           { !proposalEnded(proposal) ?
             <VoteBox
               isVotingNo={isVotingNo}
               isVotingYes={isVotingYes}
               currentVote={currentAccountVote}
               currentAccountReputation={currentAccountReputation}
-              daoName={dao.name}
-              daoTotalReputation={dao.reputationCount}
+              dao={dao}
               proposal={proposal}
               transactionState={currentAccountVoteState}
               voteOnProposal={voteOnProposal}
@@ -370,7 +301,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
                   currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  daoAddress={dao.avatarAddress}
+                  dao={dao}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   approveStakingGens={approveStakingGens}
@@ -400,7 +331,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                   currentStake={currentAccountStake}
                   currentAccountGens={currentAccountGens}
                   currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  daoAddress={dao.avatarAddress}
+                  dao={dao}
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   approveStakingGens={approveStakingGens}

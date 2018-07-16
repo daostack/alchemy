@@ -5,16 +5,16 @@ import Tooltip from 'rc-tooltip';
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IProposalState, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
+import PreTransactionModal from "components/Shared/PreTransactionModal";
 
 interface IProps {
   currentVote: number;
   currentAccountReputation: number;
-  daoName: string;
-  daoTotalReputation: number;
+  dao: IDaoState;
   proposal: IProposalState;
   transactionState: TransactionStates;
   voteOnProposal: typeof arcActions.voteOnProposal;
@@ -24,6 +24,7 @@ interface IProps {
 
 interface IState {
   currentVote: number;
+  showPreVoteModal: boolean;
 }
 
 export default class VoteBox extends React.Component<IProps, IState> {
@@ -32,16 +33,21 @@ export default class VoteBox extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      currentVote: props.currentVote,
+      currentVote: this.props.currentVote,
+      showPreVoteModal: false
     };
   }
 
   public handleClickVote(vote: number, event: any) {
-    const { currentAccountReputation, currentVote, proposal, transactionState, voteOnProposal } = this.props;
-    if (currentAccountReputation && !currentVote) {
-      this.setState({ currentVote: vote });
-      voteOnProposal(proposal.daoAvatarAddress, proposal, vote);
+    const { currentAccountReputation, proposal, transactionState, voteOnProposal } = this.props;
+    if (currentAccountReputation) {
+      this.setState({ showPreVoteModal: true, currentVote: vote });
     }
+  }
+
+  public closePreVoteModal(event: any) {
+    console.log("closing");
+    this.setState({ showPreVoteModal: false });
   }
 
   public render() {
@@ -49,15 +55,18 @@ export default class VoteBox extends React.Component<IProps, IState> {
       currentVote,
       currentAccountReputation,
       proposal,
-      daoName,
-      daoTotalReputation,
+      dao,
       transactionState,
       isVotingNo,
-      isVotingYes
+      isVotingYes,
+      voteOnProposal
     } = this.props;
 
-    const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
-    const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
+    const yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
+    const noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
+
+    const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
+    const currentAccountReputationPercentage = totalReputation ? 100 * currentAccountReputation / totalReputation : 0;
 
     const styles = {
       yesGraph: {
@@ -94,11 +103,22 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.voteControls]: true
     });
 
-    const passTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote for") : "Voting requires reputation in " + daoName;
-    const failTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote against") : "Voting requires reputation in " + daoName;
+    const passTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote for") : "Voting requires reputation in " + dao.name;
+    const failTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote against") : "Voting requires reputation in " + dao.name;
 
     return (
       <div className={wrapperClass}>
+        {this.state.showPreVoteModal ?
+          <PreTransactionModal
+            actionType={this.state.currentVote == 1 ? 'upvote' : 'downvote'}
+            action={voteOnProposal.bind(null, proposal.daoAvatarAddress, proposal, this.state.currentVote)}
+            closeAction={this.closePreVoteModal.bind(this)}
+            dao={dao}
+            effectText={<span>Your influence: <strong>{currentAccountReputationPercentage.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}% ({currentAccountReputation.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) Reputation</strong></span>}
+            proposal={proposal}
+          /> : ""
+        }
+
         <div className={css.loading}>
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
@@ -151,15 +171,15 @@ export default class VoteBox extends React.Component<IProps, IState> {
                     <div className={css.turnoutStats}>
                       <span className={css.forLabel}>
                         <ReputationView
-                          daoName={daoName}
-                          totalReputation={daoTotalReputation}
+                          daoName={dao.name}
+                          totalReputation={dao.reputationCount}
                           reputation={proposal.votesYes}
                         /> for
                       </span>
                       <span className={css.againstLabel}>
                         <ReputationView
-                          daoName={daoName}
-                          totalReputation={daoTotalReputation}
+                          daoName={dao.name}
+                          totalReputation={dao.reputationCount}
                           reputation={proposal.votesNo}
                         /> against
                       </span>
@@ -171,9 +191,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
                     </div>
                     <div className={css.reputationThreshold}>
                       <ReputationView
-                        daoName={daoName}
-                        totalReputation={daoTotalReputation}
-                        reputation={daoTotalReputation / 2}
+                        daoName={dao.name}
+                        totalReputation={dao.reputationCount}
+                        reputation={dao.reputationCount / 2}
                       /> NEEDED FOR DECISION BY VOTE
                     </div>
                   </div>

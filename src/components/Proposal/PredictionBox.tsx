@@ -8,13 +8,16 @@ import { Modal } from 'react-router-modal';
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import PreTransactionModal from "components/Shared/PreTransactionModal";
 
 import * as css from "./Proposal.scss";
 
 interface IState {
+  pendingPrediction: number;
   showStakeModal: number;
   showApproveModal: boolean;
+  showPreStakeModal: boolean;
   stakeAmount: number;
 }
 
@@ -23,7 +26,7 @@ interface IProps {
   currentStake: number;
   currentAccountGens: number;
   currentAccountGenStakingAllowance: number;
-  daoAddress: string;
+  dao: IDaoState;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   approveStakingGens: typeof web3Actions.approveStakingGens;
@@ -38,8 +41,10 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
+      pendingPrediction: null,
       showStakeModal: 0,
       showApproveModal: false,
+      showPreStakeModal: false,
       stakeAmount: 0
     };
   }
@@ -61,16 +66,19 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     this.setState({ showStakeModal: 0 });
   }
 
+  public closePreStakeModal(event: any) {
+    this.setState({ showPreStakeModal: false });
+  }
+
   public handleClickStake(prediction: number, stake: number, event: any) {
     const { proposal, stakeProposal } = this.props;
     const { stakeAmount } = this.state;
-    this.setState({ showStakeModal: 0 });
-    stakeProposal(proposal.daoAvatarAddress, proposal.proposalId, prediction, Number(stakeAmount));
+    this.setState({ pendingPrediction: prediction, showStakeModal: 0, showPreStakeModal: true });
   }
 
   public handleClickPreApprove(event: any) {
     const { approveStakingGens } = this.props;
-    approveStakingGens(this.props.daoAddress);
+    approveStakingGens(this.props.dao.avatarAddress);
     this.setState({ showApproveModal: false });
   }
 
@@ -80,12 +88,14 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       currentStake,
       currentAccountGens,
       currentAccountGenStakingAllowance,
+      dao,
       proposal,
       transactionState,
       isPredictingFail,
-      isPredictingPass
+      isPredictingPass,
+      stakeProposal
     } = this.props;
-    const { showApproveModal, showStakeModal } = this.state;
+    const { pendingPrediction, showApproveModal, showPreStakeModal, showStakeModal, stakeAmount } = this.state;
 
     if (showApproveModal) {
       return (
@@ -157,6 +167,16 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     return (
       <div className={wrapperClass}>
+        {showPreStakeModal ?
+          <PreTransactionModal
+            actionType={pendingPrediction == VoteOptions.Yes ? 'stakePass' : 'stakeFail'}
+            action={stakeProposal.bind(null, proposal.daoAvatarAddress, proposal.proposalId, stakeAmount, Number(stakeAmount))}
+            closeAction={this.closePreStakeModal.bind(this)}
+            dao={dao}
+            effectText={<span>Prediction amount: {stakeAmount} GENs<br/>You are predicting the proposal will be {pendingPrediction == VoteOptions.Yes ? "accepted" : "rejected"} by the DAO</span>}
+            proposal={proposal}
+          /> : ""
+        }
         <div className={css.loading}>
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
@@ -175,13 +195,13 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               ref={(input) => { this.stakeInput = input; }}
               className={css.predictionAmount}
               onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
-              value={this.state.stakeAmount}
+              value={stakeAmount}
             />
             <span className={css.genLabel}>GEN</span>
           </div>
           <div className={css.clearfix}>
             {
-              this.state.stakeAmount <= 0 || this.state.stakeAmount > currentAccountGens ?
+              stakeAmount <= 0 || stakeAmount > currentAccountGens ?
                 <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
                   <button
                     className={classNames({[css.placePrediction]: true, [css.disabled]: true})}
@@ -190,7 +210,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                     Place stake
                   </button>
                 </Tooltip> :
-                <button className={css.placePrediction}onClick={this.handleClickStake.bind(this, showStakeModal)}>
+                <button className={css.placePrediction} onClick={this.handleClickStake.bind(this, showStakeModal)}>
                   Place stake
                 </button>
             }
