@@ -401,12 +401,13 @@ a.navItem:hover {
 
 .boostedContainer, .regularContainer {
   position: relative;
+  margin-top: 20px;
 }
 
 .proposalsHeader {
   font-size: $subheader;
   position: relative;
-  padding-top: 40px;
+  padding-top: 20px;
   padding-bottom: 10px;
   color: $black-halftone;
   font-weight: $bold;
@@ -506,8 +507,8 @@ a.navItem:hover {
   .accessTour {
     position: absolute;
     z-index: 100;
-    right: 66px;
-    top: 61px;
+    right: 65px;
+    top: 77px;
 
     button {
       position: absolute;
@@ -605,6 +606,15 @@ a.navItem:hover {
   }
 }
 
+@media only screen and (min-width: 645px) {
+  .tourModal {
+    .accessTour {    
+      right: 66px;
+      top: 61px;
+    }
+  }
+}
+
 @media only screen and (min-width: 768px) {
   .wrapper {
     max-width: $max-width;
@@ -627,7 +637,7 @@ a.navItem:hover {
 }
 
 
-@media only screen and (min-width: 1130px) {
+@media only screen and (min-width: 1127px) {
   .tourModal {
     .accessTour {
       top: 47px;

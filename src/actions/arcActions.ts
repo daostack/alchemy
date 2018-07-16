@@ -28,7 +28,7 @@ import * as schemas from "../schemas";
 import BigNumber from "bignumber.js";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
-import { ExecutionState } from "@daostack/arc.js";
+import { ExecutionState, GenesisProtocolFactory } from "@daostack/arc.js";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 
 export function loadCachedState() {
@@ -619,6 +619,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       dispatch(push("/dao/" + daoAvatarAddress));
 
       await contributionRewardInstance.proposeContributionReward({
+        title,
         avatar: daoAvatarAddress,
         beneficiaryAddress,
         description,
@@ -627,7 +628,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         numberOfPeriods: 1,
         periodLength: 1,
         reputationChange: Util.toWei(reputationReward),
-      });
+      } as any);
 
     } catch (err) {
       console.error(err);
@@ -1065,7 +1066,6 @@ export function onReputationChangeEvent(avatarAddress: string, address: string) 
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     const proposal = getState().arc.proposals[proposalId];
-
     dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
       payload: {

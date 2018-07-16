@@ -29,6 +29,7 @@ export interface IOperation {
   status: OperationStatus;
   functionName: string;
   options: any;
+  proposalTitle?: string;
 }
 
 export interface IOperationsState {
@@ -78,7 +79,7 @@ const errorType = (error: Error) => {
     return OperationError.Canceled;
   } else if (message.includes('revert')) {
     return OperationError.Reverted;
-  } else if (message.includes('out of gas')) {
+  } else if (message.includes('out of gas') || message.includes('base fee exceeds gas limit')) {
     return OperationError.OutOfGas;
   } else {
     return error.message;
@@ -100,6 +101,11 @@ export const operationsTracker: Middleware =
       // discard the `txEventContext` property since it's not serializable and irelevent.
       const {txEventContext: _,  ...options} = info.options;
 
+      let proposalTitle = options.title;
+      if (options.proposalId) {
+        proposalTitle = (getState() as any as IRootState).arc.proposals[options.proposalId].title;
+      }
+
       dispatch({
         type: 'Operations/Update',
         payload: {
@@ -115,6 +121,7 @@ export const operationsTracker: Middleware =
                 OperationStatus.Started,
             functionName,
             options,
+            proposalTitle
           }
         }
       } as IUpdateOperation)
@@ -131,7 +138,7 @@ export const operationsTracker: Middleware =
         if (payload) {
           const state = payload.operations as IOperationsState
           Object.keys(state).forEach(async (id: string) => {
-            if (state[id].status && state[id].status === OperationStatus.Sent) {
+            if (state[id].status && state[id].status === OperationStatus.Sent && !state[id].error) {
               try {
                 const receipt = await Arc.TransactionService.watchForMinedTransaction(state[id].txHash);
                 dispatch({
@@ -144,6 +151,7 @@ export const operationsTracker: Middleware =
                   }
                 } as IUpdateOperation);
               } catch (e) {
+                console.error(e)
                 dispatch({
                   type: 'Operations/Update',
                   payload: {

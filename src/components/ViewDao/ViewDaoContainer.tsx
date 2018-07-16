@@ -94,7 +94,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
-  public executeProposalEventWatcher: Arc.EventFetcher<Arc.GenesisProtocolExecuteProposalEventResult>;
+  public executeProposalEventWatcher: Arc.EntityFetcher<Arc.ExecutedGenesisProposal, Arc.ExecuteProposalEventResult>;
   public balanceWatcher: any;
   public transferEventWatcher: any;
   public mintEventWatcher: any;
@@ -159,7 +159,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
-      onStakeEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
+      onStakeEvent(daoAddress, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
     });
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: "latest" });
@@ -182,10 +182,10 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       onReputationChangeEvent(daoAddress, result.args._from);
     });
 
-    this.executeProposalEventWatcher = votingMachineInstance.ExecuteProposal({}, { fromBlock: "latest" });
+    this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: "latest" });
     this.executeProposalEventWatcher.watch((error, result) => {
-      const { _proposalId, _executionState, _decision, _totalReputation } = result.args;
-      onProposalExecuted(daoAddress, _proposalId, Number(_executionState), Number(_decision), Util.fromWei(_totalReputation).toNumber());
+      const { proposalId, decision, totalReputation, executionState } = result;
+      onProposalExecuted(daoAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation).toNumber());
     });
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
@@ -295,13 +295,13 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
         },
         {
           target: "." + proposalCss.voteControls,
-          content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), You will be rewarded with reputation and GEN.",
+          content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), you will be rewarded with reputation and GEN.",
           placement: "right",
           disableBeacon: true
         },
         {
           target: "." + css.regularContainer,
-          content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. If proposal closes (time runs out) before a regular proposal gets more than 50% yes votes, it will fail.",
+          content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. In other words, you need 50% of all reputation to vote Yes on a regular proposal for it to pass.",
           placement: "top",
           disableBeacon: true
         },
