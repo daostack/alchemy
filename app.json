@@ -20,7 +20,8 @@
     },
     "S3_BUCKET": {
       "required": true
-    }
+    },
+    "NODE_ENV": "development"
   },
   "formation": {
     "web": {
