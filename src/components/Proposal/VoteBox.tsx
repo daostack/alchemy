@@ -46,7 +46,6 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public closePreVoteModal(event: any) {
-    console.log("closing");
     this.setState({ showPreVoteModal: false });
   }
 
