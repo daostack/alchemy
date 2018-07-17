@@ -74,13 +74,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   {effectText}
 
                     {/*
-                    <span>
-                      For {reward type}, you will receive:<br/>
-                      - {number of tokens or % of token if reputation} {type of token}<br/>
-                      - {number of tokens or % of token if reputation} {type of token}
-                    </span>
                     <span>Budget: {Proposal reputation requested %} % Rep and {Proposal ETH requested} ETH</span>
-                    <span>Prediction amount: {GEN} Gens<br/>You are predicting the proposal will be [accepted/rejected] by the DAO</span>
                      */}
                 </div>
               </div>

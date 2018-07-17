@@ -83,7 +83,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
   public handleClickRedeem(event: any) {
     const { currentAccountAddress, dao, proposal, redeemProposal } = this.props;
-    redeemProposal(dao.avatarAddress, proposal, currentAccountAddress);
+    this.setState({ preRedeemModalOpen: true });
   }
 
   public closePreRedeemModal(event: any) {
@@ -99,6 +99,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       dao,
       proposal,
       approveStakingGens,
+      redeemProposal,
       stakeProposal,
       voteOnProposal,
       isPredictingFail,
@@ -145,26 +146,55 @@ class ProposalContainer extends React.Component<IProps, IState> {
       }
 
       if (currentAccountRedemptions) {
-        redemptionsTip = <ul>
-          {currentAccountRedemptions.beneficiaryEth
-            ? <li>
-                Beneficiary reward: {currentAccountRedemptions.beneficiaryEth} ETH
-                {dao.ethCount < currentAccountRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
-              </li>
-            : ""}
-          {currentAccountRedemptions.beneficiaryReputation ? <li>Beneficiary reward: <ReputationView reputation={currentAccountRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
-          {currentAccountRedemptions.proposerReputation ? <li>Proposer reward: <ReputationView reputation={currentAccountRedemptions.proposerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
-          {currentAccountRedemptions.voterReputation ? <li>Voter reward: <ReputationView reputation={currentAccountRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
-          {currentAccountRedemptions.voterTokens ? <li>Voter reward: {currentAccountRedemptions.voterTokens} GEN</li> : ""}
-          {currentAccountRedemptions.stakerTokens ? <li>Prediction reward: {currentAccountRedemptions.stakerTokens} GEN</li> : ""}
-          {currentAccountRedemptions.stakerBountyTokens
-            ? <li>
-                Prediction bounty: {currentAccountRedemptions.stakerBountyTokens} GEN
-                {dao.genCount < currentAccountRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
-              </li>
-            : ""}
-          {currentAccountRedemptions.stakerReputation ? <li>Prediction reward: <ReputationView reputation={currentAccountRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
-        </ul>;
+        redemptionsTip =
+          <div>
+            {currentAccountRedemptions.beneficiaryEth || currentAccountRedemptions.beneficiaryReputation ?
+              <div>
+                <strong>As beneficiary of the proposal you will receive: </strong>
+                <ul>
+                  {currentAccountRedemptions.beneficiaryEth ?
+                    <li>
+                      {currentAccountRedemptions.beneficiaryEth} ETH
+                      {dao.ethCount < currentAccountRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
+                    </li> : ""
+                  }
+                  {currentAccountRedemptions.beneficiaryReputation ? <li><ReputationView reputation={currentAccountRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+                </ul>
+              </div> : ""
+            }
+            {currentAccountRedemptions.proposerReputation ?
+              <div>
+                <strong>For creating the proposal you will receive:</strong>
+                <ul>
+                  <li><ReputationView reputation={currentAccountRedemptions.proposerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li>
+                </ul>
+              </div> : ""
+            }
+            {currentAccountRedemptions.voterReputation || currentAccountRedemptions.voterTokens ?
+              <div>
+                <strong>For voting on the proposal you will receive:</strong>
+                <ul>
+                  {currentAccountRedemptions.voterReputation ? <li><ReputationView reputation={currentAccountRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+                  {currentAccountRedemptions.voterTokens ? <li>{currentAccountRedemptions.voterTokens} GEN</li> : ""}
+                </ul>
+              </div> : ""
+            }
+            {currentAccountRedemptions.stakerTokens || currentAccountRedemptions.stakerBountyTokens || currentAccountRedemptions.stakerReputation ?
+              <div>
+                <strong>For staking on the proposal you will receive:</strong>
+                <ul>
+                  {currentAccountRedemptions.stakerTokens ? <li>{currentAccountRedemptions.stakerTokens} GEN</li> : ""}
+                  {currentAccountRedemptions.stakerBountyTokens ?
+                    <li>
+                      {currentAccountRedemptions.stakerBountyTokens} GEN bounty
+                      {dao.genCount < currentAccountRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
+                    </li> : ""
+                  }
+                  {currentAccountRedemptions.stakerReputation ? <li><ReputationView reputation={currentAccountRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+                </ul>
+              </div> : ""
+            }
+          </div>;
       }
 
       let rewards = [];
@@ -340,6 +370,17 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </div>
             : proposalEnded(proposal) ?
               <div>
+                {this.state.preRedeemModalOpen ?
+                  <PreTransactionModal
+                    actionType='redeem'
+                    action={redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccountAddress)}
+                    closeAction={this.closePreRedeemModal.bind(this)}
+                    dao={dao}
+                    effectText={redemptionsTip}
+                    proposal={proposal}
+                  /> : ""
+                }
+
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
                   { currentAccountRedemptions
                     ? <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
