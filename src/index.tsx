@@ -11,7 +11,7 @@ async function renderApp() {
   try {
     Arc.ConfigService.set("estimateGas", true);
     await Arc.InitializeArcJs();
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV !== 'production') {
       Arc.LoggingService.logLevel = Arc.LogLevel.all;
     }
 

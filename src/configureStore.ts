@@ -24,15 +24,15 @@ const middlewares = [
 
 const store = createStore(
   reducers,
-  process.env.NODE_ENV === 'development' ?
+  process.env.NODE_ENV === 'production' ?
+    applyMiddleware(
+      ...middlewares
+    ) :
     composeWithDevTools(   // makes the store available to the Chrome redux dev tools
       applyMiddleware(
         ...middlewares,
         loggerMiddleware,
       ),
-    ) :
-    applyMiddleware(
-      ...middlewares
     )
 );
 
