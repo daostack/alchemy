@@ -72,10 +72,6 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 </div>
                 <div className={css.transactionEffect}>
                   {effectText}
-
-                    {/*
-                    <span>Budget: {Proposal reputation requested %} % Rep and {Proposal ETH requested} ETH</span>
-                     */}
                 </div>
               </div>
               <div className={css.closeTransactionContainer}>
