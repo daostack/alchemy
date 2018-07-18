@@ -82,71 +82,43 @@ export default class PreTransactionModal extends React.Component<IProps> {
             </div>
             <div className={css.incentives}>
               <span className={css.outcomes}>OUTCOMES</span>
-              <span className={css.passIncentive}><strong>PASS</strong> <span>YOU GAIN GEN & REPUTATION</span></span>
-              {/* 
-
-              PASS CONDITIONS:
-
-              Action
-              Copy
-
-              ----
-
-              Voting up a regular proposal
-              YOU GAIN GEN & REPUTATION
-
-              Voting up a boosted proposal
-              NO REWARDS
-
-              Vote down a regular proposal
-              LOSE 1% YOUR REPUTATION
-
-              Vote down a boosted proposal
-              NO REWARDS
-
-              Propose
-              GAIN REPUTATION & [if target of proposal, list token and reputation]
-
-              Stake up regular proposal
-              YOU GAIN GEN AND REPUTATION
-
-              Stake down a regular proposal
-              NO REWARDS & LOSE YOUR STAKE
-
-              */}
-              <span className={css.failIncentive}><strong>FAIL</strong> <span>YOU GAIN GEN</span></span>
-
-              {/*
-
-              FAIL CONDITIONS:
-
-              Action
-              Copy
-
-              ----
-
-              Voting up a regular proposal
-              LOSE 1% OF YOUR REPUTATION
-
-              Voting up a boosted proposal
-              NO REWARDS
-
-              Vote down a regular proposal
-              GAIN GEN
-
-              Vote down a boosted proposal
-              NO REWARDS
-
-              Propose
-              NO REWARDS
-
-              Stake up regular proposal
-              NO REWARDS & LOSE YOUR STAKE
-
-              Stake down a regular proposal
-              YOU GAIN GEN AND REPUTATION
-
-              */}
+              <span className={css.passIncentive}>
+                <strong>PASS</strong>
+                  { actionType == 'upvote' && proposal.state == ProposalStates.PreBoosted ? 
+                    <span>YOU GAIN GEN & REPUTATION</span>
+                  : actionType == 'upvote' && proposal.state == ProposalStates.Boosted ?
+                    <span>NO REWARDS</span>
+                  : actionType == 'downvote' && proposal.state == ProposalStates.PreBoosted ?
+                    <span>LOSE 1% YOUR REPUTATION</span>
+                  : actionType == 'downvote' && proposal.state == ProposalStates.Boosted ?
+                    <span>NO REWARDS</span>
+                  : actionType == 'createProposal' ?
+                    <span>GAIN REPUTATION & [if target of proposal, list token and reputation]</span>
+                  : actionType == 'stakePass' ?
+                    <span>YOU GAIN GEN AND REPUTATION</span>
+                  : actionType == 'stakeFail' ?
+                    <span>NO REWARDS & LOSE YOUR STAKE</span>
+                  : ""}
+              </span>
+              <span className={css.failIncentive}>
+                <strong>FAIL</strong>
+                { actionType == 'upvote' && proposal.state == ProposalStates.PreBoosted ?
+                    <span>LOSE 1% OF YOUR REPUTATION</span>
+                  : actionType == 'upvote' && proposal.state == ProposalStates.Boosted ?
+                    <span>NO REWARDS</span>
+                  : actionType == 'downvote' && proposal.state == ProposalStates.PreBoosted ?
+                    <span>GAIN GEN</span>
+                  : actionType == 'downvote' && proposal.state == ProposalStates.Boosted ?
+                    <span>NO REWARDS</span>
+                  : actionType == 'createProposal' ?
+                    <span>NO REWARDS</span>
+                  : actionType == 'stakePass' ?
+                    <span>NO REWARDS & LOSE YOUR STAKE</span>
+                  : actionType == 'stakeFail' ?
+                    <span>YOU GAIN GEN AND REPUTATION</span>
+                  : ""
+                }
+              </span>
               <span className={css.help}>
                 <img src="/assets/images/Icon/Help.svg"/>
                 <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
@@ -159,41 +131,30 @@ export default class PreTransactionModal extends React.Component<IProps> {
                     <h3>RULES FOR YES VOTES</h3>
                   </div>                
                   <div className={css.body}>
+                    { actionType == 'upvote' || actionType == 'downvote' ?
+                        <div>
+                          <p>When you vote, 1% of your reputation is taken away for the duration of the vote. If you vote for something to pass and it does, you gain reputation in addition to the reputation you lost.</p>
 
-                    {/*
+                          <p>If you vote for something to pass and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
 
-                    HELP TEXT:
+                          <p>If you vote for something to fail and it does, you will be given a portionof whatever GEN have been staked on the proposal.</p>
 
-                    ACTION
-                    Copy
+                          <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
+                        </div>
+                      : actionType == 'stakePass' || actionType == 'stakeFail' ?
+                        <div>
+                          <p>When you place a stake, GEN are taken from your wallet and held in a smart contract for the duration of the vote. If your stake is correct, you receive your GEN + a portion of whatever has been staked on the incorrect outcome.</p>
 
-                    ----
+                          <p>If your stake is correct, you will also receive reputation within the DAO.</p>
+                        </div>
+                      : actionType == 'createProposal' ?
+                        <div>
+                          <p>If a proposal you submit passes, you will be awarded reputation. If you are also the benificiary of the proposal, when the proposal passes the allocated tokens will be given to you.</p>
 
-                    VOTING UP A REGULAR PROPOSAL, VOTING DOWN A REGULAR PROPOSAL, VOTING ON BOOSTED PROPOSALS
-                    
-                    <p>When you vote, 1% of your reputation is taken away for the duration of the vote. If you vote for something to pass and it does, you gain reputation in addition to the reputation you lost.</p>
-
-                    <p>If you vote for something to pass and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
-
-                    <p>If you vote for something to fail and it does, you will be given a portionof whatever GEN have been staked on the proposal.</p>
-
-                    <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
-
-                    STAKING UP OR DOWN
-
-                    <p>When you place a stake, GEN are taken from your wallet and held in a smart contract for the duration of the vote. If your stake is correct, you receive your GEN+ a portion of whatever has been staked on the incorrect outcome.</p>
-
-                    <p>If your stake is correct, you will also receive reputation within the DAO.</p>
-
-                    PROPOSING
-
-                    <p>If a proposal you submit passes, you will be awarded reputation. If you are also the benificiary of the proposal, when the proposal passes the allocated tokens will be given to you.
-
-                    <p>If a proposal you submit fails, you do not lose anything.</p>
-
-                    */}
-
-
+                          <p>If a proposal you submit fails, you do not lose anything.</p>
+                        </div>
+                      : ""
+                    }
                   </div>
                   <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk">View the Gensis Protocol</a>
                 </div>
