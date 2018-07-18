@@ -40,7 +40,7 @@
     }
   },
   "scripts": {
-    "cache-arc": "ts-node src/bg_cache_worker.ts",
+    "cache-arc": "cross-env NODE_ENV=development ts-node src/bg_cache_worker.ts",
     "cache-arc-prod": "cross-env NODE_ENV=production ts-node src/bg_cache_worker.ts",
     "build": "webpack --config webpack.prod.config.js",
     "heroku-postbuild": "npm run build",
@@ -54,7 +54,7 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "start": "webpack-dev-server --config webpack.dev.config.js",
-    "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
+    "start-prod": "webpack-dev-server --config webpack.prod.config.js",
     "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start-ganache\""
   },
   "dependencies": {
