@@ -159,12 +159,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
-      onStakeEvent(daoAddress, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
+      onStakeEvent(daoAddress, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount));
     });
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: "latest" });
     this.voteEventWatcher.watch((error, result) => {
-      onVoteEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation).toNumber());
+      onVoteEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation));
     });
 
     this.transferEventWatcher = daoInstance.token.Transfer({}, { fromBlock: "latest" });
@@ -185,7 +185,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: "latest" });
     this.executeProposalEventWatcher.watch((error, result) => {
       const { proposalId, decision, totalReputation, executionState } = result;
-      onProposalExecuted(daoAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation).toNumber());
+      onProposalExecuted(daoAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation));
     });
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
@@ -194,9 +194,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     this.balanceWatcher = web3.eth.filter('latest');
     this.balanceWatcher.watch(async (err: any, res: any) => {
       if (!err && res) {
-        const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAddress)).toNumber();
+        const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAddress));
         onDAOEthBalanceChanged(daoAddress, newEthBalance);
-        const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAddress)).toNumber();
+        const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAddress));
         onDAOGenBalanceChanged(daoAddress, newGenBalance);
       }
     })
