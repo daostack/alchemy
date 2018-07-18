@@ -28,6 +28,7 @@ interface IState {
 }
 
 interface IStateProps {
+  currentAccount: string;
   dao: IDaoState;
   daoAddress: string;
   history: H.History;
@@ -36,6 +37,7 @@ interface IStateProps {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
+    currentAccount: state.web3.ethAccountAddress,
     dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
     daoAddress : ownProps.match.params.daoAddress,
     history: ownProps.history,
@@ -111,7 +113,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { createProposal, dao } = this.props;
+    const { createProposal, currentAccount, dao } = this.props;
     const { beneficiaryAddress, description, ethReward, externalTokenReward, nativeTokenReward, reputationChange, title } = this.state.proposalDetails;
 
     if (!dao) {
@@ -129,6 +131,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
             actionType='createProposal'
             action={createProposal.bind(null, dao.avatarAddress, title, description, nativeTokenReward, reputationChange, ethReward, beneficiaryAddress)}
             closeAction={this.closePreTransactionModal.bind(this)}
+            currentAccount={currentAccount}
             dao={dao}
             effectText={<span>Budget: <ReputationView reputation={reputationChange} totalReputation={dao.reputationCount} daoName={dao.name}/> and {ethReward} ETH</span>}
             proposal={this.state.proposalDetails}

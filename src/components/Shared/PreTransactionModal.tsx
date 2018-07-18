@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Modal } from 'react-router-modal';
 
 import * as arcActions from "actions/arcActions";
-import { IDaoState, IProposalState, ProposalStates, proposalEnded } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, proposalEnded, proposalRewardsString } from "reducers/arcReducer";
 
 import * as css from "./PreTransactionModal.scss";
 
@@ -14,6 +14,7 @@ interface IProps {
   action: any;
   actionType: string;
   closeAction: any;
+  currentAccount?: string;
   dao: IDaoState;
   effectText: JSX.Element;
   proposal: IProposalState;
@@ -27,12 +28,13 @@ export default class PreTransactionModal extends React.Component<IProps> {
   }
 
   public render() {
-    const { actionType, dao, effectText, proposal } = this.props;
+    const { actionType, currentAccount, dao, effectText, proposal } = this.props;
 
     const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
     const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
     const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
 
+    // TODO: fix
     const styles = {
       forBar: {
         width: yesPercentage + "%",
@@ -75,7 +77,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 </div>
               </div>
               <div className={css.closeTransactionContainer}>
-                <button>
+                <button onClick={this.props.closeAction}>
                   <img src="/assets/images/Tx/Close.svg"/>
                 </button>
               </div>
@@ -84,8 +86,8 @@ export default class PreTransactionModal extends React.Component<IProps> {
               <span className={css.outcomes}>OUTCOMES</span>
               <span className={css.passIncentive}>
                 <strong>PASS</strong>
-                  { actionType == 'upvote' && proposal.state == ProposalStates.PreBoosted ? 
-                    <span>YOU GAIN GEN & REPUTATION</span>
+                  { actionType == 'upvote' && proposal.state == ProposalStates.PreBoosted ?
+                    <span>YOU GAIN GEN &amp; REPUTATION</span>
                   : actionType == 'upvote' && proposal.state == ProposalStates.Boosted ?
                     <span>NO REWARDS</span>
                   : actionType == 'downvote' && proposal.state == ProposalStates.PreBoosted ?
@@ -93,11 +95,11 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   : actionType == 'downvote' && proposal.state == ProposalStates.Boosted ?
                     <span>NO REWARDS</span>
                   : actionType == 'createProposal' ?
-                    <span>GAIN REPUTATION & [if target of proposal, list token and reputation]</span>
+                    <span>{currentAccount == proposal.beneficiaryAddress ? `GAIN REPUTATION & REWARDS OF ${proposalRewardsString(proposal).toUpperCase()}`: "GAIN REPUTATION"}</span>
                   : actionType == 'stakePass' ?
                     <span>YOU GAIN GEN AND REPUTATION</span>
                   : actionType == 'stakeFail' ?
-                    <span>NO REWARDS & LOSE YOUR STAKE</span>
+                    <span>NO REWARDS &amp; LOSE YOUR STAKE</span>
                   : ""}
               </span>
               <span className={css.failIncentive}>
@@ -113,7 +115,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   : actionType == 'createProposal' ?
                     <span>NO REWARDS</span>
                   : actionType == 'stakePass' ?
-                    <span>NO REWARDS & LOSE YOUR STAKE</span>
+                    <span>NO REWARDS &amp; LOSE YOUR STAKE</span>
                   : actionType == 'stakeFail' ?
                     <span>YOU GAIN GEN AND REPUTATION</span>
                   : ""
@@ -129,28 +131,23 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   <div className={css.header}>
                     <h2>Genesis Protocol</h2>
                     <h3>RULES FOR YES VOTES</h3>
-                  </div>                
+                  </div>
                   <div className={css.body}>
                     { actionType == 'upvote' || actionType == 'downvote' ?
                         <div>
                           <p>When you vote, 1% of your reputation is taken away for the duration of the vote. If you vote for something to pass and it does, you gain reputation in addition to the reputation you lost.</p>
-
                           <p>If you vote for something to pass and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
-
                           <p>If you vote for something to fail and it does, you will be given a portionof whatever GEN have been staked on the proposal.</p>
-
                           <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
                         </div>
                       : actionType == 'stakePass' || actionType == 'stakeFail' ?
                         <div>
                           <p>When you place a stake, GEN are taken from your wallet and held in a smart contract for the duration of the vote. If your stake is correct, you receive your GEN + a portion of whatever has been staked on the incorrect outcome.</p>
-
                           <p>If your stake is correct, you will also receive reputation within the DAO.</p>
                         </div>
                       : actionType == 'createProposal' ?
                         <div>
                           <p>If a proposal you submit passes, you will be awarded reputation. If you are also the benificiary of the proposal, when the proposal passes the allocated tokens will be given to you.</p>
-
                           <p>If a proposal you submit fails, you do not lose anything.</p>
                         </div>
                       : ""

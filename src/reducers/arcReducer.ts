@@ -217,6 +217,17 @@ export function proposalFailed(proposal: IProposalState) {
   return res;
 }
 
+export function proposalRewardsString(proposal: IProposalState) {
+  let rewards = [];
+  if (proposal.ethReward) {
+    rewards.push(`${proposal.ethReward} ETH`);
+  }
+  if (proposal.reputationChange) {
+    rewards.push(`${proposal.reputationChange} Reputation`);
+  }
+  return rewards.join("&");
+}
+
 const arcReducer = (state = initialState, action: any) => {
   const { payload } = action;
 
