@@ -95,7 +95,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   : actionType == 'downvote' && proposal.state == ProposalStates.Boosted ?
                     <span>NO REWARDS</span>
                   : actionType == 'createProposal' ?
-                    <span>{currentAccount == proposal.beneficiaryAddress ? `GAIN REPUTATION & REWARDS OF ${proposalRewardsString(proposal).toUpperCase()}`: "GAIN REPUTATION"}</span>
+                    <span>{currentAccount == proposal.beneficiaryAddress ? `GAIN REPUTATION & REWARDS OF ${proposalRewardsString(proposal).toUpperCase()}` : "GAIN REPUTATION"}</span>
                   : actionType == 'stakePass' ?
                     <span>YOU GAIN GEN AND REPUTATION</span>
                   : actionType == 'stakeFail' ?
