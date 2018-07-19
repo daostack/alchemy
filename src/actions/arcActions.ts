@@ -1065,7 +1065,6 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
         reputationWhenExecuted
       }
     })
-    showNotification(NotificationStatus.Success, `Proposal '${proposal.title}' Executed!`)(dispatch);
   }
 }
 
