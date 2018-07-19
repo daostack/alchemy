@@ -992,15 +992,15 @@ export function onRedeemEvent(avatarAddress: string, proposalId: string) {
       // TODO: need to do this? this will be seen by the transfer events as well
       beneficiary: {
         address: beneficiaryAddress,
-        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(beneficiaryAddress)).toNumber(),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(beneficiaryAddress)).toNumber(),
+        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(beneficiaryAddress)),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(beneficiaryAddress)),
       },
       // Update DAO total reputation and tokens
       //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
       dao: {
         avatarAddress,
-        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()).toNumber(),
-        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()).toNumber(),
+        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
+        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
       },
     };
 
