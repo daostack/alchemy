@@ -87,7 +87,7 @@ module.exports = merge(baseConfig, {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('development'),
-        'S3_BUCKET': JSON.stringify(process.env.S3_BUCKET || "daostack-alchemy-staging"),
+        'S3_BUCKET': JSON.stringify(process.env.S3_BUCKET || "daostack-alchemy"),
         'API_URL': JSON.stringify(process.env.API_URL || "http://127.0.0.1:3001"),
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "http://localhost:3000")
       }
