@@ -1,6 +1,6 @@
 import { Action, Dispatch, Middleware } from 'redux';
 import * as moment from 'moment';
-import { isOperationsAction, OperationStatus, OperationError, IOperationsState, IOperation } from './operations';
+import { isOperationsAction, OperationStatus, OperationError, IOperationsState, IOperation, dismissOperation, IUpdateOperation } from './operations';
 import { IRootState } from 'reducers';
 import { VoteOptions } from 'reducers/arcReducer';
 import BigNumber from 'bignumber.js';
@@ -166,7 +166,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'GenesisProtocol.vote': (proposalTitle, {vote, proposalId}: Arc.VoteOptions) =>
     `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${elipsis(proposalTitle, 22)}`,
   'GenesisProtocol.stake': (proposalTitle, {vote, proposalId, amount}: Arc.StakeConfig) =>
-    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN`,
+    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount))} GEN`,
   'GenesisProtocol.execute': (proposalTitle, {proposalId}: Arc.ProposalIdOption) =>
     `Exeuting "${elipsis(proposalTitle, 22)}"`,
   'GenesisProtocol.redeem': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
@@ -180,7 +180,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'DAO.new': (proposalTitle, {}: Arc.NewDaoConfig) =>
     `Creating a new DAO`,
   'StandardToken.approve': (proposalTitle, {amount}: Arc.StandardTokenApproveOptions) =>
-    `Approving ${Util.fromWei(new BigNumber(amount)).toNumber()} GEN for staking`
+    `Approving ${Util.fromWei(new BigNumber(amount))} GEN for staking`
 }
 
 /**
@@ -242,7 +242,7 @@ export const notificationUpdater: Middleware =
         if (a.payload) {
           const operations = a.payload.operations as IOperationsState;
           Object.keys(operations).forEach((id) => {
-            if (operations[id].status === OperationStatus.Sent && !operations[id].error) {
+            if (operations[id].status === OperationStatus.Sent || operations[id].error) {
               transaction2Notification(network, id, operations[id]);
             }
           })
@@ -250,8 +250,14 @@ export const notificationUpdater: Middleware =
       }
 
       if (isOperationsAction(action) && action.type === 'Operations/Update') {
-        const {id, operation} = action.payload;
+        const {payload: {id, operation}} = action as IUpdateOperation;
         transaction2Notification(network, id, operation)
+      }
+
+      // also dismiss the corrosponding operation if it exists.
+      if (isNotificationsAction(action) && action.type === 'Notifications/Dismiss') {
+        const {payload: {id}} = action as IDismissNotification;
+        dismissOperation(action.payload.id)(dispatch);
       }
 
       return next(action);
