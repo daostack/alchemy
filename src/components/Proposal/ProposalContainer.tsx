@@ -90,14 +90,31 @@ class ProposalContainer extends React.Component<IProps, null> {
       isVotingYes
     } = this.props;
 
+    const redeemable = currentAccountRedemptions && (
+      currentAccountRedemptions.beneficiaryReputation ||
+      currentAccountRedemptions.beneficiaryNativeToken ||
+      currentAccountRedemptions.proposerReputation ||
+      currentAccountRedemptions.stakerReputation ||
+      currentAccountRedemptions.stakerTokens ||
+      currentAccountRedemptions.voterReputation ||
+      currentAccountRedemptions.voterTokens ||
+      (currentAccountRedemptions.beneficiaryEth && dao.ethCount >= currentAccountRedemptions.beneficiaryEth) ||
+      (currentAccountRedemptions.stakerBountyTokens && dao.genCount >= currentAccountRedemptions.stakerBountyTokens)
+    ) as boolean;
+
     if (proposal) {
       const proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: !!currentAccountRedemptions,
+        [css.redeemable]: redeemable,
         [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
+      });
+
+      const redeemRewards = classNames({
+        [css.redeemRewards]: true,
+        [css.disabled]: !redeemable,
       });
 
       const submittedTime = moment.unix(proposal.submittedTime);
@@ -327,7 +344,7 @@ class ProposalContainer extends React.Component<IProps, null> {
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
                   { currentAccountRedemptions
                     ? <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                        <button className={css.redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
+                        <button disabled={!redeemable} className={redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
                       </Tooltip>
                     : ""
                   }
