@@ -23,7 +23,7 @@ import Util from "./lib/util";
 require('dotenv').config();
 
 (async () => {
-  const arcjsNetwork = (await Arc.Utils.getNetworkName()).toLowerCase();
+  const arcjsNetwork = process.env.arcjs_network;
 
   if (process.env.NODE_ENV == 'production') {
     // Use Infura on production
