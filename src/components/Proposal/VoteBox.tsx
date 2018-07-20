@@ -110,7 +110,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
             action={voteOnProposal.bind(null, proposal.daoAvatarAddress, proposal, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
             dao={dao}
-            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={proposal.votesYes} /></strong></span>}
+            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccountReputation} /></strong></span>}
             proposal={proposal}
           /> : ""
         }
