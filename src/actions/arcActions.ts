@@ -936,7 +936,8 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
   accountAddress: string,
 }, {
   beneficiary: any,
-  dao: any
+  dao: any,
+  redemptions: IRedemptionState
 }>
 
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
@@ -974,8 +975,11 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 
 export function onRedeemEvent(avatarAddress: string, proposalId: string) {
   return async (dispatch: any, getState: () => IRootState) => {
+    const proposal = getState().arc.proposals[proposalId];
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const proposalDetails = await contributionRewardInstance.getVotableProposal(avatarAddress, proposalId);
     const beneficiaryAddress = proposalDetails.beneficiaryAddress;
@@ -1002,6 +1006,8 @@ export function onRedeemEvent(avatarAddress: string, proposalId: string) {
         reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
         tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
       },
+
+      redemptions: await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress)
     };
 
     dispatch({
