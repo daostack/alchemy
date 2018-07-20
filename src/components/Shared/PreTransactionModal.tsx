@@ -168,6 +168,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   <div className={css.header}>
                     <h2>Genesis Protocol</h2>
                     <h3>{rulesHeader}</h3>
+                  </div>                
                   </div>
                   <div className={css.body}>{rules}</div>
                   <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
