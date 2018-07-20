@@ -9,9 +9,9 @@ const Web3 = require("web3");
 
 export default class Util {
 
-  public static fromWei(amount: BigNumber): BigNumber {
+  public static fromWei(amount: BigNumber): number {
     const web3 = new Web3();
-    return web3.fromWei(amount, "ether");
+    return Number(web3.fromWei(amount, "ether"));
   }
 
   // TODO: should probably return a BigNumber instead of a string.

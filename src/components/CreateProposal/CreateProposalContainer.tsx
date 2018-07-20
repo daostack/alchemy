@@ -16,10 +16,10 @@ import * as css from "./CreateProposal.scss";
 
 import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
-import PreTransactionModal from "components/Shared/PreTransactionModal";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import ReputationView from "components/Account/ReputationView";
 
-import { Formik, Field } from 'formik';
+import { Formik, Field, FormikBag } from 'formik';
 import { proposalEnded } from "reducers/arcReducer";
 
 interface IState {
@@ -28,6 +28,7 @@ interface IState {
 }
 
 interface IStateProps {
+  currentAccount: string;
   dao: IDaoState;
   daoAddress: string;
   history: H.History;
@@ -36,6 +37,7 @@ interface IStateProps {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
+    currentAccount: state.web3.ethAccountAddress,
     dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
     daoAddress : ownProps.match.params.daoAddress,
     history: ownProps.history,
@@ -89,11 +91,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.web3 = await Arc.Utils.getWeb3();
   }
 
-  public handleSubmit(values: FormValues) {
+  public handleSubmit(values: FormValues, { props, setSubmitting, setErrors } : any ) {
     this.setState({
       preTransactionModalOpen: true,
       proposalDetails: { ...emptyProposal, ...values}
     });
+    setSubmitting(false);
   }
 
   public closePreTransactionModal() {
@@ -111,7 +114,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { createProposal, dao } = this.props;
+    const { createProposal, currentAccount, dao } = this.props;
     const { beneficiaryAddress, description, ethReward, externalTokenReward, nativeTokenReward, reputationChange, title } = this.state.proposalDetails;
 
     if (!dao) {
@@ -126,9 +129,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
       <div className={css.createProposalWrapper}>
         {this.state.preTransactionModalOpen ?
           <PreTransactionModal
-            actionType='createProposal'
+            actionType={ActionTypes.CreateProposal}
             action={createProposal.bind(null, dao.avatarAddress, title, description, nativeTokenReward, reputationChange, ethReward, beneficiaryAddress)}
             closeAction={this.closePreTransactionModal.bind(this)}
+            currentAccount={currentAccount}
             dao={dao}
             effectText={<span>Budget: <ReputationView reputation={reputationChange} totalReputation={dao.reputationCount} daoName={dao.name}/> and {ethReward} ETH</span>}
             proposal={this.state.proposalDetails}

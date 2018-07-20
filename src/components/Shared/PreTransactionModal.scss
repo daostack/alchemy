@@ -278,12 +278,16 @@
       background-color: rgba(56, 56, 56, 1.000);
       padding: 12px 0;
       color: $white;
+      position: relative;
+      padding-left: 80px;
 
       .transactionIcon {
         width: 80px;
         height: 60px;
-        float: left;
-        position: relative;
+        left: 0;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
 
         img {
           position: absolute;
@@ -354,6 +358,10 @@
         margin: 0;
         padding: 30px;
         font-size: $body;
+      }
+
+      a {
+        color: $accent-1;
       }
 
       .launchMetaMask {

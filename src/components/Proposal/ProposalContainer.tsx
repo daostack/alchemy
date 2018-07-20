@@ -13,7 +13,7 @@ import { isStakePending, isVotePending } from "selectors/operations";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import ReputationView from "components/Account/ReputationView";
-import PreTransactionModal from "components/Shared/PreTransactionModal";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
 
@@ -108,14 +108,31 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isVotingYes
     } = this.props;
 
+    const redeemable = currentAccountRedemptions && (
+      currentAccountRedemptions.beneficiaryReputation ||
+      currentAccountRedemptions.beneficiaryNativeToken ||
+      currentAccountRedemptions.proposerReputation ||
+      currentAccountRedemptions.stakerReputation ||
+      currentAccountRedemptions.stakerTokens ||
+      currentAccountRedemptions.voterReputation ||
+      currentAccountRedemptions.voterTokens ||
+      (currentAccountRedemptions.beneficiaryEth && dao.ethCount >= currentAccountRedemptions.beneficiaryEth) ||
+      (currentAccountRedemptions.stakerBountyTokens && dao.genCount >= currentAccountRedemptions.stakerBountyTokens)
+    ) as boolean;
+
     if (proposal) {
       const proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: !!currentAccountRedemptions,
+        [css.redeemable]: redeemable,
         [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
+      });
+
+      const redeemRewards = classNames({
+        [css.redeemRewards]: true,
+        [css.disabled]: !redeemable,
       });
 
       const submittedTime = moment.unix(proposal.submittedTime);
@@ -209,7 +226,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>)}</strong>;
+      const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>, '')}</strong>;
 
       const styles = {
         forBar: {
@@ -372,7 +389,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <div>
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
-                    actionType='redeem'
+                    actionType={ActionTypes.Redeem}
                     action={redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccountAddress)}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}
@@ -382,11 +399,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 }
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentAccountRedemptions
-                    ? <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                        <button className={css.redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
+                  { currentAccountRedemptions ?
+                      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+                        <button disabled={!redeemable} className={redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
                       </Tooltip>
-                    : ""
+                    :
+                      <button className={css.redeemRewards} onClick={this.handleClickRedeem.bind(this)}>
+                        {proposalPassed(proposal) ? 'Redeem for Beneficiary' : 'Execute'}
+                      </button>
                   }
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>

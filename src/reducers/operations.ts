@@ -46,10 +46,25 @@ export interface IUpdateOperation extends Action {
   }
 }
 
-type OperationsAction = IUpdateOperation
+export interface IDismissOperation extends Action {
+  type: 'Operations/Dismiss',
+  payload: {
+    id: string;
+  }
+}
+
+type OperationsAction = IUpdateOperation | IDismissOperation
 
 export const isOperationsAction = (action: Action): action is OperationsAction =>
   typeof action.type === 'string' && action.type.startsWith('Operations/');
+
+export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
+  dispatch({
+    type: 'Operations/Dismiss',
+    payload: {
+      id
+    }
+  } as IDismissOperation);
 
 /** -- Reducer -- */
 
@@ -66,6 +81,12 @@ export const operationsReducer =
           }
         };
       }
+
+      if (a.type === 'Operations/Dismiss') {
+        const action = a as IDismissOperation;
+        const {[a.payload.id]: _, ...rest } = state;
+        return rest;
+      }
     }
 
     return state;
@@ -79,7 +100,7 @@ const errorType = (error: Error) => {
     return OperationError.Canceled;
   } else if (message.includes('revert')) {
     return OperationError.Reverted;
-  } else if (message.includes('out of gas') || message.includes('base fee exceeds gas limit')) {
+  } else if (message.includes('gas')) {
     return OperationError.OutOfGas;
   } else {
     return error.message;

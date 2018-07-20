@@ -60,6 +60,7 @@ interface IDispatchProps {
   getDAO: typeof arcActions.getDAO;
   onProposalCreateEvent: typeof arcActions.onProposalCreateEvent;
   onTransferEvent: typeof arcActions.onTransferEvent;
+  onRedeemEvent: typeof arcActions.onRedeemEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
   onProposalExecuted: typeof arcActions.onProposalExecuted;
   onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
@@ -74,6 +75,7 @@ const mapDispatchToProps = {
   getDAO: arcActions.getDAO,
   onProposalCreateEvent: arcActions.onProposalCreateEvent,
   onTransferEvent: arcActions.onTransferEvent,
+  onRedeemEvent: arcActions.onRedeemEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
   onProposalExecuted: arcActions.onProposalExecuted,
   onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
@@ -94,6 +96,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
   public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
   public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
+  public redeemEventWatcher: Arc.EventFetcher<Arc.RedeemerRedeemEventResult>;
   public executeProposalEventWatcher: Arc.EntityFetcher<Arc.ExecutedGenesisProposal, Arc.ExecuteProposalEventResult>;
   public balanceWatcher: any;
   public transferEventWatcher: any;
@@ -130,6 +133,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       getDAO,
       onProposalCreateEvent,
       onTransferEvent,
+      onRedeemEvent,
       onReputationChangeEvent,
       onProposalExecuted,
       onDAOEthBalanceChanged,
@@ -152,19 +156,24 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     });
 
     // Watch for new, confirmed stakes coming in for the current account
-    // TODO: watch for all new stakes from anyone?
     const daoInstance = await Arc.DAO.at(daoAddress);
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: "latest" });
     this.stakeEventWatcher.watch((error, result) => {
-      onStakeEvent(daoAddress, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount).toNumber());
+      onStakeEvent(daoAddress, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount));
     });
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: "latest" });
     this.voteEventWatcher.watch((error, result) => {
-      onVoteEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation).toNumber());
+      onVoteEvent(daoAddress, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation));
+    });
+
+    const redeemerInstance = await Arc.RedeemerFactory.deployed();
+    this.redeemEventWatcher = redeemerInstance.RedeemerRedeem({ }, { fromBlock: "latest" });
+    this.redeemEventWatcher.watch((error, result) => {
+      onRedeemEvent(daoAddress, result.args._proposalId);
     });
 
     this.transferEventWatcher = daoInstance.token.Transfer({}, { fromBlock: "latest" });
@@ -185,7 +194,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: "latest" });
     this.executeProposalEventWatcher.watch((error, result) => {
       const { proposalId, decision, totalReputation, executionState } = result;
-      onProposalExecuted(daoAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation).toNumber());
+      onProposalExecuted(daoAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation));
     });
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
@@ -194,9 +203,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     this.balanceWatcher = web3.eth.filter('latest');
     this.balanceWatcher.watch(async (err: any, res: any) => {
       if (!err && res) {
-        const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAddress)).toNumber();
+        const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAddress));
         onDAOEthBalanceChanged(daoAddress, newEthBalance);
-        const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAddress)).toNumber();
+        const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAddress));
         onDAOGenBalanceChanged(daoAddress, newGenBalance);
       }
     })
