@@ -130,6 +130,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
     return (
       <Modal onBackdropClick={this.props.closeAction}>
         <div className={css.metaMaskModal}>
+          <div className={css.bg}></div>
           <div className={css.modalWindow}>
             <div className={css.transaction + " " + css.clearfix}>
               <div className={css.transactionIcon}>{icon}</div>
