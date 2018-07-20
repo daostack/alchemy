@@ -125,6 +125,7 @@ body {
         li {
           list-style: none;
           margin: 0;
+          position: relative;
 
           a {
             color: rgba(255,255,255,1);
@@ -138,6 +139,40 @@ body {
           a:hover {
             background-color: black;
             cursor: pointer;
+          }
+
+          ul {
+            left: 50px;
+            top: -150px;
+            opacity: 0;
+            transform: scale(0);
+            transition: all .25s ease;
+
+            li { 
+              text-align: center;
+
+              img {
+                position: relative;
+                top: 0;
+                left: 0;
+              }
+
+              h2 {
+                background-color: rgba(42, 42, 42, 1.000);
+                font-size: 12px;
+                font-family: $body-font;
+                margin: 0;
+                padding: 18px 0 17px 0;
+                color: $white-halftone;
+                border-bottom: 2px solid rgba(100, 100, 100, 1.000);
+              }
+            }
+          }
+          &:hover ul {
+            left: 200px;
+            opacity: 1;
+            top: 0;
+            transform: scale(1);
           }
         }
       }

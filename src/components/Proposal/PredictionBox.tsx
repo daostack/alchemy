@@ -162,6 +162,24 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
         <div className={predictionModalClass}>
+
+        <div className={css.genError}>
+          <h4>
+            You do not have enough GEN
+            <span>YOUR STAKE: [AMOUNT] - WALLET BALANCE: [AMOUNT]</span>
+          </h4>
+          <div className={css.exchangeList}>
+            Select an exchange  &#8964;
+            <ul>
+              <li><a href="https://idex.market/" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
+              <li><a href="https://ddex.io/" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
+              <li><a href="https://forkdelta.github.io/" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
+              <li><a href="https://etherdelta.com/" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
+              <li><a href="https://www.hotbit.io/" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+            </ul>
+          </div>
+          <span>Use one of our trusted exchanges to acquire more GEN</span>
+        </div>
           <button className={css.cancelPrediction} onClick={this.closeModal.bind(this)}>
             <img src="/assets/images/Icon/Close-black.svg"/>
           </button>
