@@ -360,6 +360,10 @@
         font-size: $body;
       }
 
+      a {
+        color: $accent-1;
+      }
+
       .launchMetaMask {
         border: 1px solid black;
         font-family: $body-font;
