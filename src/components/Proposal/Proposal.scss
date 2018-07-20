@@ -744,7 +744,7 @@ a.viewProposal {
 	position: absolute;
 	top: -5px;
 	left: -5px;
-	width: 100%;
+	width: 110%;
 	height: 100%;
 	z-index: 10000;
 	padding: 10px;
@@ -823,12 +823,13 @@ button.cancelPrediction {
     z-index: 1000;
     width: 16px;
     position: absolute;
-    left: 5px;
+    right: 13px;
     top: 10px;
     border: none;
 
     img {
     	width: 12px;
+    	opacity: 1;
     }
 }
 
