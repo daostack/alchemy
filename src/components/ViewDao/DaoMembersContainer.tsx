@@ -48,8 +48,6 @@ class DaoMembersContainer extends React.Component<IProps, null> {
           </div>
 
           <div className={css.memberHoldings}>
-            {dao.tokenSymbol}s: <span>{member.tokens.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
-            <div className={css.verticalDivider}></div>
             Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ({(100 * member.reputation / dao.reputationCount).toFixed(1)}%)</span>
           </div>
         </div>
