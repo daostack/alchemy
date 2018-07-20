@@ -452,7 +452,10 @@ const arcReducer = (state = initialState, action: any) => {
                 [accountAddress]: {
                   $merge : payload.beneficiary,
                   // remove pending redemptions from this account
-                  redemptions : { $unset: [proposalId] },
+                  redemptions :
+                    payload.redemptions ?
+                      { [proposalId]: {$merge: payload.redemptions}} :
+                      { $unset: [proposalId] },
                 },
               },
             },

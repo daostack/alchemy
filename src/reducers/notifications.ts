@@ -169,7 +169,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
     `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount))} GEN`,
   'GenesisProtocol.execute': (proposalTitle, {proposalId}: Arc.ProposalIdOption) =>
     `Exeuting "${elipsis(proposalTitle, 22)}"`,
-  'GenesisProtocol.redeem': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
+  'Redeemer.redeem': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
     `Redeeming rewards for "${elipsis(proposalTitle, 22)}"`,
   'GenesisProtocol.redeemDaoBounty': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
     `Redeeming bounty rewards for "${elipsis(proposalTitle, 22)}"`,
