@@ -86,22 +86,21 @@ export default class PreTransactionModal extends React.Component<IProps> {
         icon = <img src="/assets/images/Tx/StakePass.svg"/>;
         transactionInfo = <span><strong className={css.passVote}>Pass</strong> prediction</span>;
         passIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
-        failIncentive = <span>NO REWARDS &amp; LOSE YOUR STAKE</span>;
+        failIncentive = <span>LOSE YOUR STAKE</span>;
         rulesHeader = "RULES FOR PASS PREDICTIONS";
         rules = <div>
-                  <p>When you place a stake, GEN are taken from your wallet and held in a smart contract for the duration of the vote. If your stake is correct, you receive your GEN + a portion of whatever has been staked on the incorrect outcome.</p>
-                  <p>If your stake is correct, you will also receive reputation within the DAO.</p>
+                  <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
+                  <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
                 </div>;
         break;
       case ActionTypes.StakeFail:
         icon = <img src="/assets/images/Tx/StakeFail.svg"/>;
         transactionInfo = <span><strong className={css.failVote}>Fail</strong> prediction</span>;
         passIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
-        failIncentive = <span>NO REWARDS &amp; LOSE YOUR STAKE</span>;
+        failIncentive = <span>LOSE YOUR STAKE</span>;
         rulesHeader = "RULES FOR FAIL PREDICTIONS";
         rules = <div>
-                  <p>When you place a stake, GEN are taken from your wallet and held in a smart contract for the duration of the vote. If your stake is correct, you receive your GEN + a portion of whatever has been staked on the incorrect outcome.</p>
-                  <p>If your stake is correct, you will also receive reputation within the DAO.</p>
+                  <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
                 </div>;
         break;
       case ActionTypes.CreateProposal:
@@ -125,10 +124,6 @@ export default class PreTransactionModal extends React.Component<IProps> {
         rules = <div>
                   <p>If a proposal you submit passes, you will be awarded reputation. If you are the receiver of the budget, you will gain ETH and/or reputation.</p>
                 </div>;
-        break;
-      case ActionTypes.Redeem:
-        icon = <img src="/assets/images/Tx/Redemption.svg"/>;
-        transactionInfo = <span>Redeem rewards</span>;
         break;
     }
 
@@ -166,8 +161,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   <div className={css.bridge}></div>
                   <div className={css.header}>
                     <h2>Genesis Protocol</h2>
-                    <h3>{rulesHeader}</h3>
-                  </div>                
+                    <h3>{rulesHeader}</h3>      
                   </div>
                   <div className={css.body}>{rules}</div>
                   <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
