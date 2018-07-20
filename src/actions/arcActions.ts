@@ -936,7 +936,8 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
   accountAddress: string,
 }, {
   beneficiary: any,
-  dao: any
+  dao: any,
+  redemptions: IRedemptionState
 }>
 
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
@@ -958,61 +959,9 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     } as RedeemAction);
 
     try {
-      const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+      const redeemerInstance = await Arc.RedeemerFactory.deployed();
 
-      if (proposalEnded(proposal) && proposal.state !== ProposalStates.Executed) {
-        const executeTx = await votingMachineInstance.execute({proposalId: proposal.proposalId});
-
-        // Wait until actually executes (This is somehow needed...)
-        const eventWatcher = votingMachineInstance.ExecuteProposal({_proposalId: proposal.proposalId, _avatar: daoAvatarAddress, _executionState: [ProposalStates.Executed, ProposalStates.Closed]}, {fromBlock: 'latest'})
-        await new Promise((res, rej) => eventWatcher.watch(res));
-        eventWatcher.stopWatching()
-      }
-
-      if (redemption.stakerBountyTokens && dao.genCount >= redemption.stakerBountyTokens) {
-        const redeemDaoBountyTx = await votingMachineInstance.redeemDaoBounty({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
-      }
-
-      const redeemTx = await votingMachineInstance.redeem({ beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
-
-      // If current user is the beneficiary then redeem the contribution rewards too
-      if (proposal.beneficiaryAddress == accountAddress) {
-        const rewardRedeemTransaction = await contributionRewardInstance.redeemContributionReward({
-          proposalId: proposal.proposalId,
-          avatar: daoAvatarAddress,
-          ethers: dao.ethCount >= redemption.beneficiaryEth ? true : false,
-          //externalTokens: true,
-          nativeTokens: true,
-          reputation: true,
-        });
-      }
-
-      let payload: any = {
-        proposalId: proposal.proposalId,
-        // Update account of the beneficiary
-        beneficiary: {
-          address: accountAddress,
-          tokens: Util.fromWei(await daoInstance.token.balanceOf.call(accountAddress)),
-          reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(accountAddress)),
-        },
-        // Update DAO total reputation and tokens
-        //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
-        dao: {
-          avatarAddress: daoAvatarAddress,
-          reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
-          tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
-        },
-      };
-
-      dispatch({
-        type: arcConstants.ARC_REDEEM,
-        sequence: AsyncActionSequence.Success,
-        meta,
-        payload
-      } as RedeemAction);
+      const redeemRx = await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
     } catch (err) {
       console.error(err);
       dispatch({
@@ -1021,6 +970,52 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         meta,
       } as RedeemAction);
     }
+  };
+}
+
+export function onRedeemEvent(avatarAddress: string, proposalId: string) {
+  return async (dispatch: any, getState: () => IRootState) => {
+    const proposal = getState().arc.proposals[proposalId];
+    const daoInstance = await Arc.DAO.at(avatarAddress);
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+    const proposalDetails = await contributionRewardInstance.getVotableProposal(avatarAddress, proposalId);
+    const beneficiaryAddress = proposalDetails.beneficiaryAddress;
+
+    const meta = {
+      avatarAddress,
+      proposalId,
+      accountAddress: beneficiaryAddress
+    }
+
+    let payload: any = {
+      proposalId,
+      // Update account of the beneficiary
+      // TODO: need to do this? this will be seen by the transfer events as well
+      beneficiary: {
+        address: beneficiaryAddress,
+        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(beneficiaryAddress)),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(beneficiaryAddress)),
+      },
+      // Update DAO total reputation and tokens
+      //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
+      dao: {
+        avatarAddress,
+        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
+        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
+      },
+
+      redemptions: await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress)
+    };
+
+    dispatch({
+      type: arcConstants.ARC_REDEEM,
+      sequence: AsyncActionSequence.Success,
+      meta,
+      payload
+    } as RedeemAction);
   };
 }
 
@@ -1076,7 +1071,6 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
         reputationWhenExecuted
       }
     })
-    showNotification(NotificationStatus.Success, `Proposal '${proposal.title}' Executed!`)(dispatch);
   }
 }
 

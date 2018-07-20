@@ -50,23 +50,14 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  redeemProposal: typeof arcActions.redeemProposal;
 }
 
 const mapDispatchToProps = {
-  redeemProposal: arcActions.redeemProposal,
 };
 
 type IProps = IStateProps & IDispatchProps;
 
 class DaoRedemptionsContainer extends React.Component<IProps, null> {
-
-  public handleClickRedeem(event: any) {
-    const { dao, currentAccountAddress, redemptions, redeemProposal } = this.props;
-    redemptions.forEach(async (redemption) => {
-      await redeemProposal(dao.avatarAddress, redemption.proposal, currentAccountAddress);
-    });
-  }
 
   public render() {
     const { dao, proposals, redemptions } = this.props;
@@ -88,13 +79,11 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       <div>
         {redemptions.length > 0 ?
             <div className={css.clearfix + " " + css.redeemAllContainer}>
-              <button className={css.redeemAllRewardsButton} onClick={this.handleClickRedeem.bind(this)}>
-                Redeem All Rewards
-              </button>
               <div className={css.pendingRewards}>
-                Pending: {ethReward > 0 ? <strong>ETH: {ethReward} - </strong> : ""}
-                {nativeReward > 0 ? <strong>GEN: {nativeReward} - </strong> : ""}
-                {reputationReward > 0 ? <strong><ReputationView reputation={reputationReward} totalReputation={dao.reputationCount} daoName={dao.name}/> - </strong> : ""}
+                Pending Rewards:&nbsp;
+                {ethReward > 0 ? <strong>{ethReward} ETH </strong> : ""}
+                {nativeReward > 0 ? <strong>{nativeReward} GEN </strong> : ""}
+                {reputationReward > 0 ? <strong><ReputationView reputation={reputationReward} totalReputation={dao.reputationCount} daoName={dao.name}/></strong> : ""}
               </div>
             </div>
           : ""
