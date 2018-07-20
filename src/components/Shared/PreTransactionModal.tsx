@@ -130,7 +130,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
     return (
       <Modal onBackdropClick={this.props.closeAction}>
         <div className={css.metaMaskModal}>
-          <div className={css.bg}></div>
+          <div className={css.bg} onClick={this.props.closeAction}></div>
           <div className={css.modalWindow}>
             <div className={css.transaction + " " + css.clearfix}>
               <div className={css.transactionIcon}>{icon}</div>
@@ -162,7 +162,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   <div className={css.bridge}></div>
                   <div className={css.header}>
                     <h2>Genesis Protocol</h2>
-                    <h3>{rulesHeader}</h3>      
+                    <h3>{rulesHeader}</h3>
                   </div>
                   <div className={css.body}>{rules}</div>
                   <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>

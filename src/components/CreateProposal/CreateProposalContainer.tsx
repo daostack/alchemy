@@ -19,7 +19,7 @@ import DaoHeader from "../ViewDao/DaoHeader";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import ReputationView from "components/Account/ReputationView";
 
-import { Formik, Field } from 'formik';
+import { Formik, Field, FormikBag } from 'formik';
 import { proposalEnded } from "reducers/arcReducer";
 
 interface IState {
@@ -91,11 +91,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.web3 = await Arc.Utils.getWeb3();
   }
 
-  public handleSubmit(values: FormValues) {
+  public handleSubmit(values: FormValues, { props, setSubmitting, setErrors } : any ) {
     this.setState({
       preTransactionModalOpen: true,
       proposalDetails: { ...emptyProposal, ...values}
     });
+    setSubmitting(false);
   }
 
   public closePreTransactionModal() {
