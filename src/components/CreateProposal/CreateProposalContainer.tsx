@@ -91,7 +91,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.web3 = await Arc.Utils.getWeb3();
   }
 
-  public handleSubmit(values: FormValues, { props, setSubmitting, setErrors } : any ) {
+  public handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
     this.setState({
       preTransactionModalOpen: true,
       proposalDetails: { ...emptyProposal, ...values}
