@@ -55,7 +55,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
     };
 
     let icon, transactionInfo, passIncentive, failIncentive, rulesHeader, rules;
-    switch(actionType) {
+    switch (actionType) {
       case ActionTypes.VoteUp:
         icon = <img src="/assets/images/Tx/Upvote.svg" />;
         transactionInfo = <span><strong className={css.passVote}>Pass</strong> vote</span>;
