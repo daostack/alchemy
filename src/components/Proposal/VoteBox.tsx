@@ -9,7 +9,7 @@ import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptio
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
-import PreTransactionModal from "components/Shared/PreTransactionModal";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 
 interface IProps {
   currentVote: number;
@@ -64,9 +64,6 @@ export default class VoteBox extends React.Component<IProps, IState> {
     const yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
     const noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
 
-    const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-    const currentAccountReputationPercentage = totalReputation ? 100 * currentAccountReputation / totalReputation : 0;
-
     const styles = {
       yesGraph: {
         height: yesPercentage + "%",
@@ -109,11 +106,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {this.state.showPreVoteModal ?
           <PreTransactionModal
-            actionType={this.state.currentVote == 1 ? 'upvote' : 'downvote'}
+            actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
             action={voteOnProposal.bind(null, proposal.daoAvatarAddress, proposal, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
             dao={dao}
-            effectText={<span>Your influence: <strong>{currentAccountReputationPercentage.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}% ({currentAccountReputation.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}) Reputation</strong></span>}
+            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={proposal.votesYes} /></strong></span>}
             proposal={proposal}
           /> : ""
         }

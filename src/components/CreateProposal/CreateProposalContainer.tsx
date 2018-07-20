@@ -16,7 +16,7 @@ import * as css from "./CreateProposal.scss";
 
 import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
-import PreTransactionModal from "components/Shared/PreTransactionModal";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import ReputationView from "components/Account/ReputationView";
 
 import { Formik, Field } from 'formik';
@@ -128,7 +128,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
       <div className={css.createProposalWrapper}>
         {this.state.preTransactionModalOpen ?
           <PreTransactionModal
-            actionType='createProposal'
+            actionType={ActionTypes.CreateProposal}
             action={createProposal.bind(null, dao.avatarAddress, title, description, nativeTokenReward, reputationChange, ethReward, beneficiaryAddress)}
             closeAction={this.closePreTransactionModal.bind(this)}
             currentAccount={currentAccount}

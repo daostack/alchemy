@@ -6,13 +6,24 @@ import { Link } from "react-router-dom";
 import { Modal } from 'react-router-modal';
 
 import * as arcActions from "actions/arcActions";
-import { IDaoState, IProposalState, ProposalStates, proposalEnded, proposalRewardsString } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, proposalEnded } from "reducers/arcReducer";
+
+import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./PreTransactionModal.scss";
 
+export enum ActionTypes {
+  CreateProposal,
+  Redeem,
+  StakeFail,
+  StakePass,
+  VoteDown,
+  VoteUp
+}
+
 interface IProps {
   action: any;
-  actionType: string;
+  actionType: ActionTypes;
   closeAction: any;
   currentAccount?: string;
   dao: IDaoState;
@@ -34,7 +45,6 @@ export default class PreTransactionModal extends React.Component<IProps> {
     const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
     const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
 
-    // TODO: fix
     const styles = {
       forBar: {
         width: yesPercentage + "%",
@@ -44,6 +54,17 @@ export default class PreTransactionModal extends React.Component<IProps> {
       },
     };
 
+    let rewards = [];
+    if (proposal.reputationChange) {
+      rewards.push(
+        <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
+      );
+    }
+    if (proposal.ethReward) {
+      rewards.push(proposal.ethReward + " ETH");
+    }
+    const rewardsString = rewards.join("&").toUpperCase();
+
     return (
       <Modal onBackdropClick={this.props.closeAction}>
         <div className={css.metaMaskModal}>
@@ -51,22 +72,22 @@ export default class PreTransactionModal extends React.Component<IProps> {
           <div className={css.modalWindow}>
             <div className={css.transaction + " " + css.clearfix}>
               <div className={css.transactionIcon}>
-                { actionType == 'upvote' ? <img src="/assets/images/Tx/Upvote.svg" />
-                  : actionType == 'downvote' ? <img src="/assets/images/Tx/Downvote.svg" />
-                  : actionType == 'createProposal' ? <img src="/assets/images/Tx/NewProposal.svg"/>
-                  : actionType == 'redeem' ? <img src="/assets/images/Tx/Redemption.svg"/>
-                  : actionType == 'stakeFail' ? <img src="/assets/images/Tx/StakeFail.svg"/>
-                  : actionType == 'stakePass' ? <img src="/assets/images/Tx/StakePass.svg"/> : ""
+                { actionType == ActionTypes.VoteUp ? <img src="/assets/images/Tx/Upvote.svg" />
+                  : actionType == ActionTypes.VoteDown ? <img src="/assets/images/Tx/Downvote.svg" />
+                  : actionType == ActionTypes.CreateProposal ? <img src="/assets/images/Tx/NewProposal.svg"/>
+                  : actionType == ActionTypes.Redeem ? <img src="/assets/images/Tx/Redemption.svg"/>
+                  : actionType == ActionTypes.StakeFail ? <img src="/assets/images/Tx/StakeFail.svg"/>
+                  : actionType == ActionTypes.StakePass ? <img src="/assets/images/Tx/StakePass.svg"/> : ""
                 }
               </div>
               <div className={css.transactionInfo}>
                 <div className={css.transactionType}>
-                  { actionType == 'upvote' ? <span><strong className={css.passVote}>Pass</strong> vote</span>
-                    : actionType == 'downvote' ? <span><strong className={css.failVote}>Fail</strong> vote</span>
-                    : actionType == 'createProposal' ? <span>Create <strong className={css.redeem}>proposal</strong></span>
-                    : actionType == 'redeem' ? <span>Redeem rewards</span>
-                    : actionType == 'stakeFail' ? <span><strong className={css.passVote}>Fail</strong> prediction</span>
-                    : actionType == 'stakePass' ? <span><strong className={css.passVote}>Pass</strong> prediction</span> : ""
+                  { actionType == ActionTypes.VoteUp ? <span><strong className={css.passVote}>Pass</strong> vote</span>
+                    : actionType == ActionTypes.VoteDown ? <span><strong className={css.failVote}>Fail</strong> vote</span>
+                    : actionType == ActionTypes.CreateProposal ? <span>Create <strong className={css.redeem}>proposal</strong></span>
+                    : actionType == ActionTypes.Redeem ? <span>Redeem rewards</span>
+                    : actionType == ActionTypes.StakeFail ? <span><strong className={css.passVote}>Fail</strong> prediction</span>
+                    : actionType == ActionTypes.StakePass ? <span><strong className={css.passVote}>Pass</strong> prediction</span> : ""
                   }
                 </div>
                 <div className={css.transactionTitle}>
@@ -86,37 +107,37 @@ export default class PreTransactionModal extends React.Component<IProps> {
               <span className={css.outcomes}>OUTCOMES</span>
               <span className={css.passIncentive}>
                 <strong>PASS</strong>
-                  { actionType == 'upvote' && proposal.state == ProposalStates.PreBoosted ?
+                  { actionType == ActionTypes.VoteUp && proposal.state == ProposalStates.PreBoosted ?
                     <span>YOU GAIN GEN &amp; REPUTATION</span>
-                  : actionType == 'upvote' && proposal.state == ProposalStates.Boosted ?
+                  : actionType == ActionTypes.VoteUp && (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) ?
                     <span>NO REWARDS</span>
-                  : actionType == 'downvote' && proposal.state == ProposalStates.PreBoosted ?
+                  : actionType == ActionTypes.VoteDown && proposal.state == ProposalStates.PreBoosted ?
                     <span>LOSE 1% YOUR REPUTATION</span>
-                  : actionType == 'downvote' && proposal.state == ProposalStates.Boosted ?
+                  : actionType == ActionTypes.VoteDown && (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) ?
                     <span>NO REWARDS</span>
-                  : actionType == 'createProposal' ?
-                    <span>{currentAccount == proposal.beneficiaryAddress ? `GAIN REPUTATION & REWARDS OF ${proposalRewardsString(proposal).toUpperCase()}` : "GAIN REPUTATION"}</span>
-                  : actionType == 'stakePass' ?
+                  : actionType == ActionTypes.CreateProposal ?
+                    <span>{currentAccount == proposal.beneficiaryAddress ? `GAIN REPUTATION & REWARDS OF ${rewardsString}` : "GAIN REPUTATION"}</span>
+                  : actionType == ActionTypes.StakePass ?
                     <span>YOU GAIN GEN AND REPUTATION</span>
-                  : actionType == 'stakeFail' ?
+                  : actionType == ActionTypes.StakeFail ?
                     <span>NO REWARDS &amp; LOSE YOUR STAKE</span>
                   : ""}
               </span>
               <span className={css.failIncentive}>
                 <strong>FAIL</strong>
-                { actionType == 'upvote' && proposal.state == ProposalStates.PreBoosted ?
+                { actionType == ActionTypes.VoteUp && proposal.state == ProposalStates.PreBoosted ?
                     <span>LOSE 1% OF YOUR REPUTATION</span>
-                  : actionType == 'upvote' && proposal.state == ProposalStates.Boosted ?
+                  : actionType == ActionTypes.VoteUp && (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) ?
                     <span>NO REWARDS</span>
-                  : actionType == 'downvote' && proposal.state == ProposalStates.PreBoosted ?
+                  : actionType == ActionTypes.VoteDown && proposal.state == ProposalStates.PreBoosted ?
                     <span>GAIN GEN</span>
-                  : actionType == 'downvote' && proposal.state == ProposalStates.Boosted ?
+                  : actionType == ActionTypes.VoteDown && (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) ?
                     <span>NO REWARDS</span>
-                  : actionType == 'createProposal' ?
+                  : actionType == ActionTypes.CreateProposal ?
                     <span>NO REWARDS</span>
-                  : actionType == 'stakePass' ?
+                  : actionType == ActionTypes.StakePass ?
                     <span>NO REWARDS &amp; LOSE YOUR STAKE</span>
-                  : actionType == 'stakeFail' ?
+                  : actionType == ActionTypes.StakeFail ?
                     <span>YOU GAIN GEN AND REPUTATION</span>
                   : ""
                 }
@@ -133,19 +154,19 @@ export default class PreTransactionModal extends React.Component<IProps> {
                     <h3>RULES FOR YES VOTES</h3>
                   </div>
                   <div className={css.body}>
-                    { actionType == 'upvote' || actionType == 'downvote' ?
+                    { actionType == ActionTypes.VoteUp || actionType == ActionTypes.VoteDown ?
                         <div>
                           <p>When you vote, 1% of your reputation is taken away for the duration of the vote. If you vote for something to pass and it does, you gain reputation in addition to the reputation you lost.</p>
                           <p>If you vote for something to pass and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
-                          <p>If you vote for something to fail and it does, you will be given a portionof whatever GEN have been staked on the proposal.</p>
+                          <p>If you vote for something to fail and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
                           <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
                         </div>
-                      : actionType == 'stakePass' || actionType == 'stakeFail' ?
+                      : actionType == ActionTypes.StakePass || actionType == ActionTypes.StakeFail ?
                         <div>
                           <p>When you place a stake, GEN are taken from your wallet and held in a smart contract for the duration of the vote. If your stake is correct, you receive your GEN + a portion of whatever has been staked on the incorrect outcome.</p>
                           <p>If your stake is correct, you will also receive reputation within the DAO.</p>
                         </div>
-                      : actionType == 'createProposal' ?
+                      : actionType == ActionTypes.CreateProposal ?
                         <div>
                           <p>If a proposal you submit passes, you will be awarded reputation. If you are also the benificiary of the proposal, when the proposal passes the allocated tokens will be given to you.</p>
                           <p>If a proposal you submit fails, you do not lose anything.</p>

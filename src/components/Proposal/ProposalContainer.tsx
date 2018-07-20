@@ -13,7 +13,7 @@ import { isStakePending, isVotePending } from "selectors/operations";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import ReputationView from "components/Account/ReputationView";
-import PreTransactionModal from "components/Shared/PreTransactionModal";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
 
@@ -372,7 +372,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <div>
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
-                    actionType='redeem'
+                    actionType={ActionTypes.Redeem}
                     action={redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccountAddress)}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}

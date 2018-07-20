@@ -9,7 +9,7 @@ import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
-import PreTransactionModal from "components/Shared/PreTransactionModal";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 
 import * as css from "./Proposal.scss";
 
@@ -169,7 +169,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {showPreStakeModal ?
           <PreTransactionModal
-            actionType={pendingPrediction == VoteOptions.Yes ? 'stakePass' : 'stakeFail'}
+            actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
             action={stakeProposal.bind(null, proposal.daoAvatarAddress, proposal.proposalId, stakeAmount, Number(stakeAmount))}
             closeAction={this.closePreStakeModal.bind(this)}
             dao={dao}
