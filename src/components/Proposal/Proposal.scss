@@ -462,7 +462,6 @@ button.disabled {
 		width: 9px;
 		background-color: rgba(239, 239, 239, 1.000);
 		position: relative;
-		border-radius: 2px;
 		display: inline-block;
 		margin-left: 3px;
 		height: 27px;
@@ -848,7 +847,6 @@ button.cancelPrediction {
 		color: $accent-2;
 	}
 }
-
 
 /****** View Proposal Page ******/
 .viewProposalWrapper {

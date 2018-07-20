@@ -119,6 +119,39 @@ export interface IProposalState {
   threshold: number;
 }
 
+export const emptyProposal: IProposalState = {
+  beneficiaryAddress: null,
+  boostedTime: 0,
+  boostedVotePeriodLimit: 0,
+  preBoostedVotePeriodLimit: 0,
+  contributionDescriptionHash: "",
+  description: "",
+  daoAvatarAddress: null,
+  ethReward: 0,
+  executionTime: 0,
+  externalToken: "",
+  externalTokenReward: 0,
+  nativeTokenReward: 0,
+  numberOfPeriods: 1,
+  periodLength: 1,
+  proposalId: null,
+  proposer: null,
+  reputationChange: 0,
+  stakesNo: 0,
+  stakesYes: 0,
+  state: ProposalStates.None,
+  submittedTime: 0,
+  title: "",
+  transactionState: TransactionStates.Unconfirmed,
+  totalStakes: 0,
+  totalVotes: 0,
+  totalVoters: 0,
+  votesYes: 0,
+  votesNo: 0,
+  winningVote: VoteOptions.No,
+  threshold: 0
+}
+
 export interface IDaoState {
   avatarAddress: string;
   controllerAddress: string;
