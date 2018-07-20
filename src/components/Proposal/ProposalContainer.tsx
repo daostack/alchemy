@@ -342,11 +342,14 @@ class ProposalContainer extends React.Component<IProps, null> {
             : proposalEnded(proposal) ?
               <div>
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentAccountRedemptions
-                    ? <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+                  { currentAccountRedemptions ?
+                      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                         <button disabled={!redeemable} className={redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
                       </Tooltip>
-                    : ""
+                    :
+                      <button className={css.redeemRewards} onClick={this.handleClickRedeem.bind(this)}>
+                        {proposalPassed(proposal) ? 'Redeem for Beneficiary' : 'Execute'}
+                      </button>
                   }
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
