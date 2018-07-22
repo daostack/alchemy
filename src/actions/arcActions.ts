@@ -1077,6 +1077,10 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
 export function onDAOEthBalanceChanged(avatarAddress: string, balance: Number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const dao = getState().arc.daos[avatarAddress];
+    if (!dao) {
+      return;
+    }
+
     const { ethCount } = dao;
 
     if (ethCount != balance) {
@@ -1094,6 +1098,10 @@ export function onDAOEthBalanceChanged(avatarAddress: string, balance: Number) {
 export function onDAOGenBalanceChanged(avatarAddress: string, balance: Number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const dao = getState().arc.daos[avatarAddress];
+    if (!dao) {
+      return;
+    }
+
     const { genCount } = dao;
 
     if (genCount != balance) {
