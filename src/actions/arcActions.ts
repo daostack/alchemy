@@ -981,7 +981,7 @@ export function onRedeemEvent(avatarAddress: string, proposalId: string) {
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-    const proposalDetails = await contributionRewardInstance.getVotableProposal(avatarAddress, proposalId);
+    const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
     const beneficiaryAddress = proposalDetails.beneficiaryAddress;
 
     const meta = {
