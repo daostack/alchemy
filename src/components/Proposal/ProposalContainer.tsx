@@ -238,10 +238,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
       };
 
       const closingTime = (proposal: IProposalState) => {
-        const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit } = proposal;
+        const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
         const start = state === ProposalStates.Boosted ? boostedTime : submittedTime;
         const duration = state === ProposalStates.Boosted ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
-        return moment((start + duration) * 1000);
+        return moment((executionTime || start + duration) * 1000);
       }
 
       return (
@@ -275,7 +275,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             { proposalPassed(proposal) ?
                 <div className="css.clearfix">
                   <div className={css.proposalPassInfo}>
-                    <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {submittedTime.format("MMM DD, YYYY")}
+                    <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                   </div>
                   <div className={css.decisionGraph}>
                       <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
@@ -290,7 +290,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               :  proposalFailed(proposal) ?
                 <div className="css.clearfix">
                   <div className={css.proposalFailInfo}>
-                    <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {submittedTime.format("MMM DD, YYYY")}
+                    <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                   </div>
                   <div className={css.decisionGraph}>
                       <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
