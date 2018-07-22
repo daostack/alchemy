@@ -626,7 +626,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         ethReward: Util.toWei(ethReward),
         nativeTokenReward: Util.toWei(nativeTokenReward),
         numberOfPeriods: 1,
-        periodLength: 1,
+        periodLength: 0,
         reputationChange: Util.toWei(reputationReward),
       } as any);
 
@@ -674,7 +674,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
       externalTokenReward: eventResult._rewards[2],
       nativeTokenReward: eventResult._rewards[0],
       numberOfPeriods: 1,
-      periodLength: 1,
+      periodLength: 0,
       reputationChange: eventResult._reputationChange
     }
 

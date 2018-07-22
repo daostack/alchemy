@@ -133,7 +133,7 @@ export const emptyProposal: IProposalState = {
   externalTokenReward: 0,
   nativeTokenReward: 0,
   numberOfPeriods: 1,
-  periodLength: 1,
+  periodLength: 0,
   proposalId: null,
   proposer: null,
   reputationChange: 0,
