@@ -20,7 +20,7 @@ export enum OperationError {
 export enum OperationStatus {
   Started = 'Started',
   Sent = 'Sent',
-  Mined = 'Mined'
+  Complete = 'Complete'
 }
 
 export interface IOperation {
@@ -119,6 +119,10 @@ export const operationsTracker: Middleware =
         functionName
       } = info;
 
+      if (txStage == Arc.TransactionStage.mined) {
+        return;
+      }
+
       // discard the `txEventContext` property since it's not serializable and irelevent.
       const {txEventContext: _,  ...options} = info.options;
 
@@ -137,8 +141,8 @@ export const operationsTracker: Middleware =
             status:
               txStage === Arc.TransactionStage.sent ?
                 OperationStatus.Sent :
-              txStage === Arc.TransactionStage.mined || txStage === Arc.TransactionStage.confirmed ?
-                OperationStatus.Mined :
+              txStage === Arc.TransactionStage.confirmed ?
+                OperationStatus.Complete :
                 OperationStatus.Started,
             functionName,
             options,
@@ -161,13 +165,13 @@ export const operationsTracker: Middleware =
           Object.keys(state).forEach(async (id: string) => {
             if (state[id].status && state[id].status === OperationStatus.Sent && !state[id].error) {
               try {
-                const receipt = await Arc.TransactionService.watchForMinedTransaction(state[id].txHash);
+                const receipt = await Arc.TransactionService.watchForConfirmedTransaction(state[id].txHash);
                 dispatch({
                   type: 'Operations/Update',
                   payload: {
                     id: `${id}`,
                     operation: {
-                      status: OperationStatus.Mined
+                      status: OperationStatus.Complete
                     }
                   }
                 } as IUpdateOperation);

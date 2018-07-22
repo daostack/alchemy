@@ -215,7 +215,7 @@ export const notificationUpdater: Middleware =
       showNotification(
         error ?
           NotificationStatus.Failure :
-        status === OperationStatus.Mined ?
+        status === OperationStatus.Complete ?
           NotificationStatus.Success :
           NotificationStatus.Pending,
         message,
@@ -226,7 +226,7 @@ export const notificationUpdater: Middleware =
           'waiting for signature' :
         status === OperationStatus.Sent ?
           'transaction sent' :
-          'transaction mined',
+          'transaction complete',
         txHash && `https://${network !== 'mainnet' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
         id,
         +moment()
