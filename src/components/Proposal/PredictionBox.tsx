@@ -170,7 +170,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={stakeProposal.bind(null, proposal.daoAvatarAddress, proposal.proposalId, stakeAmount, Number(stakeAmount))}
+            action={stakeProposal.bind(null, proposal.daoAvatarAddress, proposal.proposalId, pendingPrediction, Number(stakeAmount))}
             closeAction={this.closePreStakeModal.bind(this)}
             dao={dao}
             effectText={<span>Prediction amount: {stakeAmount} GENs<br/>You are predicting the proposal will be {pendingPrediction == VoteOptions.Yes ? "accepted" : "rejected"} by the DAO</span>}
