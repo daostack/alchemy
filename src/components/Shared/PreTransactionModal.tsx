@@ -64,8 +64,8 @@ export default class PreTransactionModal extends React.Component<IProps> {
         rulesHeader = "RULES FOR YES VOTES";
         rules = <div>
                   <p>Every time you vote, 1% of your reputation is taken away. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails)</p>
-                  <p>“If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.</p>
-                  <p>If your vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.</p>
+                  <p>If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.</p>
+                  <p>If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
                 </div>;
         break;
@@ -91,15 +91,18 @@ export default class PreTransactionModal extends React.Component<IProps> {
         rules = <div>
                   <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
                   <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
+                  <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
                 </div>;
         break;
       case ActionTypes.StakeFail:
         icon = <img src="/assets/images/Tx/StakeFail.svg"/>;
         transactionInfo = <span><strong className={css.failVote}>Fail</strong> prediction</span>;
-        passIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
-        failIncentive = <span>LOSE YOUR STAKE</span>;
+        passIncentive = <span>LOSE YOUR STAKE</span>;
+        failIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
         rulesHeader = "RULES FOR FAIL PREDICTIONS";
         rules = <div>
+                  <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
+                  <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
                   <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
                 </div>;
         break;
