@@ -430,7 +430,6 @@ const arcReducer = (state = initialState, action: any) => {
     case ActionTypes.ARC_REDEEM: {
       const { meta, sequence, payload } = action as RedeemAction;
       const { avatarAddress, accountAddress, proposalId } = meta;
-
       switch (sequence) {
         case AsyncActionSequence.Pending:
           return update(state, { daos: {
@@ -450,12 +449,9 @@ const arcReducer = (state = initialState, action: any) => {
             [avatarAddress] : {
               members: {
                 [accountAddress]: {
-                  $merge : payload.beneficiary,
+                  $merge: payload.beneficiary,
                   // remove pending redemptions from this account
-                  redemptions :
-                    payload.redemptions ?
-                      { [proposalId]: {$merge: payload.redemptions}} :
-                      { $unset: [proposalId] },
+                  redemptions: { $unset: [proposalId] },
                 },
               },
             },

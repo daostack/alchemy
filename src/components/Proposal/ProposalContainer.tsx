@@ -108,17 +108,25 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isVotingYes
     } = this.props;
 
-    const redeemable = currentAccountRedemptions && (
+    const beneficiaryHasRewards = currentAccountRedemptions && (
       currentAccountRedemptions.beneficiaryReputation ||
       currentAccountRedemptions.beneficiaryNativeToken ||
+      (currentAccountRedemptions.beneficiaryEth && dao.ethCount >= currentAccountRedemptions.beneficiaryEth)
+    ) as boolean;
+
+    const accountHasRewards = currentAccountRedemptions && (
+      (beneficiaryHasRewards && currentAccountAddress === proposal.beneficiaryAddress) ||
       currentAccountRedemptions.proposerReputation ||
       currentAccountRedemptions.stakerReputation ||
       currentAccountRedemptions.stakerTokens ||
       currentAccountRedemptions.voterReputation ||
       currentAccountRedemptions.voterTokens ||
-      (currentAccountRedemptions.beneficiaryEth && dao.ethCount >= currentAccountRedemptions.beneficiaryEth) ||
       (currentAccountRedemptions.stakerBountyTokens && dao.genCount >= currentAccountRedemptions.stakerBountyTokens)
     ) as boolean;
+
+    const redeemable = accountHasRewards || beneficiaryHasRewards;
+
+    const executable = proposalEnded(proposal) && !proposal.executionTime;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -132,7 +140,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       const redeemRewards = classNames({
         [css.redeemRewards]: true,
-        [css.disabled]: !redeemable,
+        [css.disabled]: !redeemable && !executable,
       });
 
       const submittedTime = moment.unix(proposal.submittedTime);
@@ -167,7 +175,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div>
             {currentAccountRedemptions.beneficiaryEth || currentAccountRedemptions.beneficiaryReputation ?
               <div>
-                <strong>As beneficiary of the proposal you will receive: </strong>
+                <strong>
+                  {currentAccountAddress === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccountAddress === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
+                </strong>
                 <ul>
                   {currentAccountRedemptions.beneficiaryEth ?
                     <li>
@@ -236,6 +246,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
           width: noPercentage + "%",
         },
       };
+
+      const redeemButton = (
+        <button
+          style={{whiteSpace: 'nowrap'}}
+          disabled={!redeemable && !executable}
+          className={redeemRewards}
+          onClick={this.handleClickRedeem.bind(this)}
+        >
+          {
+            beneficiaryHasRewards && !accountHasRewards ?
+              'Redeem for beneficiary' :
+            accountHasRewards || currentAccountRedemptions ?
+              'Redeem' :
+              'Execute'
+          }
+        </button>
+      )
 
       const closingTime = (proposal: IProposalState) => {
         const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
@@ -399,14 +426,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 }
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentAccountRedemptions ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                        <button disabled={!redeemable} className={redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
-                      </Tooltip>
-                    :
-                      <button className={css.redeemRewards} onClick={this.handleClickRedeem.bind(this)}>
-                        {proposalPassed(proposal) ? 'Redeem for Beneficiary' : 'Execute'}
-                      </button>
+                  { currentAccountRedemptions || executable ?
+                      redemptionsTip ?
+                        <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+                          {redeemButton}
+                        </Tooltip> :
+                        redeemButton
+                    : ''
                   }
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>

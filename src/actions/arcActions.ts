@@ -1005,9 +1005,7 @@ export function onRedeemEvent(avatarAddress: string, proposalId: string) {
         avatarAddress,
         reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
         tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
-      },
-
-      redemptions: await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress)
+      }
     };
 
     dispatch({
