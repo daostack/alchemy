@@ -60,7 +60,6 @@ export default class PreTransactionModal extends React.Component<IProps> {
         icon = <img src="/assets/images/Tx/Upvote.svg" />;
         transactionInfo = <span><strong className={css.passVote}>Pass</strong> vote</span>;
 
-        console.log(currentAccount, proposal.beneficiaryAddress);
         if (currentAccount == proposal.beneficiaryAddress) {
           let rewards = [];
           if (proposal.reputationChange) {
