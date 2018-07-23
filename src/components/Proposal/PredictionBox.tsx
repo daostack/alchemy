@@ -110,7 +110,10 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
               <p>
-                Once you click the button below, we will pop-up a MetaMask dialogue. It will set a default gas limit and price. It's fine to stick with these defaults. You can also consult  <a href="https://ethgasstation.info/calculatorTxV.php">this calculator</a> to adjust the Gwei price.
+                Once you click the button below, we will pop-up a MetaMask dialogue.
+                It will set a default gas limit and price. It's fine to stick with these defaults.
+                You can also consult  <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a>
+                to adjust the Gwei price.
               </p>
               <div>
                 <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
