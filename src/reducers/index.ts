@@ -33,7 +33,7 @@ const onlyPending = createTransform(
       const out = {...state} as IOperationsState;
 
       for (let k in out) {
-        if (out[k].error || out[k].status !== OperationStatus.Sent) {
+        if (!(out[k].status === OperationStatus.Sent || out[k].error)) {
           delete out[k];
         }
       }
