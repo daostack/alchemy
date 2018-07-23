@@ -54,6 +54,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
 interface IDispatchProps {
   approveStakingGens: typeof web3Actions.approveStakingGens;
   redeemProposal: typeof arcActions.redeemProposal;
+  executeProposal: typeof arcActions.executeProposal;
   voteOnProposal: typeof arcActions.voteOnProposal;
   stakeProposal: typeof arcActions.stakeProposal;
 }
@@ -61,6 +62,7 @@ interface IDispatchProps {
 const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
+  executeProposal: arcActions.executeProposal,
   voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal,
 };
@@ -100,6 +102,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       proposal,
       approveStakingGens,
       redeemProposal,
+      executeProposal,
       stakeProposal,
       voteOnProposal,
       isPredictingFail,
@@ -126,7 +129,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const redeemable = accountHasRewards || beneficiaryHasRewards;
 
-    const executable = proposalEnded(proposal) && !proposal.executionTime;
+    const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -417,7 +420,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
                     actionType={ActionTypes.Redeem}
-                    action={redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccountAddress)}
+                    action={executable && !redeemable ? executeProposal.bind(null, dao.avatarAddress, proposal.proposalId) : redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccountAddress)}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}
                     effectText={redemptionsTip}
