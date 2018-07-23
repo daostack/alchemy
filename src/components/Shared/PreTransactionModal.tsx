@@ -185,7 +185,8 @@ export default class PreTransactionModal extends React.Component<IProps> {
               <p>
                 When you click "Launch MetaMask" we will pop up a Metamask dialogue.
                 This dialogue will ask you to approve your transaction, including a small ETH cost.
-                It will set a default gas limit and gas price. It's fine to stick with these defaults. You can also consult <a href="https://ethgasstation.info/calculatorTxV.php">this calculator</a> to adjust the gas price.
+                It will set a default gas limit and gas price. It's fine to stick with these defaults.
+                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
               </p>
               <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)}>
                 <img src="/assets/images/Tx/MetaMask.svg"/>
