@@ -426,7 +426,6 @@ const arcReducer = (state = initialState, action: any) => {
         }
       }
     } // EO ARC_STAKE
-
     case ActionTypes.ARC_REDEEM: {
       const { meta, sequence, payload } = action as RedeemAction;
       const { avatarAddress, accountAddress, proposalId } = meta;
@@ -436,10 +435,15 @@ const arcReducer = (state = initialState, action: any) => {
             [avatarAddress] : {
               members: {
                 [accountAddress]: {
-                  redemptions : { [proposalId] : { $merge : {
-                    ...meta,
-                    transactionState: TransactionStates.Unconfirmed
-                  } }},
+                  redemptions : {
+                    [proposalId] : {
+                      $apply: (x: IRedemptionState) => ({
+                        ...x,
+                        ...meta,
+                        transactionState: TransactionStates.Unconfirmed
+                      })
+                    }
+                  },
                 },
               },
             },
@@ -526,7 +530,7 @@ const arcReducer = (state = initialState, action: any) => {
     case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
       const { avatarAddress, proposalId, executionState, decision, reputationWhenExecuted } = payload;
 
-      if (executionState === ExecutionState.PreBoostedBarCrossed || executionState === ExecutionState.BoostedBarCrossed) {
+      if (executionState !== ExecutionState.None) {
         return update(state, {
           proposals: {
             [proposalId]: {
