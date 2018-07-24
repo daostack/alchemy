@@ -80,7 +80,7 @@ export function initializeWeb3() {
   };
 }
 
-export function setCurrentAccount(accountAddress: string, daoAddress: string = null) {
+export function setCurrentAccount(accountAddress: string, daoAvatarAddress: string = null) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const web3 = await Arc.Utils.getWeb3();
 
@@ -96,9 +96,9 @@ export function setCurrentAccount(accountAddress: string, daoAddress: string = n
     payload.ethAccountBalance = Util.fromWei(balance);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
-    if (daoAddress !== null) {
+    if (daoAvatarAddress !== null) {
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
     } else {
       votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
@@ -159,7 +159,7 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
 }>
 
 // Approve transfer of 1000 GENs from accountAddress to the GenesisProtocol contract for use in staking
-export function approveStakingGens(daoAddress: string) {
+export function approveStakingGens(daoAvatarAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
@@ -177,7 +177,7 @@ export function approveStakingGens(daoAddress: string) {
 
     try {
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAddress)).votingMachineAddress;
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
       const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
       const stakingToken = await Arc.StandardTokenFactory.at(stakingTokenAddress);

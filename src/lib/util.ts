@@ -1,6 +1,6 @@
 import * as Arc from "@daostack/arc.js";
 import { BigNumber } from "bignumber.js";
-import { IEventSubscription, TransactionReceiptsEventInfo } from "@daostack/arc.js";
+import promisify = require("es6-promisify");
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
 // v1.0 may improve on this entire Web3 typings experience
@@ -46,5 +46,11 @@ export default class Util {
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
+  }
+
+  public static async getLatestBlock() {
+    const web3 = await Arc.Utils.getWeb3();
+    const getBlock = promisify(web3.eth.getBlock);
+    return (await getBlock('latest')).number;
   }
 }

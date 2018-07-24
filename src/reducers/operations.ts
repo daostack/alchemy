@@ -128,7 +128,10 @@ export const operationsTracker: Middleware =
 
       let proposalTitle = options.title;
       if (options.proposalId) {
-        proposalTitle = (getState() as any as IRootState).arc.proposals[options.proposalId].title;
+        const proposal = (getState() as any as IRootState).arc.proposals[options.proposalId];
+        if (proposal) {
+          proposalTitle = proposal.title;
+        }
       }
 
       dispatch({

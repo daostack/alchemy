@@ -7,7 +7,7 @@ import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
 
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import * as css from "./DaoList.scss";
 
@@ -18,24 +18,18 @@ interface IStateProps {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
   daos: denormalize(state.arc.daos, schemas.daoList, state.arc),
-  daosLoaded: state.arc.daosLoaded,
+  daosLoaded: state.arc.daosLoaded
 });
 
 interface IDispatchProps {
-  getDAOs: typeof arcActions.getDAOs;
 }
 
 const mapDispatchToProps = {
-  getDAOs: arcActions.getDAOs,
 };
 
 type IProps = IStateProps & IDispatchProps;
 
 class DaoListContainer extends React.Component<IProps, null> {
-
-  public componentDidMount() {
-    this.props.getDAOs();
-  }
 
   public render() {
     const { daos, daosLoaded } = this.props;
@@ -58,14 +52,14 @@ class DaoListContainer extends React.Component<IProps, null> {
     });
 
     return (
-      <div className={css.wrapper}>
-        <div className={css.daoListHeader + " " + css.clearfix}>
-          <h2>All DAOs</h2>
-{/*          <Link to='/create-dao'>Create a New DAO</Link>*/}
+      daosLoaded ?
+        <div className={css.wrapper}>
+          <div className={css.daoListHeader + " " + css.clearfix}>
+            <h2>All DAOs</h2>
+          </div>
+          {daoNodes ? daoNodes : "None"}
         </div>
-        {daoNodes ? daoNodes : "None"}
-        {!daosLoaded ? <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div> : ""}
-      </div>
+      : <div className={css.wrapper}><div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div></div>
     );
   }
 }

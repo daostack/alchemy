@@ -8,7 +8,9 @@ async function main() {
   const DAOToken = await Arc.Utils.requireContract('DAOToken');
   const genToken = await DAOToken.at(genTokenAddress)
 
-  await Promise.all(web3.eth.accounts.map(async account => {
+  const daoAddress = '0xf7b7be05d6c115184f78226f905b643dd577fa6b';
+
+  await Promise.all([daoAddress, ...web3.eth.accounts].map(async account => {
     const diff = new BigNumber(web3.toWei(1000)).minus(await genToken.balanceOf(account))
     if(diff.gt(0)) {
       console.log(`Minting ${web3.fromWei(diff)} GEN for ${account}`);

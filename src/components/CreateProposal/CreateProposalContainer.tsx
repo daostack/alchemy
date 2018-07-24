@@ -10,7 +10,7 @@ import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IDaoState, IProposalState, emptyProposal } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import * as css from "./CreateProposal.scss";
 
@@ -30,7 +30,7 @@ interface IState {
 interface IStateProps {
   currentAccount: string;
   dao: IDaoState;
-  daoAddress: string;
+  daoAvatarAddress: string;
   history: H.History;
   web3: IWeb3State;
 }
@@ -38,8 +38,8 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     currentAccount: state.web3.ethAccountAddress,
-    dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
-    daoAddress : ownProps.match.params.daoAddress,
+    dao: denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc),
+    daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     history: ownProps.history,
     web3: state.web3,
   };
@@ -85,7 +85,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
   public async componentDidMount() {
     if (!this.props.dao) {
-      this.props.getDAO(this.props.daoAddress);
+      this.props.getDAO(this.props.daoAvatarAddress);
     }
 
     this.web3 = await Arc.Utils.getWeb3();

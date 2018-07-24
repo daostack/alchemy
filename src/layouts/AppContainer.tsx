@@ -11,10 +11,10 @@ import { bindActionCreators } from "redux";
 import { IRootState } from "reducers";
 import { IArcState } from "reducers/arcReducer";
 import { ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
-import store from "../configureStore";
 
 import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
+import Util from "lib/util";
 
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
@@ -35,43 +35,58 @@ import { dismissNotification, NotificationStatus, INotificationsState, showNotif
 import { OperationStatus, OperationError } from 'reducers/operations';
 
 interface IStateProps {
-  arc: IArcState;
   connectionStatus: ConnectionStatus;
   cookies: Cookies;
+  daosLoaded: boolean;
   ethAccountAddress: string | null;
   history: History.History;
+  lastBlock: number;
   sortedNotifications: INotificationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
-  arc: state.arc,
   connectionStatus: state.web3.connectionStatus,
+  daosLoaded: state.arc.daosLoaded,
   ethAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
+  lastBlock: state.arc.lastBlock,
   sortedNotifications: sortedNotifications()(state),
 });
 
 interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
-  showNotification: typeof showNotification;
+  getDAOs: typeof arcActions.getDAOs;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
+  onRedeemEvent: typeof arcActions.onRedeemEvent;
+  onProposalCreateEvent: typeof arcActions.onProposalCreateEvent;
+  onProposalExecuted: typeof arcActions.onProposalExecuted;
+  onStakeEvent: typeof arcActions.onStakeEvent;
+  onVoteEvent: typeof arcActions.onVoteEvent;
+  showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
   dismissNotification,
-  showNotification,
+  getDAOs: arcActions.getDAOs,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
+  onRedeemEvent: arcActions.onRedeemEvent,
+  onProposalCreateEvent: arcActions.onProposalCreateEvent,
+  onProposalExecuted: arcActions.onProposalExecuted,
+  onStakeEvent: arcActions.onStakeEvent,
+  onVoteEvent: arcActions.onVoteEvent,
+  showNotification,
 };
 
 type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
-
-  constructor(props: IProps) {
-    super(props);
-  }
+  public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
+  public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
+  public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
+  public redeemEventWatcher: Arc.EventFetcher<Arc.RedeemerRedeemEventResult>;
+  public executeProposalEventWatcher: Arc.EntityFetcher<Arc.ExecutedGenesisProposal, Arc.ExecuteProposalEventResult>;
 
   public async componentWillMount() {
     const { cookies, history } = this.props;
@@ -84,12 +99,97 @@ class AppContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { initializeWeb3, loadCachedState } = this.props;
-    initializeWeb3();
+    const { daosLoaded, getDAOs, initializeWeb3, loadCachedState } = this.props;
+    await initializeWeb3();
 
     // If not using local testnet then load cached blockchain data from S3
     if ((await Arc.Utils.getNetworkName()) !== 'Ganache') {
-      loadCachedState();
+      await loadCachedState();
+    } else {
+      if (!daosLoaded) {
+        await getDAOs();
+      }
+    }
+
+    await this.setupWatchers();
+  }
+
+   public async componentDidUpdate(prevProps: IProps) {
+    if (this.props.daosLoaded && !prevProps.daosLoaded) {
+      // If DAOs just finally loaded then setup the watchers
+      await this.setupWatchers();
+    }
+  }
+
+  public async setupWatchers() {
+    // Check if already setup
+    if (this.proposalEventWatcher || !this.props.daosLoaded) {
+      return;
+    }
+
+    const {
+      daosLoaded,
+      lastBlock,
+      onProposalCreateEvent,
+      onProposalExecuted,
+      onRedeemEvent,
+      onStakeEvent,
+      onVoteEvent,
+    } = this.props;
+
+    // OK we're loaded up and ready to roll! Now start watching for new events
+    // TODO: handle DAOs with different voting machine contracts (do this separately for each DAO?)
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+
+    // Watch for new, confirmed proposals coming in
+    this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ }, { fromBlock: lastBlock });
+    this.proposalEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.NewContributionProposalEventResult>) => {
+      onProposalCreateEvent(result.args);
+    });
+
+    this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastBlock });
+    this.executeProposalEventWatcher.watch((error, result) => {
+      const { avatarAddress, proposalId, decision, totalReputation, executionState } = result;
+      onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation));
+    });
+
+    this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastBlock });
+    this.stakeEventWatcher.watch((error: Error, result: Arc.DecodedLogEntryEvent<Arc.StakeEventResult>) => {
+      onStakeEvent(result.args._avatar, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount));
+    });
+
+    this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastBlock });
+    this.voteEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>) => {
+      onVoteEvent(result.args._avatar, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation));
+    });
+
+    const redeemerInstance = await Arc.RedeemerFactory.deployed();
+    this.redeemEventWatcher = redeemerInstance.RedeemerRedeem({ }, { fromBlock: lastBlock });
+    this.redeemEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.RedeemerRedeemEventResult>) => {
+      onRedeemEvent(result.args._proposalId);
+    });
+  }
+
+ public componentWillUnmount() {
+    if (this.proposalEventWatcher) {
+      this.proposalEventWatcher.stopWatching();
+    }
+
+    if (this.stakeEventWatcher) {
+      this.stakeEventWatcher.stopWatching();
+    }
+
+    if (this.voteEventWatcher) {
+      this.voteEventWatcher.stopWatching();
+    }
+
+    if (this.executeProposalEventWatcher) {
+      this.executeProposalEventWatcher.stopWatching();
+    }
+
+    if (this.redeemEventWatcher) {
+      this.redeemEventWatcher.stopWatching();
     }
   }
 
@@ -113,11 +213,11 @@ class AppContainer extends React.Component<IProps, null> {
       connectionStatus == ConnectionStatus.Connected ?
         <div className={css.outer}>
           <div className={css.container}>
-            <Route path="/dao/:daoAddress" children={(props) => (
-              <HeaderContainer daoAddress={props.match ? props.match.params.daoAddress : null} />
+            <Route path="/dao/:daoAvatarAddress" children={(props) => (
+              <HeaderContainer daoAvatarAddress={props.match ? props.match.params.daoAvatarAddress : null} />
             )} />
             <Switch>
-              <Route path="/dao/:daoAddress" component={ViewDaoContainer} />
+              <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
               <Route exact path="/daos" component={DaoListContainer}/>
               <Route path="/" component={HomeContainer} />
             </Switch>
@@ -128,8 +228,8 @@ class AppContainer extends React.Component<IProps, null> {
               component={CreateDaoContainer}
             />
             <ModalRoute
-              path='/dao/:daoAddress/proposals/create'
-              parentPath={(route: any) => `/dao/${route.params.daoAddress}`}
+              path='/dao/:daoAvatarAddress/proposals/create'
+              parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
               component={CreateProposalContainer}
             />
             <ModalContainer

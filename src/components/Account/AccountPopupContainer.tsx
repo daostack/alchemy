@@ -1,3 +1,4 @@
+import { denormalize } from "normalizr";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
@@ -5,8 +6,9 @@ import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
+import { IAccountState, IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
+import * as schemas from "schemas";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
@@ -22,13 +24,14 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = state.arc.daos[ownProps.daoAvatarAddress];
-  const member = dao.members[ownProps.accountAddress];
+  const dao = denormalize(state.arc.daos[ownProps.daoAvatarAddress], schemas.daoSchema, state.arc);
+  const account = state.arc.accounts[`${ownProps.accountAddress}-${ownProps.daoAvatarAddress}`] as IAccountState;
+
   return {
     accountAddress: ownProps.accountAddress,
     dao,
-    reputation: member ? member.reputation : 0,
-    tokens: member ? member.tokens : 0,
+    reputation: account ? account.reputation : 0,
+    tokens: account ? account.tokens : 0,
   };
 };
 
