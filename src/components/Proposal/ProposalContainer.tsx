@@ -263,7 +263,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               isVotingNo={isVotingNo}
               isVotingYes={isVotingYes}
               currentVote={currentAccountVote}
-              currentAccountAddress={currentAccountAddress}
+              currentAccountAddress={currentAccount.address}
               currentAccountReputation={currentAccountReputation}
               dao={dao}
               proposal={proposal}

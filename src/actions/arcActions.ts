@@ -425,9 +425,8 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
       });
       associatedAccounts = [...new Set(associatedAccounts)]; // Dedupe
 
-      let redemptions: IRedemptionState, accountAddress: string;
-      for (const i of associatedAccounts) {
-        accountAddress = associatedAccounts[i];
+      let redemptions: IRedemptionState;
+      for (const accountAddress of associatedAccounts) {
         redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
         if (redemptions) {
           proposal.redemptions.push(redemptions);
@@ -856,9 +855,8 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
         });
         associatedAccounts = [...new Set(associatedAccounts)]; // Dedupe
 
-        let accountRedemptions: IRedemptionState, accountAddress: string;
-        for (const i of associatedAccounts) {
-          accountAddress = associatedAccounts[i];
+        let accountRedemptions: IRedemptionState;
+        for (const accountAddress of associatedAccounts) {
           accountRedemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
           if (accountRedemptions) {
             redemptions.push(accountRedemptions);
