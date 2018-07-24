@@ -81,6 +81,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
       },
     };
 
+    const votingDisabled = !currentAccountReputation || !!currentVote;
+
     let wrapperClass = classNames({
       [css.voteBox] : true,
       [css.clearfix] : true,
@@ -88,12 +90,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
     let voteUpButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.Yes,
-      [css.disabled]: !currentAccountReputation || !!currentVote,
+      [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.No,
-      [css.disabled]: !currentAccountReputation || !!currentVote,
+      [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
 
@@ -124,7 +126,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
         <div className={voteControls}>
           <div className={css.voteUp}>
             <Tooltip placement="right" trigger={["hover"]} overlay={passTipContent} overlayClassName={css.voteTooltip}>
-              <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
                 <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
                 <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
                 <svg className={css.upvotePendingIcon} viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -205,7 +207,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
           </div>
           <div className={css.voteDown}>
             <Tooltip placement="right" trigger={["hover"]} overlay={failTipContent} overlayClassName={css.voteTooltip}>
-              <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
                 <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
                 <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
                 <svg className={css.downvotePendingIcon} width="41px" height="29px" viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
