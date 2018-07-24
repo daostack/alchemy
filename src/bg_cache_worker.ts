@@ -122,6 +122,7 @@ async function updateCache() {
   });
 
   process.on('SIGTERM', function () {
+    console.log("Exiting process");
     unsubscribe();
     process.exit(0);
   });
