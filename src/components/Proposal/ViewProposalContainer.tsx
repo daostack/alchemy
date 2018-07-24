@@ -9,7 +9,7 @@ import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IProposalState } from "reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import ProposalContainer from "./ProposalContainer";
 

@@ -40,9 +40,9 @@
     }
   },
   "scripts": {
-    "cache-arc-dev": "ts-node src/bg_cache_worker.ts",
-    "cache-arc-staging": "cross-env NODE_ENV=production ts-node src/bg_cache_worker.ts",
-    "cache-arc-prod": "cross-env NODE_ENV=production ts-node src/bg_cache_worker.ts",
+    "cache-arc-dev": "ts-node src/run_cache_worker.ts",
+    "cache-arc-staging": "cross-env NODE_ENV=production arcjs_network=kovan ts-node src/run_cache_worker.ts",
+    "cache-arc-prod": "cross-env NODE_ENV=production arcjs_network=live ts-node src/run_cache_worker.ts",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "heroku-postbuild": "npm run build && tsc",
     "ganache": "npm explore @daostack/arc.js -- npm start ganache.run",
