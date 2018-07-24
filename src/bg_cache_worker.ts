@@ -88,7 +88,7 @@ async function updateCache() {
   let initialState: IRootState;
   let store = Redux.createStore(
     Redux.combineReducers(reducers),
-    Redux.applyMiddleware(thunkMiddleware, loggerMiddleware)
+    Redux.applyMiddleware(thunkMiddleware)
   );
 
   // Subscribe to the redux store changes
@@ -154,9 +154,9 @@ async function updateCache() {
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     await this.proposalEventWatcher.get(async (error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.NewContributionProposalEventResult>>) => {
-      console.log("got new proposal", error, eventsArray);
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
+        console.log("Got new proposal", event.args);
         await store.dispatch(arcActions.onProposalCreateEvent(event.args));
       }
     });
@@ -167,9 +167,9 @@ async function updateCache() {
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     await this.stakeEventWatcher.get(async (error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.StakeEventResult>>) => {
-      console.log("got stake", error, eventsArray);
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
+        console.log("Got new stake", event.args);
         await store.dispatch(arcActions.onStakeEvent(event.args._avatar, event.args._proposalId, event.args._staker, Number(event.args._vote), Util.fromWei(event.args._amount)));
       }
     });
@@ -178,12 +178,12 @@ async function updateCache() {
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     await this.voteEventWatcher.get(async (error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>>) => {
-      console.log("got vote", error, eventsArray);
       if (error) {
         console.error("Error getting votes", error);
       } else {
         for (let index = 0; index < eventsArray.length; index++) {
           const event = eventsArray[index];
+          console.log("Got new vote", event.args);
           await store.dispatch(arcActions.onVoteEvent(event.args._avatar, event.args._proposalId, event.args._voter, Number(event.args._vote), Util.fromWei(event.args._reputation)));
         }
       }
@@ -193,9 +193,9 @@ async function updateCache() {
 
     this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     await this.executeProposalEventWatcher.get(async (error: Error, eventsArray: Arc.ExecutedGenesisProposal[]) => {
-      console.log("got executed proposal", error, eventsArray);
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
+        console.log("Proposal executed", event);
         const { avatarAddress, proposalId, decision, totalReputation, executionState } = event;
         await store.dispatch(arcActions.onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation)));
       }
@@ -214,6 +214,7 @@ async function updateCache() {
       await this.mintEventWatcher.get(async (error: any, eventsArray: any) => {
         for (let index = 0; index < eventsArray.length; index++) {
           const event = eventsArray[index];
+          console.log("Reputation minted for account", event.args._to, "in DAO", avatarAddress);
           await store.dispatch(arcActions.onReputationChangeEvent(avatarAddress, event.args._to));
         }
       });
@@ -222,6 +223,7 @@ async function updateCache() {
       await this.burnEventWatcher.get(async (error: any, eventsArray: any) => {
         for (let index = 0; index < eventsArray.length; index++) {
           const event = eventsArray[index];
+          console.log("Reputation burned from account", event.args._from, "in DAO", avatarAddress);
           await store.dispatch(arcActions.onReputationChangeEvent(avatarAddress, event.args._from));
         }
       });
