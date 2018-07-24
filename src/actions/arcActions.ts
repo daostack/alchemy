@@ -27,7 +27,7 @@ import { ContributionRewardType,
 
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
-import { ExecutionState, GenesisProtocolFactory } from "@daostack/arc.js";
+import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as schemas from "schemas";
 
@@ -498,19 +498,24 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
   proposal.numberOfPeriods
 
   // Beneficiary rewards
-  if (proposal.beneficiaryAddress == accountAddress) {
-    if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
-      // Boosted proposal that passed by expiring with more yes votes than no
-      //   have to manually calculate beneficiary rewards
-      redemptions.beneficiaryEth = proposal.numberOfPeriods * proposal.ethReward;
-      redemptions.beneficiaryNativeToken = proposal.numberOfPeriods * proposal.nativeTokenReward;
-      redemptions.beneficiaryReputation = proposal.numberOfPeriods * proposal.reputationChange;
-    } else {
-      redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
-      redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
-      redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
-    }
+  if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
+    // Boosted proposal that passed by expiring with more yes votes than no
+    // have to manually calculate beneficiary rewards
+
+    const votableProposals = await (await proposalInstance.getVotableProposals(avatarAddress))({proposalId}, {fromBlock: 0}).get();
+    const executedProposals = await (await proposalInstance.getExecutedProposals(avatarAddress))({proposalId}, {fromBlock: 0}).get();
+    const proposals = [...votableProposals, ...executedProposals];
+    const numberOfPeriods = proposals[0].numberOfPeriods;
+
+    redemptions.beneficiaryEth = numberOfPeriods * proposal.ethReward;
+    redemptions.beneficiaryNativeToken = numberOfPeriods * proposal.nativeTokenReward;
+    redemptions.beneficiaryReputation = numberOfPeriods * proposal.reputationChange;
+  } else {
+    redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
+    redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
+    redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
   }
+
   if (proposal.proposer == accountAddress) {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
@@ -1025,6 +1030,14 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
   redemptions: IRedemptionState
 }>
 
+export function executeProposal(avatarAddress: string, proposalId: string) {
+  return async (dispatch: Dispatch<any>) => {
+    const dao = await Arc.DAO.at(avatarAddress)
+    const votingMachineInstance = (await dao.getSchemes('GenesisProtocol'))[0].wrapper as GenesisProtocolWrapper
+    await votingMachineInstance.execute({proposalId});
+  }
+}
+
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const redemption = getState().arc.redemptions[`${proposal.proposalId}-${accountAddress}`];
@@ -1045,8 +1058,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 
     try {
       const redeemerInstance = await Arc.RedeemerFactory.deployed();
-
-      const redeemRx = await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
+      const redeemTx = await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
     } catch (err) {
       console.error(err);
       dispatch({
@@ -1089,8 +1101,8 @@ export function onRedeemEvent(proposalId: string) {
         reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
         tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
       },
-      // Check if there are any remaining redemptions left for this proposal and this beneficiary
-      redemptions: await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress)
+      // TODO: Check if there are any remaining redemptions left for this proposal and this beneficiary
+      // redemptions: await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress)
     };
 
     dispatch({

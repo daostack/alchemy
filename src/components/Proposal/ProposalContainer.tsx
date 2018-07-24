@@ -68,6 +68,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
 interface IDispatchProps {
   approveStakingGens: typeof web3Actions.approveStakingGens;
   redeemProposal: typeof arcActions.redeemProposal;
+  executeProposal: typeof arcActions.executeProposal;
   voteOnProposal: typeof arcActions.voteOnProposal;
   stakeProposal: typeof arcActions.stakeProposal;
 }
@@ -75,6 +76,7 @@ interface IDispatchProps {
 const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
+  executeProposal: arcActions.executeProposal,
   voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal,
 };
@@ -115,6 +117,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       proposal,
       approveStakingGens,
       redeemProposal,
+      executeProposal,
       stakeProposal,
       voteOnProposal,
       isPredictingFail,
@@ -123,17 +126,25 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isVotingYes
     } = this.props;
 
-    const redeemable = currentRedemptions && (
+    const beneficiaryHasRewards = currentRedemptions && (
       currentRedemptions.beneficiaryReputation ||
       currentRedemptions.beneficiaryNativeToken ||
+      (currentRedemptions.beneficiaryEth && dao.ethCount >= currentRedemptions.beneficiaryEth)
+    ) as boolean;
+
+    const accountHasRewards = currentRedemptions && (
+      (beneficiaryHasRewards && currentAccountAddress === proposal.beneficiaryAddress) ||
       currentRedemptions.proposerReputation ||
       currentRedemptions.stakerReputation ||
       currentRedemptions.stakerTokens ||
       currentRedemptions.voterReputation ||
       currentRedemptions.voterTokens ||
-      (currentRedemptions.beneficiaryEth && dao.ethCount >= currentRedemptions.beneficiaryEth) ||
       (currentRedemptions.stakerBountyTokens && dao.genCount >= currentRedemptions.stakerBountyTokens)
     ) as boolean;
+
+    const redeemable = accountHasRewards || beneficiaryHasRewards;
+
+    const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -147,7 +158,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       const redeemRewards = classNames({
         [css.redeemRewards]: true,
-        [css.disabled]: !redeemable,
+        [css.disabled]: !redeemable && !executable,
       });
 
       const submittedTime = moment.unix(proposal.submittedTime);
@@ -179,7 +190,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div>
             {currentRedemptions.beneficiaryEth || currentRedemptions.beneficiaryReputation ?
               <div>
-                <strong>As beneficiary of the proposal you will receive: </strong>
+                <strong>
+                  {currentAccount.address === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccountAddress === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
+                </strong>
                 <ul>
                   {currentRedemptions.beneficiaryEth ?
                     <li>
@@ -248,6 +261,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
           width: noPercentage + "%",
         },
       };
+
+      const redeemButton = (
+        <button
+          style={{whiteSpace: 'nowrap'}}
+          disabled={!redeemable && !executable}
+          className={redeemRewards}
+          onClick={this.handleClickRedeem.bind(this)}
+        >
+          {
+            beneficiaryHasRewards && !accountHasRewards ?
+              'Redeem for beneficiary' :
+            accountHasRewards || currentRedemptions ?
+              'Redeem' :
+              'Execute'
+          }
+        </button>
+      )
 
       const closingTime = (proposal: IProposalState) => {
         const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
@@ -403,7 +433,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
                     actionType={ActionTypes.Redeem}
-                    action={redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccount.address)}
+                    action={executable && !redeemable ? executeProposal.bind(null, dao.avatarAddress, proposal.proposalId) : redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccount.address)}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}
                     effectText={redemptionsTip}
@@ -412,14 +442,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 }
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentRedemptions ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                        <button disabled={!redeemable} className={redeemRewards} onClick={this.handleClickRedeem.bind(this)}>Redeem</button>
-                      </Tooltip>
-                    :
-                      <button className={css.redeemRewards} onClick={this.handleClickRedeem.bind(this)}>
-                        {proposalPassed(proposal) ? 'Redeem for Beneficiary' : 'Execute'}
-                      </button>
+                  { currentRedemptions || executable ?
+                      redemptionsTip ?
+                        <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+                          {redeemButton}
+                        </Tooltip> :
+                        redeemButton
+                    : ''
                   }
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>

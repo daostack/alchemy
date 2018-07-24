@@ -418,7 +418,6 @@ const arcReducer = (state = initialState, action: any) => {
         }
       }
     } // EO ARC_STAKE
-
     case ActionTypes.ARC_REDEEM: {
       const { meta, sequence, payload } = action as RedeemAction;
       const { avatarAddress, accountAddress, proposalId } = meta;
@@ -427,7 +426,9 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Pending:
-          // TODO: something to show that there is a pending redemption happening in the UI?
+          return update(state, {
+            redemptions: { [redemptionsKey] : { transactionState: { $set: TransactionStates.Unconfirmed }} }
+          });
           return state;
         case AsyncActionSequence.Success: {
           const { beneficiary, dao, redemptions } = payload;
@@ -523,7 +524,7 @@ const arcReducer = (state = initialState, action: any) => {
     case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
       const { avatarAddress, proposalId, executionState, decision, reputationWhenExecuted } = payload;
 
-      if (executionState === ExecutionState.PreBoostedBarCrossed || executionState === ExecutionState.BoostedBarCrossed) {
+      if (executionState !== ExecutionState.None) {
         return update(state, {
           proposals: {
             [proposalId]: {
