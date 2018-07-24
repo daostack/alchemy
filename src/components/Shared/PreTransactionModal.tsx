@@ -14,6 +14,7 @@ import * as css from "./PreTransactionModal.scss";
 
 export enum ActionTypes {
   CreateProposal,
+  Execute,
   Redeem,
   StakeFail,
   StakePass,
@@ -59,23 +60,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
       case ActionTypes.VoteUp:
         icon = <img src="/assets/images/Tx/Upvote.svg" />;
         transactionInfo = <span><strong className={css.passVote}>Pass</strong> vote</span>;
-
-        if (currentAccount == proposal.beneficiaryAddress) {
-          let rewards = [];
-          if (proposal.reputationChange) {
-            rewards.push(
-              <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
-            );
-          }
-          if (proposal.ethReward) {
-            rewards.push(proposal.ethReward + " ETH");
-          }
-          const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} &amp; {v}</React.Fragment>)}</strong>;
-          passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION &amp; {rewardsString} </span> : <span>{rewardsString}</span>;
-        } else {
-          passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
-        }
-
+        passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
         failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR YES VOTES";
         rules = <div>
@@ -148,6 +133,12 @@ export default class PreTransactionModal extends React.Component<IProps> {
                   <p>If a proposal you submit passes, you will be awarded reputation. If you are the receiver of the budget, you will gain ETH and/or reputation.</p>
                 </div>;
         break;
+      case ActionTypes.Redeem:
+        transactionInfo = <span>Redeem proposal</span>;
+        break;
+      case ActionTypes.Execute:
+        transactionInfo = <span>Execute proposal</span>;
+        break;
     }
 
     return (
@@ -172,7 +163,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 </button>
               </div>
             </div>
-            {actionType != ActionTypes.Redeem ?
+            {actionType != ActionTypes.Redeem && actionType != ActionTypes.Execute ?
               <div className={css.incentives}>
                 <span className={css.outcomes}>OUTCOMES</span>
                 <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
