@@ -896,7 +896,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       // Update the proposal
       proposal: {
         proposalId,
-        redemptions: redemptions,
+        redemptions,
         state: Number(await votingMachineInstance.getState({ proposalId })),
         votesNo: Util.fromWei(noVotes),
         votesYes: Util.fromWei(yesVotes),
