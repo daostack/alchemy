@@ -5,7 +5,6 @@ import { createSelector } from "reselect";
 import { IRootState } from "reducers";
 import { IProposalState, ProposalStates, closingTime } from "reducers/arcReducer";
 import * as schemas from "schemas";
-import * as moment from 'moment';
 
 const getArcEntities = (state: IRootState) => state.arc;
 const getDaos = (state: IRootState) => state.arc.daos;
