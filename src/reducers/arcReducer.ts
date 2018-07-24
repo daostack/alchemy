@@ -272,16 +272,10 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Success:
-          // Add the new proposal to the DAO's state
-          return update(state , {
-            daos : {
-              [avatarAddress]: {
-                proposals: {
-                  $push : [action.payload.result]
-                }
-              }
-            }
-          });
+          // Add the new proposal to the DAO's state if not already there
+          if (state.daos[avatarAddress].proposals.indexOf(action.payload.result) === -1) {
+            return update(state , { daos : { [avatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
+          }
         default:
           return state;
       }
@@ -293,7 +287,7 @@ const arcReducer = (state = initialState, action: any) => {
 
       // Add the new proposal to the DAO's state if not already there
       if (state.daos[avatarAddress].proposals.indexOf(action.payload.result) === -1) {
-        state = update(state , { daos : { [avatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
+        return update(state , { daos : { [avatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
       }
 
       return state;
@@ -307,20 +301,19 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Pending:
+          // Add vote to account if not already there
+          if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
+            state = update(state, { accounts: { [accountKey] : { votes: { $push: [voteKey] } } } });
+          }
+          // Add vote to proposal if not already there
+          if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
+            state = update(state, { proposals: { [proposalId] : { votes: { $push: [voteKey] } } } });
+          }
+
+          // Add vote
+          // TODO: this automatically through normalizing it?
           return update(state, {
-            // Add vote to the account, proposal and as an entity
-            accounts: {
-              [accountKey] : {
-                votes: { $push: [voteKey] }
-              }
-            },
-            proposals: {
-              [proposalId] : {
-                votes: { $push: [voteKey] }
-              }
-            },
             votes: {
-              // TODO: this automatically through normalizing it?
               [voteKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
             }
           });
@@ -367,21 +360,22 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Pending:
+          // Add empty account if there isntted to the DAO already
+          if (!state.accounts[accountKey]) {
+            state = update(state, { accounts: { [accountKey]: { $set: { ...emptyAccount, daoAvatarAddress: avatarAddress, address: stakerAddress }}}});
+          }
+          // Add stake to account if not already there
+          if (state.accounts[accountKey].stakes.indexOf(stakeKey) === -1) {
+            state = update(state, { accounts: { [accountKey] : { stakes: { $push: [stakeKey] } } } });
+          }
+          // Add stake to proposal if not already there
+          if (state.proposals[proposalId].stakes.indexOf(stakeKey) === -1) {
+            state = update(state, { proposals: { [proposalId] : { stakes: { $push: [stakeKey] } } } });
+          }
+
+          // Add the new stake
+          // TODO: do automatically through normalizing?
           return update(state, {
-            // Add stake to the account, proposal and as an entity
-            accounts: {
-              [accountKey] : (account: any) => {
-                // If staking being done by a non member of the DAO, add them as a member to this DAO
-                return update(account || { ...emptyAccount, daoAvatarAddress: avatarAddress, address: stakerAddress }, {
-                  stakes: { $push: [stakeKey] }
-                });
-              }
-            },
-            proposals: {
-              [proposalId] : {
-                stakes: { $push: [stakeKey] }
-              }
-            },
             stakes: {
               // TODO: this automatically through normalizing it?
               [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }

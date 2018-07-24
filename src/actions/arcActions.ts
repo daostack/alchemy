@@ -851,7 +851,9 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
         // Even if the current account has no reputation in the DAO they could have previously waiting redemptions, so create an empty account for them
         const account = getState().arc.accounts[`${currentAccountAddress}-${avatarAddress}`] || {...emptyAccount, daoAvatarAddress: avatarAddress, address: currentAccountAddress};
         accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`] = account;
-        accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`].redemptions.push(`${proposalId}-${currentAccountAddress}`);
+        if (account.redemptions.indexOf(`${proposalId}-${currentAccountAddress}`) === -1) {
+          accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`].redemptions.push(`${proposalId}-${currentAccountAddress}`);
+        }
       } else {
         // Caching in the background so pull redemptions for all people who interacted with the proposal
         let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
@@ -869,13 +871,20 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
           if (accountRedemptions) {
             redemptions.push(accountRedemptions);
             accountsToUpdate[`${accountAddress}-${avatarAddress}`] = getState().arc.accounts[`${accountAddress}-${avatarAddress}`];
-            accountsToUpdate[`${accountAddress}-${avatarAddress}`].redemptions.push(`${proposalId}-${accountAddress}`);
+            if (accountsToUpdate[`${accountAddress}-${avatarAddress}`].redemptions.indexOf(`${proposalId}-${accountAddress}`) === -1) {
+              accountsToUpdate[`${accountAddress}-${avatarAddress}`].redemptions.push(`${proposalId}-${accountAddress}`);
+            }
           }
         }
       }
     }
 
     const normalizedRedemptions = normalize(redemptions, schemas.redemptionList);
+
+    // Dedupe new redemptions with the old redemptions already on the proposal
+    // TODO: seems like all this should be happening in the reducer?
+    redemptions = [...proposal.redemptions, ...normalizedRedemptions.result];
+    redemptions = [...new Set(redemptions)];
 
     const payload = {
       entities: { ...normalizedRedemptions.entities, accounts: accountsToUpdate},
@@ -887,7 +896,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       // Update the proposal
       proposal: {
         proposalId,
-        redemptions: normalizedRedemptions.result,
+        redemptions: redemptions,
         state: Number(await votingMachineInstance.getState({ proposalId })),
         votesNo: Util.fromWei(noVotes),
         votesYes: Util.fromWei(yesVotes),
