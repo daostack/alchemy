@@ -133,7 +133,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
     ) as boolean;
 
     const accountHasRewards = currentRedemptions && (
-      (beneficiaryHasRewards && currentAccountAddress === proposal.beneficiaryAddress) ||
+      (beneficiaryHasRewards && currentAccount.address === proposal.beneficiaryAddress) ||
       currentRedemptions.proposerReputation ||
       currentRedemptions.stakerReputation ||
       currentRedemptions.stakerTokens ||
@@ -191,7 +191,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {currentRedemptions.beneficiaryEth || currentRedemptions.beneficiaryReputation ?
               <div>
                 <strong>
-                  {currentAccount.address === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccountAddress === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
+                  {currentAccount.address === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccount.address === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
                 </strong>
                 <ul>
                   {currentRedemptions.beneficiaryEth ?
