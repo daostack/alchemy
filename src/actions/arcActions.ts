@@ -837,12 +837,15 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     let redemptions: IRedemptionState[] = [];
     let accountsToUpdate: { [key: string]: IAccountState } = {};
     if (proposalEnded(proposal)) {
-      if (getState().web3.ethAccountAddress) {
-        // Logged in to the app so only pull redemptions for currentAccount
-        const currentAccountAddress: string = getState().web3.ethAccountAddress;
+      const currentAccountAddress: string = getState().web3.ethAccountAddress;
+      if (currentAccountAddress) {
+        // Logged in to the app so only pull redemptions for currentAccount;
         const currentRedemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
         redemptions.push(currentRedemptions);
-        accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`] = getState().arc.accounts[`${currentAccountAddress}-${avatarAddress}`];
+
+        // Even if the current account has no reputation in the DAO they could have previously waiting redemptions, so create an empty account for them
+        const account = getState().arc.accounts[`${currentAccountAddress}-${avatarAddress}`] || {...emptyAccount, daoAvatarAddress: avatarAddress, address: currentAccountAddress};
+        accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`] = account;
         accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`].redemptions.push(`${proposalId}-${currentAccountAddress}`);
       } else {
         // Caching in the background so pull redemptions for all people who interacted with the proposal

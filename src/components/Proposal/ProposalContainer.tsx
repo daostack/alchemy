@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, emptyAccount } from "reducers/arcReducer";
 import { isStakePending, isVotePending } from "selectors/operations";
 import * as schemas from "schemas";
 
@@ -43,7 +43,11 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const currentVote = state.arc.votes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const proposal = state.arc.proposals[ownProps.proposalId];
   const dao = denormalize(state.arc.daos[proposal.daoAvatarAddress], schemas.daoSchema, state.arc) as IDaoState;
-  const currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${proposal.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
+
+  let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${proposal.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
+  if (!currentAccount) {
+    currentAccount = { ...emptyAccount, daoAvatarAddress: proposal.daoAvatarAddress, address: state.web3.ethAccountAddress };
+  }
 
   return {
     currentAccount,
@@ -155,24 +159,19 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
       const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
-      let currentAccountAddress = "", currentAccountReputation = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0,
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0,
           currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
           redemptionsTip: JSX.Element = null;
 
-      if (currentAccount) {
-        currentAccountReputation = currentAccount.reputation;
-        currentAccountAddress = currentAccount.address;
+      if (currentVote) {
+        currentAccountVoteState = currentVote.transactionState;
+        currentAccountVote = currentVote.voteOption;
+      }
 
-        if (currentVote) {
-          currentAccountVoteState = currentVote.transactionState;
-          currentAccountVote = currentVote.voteOption;
-        }
-
-        if (currentStake) {
-          currentAccountPrediction = currentStake.prediction;
-          currentAccountStakeAmount = currentStake.stakeAmount;
-          currentAccountStakeState = currentStake.transactionState;
-        }
+      if (currentStake) {
+        currentAccountPrediction = currentStake.prediction;
+        currentAccountStakeAmount = currentStake.stakeAmount;
+        currentAccountStakeState = currentStake.transactionState;
       }
 
       if (currentRedemptions) {
@@ -264,8 +263,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
               isVotingNo={isVotingNo}
               isVotingYes={isVotingYes}
               currentVote={currentAccountVote}
-              currentAccountAddress={currentAccountAddress}
-              currentAccountReputation={currentAccountReputation}
+              currentAccountAddress={currentAccount.address}
+              currentAccountReputation={currentAccount.reputation}
               dao={dao}
               proposal={proposal}
               transactionState={currentAccountVoteState}

@@ -368,10 +368,13 @@ const arcReducer = (state = initialState, action: any) => {
       switch (sequence) {
         case AsyncActionSequence.Pending:
           return update(state, {
-            // Add vote to the account, proposal and as an entity
+            // Add stake to the account, proposal and as an entity
             accounts: {
-              [accountKey] : {
-                stakes: { $push: [stakeKey] }
+              [accountKey] : (account: any) => {
+                // If staking being done by a non member of the DAO, add them as a member to this DAO
+                return update(account || { ...emptyAccount, daoAvatarAddress: avatarAddress, address: stakerAddress }, {
+                  stakes: { $push: [stakeKey] }
+                });
               }
             },
             proposals: {
