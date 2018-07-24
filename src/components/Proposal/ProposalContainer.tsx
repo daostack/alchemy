@@ -155,12 +155,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
       const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
-      let currentAccountReputation = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0,
+      let currentAccountAddress = "", currentAccountReputation = 0, currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0,
           currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
           redemptionsTip: JSX.Element = null;
 
       if (currentAccount) {
         currentAccountReputation = currentAccount.reputation;
+        currentAccountAddress = currentAccount.address;
 
         if (currentVote) {
           currentAccountVoteState = currentVote.transactionState;
@@ -263,7 +264,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               isVotingNo={isVotingNo}
               isVotingYes={isVotingYes}
               currentVote={currentAccountVote}
-              currentAccountAddress={currentAccount.address}
+              currentAccountAddress={currentAccountAddress}
               currentAccountReputation={currentAccountReputation}
               dao={dao}
               proposal={proposal}
