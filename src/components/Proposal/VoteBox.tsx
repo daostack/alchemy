@@ -12,8 +12,9 @@ import ReputationView from "components/Account/ReputationView";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 
 interface IProps {
-  currentVote: number;
+  currentAccountAddress: string;
   currentAccountReputation: number;
+  currentVote: number;
   dao: IDaoState;
   proposal: IProposalState;
   transactionState: TransactionStates;
@@ -53,6 +54,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
     const {
       currentVote,
       currentAccountReputation,
+      currentAccountAddress,
       proposal,
       dao,
       transactionState,
@@ -109,6 +111,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
             actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
             action={voteOnProposal.bind(null, proposal.daoAvatarAddress, proposal, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
+            currentAccount={currentAccountAddress}
             dao={dao}
             effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccountReputation} /></strong></span>}
             proposal={proposal}

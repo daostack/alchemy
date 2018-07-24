@@ -59,13 +59,29 @@ export default class PreTransactionModal extends React.Component<IProps> {
       case ActionTypes.VoteUp:
         icon = <img src="/assets/images/Tx/Upvote.svg" />;
         transactionInfo = <span><strong className={css.passVote}>Pass</strong> vote</span>;
-        passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>YOU GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
+
+        if (currentAccount == proposal.beneficiaryAddress) {
+          let rewards = [];
+          if (proposal.reputationChange) {
+            rewards.push(
+              <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
+            );
+          }
+          if (proposal.ethReward) {
+            rewards.push(proposal.ethReward + " ETH");
+          }
+          const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} &amp; {v}</React.Fragment>)}</strong>;
+          passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION &amp; {rewardsString} </span> : <span>{rewardsString}</span>;
+        } else {
+          passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
+        }
+
         failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR YES VOTES";
         rules = <div>
                   <p>Every time you vote, 1% of your reputation is taken away. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails)</p>
-                  <p>“If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.</p>
-                  <p>If your vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.</p>
+                  <p>If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.</p>
+                  <p>If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
                 </div>;
         break;
@@ -91,15 +107,18 @@ export default class PreTransactionModal extends React.Component<IProps> {
         rules = <div>
                   <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
                   <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
+                  <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
                 </div>;
         break;
       case ActionTypes.StakeFail:
         icon = <img src="/assets/images/Tx/StakeFail.svg"/>;
         transactionInfo = <span><strong className={css.failVote}>Fail</strong> prediction</span>;
-        passIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
-        failIncentive = <span>LOSE YOUR STAKE</span>;
+        passIncentive = <span>LOSE YOUR STAKE</span>;
+        failIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
         rulesHeader = "RULES FOR FAIL PREDICTIONS";
         rules = <div>
+                  <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
+                  <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
                   <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
                 </div>;
         break;
@@ -107,17 +126,21 @@ export default class PreTransactionModal extends React.Component<IProps> {
         icon = <img src="/assets/images/Tx/NewProposal.svg"/>;
         transactionInfo = <span>Create <strong className={css.redeem}>proposal</strong></span>;
 
-        let rewards = [];
-        if (proposal.reputationChange) {
-          rewards.push(
-            <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
-          );
+        if (currentAccount == proposal.beneficiaryAddress) {
+          let rewards = [];
+          if (proposal.reputationChange) {
+            rewards.push(
+              <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
+            );
+          }
+          if (proposal.ethReward) {
+            rewards.push(proposal.ethReward + " ETH");
+          }
+          const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} &amp; {v}</React.Fragment>)}</strong>;
+          passIncentive = <span>GAIN REPUTATION &amp; {rewardsString}</span>;
+        } else {
+          passIncentive = <span>GAIN REPUTATION</span>;
         }
-        if (proposal.ethReward) {
-          rewards.push(proposal.ethReward + " ETH");
-        }
-        const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} &amp; {v}</React.Fragment>)}</strong>;
-        passIncentive = currentAccount == proposal.beneficiaryAddress ? <span>GAIN REPUTATION &amp; REWARDS OF {rewardsString}</span> : <span>GAIN REPUTATION</span>;
 
         failIncentive = <span>NOTHING TO LOSE</span>;
         rulesHeader = "RULES FOR CREATING PROPOSALS";
@@ -149,26 +172,28 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 </button>
               </div>
             </div>
-            <div className={css.incentives}>
-              <span className={css.outcomes}>OUTCOMES</span>
-              <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
-              <span className={css.failIncentive}><strong>FAIL</strong>{failIncentive}</span>
-              <span className={css.help}>
-                <img src="/assets/images/Icon/Help.svg"/>
-                <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
-                <div className={css.helpBox}>
-                  <div className={css.pointer}></div>
-                  <div className={css.bg}></div>
-                  <div className={css.bridge}></div>
-                  <div className={css.header}>
-                    <h2>Genesis Protocol</h2>
-                    <h3>{rulesHeader}</h3>
+            {actionType != ActionTypes.Redeem ?
+              <div className={css.incentives}>
+                <span className={css.outcomes}>OUTCOMES</span>
+                <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
+                <span className={css.failIncentive}><strong>FAIL</strong>{failIncentive}</span>
+                <span className={css.help}>
+                  <img src="/assets/images/Icon/Help.svg"/>
+                  <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
+                  <div className={css.helpBox}>
+                    <div className={css.pointer}></div>
+                    <div className={css.bg}></div>
+                    <div className={css.bridge}></div>
+                    <div className={css.header}>
+                      <h2>Genesis Protocol</h2>
+                      <h3>{rulesHeader}</h3>
+                    </div>
+                    <div className={css.body}>{rules}</div>
+                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
                   </div>
-                  <div className={css.body}>{rules}</div>
-                  <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
-                </div>
-              </span>
-            </div>
+                </span>
+              </div> : ""
+            }
             { !proposalEnded(proposal) ?
               <div className={css.decisionGraph}>
                   <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%) PASS</span>
