@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, IRedemptionState, TransactionStates, VoteOptions, closingTime } from "reducers/arcReducer";
 import { isStakePending, isVotePending } from "selectors/operations";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -236,13 +236,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
           width: noPercentage + "%",
         },
       };
-
-      const closingTime = (proposal: IProposalState) => {
-        const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
-        const start = state === ProposalStates.Boosted ? boostedTime : submittedTime;
-        const duration = state === ProposalStates.Boosted ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
-        return moment((executionTime || start + duration) * 1000);
-      }
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
