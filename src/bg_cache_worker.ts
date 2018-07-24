@@ -62,7 +62,7 @@ async function updateCache() {
   const s3FileName = 'initialArcState-' + arcjsNetwork + '.json';
   const s3FileType = 'application/json';
 
-  const redisClient = Redis.createClient();
+  const redisClient = Redis.createClient(process.env.REDIS_URL || "redis://127.0.0.1:6379");
 
   const redisGet = promisify(redisClient.get.bind(redisClient));
   const redisSet = promisify(redisClient.set.bind(redisClient));
@@ -121,7 +121,7 @@ async function updateCache() {
     }
   });
 
-  process.on('SIGTERM', function () {
+  process.on('SIGTERM', () => {
     console.log("Exiting process");
     unsubscribe();
     process.exit(0);
@@ -192,7 +192,7 @@ async function updateCache() {
     console.log("done for new votes, now executed proposal");
 
     this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-    await this.executeProposalEventWatcher.get(async (error: Error, eventsArray: Array<Arc.ExecutedGenesisProposal>) => {
+    await this.executeProposalEventWatcher.get(async (error: Error, eventsArray: Arc.ExecutedGenesisProposal[]) => {
       console.log("got executed proposal", error, eventsArray);
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
