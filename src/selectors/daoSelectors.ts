@@ -23,7 +23,7 @@ const getDaoProposals = createSelector(
 export const createBoostedProposalsSelector = () => createSelector(
   [ getDaoProposals ],
   (proposals) => proposals.filter((proposal: IProposalState) =>
-    proposal.state === ProposalStates.Boosted && (+moment() / 1000) <= proposal.boostedTime + proposal.boostedVotePeriodLimit
+    (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) && (+moment() / 1000) <= proposal.boostedTime + proposal.boostedVotePeriodLimit
   )
 );
 
@@ -40,7 +40,7 @@ export const createHistoryProposalsSelector = () => createSelector(
     const result = proposals.filter((proposal: IProposalState) => (
       proposal.state === ProposalStates.Executed ||
       proposal.state === ProposalStates.Closed ||
-      proposal.state === ProposalStates.Boosted && (+moment() / 1000) > proposal.boostedTime + proposal.boostedVotePeriodLimit ||
+      (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) && (+moment() / 1000) > proposal.boostedTime + proposal.boostedVotePeriodLimit ||
       proposal.state === ProposalStates.PreBoosted && (+moment() / 1000) > proposal.submittedTime + proposal.preBoostedVotePeriodLimit
     ));
 

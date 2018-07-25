@@ -207,8 +207,8 @@ export const initialState: IArcState = {
 
 export const closingTime = (proposal: IProposalState) => {
   const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
-  const start = state === ProposalStates.Boosted ? boostedTime : submittedTime;
-  const duration = state === ProposalStates.Boosted ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
+  const start = (state == ProposalStates.Boosted || state == ProposalStates.QuietEndingPeriod) ? boostedTime : submittedTime;
+  const duration = (state == ProposalStates.Boosted || state == ProposalStates.QuietEndingPeriod) ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
   return moment((executionTime || start + duration) * 1000);
 }
 
@@ -217,7 +217,7 @@ export function proposalEnded(proposal: IProposalState) {
     proposal.state == ProposalStates.Executed ||
     proposal.state == ProposalStates.Closed ||
     // Boosted proposal past end time but not yet executed
-    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) ||
+    ((proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) ||
     // Pre boosted proposal past end time but not yet executed
     (proposal.state == ProposalStates.PreBoosted && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000)
   );
@@ -228,7 +228,7 @@ export function proposalPassed(proposal: IProposalState) {
   const res = (
     (proposal.state == ProposalStates.Executed && proposal.winningVote == VoteOptions.Yes) ||
     // Boosted proposal past end time with more yes votes than no, but not yet executed
-    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000 && proposal.winningVote == VoteOptions.Yes)
+    ((proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000 && proposal.winningVote == VoteOptions.Yes)
   );
   return res;
 }
@@ -238,7 +238,7 @@ export function proposalFailed(proposal: IProposalState) {
     proposal.state == ProposalStates.Closed ||
     (proposal.state == ProposalStates.Executed && proposal.winningVote == VoteOptions.No) ||
     // Boosted proposal past end time with more no votes than yes, but not yet executed
-    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000 && proposal.winningVote == VoteOptions.No) ||
+    ((proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000 && proposal.winningVote == VoteOptions.No) ||
     // Pre boosted proposal past end time but not yet executed are always failed
     (proposal.state == ProposalStates.PreBoosted && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000)
   );

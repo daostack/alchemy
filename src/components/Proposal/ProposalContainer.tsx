@@ -149,7 +149,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
     if (proposal) {
       const proposalClass = classNames({
         [css.proposal]: true,
-        [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted,
+        [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: redeemable,
@@ -362,7 +362,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               />
             </div>
           </div>
-          { !proposalEnded(proposal) && proposal.state == ProposalStates.Boosted ?
+          { !proposalEnded(proposal) && (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) ?
               <div>
                 <div className={css.proposalDetails}>
                   <div className={css.createdBy}>
