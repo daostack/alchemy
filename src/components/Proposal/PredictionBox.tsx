@@ -134,7 +134,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       );
     }
 
-    const stakingLeftToBoost = proposal.threshold - (proposal.stakesYes - proposal.stakesNo);
+    // round second decimal up
+    const stakingLeftToBoost = Math.ceil((proposal.threshold - (proposal.stakesYes - proposal.stakesNo)) * 100) / 100;
 
     let wrapperClass = classNames({
       [css.predictions] : true,
