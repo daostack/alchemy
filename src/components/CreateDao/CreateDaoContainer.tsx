@@ -4,7 +4,7 @@ import { connect, Dispatch } from "react-redux";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { emptyAccount, IAccountState, IDaoState } from "reducers/arcReducer";
+import { newAccount, IAccountState, IDaoState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import * as css from "./CreateDao.scss";
@@ -48,7 +48,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
       name: "",
       tokenName: "",
       tokenSymbol: "",
-      members: [ { ...emptyAccount, address: this.props.web3.ethAccountAddress, tokens: 1000, reputation: 1000 }],
+      members: [ newAccount(null, this.props.web3.ethAccountAddress, 1000, 1000) ],
     };
   }
 
@@ -101,7 +101,7 @@ class CreateDaoContainer extends React.Component<IProps, IState> {
 
   public handleAddMember = (event: any) => {
     this.setState({
-      members: this.state.members.concat([{...emptyAccount, address: "", tokens: 1000, reputation: 1000 }]),
+      members: this.state.members.concat([newAccount(null, "", 1000, 1000)]),
     });
   }
 

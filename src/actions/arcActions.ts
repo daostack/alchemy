@@ -13,7 +13,7 @@ import * as arcConstants from "constants/arcConstants";
 import Util from "lib/util";
 import { IRootState } from "reducers/index";
 import { ContributionRewardType,
-         emptyAccount,
+         newAccount,
          IAccountState,
          IDaoState,
          IRedemptionState,
@@ -160,7 +160,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const members: { [address: string]: IAccountState } = {};
   for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
     const address = memberAddresses[cnt];
-    const member: IAccountState = { ...emptyAccount, daoAvatarAddress: avatarAddress, address };
+    const member: IAccountState = newAccount(avatarAddress, address);
     const tokens = await daoInstance.token.balanceOf(address);
     member.tokens = Util.fromWei(tokens);
     const reputation = await daoInstance.reputation.reputationOf(address);
@@ -193,22 +193,25 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     // Add any votes, stakes and redemptions on the proposal to each account too
     // This seems weird, but best I could come up with for now
     proposal.redemptions.forEach((redemption: IRedemptionState) => {
-      if (members[redemption.accountAddress]) {
-        // TODO: if accountAddress no longer has reputation in the DAO then still add here for later history purposes
-        members[redemption.accountAddress].redemptions.push(redemption);
+      // If this account is not a current "member" of the DAO then add it to the list because they still have some pending redemptions
+      if (!members[redemption.accountAddress]) {
+        members[redemption.accountAddress] = newAccount(avatarAddress, redemption.accountAddress)
       }
+      members[redemption.accountAddress].redemptions.push(redemption);
     });
     proposal.stakes.forEach((stake: IStakeState) => {
-      if (members[stake.stakerAddress]) {
-        // TODO: if stakerAddress no longer has reputation in the DAO then still add here for later history purposes
-        members[stake.stakerAddress].stakes.push(stake);
+      // If this account is not a current "member" of the DAO then add it to the list to track their stakes
+      if (!members[stake.stakerAddress]) {
+        members[stake.stakerAddress] = newAccount(avatarAddress, stake.stakerAddress);
       }
+      members[stake.stakerAddress].stakes.push(stake);
     });
     proposal.votes.forEach((vote: IVoteState) => {
-      if (members[vote.voterAddress]) {
-        // TODO: if voterAddress no longer has reputation in the DAO then still add here for later history purposes
-        members[vote.voterAddress].votes.push(vote);
+      // If this account is not a current "member" of the DAO then add it to the list to track their votes
+      if (!members[vote.voterAddress]) {
+        members[vote.voterAddress] = newAccount(avatarAddress, vote.voterAddress);
       }
+      members[vote.voterAddress].votes.push(vote);
     });
   } // EO for each proposal
 
@@ -363,21 +366,18 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     }
   }
 
-  // Check for votes and stakes from the current account on this proposal
+  // Check for votes, stakes and redemptions for the current account on this proposal
   if (currentAccountAddress !== null) {
-    // Check if current account voted on this proposal
     const voterInfo = await getVoterInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress)
     if (voterInfo) {
       proposal.votes.push(voterInfo as IVoteState);
     }
 
-    // Check if current account staked on this proposal
     const stakerInfo = await getStakerInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress)
     if (stakerInfo) {
       proposal.stakes.push(stakerInfo as IStakeState);
     }
 
-    // If proposal closed, look for any redemptions the current account has for this proposal
     if (proposalEnded(proposal)) {
       const redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress)
       if (redemptions) {
@@ -842,39 +842,30 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     let redemptions: IRedemptionState[] = [];
     let accountsToUpdate: { [key: string]: IAccountState } = {};
     if (proposalEnded(proposal)) {
-      const currentAccountAddress: string = getState().web3.ethAccountAddress;
-      if (currentAccountAddress) {
-        // Logged in to the app so only pull redemptions for currentAccount;
-        const currentRedemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
-        redemptions.push(currentRedemptions);
+      // Gather redemptions for all people who interacted with the proposal
+      // Doing this here instead of on proposal executed because we need to show redemptions for expired proposals too (TODO: does this make sense?)
+      let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer, voterAddress];
+      proposal.votes.forEach((vote: IVoteState) => {
+        associatedAccounts.push(vote.voterAddress);
+      });
+      proposal.stakes.forEach((stake: IStakeState) => {
+        associatedAccounts.push(stake.stakerAddress);
+      });
+      associatedAccounts = [...new Set(associatedAccounts)]; // Dedupe
 
-        // Even if the current account has no reputation in the DAO they could have previously waiting redemptions, so create an empty account for them
-        const account = getState().arc.accounts[`${currentAccountAddress}-${avatarAddress}`] || {...emptyAccount, daoAvatarAddress: avatarAddress, address: currentAccountAddress};
-        accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`] = account;
-        if (account.redemptions.indexOf(`${proposalId}-${currentAccountAddress}`) === -1) {
-          accountsToUpdate[`${currentAccountAddress}-${avatarAddress}`].redemptions.push(`${proposalId}-${currentAccountAddress}`);
-        }
-      } else {
-        // Caching in the background so pull redemptions for all people who interacted with the proposal
-        let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
-        proposal.votes.forEach((vote: IVoteState) => {
-          associatedAccounts.push(vote.voterAddress);
-        });
-        proposal.stakes.forEach((stake: IStakeState) => {
-          associatedAccounts.push(stake.stakerAddress);
-        });
-        associatedAccounts = [...new Set(associatedAccounts)]; // Dedupe
-
-        let accountRedemptions: IRedemptionState;
-        for (const accountAddress of associatedAccounts) {
-          accountRedemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
-          if (accountRedemptions) {
-            redemptions.push(accountRedemptions);
-            accountsToUpdate[`${accountAddress}-${avatarAddress}`] = getState().arc.accounts[`${accountAddress}-${avatarAddress}`];
-            if (accountsToUpdate[`${accountAddress}-${avatarAddress}`].redemptions.indexOf(`${proposalId}-${accountAddress}`) === -1) {
-              accountsToUpdate[`${accountAddress}-${avatarAddress}`].redemptions.push(`${proposalId}-${accountAddress}`);
-            }
+      let accountRedemptions: IRedemptionState, account: IAccountState;
+      for (const accountAddress of associatedAccounts) {
+        accountRedemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
+        if (accountRedemptions) {
+          redemptions.push(accountRedemptions);
+          account = getState().arc.accounts[`${accountAddress}-${avatarAddress}`];
+          if (!account) {
+            account = newAccount(avatarAddress, accountAddress, 0, 0, [`${proposalId}-${accountAddress}`]);
+          } else if (account.redemptions.indexOf(`${proposalId}-${accountAddress}`) === -1) {
+            // If existing account doesn't have this redemption yet then add it
+            account.redemptions.push(`${proposalId}-${accountAddress}`);
           }
+          accountsToUpdate[`${accountAddress}-${avatarAddress}`] = account;
         }
       }
     }
@@ -882,8 +873,8 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     const normalizedRedemptions = normalize(redemptions, schemas.redemptionList);
 
     // Dedupe new redemptions with the old redemptions already on the proposal
-    // TODO: seems like all this should be happening in the reducer?
-    redemptions = [...proposal.redemptions, ...normalizedRedemptions.result];
+    // TODO: seems like this should be happening in the reducer?
+    redemptions = [...Object.keys(proposal.redemptions), ...normalizedRedemptions.result];
     redemptions = [...new Set(redemptions)];
 
     const payload = {

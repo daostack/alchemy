@@ -9,7 +9,7 @@ import { showNotification, NotificationStatus } from 'reducers/notifications'
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, emptyAccount } from "reducers/arcReducer";
+import { IAccountState, IDaoState, newAccount } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import AccountBalance from "components/Account/AccountBalance";
@@ -182,10 +182,10 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    let { accounts, currentAccount, currentAccountGenBalance, currentAccountGenStakingAllowance, dao, ethAccountAddress, ethAccountBalance, networkId, showTour } = this.props;
+    let { accounts, currentAccount, currentAccountGenBalance, currentAccountGenStakingAllowance, dao, daoAvatarAddress, ethAccountAddress, ethAccountBalance, networkId, showTour } = this.props;
 
     if (!currentAccount) {
-      currentAccount = {...emptyAccount };
+      currentAccount = newAccount(daoAvatarAddress, ethAccountAddress);
     }
 
     const accountOptionNodes = accounts.map((account: string) => (

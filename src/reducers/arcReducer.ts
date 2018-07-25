@@ -43,14 +43,23 @@ export interface IAccountState {
   votes: Array<IVoteState | string>; // Either normalized (string) or denormalized (object)
 }
 
-export const emptyAccount: IAccountState = {
-  address: null,
-  daoAvatarAddress: null,
-  redemptions: [],
-  reputation: 0,
-  stakes: [],
-  tokens: 0,
-  votes: []
+export function newAccount(
+    daoAvatarAddress: string,
+    address: string,
+    reputation = 0,
+    tokens = 0,
+    redemptions: Array<IRedemptionState | string> = [],
+    stakes: Array<IStakeState | string> = [],
+    votes: Array<IVoteState | string> = []): IAccountState {
+  return {
+    address,
+    daoAvatarAddress,
+    redemptions: [],
+    reputation,
+    stakes: [],
+    tokens,
+    votes: []
+  }
 }
 
 export interface IDaoState {
@@ -362,7 +371,7 @@ const arcReducer = (state = initialState, action: any) => {
         case AsyncActionSequence.Pending:
           // Add empty account if there isntted to the DAO already
           if (!state.accounts[accountKey]) {
-            state = update(state, { accounts: { [accountKey]: { $set: { ...emptyAccount, daoAvatarAddress: avatarAddress, address: stakerAddress }}}});
+            state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, stakerAddress) }}});
           }
           // Add stake to account if not already there
           if (state.accounts[accountKey].stakes.indexOf(stakeKey) === -1) {
@@ -486,7 +495,7 @@ const arcReducer = (state = initialState, action: any) => {
         accounts: {
           [toKey]: (member: any) => {
             // If tokens are being given to a non member, add them as a member to this DAO
-            return update(member || { ...emptyAccount, daoAvatarAddress: avatarAddress, address: toAccount }, {
+            return update(member || newAccount(avatarAddress, toAccount), {
               tokens: { $set: toBalance }
             });
           }
@@ -507,7 +516,7 @@ const arcReducer = (state = initialState, action: any) => {
         accounts: {
           [accountKey]: (member: any) => {
             // If reputation is being given to a non member, add them as a member to this DAO
-            return update(member || { ...emptyAccount, daoAvatarAddress: avatarAddress, address }, {
+            return update(member || newAccount(avatarAddress, address), {
               tokens: { $set: reputation }
             });
           }

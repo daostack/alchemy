@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, emptyAccount } from "reducers/arcReducer";
+import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
 import { isStakePending, isVotePending } from "selectors/operations";
 import * as schemas from "schemas";
 
@@ -46,7 +46,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
 
   let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${proposal.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
   if (!currentAccount) {
-    currentAccount = { ...emptyAccount, daoAvatarAddress: proposal.daoAvatarAddress, address: state.web3.ethAccountAddress };
+    currentAccount = newAccount(proposal.daoAvatarAddress, state.web3.ethAccountAddress);
   }
 
   return {
