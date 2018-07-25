@@ -7,12 +7,14 @@ import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "act
 import { AsyncActionSequence } from "actions/async";
 
 export enum ProposalStates {
-  None = 0,
-  Closed = 1,
-  Executed = 2,
-  PreBoosted = 3,
-  Boosted = 4,
-  QuietEndingPeriod = 5,
+  None,
+  Closed,
+  Executed,
+  PreBoosted,
+  Boosted,
+  QuietEndingPeriod,
+  PreBoostedTimedOut, // pre boosted proposal past time limit but not executed yet
+  BoostedTimedOut // boosted proposal past time limit but not executed yet
 }
 
 export enum TransactionStates {
@@ -226,9 +228,9 @@ export function proposalEnded(proposal: IProposalState) {
     proposal.state == ProposalStates.Executed ||
     proposal.state == ProposalStates.Closed ||
     // Boosted proposal past end time but not yet executed
-    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) ||
+    proposal.state == ProposalStates.BoostedTimedOut||
     // Pre boosted proposal past end time but not yet executed
-    (proposal.state == ProposalStates.PreBoosted && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000)
+    proposal.state == ProposalStates.PreBoostedTimedOut
   );
   return res;
 }
@@ -237,7 +239,7 @@ export function proposalPassed(proposal: IProposalState) {
   const res = (
     (proposal.state == ProposalStates.Executed && proposal.winningVote == VoteOptions.Yes) ||
     // Boosted proposal past end time with more yes votes than no, but not yet executed
-    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000 && proposal.winningVote == VoteOptions.Yes)
+    (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.Yes)
   );
   return res;
 }
@@ -247,9 +249,9 @@ export function proposalFailed(proposal: IProposalState) {
     proposal.state == ProposalStates.Closed ||
     (proposal.state == ProposalStates.Executed && proposal.winningVote == VoteOptions.No) ||
     // Boosted proposal past end time with more no votes than yes, but not yet executed
-    (proposal.state == ProposalStates.Boosted && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000 && proposal.winningVote == VoteOptions.No) ||
+    (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.No) ||
     // Pre boosted proposal past end time but not yet executed are always failed
-    (proposal.state == ProposalStates.PreBoosted && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000)
+    proposal.state == ProposalStates.PreBoostedTimedOut
   );
   return res;
 }
