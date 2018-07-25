@@ -94,10 +94,9 @@ async function updateCache() {
   // Subscribe to the redux store changes
   const unsubscribe = store.subscribe(async () => {
     const arcState = (store.getState() as IRootState).arc;
-    console.log("xsubscrib callback ");
     if (arcState.daosLoaded) {
       // Write cached blockchain data to S3
-      console.log("xWriting state to S3");
+      console.log("Writing state to S3");
       const s3Params = {
         Body: JSON.stringify(arcState),
         Bucket: process.env.S3_BUCKET || 'daostack-alchemy',
@@ -108,7 +107,7 @@ async function updateCache() {
       };
       s3.putObject(s3Params, (err, data) => {
         if (err) {
-          console.error("Error writing data to S3 = ", err, err.stack);
+          console.error("Error writing data to S3: ", err, err.stack);
         } else {
           // tslint:disable-next-line:no-console
           console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
@@ -144,11 +143,11 @@ async function updateCache() {
     console.log("Starting to cache the "  + arcjsNetwork + " blockchain from block ", lastCachedBlock, "to block", latestBlock);
 
     // Look for new DAOs
-    console.log("looking for new DAOs");
+    console.log("Looking for new DAOs");
     await store.dispatch(arcActions.getDAOs(lastCachedBlock, latestBlock));
 
     // TODO: if there is a new DAO then i think we need to wait for it to be loaded completely
-    console.log("done for new DAOs, now new proposals");
+    console.log("Done looking for new DAOs, now looking for new proposals");
 
     // Watch for new, confirmed proposals coming in
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -161,8 +160,9 @@ async function updateCache() {
       }
     });
 
-    console.log("done for new proposals, now new stakes");
+    console.log("Done looking for new proposals, now looking for new stakes");
 
+    // TODO: look for allEvents on the voting machine instance to process these in the exact order they happened
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
@@ -174,7 +174,7 @@ async function updateCache() {
       }
     });
 
-    console.log("done for new stakes, now new votes");
+    console.log("Done looking for new stakes, now looking for new votes");
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     await this.voteEventWatcher.get(async (error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>>) => {
@@ -189,7 +189,7 @@ async function updateCache() {
       }
     });
 
-    console.log("done for new votes, now executed proposal");
+    console.log("Done looking for new votes, now looking for executed proposals");
 
     this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     await this.executeProposalEventWatcher.get(async (error: Error, eventsArray: Arc.ExecutedGenesisProposal[]) => {
