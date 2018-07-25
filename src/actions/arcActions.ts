@@ -498,7 +498,7 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
   proposal.numberOfPeriods
 
   // Beneficiary rewards
-  if (proposal.state == ProposalStates.Boosted && proposal.winningVote === VoteOptions.Yes) {
+  if ((proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) && proposal.winningVote === VoteOptions.Yes) {
     // Boosted proposal that passed by expiring with more yes votes than no
     // have to manually calculate beneficiary rewards
 
