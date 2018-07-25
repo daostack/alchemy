@@ -167,7 +167,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
               <div className={css.reputationTurnout}>
                 <div className={css.header}>Reputation turnout</div>
                 <div className={css.turnoutInfo}>
-                  {/* TODO: <span className={css.description}>{proposal.totalVoters} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
+                  {/* TODO: <span className={css.description}>{proposal.votes.length} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
                   <div className={css.turnoutGraph}>
                     <div className={css.turnoutStats}>
                       <span className={css.forLabel}>

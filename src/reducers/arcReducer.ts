@@ -133,7 +133,6 @@ export interface IProposalState {
   transactionState: TransactionStates;
   totalStakes: number;
   totalVotes: number;
-  totalVoters: number;
   votes: Array<IVoteState | string>; // Either normalized (string) or denormalized (object)
   votesYes: number;
   votesNo: number;
@@ -168,7 +167,6 @@ export const emptyProposal: IProposalState = {
   transactionState: TransactionStates.Unconfirmed,
   totalStakes: 0,
   totalVotes: 0,
-  totalVoters: 0,
   votes: [],
   votesYes: 0,
   votesNo: 0,
@@ -311,6 +309,14 @@ const arcReducer = (state = initialState, action: any) => {
       return state;
     }
 
+    case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
+      return update(state, {
+        proposals: {
+          [payload.proposal.proposalId]: { $merge: payload.proposal }
+        }
+      });
+    }
+
     case ActionTypes.ARC_VOTE: {
       const { meta, sequence, payload } = action as VoteAction;
       const { avatarAddress, proposalId, voteOption, voterAddress } = meta;
@@ -352,11 +358,10 @@ const arcReducer = (state = initialState, action: any) => {
           });
         }
         case AsyncActionSequence.Success: {
-          const { dao, proposal, voter } = payload;
+          const { proposal, voter } = payload;
 
           return update(state, {
             accounts: { [accountKey]: { $merge: payload.voter } },
-            daos: { [avatarAddress]: { $merge: payload.dao } },
             proposals: { [proposalId]: { $merge: payload.proposal } },
             // Confirm the vote, and add to the state if wasn't there before
             votes: {
@@ -531,26 +536,6 @@ const arcReducer = (state = initialState, action: any) => {
           }
         }
       });
-    }
-
-    case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
-      const { avatarAddress, proposalId, executionState, decision, reputationWhenExecuted } = payload;
-
-      if (executionState !== ExecutionState.None) {
-        return update(state, {
-          proposals: {
-            [proposalId]: {
-              $merge: {
-                reputationWhenExecuted,
-                winningVote: decision,
-                state: ProposalStates.Executed
-              }
-            }
-          }
-        });
-      } else {
-        return state;
-      }
     }
 
     case ActionTypes.ARC_ON_DAO_ETH_BALANCE_CHANGE: {

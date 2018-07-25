@@ -390,7 +390,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     }
 
     if (proposalEnded(proposal)) {
-      const redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress)
+      const redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress)
       if (redemptions) {
         proposal.redemptions.push(redemptions as IRedemptionState);
       }
@@ -438,7 +438,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
       let redemptions: IRedemptionState;
       for (const accountAddress of associatedAccounts) {
-        redemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
+        redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
         if (redemptions) {
           proposal.redemptions.push(redemptions);
         }
@@ -483,7 +483,8 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
   }
 }
 
-async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalState, accountAddress: string): Promise<IRedemptionState> {
+// TODO: move this to a separate Util/lib class
+async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalState, accountAddress: string): Promise<IRedemptionState> {
   if (!proposalEnded(proposal)) {
     return null;
   }
@@ -513,8 +514,8 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     // Boosted proposal that passed by expiring with more yes votes than no
     // have to manually calculate beneficiary rewards
 
-    const votableProposals = await (await proposalInstance.getVotableProposals(avatarAddress))({proposalId}, {fromBlock: 0}).get();
-    const executedProposals = await (await proposalInstance.getExecutedProposals(avatarAddress))({proposalId}, {fromBlock: 0}).get();
+    const votableProposals = await (await proposalInstance.getVotableProposals(proposal.daoAvatarAddress))({proposalId}, {fromBlock: 0}).get();
+    const executedProposals = await (await proposalInstance.getExecutedProposals(proposal.daoAvatarAddress))({proposalId}, {fromBlock: 0}).get();
     const proposals = [...votableProposals, ...executedProposals];
     const numberOfPeriods = proposals[0].numberOfPeriods;
 
@@ -522,9 +523,9 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     redemptions.beneficiaryNativeToken = numberOfPeriods * proposal.nativeTokenReward;
     redemptions.beneficiaryReputation = numberOfPeriods * proposal.reputationChange;
   } else {
-    redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
-    redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
-    redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, avatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+    redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
+    redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
+    redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
   }
 
   if (proposal.proposer == accountAddress) {
@@ -543,6 +544,58 @@ async function getRedemptions(avatarAddress: string, votingMachineInstance: Arc.
     redemptions.voterTokens
   );
   return anyRedemptions ? redemptions : null;
+}
+
+async function getProposalRedemptions(proposal: IProposalState, state: IRootState): Promise<{ entities: any, redemptions: string[] }> {
+  if (!proposalEnded(proposal)) {
+    return { entities: {}, redemptions: [] };
+  }
+
+  proposal = denormalize(proposal, schemas.proposalSchema, state.arc);
+
+  const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+  const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
+  const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+  let redemptions: IRedemptionState[] = [];
+  let accountsToUpdate: { [key: string]: IAccountState } = {};
+
+  // Gather redemptions for all people who interacted with the proposal
+  // Doing this here instead of on proposal executed because we need to show redemptions for expired proposals too (TODO: does this make sense?)
+  let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
+  proposal.votes.forEach((vote: IVoteState) => {
+    associatedAccounts.push(vote.voterAddress);
+  });
+  proposal.stakes.forEach((stake: IStakeState) => {
+    associatedAccounts.push(stake.stakerAddress);
+  });
+  associatedAccounts = [...new Set(associatedAccounts)]; // Dedupe
+
+  let accountRedemptions: IRedemptionState, account: IAccountState;
+  for (const accountAddress of associatedAccounts) {
+    accountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
+    if (accountRedemptions) {
+      redemptions.push(accountRedemptions);
+      account = state.arc.accounts[`${accountAddress}-${proposal.daoAvatarAddress}`];
+      if (!account) {
+        account = newAccount(proposal.daoAvatarAddress, accountAddress, 0, 0, [`${proposal.proposalId}-${accountAddress}`]);
+      } else if (account.redemptions.indexOf(`${proposal.proposalId}-${accountAddress}`) === -1) {
+        // If existing account doesn't have this redemption yet then add it
+        account.redemptions.push(`${proposal.proposalId}-${accountAddress}`);
+      }
+      accountsToUpdate[`${accountAddress}-${proposal.daoAvatarAddress}`] = account;
+    }
+  }
+
+  const normalizedRedemptions = normalize(redemptions, schemas.redemptionList);
+
+  // Dedupe new redemptions with the old redemptions already on the proposal
+  // TODO: seems like this should be happening in the reducer?
+  let redemptionsStrings: string[] = [...Object.keys(proposal.redemptions), ...normalizedRedemptions.result];
+  redemptionsStrings = [...new Set(redemptionsStrings)];
+
+  const entities = { ...normalizedRedemptions.entities, accounts: accountsToUpdate };
+  return { entities, redemptions: redemptionsStrings };
 }
 
 export type CreateDAOAction = IAsyncAction<'ARC_CREATE_DAO', {}, any>;
@@ -757,18 +810,23 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
 
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
-    const proposal = getState().arc.proposals[proposalId];
-    // TODO: get redemptions for all? or have we already done this on the vote event?
-    dispatch({
-      type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
-      payload: {
-        avatarAddress,
-        proposalId,
-        executionState,
-        decision,
-        reputationWhenExecuted
-      }
-    })
+    if (executionState != ExecutionState.None) {
+      const proposal = getState().arc.proposals[proposalId];
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
+      proposal.executionTime = proposalDetails.executionTime;
+      proposal.state = ProposalStates.Executed;
+      proposal.reputationWhenExecuted = reputationWhenExecuted;
+      proposal.winningVote = decision;
+
+      let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
+      proposal.redemptions = redemptions;
+
+      dispatch({
+        type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
+        payload: { entities, proposal }
+      })
+    }
   }
 }
 
@@ -779,7 +837,6 @@ export type VoteAction = IAsyncAction<'ARC_VOTE', {
   voteOption: VoteOptions,
   voterAddress: string,
 }, {
-  dao: any,
   entities: any,
   proposal: any,
   voter: any
@@ -830,19 +887,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
 
 export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddress: string, voteOption: number, reputation: number) {
   return async (dispatch: any, getState: () => IRootState) => {
-    const daoInstance = await Arc.DAO.at(avatarAddress);
-    const proposal: IProposalState = denormalize(getState().arc.proposals[proposalId], schemas.proposalSchema, getState().arc);
-    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-    const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
-    const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
-
-    const winningVote = await votingMachineInstance.getWinningVote({ proposalId });
-
-    const meta = {
+    const meta: IVoteState = {
       avatarAddress,
       proposalId,
       reputation,
@@ -850,60 +895,30 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       voterAddress
     };
 
-    let redemptions: IRedemptionState[] = [];
-    let accountsToUpdate: { [key: string]: IAccountState } = {};
-    if (proposalEnded(proposal)) {
-      // Gather redemptions for all people who interacted with the proposal
-      // Doing this here instead of on proposal executed because we need to show redemptions for expired proposals too (TODO: does this make sense?)
-      let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer, voterAddress];
-      proposal.votes.forEach((vote: IVoteState) => {
-        associatedAccounts.push(vote.voterAddress);
-      });
-      proposal.stakes.forEach((stake: IStakeState) => {
-        associatedAccounts.push(stake.stakerAddress);
-      });
-      associatedAccounts = [...new Set(associatedAccounts)]; // Dedupe
+    const daoInstance = await Arc.DAO.at(avatarAddress);
+    const proposal: IProposalState = getState().arc.proposals[proposalId];
 
-      let accountRedemptions: IRedemptionState, account: IAccountState;
-      for (const accountAddress of associatedAccounts) {
-        accountRedemptions = await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
-        if (accountRedemptions) {
-          redemptions.push(accountRedemptions);
-          account = getState().arc.accounts[`${accountAddress}-${avatarAddress}`];
-          if (!account) {
-            account = newAccount(avatarAddress, accountAddress, 0, 0, [`${proposalId}-${accountAddress}`]);
-          } else if (account.redemptions.indexOf(`${proposalId}-${accountAddress}`) === -1) {
-            // If existing account doesn't have this redemption yet then add it
-            account.redemptions.push(`${proposalId}-${accountAddress}`);
-          }
-          accountsToUpdate[`${accountAddress}-${avatarAddress}`] = account;
-        }
-      }
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+    const proposalDetails = await votingMachineInstance.getProposal(proposalId);
+    proposal.boostedVotePeriodLimit = Number(proposalDetails.currentBoostedVotePeriodLimit); // update boostedVotePeriodLimit in case we are in quiet ending period
+    proposal.votesYes = Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes }));
+    proposal.votesNo = Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No }));
+    proposal.winningVote = await votingMachineInstance.getWinningVote({ proposalId });
+    proposal.state = Number(await votingMachineInstance.getState({ proposalId }));
+
+    const voterRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, voterAddress);
+    let { entities, result } = normalize(voterRedemptions, schemas.redemptionSchema);
+    if (result && proposal.redemptions.indexOf(result) === -1) {
+      proposal.redemptions.push(result);
     }
 
-    const normalizedRedemptions = normalize(redemptions, schemas.redemptionList);
-
-    // Dedupe new redemptions with the old redemptions already on the proposal
-    // TODO: seems like this should be happening in the reducer?
-    redemptions = [...Object.keys(proposal.redemptions), ...normalizedRedemptions.result];
-    redemptions = [...new Set(redemptions)];
-
     const payload = {
-      entities: { ...normalizedRedemptions.entities, accounts: accountsToUpdate},
-      // Update DAO total reputation and tokens
-      dao: {
-        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
-        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
-      },
+      entities,
       // Update the proposal
-      proposal: {
-        proposalId,
-        redemptions,
-        state: Number(await votingMachineInstance.getState({ proposalId })),
-        votesNo: Util.fromWei(noVotes),
-        votesYes: Util.fromWei(yesVotes),
-        winningVote
-      },
+      proposal,
       // Update voter tokens and reputation
       voter: {
         tokens: Util.fromWei(await daoInstance.token.balanceOf(voterAddress)),
