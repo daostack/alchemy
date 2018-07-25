@@ -237,6 +237,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </div> : ""
             }
           </div>;
+      } else if (executable) {
+        redemptionsTip = <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>;
       }
 
       let rewards = [];
@@ -278,13 +280,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
           }
         </button>
       )
-
-      const closingTime = (proposal: IProposalState) => {
-        const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
-        const start = state === ProposalStates.Boosted ? boostedTime : submittedTime;
-        const duration = state === ProposalStates.Boosted ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
-        return moment((executionTime || start + duration) * 1000);
-      }
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
@@ -432,7 +427,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <div>
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
-                    actionType={ActionTypes.Redeem}
+                    actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
                     action={executable && !redeemable ? executeProposal.bind(null, dao.avatarAddress, proposal.proposalId) : redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccount.address)}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}
@@ -443,11 +438,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
                   { currentRedemptions || executable ?
-                      redemptionsTip ?
-                        <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                          {redeemButton}
-                        </Tooltip> :
-                        redeemButton
+                      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+                        {redeemButton}
+                      </Tooltip>
                     : ''
                   }
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>

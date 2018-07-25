@@ -214,6 +214,13 @@ export const initialState: IArcState = {
   votes: {}
 };
 
+export const closingTime = (proposal: IProposalState) => {
+  const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
+  const start = state === ProposalStates.Boosted ? boostedTime : submittedTime;
+  const duration = state === ProposalStates.Boosted ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
+  return moment((executionTime || start + duration) * 1000);
+}
+
 export function proposalEnded(proposal: IProposalState) {
   const res = (
     proposal.state == ProposalStates.Executed ||
@@ -312,18 +319,18 @@ const arcReducer = (state = initialState, action: any) => {
         case AsyncActionSequence.Pending:
           // Add vote to account if not already there
           if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
-            state = update(state, { accounts: { [accountKey] : { votes: { $push: [voteKey] } } } });
+            state = update(state, { accounts: { [accountKey]: { votes: { $push: [voteKey] } } } });
           }
           // Add vote to proposal if not already there
           if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
-            state = update(state, { proposals: { [proposalId] : { votes: { $push: [voteKey] } } } });
+            state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
           }
 
           // Add vote
           // TODO: this automatically through normalizing it?
           return update(state, {
             votes: {
-              [voteKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
+              [voteKey]: { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
             }
           });
         case AsyncActionSequence.Failure: {
@@ -346,12 +353,12 @@ const arcReducer = (state = initialState, action: any) => {
           const { dao, proposal, voter } = payload;
 
           return update(state, {
-            accounts: { [accountKey] : { $merge: payload.voter } },
+            accounts: { [accountKey]: { $merge: payload.voter } },
             daos: { [avatarAddress]: { $merge: payload.dao } },
-            proposals: { [proposalId]: { $merge : payload.proposal } },
-            // Confirm the vote
+            proposals: { [proposalId]: { $merge: payload.proposal } },
+            // Confirm the vote, and add to the state if wasn't there before
             votes: {
-              [voteKey] : { transactionState: { $set: TransactionStates.Confirmed } }
+              [voteKey]: { $set: {...meta, transactionState: TransactionStates.Confirmed } }
             }
           });
         }
@@ -410,9 +417,9 @@ const arcReducer = (state = initialState, action: any) => {
             proposals: {
               [proposalId]: { $merge : payload.proposal }
             },
-            // Confirm the vote
+            // Confirm the stake and add to the state if wasn't there before
             stakes: {
-              [stakeKey] : { transactionState: { $set: TransactionStates.Confirmed } }
+              [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Confirmed } }
             }
           });
         }

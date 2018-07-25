@@ -3,7 +3,7 @@ import { denormalize } from "normalizr";
 import { createSelector } from "reselect";
 
 import { IRootState } from "reducers";
-import { IProposalState, ProposalStates } from "reducers/arcReducer";
+import { IProposalState, ProposalStates, closingTime } from "reducers/arcReducer";
 import * as schemas from "schemas";
 
 const getArcEntities = (state: IRootState) => state.arc;
@@ -36,14 +36,17 @@ export const createPreBoostedProposalsSelector = () => createSelector(
 
 export const createHistoryProposalsSelector = () => createSelector(
   [ getDaoProposals ],
-  (proposals) => proposals.filter((proposal: IProposalState) =>
-    (
+  (proposals: IProposalState[]) => {
+    const result = proposals.filter((proposal: IProposalState) => (
       proposal.state === ProposalStates.Executed ||
       proposal.state === ProposalStates.Closed ||
       proposal.state === ProposalStates.Boosted && (+moment() / 1000) > proposal.boostedTime + proposal.boostedVotePeriodLimit ||
       proposal.state === ProposalStates.PreBoosted && (+moment() / 1000) > proposal.submittedTime + proposal.preBoostedVotePeriodLimit
-    )
-  )
+    ));
+
+    result.sort((a, b) => closingTime(b).unix() - closingTime(a).unix())
+    return result;
+  }
 );
 
 // export const makeTotalDaoReputationSelector = () => {
