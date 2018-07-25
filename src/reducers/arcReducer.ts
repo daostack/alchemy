@@ -216,8 +216,8 @@ export const initialState: IArcState = {
 
 export const closingTime = (proposal: IProposalState) => {
   const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
-  const start = state === (ProposalStates.Boosted || state == ProposalStates.BoostedTimedOut) ? boostedTime : submittedTime;
-  const duration = state === (ProposalStates.Boosted || state == ProposalStates.BoostedTimedOut) ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
+  const start = state === boostedTime ? boostedTime : submittedTime;
+  const duration = state === boostedTime ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
   return moment((executionTime || start + duration) * 1000);
 }
 

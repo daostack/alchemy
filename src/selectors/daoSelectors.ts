@@ -23,7 +23,7 @@ const getDaoProposals = createSelector(
 export const createBoostedProposalsSelector = () => createSelector(
   [ getDaoProposals ],
   (proposals) => proposals.filter((proposal: IProposalState) =>
-    proposal.state === ProposalStates.Boosted
+    proposal.state === ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod
   )
 );
 

@@ -292,8 +292,8 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   const boostedTime = Number(proposalDetails.boostedPhaseTime);
   const boostedVotePeriodLimit = Number(proposalDetails.currentBoostedVotePeriodLimit);
 
-  let state = Number(proposalDetails.state); // TODO: using our own enum instead of from Arc.js because we add new states
-  if (state == ProposalStates.Boosted && boostedTime + boostedVotePeriodLimit <= +moment() / 1000) {
+  let state = Number(proposalDetails.state); // TODO: using our own enum instead of from Arc.js because we add new states, have arc.js do this?
+  if ((state == ProposalStates.Boosted || state == ProposalStates.QuietEndingPeriod) && boostedTime + boostedVotePeriodLimit <= +moment() / 1000) {
     // Boosted proposal past end time but not yet executed
     state = ProposalStates.BoostedTimedOut;
   } else if (state == ProposalStates.PreBoosted && submittedTime + preBoostedVotePeriodLimit <= +moment() / 1000) {
