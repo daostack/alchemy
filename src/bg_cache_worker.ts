@@ -250,9 +250,6 @@ async function updateCache() {
   } else {
     console.log("Something weird happened, DAOs not loaded so didn't write the data");
   }
-
-  // This is to prevent eventual memory leaks on Heroku
-  process.kill(process.pid, "SIGTERM");
 }
 
 export default updateCache;
