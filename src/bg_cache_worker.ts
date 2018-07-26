@@ -23,7 +23,8 @@ const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
 import * as arcConstants from "constants/arcConstants";
-import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, TransactionStates, IVoteState } from "./reducers/arcReducer";
+import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState } from "./reducers/arcReducer";
+import * as selectors from "selectors/daoSelectors";
 import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
 
 import * as ActionTypes from "constants/arcConstants";
@@ -177,8 +178,8 @@ async function updateCache() {
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
 
     const state = (store.getState() as IRootState);
-    const daos = denormalize(state.arc.daos, schemas.daoList, state.arc);
-    for (const avatarAddress of Object.keys(daos)) {
+    for (const avatarAddress of Object.keys(state.arc.daos)) {
+      const dao = denormalize(state.arc.daos[avatarAddress], schemas.daoSchema, state.arc);
       const daoInstance = await Arc.DAO.at(avatarAddress);
 
       const mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
@@ -208,10 +209,16 @@ async function updateCache() {
 
       console.log("Done updating balances, now look for any expired proposals");
 
-      // Check all proposals to see if any expired and if so update state and gather redemptions
-      for (const proposal of daos[avatarAddress].proposals) {
+      // Check all open proposals to see if any expired and if so update state and gather redemptions
+      let proposals = dao.proposals;
+      proposals = proposals.filter((proposal: IProposalState) => (
+        proposal.state === ProposalStates.PreBoosted ||
+        proposal.state === ProposalStates.Boosted ||
+        proposal.state === ProposalStates.QuietEndingPeriod
+      ));
+      for (const proposal of proposals) {
         if (checkProposalExpired(proposal) != proposal.state) {
-          console.log("Proposal expired", proposal.Id, proposal.title);
+          console.log("Proposal expired", proposal.proposalId, proposal.title);
           await store.dispatch(arcActions.onProposalExpired(proposal));
         }
       }
