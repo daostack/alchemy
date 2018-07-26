@@ -81,7 +81,7 @@ const mapDispatchToProps = {
   updateDAOLastBlock: arcActions.updateDAOLastBlock,
   hideTour: uiActions.hideTour,
   showTour: uiActions.showTour,
-  showNotification: showNotification
+  showNotification
 };
 
 type IProps = IStateProps & IDispatchProps;
