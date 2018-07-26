@@ -23,7 +23,6 @@ const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
 import * as arcConstants from "constants/arcConstants";
-import { default as rootReducer, IRootState } from "./reducers/index";
 import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, TransactionStates, IVoteState } from "./reducers/arcReducer";
 import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
 
@@ -61,6 +60,34 @@ const s3 = new aws.S3();
 const s3FileName = 'initialArcState-' + arcjsNetwork + '.json';
 const s3FileType = 'application/json';
 
+// Use redux store for the state
+interface IRootState {
+  arc: IArcState;
+  web3: IWeb3State;
+}
+
+const reducers = {
+  arc: arcReducer,
+  web3: web3Reducer,
+};
+
+let initialState: IRootState;
+let store = Redux.createStore(
+  Redux.combineReducers(reducers),
+  Redux.applyMiddleware(thunkMiddleware)
+);
+
+// Subscribe to the redux store changes
+const unsubscribe = store.subscribe(() => {
+  // XXX: dont need to do anything here
+});
+
+process.on('SIGTERM', () => {
+  console.log("Got SIGTERM so exiting process");
+  unsubscribe();
+  process.exit(0);
+});
+
 async function updateCache() {
   await Arc.InitializeArcJs();
 
@@ -72,58 +99,6 @@ async function updateCache() {
 
   // Latest block to cache up to
   const latestBlock = await Util.getLatestBlock();
-
-  // Use redux store for the state
-  interface IRootState {
-    arc: IArcState;
-    web3: IWeb3State;
-  }
-
-  const reducers = {
-    arc: arcReducer,
-    web3: web3Reducer,
-  };
-
-  let initialState: IRootState;
-  let store = Redux.createStore(
-    Redux.combineReducers(reducers),
-    Redux.applyMiddleware(thunkMiddleware)
-  );
-
-  // Subscribe to the redux store changes
-  const unsubscribe = store.subscribe(async () => {
-    const arcState = (store.getState() as IRootState).arc;
-    if (arcState.daosLoaded) {
-      // Write cached blockchain data to S3
-      console.log("Writing state to S3");
-      const s3Params = {
-        Body: JSON.stringify(arcState),
-        Bucket: process.env.S3_BUCKET || 'daostack-alchemy',
-        Key: s3FileName,
-        //Expires: 60,
-        ContentType: s3FileType,
-        ACL: 'public-read'
-      };
-      s3.putObject(s3Params, (err, data) => {
-        if (err) {
-          console.error("Error writing data to S3: ", err, err.stack);
-        } else {
-          // tslint:disable-next-line:no-console
-          console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
-        }
-      });
-      const endTime = moment();
-      const duration = moment.duration(endTime.diff(startTime));
-      const minutes = duration.asMinutes();
-      console.log("Finishing data cache after " + minutes + " minutes");
-    }
-  });
-
-  process.on('SIGTERM', () => {
-    console.log("Exiting process");
-    unsubscribe();
-    process.exit(0);
-  });
 
   if (lastCachedBlock == 0) {
     console.log("Starting to cache the "  + arcjsNetwork + " blockchain from the beginning");
@@ -196,7 +171,7 @@ async function updateCache() {
       await store.dispatch(arcActions.onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation)));
     }
 
-    console.log("done with executed proposals, now token and reputation balances");
+    console.log("Done with executed proposals, now updating reputation balances");
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
@@ -224,10 +199,14 @@ async function updateCache() {
         await store.dispatch(arcActions.onReputationChangeEvent(avatarAddress, event.args._from));
       }
 
+      console.log("Done updating reputation, now update DAO ETH and GEN balances");
+
       const newEthBalance = Util.fromWei(await promisify(global.web3.eth.getBalance)(avatarAddress));
       await store.dispatch(arcActions.onDAOEthBalanceChanged(avatarAddress, newEthBalance));
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(avatarAddress));
       await store.dispatch(arcActions.onDAOGenBalanceChanged(avatarAddress, newGenBalance));
+
+      console.log("Done updating balances, now look for any expired proposals");
 
       // Check all proposals to see if any expired and if so update state and gather redemptions
       for (const proposal of daos[avatarAddress].proposals) {
@@ -239,8 +218,41 @@ async function updateCache() {
     }
   }
 
-  console.log("Updating last block read on redis: ", latestBlock);
-  redisSet('alchemy-last-block-' + arcjsNetwork, latestBlock);
+  const arcState = (store.getState() as IRootState).arc;
+  if (arcState.daosLoaded) {
+    // Write cached blockchain data to S3
+    console.log("Writing state to S3");
+
+    const s3Params = {
+      Body: JSON.stringify(arcState),
+      Bucket: process.env.S3_BUCKET || 'daostack-alchemy',
+      Key: s3FileName,
+      //Expires: 60,
+      ContentType: s3FileType,
+      ACL: 'public-read'
+    };
+
+    const s3Put = promisify(s3.putObject.bind(s3));
+    try {
+      const data = await s3Put(s3Params);
+      console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
+    } catch (e) {
+      console.error("Error writing data to S3: ", e, e.stack);
+    }
+
+    console.log("Updating last block read on redis: ", latestBlock);
+    await redisSet('alchemy-last-block-' + arcjsNetwork, latestBlock);
+
+    const endTime = moment();
+    const duration = moment.duration(endTime.diff(startTime));
+    const minutes = duration.asMinutes();
+    console.log("Finishing updating cache after " + minutes + " minutes");
+  } else {
+    console.log("Something weird happened, DAOs not loaded so didn't write the data");
+  }
+
+  // This is to prevent eventual memory leaks on Heroku
+  process.kill(process.pid, "SIGTERM");
 }
 
 export default updateCache;
