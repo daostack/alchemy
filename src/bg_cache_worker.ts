@@ -24,7 +24,7 @@ const Web3 = require("web3");
 import * as arcActions from "./actions/arcActions";
 import * as arcConstants from "constants/arcConstants";
 import { default as rootReducer, IRootState } from "./reducers/index";
-import { default as arcReducer, initialState as arcInitialState, IArcState, IDaoState, TransactionStates, IVoteState } from "./reducers/arcReducer";
+import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, TransactionStates, IVoteState } from "./reducers/arcReducer";
 import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
 
 import * as ActionTypes from "constants/arcConstants";
@@ -232,6 +232,13 @@ async function updateCache() {
       await arcActions.onDAOEthBalanceChanged(avatarAddress, newEthBalance);
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(avatarAddress));
       await arcActions.onDAOGenBalanceChanged(avatarAddress, newGenBalance);
+
+      // Check all proposals to see if any expired and if so update state and gather redemptions
+      daos[avatarAddress].proposals.forEach((proposal: IProposalState) => {
+        if (checkProposalExpired(proposal) != proposal.state) {
+          arcActions.onProposalExpired(proposal);
+        }
+      });
     });
   }
 

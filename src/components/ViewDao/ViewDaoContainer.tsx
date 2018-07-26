@@ -1,5 +1,6 @@
 import * as Arc from "@daostack/arc.js";
 import * as classNames from "classnames";
+import * as moment from "moment";
 import { denormalize } from "normalizr";
 import * as React from "react";
 import { withCookies, Cookies } from 'react-cookie';
@@ -11,7 +12,7 @@ import * as arcActions from "actions/arcActions";
 import * as uiActions from "actions/uiActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, IProposalState, IRedemptionState } from "reducers/arcReducer";
+import { checkProposalExpired, IAccountState, IDaoState, IProposalState, IRedemptionState, ProposalStates } from "reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
 
@@ -35,6 +36,7 @@ interface IStateProps extends RouteComponentProps<any> {
   daoAvatarAddress: string;
   lastBlock: number;
   numRedemptions: number;
+  proposals: IProposalState[];
   tourVisible: boolean;
 }
 
@@ -52,6 +54,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     numRedemptions,
+    proposals: dao ? dao.proposals : [],
     tourVisible: state.ui.tourVisible
   };
 };
@@ -61,6 +64,7 @@ interface IDispatchProps {
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
   onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
   onDAOGenBalanceChanged: typeof arcActions.onDAOGenBalanceChanged;
+  onProposalExpired: typeof arcActions.onProposalExpired;
   updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
   hideTour: typeof uiActions.hideTour;
   showTour: typeof uiActions.showTour;
@@ -71,6 +75,7 @@ const mapDispatchToProps = {
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
   onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
   onDAOGenBalanceChanged: arcActions.onDAOGenBalanceChanged,
+  onProposalExpired: arcActions.onProposalExpired,
   updateDAOLastBlock: arcActions.updateDAOLastBlock,
   hideTour: uiActions.hideTour,
   showTour: uiActions.showTour,
@@ -152,6 +157,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       onReputationChangeEvent,
       onDAOEthBalanceChanged,
       onDAOGenBalanceChanged,
+      onProposalExpired,
       updateDAOLastBlock
     } = this.props;
 
@@ -177,11 +183,19 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
 
     this.blockInterval = setInterval(async () => {
+      updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
+
       const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
       onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
       onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
-      updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
+
+      // Check all proposals to see if any expired
+      this.props.proposals.forEach((proposal: IProposalState) => {
+        if (checkProposalExpired(proposal) != proposal.state) {
+          onProposalExpired(proposal);
+        }
+      });
     }, 10000);
   }
 

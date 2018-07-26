@@ -216,9 +216,23 @@ export const initialState: IArcState = {
 
 export const closingTime = (proposal: IProposalState) => {
   const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
-  const start = state === boostedTime ? boostedTime : submittedTime;
-  const duration = state === boostedTime ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
+  const start = boostedTime ? boostedTime : submittedTime;
+  const duration = boostedTime ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
   return moment((executionTime || start + duration) * 1000);
+}
+
+export function checkProposalExpired(proposal: IProposalState): ProposalStates {
+  if ((proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod)
+      && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) {
+    // Boosted proposal past end time but not yet executed
+    return ProposalStates.BoostedTimedOut;
+  } else if (proposal.state == ProposalStates.PreBoosted
+              && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000) {
+    // Pre boosted proposal past end time but not yet executed
+    return ProposalStates.PreBoostedTimedOut;
+  } else {
+    return proposal.state;
+  }
 }
 
 export function proposalEnded(proposal: IProposalState) {
@@ -310,6 +324,14 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
+      return update(state, {
+        proposals: {
+          [payload.proposal.proposalId]: { $merge: payload.proposal }
+        }
+      });
+    }
+
+    case ActionTypes.ARC_ON_PROPOSAL_EXPIRED: {
       return update(state, {
         proposals: {
           [payload.proposal.proposalId]: { $merge: payload.proposal }
