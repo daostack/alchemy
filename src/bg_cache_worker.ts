@@ -177,7 +177,7 @@ async function updateCache() {
 
     const voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     const getVoteEvents = promisify(voteEventWatcher.get.bind(voteEventWatcher));
-    const voteEvents:Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>> = await voteEventWatcher.get();
+    const voteEvents: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>> = await voteEventWatcher.get();
     for (let index = 0; index < voteEvents.length; index++) {
       const event = voteEvents[index];
       console.log("Got new vote", event.args);
