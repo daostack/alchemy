@@ -1084,8 +1084,6 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     try {
       const redeemerInstance = await Arc.RedeemerFactory.deployed();
       const redeemTx = await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
-
-      await onRedeemEvent(proposal.proposalId);
     } catch (err) {
       console.error(err);
       dispatch({
