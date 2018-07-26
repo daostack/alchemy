@@ -513,7 +513,7 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
     }
   }
 
-  if (proposal.proposer == accountAddress) {
+  if (proposal.proposer === accountAddress) {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
 
@@ -1047,10 +1047,12 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
   proposalId: string,
   accountAddress: string,
 }, {
+  currentAccount: string,
   beneficiary: any,
   dao: any,
   proposal: any;
-  redemptions: IRedemptionState
+  redemptions: IRedemptionState,
+  accountRedemptions: IRedemptionState,
 }>
 
 export function executeProposal(avatarAddress: string, proposalId: string) {
@@ -1098,6 +1100,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 export function onRedeemEvent(proposalId: string) {
   return async (dispatch: any, getState: () => IRootState) => {
     const proposal = getState().arc.proposals[proposalId];
+    const currentAccount = getState().web3.ethAccountAddress;
     const avatarAddress = proposal.daoAvatarAddress;
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -1107,6 +1110,9 @@ export function onRedeemEvent(proposalId: string) {
     const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
     const beneficiaryAddress = proposalDetails.beneficiaryAddress;
 
+    const redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress);
+    const accountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccount);
+
     const meta = {
       avatarAddress,
       proposalId,
@@ -1114,6 +1120,7 @@ export function onRedeemEvent(proposalId: string) {
     }
 
     let payload: any = {
+      currentAccount,
       // Update account of the beneficiary
       // TODO: need to do this? this will be seen by the transfer events as well
       beneficiary: {
@@ -1130,8 +1137,9 @@ export function onRedeemEvent(proposalId: string) {
       proposal: {
         state: proposalDetails.executionTime ? ProposalStates.Executed : ProposalStates.Closed
       },
-      // TODO: Check if there are any remaining redemptions left for this proposal and this beneficiary
-      // redemptions: await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress)
+      // This doesn't seem to work correctly
+      // redemptions,
+      // accountRedemptions
     };
 
     dispatch({
