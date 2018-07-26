@@ -57,27 +57,24 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
     }
 
     // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
-    const newOrgEvents = daoCreator.InitialSchemesSet({}, { fromBlock, toBlock });
-    newOrgEvents.get(async (err: Error, eventsArray: any[]) => {
-      if (err) {
-        dispatch({ type: arcConstants.ARC_GET_DAOS_REJECTED, payload: "Error getting new daos from genesis contract: " + err.message });
+    const newOrgEventsWatcher = daoCreator.InitialSchemesSet({}, { fromBlock, toBlock });
+    const getNewOrgEvents = promisify(newOrgEventsWatcher.get.bind(newOrgEventsWatcher));
+    const newOrgEvents = await getNewOrgEvents();
+
+    const daos = {} as { [key: string]: IDaoState };
+
+    for (let index = 0; index < newOrgEvents.length; index++) {
+      const event = newOrgEvents[index];
+      const daoData = await getDAOData(event.args._avatar);
+      if (daoData) {
+        daos[event.args._avatar] = daoData;
       }
+    }
 
-      const daos = {} as { [key: string]: IDaoState };
+    const payload = normalize(daos, schemas.daoList);
+    (payload as any).lastBlock = toBlock;
 
-      for (let index = 0; index < eventsArray.length; index++) {
-        const event = eventsArray[index];
-        const daoData = await getDAOData(event.args._avatar);
-        if (daoData) {
-          daos[event.args._avatar] = daoData;
-        }
-      }
-
-      const payload = normalize(daos, schemas.daoList);
-      (payload as any).lastBlock = toBlock;
-
-      dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload });
-    });
+    dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload });
   };
 }
 
@@ -391,7 +388,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     }
   } else {
     // No current account so caching all data, pull all the votes and stakes and redemptions on this proposal ever
-    const stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: 0, toBlock });
+    const stakeEventWatcher = votingMachineInstance.Stake({ _proposalId: proposalId }, { fromBlock: 0, toBlock });
     await stakeEventWatcher.get((error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.StakeEventResult>>) => {
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
@@ -405,7 +402,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
       }
     });
 
-    const voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: 0, toBlock });
+    const voteEventWatcher = votingMachineInstance.VoteProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock });
     await voteEventWatcher.get((error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>>) => {
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
@@ -501,21 +498,13 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
     voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })),
   };
 
-  proposal.numberOfPeriods
-
   // Beneficiary rewards
   if (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote === VoteOptions.Yes) {
     // Boosted proposal that passed by expiring with more yes votes than no
     // have to manually calculate beneficiary rewards
-
-    const votableProposals = await (await proposalInstance.getVotableProposals(proposal.daoAvatarAddress))({proposalId}, {fromBlock: 0}).get();
-    const executedProposals = await (await proposalInstance.getExecutedProposals(proposal.daoAvatarAddress))({proposalId}, {fromBlock: 0}).get();
-    const proposals = [...votableProposals, ...executedProposals];
-    const numberOfPeriods = proposals[0].numberOfPeriods;
-
-    redemptions.beneficiaryEth = numberOfPeriods * proposal.ethReward;
-    redemptions.beneficiaryNativeToken = numberOfPeriods * proposal.nativeTokenReward;
-    redemptions.beneficiaryReputation = numberOfPeriods * proposal.reputationChange;
+    redemptions.beneficiaryEth = proposal.numberOfPeriods * proposal.ethReward;
+    redemptions.beneficiaryNativeToken = proposal.numberOfPeriods * proposal.nativeTokenReward;
+    redemptions.beneficiaryReputation = proposal.numberOfPeriods * proposal.reputationChange;
   } else {
     redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
     redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
