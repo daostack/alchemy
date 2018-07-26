@@ -466,11 +466,18 @@ const arcReducer = (state = initialState, action: any) => {
       switch (sequence) {
         case AsyncActionSequence.Pending:
           return update(state, {
-            redemptions: { [redemptionsKey] : { transactionState: { $set: TransactionStates.Unconfirmed }} }
+            redemptions: { [redemptionsKey]: { transactionState: {$set: TransactionStates.Unconfirmed }}}
           });
-          return state;
+        case AsyncActionSequence.Failure:
+          return update(state, {
+            redemptions: {
+              [redemptionsKey]: {
+                transactionState: { $set: TransactionStates.Failed }
+              }
+            }
+          })
         case AsyncActionSequence.Success: {
-          const { beneficiary, dao, redemptions } = payload;
+          const { beneficiary, dao, redemptions, proposal } = payload;
 
           if (redemptions) {
             // Still redemptions left for this proposal & beneficiary combo
@@ -487,7 +494,8 @@ const arcReducer = (state = initialState, action: any) => {
               },
               proposals: {
                 [proposalId]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey)
+                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey),
+                  $merge: proposal
                 }
               },
               redemptions: { $unset: [redemptionsKey] }
