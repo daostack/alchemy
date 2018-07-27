@@ -381,7 +381,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     }
 
     if (proposalEnded(proposal)) {
-      const redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress)
+      const redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
       if (redemptions) {
         proposal.redemptions.push(redemptions as IRedemptionState);
       }
@@ -418,7 +418,11 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
     if (proposalEnded(proposal)) {
       // Find all current rewards waiting to be redeemed
-      let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
+      let associatedAccounts = [proposal.beneficiaryAddress];
+      if (proposal.proposer != "0x0000000000000000000000000000000000000000") {
+        // XXX: Need to do this check because GenesisProtocol sets proposer to 0 after calling redeem, and then returns proposer reputation even after redeeming...
+        associatedAccounts.push(proposal.proposer);
+      }
       proposal.votes.forEach((vote: IVoteState) => {
         associatedAccounts.push(vote.voterAddress);
       });
@@ -499,19 +503,21 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
   };
 
   // Beneficiary rewards
-  if (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote === VoteOptions.Yes) {
-    // Boosted proposal that passed by expiring with more yes votes than no
-    // have to manually calculate beneficiary rewards
-    redemptions.beneficiaryEth = proposal.numberOfPeriods * proposal.ethReward;
-    redemptions.beneficiaryNativeToken = proposal.numberOfPeriods * proposal.nativeTokenReward;
-    redemptions.beneficiaryReputation = proposal.numberOfPeriods * proposal.reputationChange;
-  } else {
-    redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
-    redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
-    redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+  if (accountAddress === proposal.beneficiaryAddress) {
+    if (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote === VoteOptions.Yes) {
+      // Boosted proposal that passed by expiring with more yes votes than no
+      // have to manually calculate beneficiary rewards
+      redemptions.beneficiaryEth = proposal.numberOfPeriods * proposal.ethReward;
+      redemptions.beneficiaryNativeToken = proposal.numberOfPeriods * proposal.nativeTokenReward;
+      redemptions.beneficiaryReputation = proposal.numberOfPeriods * proposal.reputationChange;
+    } else {
+      redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
+      redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
+      redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+    }
   }
 
-  if (proposal.proposer == accountAddress) {
+  if (proposal.proposer === accountAddress) {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
 
@@ -545,7 +551,11 @@ async function getProposalRedemptions(proposal: IProposalState, state: IRootStat
 
   // Gather redemptions for all people who interacted with the proposal
   // Doing this here instead of on proposal executed because we need to show redemptions for expired proposals too (TODO: does this make sense?)
-  let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
+  let associatedAccounts = [proposal.beneficiaryAddress];
+  if (proposal.proposer !== "0x0000000000000000000000000000000000000000") {
+    // XXX: Need to do this check because GenesisProtocol sets proposer to 0 after calling redeem, and then returns proposer reputation even after redeeming...
+    associatedAccounts.push(proposal.proposer);
+  }
   proposal.votes.forEach((vote: IVoteState) => {
     associatedAccounts.push(vote.voterAddress);
   });
@@ -802,6 +812,10 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       proposal.reputationWhenExecuted = reputationWhenExecuted;
       proposal.winningVote = decision;
 
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
+      const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
+      proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
 
@@ -1045,9 +1059,12 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
   proposalId: string,
   accountAddress: string,
 }, {
+  currentAccount: any,
   beneficiary: any,
   dao: any,
-  redemptions: IRedemptionState
+  proposal: any;
+  beneficiaryRedemptions: IRedemptionState,
+  currentAccountRedemptions: IRedemptionState,
 }>
 
 export function executeProposal(avatarAddress: string, proposalId: string) {
@@ -1102,6 +1119,11 @@ export function onRedeemEvent(proposalId: string) {
     const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
     const beneficiaryAddress = proposalDetails.beneficiaryAddress;
 
+    const beneficiaryRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress);
+
+    const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
+    proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+
     const meta = {
       avatarAddress,
       proposalId,
@@ -1110,10 +1132,9 @@ export function onRedeemEvent(proposalId: string) {
 
     let payload: any = {
       // Update account of the beneficiary
-      // TODO: need to do this? this will be seen by the transfer events as well
       beneficiary: {
         tokens: Util.fromWei(await daoInstance.token.balanceOf.call(beneficiaryAddress)),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(beneficiaryAddress)),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(beneficiaryAddress))
       },
       // Update DAO total reputation and tokens
       //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
@@ -1121,9 +1142,23 @@ export function onRedeemEvent(proposalId: string) {
         reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
         tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
       },
-      // TODO: Check if there are any remaining redemptions left for this proposal and this beneficiary
-      // redemptions: await getRedemptions(avatarAddress, votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress)
+      proposal: {
+        proposer: proposal.proposer,
+        state: proposalDetails.executionTime ? ProposalStates.Executed : ProposalStates.Closed
+      },
+      beneficiaryRedemptions
     };
+
+    const currentAccountAddress = getState().web3.ethAccountAddress;
+    if (currentAccountAddress && currentAccountAddress !== beneficiaryAddress) {
+      payload.currentAccount = {
+        address: currentAccountAddress,
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(currentAccountAddress)),
+        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(currentAccountAddress))
+      }
+      const currentAccountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
+      payload.currentAccountRedemptions = currentAccountRedemptions;
+    }
 
     dispatch({
       type: arcConstants.ARC_REDEEM,
