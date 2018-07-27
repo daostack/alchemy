@@ -819,7 +819,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
 
-      dispatch({
+      return dispatch({
         type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
         payload: { entities, proposal }
       })
@@ -842,7 +842,7 @@ export function onProposalExpired(proposal: IProposalState) {
     let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
     proposal.redemptions = redemptions;
 
-    dispatch({
+    return dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXPIRED,
       payload: { entities, proposal }
     })

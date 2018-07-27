@@ -12,7 +12,8 @@ import * as arcActions from "actions/arcActions";
 import * as uiActions from "actions/uiActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
-import { checkProposalExpired, IAccountState, IDaoState, IProposalState, IRedemptionState, ProposalStates } from "reducers/arcReducer";
+import { checkProposalExpired, IAccountState, IDaoState, IProposalState, IRedemptionState, ProposalStates, proposalPassed } from "reducers/arcReducer";
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
 
@@ -36,7 +37,7 @@ interface IStateProps extends RouteComponentProps<any> {
   daoAvatarAddress: string;
   lastBlock: number;
   numRedemptions: number;
-  proposals: IProposalState[];
+  openProposals: IProposalState[];
   tourVisible: boolean;
 }
 
@@ -54,7 +55,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     numRedemptions,
-    proposals: dao ? dao.proposals : [],
+    openProposals: dao ? selectors.createOpenProposalsSelector()(state, ownProps) : [],
     tourVisible: state.ui.tourVisible
   };
 };
@@ -68,6 +69,7 @@ interface IDispatchProps {
   updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
   hideTour: typeof uiActions.hideTour;
   showTour: typeof uiActions.showTour;
+  showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
@@ -79,6 +81,7 @@ const mapDispatchToProps = {
   updateDAOLastBlock: arcActions.updateDAOLastBlock,
   hideTour: uiActions.hideTour,
   showTour: uiActions.showTour,
+  showNotification
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -158,6 +161,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       onDAOEthBalanceChanged,
       onDAOGenBalanceChanged,
       onProposalExpired,
+      showNotification,
       updateDAOLastBlock
     } = this.props;
 
@@ -191,9 +195,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
 
       // Check all proposals to see if any expired
-      this.props.proposals.forEach((proposal: IProposalState) => {
+      this.props.openProposals.forEach((proposal: IProposalState) => {
         if (checkProposalExpired(proposal) != proposal.state) {
-          onProposalExpired(proposal);
+          const message = proposalPassed(proposal) ?
+            `Proposal '${proposal.title}' timed out with enough votes to pass!` :
+            `Proposal '${proposal.title}' timed out and didn't have enough votes to pass.`;
+          Promise.resolve(onProposalExpired(proposal)).then(showNotification(NotificationStatus.Success, message));
         }
       });
     }, 10000);
