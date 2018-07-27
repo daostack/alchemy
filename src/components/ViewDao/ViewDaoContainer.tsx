@@ -237,49 +237,49 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const tourSteps = [
       {
         target: "." + css.daoInfo,
-        content: `Alchemy is used for making budget decisions within Genesis Alpha. Decisions are made by people who have been given reputation within it. ${dao.name} has ${Object.keys(dao.members).length} Members with ${Math.round(dao.reputationCount).toLocaleString()} Reputation`,
+        content: `Alchemy is a collaborative application used by the Genesis Alpha DAO to fund proposals. Anyone who has acquired reputation in the Genesis Alpha DAO can vote on decisions. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },
       {
         target: "." + appCss.accountInfo,
-        content: "Your wallet: Check here to see how much reputation you have and see your token balance",
+        content: "This icon represents your ETH wallet. Here you can view your reputation and token balances.",
         placement: "bottom",
         disableBeacon: true
       },
       {
         target: "." + css.holdings,
-        content: "DAO Budget: Reputation holders collectively decide how to manage the DAO’s budget. The amount in ETH represents available budget for funding proposals. The GEN amount indicates how much the DAO has to reward voters and predictors.",
+        content: "The amount in ETH represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors..",
         placement: "left",
         disableBeacon: true
       },
       {
         target: "." + css.createProposal,
-        content: "Create proposal: Do you have an initiative to improve DAOstack? Create a proposal to get it funded. If the proposal passes, the funds would be transferred to the target account automatically and you will be rewarded with additional reputation and GEN. If a proposal fails, there is no penalty for the proposer.",
+        content: "Do you have an idea for an initiative to improve the DAOstack project or ecosystem? Create a proposal to get it funded. If the proposal passes, funds will be transferred to the target account automatically and you will be rewarded with additional reputation and GEN. If a proposal fails, there is no penalty for the proposer.",
         placement: "top",
         disableBeacon: true
       },
       {
         target: "." + proposalCss.voteControls,
-        content: "Voting: If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome of the proposal (You vote yes on a proposal that passes, or vote no on a proposal that fails), you will be rewarded with reputation and GEN.",
+        content: "If you have reputation in the DAO, you can vote on proposals. If your vote corresponds with the outcome (you vote yes on a proposal that passes, or vote no on a proposal that fails), you will be rewarded with reputation and GEN.",
         placement: "right",
         disableBeacon: true
       },
       {
         target: "." + css.regularContainer,
-        content: "Regular proposals: Regular proposals need at least a 50% majority to be approved or rejected by the DAO. In other words, you need 50% of all reputation to vote Yes on a regular proposal for it to pass.",
+        content: "Regular proposals need an absolute majority to be approved by the DAO. This means that 50% of all reputation needs to vote yes on a non-boosted proposal for it to pass.",
         placement: "top",
         disableBeacon: true
       },
       {
         target: "." + css.boostedContainer,
-        content: "Urgent proposals are called Boosted proposals. At the end of a three day voting period, the proposal will pass or fail depending on which side gets the most votes. Unlike regular proposals, there is no need for a 50% majority. Regular proposal become boosted proposal once enough GENs are used to predict they will pass.",
+        content: "Boosted proposals pass or fail based on relative-majority voting. This means that the proposal will pass or fail based on whichever side gets more votes during a three-day voting period. There is no need for an absolute majority of all DAO reputation. Proposals become boosted when enough people use GEN to stake for their success.",
         placement: "top",
         disableBeacon: true
       },
       {
         target: "." + proposalCss.predictions,
-        content: "Predictions: Influencing proposals isn’t limited to reputation holders only. Anyone can direct the attention of the DAO by using GEN to place a prediction whether a proposal will pass or fail. When enough GEN are placed in predicting a proposal will pass, it will become a boosted proposal. If you correctly predict the outcome of a proposal you will be rewarded with GEN and reputation.",
+        content: "Influencing proposals isn’t limited to reputation holders only. Anyone can help direct the attention of the DAO by using GEN to stake on whether a proposal will pass or fail. When enough GEN are staked on the passing of a proposal, it becomes a boosted proposal. Conversely, GEN that are staked on a proposal’s failure can prevent the boosting of a proposal. If you stake with GEN and correctly predict the outcome of a proposal, you will be rewarded with more GEN and reputation.",
         placement: "left",
         disableBeacon: true
       }
@@ -311,16 +311,16 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
           <div className={tourStartClass}>
             <h1>Welcome to Alchemy!</h1>
             <span>Decentralized budgeting powered by <img src="/assets/images/Tour/DAOstackLogo.svg"/> DAOstack.</span>
-            <p>New to Alchemy? Take this tour to learn how <strong>voting, reputation, predictions,</strong> and <strong>proposals</strong> work within Alchemy.</p>
+            <p>New to Alchemy? Take this tour to learn how <strong>voting, reputation, predictions,</strong> and <strong>proposals</strong> work.</p>
             <div>
-              <button onClick={this.handleClickSkipTour}><img src="/assets/images/Tour/SkipTour.svg"/> Skip the tour</button>
-              <button className={css.startButton} onClick={this.handleClickStartTour}><img src="/assets/images/Tour/StartTour.svg"/> Start the tour</button>
+              <button onClick={this.handleClickSkipTour}><img src="/assets/images/Tour/SkipTour.svg"/> Skip for now</button>
+              <button className={css.startButton} onClick={this.handleClickStartTour}><img src="/assets/images/Tour/StartTour.svg"/> Take the tour</button>
             </div>
           </div>
           <div className={tourEndClass}>
             <h1>You’re done!</h1>
             <p>Thanks for taking the time to learn about Alchemy.
-For additional information check out our <a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/edit">FAQ</a> and our <a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23">Intro to Alchemy</a> blog post.</p>
+For additional information check out our <a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/edit">FAQ</a> and this <a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23">Intro to Alchemy</a> article.</p>
             <button className={css.startButton} onClick={this.handleClickEndTour}><img src="/assets/images/Tour/StartTour.svg"/> Start using Alchemy</button>
           </div>
         </div>
