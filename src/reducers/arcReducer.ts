@@ -422,7 +422,6 @@ const arcReducer = (state = initialState, action: any) => {
           // TODO: do automatically through normalizing?
           return update(state, {
             stakes: {
-              // TODO: this automatically through normalizing it?
               [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
             }
           });
@@ -466,16 +465,30 @@ const arcReducer = (state = initialState, action: any) => {
       switch (sequence) {
         case AsyncActionSequence.Pending:
           return update(state, {
-            redemptions: { [redemptionsKey] : { transactionState: { $set: TransactionStates.Unconfirmed }} }
+            redemptions: {
+              [redemptionsKey]: {
+                $apply: (redemptions: IRedemptionState) => ({
+                  ...redemptions,
+                  transactionState: TransactionStates.Unconfirmed
+                })
+              }
+            }
           });
-          return state;
+        case AsyncActionSequence.Failure:
+          return update(state, {
+            redemptions: {
+              [redemptionsKey]: {
+                transactionState: { $set: TransactionStates.Failed }
+              }
+            }
+          })
         case AsyncActionSequence.Success: {
-          const { beneficiary, dao, redemptions } = payload;
+          const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
-          if (redemptions) {
+          if (beneficiaryRedemptions) {
             // Still redemptions left for this proposal & beneficiary combo
             state = update(state, {
-              redemptions: { [redemptionsKey] : { $set: redemptions }}
+              redemptions: { [redemptionsKey] : { $set: beneficiaryRedemptions }}
             });
           } else {
             // No redemptions left for this proposal & beneficiary combo so remove from the state
@@ -487,17 +500,46 @@ const arcReducer = (state = initialState, action: any) => {
               },
               proposals: {
                 [proposalId]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey)
+                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey),
                 }
               },
               redemptions: { $unset: [redemptionsKey] }
             });
           }
 
-          // Also update the beneficiary account and the dao
+          if (currentAccount) {
+            const currentAccountKey = `${currentAccount.address}-${avatarAddress}`;
+            const currentAccountRedemptionsKey = `${proposalId}-${currentAccount.address}`;
+
+            if (currentAccountRedemptions) {
+              // Still redemptions left for this proposal for current account
+              state = update(state, {
+                redemptions: { [currentAccountRedemptionsKey] : { $set: currentAccountRedemptions }}
+              });
+            } else {
+              // No redemptions left for this proposal & account combo so remove from the state
+              state = update(state, {
+                accounts: {
+                  [currentAccountKey]: {
+                    $merge: currentAccount,
+                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey)
+                  }
+                },
+                proposals: {
+                  [proposalId]: {
+                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey),
+                  }
+                },
+                redemptions: { $unset: [currentAccountRedemptionsKey] }
+              });
+            }
+          }
+
+          // Also update the beneficiary account the dao, and proposal state
           return update(state, {
             accounts: { [accountKey]: { $merge: beneficiary } },
             daos: { [avatarAddress]: { $merge: dao } },
+            proposals: { [proposalId]: { $merge: proposal }},
           });
         }
         default: {
@@ -553,7 +595,7 @@ const arcReducer = (state = initialState, action: any) => {
           [accountKey]: (member: any) => {
             // If reputation is being given to a non member, add them as a member to this DAO
             return update(member || newAccount(avatarAddress, address), {
-              tokens: { $set: reputation }
+              reputation: { $set: reputation }
             });
           }
         }
