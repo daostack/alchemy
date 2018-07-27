@@ -344,9 +344,52 @@ class ProposalContainer extends React.Component<IProps, IState> {
             }
             <h3>
               <span>
+
+                    <strong>
+                      <img src="/assets/images/Icon/Overtime.svg"/> OVERTIME: CLOSES IN {closingTime(proposal).fromNow().toUpperCase()}
+                      <div className={css.help}>
+                        <img src="/assets/images/Icon/Help-light.svg"/>
+                        <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg"/>
+                        <div className={css.helpBox}>
+                          <div className={css.pointer}></div>
+                          <div className={css.bg}></div>
+                          <div className={css.bridge}></div>
+                          <div className={css.header}>
+                            <h2>Genesis Protocol</h2>
+                            <h3>RULES FOR OVERTIME</h3>
+                          </div>
+                          <div className={css.body}>
+                            <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased in one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
+                          </div>
+                          <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                        </div>
+                      </div>
+                    </strong>
+
                 { !proposalEnded(proposal) ?
                   `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
-                  : ""
+                  : proposal.state == ProposalStates.QuietEndingPeriod ?
+                    <strong>
+                      <img src="/assets/images/Icon/Overtime.svg"/> OVERTIME: CLOSES IN {closingTime(proposal).fromNow().toUpperCase()}
+                      <div className={css.help}>
+                        <img src="/assets/images/Icon/Help.svg"/>
+                        <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
+                        <div className={css.helpBox}>
+                          <div className={css.pointer}></div>
+                          <div className={css.bg}></div>
+                          <div className={css.bridge}></div>
+                          <div className={css.header}>
+                            <h2>Genesis Protocol</h2>
+                            <h3>RULES FOR OVERTIME</h3>
+                          </div>
+                          <div className={css.body}>
+                            <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased in one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
+                          </div>
+                          <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                        </div>
+                      </div>
+                    </strong>
+                  : " "
                 }
               </span>
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>

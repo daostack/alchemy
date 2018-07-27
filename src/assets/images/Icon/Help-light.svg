@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Overtime" transform="translate(-207.000000, -263.000000)">
+            <g id="Group" transform="translate(207.000000, 263.000000)">
+                <rect id="Rectangle-10" stroke="#9B9B9B" opacity="0.229999989" transform="translate(10.606602, 10.606602) rotate(-45.000000) translate(-10.606602, -10.606602) " x="3.60660172" y="3.60660172" width="14" height="14"></rect>
+                <text id="?" opacity="0.5" font-family="DINPro-Regular, DINPro" font-size="12" font-weight="normal" fill="#080808">
+                    <tspan x="7.018" y="15">?</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>
