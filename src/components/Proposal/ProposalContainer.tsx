@@ -200,7 +200,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         >
           {
             currentRedemptions && currentRedemptions.transactionState == TransactionStates.Unconfirmed ?
-              'Redeeming...' :
+              'Redeeming in progress' :
             beneficiaryHasRewards && !accountHasRewards ?
               'Redeem for beneficiary' :
             accountHasRewards || currentRedemptions ?
