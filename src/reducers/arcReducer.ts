@@ -422,7 +422,6 @@ const arcReducer = (state = initialState, action: any) => {
           // TODO: do automatically through normalizing?
           return update(state, {
             stakes: {
-              // TODO: this automatically through normalizing it?
               [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
             }
           });
@@ -484,14 +483,12 @@ const arcReducer = (state = initialState, action: any) => {
             }
           })
         case AsyncActionSequence.Success: {
-          const { currentAccount, beneficiary, dao, redemptions, accountRedemptions, proposal } = payload;
-          const currentAccountKey = `${currentAccount}-${avatarAddress}`;
-          const currentAccountRedemptionsKey = `${proposalId}-${currentAccount}`;
+          const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
-          if (redemptions) {
+          if (beneficiaryRedemptions) {
             // Still redemptions left for this proposal & beneficiary combo
             state = update(state, {
-              redemptions: { [redemptionsKey] : { $set: redemptions }}
+              redemptions: { [redemptionsKey] : { $set: beneficiaryRedemptions }}
             });
           } else {
             // No redemptions left for this proposal & beneficiary combo so remove from the state
@@ -510,26 +507,32 @@ const arcReducer = (state = initialState, action: any) => {
             });
           }
 
-          if (accountRedemptions) {
-            // Still redemptions left for this proposal & beneficiary combo
-            state = update(state, {
-              redemptions: { [currentAccountRedemptionsKey] : { $set: accountRedemptions }}
-            });
-          } else {
-            // No redemptions left for this proposal & beneficiary combo so remove from the state
-            state = update(state, {
-              accounts: {
-                [currentAccountKey]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey)
-                }
-              },
-              proposals: {
-                [proposalId]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey),
-                }
-              },
-              redemptions: { $unset: [currentAccountRedemptionsKey] }
-            });
+          if (currentAccount) {
+            const currentAccountKey = `${currentAccount.address}-${avatarAddress}`;
+            const currentAccountRedemptionsKey = `${proposalId}-${currentAccount.address}`;
+
+            if (currentAccountRedemptions) {
+              // Still redemptions left for this proposal for current account
+              state = update(state, {
+                redemptions: { [currentAccountRedemptionsKey] : { $set: currentAccountRedemptions }}
+              });
+            } else {
+              // No redemptions left for this proposal & account combo so remove from the state
+              state = update(state, {
+                accounts: {
+                  [currentAccountKey]: {
+                    $merge: currentAccount,
+                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey)
+                  }
+                },
+                proposals: {
+                  [proposalId]: {
+                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey),
+                  }
+                },
+                redemptions: { $unset: [currentAccountRedemptionsKey] }
+              });
+            }
           }
 
           // Also update the beneficiary account the dao, and proposal state
@@ -592,7 +595,7 @@ const arcReducer = (state = initialState, action: any) => {
           [accountKey]: (member: any) => {
             // If reputation is being given to a non member, add them as a member to this DAO
             return update(member || newAccount(avatarAddress, address), {
-              tokens: { $set: reputation }
+              reputation: { $set: reputation }
             });
           }
         }
