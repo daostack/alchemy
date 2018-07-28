@@ -196,7 +196,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
       // Check all proposals to see if any expired
       this.props.openProposals.forEach((proposal: IProposalState) => {
-        if (checkProposalExpired(proposal) != proposal.state) {
+        const newState = checkProposalExpired(proposal);
+        if (newState != proposal.state) {
+          proposal.state = newState;
           const message = proposalPassed(proposal) ?
             `Proposal '${proposal.title}' timed out with enough votes to pass!` :
             `Proposal '${proposal.title}' timed out and didn't have enough votes to pass.`;
