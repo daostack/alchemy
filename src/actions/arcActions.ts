@@ -1144,7 +1144,7 @@ export function onRedeemEvent(proposalId: string) {
       },
       proposal: {
         proposer: proposal.proposer,
-        state: proposalDetails.executionTime ? ProposalStates.Executed : ProposalStates.Closed
+        state: Number(await votingMachineInstance.getState({ proposalId }))
       },
       beneficiaryRedemptions
     };
