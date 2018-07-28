@@ -172,7 +172,19 @@ async function updateCache() {
       await store.dispatch(arcActions.onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation)));
     }
 
-    console.log("Done with executed proposals, now updating reputation balances");
+    console.log("Done with executed proposals, now looking for Redeemer redemptions");
+
+    const redeemerInstance = await Arc.RedeemerFactory.deployed();
+    const redeemEventWatcher = redeemerInstance.RedeemerRedeem({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
+    const getRedeemEvents = promisify(redeemEventWatcher.get.bind(redeemEventWatcher));
+    const redeemEvents: Array<Arc.DecodedLogEntryEvent<Arc.RedeemerRedeemEventResult>> = await getRedeemEvents();
+    for (let index = 0; index < redeemEvents.length; index++) {
+      const event = redeemEvents[index];
+      console.log("Proposal redeemed through Redeemer", event);
+      await store.dispatch(arcActions.onRedeemEvent(event.args._proposalId));
+    }
+
+    console.log("Done with Redeemer redemptions, now updating reputation balances");
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
