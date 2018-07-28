@@ -815,7 +815,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       const proposal = getState().arc.proposals[proposalId];
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
       const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
-      proposal.executionTime = proposalDetails.executionTime;
+      proposal.executionTime = Number(proposalDetails.executionTime);
       proposal.state = ProposalStates.Executed;
       proposal.reputationWhenExecuted = reputationWhenExecuted;
       proposal.winningVote = decision;
