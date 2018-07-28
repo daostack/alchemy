@@ -485,6 +485,16 @@ const arcReducer = (state = initialState, action: any) => {
         case AsyncActionSequence.Success: {
           const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
+          // Update beneficiary reputation
+          state = update(state, {
+            [accountKey]: (account: any) => {
+              // Make sure account exists for this DAO
+              return update(account || newAccount(avatarAddress, accountAddress), {
+                $merge: beneficiary
+              });
+            }
+          });
+
           if (beneficiaryRedemptions) {
             // Still redemptions left for this proposal & beneficiary combo
             state = update(state, {
@@ -511,17 +521,26 @@ const arcReducer = (state = initialState, action: any) => {
             const currentAccountKey = `${currentAccount.address}-${avatarAddress}`;
             const currentAccountRedemptionsKey = `${proposalId}-${currentAccount.address}`;
 
+            // Update current account reputation
+            state = update(state, {
+              [currentAccountKey]: (account: any) => {
+                // Make sure account exists for this DAO
+                return update(account || newAccount(avatarAddress, currentAccount.address), {
+                  $merge: currentAccount
+                });
+              }
+            });
+
             if (currentAccountRedemptions) {
               // Still redemptions left for this proposal for current account
               state = update(state, {
                 redemptions: { [currentAccountRedemptionsKey] : { $set: currentAccountRedemptions }}
               });
             } else {
-              // No redemptions left for this proposal & account combo so remove from the state
+              // No redemptions left for this proposal & current account combo so remove from the state
               state = update(state, {
                 accounts: {
                   [currentAccountKey]: {
-                    $merge: currentAccount,
                     redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey)
                   }
                 },
@@ -535,9 +554,8 @@ const arcReducer = (state = initialState, action: any) => {
             }
           }
 
-          // Also update the beneficiary account the dao, and proposal state
+          // Also update the dao, and proposal state
           return update(state, {
-            accounts: { [accountKey]: { $merge: beneficiary } },
             daos: { [avatarAddress]: { $merge: dao } },
             proposals: { [proposalId]: { $merge: proposal }},
           });
@@ -585,15 +603,22 @@ const arcReducer = (state = initialState, action: any) => {
       const { avatarAddress, address, reputation, totalReputation } = payload;
       const accountKey = `${address}-${avatarAddress}`;
 
+      const members = state.daos[avatarAddress].members;
+      // If reputation is being given to a non member, add them as a member to this DAO
+      if (members.indexOf(accountKey) === -1) {
+        members.push(accountKey);
+      }
+
       return update(state, {
         daos: {
           [avatarAddress]: {
-            reputationCount: { $set: totalReputation },
+            members: { $set: members },
+            reputationCount: { $set: totalReputation }
           }
         },
         accounts: {
           [accountKey]: (member: any) => {
-            // If reputation is being given to a non member, add them as a member to this DAO
+            // Make sure account exists before updating
             return update(member || newAccount(avatarAddress, address), {
               reputation: { $set: reputation }
             });
