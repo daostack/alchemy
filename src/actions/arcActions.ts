@@ -801,6 +801,14 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
   }
 }
 
+export function executeProposal(avatarAddress: string, proposalId: string) {
+  return async (dispatch: Dispatch<any>) => {
+    const dao = await Arc.DAO.at(avatarAddress)
+    const votingMachineInstance = (await dao.getSchemes('GenesisProtocol'))[0].wrapper as GenesisProtocolWrapper
+    await votingMachineInstance.execute({proposalId});
+  }
+}
+
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     if (executionState != ExecutionState.None) {
@@ -1066,14 +1074,6 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
   beneficiaryRedemptions: IRedemptionState,
   currentAccountRedemptions: IRedemptionState,
 }>
-
-export function executeProposal(avatarAddress: string, proposalId: string) {
-  return async (dispatch: Dispatch<any>) => {
-    const dao = await Arc.DAO.at(avatarAddress)
-    const votingMachineInstance = (await dao.getSchemes('GenesisProtocol'))[0].wrapper as GenesisProtocolWrapper
-    await votingMachineInstance.execute({proposalId});
-  }
-}
 
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
