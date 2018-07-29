@@ -517,7 +517,7 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
     }
   }
 
-  if (proposal.proposer === accountAddress) {
+  if (proposal.proposer === accountAddress && proposal.proposer != "0x0000000000000000000000000000000000000000") {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
 
@@ -1119,10 +1119,10 @@ export function onRedeemEvent(proposalId: string) {
     const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
     const beneficiaryAddress = proposalDetails.beneficiaryAddress;
 
-    const beneficiaryRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress);
-
     const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
-    proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+    proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for propose
+
+    const beneficiaryRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress);
 
     const meta = {
       avatarAddress,
