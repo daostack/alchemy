@@ -1037,6 +1037,10 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const proposal: IProposalState = getState().arc.proposals[proposalId];
+    if (!proposal) {
+      // Seeing this on production. Shouldn't really happen but may as well check for safety. Must be from past issues with cache script?
+      return;
+    }
 
     const proposalDetails = await votingMachineInstance.getProposal(proposalId);
     proposal.boostedTime = Number(proposalDetails.boostedPhaseTime);
