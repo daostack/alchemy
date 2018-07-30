@@ -227,7 +227,7 @@ export const notificationUpdater: Middleware =
         status === OperationStatus.Sent ?
           'transaction sent' :
           'transaction complete',
-        txHash && `https://${network !== 'mainnet' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
+        txHash && `https://${network !== 'live' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
         id,
         +moment()
       )(dispatch)
@@ -238,7 +238,7 @@ export const notificationUpdater: Middleware =
       (async () => {
 
         const state = getState() as any as IRootState;
-        const network = Util.networkName(Number(await Arc.Utils.getNetworkId())).toLowerCase();
+        const network = (await Arc.Utils.getNetworkName()).toLowerCase();
 
         if (action.type === REHYDRATE) {
           const a = action as RehydrateAction;
