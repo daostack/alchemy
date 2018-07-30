@@ -1133,8 +1133,8 @@ export function onRedeemEvent(proposalId: string) {
     let payload: any = {
       // Update account of the beneficiary
       beneficiary: {
-        tokens: Util.fromWei(await daoInstance.token.getBalanceOf.call(beneficiaryAddress)),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(beneficiaryAddress))
+        tokens: Util.fromWei(await daoInstance.token.getBalanceOf(beneficiaryAddress)),
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf(beneficiaryAddress))
       },
       // Update DAO total reputation and tokens
       //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
