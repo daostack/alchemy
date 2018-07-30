@@ -146,29 +146,29 @@ class AppContainer extends React.Component<IProps, null> {
     this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({}, { fromBlock: lastBlock });
     this.proposalEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.NewContributionProposalEventResult>) => {
       onProposalCreateEvent(result.args);
-    },-1);
+    }, -1);
 
     this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastBlock });
     this.executeProposalEventWatcher.watch((error, result) => {
       const { avatarAddress, proposalId, decision, totalReputation, executionState } = result;
       onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation));
-    },-1);
+    }, -1);
 
     this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastBlock });
     this.stakeEventWatcher.watch((error: Error, result: Arc.DecodedLogEntryEvent<Arc.StakeEventResult>) => {
       onStakeEvent(result.args._avatar, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount));
-    },-1);
+    }, -1);
 
     this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastBlock });
     this.voteEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>) => {
       onVoteEvent(result.args._avatar, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation));
-    },-1);
+    }, -1);
 
     const redeemerInstance = await Arc.RedeemerFactory.deployed();
     this.redeemEventWatcher = redeemerInstance.RedeemerRedeem({ }, { fromBlock: lastBlock });
     this.redeemEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.RedeemerRedeemEventResult>) => {
       onRedeemEvent(result.args._proposalId);
-    },-1);
+    }, -1);
   }
 
  public componentWillUnmount() {
