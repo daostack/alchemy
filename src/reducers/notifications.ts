@@ -227,38 +227,42 @@ export const notificationUpdater: Middleware =
         status === OperationStatus.Sent ?
           'transaction sent' :
           'transaction complete',
-        txHash && `https://${network !== 'mainnet' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
+        txHash && `https://${network !== 'live' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
         id,
         +moment()
       )(dispatch)
     }
 
     return (action: any) => {
-      const state = getState() as any as IRootState;
-      const network = Util.networkName(state.web3.networkId).toLowerCase();
 
-      if (action.type === REHYDRATE) {
-        const a = action as RehydrateAction;
-        if (a.payload) {
-          const operations = a.payload.operations as IOperationsState;
-          Object.keys(operations).forEach((id) => {
-            if (operations[id].status === OperationStatus.Sent || operations[id].error) {
-              transaction2Notification(network, id, operations[id]);
-            }
-          })
+      (async () => {
+
+        const state = getState() as any as IRootState;
+        const network = (await Arc.Utils.getNetworkName()).toLowerCase();
+
+        if (action.type === REHYDRATE) {
+          const a = action as RehydrateAction;
+          if (a.payload) {
+            const operations = a.payload.operations as IOperationsState;
+            Object.keys(operations).forEach((id) => {
+              if (operations[id].status === OperationStatus.Sent || operations[id].error) {
+                transaction2Notification(network, id, operations[id]);
+              }
+            })
+          }
         }
-      }
 
-      if (isOperationsAction(action) && action.type === 'Operations/Update') {
-        const {payload: {id, operation}} = action as IUpdateOperation;
-        transaction2Notification(network, id, operation)
-      }
+        if (isOperationsAction(action) && action.type === 'Operations/Update') {
+          const {payload: {id, operation}} = action as IUpdateOperation;
+          transaction2Notification(network, id, operation)
+        }
 
-      // also dismiss the corrosponding operation if it exists.
-      if (isNotificationsAction(action) && action.type === 'Notifications/Dismiss') {
-        const {payload: {id}} = action as IDismissNotification;
-        dismissOperation(action.payload.id)(dispatch);
-      }
+        // also dismiss the corrosponding operation if it exists.
+        if (isNotificationsAction(action) && action.type === 'Notifications/Dismiss') {
+          const {payload: {id}} = action as IDismissNotification;
+          dismissOperation(action.payload.id)(dispatch);
+        }
+      })()
 
       return next(action);
     }
