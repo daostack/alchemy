@@ -176,12 +176,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     this.mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: dao.lastBlock });
     this.mintEventWatcher.watch((error: any, result: any) => {
       onReputationChangeEvent(daoAvatarAddress, result.args._to);
-    });
+    },-1);
 
     this.burnEventWatcher = daoInstance.reputation.Burn({}, { fromBlock: dao.lastBlock });
     this.burnEventWatcher.watch((error: any, result: any) => {
       onReputationChangeEvent(daoAvatarAddress, result.args._from);
-    });
+    },-1);
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
