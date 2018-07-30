@@ -134,9 +134,11 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 </div>;
         break;
       case ActionTypes.Redeem:
+        icon = <img src="/assets/images/Tx/Redemption.svg"/>;
         transactionInfo = <span>Redeem proposal</span>;
         break;
       case ActionTypes.Execute:
+        icon = <img src="/assets/images/Tx/Redemption.svg"/>;
         transactionInfo = <span>Execute proposal</span>;
         break;
     }
