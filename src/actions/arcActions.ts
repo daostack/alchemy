@@ -131,11 +131,11 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     proposals: [],
     proposalsLoaded: false,
     reputationAddress: await daoInstance.reputation.address,
-    reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
+    reputationCount: Util.fromWei(await daoInstance.reputation.contract.totalSupply()), // TODO: replace with wrapper function when available.
     tokenAddress: await daoInstance.token.address,
-    tokenCount: Util.fromWei(await daoInstance.token.balanceOf(avatarAddress)),
+    tokenCount: Util.fromWei(await daoInstance.token.getBalanceOf(avatarAddress)),
     tokenName: await daoInstance.getTokenName(),
-    tokenSupply: Util.fromWei(await daoInstance.token.totalSupply()),
+    tokenSupply: Util.fromWei(await daoInstance.token.getTotalSupply()),
     tokenSymbol: await daoInstance.getTokenSymbol()
   };
 
@@ -159,7 +159,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   for (let cnt = 0; cnt < memberAddresses.length; cnt++) {
     const address = memberAddresses[cnt];
     const member: IAccountState = newAccount(avatarAddress, address);
-    const tokens = await daoInstance.token.balanceOf(address);
+    const tokens = await daoInstance.token.getBalanceOf(address);
     member.tokens = Util.fromWei(tokens);
     const reputation = await daoInstance.reputation.reputationOf(address);
     member.reputation = Util.fromWei(reputation);
@@ -953,7 +953,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       proposal,
       // Update voter tokens and reputation
       voter: {
-        tokens: Util.fromWei(await daoInstance.token.balanceOf(voterAddress)),
+        tokens: Util.fromWei(await daoInstance.token.getBalanceOf(voterAddress)),
         reputation: Util.fromWei(await daoInstance.reputation.reputationOf(voterAddress)),
       }
     };
@@ -1133,14 +1133,14 @@ export function onRedeemEvent(proposalId: string) {
     let payload: any = {
       // Update account of the beneficiary
       beneficiary: {
-        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(beneficiaryAddress)),
+        tokens: Util.fromWei(await daoInstance.token.getBalanceOf.call(beneficiaryAddress)),
         reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(beneficiaryAddress))
       },
       // Update DAO total reputation and tokens
       //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
       dao: {
-        reputationCount: Util.fromWei(await daoInstance.reputation.totalSupply()),
-        tokenCount: Util.fromWei(await daoInstance.token.totalSupply()),
+        reputationCount: Util.fromWei(await daoInstance.reputation.contract.totalSupply()), // TODO: replace with wrapper function when available.
+        tokenCount: Util.fromWei(await daoInstance.token.getTotalSupply()),
       },
       proposal: {
         proposer: proposal.proposer,
@@ -1153,8 +1153,8 @@ export function onRedeemEvent(proposalId: string) {
     if (currentAccountAddress && currentAccountAddress !== beneficiaryAddress) {
       payload.currentAccount = {
         address: currentAccountAddress,
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf.call(currentAccountAddress)),
-        tokens: Util.fromWei(await daoInstance.token.balanceOf.call(currentAccountAddress))
+        reputation: Util.fromWei(await daoInstance.reputation.reputationOf(currentAccountAddress)),
+        tokens: Util.fromWei(await daoInstance.token.getBalanceOf(currentAccountAddress))
       }
       const currentAccountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
       payload.currentAccountRedemptions = currentAccountRedemptions;
@@ -1172,9 +1172,9 @@ export function onRedeemEvent(proposalId: string) {
 export function onTransferEvent(avatarAddress: string, from: string, to: string) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const fromBalance = Util.fromWei(await daoInstance.token.balanceOf(from));
-    const toBalance = Util.fromWei(await daoInstance.token.balanceOf(to));
-    const totalTokens = Util.fromWei(await daoInstance.token.totalSupply());
+    const fromBalance = Util.fromWei(await daoInstance.token.getBalanceOf(from));
+    const toBalance = Util.fromWei(await daoInstance.token.getBalanceOf(to));
+    const totalTokens = Util.fromWei(await daoInstance.token.getTotalSupply());
 
     dispatch({
       type: arcConstants.ARC_ON_TRANSFER,
@@ -1194,7 +1194,7 @@ export function onReputationChangeEvent(avatarAddress: string, address: string) 
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const reputation = Util.fromWei(await daoInstance.reputation.reputationOf(address));
-    const totalReputation = Util.fromWei(await daoInstance.reputation.totalSupply());
+    const totalReputation = Util.fromWei(await daoInstance.reputation.contract.totalSupply()); // TODO: replace with wrapper function when available.
 
     dispatch({
       type: arcConstants.ARC_ON_REPUTATION_CHANGE,
