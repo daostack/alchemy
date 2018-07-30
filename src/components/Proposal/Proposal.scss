@@ -712,7 +712,7 @@ a.viewProposal {
 }
 
 .redeemRewards {
-	border: 1px solid $black-tenthtone;
+	border: 1px solid $accent-1;
 	color: $accent-1;
 	background-color: transparent;
 	padding: 5px 8px;
@@ -723,6 +723,24 @@ a.viewProposal {
 	cursor: pointer;
 	margin-top: -2px;
 	font-weight: bold;
+
+	img {
+		display: none;
+	}
+}
+
+.redeemRewards.disabled {
+	border: 1px solid $black-tenthtone;
+	color: $black-halftone;
+
+	img {
+		display: inline-block;
+		height: 16px;
+		position: relative;
+		top: 4px;
+		margin-left: 5px;
+		margin-top: -6px;
+	}
 }
 
 
