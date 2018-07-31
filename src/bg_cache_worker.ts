@@ -91,6 +91,8 @@ process.on('SIGTERM', () => {
 
 async function updateCache() {
   await Arc.InitializeArcJs();
+  Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
+  Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
 
   const startTime = moment();
 
@@ -127,7 +129,7 @@ async function updateCache() {
     // Watch for new, confirmed proposals coming in
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     const proposalEventWatcher = contributionRewardInstance.NewContributionProposal({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-    const getProposalEvents = promisify(proposalEventWatcher.get.bind(proposalEventWatcher));
+    const getProposalEvents = promisify(proposalEventWatcher.get.bind(proposalEventWatcher, -1));
     const proposalEvents: Array<Arc.DecodedLogEntryEvent<Arc.NewContributionProposalEventResult>> = await getProposalEvents();
     for (let index = 0; index < proposalEvents.length; index++) {
       const event = proposalEvents[index];
@@ -141,7 +143,7 @@ async function updateCache() {
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     const stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-    const getStakeEvents = promisify(stakeEventWatcher.get.bind(stakeEventWatcher));
+    const getStakeEvents = promisify(stakeEventWatcher.get.bind(stakeEventWatcher, -1));
     const stakeEvents: Array<Arc.DecodedLogEntryEvent<Arc.StakeEventResult>> = await getStakeEvents();
     for (let index = 0; index < stakeEvents.length; index++) {
       const event = stakeEvents[index];
@@ -152,8 +154,8 @@ async function updateCache() {
     console.log("Done looking for new stakes, now looking for new votes");
 
     const voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-    const getVoteEvents = promisify(voteEventWatcher.get.bind(voteEventWatcher));
-    const voteEvents: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>> = await voteEventWatcher.get();
+    const getVoteEvents = promisify(voteEventWatcher.get.bind(voteEventWatcher, -1));
+    const voteEvents: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>> = await getVoteEvents();
     for (let index = 0; index < voteEvents.length; index++) {
       const event = voteEvents[index];
       console.log("Got new vote", event.args);
@@ -163,7 +165,7 @@ async function updateCache() {
     console.log("Done looking for new votes, now looking for executed proposals");
 
     const executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-    const getExecutedProposalEvents = promisify(executeProposalEventWatcher.get.bind(executeProposalEventWatcher));
+    const getExecutedProposalEvents = promisify(executeProposalEventWatcher.get.bind(executeProposalEventWatcher, -1));
     const executedProposalEvents: Arc.ExecutedGenesisProposal[] = await getExecutedProposalEvents();
     for (let index = 0; index < executedProposalEvents.length; index++) {
       const event = executedProposalEvents[index];
@@ -172,7 +174,19 @@ async function updateCache() {
       await store.dispatch(arcActions.onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation)));
     }
 
-    console.log("Done with executed proposals, now updating reputation balances");
+    console.log("Done with executed proposals, now looking for Redeemer redemptions");
+
+    const redeemerInstance = await Arc.RedeemerFactory.deployed();
+    const redeemEventWatcher = redeemerInstance.RedeemerRedeem({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
+    const getRedeemEvents = promisify(redeemEventWatcher.get.bind(redeemEventWatcher, -1));
+    const redeemEvents: Array<Arc.DecodedLogEntryEvent<Arc.RedeemerRedeemEventResult>> = await getRedeemEvents();
+    for (let index = 0; index < redeemEvents.length; index++) {
+      const event = redeemEvents[index];
+      console.log("Proposal redeemed through Redeemer", event);
+      await store.dispatch(arcActions.onRedeemEvent(event.args._proposalId));
+    }
+
+    console.log("Done with Redeemer redemptions, now updating reputation balances");
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
@@ -183,7 +197,7 @@ async function updateCache() {
       const daoInstance = await Arc.DAO.at(avatarAddress);
 
       const mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-      const getMintEvents = promisify(mintEventWatcher.get.bind(mintEventWatcher));
+      const getMintEvents = promisify(mintEventWatcher.get.bind(mintEventWatcher, -1));
       const mintEvents = await getMintEvents();
       for (let index = 0; index < mintEvents.length; index++) {
         const event = mintEvents[index];
@@ -192,7 +206,7 @@ async function updateCache() {
       }
 
       const burnEventWatcher = daoInstance.reputation.Burn({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-      const getBurnEvents = promisify(burnEventWatcher.get.bind(burnEventWatcher));
+      const getBurnEvents = promisify(burnEventWatcher.get.bind(burnEventWatcher, -1));
       const burnEvents = await getBurnEvents();
       for (let index = 0; index < burnEvents.length; index++) {
         const event = burnEvents[index];

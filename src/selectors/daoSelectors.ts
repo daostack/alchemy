@@ -34,6 +34,18 @@ export const createPreBoostedProposalsSelector = () => createSelector(
   ),
 );
 
+export const createOpenProposalsSelector = () => createSelector(
+  [ getDaoProposals ],
+  (proposals: IProposalState[]) => {
+    const result = proposals.filter((proposal: IProposalState) => (
+      proposal.state === ProposalStates.PreBoosted ||
+      proposal.state === ProposalStates.Boosted ||
+      proposal.state === ProposalStates.QuietEndingPeriod
+    ));
+    return result;
+  }
+);
+
 export const createHistoryProposalsSelector = () => createSelector(
   [ getDaoProposals ],
   (proposals: IProposalState[]) => {
