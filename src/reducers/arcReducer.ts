@@ -3,7 +3,7 @@ import * as update from "immutability-helper";
 import * as moment from "moment";
 
 import * as ActionTypes from "constants/arcConstants";
-import { RedeemAction, StakeAction, VoteAction, CreateProposalAction, RewardType } from "actions/arcActions";
+import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
 export enum ProposalStates {
@@ -84,6 +84,14 @@ export interface IDaoState {
   tokenName: string;
   tokenSupply: number; // total amount in circulation
   tokenSymbol: string;
+}
+
+export enum RewardType {
+  ETH,
+  GEN,
+  NativeToken,
+  Reputation,
+  ExternalToken
 }
 
 export interface IRedemptionState {

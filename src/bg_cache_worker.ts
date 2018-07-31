@@ -23,7 +23,7 @@ const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
 import * as arcConstants from "constants/arcConstants";
-import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState } from "./reducers/arcReducer";
+import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState, RewardType } from "./reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
 import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
 
@@ -178,37 +178,37 @@ async function updateCache() {
 
     const redeemEth = await contributionRewardInstance.RedeemEther({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
     redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.ETH, true))
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ETH, true))
     );
 
     const redeemGen = await contributionRewardInstance.RedeemExternalToken({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
     redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.ExternalToken, true))
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ExternalToken, true))
     );
 
     const redeemToken = await contributionRewardInstance.RedeemNativeToken({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
     redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.NativeToken, true))
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.NativeToken, true))
     );
 
     const redeemRep = await contributionRewardInstance.RedeemReputation({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
     redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.Reputation, true))
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, true))
     );
 
     const redeem = await votingMachineInstance.Redeem({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
     redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.GEN, false))
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false))
     );
 
     const redeemDaoBounty = await votingMachineInstance.RedeemDaoBounty({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
     redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.GEN, false))
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false))
     );
 
     const redeemRepGP = await votingMachineInstance.RedeemReputation({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
     redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.Reputation, false))
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, false))
     );
 
     console.log("Done with Redeemer redemptions, now updating reputation balances");

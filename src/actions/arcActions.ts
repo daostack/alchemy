@@ -26,7 +26,8 @@ import { ContributionRewardType,
          ProposalStates,
          TransactionStates,
          VoteOptions,
-         anyRedemptions} from "reducers/arcReducer";
+         anyRedemptions,
+         RewardType} from "reducers/arcReducer";
 
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
@@ -1158,14 +1159,6 @@ export function onRedeemEvent(proposalId: string) {
       payload
     } as RedeemAction);
   };
-}
-
-export enum RewardType {
-  ETH,
-  GEN,
-  NativeToken,
-  Reputation,
-  ExternalToken
 }
 
 export function onRedeemReward(avatarAddress: string, proposalId: string, beneficiary: string, rewardType: RewardType, isTarget: boolean) {
