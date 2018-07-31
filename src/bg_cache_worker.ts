@@ -90,7 +90,7 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-(async() => {
+(async () => {
   await Arc.InitializeArcJs();
 })();
 
