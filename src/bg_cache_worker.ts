@@ -177,39 +177,39 @@ async function updateCache() {
     console.log("Done with executed proposals, now looking for Redeemer redemptions");
 
     const redeemEth = await contributionRewardInstance.RedeemEther({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) =>
       store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ETH, true))
-    );
+    ));
 
     const redeemGen = await contributionRewardInstance.RedeemExternalToken({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) =>
       store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ExternalToken, true))
-    );
+    ));
 
     const redeemToken = await contributionRewardInstance.RedeemNativeToken({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) =>
       store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.NativeToken, true))
-    );
+    ));
 
     const redeemRep = await contributionRewardInstance.RedeemReputation({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) =>
       store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, true))
-    );
+    ));
 
     const redeem = await votingMachineInstance.Redeem({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) =>
       store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false))
-    );
+    ));
 
     const redeemDaoBounty = await votingMachineInstance.RedeemDaoBounty({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) =>
       store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false))
-    );
+    ));
 
     const redeemRepGP = await votingMachineInstance.RedeemReputation({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    redeemEth.forEach(({args: {_proposalId, _avatar, _beneficiary}}) =>
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) =>
       store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, false))
-    );
+    ));
 
     console.log("Done with Redeemer redemptions, now updating reputation balances");
 
