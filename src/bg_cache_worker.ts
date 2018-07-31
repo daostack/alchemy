@@ -83,9 +83,10 @@ const unsubscribe = store.subscribe(() => {
   // XXX: dont need to do anything here
 });
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log("Got SIGTERM so exiting process");
   unsubscribe();
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
   process.exit(0);
 });
 
@@ -99,7 +100,7 @@ Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
 async function updateCache() {
   if (Number(await redisGet('alchemy-caching-' + arcjsNetwork))) {
     console.log("The cache is already being updated.");
-    return;
+    return false;
   }
   await redisSet('alchemy-caching-' + arcjsNetwork, 1);
 
@@ -281,6 +282,7 @@ async function updateCache() {
     console.log("Something weird happened, DAOs not loaded so didn't write the data");
   }
   await redisSet('alchemy-caching-' + arcjsNetwork, 0);
+  return true;
 }
 
 export default updateCache;
