@@ -924,6 +924,9 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const proposal: IProposalState = getState().arc.proposals[proposalId];
+    if (!proposal) {
+      return;
+    }
 
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
