@@ -89,10 +89,19 @@ process.on('SIGTERM', () => {
   process.exit(0);
 });
 
-async function updateCache() {
+(async() => {
   await Arc.InitializeArcJs();
-  Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
-  Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
+})();
+
+Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
+Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
+
+async function updateCache() {
+  if (Number(await redisGet('alchemy-caching-' + arcjsNetwork))) {
+    console.log("The cache is already being updated.");
+    return;
+  }
+  await redisSet('alchemy-caching-' + arcjsNetwork, 1);
 
   const startTime = moment();
 
@@ -271,6 +280,7 @@ async function updateCache() {
   } else {
     console.log("Something weird happened, DAOs not loaded so didn't write the data");
   }
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
 }
 
 export default updateCache;
