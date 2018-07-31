@@ -9,7 +9,7 @@ import { IRootState } from "reducers";
 import { IProposalState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 import DaoHeader from "./DaoHeader";
@@ -18,7 +18,7 @@ import DaoNav from "./DaoNav";
 import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
-  daoAddress: string;
+  daoAvatarAddress: string;
   proposalsLoaded: boolean;
   proposalsBoosted: IProposalState[];
   proposalsPreBoosted: IProposalState[];
@@ -27,8 +27,8 @@ interface IStateProps extends RouteComponentProps<any> {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    daoAddress: ownProps.match.params.daoAddress,
-    proposalsLoaded: state.arc.daos[ownProps.match.params.daoAddress].proposalsLoaded,
+    daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
+    proposalsLoaded: state.arc.daos[ownProps.match.params.daoAvatarAddress].proposalsLoaded,
     proposalsBoosted: selectors.createBoostedProposalsSelector()(state, ownProps),
     proposalsPreBoosted: selectors.createPreBoostedProposalsSelector()(state, ownProps),
     web3: state.web3,
@@ -92,7 +92,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
                     No upcoming proposals
                   </div>
                   <div className={css.cta}>
-                    <Link to={`/dao/${this.props.daoAddress}/proposals/create`}>Create a proposal</Link>
+                    <Link to={`/dao/${this.props.daoAvatarAddress}/proposals/create`}>Create a proposal</Link>
                   </div>
                 </div>
               : ""

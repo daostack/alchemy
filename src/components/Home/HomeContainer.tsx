@@ -7,7 +7,7 @@ import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
 
 import * as arcActions from "actions/arcActions";
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import * as css from "./Home.scss";
 

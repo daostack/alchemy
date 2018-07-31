@@ -6,8 +6,8 @@ import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
-import * as schemas from "../../schemas";
+import { IAccountState, IDaoState } from "reducers/arcReducer";
+import * as schemas from "schemas";
 
 import AccountImage from "components/Account/AccountImage";
 
@@ -20,7 +20,7 @@ interface IStateProps extends RouteComponentProps<any> {
 // TODO: can i make this not a container and just take the dao passed in as a prop?
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
+    dao: denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc),
   };
 };
 
@@ -35,21 +35,18 @@ class DaoMembersContainer extends React.Component<IProps, null> {
   public render() {
     const { dao } = this.props;
 
-    const membersHTML = Object.keys(dao.members).map((address: string) => {
-      const member = dao.members[address];
+    const membersHTML = dao.members.map((member: IAccountState) => {
       return (
-        <div className={css.member + " " + css.clearfix} key={"member_" + address}>
+        <div className={css.member + " " + css.clearfix} key={"member_" + member.address}>
           <AccountImage
-            accountAddress={address}
+            accountAddress={member.address}
             className="membersPage"
           />
           <div className={css.memberAddress}>
-            {address}
+            {member.address}
           </div>
 
           <div className={css.memberHoldings}>
-            {dao.tokenSymbol}s: <span>{member.tokens.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
-            <div className={css.verticalDivider}></div>
             Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ({(100 * member.reputation / dao.reputationCount).toFixed(1)}%)</span>
           </div>
         </div>

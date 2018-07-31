@@ -3,7 +3,6 @@ import { routerMiddleware } from "react-router-redux";
 import { applyMiddleware, compose, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import loggerMiddleware from "redux-logger";
-import promiseMiddleware from "redux-promise-middleware";
 import thunkMiddleware from "redux-thunk";
 
 import reducers from "./reducers";
@@ -21,7 +20,6 @@ const store = createStore(
       notificationUpdater,
       successDismisser(),
       thunkMiddleware,
-      promiseMiddleware(),
       routerMiddleware(history),
       loggerMiddleware,
     ),

@@ -11,6 +11,8 @@ async function renderApp() {
   try {
     Arc.ConfigService.set("estimateGas", true);
     await Arc.InitializeArcJs();
+    Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
+    Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
     // Silence 240 sec error
     Arc.ContractWrappers.AbsoluteVote.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.ContributionReward.contract.constructor.synchronization_timeout = 0;

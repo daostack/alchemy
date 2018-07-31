@@ -8,29 +8,38 @@ import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState } from "reducers/arcReducer";
+import { IDaoState, IProposalState, emptyProposal } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import * as css from "./CreateProposal.scss";
 
 import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import ReputationView from "components/Account/ReputationView";
 
-import { Formik, Field } from 'formik';
+import { Formik, Field, FormikBag } from 'formik';
 import { proposalEnded } from "reducers/arcReducer";
 
+interface IState {
+  preTransactionModalOpen: boolean;
+  proposalDetails: IProposalState;
+}
+
 interface IStateProps {
+  currentAccount: string;
   dao: IDaoState;
-  daoAddress: string;
+  daoAvatarAddress: string;
   history: H.History;
   web3: IWeb3State;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    dao: denormalize(state.arc.daos[ownProps.match.params.daoAddress], schemas.daoSchema, state.arc),
-    daoAddress : ownProps.match.params.daoAddress,
+    currentAccount: state.web3.ethAccountAddress,
+    dao: denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc),
+    daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     history: ownProps.history,
     web3: state.web3,
   };
@@ -54,47 +63,44 @@ interface FormValues {
   ethReward: number;
   externalTokenReward: number;
   nativeTokenReward: number;
-  reputationReward: number;
+  reputationChange: number;
   title: string;
 
   [key: string]: any;
 }
 
-class CreateProposalContainer extends React.Component<IProps, null> {
+class CreateProposalContainer extends React.Component<IProps, IState> {
   private web3: Web3;
+
   constructor(props: IProps) {
     super(props);
+
+    this.state = {
+      preTransactionModalOpen: false,
+      proposalDetails: emptyProposal
+    };
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   public async componentDidMount() {
     if (!this.props.dao) {
-      this.props.getDAO(this.props.daoAddress);
+      this.props.getDAO(this.props.daoAvatarAddress);
     }
 
     this.web3 = await Arc.Utils.getWeb3();
   }
 
-  public handleSubmit(values: FormValues) {
-    const { createProposal, dao: { avatarAddress } } = this.props;
-    const {
-      title,
-      description,
-      nativeTokenReward,
-      reputationReward,
-      ethReward,
-      beneficiaryAddress,
-    } = values;
+  public handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
+    this.setState({
+      preTransactionModalOpen: true,
+      proposalDetails: { ...emptyProposal, ...values}
+    });
+    setSubmitting(false);
+  }
 
-    createProposal(
-      avatarAddress,
-      title,
-      description,
-      nativeTokenReward,
-      reputationReward,
-      ethReward,
-      beneficiaryAddress,
-    );
+  public closePreTransactionModal() {
+    this.setState({ preTransactionModalOpen: false });
   }
 
   public goBack() {
@@ -108,7 +114,9 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { dao } = this.props;
+    const { createProposal, currentAccount, dao } = this.props;
+    const { beneficiaryAddress, description, ethReward, externalTokenReward, nativeTokenReward, reputationChange, title } = this.state.proposalDetails;
+
     if (!dao) {
       return "Loading...";
     }
@@ -119,6 +127,18 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.createProposalWrapper}>
+        {this.state.preTransactionModalOpen ?
+          <PreTransactionModal
+            actionType={ActionTypes.CreateProposal}
+            action={createProposal.bind(null, dao.avatarAddress, title, description, nativeTokenReward, reputationChange, ethReward, beneficiaryAddress)}
+            closeAction={this.closePreTransactionModal.bind(this)}
+            currentAccount={currentAccount}
+            dao={dao}
+            effectText={<span>Budget: <ReputationView reputation={reputationChange} totalReputation={dao.reputationCount} daoName={dao.name}/> and {ethReward} ETH</span>}
+            proposal={this.state.proposalDetails}
+          /> : ""
+        }
+
         <h2>
           <img className={css.editIcon} src="/assets/images/Icon/Draft-white.svg"/>
           <span>Create proposal</span>
@@ -133,7 +153,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             ethReward: 0,
             externalTokenReward: 0,
             nativeTokenReward: 0,
-            reputationReward: 0,
+            reputationChange: 0,
             title: ''
           } as FormValues}
           validate={(values: FormValues) => {
@@ -143,7 +163,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
               ethReward,
               externalTokenReward,
               nativeTokenReward,
-              reputationReward,
+              reputationChange,
               title
             } = values;
             const errors: any = {};
@@ -185,7 +205,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             require('title');
             require('beneficiaryAddress');
 
-            if (!ethReward && !reputationReward) {
+            if (!ethReward && !reputationChange) {
               errors.rewards = 'Please select at least some reward';
             }
 
@@ -261,16 +281,16 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   </label>
                 </div>
                 <Field
-                  id="reputationRewardInput"
+                  id="reputationChangeInput"
                   placeholder="How much reputation to reward"
-                  name='reputationReward'
+                  name='reputationChange'
                   type="number"
-                  className={touched.reputationReward && errors.reputationReward ? css.error : null}
+                  className={touched.reputationChange && errors.reputationChange ? css.error : null}
                   step={0.1}
                 />
-                <label htmlFor="reputationRewardInput">
+                <label htmlFor="reputationChangeInput">
                   Reputation reward:
-                  {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
+                  {touched.reputationChange && errors.reputationChange && <span className={css.errorMessage}>{errors.reputationChange}</span>}
                 </label>
                 <Field
                   id="ethRewardInput"
@@ -286,7 +306,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
                 </label>
 
-                {touched.ethReward && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
+                {touched.ethReward && touched.reputationChange && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
               </div>
               {/*
               <div className={css.transactionList}>

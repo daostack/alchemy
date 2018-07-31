@@ -7,10 +7,10 @@ import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState, IRedemptionState } from "reducers/arcReducer";
+import { IAccountState, IDaoState, IProposalState, IRedemptionState, closingTime } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
-import * as schemas from "../../schemas";
+import * as schemas from "schemas";
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 import DaoHeader from "./DaoHeader";
@@ -27,18 +27,19 @@ interface IStateProps extends RouteComponentProps<any> {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = state.arc.daos[ownProps.match.params.daoAddress];
+  const dao = denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc);
+  const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.match.params.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
+
   let proposals: IProposalState[] = [];
   let redemptionsList: IRedemptionState[] = [];
 
-  if (dao && dao.members.hasOwnProperty(state.web3.ethAccountAddress)) {
-    const redemptions = dao.members[state.web3.ethAccountAddress].redemptions;
-    Object.keys(redemptions).forEach((proposalId) => {
-      const redemption = redemptions[proposalId];
-      redemption.proposal = state.arc.proposals[proposalId];
-      redemptionsList.push(redemption);
-      proposals.push(state.arc.proposals[proposalId]);
-    })
+  if (account) {
+    redemptionsList = account.redemptions as IRedemptionState[];
+    redemptionsList.forEach((redemption: IRedemptionState) => {
+      redemption.proposal = state.arc.proposals[redemption.proposalId];
+      proposals.push(state.arc.proposals[redemption.proposalId]);
+    });
+    proposals.sort((a, b) => closingTime(b).unix() - closingTime(a).unix())
   }
 
   return {

@@ -27,9 +27,28 @@ const reducers = {
   web3: web3Reducer,
 };
 
+const onlyPending = createTransform(
+  (state, key) => {
+    if (key === 'operations') {
+      const out = {...state} as IOperationsState;
+
+      for (let k in out) {
+        if (!(out[k].status === OperationStatus.Sent || out[k].error)) {
+          delete out[k];
+        }
+      }
+
+      return out;
+    } else {
+      return state;
+    }
+  },
+  (raw, key) => raw
+)
+
 export default persistReducer({
   key: 'state',
-  transforms: [],
+  transforms: [onlyPending],
   whitelist: ['operations'],
   storage,
 }, combineReducers(reducers));

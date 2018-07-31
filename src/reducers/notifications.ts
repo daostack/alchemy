@@ -168,7 +168,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'GenesisProtocol.stake': (proposalTitle, {vote, proposalId, amount}: Arc.StakeConfig) =>
     `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount))} GEN`,
   'GenesisProtocol.execute': (proposalTitle, {proposalId}: Arc.ProposalIdOption) =>
-    `Exeuting "${elipsis(proposalTitle, 22)}"`,
+    `Executing "${elipsis(proposalTitle, 22)}"`,
   'Redeemer.redeem': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
     `Redeeming rewards for "${elipsis(proposalTitle, 22)}"`,
   'GenesisProtocol.redeemDaoBounty': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
@@ -215,7 +215,7 @@ export const notificationUpdater: Middleware =
       showNotification(
         error ?
           NotificationStatus.Failure :
-        status === OperationStatus.Mined ?
+        status === OperationStatus.Complete ?
           NotificationStatus.Success :
           NotificationStatus.Pending,
         message,
@@ -226,39 +226,43 @@ export const notificationUpdater: Middleware =
           'waiting for signature' :
         status === OperationStatus.Sent ?
           'transaction sent' :
-          'transaction mined',
-        txHash && `https://${network !== 'mainnet' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
+          'transaction complete',
+        txHash && `https://${network !== 'live' ? `${network}.` : ''}etherscan.io/tx/${txHash}`,
         id,
         +moment()
       )(dispatch)
     }
 
     return (action: any) => {
-      const state = getState() as any as IRootState;
-      const network = Util.networkName(state.web3.networkId).toLowerCase();
 
-      if (action.type === REHYDRATE) {
-        const a = action as RehydrateAction;
-        if (a.payload) {
-          const operations = a.payload.operations as IOperationsState;
-          Object.keys(operations).forEach((id) => {
-            if (operations[id].status === OperationStatus.Sent || operations[id].error) {
-              transaction2Notification(network, id, operations[id]);
-            }
-          })
+      (async () => {
+
+        const state = getState() as any as IRootState;
+        const network = (await Arc.Utils.getNetworkName()).toLowerCase();
+
+        if (action.type === REHYDRATE) {
+          const a = action as RehydrateAction;
+          if (a.payload) {
+            const operations = a.payload.operations as IOperationsState;
+            Object.keys(operations).forEach((id) => {
+              if (operations[id].status === OperationStatus.Sent || operations[id].error) {
+                transaction2Notification(network, id, operations[id]);
+              }
+            })
+          }
         }
-      }
 
-      if (isOperationsAction(action) && action.type === 'Operations/Update') {
-        const {payload: {id, operation}} = action as IUpdateOperation;
-        transaction2Notification(network, id, operation)
-      }
+        if (isOperationsAction(action) && action.type === 'Operations/Update') {
+          const {payload: {id, operation}} = action as IUpdateOperation;
+          transaction2Notification(network, id, operation)
+        }
 
-      // also dismiss the corrosponding operation if it exists.
-      if (isNotificationsAction(action) && action.type === 'Notifications/Dismiss') {
-        const {payload: {id}} = action as IDismissNotification;
-        dismissOperation(action.payload.id)(dispatch);
-      }
+        // also dismiss the corrosponding operation if it exists.
+        if (isNotificationsAction(action) && action.type === 'Notifications/Dismiss') {
+          const {payload: {id}} = action as IDismissNotification;
+          dismissOperation(action.payload.id)(dispatch);
+        }
+      })()
 
       return next(action);
     }

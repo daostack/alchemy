@@ -5,16 +5,17 @@ import Tooltip from 'rc-tooltip';
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IProposalState, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 
 interface IProps {
-  currentVote: number;
+  currentAccountAddress: string;
   currentAccountReputation: number;
-  daoName: string;
-  daoTotalReputation: number;
+  currentVote: number;
+  dao: IDaoState;
   proposal: IProposalState;
   transactionState: TransactionStates;
   voteOnProposal: typeof arcActions.voteOnProposal;
@@ -24,6 +25,7 @@ interface IProps {
 
 interface IState {
   currentVote: number;
+  showPreVoteModal: boolean;
 }
 
 export default class VoteBox extends React.Component<IProps, IState> {
@@ -32,32 +34,37 @@ export default class VoteBox extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      currentVote: props.currentVote,
+      currentVote: this.props.currentVote,
+      showPreVoteModal: false
     };
   }
 
   public handleClickVote(vote: number, event: any) {
-    const { currentAccountReputation, currentVote, proposal, transactionState, voteOnProposal } = this.props;
-    if (currentAccountReputation && !currentVote) {
-      this.setState({ currentVote: vote });
-      voteOnProposal(proposal.daoAvatarAddress, proposal, vote);
+    const { currentAccountReputation, proposal, transactionState, voteOnProposal } = this.props;
+    if (currentAccountReputation) {
+      this.setState({ showPreVoteModal: true, currentVote: vote });
     }
+  }
+
+  public closePreVoteModal(event: any) {
+    this.setState({ showPreVoteModal: false });
   }
 
   public render() {
     const {
       currentVote,
       currentAccountReputation,
+      currentAccountAddress,
       proposal,
-      daoName,
-      daoTotalReputation,
+      dao,
       transactionState,
       isVotingNo,
-      isVotingYes
+      isVotingYes,
+      voteOnProposal
     } = this.props;
 
-    const yesPercentage = daoTotalReputation ? Math.round(proposal.votesYes / daoTotalReputation * 100) : 0;
-    const noPercentage = daoTotalReputation ? Math.round(proposal.votesNo / daoTotalReputation * 100) : 0;
+    const yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
+    const noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
 
     const styles = {
       yesGraph: {
@@ -74,6 +81,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
       },
     };
 
+    const votingDisabled = !currentAccountReputation || !!currentVote;
+
     let wrapperClass = classNames({
       [css.voteBox] : true,
       [css.clearfix] : true,
@@ -81,12 +90,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
     let voteUpButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.Yes,
-      [css.disabled]: !currentAccountReputation || !!currentVote,
+      [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
       [css.voted]: currentVote == VoteOptions.No,
-      [css.disabled]: !currentAccountReputation || !!currentVote,
+      [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
 
@@ -94,18 +103,30 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.voteControls]: true
     });
 
-    const passTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote for") : "Voting requires reputation in " + daoName;
-    const failTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote against") : "Voting requires reputation in " + daoName;
+    const passTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote for") : "Voting requires reputation in " + dao.name;
+    const failTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote against") : "Voting requires reputation in " + dao.name;
 
     return (
       <div className={wrapperClass}>
+        {this.state.showPreVoteModal ?
+          <PreTransactionModal
+            actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+            action={voteOnProposal.bind(null, proposal.daoAvatarAddress, proposal, this.state.currentVote)}
+            closeAction={this.closePreVoteModal.bind(this)}
+            currentAccount={currentAccountAddress}
+            dao={dao}
+            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccountReputation} /></strong></span>}
+            proposal={proposal}
+          /> : ""
+        }
+
         <div className={css.loading}>
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
         <div className={voteControls}>
           <div className={css.voteUp}>
             <Tooltip placement="right" trigger={["hover"]} overlay={passTipContent} overlayClassName={css.voteTooltip}>
-              <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
                 <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
                 <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
                 <svg className={css.upvotePendingIcon} viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -146,20 +167,20 @@ export default class VoteBox extends React.Component<IProps, IState> {
               <div className={css.reputationTurnout}>
                 <div className={css.header}>Reputation turnout</div>
                 <div className={css.turnoutInfo}>
-                  {/* TODO: <span className={css.description}>{proposal.totalVoters} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
+                  {/* TODO: <span className={css.description}>{proposal.votes.length} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
                   <div className={css.turnoutGraph}>
                     <div className={css.turnoutStats}>
                       <span className={css.forLabel}>
                         <ReputationView
-                          daoName={daoName}
-                          totalReputation={daoTotalReputation}
+                          daoName={dao.name}
+                          totalReputation={dao.reputationCount}
                           reputation={proposal.votesYes}
                         /> for
                       </span>
                       <span className={css.againstLabel}>
                         <ReputationView
-                          daoName={daoName}
-                          totalReputation={daoTotalReputation}
+                          daoName={dao.name}
+                          totalReputation={dao.reputationCount}
                           reputation={proposal.votesNo}
                         /> against
                       </span>
@@ -171,9 +192,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
                     </div>
                     <div className={css.reputationThreshold}>
                       <ReputationView
-                        daoName={daoName}
-                        totalReputation={daoTotalReputation}
-                        reputation={daoTotalReputation / 2}
+                        daoName={dao.name}
+                        totalReputation={dao.reputationCount}
+                        reputation={dao.reputationCount / 2}
                       /> NEEDED FOR DECISION BY VOTE
                     </div>
                   </div>
@@ -186,7 +207,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
           </div>
           <div className={css.voteDown}>
             <Tooltip placement="right" trigger={["hover"]} overlay={failTipContent} overlayClassName={css.voteTooltip}>
-              <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
                 <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
                 <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
                 <svg className={css.downvotePendingIcon} width="41px" height="29px" viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
