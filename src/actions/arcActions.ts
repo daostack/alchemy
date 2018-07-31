@@ -25,7 +25,8 @@ import { ContributionRewardType,
          proposalEnded,
          ProposalStates,
          TransactionStates,
-         VoteOptions } from "reducers/arcReducer";
+         VoteOptions, 
+         anyRedemptions} from "reducers/arcReducer";
 
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
@@ -521,18 +522,7 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
 
-  const anyRedemptions = (
-    redemptions.beneficiaryEth ||
-    redemptions.beneficiaryReputation ||
-    redemptions.beneficiaryNativeToken ||
-    redemptions.proposerReputation ||
-    redemptions.stakerReputation ||
-    redemptions.stakerTokens ||
-    redemptions.stakerBountyTokens ||
-    redemptions.voterReputation ||
-    redemptions.voterTokens
-  );
-  return anyRedemptions ? redemptions : null;
+  return anyRedemptions(redemptions) ? redemptions : null;
 }
 
 async function getProposalRedemptions(proposal: IProposalState, state: IRootState): Promise<{ entities: any, redemptions: string[] }> {
@@ -1100,6 +1090,8 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     try {
       const redeemerInstance = await Arc.RedeemerFactory.deployed();
       const redeemTx = await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
+      await redeemTx.getTxConfirmed();
+      await onRedeemEvent(proposal.proposalId)(dispatch, getState)
     } catch (err) {
       console.error(err);
       dispatch({
@@ -1126,8 +1118,6 @@ export function onRedeemEvent(proposalId: string) {
     const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
     proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for propose
 
-    const beneficiaryRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress);
-
     const meta = {
       avatarAddress,
       proposalId,
@@ -1149,8 +1139,7 @@ export function onRedeemEvent(proposalId: string) {
       proposal: {
         proposer: proposal.proposer,
         state: Number(await votingMachineInstance.getState({ proposalId }))
-      },
-      beneficiaryRedemptions
+      }
     };
 
     const currentAccountAddress = getState().web3.ethAccountAddress;
@@ -1160,8 +1149,6 @@ export function onRedeemEvent(proposalId: string) {
         reputation: Util.fromWei(await daoInstance.reputation.reputationOf(currentAccountAddress)),
         tokens: Util.fromWei(await daoInstance.token.getBalanceOf(currentAccountAddress))
       }
-      const currentAccountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
-      payload.currentAccountRedemptions = currentAccountRedemptions;
     }
 
     dispatch({
@@ -1171,6 +1158,29 @@ export function onRedeemEvent(proposalId: string) {
       payload
     } as RedeemAction);
   };
+}
+
+export enum RewardType {
+  ETH,
+  GEN,
+  NativeToken,
+  Reputation,
+  ExternalToken
+}
+
+export function onRedeemReward(avatarAddress: string, proposalId: string, beneficiary: string, amount: number, rewardType: RewardType, isTarget: boolean) {
+  return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
+    dispatch({
+      type: arcConstants.ARC_ON_REDEEM_REWARD,
+      payload: {
+        avatarAddress,
+        rewardType,
+        proposalId,
+        beneficiary,
+        isTarget
+      }
+    })
+  }
 }
 
 export function onTransferEvent(avatarAddress: string, from: string, to: string) {
