@@ -101,7 +101,7 @@ async function updateCache() {
   let lastCachedBlock = process.argv[2] || (await redisGet('alchemy-last-block-' + arcjsNetwork)) || 0;
 
   // Latest block to cache up to
-  const latestBlock = await Util.getLatestBlock();
+  const latestBlock = process.argv[3] || await Util.getLatestBlock();
 
   if (lastCachedBlock == 0) {
     console.log("Starting to cache the "  + arcjsNetwork + " blockchain from the beginning");
