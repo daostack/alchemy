@@ -1168,7 +1168,7 @@ export enum RewardType {
   ExternalToken
 }
 
-export function onRedeemReward(avatarAddress: string, proposalId: string, beneficiary: string, amount: number, rewardType: RewardType, isTarget: boolean) {
+export function onRedeemReward(avatarAddress: string, proposalId: string, beneficiary: string, rewardType: RewardType, isTarget: boolean) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     dispatch({
       type: arcConstants.ARC_ON_REDEEM_REWARD,

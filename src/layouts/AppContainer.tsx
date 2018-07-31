@@ -168,28 +168,28 @@ class AppContainer extends React.Component<IProps, null> {
     const redeemEth = contributionRewardInstance.RedeemEther({}, {fromBlock: 'latest'});
     redeemEth.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.ETH, true);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.ETH, true);
     }, -1);
     this.watchers.push(redeemEth);
 
     const redeemGen = contributionRewardInstance.RedeemExternalToken({}, {fromBlock: 'latest'});
     redeemGen.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.ExternalToken, true);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.ExternalToken, true);
     }, -1);
     this.watchers.push(redeemGen);
 
     const redeemToken = contributionRewardInstance.RedeemNativeToken({}, {fromBlock: 'latest'});
     redeemToken.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.NativeToken, true);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.NativeToken, true);
     }, -1);
     this.watchers.push(redeemToken);
 
     const redeemRep = contributionRewardInstance.RedeemReputation({}, {fromBlock: 'latest'});
     redeemRep.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.Reputation, true);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.Reputation, true);
     }, -1);
     this.watchers.push(redeemRep);
 
@@ -197,21 +197,21 @@ class AppContainer extends React.Component<IProps, null> {
     const redeem = votingMachineInstance.Redeem({}, {fromBlock: 'latest'});
     redeem.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.GEN, false);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.GEN, false);
     }, -1);
     this.watchers.push(redeem);
 
     const redeemDaoBounty = votingMachineInstance.RedeemDaoBounty({}, {fromBlock: 'latest'});
     redeemDaoBounty.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.GEN, false);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.GEN, false);
     }, -1);
     this.watchers.push(redeemDaoBounty);
 
     const redeemRepGP = votingMachineInstance.RedeemReputation({}, {fromBlock: 'latest'});
     redeemRepGP.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.Reputation, false);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, arcActions.RewardType.Reputation, false);
     }, -1);
     this.watchers.push(redeemRepGP);
   }
