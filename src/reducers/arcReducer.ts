@@ -114,7 +114,7 @@ export function anyRedemptions(redemptions: IRedemptionState) {
     redemptions.voterReputation ||
     redemptions.voterTokens
   );
-} 
+}
 
 export interface IProposalState {
   beneficiaryAddress: string;
@@ -547,7 +547,7 @@ const arcReducer = (state = initialState, action: any) => {
         return state;
       }
 
-      const updateObj = 
+      const updateObj =
         isTarget ?
           (
             type === RewardType.ETH ?
@@ -555,9 +555,9 @@ const arcReducer = (state = initialState, action: any) => {
             type === RewardType.Reputation ?
               { beneficiaryReputation: {$set: 0} } :
             type === RewardType.NativeToken ?
-              { beneficiaryNativeToken: {$set: 0} } : 
+              { beneficiaryNativeToken: {$set: 0} } :
               {}
-          ) : 
+          ) :
           (
             type === RewardType.Reputation ?
               {
@@ -575,14 +575,14 @@ const arcReducer = (state = initialState, action: any) => {
           )
 
       // Set redeemed rewards to zero
-      state = update(state,{
+      state = update(state, {
         redemptions: {
           [redemptionKey]: updateObj
         }
       })
 
       // Remove if there are no more redemptions
-      if(!anyRedemptions(state.redemptions[redemptionKey])) {
+      if (!anyRedemptions(state.redemptions[redemptionKey])) {
         state = update(state, {
           accounts: {
             [accountKey]: {

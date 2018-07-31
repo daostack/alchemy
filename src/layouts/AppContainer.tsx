@@ -82,7 +82,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
-  public watchers: (Arc.EventFetcher<any> | Arc.EntityFetcher<any,any>)[] = []
+  public watchers: Array<Arc.EventFetcher<any> | Arc.EntityFetcher<any, any>> = []
 
   public async componentWillMount() {
     const { cookies, history } = this.props;
@@ -168,10 +168,10 @@ class AppContainer extends React.Component<IProps, null> {
     const redeemEth = contributionRewardInstance.RedeemEther({}, {fromBlock: 'latest'});
     redeemEth.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary,Util.fromWei(_amount), arcActions.RewardType.ETH, true);
+      onRedeemReward(_avatar, _proposalId, _beneficiary, Util.fromWei(_amount), arcActions.RewardType.ETH, true);
     }, -1);
     this.watchers.push(redeemEth);
-    
+
     const redeemGen = contributionRewardInstance.RedeemExternalToken({}, {fromBlock: 'latest'});
     redeemGen.watch((err, result) => {
       const { _beneficiary, _avatar, _proposalId, _amount } = result.args;

@@ -25,7 +25,7 @@ import { ContributionRewardType,
          proposalEnded,
          ProposalStates,
          TransactionStates,
-         VoteOptions, 
+         VoteOptions,
          anyRedemptions} from "reducers/arcReducer";
 
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
