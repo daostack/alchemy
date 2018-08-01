@@ -537,7 +537,7 @@ button.disabled {
 	width: 140px;
 
 	.genError {
-		background-color: $black-halftone;
+		background-color: rgba(0, 0, 0, 0.8);
 		height: 100%;
 		position: absolute;
 		width: 300px;
@@ -580,7 +580,7 @@ button.disabled {
 				position: absolute;
 				top: -130px;
 				left: 0;
-				background-color: $black-thirdtone;
+				background-color: rgba(0, 0, 0, 0.8);
 				list-style: none;
 				margin: 0;
 				border-left: 1px solid $white;
@@ -822,7 +822,7 @@ a.viewProposal {
 	&.pending {
 		border: 1px solid $black-tenthtone;
 		color: $black-halftone;
-	
+
 		img {
 			display: inline-block;
 			height: 16px;
