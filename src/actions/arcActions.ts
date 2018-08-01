@@ -1090,9 +1090,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 
     try {
       const redeemerInstance = await Arc.RedeemerFactory.deployed();
-      const redeemTx = await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
-      await redeemTx.getTxConfirmed();
-      await onRedeemEvent(proposal.proposalId)(dispatch, getState)
+      await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
     } catch (err) {
       console.error(err);
       dispatch({
@@ -1101,63 +1099,6 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         meta,
       } as RedeemAction);
     }
-  };
-}
-
-export function onRedeemEvent(proposalId: string) {
-  return async (dispatch: any, getState: () => IRootState) => {
-    const proposal = getState().arc.proposals[proposalId];
-    const avatarAddress = proposal.daoAvatarAddress;
-    const daoInstance = await Arc.DAO.at(avatarAddress);
-    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-    const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
-    const beneficiaryAddress = proposalDetails.beneficiaryAddress;
-
-    const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
-    proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for propose
-
-    const meta = {
-      avatarAddress,
-      proposalId,
-      accountAddress: beneficiaryAddress
-    }
-
-    let payload: any = {
-      // Update account of the beneficiary
-      beneficiary: {
-        tokens: Util.fromWei(await daoInstance.token.getBalanceOf(beneficiaryAddress)),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf(beneficiaryAddress))
-      },
-      // Update DAO total reputation and tokens
-      //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
-      dao: {
-        reputationCount: Util.fromWei(await daoInstance.reputation.contract.totalSupply()), // TODO: replace with wrapper function when available.
-        tokenCount: Util.fromWei(await daoInstance.token.getTotalSupply()),
-      },
-      proposal: {
-        proposer: proposal.proposer,
-        state: Number(await votingMachineInstance.getState({ proposalId }))
-      }
-    };
-
-    const currentAccountAddress = getState().web3.ethAccountAddress;
-    if (currentAccountAddress && currentAccountAddress !== beneficiaryAddress) {
-      payload.currentAccount = {
-        address: currentAccountAddress,
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf(currentAccountAddress)),
-        tokens: Util.fromWei(await daoInstance.token.getBalanceOf(currentAccountAddress))
-      }
-    }
-
-    dispatch({
-      type: arcConstants.ARC_REDEEM,
-      sequence: AsyncActionSequence.Success,
-      meta,
-      payload
-    } as RedeemAction);
   };
 }
 

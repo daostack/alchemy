@@ -34,3 +34,18 @@ export const isStakePending = (proposalId: string, vote: VoteOptions) =>
         .length > 0
     }
   )
+
+export const isRedeemPending = (proposalId: string, beneficiary: string) =>
+  createSelector(
+    [operations],
+    (operations: IOperationsState) => {
+      return Object.keys(operations)
+        .filter((k) =>
+          operations[k].status !== OperationStatus.Complete && !operations[k].error &&
+          operations[k].functionName === 'Redeemer.redeem' &&
+          operations[k].options.proposalId === proposalId &&
+          operations[k].options.beneficiaryAddress === beneficiary
+        )
+        .length > 0
+    }
+  )

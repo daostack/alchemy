@@ -105,7 +105,6 @@ export interface IRedemptionState {
   stakerReputation: number;
   stakerTokens: number;
   stakerBountyTokens: number;
-  transactionState?: TransactionStates;
   voterTokens: number;
   voterReputation: number;
 }
@@ -496,14 +495,6 @@ const arcReducer = (state = initialState, action: any) => {
               }
             }
           });
-        case AsyncActionSequence.Failure:
-          return update(state, {
-            redemptions: {
-              [redemptionsKey]: {
-                transactionState: { $set: TransactionStates.Failed }
-              }
-            }
-          })
         case AsyncActionSequence.Success: {
           const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
@@ -535,8 +526,7 @@ const arcReducer = (state = initialState, action: any) => {
           // Also update the dao, proposal state and redemption's transactionState
           return update(state, {
             daos: { [avatarAddress]: { $merge: dao } },
-            proposals: { [proposalId]: { $merge: proposal }},
-            redemptions: { [redemptionsKey]: { transactionState: {$set: TransactionStates.Confirmed} } }
+            proposals: { [proposalId]: { $merge: proposal }}
           });
         }
         default: {
