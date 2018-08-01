@@ -189,13 +189,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       const redeemRewards = classNames({
         [css.redeemRewards]: true,
-        [css.disabled]: (!redeemable && !executable) || isRedeemPending
+        [css.pending]: isRedeemPending,
+        [css.disabled]: !redeemable && !executable
       });
 
       const redeemButton = (
         <button
           style={{whiteSpace: 'nowrap'}}
-          disabled={(!redeemable && !executable) || isRedeemPending}
+          disabled={!redeemable && !executable}
           className={redeemRewards}
           onClick={this.handleClickRedeem.bind(this)}
         >
@@ -271,6 +272,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
             : ''
           }
+          {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
         </div>;
 
       let rewards = [];
