@@ -10,7 +10,7 @@ import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
-import { isStakePending, isVotePending } from "selectors/operations";
+import { isStakePending, isVotePending, isRedeemPending } from "selectors/operations";
 import * as schemas from "schemas";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -36,6 +36,7 @@ interface IStateProps {
   isVotingNo: boolean;
   isPredictingPass: boolean;
   isPredictingFail: boolean;
+  isRedeemPending: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
@@ -65,6 +66,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
     isVotingNo: isVotePending(proposal.proposalId, VoteOptions.No)(state),
     isPredictingPass: isStakePending(proposal.proposalId, VoteOptions.Yes)(state),
     isPredictingFail: isStakePending(proposal.proposalId, VoteOptions.No)(state),
+    isRedeemPending: isRedeemPending(proposal.proposalId, state.web3.ethAccountAddress)(state)
   };
 };
 
@@ -127,7 +129,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isPredictingFail,
       isPredictingPass,
       isVotingNo,
-      isVotingYes
+      isVotingYes,
+      isRedeemPending
     } = this.props;
 
     const beneficiaryHasRewards = beneficiaryRedemptions && (
@@ -149,8 +152,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
     const redeemable = accountHasRewards || beneficiaryHasRewards;
 
     const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
-
-    const redemptionPending = currentRedemptions && currentRedemptions.transactionState == TransactionStates.Unconfirmed;
 
     if (proposal) {
       const proposalClass = classNames({
@@ -188,18 +189,19 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       const redeemRewards = classNames({
         [css.redeemRewards]: true,
-        [css.disabled]: (!redeemable && !executable) || redemptionPending
+        [css.pending]: isRedeemPending,
+        [css.disabled]: !redeemable && !executable
       });
 
       const redeemButton = (
         <button
           style={{whiteSpace: 'nowrap'}}
-          disabled={(!redeemable && !executable) || redemptionPending}
+          disabled={!redeemable && !executable}
           className={redeemRewards}
           onClick={this.handleClickRedeem.bind(this)}
         >
           {
-            currentRedemptions && currentRedemptions.transactionState == TransactionStates.Unconfirmed ?
+            isRedeemPending ?
               'Redeeming in progress' :
             beneficiaryHasRewards && !accountHasRewards ?
               'Redeem for beneficiary' :
@@ -207,6 +209,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               'Redeem' :
               'Execute'
           }
+          <img src="/assets/images/Icon/Loading-black.svg"/>
         </button>
       )
 
@@ -269,6 +272,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
             : ''
           }
+          {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
         </div>;
 
       let rewards = [];
