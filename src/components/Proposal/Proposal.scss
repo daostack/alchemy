@@ -532,6 +532,93 @@ button.disabled {
 	height: 100%;
 	width: 140px;
 
+	.genError {
+		background-color: $black-halftone;
+		height: 100%;
+		position: absolute;
+		width: 300px;
+		text-align: center;
+		color: $white;
+		left: -150px;
+
+		h4 {
+			color: $accent-2;
+			font-size: 14px;
+			font-family: $body-font;
+			margin: 0;
+			padding-top: 8px;
+		}
+
+		span {
+			display: block;
+			font-size: 10px;
+			font-weight: normal;
+			color: $white-halftone;
+		}
+
+		div.exchangeList {
+			color: $white;
+			font-size: 12px;
+			color: $white;
+			border: 1px solid $white;
+			width: 150px;
+			position: relative;
+			top: 0;
+			left: 0;
+		    text-align: center;
+		    transform: translate(0,0);
+		    display: inline-block;
+		    height: 30px;
+		    margin: 11px;
+		    line-height: 30px;
+
+			ul {
+				position: absolute;
+				top: -130px;
+				left: 0;
+				background-color: $black-thirdtone;
+				list-style: none;
+				margin: 0;
+				border-left: 1px solid $white;
+				border-right:  1px solid $white;
+				border-bottom:  1px solid $white;
+				width: 150px;
+				left: -1px;
+				padding: 0;
+				opacity: 0;
+				transform: scale(0);
+				transition: all .25s ease;
+
+				a {
+					color: $white;
+					font-weight: bold;
+					width: 100%;
+					display: inline-block;
+					padding: 8px 0;
+
+					&:hover {
+						background-color: $black;
+					}
+				}
+			}
+
+			&:hover {
+				background-color: $black-thirdtone;
+				cursor: pointer;
+				border-bottom: none;
+				border-left: 1px solid $white;
+				border-right:  1px solid $white;
+				border-top:  1px solid $white;
+				
+				ul {
+					opacity: 1;
+					transform: scale(1);
+					top: 30px;
+				}
+			}
+		}
+	}
+
 	div {
 		position: absolute;
 		top: 50%;
