@@ -344,7 +344,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     stakesYes: Util.fromWei(yesStakes),
     state: Number(proposalDetails.state), // TODO: using our own enum instead of from Arc.js because we add new states, have arc.js do this?,
     submittedTime,
-    threshold: Util.fromWei(await votingMachineInstance.getThreshold({avatar: avatarAddress, proposalId})),
+    threshold: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress })),
     title,
     totalStakes: 0, //Util.fromWei(proposalDetails[8]),
     totalVotes: Util.fromWei(proposalDetails.totalVotes),
