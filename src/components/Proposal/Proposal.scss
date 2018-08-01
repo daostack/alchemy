@@ -814,23 +814,21 @@ a.viewProposal {
 	img {
 		display: none;
 	}
-}
 
-.redeemRewards.disabled {
-	border: 1px solid $black-tenthtone;
-	color: $black-halftone;
-
-	img {
-		display: inline-block;
-		height: 16px;
-		position: relative;
-		top: 4px;
-		margin-left: 5px;
-		margin-top: -6px;
+	&.pending {
+		border: 1px solid $black-tenthtone;
+		color: $black-halftone;
+	
+		img {
+			display: inline-block;
+			height: 16px;
+			position: relative;
+			top: 4px;
+			margin-left: 5px;
+			margin-top: -6px;
+		}
 	}
 }
-
-
 
 .proposalsContainer .proposal {
 	border: 1px solid red;

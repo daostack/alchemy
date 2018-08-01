@@ -9,7 +9,7 @@ import { replace as routerReplace } from "react-router-redux";
 import { bindActionCreators } from "redux";
 
 import { IRootState } from "reducers";
-import { IArcState } from "reducers/arcReducer";
+import { IArcState, RewardType } from "reducers/arcReducer";
 import { ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
 
 import * as web3Actions from 'actions/web3Actions';
@@ -58,7 +58,7 @@ interface IDispatchProps {
   getDAOs: typeof arcActions.getDAOs;
   initializeWeb3: typeof web3Actions.initializeWeb3;
   loadCachedState: typeof arcActions.loadCachedState;
-  onRedeemEvent: typeof arcActions.onRedeemEvent;
+  onRedeemReward: typeof arcActions.onRedeemReward;
   onProposalCreateEvent: typeof arcActions.onProposalCreateEvent;
   onProposalExecuted: typeof arcActions.onProposalExecuted;
   onStakeEvent: typeof arcActions.onStakeEvent;
@@ -71,7 +71,7 @@ const mapDispatchToProps = {
   getDAOs: arcActions.getDAOs,
   initializeWeb3: web3Actions.initializeWeb3,
   loadCachedState: arcActions.loadCachedState,
-  onRedeemEvent: arcActions.onRedeemEvent,
+  onRedeemReward: arcActions.onRedeemReward,
   onProposalCreateEvent: arcActions.onProposalCreateEvent,
   onProposalExecuted: arcActions.onProposalExecuted,
   onStakeEvent: arcActions.onStakeEvent,
@@ -82,11 +82,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 class AppContainer extends React.Component<IProps, null> {
-  public proposalEventWatcher: Arc.EventFetcher<Arc.NewContributionProposalEventResult>;
-  public stakeEventWatcher: Arc.EventFetcher<Arc.StakeEventResult>;
-  public voteEventWatcher: Arc.EventFetcher<Arc.VoteProposalEventResult>;
-  public redeemEventWatcher: Arc.EventFetcher<Arc.RedeemerRedeemEventResult>;
-  public executeProposalEventWatcher: Arc.EntityFetcher<Arc.ExecutedGenesisProposal, Arc.ExecuteProposalEventResult>;
+  public watchers: Array<Arc.EventFetcher<any> | Arc.EntityFetcher<any, any>> = []
 
   public async componentWillMount() {
     const { cookies, history } = this.props;
@@ -123,7 +119,7 @@ class AppContainer extends React.Component<IProps, null> {
 
   public async setupWatchers() {
     // Check if already setup
-    if (this.proposalEventWatcher || !this.props.daosLoaded) {
+    if (this.watchers.length || !this.props.daosLoaded) {
       return;
     }
 
@@ -132,7 +128,7 @@ class AppContainer extends React.Component<IProps, null> {
       lastBlock,
       onProposalCreateEvent,
       onProposalExecuted,
-      onRedeemEvent,
+      onRedeemReward,
       onStakeEvent,
       onVoteEvent,
     } = this.props;
@@ -143,54 +139,87 @@ class AppContainer extends React.Component<IProps, null> {
     const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
     // Watch for new, confirmed proposals coming in
-    this.proposalEventWatcher = contributionRewardInstance.NewContributionProposal({}, { fromBlock: lastBlock });
-    this.proposalEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.NewContributionProposalEventResult>) => {
+    const proposalEventWatcher = contributionRewardInstance.NewContributionProposal({}, { fromBlock: lastBlock });
+    proposalEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.NewContributionProposalEventResult>) => {
       onProposalCreateEvent(result.args);
     }, -1);
+    this.watchers.push(proposalEventWatcher);
 
-    this.executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastBlock });
-    this.executeProposalEventWatcher.watch((error, result) => {
+    const executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastBlock });
+    executeProposalEventWatcher.watch((error, result) => {
       const { avatarAddress, proposalId, decision, totalReputation, executionState } = result;
       onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation));
     }, -1);
+    this.watchers.push(executeProposalEventWatcher);
 
-    this.stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastBlock });
-    this.stakeEventWatcher.watch((error: Error, result: Arc.DecodedLogEntryEvent<Arc.StakeEventResult>) => {
+    const stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastBlock });
+    stakeEventWatcher.watch((error: Error, result: Arc.DecodedLogEntryEvent<Arc.StakeEventResult>) => {
       onStakeEvent(result.args._avatar, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount));
     }, -1);
+    this.watchers.push(stakeEventWatcher);
 
-    this.voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastBlock });
-    this.voteEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>) => {
+    const voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastBlock });
+    voteEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>) => {
       onVoteEvent(result.args._avatar, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation));
     }, -1);
+    this.watchers.push(voteEventWatcher);
 
-    const redeemerInstance = await Arc.RedeemerFactory.deployed();
-    this.redeemEventWatcher = redeemerInstance.RedeemerRedeem({ }, { fromBlock: lastBlock });
-    this.redeemEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.RedeemerRedeemEventResult>) => {
-      onRedeemEvent(result.args._proposalId);
+    // ContributionReward redemptions
+    const redeemEth = contributionRewardInstance.RedeemEther({}, {fromBlock: 'latest'});
+    redeemEth.watch((err, result) => {
+      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ETH, true);
     }, -1);
+    this.watchers.push(redeemEth);
+
+    const redeemGen = contributionRewardInstance.RedeemExternalToken({}, {fromBlock: 'latest'});
+    redeemGen.watch((err, result) => {
+      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ExternalToken, true);
+    }, -1);
+    this.watchers.push(redeemGen);
+
+    const redeemToken = contributionRewardInstance.RedeemNativeToken({}, {fromBlock: 'latest'});
+    redeemToken.watch((err, result) => {
+      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.NativeToken, true);
+    }, -1);
+    this.watchers.push(redeemToken);
+
+    const redeemRep = contributionRewardInstance.RedeemReputation({}, {fromBlock: 'latest'});
+    redeemRep.watch((err, result) => {
+      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, true);
+    }, -1);
+    this.watchers.push(redeemRep);
+
+    // GenesisProtocol Redemptions
+    const redeem = votingMachineInstance.Redeem({}, {fromBlock: 'latest'});
+    redeem.watch((err, result) => {
+      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false);
+    }, -1);
+    this.watchers.push(redeem);
+
+    const redeemDaoBounty = votingMachineInstance.RedeemDaoBounty({}, {fromBlock: 'latest'});
+    redeemDaoBounty.watch((err, result) => {
+      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false);
+    }, -1);
+    this.watchers.push(redeemDaoBounty);
+
+    const redeemRepGP = votingMachineInstance.RedeemReputation({}, {fromBlock: 'latest'});
+    redeemRepGP.watch((err, result) => {
+      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
+      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, false);
+    }, -1);
+    this.watchers.push(redeemRepGP);
   }
 
  public componentWillUnmount() {
-    if (this.proposalEventWatcher) {
-      this.proposalEventWatcher.stopWatching();
-    }
-
-    if (this.stakeEventWatcher) {
-      this.stakeEventWatcher.stopWatching();
-    }
-
-    if (this.voteEventWatcher) {
-      this.voteEventWatcher.stopWatching();
-    }
-
-    if (this.executeProposalEventWatcher) {
-      this.executeProposalEventWatcher.stopWatching();
-    }
-
-    if (this.redeemEventWatcher) {
-      this.redeemEventWatcher.stopWatching();
-    }
+    this.watchers.forEach((watch) => {
+      watch.stopWatching();
+    })
   }
 
   public render() {

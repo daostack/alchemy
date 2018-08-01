@@ -74,6 +74,7 @@ export const createdBy: string;
 export const targetAccount: string;
 export const viewProposal: string;
 export const redeemRewards: string;
+export const pending: string;
 export const proposalsContainer: string;
 export const concludedDecisionDetails: string;
 export const newPrediction: string;
