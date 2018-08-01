@@ -519,7 +519,9 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
     }
   }
 
-  if (proposal.proposer === accountAddress && proposal.proposer != "0x0000000000000000000000000000000000000000") {
+  // Get the proposer from the blockchain instead of the state because it won't be zeroed after redeem.
+  const proposer = (await votingMachineInstance.getProposal(proposal.proposalId)).proposer
+  if (proposal.proposer === accountAddress && proposer != "0x0000000000000000000000000000000000000000") {
     redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
 
