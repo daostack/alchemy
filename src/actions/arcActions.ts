@@ -13,8 +13,7 @@ import { Web3 } from "web3";
 import * as arcConstants from "constants/arcConstants";
 import Util from "lib/util";
 import { IRootState } from "reducers/index";
-import { ContributionRewardType,
-         checkProposalExpired,
+import { checkProposalExpired,
          newAccount,
          IAccountState,
          IDaoState,
@@ -513,9 +512,9 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
       redemptions.beneficiaryNativeToken = proposal.numberOfPeriods * proposal.nativeTokenReward;
       redemptions.beneficiaryReputation = proposal.numberOfPeriods * proposal.reputationChange;
     } else {
-      redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Eth)) * proposal.ethReward;
-      redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.NativeToken)) * proposal.nativeTokenReward;
-      redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, ContributionRewardType.Reputation)) * proposal.reputationChange;
+      redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.Eth)) * proposal.ethReward;
+      redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.NativeToken)) * proposal.nativeTokenReward;
+      redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.Reputation)) * proposal.reputationChange;
     }
   }
 

@@ -28,11 +28,13 @@ export enum VoteOptions {
   No = 2,
 }
 
-export enum ContributionRewardType {
+export enum RewardType {
   Reputation = 0,
   NativeToken = 1,
   Eth = 2,
   ExternalToken = 3,
+  GEN = 4,
+  BountyGEN = 5
 }
 
 export interface IAccountState {
@@ -84,14 +86,6 @@ export interface IDaoState {
   tokenName: string;
   tokenSupply: number; // total amount in circulation
   tokenSymbol: string;
-}
-
-export enum RewardType {
-  ETH,
-  GEN,
-  NativeToken,
-  Reputation,
-  ExternalToken
 }
 
 export interface IRedemptionState {
@@ -552,7 +546,7 @@ const arcReducer = (state = initialState, action: any) => {
       const updateObj =
         isTarget ?
           (
-            type === RewardType.ETH ?
+            type === RewardType.Eth ?
               { beneficiaryEth: {$set: 0} } :
             type === RewardType.Reputation ?
               { beneficiaryReputation: {$set: 0} } :
@@ -570,8 +564,11 @@ const arcReducer = (state = initialState, action: any) => {
             type === RewardType.GEN ?
               {
                 stakerTokens: {$set: 0},
-                stakerBountyTokens: {$set: 0},
                 voterTokens: {$set: 0},
+              } :
+            type === RewardType.BountyGEN ?
+              {
+                stakerBountyTokens: {$set: 0}
               } :
               {}
           )
