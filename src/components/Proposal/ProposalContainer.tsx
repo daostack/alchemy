@@ -167,8 +167,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       // Calculate reputation percentages
       const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-      const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
-      const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
+      const yesPercentage = totalReputation && proposal.votesYes ? Math.max(2, Math.ceil(proposal.votesYes / totalReputation * 100)) : 0;
+      const noPercentage = totalReputation && proposal.votesNo ? Math.max(2, Math.ceil(proposal.votesNo / totalReputation * 100)) : 0;
       const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
       const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 

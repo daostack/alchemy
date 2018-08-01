@@ -63,11 +63,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
       voteOnProposal
     } = this.props;
 
-    let yesPercentage = dao.reputationCount ? Math.round(proposal.votesYes / dao.reputationCount * 100) : 0;
-    let noPercentage = dao.reputationCount ? Math.round(proposal.votesNo / dao.reputationCount * 100) : 0;
-
-    if (yesPercentage < 2 && yesPercentage > 0) { yesPercentage = 2 }
-    if (noPercentage < 2 && noPercentage > 0) { noPercentage = 2 }
+    // If percentages are less than 2 then set them to 2 so they can be visibly noticed
+    let yesPercentage = dao.reputationCount && proposal.votesYes ? Math.max(2, Math.ceil(proposal.votesYes / dao.reputationCount * 100)) : 0;
+    let noPercentage = dao.reputationCount && proposal.votesNo ? Math.max(2, Math.ceil(proposal.votesNo / dao.reputationCount * 100)) : 0;
 
     const styles = {
       yesGraph: {
