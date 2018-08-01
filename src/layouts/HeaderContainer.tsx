@@ -262,8 +262,6 @@ class HeaderContainer extends React.Component<IProps, null> {
                 { dao
                   ? <div className={css.daoBalance}>
                       <h3>Genesis Alpha</h3>
-                      <AccountBalance tokenSymbol={dao.tokenSymbol} balance={currentAccount.tokens} accountAddress={ethAccountAddress} />
-                      <label>NATIVE TOKEN</label>
                       <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccount.reputation}/>
                       <label>REPUTATION</label>
                     </div>
