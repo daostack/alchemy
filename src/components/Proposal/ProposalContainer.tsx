@@ -365,8 +365,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <strong>
                       <img src="/assets/images/Icon/Overtime.svg"/> OVERTIME: CLOSES IN {closingTime(proposal).fromNow().toUpperCase()}
                       <div className={css.help}>
-                        <img src="/assets/images/Icon/Help.svg"/>
-                        <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
+                        <img src="/assets/images/Icon/Help-light.svg"/>
+                        <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg"/>
                         <div className={css.helpBox}>
                           <div className={css.pointer}></div>
                           <div className={css.bg}></div>
