@@ -83,16 +83,26 @@ const unsubscribe = store.subscribe(() => {
   // XXX: dont need to do anything here
 });
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log("Got SIGTERM so exiting process");
   unsubscribe();
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
   process.exit(0);
 });
 
-async function updateCache() {
+(async () => {
   await Arc.InitializeArcJs();
-  Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
-  Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
+})();
+
+Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
+Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
+
+async function updateCache() {
+  if (Number(await redisGet('alchemy-caching-' + arcjsNetwork))) {
+    console.log("The cache is already being updated.");
+    return false;
+  }
+  await redisSet('alchemy-caching-' + arcjsNetwork, 1);
 
   const startTime = moment();
 
@@ -101,7 +111,7 @@ async function updateCache() {
   let lastCachedBlock = process.argv[2] || (await redisGet('alchemy-last-block-' + arcjsNetwork)) || 0;
 
   // Latest block to cache up to
-  const latestBlock = await Util.getLatestBlock();
+  const latestBlock = process.argv[3] || await Util.getLatestBlock();
 
   if (lastCachedBlock == 0) {
     console.log("Starting to cache the "  + arcjsNetwork + " blockchain from the beginning");
@@ -271,6 +281,8 @@ async function updateCache() {
   } else {
     console.log("Something weird happened, DAOs not loaded so didn't write the data");
   }
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
+  return true;
 }
 
 export default updateCache;

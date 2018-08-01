@@ -813,6 +813,10 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     if (executionState != ExecutionState.None) {
       const proposal = getState().arc.proposals[proposalId];
+      if (!proposal) {
+        return;
+      }
+
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
       const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
       proposal.executionTime = Number(proposalDetails.executionTime);
@@ -924,6 +928,9 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const proposal: IProposalState = getState().arc.proposals[proposalId];
+    if (!proposal) {
+      return;
+    }
 
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
@@ -1114,6 +1121,10 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 export function onRedeemEvent(proposalId: string) {
   return async (dispatch: any, getState: () => IRootState) => {
     const proposal = getState().arc.proposals[proposalId];
+    if (!proposal) {
+      return;
+    }
+
     const avatarAddress = proposal.daoAvatarAddress;
     const daoInstance = await Arc.DAO.at(avatarAddress);
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
