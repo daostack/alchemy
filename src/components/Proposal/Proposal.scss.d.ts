@@ -59,6 +59,8 @@ export const upvoteGraph: string;
 export const downvoteGraph: string;
 export const predictions: string;
 export const enablePredictions: string;
+export const genError: string;
+export const exchangeList: string;
 export const pendingPrediction: string;
 export const predicted: string;
 export const passPrediction: string;

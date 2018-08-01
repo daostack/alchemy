@@ -500,11 +500,13 @@ const arcReducer = (state = initialState, action: any) => {
 
           // Update beneficiary reputation
           state = update(state, {
-            [accountKey]: (account: any) => {
-              // Make sure account exists for this DAO
-              return update(account || newAccount(avatarAddress, accountAddress), {
-                $merge: beneficiary
-              });
+            accounts: {
+              [accountKey]: (account: any) => {
+                // Make sure account exists for this DAO
+                return update(account || newAccount(avatarAddress, accountAddress), {
+                  $merge: beneficiary
+                });
+              }
             }
           });
 
@@ -514,11 +516,13 @@ const arcReducer = (state = initialState, action: any) => {
 
             // Update current account reputation
             state = update(state, {
-              [currentAccountKey]: (account: any) => {
-                // Make sure account exists for this DAO
-                return update(account || newAccount(avatarAddress, currentAccount.address), {
-                  $merge: currentAccount
-                });
+              accounts: {
+                [currentAccountKey]: (account: any) => {
+                  // Make sure account exists for this DAO
+                  return update(account || newAccount(avatarAddress, currentAccount.address), {
+                    $merge: currentAccount
+                  });
+                }
               }
             });
           }

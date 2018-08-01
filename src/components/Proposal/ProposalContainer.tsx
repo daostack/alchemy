@@ -208,6 +208,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               'Redeem' :
               'Execute'
           }
+          <img src="/assets/images/Icon/Loading-black.svg"/>
         </button>
       )
 
