@@ -59,7 +59,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
   public showModal(prediction: number, event: any) {
     this.setState({ showStakeModal: prediction });
-    setTimeout(() => this.stakeInput.focus(), 10);
+    setTimeout(() => this.stakeInput.select(), 10);
   }
 
   public closeModal(event: any) {
@@ -169,6 +169,11 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const passTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.No ? "Can't change prediction" : "";
     const failTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.Yes ? "Can't change prediction" : "";
 
+    const buyGensClass = classNames({
+      [css.genError]: true,
+      [css.hidden]: stakeAmount <= currentAccountGens
+    });
+
     return (
       <div className={wrapperClass}>
         {showPreStakeModal ?
@@ -186,10 +191,10 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         </div>
         <div className={predictionModalClass}>
 
-        <div className={css.genError}>
+        <div className={buyGensClass}>
           <h4>
             You do not have enough GEN
-            <span>YOUR STAKE: [AMOUNT] - WALLET BALANCE: [AMOUNT]</span>
+            <span>YOUR STAKE: {stakeAmount} - WALLET BALANCE: {currentAccountGens}</span>
           </h4>
           <div className={css.exchangeList}>
             Select an exchange  &#8964;
@@ -221,6 +226,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             />
             <span className={css.genLabel}>GEN</span>
           </div>
+
           <div className={css.clearfix}>
             {
               stakeAmount <= 0 || stakeAmount > currentAccountGens ?
