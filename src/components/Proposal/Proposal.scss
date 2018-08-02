@@ -4,6 +4,10 @@
   clear: both;
 }
 
+.hidden {
+	display: none;
+}
+
 .loading {
 	display: none;
 	position: absolute;
@@ -390,8 +394,132 @@ button.disabled {
 			color: $black-halftone;
 			margin: 0 0 6px 0;
 			top: -3px;
+
+			strong {
+				color: rgba(255, 0, 72, 1.000);
+				font-weight: normal;
+			}
 		}
 	}
+
+  .help {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    margin-left: 5px;
+    margin-top: -10px;
+    top: 9px;
+
+    &:hover {
+      cursor: pointer;
+
+      .helpBox {
+        transform: scale(1);
+        opacity: 1;
+        top: 37px;
+      }
+
+      .hover {
+        opacity: 1;
+      }
+    }
+
+    img {
+      position: absolute;
+      z-index: 0;
+    }
+
+    .hover {
+      position: absolute;
+      z-index: 1;
+      opacity: 0;
+    }
+
+    .helpBox {
+      transition: all .25s ease;
+      width: 230px;
+      position: absolute;
+      right: -100px;
+      top: -144px;
+      z-index: 10000;
+      transform: scale(0);
+      opacity: 0;
+
+      .bg {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0, 0.9);
+        position: absolute;
+        z-index: 0;
+      }
+
+      .pointer {
+        width: 12px;
+        position: absolute;
+        top: -6px;
+        right: 107px;
+        height: 12px;
+        transform: rotate(45deg);
+        background-color: rgba(0,0,0, 0.9);
+      }
+
+      .bridge {
+	    height: 30px;
+	    width: 80px;
+	    top: -29px;
+	    position: absolute;
+	    right: 72px;
+      }
+
+      .header {
+        position: relative;
+        z-index: 5;
+        padding: 24px 10px;
+        border-bottom: 3px solid #434343;
+        text-align: center;
+
+        h2 {
+          margin: 0;
+          font-size: 24px;
+          font-family: $heading-1-font;
+          color: $white;
+        }
+
+        h3 {
+          margin: 0;
+          font-family: $body-font;
+          color: $white;
+          font-size: 11px;
+          font-weight: normal;
+        }
+      }
+
+      .body {
+        position: relative;
+        z-index: 5;
+        padding: 24px;
+
+        p {
+          font-size: 11px;
+          color: $white;
+          padding: 0 0 14px 0;
+          margin: 0;
+        }
+      }
+
+      a {
+        display: block;
+        margin: 0 24px 24px 24px;
+        border: 1px solid #fff;
+        color: $white;
+        text-align: center;
+        padding: 12px;
+        opacity: .9;
+      }
+
+    }
+  }
 }
 
 .passedProposal .proposalInfo h3, .failedProposal .proposalInfo h3 {
@@ -531,6 +659,93 @@ button.disabled {
 	background-color: rgba(248, 248, 248, 1.000);
 	height: 100%;
 	width: 140px;
+
+	.genError {
+		background-color: rgba(0, 0, 0, 0.8);
+		height: 100%;
+		position: absolute;
+		width: 300px;
+		text-align: center;
+		color: $white;
+		left: -150px;
+
+		h4 {
+			color: $accent-2;
+			font-size: 14px;
+			font-family: $body-font;
+			margin: 0;
+			padding-top: 8px;
+		}
+
+		span {
+			display: block;
+			font-size: 10px;
+			font-weight: normal;
+			color: $white-halftone;
+		}
+
+		div.exchangeList {
+			color: $white;
+			font-size: 12px;
+			color: $white;
+			border: 1px solid $white;
+			width: 150px;
+			position: relative;
+			top: 0;
+			left: 0;
+		    text-align: center;
+		    transform: translate(0,0);
+		    display: inline-block;
+		    height: 30px;
+		    margin: 11px;
+		    line-height: 30px;
+
+			ul {
+				position: absolute;
+				top: -130px;
+				left: 0;
+				background-color: rgba(0, 0, 0, 0.8);
+				list-style: none;
+				margin: 0;
+				border-left: 1px solid $white;
+				border-right:  1px solid $white;
+				border-bottom:  1px solid $white;
+				width: 150px;
+				left: -1px;
+				padding: 0;
+				opacity: 0;
+				transform: scale(0);
+				transition: all .25s ease;
+
+				a {
+					color: $white;
+					font-weight: bold;
+					width: 100%;
+					display: inline-block;
+					padding: 8px 0;
+
+					&:hover {
+						background-color: $black;
+					}
+				}
+			}
+
+			&:hover {
+				background-color: $black-thirdtone;
+				cursor: pointer;
+				border-bottom: none;
+				border-left: 1px solid $white;
+				border-right:  1px solid $white;
+				border-top:  1px solid $white;
+
+				ul {
+					opacity: 1;
+					transform: scale(1);
+					top: 30px;
+				}
+			}
+		}
+	}
 
 	div {
 		position: absolute;
@@ -712,7 +927,7 @@ a.viewProposal {
 }
 
 .redeemRewards {
-	border: 1px solid $black-tenthtone;
+	border: 1px solid $accent-1;
 	color: $accent-1;
 	background-color: transparent;
 	padding: 5px 8px;
@@ -723,9 +938,25 @@ a.viewProposal {
 	cursor: pointer;
 	margin-top: -2px;
 	font-weight: bold;
+
+	img {
+		display: none;
+	}
+
+	&.pending {
+		border: 1px solid $black-tenthtone;
+		color: $black-halftone;
+
+		img {
+			display: inline-block;
+			height: 16px;
+			position: relative;
+			top: 4px;
+			margin-left: 5px;
+			margin-top: -6px;
+		}
+	}
 }
-
-
 
 .proposalsContainer .proposal {
 	border: 1px solid red;

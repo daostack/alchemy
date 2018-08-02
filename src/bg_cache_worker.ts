@@ -23,7 +23,7 @@ const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
 import * as arcConstants from "constants/arcConstants";
-import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState } from "./reducers/arcReducer";
+import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState, RewardType } from "./reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
 import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
 
@@ -83,16 +83,26 @@ const unsubscribe = store.subscribe(() => {
   // XXX: dont need to do anything here
 });
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log("Got SIGTERM so exiting process");
   unsubscribe();
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
   process.exit(0);
 });
 
-async function updateCache() {
+(async () => {
   await Arc.InitializeArcJs();
-  Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
-  Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
+})();
+
+Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 3)
+Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 3)
+
+async function updateCache() {
+  if (Number(await redisGet('alchemy-caching-' + arcjsNetwork))) {
+    console.log("The cache is already being updated.");
+    return false;
+  }
+  await redisSet('alchemy-caching-' + arcjsNetwork, 1);
 
   const startTime = moment();
 
@@ -101,7 +111,7 @@ async function updateCache() {
   let lastCachedBlock = process.argv[2] || (await redisGet('alchemy-last-block-' + arcjsNetwork)) || 0;
 
   // Latest block to cache up to
-  const latestBlock = await Util.getLatestBlock();
+  const latestBlock = process.argv[3] || await Util.getLatestBlock();
 
   if (lastCachedBlock == 0) {
     console.log("Starting to cache the "  + arcjsNetwork + " blockchain from the beginning");
@@ -174,19 +184,51 @@ async function updateCache() {
       await store.dispatch(arcActions.onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation)));
     }
 
-    console.log("Done with executed proposals, now looking for Redeemer redemptions");
+    console.log("Done with executed proposals, now looking for redemptions");
 
-    const redeemerInstance = await Arc.RedeemerFactory.deployed();
-    const redeemEventWatcher = redeemerInstance.RedeemerRedeem({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
-    const getRedeemEvents = promisify(redeemEventWatcher.get);
-    const redeemEvents: Array<Arc.DecodedLogEntryEvent<Arc.RedeemerRedeemEventResult>> = await getRedeemEvents(null, -1);
-    for (let index = 0; index < redeemEvents.length; index++) {
-      const event = redeemEvents[index];
-      console.log("Proposal redeemed through Redeemer", event);
-      await store.dispatch(arcActions.onRedeemEvent(event.args._proposalId));
-    }
+    const redeemEth = await contributionRewardInstance.RedeemEther({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
+    await Promise.all(redeemEth.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+      console.log(`Redeeming ContributionReward ETH for account ${_beneficiary} on proposal ${_proposalId}`);
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Eth, true))
+    }));
 
-    console.log("Done with Redeemer redemptions, now updating reputation balances");
+    const redeemGen = await contributionRewardInstance.RedeemExternalToken({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
+    await Promise.all(redeemGen.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+      console.log(`Redeeming ContributionReward external token for account ${_beneficiary} on proposal ${_proposalId}`);
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.ExternalToken, true))
+    }));
+
+    const redeemToken = await contributionRewardInstance.RedeemNativeToken({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
+    await Promise.all(redeemToken.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+      console.log(`Redeeming ContributionReward native token for account ${_beneficiary} on proposal ${_proposalId}`);
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.NativeToken, true))
+    }));
+
+    const redeemRep = await contributionRewardInstance.RedeemReputation({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
+    await Promise.all(redeemRep.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+      console.log(`Redeeming ContributionReward reputation for account ${_beneficiary} on proposal ${_proposalId}`);
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, true))
+    }));
+
+    const redeem = await votingMachineInstance.Redeem({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
+    await Promise.all(redeem.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+      console.log(`Redeeming GenesisProtocol GEN for account ${_beneficiary} on proposal ${_proposalId}`);
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false))
+    }));
+
+    const redeemDaoBounty = await votingMachineInstance.RedeemDaoBounty({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
+    await Promise.all(redeemDaoBounty.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+      console.log(`Redeeming GenesisProtocol staker bounty GEN for account ${_beneficiary} on proposal ${_proposalId}`);
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.BountyGEN, false))
+    }));
+
+    const redeemRepGP = await votingMachineInstance.RedeemReputation({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
+    await Promise.all(redeemRepGP.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+      console.log(`Redeeming GenesisProtocol reputation for account ${_beneficiary} on proposal ${_proposalId}`);
+      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, false))
+    }));
+
+    console.log("Done with redemptions, now updating DAOs");
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
@@ -195,6 +237,8 @@ async function updateCache() {
     for (const avatarAddress of Object.keys(state.arc.daos)) {
       const dao = denormalize(state.arc.daos[avatarAddress], schemas.daoSchema, state.arc);
       const daoInstance = await Arc.DAO.at(avatarAddress);
+
+      console.log(`Looking at DAO ${avatarAddress}, updating reputation balances`);
 
       const mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: lastCachedBlock, toBlock: latestBlock });
       const getMintEvents = promisify(mintEventWatcher.get);
@@ -271,6 +315,8 @@ async function updateCache() {
   } else {
     console.log("Something weird happened, DAOs not loaded so didn't write the data");
   }
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
+  return true;
 }
 
 export default updateCache;

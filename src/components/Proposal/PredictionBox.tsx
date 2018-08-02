@@ -59,7 +59,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
   public showModal(prediction: number, event: any) {
     this.setState({ showStakeModal: prediction });
-    setTimeout(() => this.stakeInput.focus(), 10);
+    setTimeout(() => this.stakeInput.select(), 10);
   }
 
   public closeModal(event: any) {
@@ -169,6 +169,11 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const passTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.No ? "Can't change prediction" : "";
     const failTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.Yes ? "Can't change prediction" : "";
 
+    const buyGensClass = classNames({
+      [css.genError]: true,
+      [css.hidden]: stakeAmount <= currentAccountGens
+    });
+
     return (
       <div className={wrapperClass}>
         {showPreStakeModal ?
@@ -185,6 +190,24 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <img src="/assets/images/Icon/Loading-black.svg"/>
         </div>
         <div className={predictionModalClass}>
+
+        <div className={buyGensClass}>
+          <h4>
+            You do not have enough GEN
+            <span>YOUR STAKE: {stakeAmount} - WALLET BALANCE: {currentAccountGens}</span>
+          </h4>
+          <div className={css.exchangeList}>
+            Select an exchange  &#8964;
+            <ul>
+              <li><a href="https://idex.market/" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
+              <li><a href="https://ddex.io/" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
+              <li><a href="https://forkdelta.github.io/" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
+              <li><a href="https://etherdelta.com/" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
+              <li><a href="https://www.hotbit.io/" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+            </ul>
+          </div>
+          <span>Use one of our trusted exchanges to acquire more GEN</span>
+        </div>
           <button className={css.cancelPrediction} onClick={this.closeModal.bind(this)}>
             <img src="/assets/images/Icon/Close-black.svg"/>
           </button>
@@ -203,6 +226,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             />
             <span className={css.genLabel}>GEN</span>
           </div>
+
           <div className={css.clearfix}>
             {
               stakeAmount <= 0 || stakeAmount > currentAccountGens ?

@@ -43,8 +43,10 @@ export default class PreTransactionModal extends React.Component<IProps> {
     const { actionType, currentAccount, dao, effectText, proposal } = this.props;
 
     const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-    const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
-    const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
+
+    // If percentages are less than 2 then set them to 2 so they can be visibly noticed
+    const yesPercentage = totalReputation && proposal.votesYes ? Math.max(2, Math.ceil(proposal.votesYes / totalReputation * 100)) : 0;
+    const noPercentage = totalReputation  && proposal.votesNo ? Math.max(2, Math.ceil(proposal.votesNo / totalReputation * 100)) : 0;
 
     const styles = {
       forBar: {
@@ -134,9 +136,11 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 </div>;
         break;
       case ActionTypes.Redeem:
+        icon = <img src="/assets/images/Tx/Redemption.svg"/>;
         transactionInfo = <span>Redeem proposal</span>;
         break;
       case ActionTypes.Execute:
+        icon = <img src="/assets/images/Tx/Redemption.svg"/>;
         transactionInfo = <span>Execute proposal</span>;
         break;
     }

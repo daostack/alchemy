@@ -10,7 +10,7 @@ import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
-import { isStakePending, isVotePending } from "selectors/operations";
+import { isStakePending, isVotePending, isRedeemPending } from "selectors/operations";
 import * as schemas from "schemas";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -36,6 +36,7 @@ interface IStateProps {
   isVotingNo: boolean;
   isPredictingPass: boolean;
   isPredictingFail: boolean;
+  isRedeemPending: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
@@ -65,6 +66,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
     isVotingNo: isVotePending(proposal.proposalId, VoteOptions.No)(state),
     isPredictingPass: isStakePending(proposal.proposalId, VoteOptions.Yes)(state),
     isPredictingFail: isStakePending(proposal.proposalId, VoteOptions.No)(state),
+    isRedeemPending: isRedeemPending(proposal.proposalId, state.web3.ethAccountAddress)(state)
   };
 };
 
@@ -127,7 +129,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isPredictingFail,
       isPredictingPass,
       isVotingNo,
-      isVotingYes
+      isVotingYes,
+      isRedeemPending
     } = this.props;
 
     const beneficiaryHasRewards = beneficiaryRedemptions && (
@@ -150,8 +153,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
 
-    const redemptionPending = currentRedemptions && currentRedemptions.transactionState == TransactionStates.Unconfirmed;
-
     if (proposal) {
       const proposalClass = classNames({
         [css.proposal]: true,
@@ -166,8 +167,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       // Calculate reputation percentages
       const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-      const yesPercentage = totalReputation ? Math.round(proposal.votesYes / totalReputation * 100) : 0;
-      const noPercentage = totalReputation ? Math.round(proposal.votesNo / totalReputation * 100) : 0;
+      const yesPercentage = totalReputation && proposal.votesYes ? Math.max(2, Math.ceil(proposal.votesYes / totalReputation * 100)) : 0;
+      const noPercentage = totalReputation && proposal.votesNo ? Math.max(2, Math.ceil(proposal.votesNo / totalReputation * 100)) : 0;
       const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
       const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
@@ -188,18 +189,19 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       const redeemRewards = classNames({
         [css.redeemRewards]: true,
-        [css.disabled]: (!redeemable && !executable) || redemptionPending
+        [css.pending]: isRedeemPending,
+        [css.disabled]: !redeemable && !executable
       });
 
       const redeemButton = (
         <button
           style={{whiteSpace: 'nowrap'}}
-          disabled={(!redeemable && !executable) || redemptionPending}
+          disabled={!redeemable && !executable}
           className={redeemRewards}
           onClick={this.handleClickRedeem.bind(this)}
         >
           {
-            currentRedemptions && currentRedemptions.transactionState == TransactionStates.Unconfirmed ?
+            isRedeemPending ?
               'Redeeming in progress' :
             beneficiaryHasRewards && !accountHasRewards ?
               'Redeem for beneficiary' :
@@ -207,6 +209,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               'Redeem' :
               'Execute'
           }
+          <img src="/assets/images/Icon/Loading-black.svg"/>
         </button>
       )
 
@@ -269,6 +272,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
             : ''
           }
+          {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
         </div>;
 
       let rewards = [];
@@ -357,9 +361,30 @@ class ProposalContainer extends React.Component<IProps, IState> {
             }
             <h3>
               <span>
-                { !proposalEnded(proposal) ?
-                  `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
-                  : ""
+                { proposal.state == ProposalStates.QuietEndingPeriod ?
+                    <strong>
+                      <img src="/assets/images/Icon/Overtime.svg"/> OVERTIME: CLOSES IN {closingTime(proposal).fromNow().toUpperCase()}
+                      <div className={css.help}>
+                        <img src="/assets/images/Icon/Help-light.svg"/>
+                        <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg"/>
+                        <div className={css.helpBox}>
+                          <div className={css.pointer}></div>
+                          <div className={css.bg}></div>
+                          <div className={css.bridge}></div>
+                          <div className={css.header}>
+                            <h2>Genesis Protocol</h2>
+                            <h3>RULES FOR OVERTIME</h3>
+                          </div>
+                          <div className={css.body}>
+                            <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased in one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
+                          </div>
+                          <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                        </div>
+                      </div>
+                    </strong>
+                  : !proposalEnded(proposal) ?
+                    `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
+                  : " "
                 }
               </span>
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
