@@ -40,15 +40,19 @@ const redisSet = promisify(redisClient.set.bind(redisClient));
 const arcjsNetwork = process.env.arcjs_network;
 
 if (process.env.NODE_ENV == 'production') {
-  // Use Infura on production
-  const infuraNetwork = arcjsNetwork == 'live' ? 'mainnet' : arcjsNetwork;
-
-  // The default account in reading from Infura, I'm not totally sure why this is needed (but it is), or what account it should be
   const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
-  const infuraKey = process.env.INFURA_KEY;
-  const provider = new HDWalletProvider(mnemonic, "https://" + infuraNetwork + ".infura.io/" + infuraKey);
+  let provider;
 
-  // Setup web3 ourselves so we can use Infura instead of letting Arc.js setup web3
+  if (arcjsNetwork == 'live') {
+    // Use our Quiknode on production
+    provider = new HDWalletProvider(mnemonic, "https://sadly-exact-hen.quiknode.io/d5ba26f2-ea9b-4b16-9247-2a8858623c68/b3URb1n1WPG35IpElyDBog==/");
+  } else {
+    // Use infura on Kovan right now
+    const infuraKey = process.env.INFURA_KEY;
+    provider = new HDWalletProvider(mnemonic, "https://kovan.infura.io/" + infuraKey);
+  }
+
+  // Setup web3 ourselves so we can use Infura or Quiknode instead of letting Arc.js setup web3
   global.web3 = new Web3(provider.engine);
 
   process.env.API_URL = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
