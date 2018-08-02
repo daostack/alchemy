@@ -69,6 +69,7 @@ export function newAccount(
 export interface IDaoState {
   avatarAddress: string;
   controllerAddress: string;
+  currentThresholdToBoost: number;
   ethCount: number;
   fromBlock?: number;
   genCount: number;
@@ -143,7 +144,6 @@ export interface IProposalState {
   stakesYes: number;
   state: ProposalStates;
   submittedTime: number;
-  threshold: number;
   title: string;
   transactionState: TransactionStates;
   totalStakes: number;
@@ -186,7 +186,6 @@ export const emptyProposal: IProposalState = {
   votesYes: 0,
   votesNo: 0,
   winningVote: VoteOptions.No,
-  threshold: 0
 }
 
 export interface IStakeState {
@@ -457,12 +456,15 @@ const arcReducer = (state = initialState, action: any) => {
           });
         case AsyncActionSequence.Success: {
           return update(state, {
+            daos: {
+              [avatarAddress]: { $merge: payload.dao }
+            },
             proposals: {
               [proposalId]: { $merge : payload.proposal }
             },
             // Confirm the stake and add to the state if wasn't there before
             stakes: {
-              [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Confirmed } }
+              [stakeKey]: { $set: {...meta, transactionState: TransactionStates.Confirmed } }
             }
           });
         }
