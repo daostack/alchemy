@@ -112,8 +112,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <p>
                 Once you click the button below, we will pop-up a MetaMask dialogue.
                 It will set a default gas limit and price. It's fine to stick with these defaults.
-                You can also consult  <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a>
-                to adjust the Gwei price.
+                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a>
+                &nbsp;to adjust the Gwei price.
               </p>
               <div>
                 <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
@@ -199,11 +199,11 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <div className={css.exchangeList}>
             Select an exchange  &#8964;
             <ul>
-              <li><a href="https://idex.market/" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-              <li><a href="https://ddex.io/" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-              <li><a href="https://forkdelta.github.io/" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-              <li><a href="https://etherdelta.com/" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-              <li><a href="https://www.hotbit.io/" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+              <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
+              <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
+              <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
+              <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
+              <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
             </ul>
           </div>
           <span>Use one of our trusted exchanges to acquire more GEN</span>
