@@ -122,6 +122,7 @@ export interface IProposalState {
   beneficiaryAddress: string;
   boostedTime: number;
   boostedVotePeriodLimit: number;
+  quietPeriod: number;
   contributionDescriptionHash: string;
   daoAvatarAddress: string;
   description: string;
@@ -158,6 +159,7 @@ export const emptyProposal: IProposalState = {
   beneficiaryAddress: null,
   boostedTime: 0,
   boostedVotePeriodLimit: 0,
+  quietPeriod: 0,
   preBoostedVotePeriodLimit: 0,
   contributionDescriptionHash: "",
   description: "",
@@ -229,9 +231,10 @@ export const initialState: IArcState = {
 };
 
 export const closingTime = (proposal: IProposalState) => {
-  const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
+  const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, quietPeriod, executionTime } = proposal;
+
   const start = boostedTime ? boostedTime : submittedTime;
-  const duration = boostedTime ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
+  const duration = boostedTime ? (state === ProposalStates.QuietEndingPeriod ? quietPeriod : boostedVotePeriodLimit) : preBoostedVotePeriodLimit;
   return moment((executionTime || start + duration) * 1000);
 }
 

@@ -283,10 +283,10 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   const avatarAddress = daoInstance.avatar.address;
 
   const votingMachineParamsHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, avatarAddress);
-  const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
+  const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamsHash);
 
   const proposalDetails = await votingMachineInstance.getProposal(proposalId);
-  const preBoostedVotePeriodLimit = Number(votingMachineParams[1]);
+  const preBoostedVotePeriodLimit = Number(votingMachineParams.preBoostedVotePeriodLimit);
   const submittedTime = Number(proposalDetails.submittedTime);
   const boostedTime = Number(proposalDetails.boostedPhaseTime);
   const boostedVotePeriodLimit = Number(proposalDetails.currentBoostedVotePeriodLimit);
@@ -327,6 +327,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
     boostedTime,
     boostedVotePeriodLimit,
+    quietPeriod: votingMachineParams.quietEndingPeriod,
     daoAvatarAddress: avatarAddress,
     description,
     ethReward: Util.fromWei(contributionProposal.ethReward),
