@@ -222,11 +222,11 @@ class HeaderContainer extends React.Component<IProps, null> {
                   <a>Buy GEN</a>
                   <ul>
                     <li><h2>EXCHANGES</h2></li>
-                    <li><a href="https://idex.market/" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-                    <li><a href="https://ddex.io/" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-                    <li><a href="https://forkdelta.github.io/" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-                    <li><a href="https://etherdelta.com/" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-                    <li><a href="https://www.hotbit.io/" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+                    <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
+                    <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
+                    <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
+                    <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
+                    <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
                   </ul>
                 </li>
               </ul>

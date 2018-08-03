@@ -96,8 +96,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-  const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
+  const votingMachineAddress = await contributionRewardInstance.getVotingMachineAddress(avatarAddress);
   if (votingMachineAddress == "0x0000000000000000000000000000000000000000") {
     // This DAO has no GenesisProtocol, so lets ignore it
     return false;
@@ -122,6 +121,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const daoData: IDaoState = {
     avatarAddress,
     controllerAddress: "",
+    currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress })),
     ethCount: Util.fromWei(await getBalance(avatarAddress)),
     genCount: Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance),
     lastBlock: toBlock,
@@ -344,7 +344,6 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     stakesYes: Util.fromWei(yesStakes),
     state: Number(proposalDetails.state), // TODO: using our own enum instead of from Arc.js because we add new states, have arc.js do this?,
     submittedTime,
-    threshold: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress })),
     title,
     totalStakes: 0, //Util.fromWei(proposalDetails[8]),
     totalVotes: Util.fromWei(proposalDetails.totalVotes),
@@ -619,20 +618,23 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         founders,
         schemes: [
           // TODO: add these
-          // { name: "SchemeRegistrar" },
           // { name: "UpgradeScheme" },
           // { name: "GlobalConstraintRegistrar" },
+          { name: "SchemeRegistrar" },
           { name: "ContributionReward" },
           { name: "GenesisProtocol" }
         ],
         votingMachineParams: {
           votingMachineName: "GenesisProtocol"
         }
-      })
+      });
+
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
 
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
+        currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: dao.avatar.address })),
         ethCount: 0,
         genCount: 0,
         lastBlock: await Util.getLatestBlock(),
@@ -778,7 +780,6 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal);
 
     const payload = normalize(proposal, schemas.proposalSchema);
-    (payload as any).daoAvatarAddress = avatarAddress;
 
     const meta = {
       avatarAddress
@@ -810,22 +811,29 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       }
 
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const daoInstance = await Arc.DAO.at(proposal.daoAvatarAddress);
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
       const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
       proposal.executionTime = Number(proposalDetails.executionTime);
       proposal.state = ProposalStates.Executed;
       proposal.reputationWhenExecuted = reputationWhenExecuted;
       proposal.winningVote = decision;
 
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
       const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
       proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
 
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
 
+      const daoUpdates = {
+        currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
+      };
+
       return dispatch({
         type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
-        payload: { entities, proposal }
+        payload: { entities, proposal, dao: daoUpdates }
       })
     }
   }
@@ -846,9 +854,18 @@ export function onProposalExpired(proposal: IProposalState) {
     let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
     proposal.redemptions = redemptions;
 
+    const daoInstance = await Arc.DAO.at(proposal.daoAvatarAddress);
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+    const daoUpdates = {
+      currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: proposal.daoAvatarAddress }))
+    };
+
     return dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXPIRED,
-      payload: { entities, proposal }
+      payload: { entities, proposal, dao: daoUpdates }
     })
   }
 }
@@ -973,6 +990,7 @@ export type StakeAction = IAsyncAction<'ARC_STAKE', {
   stakeAmount: number,
   stakerAddress: string,
 }, {
+  dao: any,
   proposal: any
 }>
 
@@ -1060,7 +1078,12 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
       type: arcConstants.ARC_STAKE,
       sequence: AsyncActionSequence.Success,
       meta,
-      payload: { proposal }
+      payload: {
+        dao: {
+          currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
+        },
+        proposal
+      }
     } as StakeAction);
   }
 }
