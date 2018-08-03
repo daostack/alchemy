@@ -412,9 +412,15 @@ const arcReducer = (state = initialState, action: any) => {
         case AsyncActionSequence.Success: {
           const { proposal, voter } = payload;
 
+          // Add empty account if there isnt one tied to the DAO already
+          // XXX: this shouldn't happen but does right now because we are not watching for all changes to all DAOs, only to currently viewed one
+          if (!state.accounts[accountKey]) {
+            state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, voterAddress) }}});
+          }
+
           return update(state, {
-            accounts: { [accountKey]: { $merge: payload.voter } },
-            proposals: { [proposalId]: { $merge: payload.proposal } },
+            accounts: { [accountKey]: { $merge: voter } },
+            proposals: { [proposalId]: { $merge: proposal } },
             // Confirm the vote, and add to the state if wasn't there before
             votes: {
               [voteKey]: { $set: {...meta, transactionState: TransactionStates.Confirmed } }
@@ -435,7 +441,7 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Pending:
-          // Add empty account if there isntted to the DAO already
+          // Add empty account if there isnt one tied to the DAO already
           if (!state.accounts[accountKey]) {
             state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, stakerAddress) }}});
           }
