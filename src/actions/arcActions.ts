@@ -619,9 +619,9 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         founders,
         schemes: [
           // TODO: add these
-          // { name: "SchemeRegistrar" },
           // { name: "UpgradeScheme" },
           // { name: "GlobalConstraintRegistrar" },
+          { name: "SchemeRegistrar" },
           { name: "ContributionReward" },
           { name: "GenesisProtocol" }
         ],
