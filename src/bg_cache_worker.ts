@@ -94,8 +94,7 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 0);
-Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 0);
+Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
 
 (async () => {
   await Arc.InitializeArcJs();

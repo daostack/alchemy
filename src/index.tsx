@@ -10,8 +10,7 @@ import "./assets/styles/global.scss";
 async function renderApp() {
   try {
     Arc.ConfigService.set("estimateGas", true);
-    Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 0);
-    Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 0);
+    Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
 
     await Arc.InitializeArcJs();
 
