@@ -946,6 +946,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const proposalDetails = await votingMachineInstance.getProposal(proposalId);
+    proposal.boostedTime = Number(proposalDetails.boostedPhaseTime); // update the boosted time in case we are in quiet ending period
     proposal.boostedVotePeriodLimit = Number(proposalDetails.currentBoostedVotePeriodLimit); // update boostedVotePeriodLimit in case we are in quiet ending period
     proposal.votesYes = Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes }));
     proposal.votesNo = Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No }));
