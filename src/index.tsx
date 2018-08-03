@@ -14,6 +14,8 @@ async function renderApp() {
 
     await Arc.InitializeArcJs();
 
+    Arc.LoggingService.logLevel = Arc.LogLevel.all;
+
     // Silence 240 sec error
     Arc.ContractWrappers.AbsoluteVote.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.ContributionReward.contract.constructor.synchronization_timeout = 0;
