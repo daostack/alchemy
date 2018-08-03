@@ -267,7 +267,7 @@ export function getProposal(avatarAddress: string, proposalId: string, fromBlock
       console.error(e);
     }
 
-    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, currentAccountAddress, serverProposal, fromBlock, toBlock);
+    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress, fromBlock, toBlock);
     const payload = normalize(proposal, schemas.proposalSchema);
     // TODO: Add votes and stakes and redemptions to accounts too, or maybe just get rid of this function because we load everything up front?
 
@@ -750,6 +750,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+    const currentAccountAddress = getState().web3.ethAccountAddress;
 
     let serverProposal: any = false;
     try {
@@ -777,7 +778,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
       reputationChange: eventResult._reputationChange
     }
 
-    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal);
+    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress);
 
     const payload = normalize(proposal, schemas.proposalSchema);
 
