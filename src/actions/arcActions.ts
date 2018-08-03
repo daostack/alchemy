@@ -96,8 +96,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-  const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
+  const votingMachineAddress = await contributionRewardInstance.getVotingMachineAddress(avatarAddress);
   if (votingMachineAddress == "0x0000000000000000000000000000000000000000") {
     // This DAO has no GenesisProtocol, so lets ignore it
     return false;
@@ -781,7 +780,6 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal);
 
     const payload = normalize(proposal, schemas.proposalSchema);
-    (payload as any).daoAvatarAddress = avatarAddress;
 
     const meta = {
       avatarAddress
@@ -813,22 +811,29 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       }
 
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const daoInstance = await Arc.DAO.at(proposal.daoAvatarAddress);
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
       const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
       proposal.executionTime = Number(proposalDetails.executionTime);
       proposal.state = ProposalStates.Executed;
       proposal.reputationWhenExecuted = reputationWhenExecuted;
       proposal.winningVote = decision;
 
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
       const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
       proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
 
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
 
+      const daoUpdates = {
+        currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
+      };
+
       return dispatch({
         type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
-        payload: { entities, proposal }
+        payload: { entities, proposal, dao: daoUpdates }
       })
     }
   }
@@ -849,9 +854,18 @@ export function onProposalExpired(proposal: IProposalState) {
     let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
     proposal.redemptions = redemptions;
 
+    const daoInstance = await Arc.DAO.at(proposal.daoAvatarAddress);
+    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
+    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+    const daoUpdates = {
+      currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: proposal.daoAvatarAddress }))
+    };
+
     return dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXPIRED,
-      payload: { entities, proposal }
+      payload: { entities, proposal, dao: daoUpdates }
     })
   }
 }

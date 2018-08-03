@@ -94,12 +94,12 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
+Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 0);
+Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 0);
+
 (async () => {
   await Arc.InitializeArcJs();
 })();
-
-Arc.ConfigService.set("txDepthRequiredForConfirmation.live", 0)
-Arc.ConfigService.set("txDepthRequiredForConfirmation.kovan", 0)
 
 async function updateCache() {
   if (Number(await redisGet('alchemy-caching-' + arcjsNetwork))) {

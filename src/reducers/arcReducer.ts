@@ -316,9 +316,15 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Success:
+          const { result } = payload;
+
           // Add the new proposal to the DAO's state if not already there
-          if (state.daos[avatarAddress].proposals.indexOf(action.payload.result) === -1) {
-            return update(state , { daos : { [avatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
+          if (state.daos[avatarAddress].proposals.indexOf(result) === -1) {
+            return update(state , {
+              daos : { [avatarAddress] : {
+                proposals: { $push : [result] }
+              }}
+            });
           }
         default:
           return state;
@@ -338,15 +344,25 @@ const arcReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
+      const { dao, proposal } = payload;
+
       return update(state, {
+        daos: {
+          [proposal.daoAvatarAddress]: { $merge: dao }
+        },
         proposals: {
-          [payload.proposal.proposalId]: { $merge: payload.proposal }
+          [proposal.proposalId]: { $merge: proposal }
         }
       });
     }
 
     case ActionTypes.ARC_ON_PROPOSAL_EXPIRED: {
+      const { dao, proposal } = payload;
+
       return update(state, {
+        daos: {
+          [proposal.daoAvatarAddress]: { $merge: dao }
+        },
         proposals: {
           [payload.proposal.proposalId]: { $merge: payload.proposal }
         }
