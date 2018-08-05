@@ -75,6 +75,7 @@
     "ethjs-abi": "0.1.8",
     "express": "^4.16.3",
     "formik": "^0.11.11",
+    "heroku-client": "^3.0.6",
     "immutability-helper": "2.6.4",
     "intro.js": "^2.9.3",
     "lodash": "^4.17.4",
