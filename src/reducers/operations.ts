@@ -119,7 +119,7 @@ export const operationsTracker: Middleware =
         functionName
       } = info;
 
-      if (txStage == Arc.TransactionStage.mined) {
+      if (txStage == Arc.TransactionStage.mined && !error) {
         return;
       }
 
@@ -142,11 +142,11 @@ export const operationsTracker: Middleware =
             txHash: tx,
             error: error ? errorType(error) : undefined,
             status:
+              txStage === Arc.TransactionStage.kickoff ?
+                OperationStatus.Started :
               txStage === Arc.TransactionStage.sent ?
                 OperationStatus.Sent :
-              txStage === Arc.TransactionStage.confirmed ?
-                OperationStatus.Complete :
-                OperationStatus.Started,
+                OperationStatus.Complete,
             functionName,
             options,
             proposalTitle

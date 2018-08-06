@@ -271,7 +271,7 @@ async function updateCache() {
       console.log("Done updating balances, now look for any expired proposals");
 
       // Check all open proposals to see if any expired and if so update state and gather redemptions
-      let proposals = dao.proposals;
+      let proposals = denormalize(dao.proposals, schemas.proposalList, (store.getState() as IRootState).arc);
       proposals = proposals.filter((proposal: IProposalState) => (
         proposal.state === ProposalStates.PreBoosted ||
         proposal.state === ProposalStates.Boosted ||
