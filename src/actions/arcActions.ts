@@ -531,7 +531,6 @@ async function getProposalRedemptions(proposal: IProposalState, state: IRootStat
     return { entities: {}, redemptions: [] };
   }
 
-  proposal = denormalize(proposal, schemas.proposalSchema, state.arc);
 
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
   const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
@@ -806,7 +805,7 @@ export function executeProposal(avatarAddress: string, proposalId: string) {
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     if (executionState != ExecutionState.None) {
-      const proposal = getState().arc.proposals[proposalId];
+      const proposal = denormalize(getState().arc.proposals[proposalId], schemas.proposalSchema, getState().arc);
       if (!proposal) {
         return;
       }
