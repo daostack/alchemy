@@ -374,24 +374,14 @@ const arcReducer = (state = initialState, action: any) => {
       const accountKey = `${voterAddress}-${avatarAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Failure: {
-          // Remove the vote from the account, proposal and entities
-          return update(state, {
-            accounts: {
-              [accountKey]: {
-                votes: (arr: string[]) => arr.filter((item) => item != voteKey)
-              }
-            },
-            proposals: {
-              [proposalId]: {
-                votes: (arr: string[]) => arr.filter((item) => item != voteKey)
-              }
-            },
-            votes: { $unset: [voteKey] },
-          });
-        }
         case AsyncActionSequence.Success: {
           const { proposal, voter } = payload;
+
+          // Add empty account if there isnt one tied to the DAO already
+          // XXX: this shouldn't happen but does right now because we are not watching for all changes to all DAOs, only to currently viewed one
+          if (!state.accounts[accountKey]) {
+            state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, voterAddress) }}});
+          }
 
           // Add vote to account if not already there
           if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
@@ -402,26 +392,12 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
           }
 
-          // Add vote
-          // TODO: this automatically through normalizing it?
-          state = update(state, {
-            votes: {
-              [voteKey]: { $set: meta }
-            }
-          });
-
-          // Add empty account if there isnt one tied to the DAO already
-          // XXX: this shouldn't happen but does right now because we are not watching for all changes to all DAOs, only to currently viewed one
-          if (!state.accounts[accountKey]) {
-            state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, voterAddress) }}});
-          }
-
           return update(state, {
             accounts: { [accountKey]: { $merge: voter } },
             proposals: { [proposalId]: { $merge: proposal } },
             // Confirm the vote, and add to the state if wasn't there before
             votes: {
-              [voteKey]: { $set: {...meta } }
+              [voteKey]: { $set: meta }
             }
           });
         }
@@ -438,21 +414,6 @@ const arcReducer = (state = initialState, action: any) => {
       const accountKey = `${stakerAddress}-${avatarAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Failure:
-          // Remove the stake from the account, proposal and entities
-          return update(state, {
-            accounts: {
-              [accountKey]: {
-                stakes: (arr: string[]) => arr.filter((item) => item != stakeKey)
-              }
-            },
-            proposals: {
-              [proposalId]: {
-                stakes: (arr: string[]) => arr.filter((item) => item != stakeKey)
-              }
-            },
-            stakes: { $unset: [stakeKey] },
-          });
         case AsyncActionSequence.Success: {
           // Add empty account if there isnt one tied to the DAO already
           if (!state.accounts[accountKey]) {
@@ -467,14 +428,6 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, { proposals: { [proposalId] : { stakes: { $push: [stakeKey] } } } });
           }
 
-          // Add the new stake
-          // TODO: do automatically through normalizing?
-          state = update(state, {
-            stakes: {
-              [stakeKey] : { $set: {...meta } }
-            }
-          });
-
           return update(state, {
             daos: {
               [avatarAddress]: { $merge: payload.dao }
@@ -484,7 +437,7 @@ const arcReducer = (state = initialState, action: any) => {
             },
             // Confirm the stake and add to the state if wasn't there before
             stakes: {
-              [stakeKey]: { $set: {...meta } }
+              [stakeKey]: { $set: meta }
             }
           });
         }
