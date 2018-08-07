@@ -33,6 +33,7 @@ import * as css from "./App.scss";
 import { sortedNotifications } from '../selectors/notifications';
 import { dismissNotification, NotificationStatus, INotificationsState, showNotification } from 'reducers/notifications';
 import { OperationStatus, OperationError } from 'reducers/operations';
+import MinimizedNotifications from 'components/Notification/MinimizedNotifications';
 
 interface IStateProps {
   connectionStatus: ConnectionStatus;
@@ -81,8 +82,17 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-class AppContainer extends React.Component<IProps, null> {
+interface IState {
+  notificationsMinimized: boolean;
+}
+
+class AppContainer extends React.Component<IProps, IState> {
   public watchers: Array<Arc.EventFetcher<any> | Arc.EntityFetcher<any, any>> = []
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = { notificationsMinimized: false };
+  }
 
   public async componentWillMount() {
     const { cookies, history } = this.props;
@@ -232,6 +242,8 @@ class AppContainer extends React.Component<IProps, null> {
       sortedNotifications
     } = this.props;
 
+    const { notificationsMinimized } = this.state;
+
     return (
       (connectionStatus === ConnectionStatus.Pending ?
         <div className={css.loading}>Loading...</div> :
@@ -269,27 +281,34 @@ class AppContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.pendingTransactions}>
-            {sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
-              <div key={id}>
-                <Notification
-                    title={(title || status).toUpperCase()}
-                    status={
-                      status === NotificationStatus.Failure ?
-                        NotificationViewStatus.Failure :
-                      status === NotificationStatus.Success ?
-                        NotificationViewStatus.Success :
-                        NotificationViewStatus.Pending
-                    }
-                    message={message}
-                    fullErrorMessage={fullErrorMessage}
-                    url={url}
-                    timestamp={timestamp}
-                    dismiss={() => dismissNotification(id)}
-                    showNotification={showNotification}
-                  />
-                <br/>
-              </div>
-            ))}
+            {notificationsMinimized ?
+              <MinimizedNotifications
+                notifications={sortedNotifications.length}
+                unminimize={() => this.setState({notificationsMinimized: false})}
+              /> :
+              sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
+                <div key={id}>
+                  <Notification
+                      title={(title || status).toUpperCase()}
+                      status={
+                        status === NotificationStatus.Failure ?
+                          NotificationViewStatus.Failure :
+                        status === NotificationStatus.Success ?
+                          NotificationViewStatus.Success :
+                          NotificationViewStatus.Pending
+                      }
+                      message={message}
+                      fullErrorMessage={fullErrorMessage}
+                      url={url}
+                      timestamp={timestamp}
+                      dismiss={() => dismissNotification(id)}
+                      showNotification={showNotification}
+                      minimize={() => this.setState({notificationsMinimized: true})}
+                    />
+                  <br/>
+                </div>
+              ))
+            }
           </div>
           <div className={css.background}></div>
         </div>
