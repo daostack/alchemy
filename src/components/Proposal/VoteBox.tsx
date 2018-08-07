@@ -17,7 +17,6 @@ interface IProps {
   currentVote: number;
   dao: IDaoState;
   proposal: IProposalState;
-  transactionState: TransactionStates;
   voteOnProposal: typeof arcActions.voteOnProposal;
   isVotingNo: boolean;
   isVotingYes: boolean;
@@ -40,7 +39,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public handleClickVote(vote: number, event: any) {
-    const { currentAccountReputation, proposal, transactionState, voteOnProposal } = this.props;
+    const { currentAccountReputation } = this.props;
     if (currentAccountReputation) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
@@ -57,11 +56,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
       currentAccountAddress,
       proposal,
       dao,
-      transactionState,
       isVotingNo,
       isVotingYes,
       voteOnProposal
     } = this.props;
+
+    const isVoting = isVotingNo || isVotingYes;
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     let yesPercentage = dao.reputationCount && proposal.votesYes ? Math.max(2, Math.ceil(proposal.votesYes / dao.reputationCount * 100)) : 0;
@@ -87,15 +87,15 @@ export default class VoteBox extends React.Component<IProps, IState> {
     let wrapperClass = classNames({
       [css.voteBox] : true,
       [css.clearfix] : true,
-      [css.unconfirmedVote] : transactionState == TransactionStates.Unconfirmed,
+      [css.unconfirmedVote] : isVoting,
     });
     let voteUpButtonClass = classNames({
-      [css.voted]: currentVote == VoteOptions.Yes,
+      [css.voted]: !isVotingYes && currentVote == VoteOptions.Yes,
       [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
-      [css.voted]: currentVote == VoteOptions.No,
+      [css.voted]: !isVotingNo && currentVote == VoteOptions.No,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
@@ -104,8 +104,15 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.voteControls]: true
     });
 
-    const passTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote for") : "Voting requires reputation in " + dao.name;
-    const failTipContent = currentAccountReputation ? (currentVote ? "Can't change your vote" : "Vote against") : "Voting requires reputation in " + dao.name;
+    const tipContent = (vote: VoteOptions) =>
+      currentVote ?
+        "Can't change your vote" :
+      !currentAccountReputation ?
+        "Voting requires reputation in " + dao.name :
+      isVoting ?
+        'Warning: Voting for this proposal is already in progress' :
+        `Vote ${vote === VoteOptions.Yes ? 'for' : 'against'}`
+    ;
 
     return (
       <div className={wrapperClass}>
@@ -121,12 +128,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
           /> : ""
         }
 
-        <div className={css.loading}>
-          <img src="/assets/images/Icon/Loading-black.svg"/>
-        </div>
         <div className={voteControls}>
           <div className={css.voteUp}>
-            <Tooltip placement="right" trigger={["hover"]} overlay={passTipContent} overlayClassName={css.voteTooltip}>
+            <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(VoteOptions.Yes)} overlayClassName={css.voteTooltip}>
               <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
                 <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
                 <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
@@ -207,7 +211,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.voteDown}>
-            <Tooltip placement="right" trigger={["hover"]} overlay={failTipContent} overlayClassName={css.voteTooltip}>
+            <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(VoteOptions.No)} overlayClassName={css.voteTooltip}>
               <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
                 <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
                 <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>

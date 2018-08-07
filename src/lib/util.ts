@@ -53,4 +53,10 @@ export default class Util {
     const getBlock = promisify(web3.eth.getBlock);
     return (await getBlock('latest')).number;
   }
+
+  public static trace<T>(x: T, ...args: any[]): T {
+    // tslint:disable-next-line:no-console
+    console.debug('trace', ...args, x);
+    return x;
+  }
 }

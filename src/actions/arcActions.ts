@@ -452,7 +452,6 @@ async function getVoterInfo(avatarAddress: string, votingMachineInstance: Arc.Ge
       avatarAddress,
       proposalId,
       reputation: Util.fromWei(voterInfo.reputation),
-      transactionState: TransactionStates.Confirmed,
       voteOption: Number(voterInfo.vote),
       voterAddress
     }
@@ -470,8 +469,7 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
       proposalId,
       stakeAmount: Util.fromWei(stakerInfo.stake),
       prediction: Number(stakerInfo.vote),
-      stakerAddress,
-      transactionState: TransactionStates.Confirmed,
+      stakerAddress
     }
   } else {
     return false;
