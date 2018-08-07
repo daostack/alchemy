@@ -172,9 +172,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
       const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0,
-          currentAccountStakeState = TransactionStates.Confirmed,
-          redemptionsTip: JSX.Element = null;
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0, redemptionsTip: JSX.Element = null;
 
       if (currentVote) {
         currentAccountVote = currentVote.voteOption;

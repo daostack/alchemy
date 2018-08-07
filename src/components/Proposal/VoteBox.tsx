@@ -110,7 +110,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
       !currentAccountReputation ?
         "Voting requires reputation in " + dao.name :
       isVoting ?
-        'Warning: Voting for this proposal is aleardy in progress' :
+        'Warning: Voting for this proposal is already in progress' :
         `Vote ${vote === VoteOptions.Yes ? 'for' : 'against'}`
     ;
 

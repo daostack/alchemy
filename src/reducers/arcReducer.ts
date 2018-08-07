@@ -471,7 +471,7 @@ const arcReducer = (state = initialState, action: any) => {
           // TODO: do automatically through normalizing?
           state = update(state, {
             stakes: {
-              [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
+              [stakeKey] : { $set: {...meta } }
             }
           });
 
