@@ -531,7 +531,6 @@ async function getProposalRedemptions(proposal: IProposalState, state: IRootStat
     return { entities: {}, redemptions: [] };
   }
 
-
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
   const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
   const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
