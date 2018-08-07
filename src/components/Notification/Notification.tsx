@@ -20,17 +20,13 @@ interface IProps {
   timestamp: number;
   url?: string;
   dismiss: () => any;
+  minimize: () => any;
   showNotification: typeof showNotification;
 }
 
-interface IState {
-  minimized: boolean
-}
-
-export default class Notification extends React.Component<IProps, IState> {
+export default class Notification extends React.Component<IProps, null> {
   constructor(props: IProps) {
     super(props);
-    this.state = { minimized: false };
 
     this.handleClose = this.handleClose.bind(this);
     this.copyToClipboard = this.copyToClipboard.bind(this);
@@ -48,8 +44,7 @@ export default class Notification extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { title, message, timestamp, status, url, fullErrorMessage } = this.props;
-    const { minimized } = this.state;
+    const { title, message, timestamp, status, url, fullErrorMessage, minimize } = this.props;
 
     const transactionClass = classNames({
       [css.pendingTransaction]: true,
@@ -57,13 +52,12 @@ export default class Notification extends React.Component<IProps, IState> {
       [css.pending]: status === NotificationViewStatus.Pending,
       [css.error]: status === NotificationViewStatus.Failure,
       [css.success]: status === NotificationViewStatus.Success,
-      [css.minimized]: status === NotificationViewStatus.Pending && minimized,
     });
 
     return (
       <div className={transactionClass}>
         <div className={css.statusIcon}>
-          <img className={css.pending} style={{cursor: minimized && 'pointer'}} onClick={() => this.setState({minimized: false})} src="/assets/images/Icon/Loading-white.svg" />
+          <img className={css.pending} src="/assets/images/Icon/Loading-white.svg" />
           <img className={css.success} src="/assets/images/Icon/Success-notification.svg" />
           <img className={css.error} src="/assets/images/Icon/Error-notification.svg" />
         </div>
@@ -93,7 +87,7 @@ export default class Notification extends React.Component<IProps, IState> {
           </div>
         </div>
         <div className={css.notificationControls}>
-          <button className={css.pending} onClick={() => this.setState({minimized: true})}><img src="/assets/images/Icon/Minimize-notification.svg" /></button>
+          <button className={css.pending} onClick={() => minimize()}><img src="/assets/images/Icon/Minimize-notification.svg" /></button>
           <button className={css.success} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
           <button className={css.error} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
         </div>
