@@ -192,7 +192,6 @@ export interface IStakeState {
   avatarAddress: string;
   prediction: VoteOptions;
   proposalId: string;
-  transactionState?: TransactionStates;
   stakeAmount: number;
   stakerAddress: string;
 }
@@ -201,7 +200,6 @@ export interface IVoteState {
   avatarAddress: string;
   proposalId: string;
   reputation?: number;
-  transactionState?: TransactionStates;
   voteOption: VoteOptions;
   voterAddress: string;
 }
@@ -376,23 +374,6 @@ const arcReducer = (state = initialState, action: any) => {
       const accountKey = `${voterAddress}-${avatarAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Pending:
-          // Add vote to account if not already there
-          if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
-            state = update(state, { accounts: { [accountKey]: { votes: { $push: [voteKey] } } } });
-          }
-          // Add vote to proposal if not already there
-          if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
-            state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
-          }
-
-          // Add vote
-          // TODO: this automatically through normalizing it?
-          return update(state, {
-            votes: {
-              [voteKey]: { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
-            }
-          });
         case AsyncActionSequence.Failure: {
           // Remove the vote from the account, proposal and entities
           return update(state, {
@@ -412,6 +393,23 @@ const arcReducer = (state = initialState, action: any) => {
         case AsyncActionSequence.Success: {
           const { proposal, voter } = payload;
 
+          // Add vote to account if not already there
+          if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
+            state = update(state, { accounts: { [accountKey]: { votes: { $push: [voteKey] } } } });
+          }
+          // Add vote to proposal if not already there
+          if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
+            state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
+          }
+
+          // Add vote
+          // TODO: this automatically through normalizing it?
+          state = update(state, {
+            votes: {
+              [voteKey]: { $set: meta }
+            }
+          });
+
           // Add empty account if there isnt one tied to the DAO already
           // XXX: this shouldn't happen but does right now because we are not watching for all changes to all DAOs, only to currently viewed one
           if (!state.accounts[accountKey]) {
@@ -423,7 +421,7 @@ const arcReducer = (state = initialState, action: any) => {
             proposals: { [proposalId]: { $merge: proposal } },
             // Confirm the vote, and add to the state if wasn't there before
             votes: {
-              [voteKey]: { $set: {...meta, transactionState: TransactionStates.Confirmed } }
+              [voteKey]: { $set: {...meta } }
             }
           });
         }
@@ -440,27 +438,6 @@ const arcReducer = (state = initialState, action: any) => {
       const accountKey = `${stakerAddress}-${avatarAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Pending:
-          // Add empty account if there isnt one tied to the DAO already
-          if (!state.accounts[accountKey]) {
-            state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, stakerAddress) }}});
-          }
-          // Add stake to account if not already there
-          if (state.accounts[accountKey].stakes.indexOf(stakeKey) === -1) {
-            state = update(state, { accounts: { [accountKey] : { stakes: { $push: [stakeKey] } } } });
-          }
-          // Add stake to proposal if not already there
-          if (state.proposals[proposalId].stakes.indexOf(stakeKey) === -1) {
-            state = update(state, { proposals: { [proposalId] : { stakes: { $push: [stakeKey] } } } });
-          }
-
-          // Add the new stake
-          // TODO: do automatically through normalizing?
-          return update(state, {
-            stakes: {
-              [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
-            }
-          });
         case AsyncActionSequence.Failure:
           // Remove the stake from the account, proposal and entities
           return update(state, {
@@ -477,6 +454,27 @@ const arcReducer = (state = initialState, action: any) => {
             stakes: { $unset: [stakeKey] },
           });
         case AsyncActionSequence.Success: {
+          // Add empty account if there isnt one tied to the DAO already
+          if (!state.accounts[accountKey]) {
+            state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, stakerAddress) }}});
+          }
+          // Add stake to account if not already there
+          if (state.accounts[accountKey].stakes.indexOf(stakeKey) === -1) {
+            state = update(state, { accounts: { [accountKey] : { stakes: { $push: [stakeKey] } } } });
+          }
+          // Add stake to proposal if not already there
+          if (state.proposals[proposalId].stakes.indexOf(stakeKey) === -1) {
+            state = update(state, { proposals: { [proposalId] : { stakes: { $push: [stakeKey] } } } });
+          }
+
+          // Add the new stake
+          // TODO: do automatically through normalizing?
+          state = update(state, {
+            stakes: {
+              [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
+            }
+          });
+
           return update(state, {
             daos: {
               [avatarAddress]: { $merge: payload.dao }
@@ -486,7 +484,7 @@ const arcReducer = (state = initialState, action: any) => {
             },
             // Confirm the stake and add to the state if wasn't there before
             stakes: {
-              [stakeKey]: { $set: {...meta, transactionState: TransactionStates.Confirmed } }
+              [stakeKey]: { $set: {...meta } }
             }
           });
         }
