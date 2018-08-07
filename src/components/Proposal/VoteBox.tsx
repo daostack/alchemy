@@ -82,7 +82,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
       },
     };
 
-    const votingDisabled = !currentAccountReputation || currentVote;
+    const votingDisabled = !currentAccountReputation || !!currentVote;
 
     let wrapperClass = classNames({
       [css.voteBox] : true,
