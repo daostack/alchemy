@@ -828,7 +828,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       entities = {...entities, ...normalizedProposal.entities };
 
       const daoUpdates = {
-        avatarAddress: avatarAddress,
+        avatarAddress,
         currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
       };
 
