@@ -317,7 +317,8 @@ const arcReducer = (state = initialState, action: any) => {
           const { result } = payload;
 
           // Add the new proposal to the DAO's state if not already there
-          if (state.daos[avatarAddress].proposals.indexOf(result) === -1) {
+          // XXX: first check if this DAO exists in our state. this is kind of a hack but right now we cant support "old" DAOs
+          if (state.daos[avatarAddress] && state.daos[avatarAddress].proposals.indexOf(result) === -1) {
             return update(state , {
               daos : { [avatarAddress] : {
                 proposals: { $push : [result] }
