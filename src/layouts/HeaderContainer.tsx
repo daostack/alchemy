@@ -150,14 +150,12 @@ class HeaderContainer extends React.Component<IProps, null> {
         clearInterval(this.accountInterval);
       }
 
-      this.accountInterval = setInterval(async function(accountAddress: string) {
+      this.accountInterval = setInterval(async () => {
         const newAccount = await Arc.Utils.getDefaultAccount();
-        if (newAccount !== accountAddress) {
-          // Clear this interval so next one can be setup with new account address
-          clearInterval(this.accountInterval);
-          this.props.setCurrentAccount(newAccount, props.daoAvatarAddress ? props.daoAvatarAddress : null);
+        if (newAccount !== props.ethAccountAddress) {
+          window.location.reload()
         }
-      }.bind(this, props.ethAccountAddress), 400);
+      }, 400);
     }
   }
 
