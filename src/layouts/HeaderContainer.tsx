@@ -86,8 +86,6 @@ const Fade = ({ children, ...props }: any) => (
 );
 
 class HeaderContainer extends React.Component<IProps, null> {
-
-  private accountInterval: any;
   private ethBalanceWatcher: FilterResult;
   private approvalWatcher: FilterResult;
 
@@ -138,25 +136,6 @@ class HeaderContainer extends React.Component<IProps, null> {
   public componentWillUnmount() {
     this.ethBalanceWatcher.stopWatching();
     this.approvalWatcher.stopWatching();
-  }
-
-  public async componentWillReceiveProps(props: IProps) {
-    // If we are connected to an account through MetaMask then watch for account changes in MetaMask
-    const web3 = await Arc.Utils.getWeb3();
-    if (props.ethAccountAddress && (web3.currentProvider as any).isMetaMask === true ) {
-      // Setup an interval to check for the account to change
-      // First clear old one
-      if (this.accountInterval) {
-        clearInterval(this.accountInterval);
-      }
-
-      this.accountInterval = setInterval(async () => {
-        const newAccount = await Arc.Utils.getDefaultAccount();
-        if (newAccount !== props.ethAccountAddress) {
-          window.location.reload()
-        }
-      }, 400);
-    }
   }
 
   public copyAddress() {
