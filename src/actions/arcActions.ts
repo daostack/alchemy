@@ -828,6 +828,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       entities = {...entities, ...normalizedProposal.entities };
 
       const daoUpdates = {
+        avatarAddress: avatarAddress,
         currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
       };
 
@@ -862,6 +863,7 @@ export function onProposalExpired(proposal: IProposalState) {
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const daoUpdates = {
+      avatarAddress: proposal.daoAvatarAddress,
       currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: proposal.daoAvatarAddress }))
     };
 

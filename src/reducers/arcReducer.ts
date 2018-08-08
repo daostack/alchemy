@@ -347,7 +347,7 @@ const arcReducer = (state = initialState, action: any) => {
 
       return update(state, {
         daos: {
-          [proposal.daoAvatarAddress]: { $merge: dao }
+          [dao.avatarAddress]: { $merge: dao }
         },
       });
     }
@@ -357,7 +357,7 @@ const arcReducer = (state = initialState, action: any) => {
 
       return update(state, {
         daos: {
-          [proposal.daoAvatarAddress]: { $merge: dao }
+          [dao.avatarAddress]: { $merge: dao }
         },
       });
     }
@@ -378,23 +378,27 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, voterAddress) }}});
           }
 
-          // Add vote to account if not already there
-          if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
-            state = update(state, { accounts: { [accountKey]: { votes: { $push: [voteKey] } } } });
-          }
-          // Add vote to proposal if not already there
-          if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
-            state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
-          }
-
-          return update(state, {
+          state = update(state, {
             accounts: { [accountKey]: { $merge: voter } },
             proposals: { [proposalId]: { $merge: proposal } },
-            // Confirm the vote, and add to the state if wasn't there before
+            // Add vote to the state
             votes: {
               [voteKey]: { $set: meta }
             }
           });
+
+          // Add vote to account if not already there.
+          // XXX: need to do this after merging in voter account above
+          if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
+            state = update(state, { accounts: { [accountKey]: { votes: { $push: [voteKey] } } } });
+          }
+          // Add vote to proposal if not already there
+          // XXX: need to do this after merging in proposal above
+          if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
+            state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
+          }
+
+          return state;
         }
         default: {
           return state;
@@ -410,10 +414,25 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Success: {
+
           // Add empty account if there isnt one tied to the DAO already
           if (!state.accounts[accountKey]) {
             state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, stakerAddress) }}});
           }
+
+          state = update(state, {
+            daos: {
+              [avatarAddress]: { $merge: payload.dao }
+            },
+            proposals: {
+              [proposalId]: { $merge : payload.proposal }
+            },
+            // Add stake to the state
+            stakes: {
+              [stakeKey]: { $set: meta }
+            }
+          });
+
           // Add stake to account if not already there
           if (state.accounts[accountKey].stakes.indexOf(stakeKey) === -1) {
             state = update(state, { accounts: { [accountKey] : { stakes: { $push: [stakeKey] } } } });
@@ -423,18 +442,7 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, { proposals: { [proposalId] : { stakes: { $push: [stakeKey] } } } });
           }
 
-          return update(state, {
-            daos: {
-              [avatarAddress]: { $merge: payload.dao }
-            },
-            proposals: {
-              [proposalId]: { $merge : payload.proposal }
-            },
-            // Confirm the stake and add to the state if wasn't there before
-            stakes: {
-              [stakeKey]: { $set: meta }
-            }
-          });
+          return state;
         }
         default: {
           return state;
