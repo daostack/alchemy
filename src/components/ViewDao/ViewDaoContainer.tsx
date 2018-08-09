@@ -87,7 +87,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  readyToShow: boolean; // Right now used to wait 10 seconds to load changes since last cache before showing the DAO
+  readyToShow: boolean;
   showTourIntro: boolean;
   showTourOutro: boolean;
   tourCount: number;
@@ -103,7 +103,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      readyToShow: false,
+      // On production this is used to wait 10 seconds to load changes since last cache before showing the DAO
+      readyToShow: process.env.NODE_ENV == 'development',
       showTourIntro: false,
       showTourOutro: false,
       tourCount: 0
