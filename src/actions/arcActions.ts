@@ -323,6 +323,8 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     }
   }
 
+  const proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
+
   const proposal: IProposalState = {...contributionProposal, ...{
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
     boostedTime,
@@ -338,7 +340,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     reputationChange: Util.fromWei(contributionProposal.reputationChange),
     periodLength: Number(contributionProposal.periodLength),
     preBoostedVotePeriodLimit,
-    proposer: proposalDetails.proposer,
+    proposer,
     stakes: [],
     stakesNo: Util.fromWei(noStakes),
     stakesYes: Util.fromWei(yesStakes),
