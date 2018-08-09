@@ -802,7 +802,7 @@ export function executeProposal(avatarAddress: string, proposalId: string) {
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     if (executionState != ExecutionState.None) {
-      const proposal = denormalize(getState().arc.proposals[proposalId], schemas.proposalSchema, getState().arc);
+      let proposal = denormalize(getState().arc.proposals[proposalId], schemas.proposalSchema, getState().arc);
       if (!proposal) {
         return;
       }
@@ -813,19 +813,22 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       const proposalDetails = await contributionRewardInstance.getProposal(avatarAddress, proposalId);
-      proposal.executionTime = Number(proposalDetails.executionTime);
-      proposal.state = ProposalStates.Executed;
-      proposal.reputationWhenExecuted = reputationWhenExecuted;
-      proposal.winningVote = decision;
-
       const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
-      proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+
+      const proposalUpdates: any = {
+        executionTime: Number(proposalDetails.executionTime),
+        proposalId,
+        proposer: gpProposalDetails.proposer, // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+        reputationWhenExecuted,
+        state: ProposalStates.Executed,
+        winningVote: decision,
+      };
+
+      // Need to update proposal object before getting redemptions
+      proposal = {...proposal, ...proposalUpdates};
 
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
-      proposal.redemptions = redemptions;
-
-      const normalizedProposal = normalize(proposal, schemas.proposalSchema);
-      entities = {...entities, ...normalizedProposal.entities };
+      proposalUpdates.redemptions = redemptions;
 
       const daoUpdates = {
         avatarAddress,
@@ -834,7 +837,11 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
 
       return dispatch({
         type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
-        payload: { entities, dao: daoUpdates }
+        payload: {
+          entities,
+          dao: daoUpdates,
+          proposal: proposalUpdates // only update properties that changed from this action so as not to overwrite other actions
+        }
       })
     }
   }
@@ -843,19 +850,21 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
 export function onProposalExpired(proposal: IProposalState) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
 
+    const proposalUpdates: any = {
+      proposalId: proposal.proposalId
+    };
+
     const expiredState = checkProposalExpired(proposal);
     if (expiredState != proposal.state) {
-      proposal.state = expiredState;
+      proposalUpdates.state = proposal.state = expiredState;
     } else {
       return;
     }
 
-    // proposal.reputationWhenExecuted = TODO: get from DAO? but this will get out of date on refresh...
+    // proposalUpdates.reputationWhenExecuted = TODO: get from DAO? but this will get out of date on refresh...
 
     let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
-    proposal.redemptions = redemptions;
-    const normalizedProposal = normalize(proposal, schemas.proposalSchema);
-    entities = {...entities, ...normalizedProposal.entities };
+    proposalUpdates.redemptions = redemptions;
 
     const daoInstance = await Arc.DAO.at(proposal.daoAvatarAddress);
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -869,7 +878,11 @@ export function onProposalExpired(proposal: IProposalState) {
 
     return dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXPIRED,
-      payload: { entities, dao: daoUpdates }
+      payload: {
+        entities,
+        dao: daoUpdates,
+        proposal: proposalUpdates // Only update properties changed by this action
+      }
     })
   }
 }
@@ -950,28 +963,26 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const proposalDetails = await votingMachineInstance.getProposal(proposalId);
-    proposal.boostedTime = Number(proposalDetails.boostedPhaseTime); // update the boosted time in case we are in quiet ending period
-    proposal.boostedVotePeriodLimit = Number(proposalDetails.currentBoostedVotePeriodLimit); // update boostedVotePeriodLimit in case we are in quiet ending period
-    proposal.votesYes = Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes }));
-    proposal.votesNo = Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No }));
-    proposal.winningVote = await votingMachineInstance.getWinningVote({ proposalId });
-    proposal.state = Number(await votingMachineInstance.getState({ proposalId }));
-    proposal.state = checkProposalExpired(proposal);
 
-    let entities = {};
-    const voterRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, voterAddress);
-    if (voterRedemptions) {
-      const normalizedRedemptions = normalize(voterRedemptions, schemas.redemptionSchema);
-      entities = normalizedRedemptions.entities;
-      if (normalizedRedemptions.result && proposal.redemptions.indexOf(normalizedRedemptions.result) === -1) {
-        proposal.redemptions.push(normalizedRedemptions.result);
-      }
-    }
+    // Update these before checking for expiration
+    proposal.boostedTime = Number(proposalDetails.boostedPhaseTime);
+    proposal.boostedVotePeriodLimit = Number(proposalDetails.currentBoostedVotePeriodLimit);
+    proposal.state = Number(await votingMachineInstance.getState({ proposalId }));
+
+    const proposalUpdates: any = {
+      // update the boosted time in case we are in quiet ending period
+      boostedTime: proposal.boostedTime,
+      // update boostedVotePeriodLimit in case we are in quiet ending period
+      boostedVotePeriodLimit: proposal.boostedVotePeriodLimit,
+      state: checkProposalExpired(proposal),
+      votesYes: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes })),
+      votesNo: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No })),
+      winningVote: await votingMachineInstance.getWinningVote({ proposalId }),
+    };
 
     const payload = {
-      entities,
       // Update the proposal
-      proposal,
+      proposal: proposalUpdates,
       // Update voter tokens and reputation
       voter: {
         tokens: Util.fromWei(await daoInstance.token.getBalanceOf(voterAddress)),
@@ -1065,11 +1076,16 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     }
 
     const proposalDetails = await votingMachineInstance.getProposal(proposalId);
+
     proposal.boostedTime = Number(proposalDetails.boostedPhaseTime);
-    proposal.stakesYes = Util.fromWei(await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes }));
-    proposal.stakesNo = Util.fromWei(await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No }));
     proposal.state = Number(await votingMachineInstance.getState({ proposalId }));
-    proposal.state = checkProposalExpired(proposal);
+
+    const proposalUpdates: any = {
+      boostedTime: proposal.boostedTime,
+      stakesYes: Util.fromWei(await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes })),
+      stakesNo: Util.fromWei(await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No })),
+      state: checkProposalExpired(proposal)
+    };
 
     const meta = {
       avatarAddress,
@@ -1087,7 +1103,7 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
         dao: {
           currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
         },
-        proposal
+        proposal: proposalUpdates
       }
     } as StakeAction);
   }
