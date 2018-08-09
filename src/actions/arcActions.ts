@@ -820,8 +820,8 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       proposal.reputationWhenExecuted = reputationWhenExecuted;
       proposal.winningVote = decision;
 
-      const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
-      proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+      // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+      proposal.proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
 
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
