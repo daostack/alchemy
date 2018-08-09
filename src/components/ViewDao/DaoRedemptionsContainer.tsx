@@ -67,24 +67,35 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} />);
     });
 
-    let redeemAllTip: JSX.Element | string = "", ethReward = 0, nativeReward = 0, reputationReward = 0;
+    let redeemAllTip: JSX.Element | string = "", ethReward = 0, genReward = 0, reputationReward = 0;
     if (redemptions.length > 0) {
       redemptions.forEach((redemption) => {
         ethReward += redemption.beneficiaryEth;
-        nativeReward += redemption.voterTokens + redemption.stakerTokens + redemption.stakerBountyTokens + redemption.beneficiaryNativeToken;
+        genReward += redemption.voterTokens + redemption.stakerTokens + redemption.stakerBountyTokens;
         reputationReward += redemption.voterReputation + redemption.stakerReputation + redemption.beneficiaryReputation + redemption.proposerReputation;
       });
     }
+
+    let totalRewards = [];
+    if (ethReward) {
+      totalRewards.push(ethReward.toFixed(2).toLocaleString() + " ETH");
+    }
+    if (genReward) {
+      totalRewards.push(genReward.toFixed(2).toLocaleString() + " GEN");
+    }
+    if (reputationReward) {
+      totalRewards.push(
+        <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={reputationReward}/>
+      );
+    }
+    const totalRewardsString = <strong>{totalRewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>, null)}</strong>;
 
     return(
       <div>
         {redemptions.length > 0 ?
             <div className={css.clearfix + " " + css.redeemAllContainer}>
               <div className={css.pendingRewards}>
-                Pending Rewards:&nbsp;
-                {ethReward > 0 ? <strong>{ethReward} ETH </strong> : ""}
-                {nativeReward > 0 ? <strong>{nativeReward} GEN </strong> : ""}
-                {reputationReward > 0 ? <strong><ReputationView reputation={reputationReward} totalReputation={dao.reputationCount} daoName={dao.name}/></strong> : ""}
+                Pending Rewards:&nbsp;{totalRewardsString}
               </div>
             </div>
           : ""
