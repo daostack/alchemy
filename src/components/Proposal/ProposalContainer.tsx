@@ -468,7 +468,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 }
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentRedemptions || executable ?
+                  { currentRedemptions || beneficiaryRedemptions || executable ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                         {redeemButton}
                       </Tooltip>
