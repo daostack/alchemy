@@ -189,26 +189,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.disabled]: !redeemable && !executable
       });
 
-      const redeemButton = (
-        <button
-          style={{whiteSpace: 'nowrap'}}
-          disabled={!redeemable && !executable}
-          className={redeemRewards}
-          onClick={this.handleClickRedeem.bind(this)}
-        >
-          {
-            isRedeemPending ?
-              'Redeeming in progress' :
-            beneficiaryHasRewards && !accountHasRewards ?
-              'Redeem for beneficiary' :
-            accountHasRewards || currentRedemptions ?
-              'Redeem' :
-              'Execute'
-          }
-          <img src="/assets/images/Icon/Loading-black.svg"/>
-        </button>
-      )
-
       redemptionsTip =
         <div>
           {beneficiaryRedemptions && (beneficiaryRedemptions.beneficiaryEth || beneficiaryRedemptions.beneficiaryReputation) ?
@@ -270,6 +250,28 @@ class ProposalContainer extends React.Component<IProps, IState> {
           }
           {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
         </div>;
+
+      const redeemButton = (redeemable || executable ?
+        <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+          <button
+            style={{whiteSpace: 'nowrap'}}
+            disabled={false}
+            className={redeemRewards}
+            onClick={this.handleClickRedeem.bind(this)}
+          >
+            {
+              isRedeemPending ?
+                'Redeeming in progress' :
+              beneficiaryHasRewards && !accountHasRewards ?
+                'Redeem for beneficiary' :
+              accountHasRewards || currentRedemptions ?
+                'Redeem' :
+                'Execute'
+            }
+            <img src="/assets/images/Icon/Loading-black.svg"/>
+          </button>
+        </Tooltip>
+      : "");
 
       let rewards = [];
       if (proposal.nativeTokenReward) {
@@ -468,12 +470,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 }
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentRedemptions || beneficiaryRedemptions || executable ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                        {redeemButton}
-                      </Tooltip>
-                    : ''
-                  }
+                  {redeemButton}
+
                   <a href={proposal.description} target="_blank" className={css.viewProposal}>
                     <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
                   </a>
