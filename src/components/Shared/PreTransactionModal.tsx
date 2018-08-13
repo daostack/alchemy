@@ -123,7 +123,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
           if (proposal.ethReward) {
             rewards.push(proposal.ethReward + " ETH");
           }
-          const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} &amp; {v}</React.Fragment>)}</strong>;
+          const rewardsString = <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>, null)}</strong>;
           passIncentive = <span>GAIN REPUTATION &amp; {rewardsString}</span>;
         } else {
           passIncentive = <span>GAIN REPUTATION</span>;
