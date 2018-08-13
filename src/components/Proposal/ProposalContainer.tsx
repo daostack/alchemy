@@ -260,7 +260,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
           >
             {
               isRedeemPending ?
-                'Redeeming in progress' :
+                'Redeem in progress' :
               beneficiaryHasRewards && !accountHasRewards ?
                 'Redeem for beneficiary' :
               currentRedemptions ?
