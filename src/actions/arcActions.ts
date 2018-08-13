@@ -452,7 +452,6 @@ async function getVoterInfo(avatarAddress: string, votingMachineInstance: Arc.Ge
       avatarAddress,
       proposalId,
       reputation: Util.fromWei(voterInfo.reputation),
-      transactionState: TransactionStates.Confirmed,
       voteOption: Number(voterInfo.vote),
       voterAddress
     }
@@ -470,8 +469,7 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
       proposalId,
       stakeAmount: Util.fromWei(stakerInfo.stake),
       prediction: Number(stakerInfo.vote),
-      stakerAddress,
-      transactionState: TransactionStates.Confirmed,
+      stakerAddress
     }
   } else {
     return false;
@@ -826,13 +824,17 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
 
+      const normalizedProposal = normalize(proposal, schemas.proposalSchema);
+      entities = {...entities, ...normalizedProposal.entities };
+
       const daoUpdates = {
+        avatarAddress,
         currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
       };
 
       return dispatch({
         type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
-        payload: { entities, proposal, dao: daoUpdates }
+        payload: { entities, dao: daoUpdates }
       })
     }
   }
@@ -852,6 +854,8 @@ export function onProposalExpired(proposal: IProposalState) {
 
     let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
     proposal.redemptions = redemptions;
+    const normalizedProposal = normalize(proposal, schemas.proposalSchema);
+    entities = {...entities, ...normalizedProposal.entities };
 
     const daoInstance = await Arc.DAO.at(proposal.daoAvatarAddress);
     const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -859,12 +863,13 @@ export function onProposalExpired(proposal: IProposalState) {
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
     const daoUpdates = {
+      avatarAddress: proposal.daoAvatarAddress,
       currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: proposal.daoAvatarAddress }))
     };
 
     return dispatch({
       type: arcConstants.ARC_ON_PROPOSAL_EXPIRED,
-      payload: { entities, proposal, dao: daoUpdates }
+      payload: { entities, dao: daoUpdates }
     })
   }
 }

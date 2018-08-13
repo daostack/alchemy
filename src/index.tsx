@@ -12,7 +12,7 @@ async function renderApp() {
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
 
-    await Arc.InitializeArcJs();
+    await Arc.InitializeArcJs({ watchForAccountChanges: true });
 
     Arc.LoggingService.logLevel = Arc.LogLevel.all;
 
@@ -27,6 +27,10 @@ async function renderApp() {
     Arc.ContractWrappers.UpgradeScheme.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.VestingScheme.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.VoteInOrganizationScheme.contract.constructor.synchronization_timeout = 0;
+
+    Arc.AccountService.subscribeToAccountChanges(() => {
+      window.location.reload()
+    })
   } catch (e) {
     console.error(e);
   }

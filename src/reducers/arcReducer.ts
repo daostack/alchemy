@@ -192,7 +192,6 @@ export interface IStakeState {
   avatarAddress: string;
   prediction: VoteOptions;
   proposalId: string;
-  transactionState?: TransactionStates;
   stakeAmount: number;
   stakerAddress: string;
 }
@@ -201,7 +200,6 @@ export interface IVoteState {
   avatarAddress: string;
   proposalId: string;
   reputation?: number;
-  transactionState?: TransactionStates;
   voteOption: VoteOptions;
   voterAddress: string;
 }
@@ -319,7 +317,8 @@ const arcReducer = (state = initialState, action: any) => {
           const { result } = payload;
 
           // Add the new proposal to the DAO's state if not already there
-          if (state.daos[avatarAddress].proposals.indexOf(result) === -1) {
+          // XXX: first check if this DAO exists in our state. this is kind of a hack but right now we cant support "old" DAOs
+          if (state.daos[avatarAddress] && state.daos[avatarAddress].proposals.indexOf(result) === -1) {
             return update(state , {
               daos : { [avatarAddress] : {
                 proposals: { $push : [result] }
@@ -348,11 +347,8 @@ const arcReducer = (state = initialState, action: any) => {
 
       return update(state, {
         daos: {
-          [proposal.daoAvatarAddress]: { $merge: dao }
+          [dao.avatarAddress]: { $merge: dao }
         },
-        proposals: {
-          [proposal.proposalId]: { $merge: proposal }
-        }
       });
     }
 
@@ -361,11 +357,8 @@ const arcReducer = (state = initialState, action: any) => {
 
       return update(state, {
         daos: {
-          [proposal.daoAvatarAddress]: { $merge: dao }
+          [dao.avatarAddress]: { $merge: dao }
         },
-        proposals: {
-          [payload.proposal.proposalId]: { $merge: payload.proposal }
-        }
       });
     }
 
@@ -376,39 +369,6 @@ const arcReducer = (state = initialState, action: any) => {
       const accountKey = `${voterAddress}-${avatarAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Pending:
-          // Add vote to account if not already there
-          if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
-            state = update(state, { accounts: { [accountKey]: { votes: { $push: [voteKey] } } } });
-          }
-          // Add vote to proposal if not already there
-          if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
-            state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
-          }
-
-          // Add vote
-          // TODO: this automatically through normalizing it?
-          return update(state, {
-            votes: {
-              [voteKey]: { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
-            }
-          });
-        case AsyncActionSequence.Failure: {
-          // Remove the vote from the account, proposal and entities
-          return update(state, {
-            accounts: {
-              [accountKey]: {
-                votes: (arr: string[]) => arr.filter((item) => item != voteKey)
-              }
-            },
-            proposals: {
-              [proposalId]: {
-                votes: (arr: string[]) => arr.filter((item) => item != voteKey)
-              }
-            },
-            votes: { $unset: [voteKey] },
-          });
-        }
         case AsyncActionSequence.Success: {
           const { proposal, voter } = payload;
 
@@ -418,14 +378,27 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, voterAddress) }}});
           }
 
-          return update(state, {
+          state = update(state, {
             accounts: { [accountKey]: { $merge: voter } },
             proposals: { [proposalId]: { $merge: proposal } },
-            // Confirm the vote, and add to the state if wasn't there before
+            // Add vote to the state
             votes: {
-              [voteKey]: { $set: {...meta, transactionState: TransactionStates.Confirmed } }
+              [voteKey]: { $set: meta }
             }
           });
+
+          // Add vote to account if not already there.
+          // XXX: need to do this after merging in voter account above
+          if (state.accounts[accountKey].votes.indexOf(voteKey) === -1) {
+            state = update(state, { accounts: { [accountKey]: { votes: { $push: [voteKey] } } } });
+          }
+          // Add vote to proposal if not already there
+          // XXX: need to do this after merging in proposal above
+          if (state.proposals[proposalId].votes.indexOf(voteKey) === -1) {
+            state = update(state, { proposals: { [proposalId]: { votes: { $push: [voteKey] } } } });
+          }
+
+          return state;
         }
         default: {
           return state;
@@ -440,11 +413,26 @@ const arcReducer = (state = initialState, action: any) => {
       const accountKey = `${stakerAddress}-${avatarAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Pending:
+        case AsyncActionSequence.Success: {
+
           // Add empty account if there isnt one tied to the DAO already
           if (!state.accounts[accountKey]) {
             state = update(state, { accounts: { [accountKey]: { $set: newAccount(avatarAddress, stakerAddress) }}});
           }
+
+          state = update(state, {
+            daos: {
+              [avatarAddress]: { $merge: payload.dao }
+            },
+            proposals: {
+              [proposalId]: { $merge : payload.proposal }
+            },
+            // Add stake to the state
+            stakes: {
+              [stakeKey]: { $set: meta }
+            }
+          });
+
           // Add stake to account if not already there
           if (state.accounts[accountKey].stakes.indexOf(stakeKey) === -1) {
             state = update(state, { accounts: { [accountKey] : { stakes: { $push: [stakeKey] } } } });
@@ -454,41 +442,7 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, { proposals: { [proposalId] : { stakes: { $push: [stakeKey] } } } });
           }
 
-          // Add the new stake
-          // TODO: do automatically through normalizing?
-          return update(state, {
-            stakes: {
-              [stakeKey] : { $set: {...meta, transactionState: TransactionStates.Unconfirmed } }
-            }
-          });
-        case AsyncActionSequence.Failure:
-          // Remove the stake from the account, proposal and entities
-          return update(state, {
-            accounts: {
-              [accountKey]: {
-                stakes: (arr: string[]) => arr.filter((item) => item != stakeKey)
-              }
-            },
-            proposals: {
-              [proposalId]: {
-                stakes: (arr: string[]) => arr.filter((item) => item != stakeKey)
-              }
-            },
-            stakes: { $unset: [stakeKey] },
-          });
-        case AsyncActionSequence.Success: {
-          return update(state, {
-            daos: {
-              [avatarAddress]: { $merge: payload.dao }
-            },
-            proposals: {
-              [proposalId]: { $merge : payload.proposal }
-            },
-            // Confirm the stake and add to the state if wasn't there before
-            stakes: {
-              [stakeKey]: { $set: {...meta, transactionState: TransactionStates.Confirmed } }
-            }
-          });
+          return state;
         }
         default: {
           return state;

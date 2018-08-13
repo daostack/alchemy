@@ -172,19 +172,15 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const passedByDecision = totalReputation ? (proposal.votesYes / totalReputation) > 0.5 : false;
       const failedByDecision = totalReputation ? (proposal.votesNo / totalReputation) > 0.5 : false;
 
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0,
-          currentAccountStakeState = TransactionStates.Confirmed, currentAccountVoteState = TransactionStates.Confirmed,
-          redemptionsTip: JSX.Element = null;
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0, redemptionsTip: JSX.Element = null;
 
       if (currentVote) {
-        currentAccountVoteState = currentVote.transactionState;
         currentAccountVote = currentVote.voteOption;
       }
 
       if (currentStake) {
         currentAccountPrediction = currentStake.prediction;
         currentAccountStakeAmount = currentStake.stakeAmount;
-        currentAccountStakeState = currentStake.transactionState;
       }
 
       const redeemRewards = classNames({
@@ -309,7 +305,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
               currentAccountReputation={currentAccount.reputation}
               dao={dao}
               proposal={proposal}
-              transactionState={currentAccountVoteState}
               voteOnProposal={voteOnProposal}
             />
             : proposalPassed(proposal) ?
@@ -428,7 +423,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   approveStakingGens={approveStakingGens}
-                  transactionState={currentAccountStakeState}
                 />
               </div>
             : !proposalEnded(proposal) && proposal.state == ProposalStates.PreBoosted ?
@@ -458,7 +452,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   proposal={proposal}
                   stakeProposal={stakeProposal}
                   approveStakingGens={approveStakingGens}
-                  transactionState={currentAccountStakeState}
                 />
               </div>
             : proposalEnded(proposal) ?
@@ -475,7 +468,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 }
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentRedemptions || executable ?
+                  { currentRedemptions || beneficiaryRedemptions || executable ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                         {redeemButton}
                       </Tooltip>

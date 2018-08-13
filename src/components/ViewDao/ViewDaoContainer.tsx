@@ -87,6 +87,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
+  readyToShow: boolean;
   showTourIntro: boolean;
   showTourOutro: boolean;
   tourCount: number;
@@ -102,6 +103,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
+      // On production this is used to wait 10 seconds to load changes since last cache before showing the DAO
+      readyToShow: process.env.NODE_ENV == 'development',
       showTourIntro: false,
       showTourOutro: false,
       tourCount: 0
@@ -187,25 +190,26 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
 
     this.blockInterval = setInterval(async () => {
-      updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
-
       const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
-      onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
+      await onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
-      onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
+      await onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
 
       // Check all proposals to see if any expired
-      this.props.openProposals.forEach((proposal: IProposalState) => {
+      for (const proposal of this.props.openProposals) {
         const newState = checkProposalExpired(proposal);
         if (newState != proposal.state) {
-          Promise.resolve(onProposalExpired(proposal)).then(() => {
+          await Promise.resolve(onProposalExpired(proposal)).then(() => {
             const message = proposalPassed(proposal) ?
               `Proposal '${proposal.title}' timed out with enough votes to pass!` :
               `Proposal '${proposal.title}' timed out and didn't have enough votes to pass.`;
             showNotification(NotificationStatus.Success, message);
           });
         }
-      });
+      }
+
+      updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
+      this.setState({ readyToShow: true });
     }, 10000);
   }
 
@@ -240,7 +244,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public render() {
     const { currentAccountAddress, dao, numRedemptions, tourVisible } = this.props;
 
-    if (!dao) {
+    if (!dao || !this.state.readyToShow) {
       return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
     }
 

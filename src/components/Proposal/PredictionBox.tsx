@@ -30,7 +30,6 @@ interface IProps {
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   approveStakingGens: typeof web3Actions.approveStakingGens;
-  transactionState: TransactionStates;
   isPredictingFail: boolean;
   isPredictingPass: boolean;
 }
@@ -90,12 +89,20 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       proposal,
-      transactionState,
       isPredictingFail,
       isPredictingPass,
       stakeProposal
     } = this.props;
-    const { pendingPrediction, showApproveModal, showPreStakeModal, showStakeModal, stakeAmount } = this.state;
+
+    const {
+      pendingPrediction,
+      showApproveModal,
+      showPreStakeModal,
+      showStakeModal,
+      stakeAmount
+    } = this.state;
+
+    const isPredicting = isPredictingFail || isPredictingPass;
 
     if (showApproveModal) {
       return (
@@ -139,7 +146,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     let wrapperClass = classNames({
       [css.predictions] : true,
-      [css.unconfirmedPrediction] : transactionState == TransactionStates.Unconfirmed,
+      [css.unconfirmedPrediction] : isPredicting,
     });
     let predictionModalClass = classNames({
       [css.newPrediction] : true,
@@ -166,13 +173,34 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       [css.disabled]: disableStakeFail
     });
 
-    const passTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.No ? "Can't change prediction" : "";
-    const failTip = !currentAccountGens ? "Insufficient GENs" : currentPrediction === VoteOptions.Yes ? "Can't change prediction" : "";
+    const tip = (prediction: VoteOptions) =>
+      !currentAccountGens ?
+        'Insufficient GENs' :
+      currentPrediction === prediction ?
+        "Can't change prediction" :
+      isPredicting ?
+        'Warning: Staking on this proposal is already in progress' :
+        ''
+    ;
 
     const buyGensClass = classNames({
       [css.genError]: true,
       [css.hidden]: stakeAmount <= currentAccountGens
     });
+
+    const passButton = (
+      <button className={isPredictingPass ? css.pendingPrediction : undefined} onClick={disableStakePass ? "" : this.showModal.bind(this, 1)}>
+        PASS <strong>+</strong>
+        <img src="/assets/images/Icon/Loading-black.svg"/>
+      </button>
+    );
+
+    const failButton = (
+      <button className={isPredictingFail ? css.pendingPrediction : undefined} onClick={disableStakeFail ? "" : this.showModal.bind(this, 2)}>
+        FAIL <strong>+</strong>
+        <img src="/assets/images/Icon/Loading-black.svg"/>
+      </button>
+    );
 
     return (
       <div className={wrapperClass}>
@@ -186,9 +214,6 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             proposal={proposal}
           /> : ""
         }
-        <div className={css.loading}>
-          <img src="/assets/images/Icon/Loading-black.svg"/>
-        </div>
         <div className={predictionModalClass}>
 
         <div className={buyGensClass}>
@@ -252,14 +277,15 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             <tbody>
               <tr className={stakeUpClass}>
                 <td className={passPrediction}>
-                  { proposal.state == ProposalStates.PreBoosted
-                    ? <Tooltip placement="left" trigger={disableStakePass ? ["hover"] : []} overlay={passTip}>
-                        <button className={isPredictingPass ? css.pendingPrediction : undefined} onClick={disableStakePass ? "" : this.showModal.bind(this, 1)}>
-                          PASS <strong>+</strong>
-                          <img src="/assets/images/Icon/Loading-black.svg"/>
-                        </button>
-                      </Tooltip>
-                    : "PASS"
+                  { proposal.state == ProposalStates.PreBoosted ?
+                    (
+                      tip(VoteOptions.No) != '' ?
+                        <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                          {passButton}
+                        </Tooltip> :
+                        passButton
+                    ) :
+                    "PASS"
                   }
                 </td>
                 <td>{proposal.stakesYes} GEN</td>
@@ -267,12 +293,13 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <tr className={stakeDownClass} >
                 <td className={failPrediction}>
                   { proposal.state == ProposalStates.PreBoosted
-                    ? <Tooltip placement="left" trigger={disableStakeFail ? ["hover"] : []} overlay={failTip}>
-                        <button className={isPredictingFail ? css.pendingPrediction : undefined} onClick={disableStakeFail ? "" : this.showModal.bind(this, 2)}>
-                          FAIL <strong>+</strong>
-                          <img src="/assets/images/Icon/Loading-black.svg"/>
-                        </button>
-                      </Tooltip>
+                    ? (
+                        tip(VoteOptions.Yes) != '' ?
+                          <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                            {failButton}
+                          </Tooltip> :
+                          failButton
+                      )
                     : "FAIL"
                   }
                 </td>
