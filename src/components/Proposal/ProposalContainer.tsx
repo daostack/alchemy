@@ -159,8 +159,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: redeemable,
-        [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
+        [css.redeemable]: redeemable
       });
 
       const submittedTime = moment.unix(proposal.submittedTime);
@@ -191,7 +190,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       redemptionsTip =
         <div>
-          {beneficiaryRedemptions && (beneficiaryRedemptions.beneficiaryEth || beneficiaryRedemptions.beneficiaryReputation) ?
+          {beneficiaryHasRewards ?
             <div>
               <strong>
                 {currentAccount.address === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccount.address === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
@@ -244,14 +243,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
             </React.Fragment>
             : ''
           }
-          {!accountHasRewards && !beneficiaryHasRewards && executable ?
+          {!currentRedemptions && !beneficiaryHasRewards && executable ?
             <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
             : ''
           }
           {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
         </div>;
 
-      const redeemButton = (redeemable || executable ?
+      const redeemButton = (currentRedemptions || beneficiaryHasRewards || executable ?
         <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
           <button
             style={{whiteSpace: 'nowrap'}}
@@ -264,7 +263,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 'Redeeming in progress' :
               beneficiaryHasRewards && !accountHasRewards ?
                 'Redeem for beneficiary' :
-              accountHasRewards || currentRedemptions ?
+              currentRedemptions ?
                 'Redeem' :
                 'Execute'
             }

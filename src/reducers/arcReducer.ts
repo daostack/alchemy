@@ -456,17 +456,6 @@ const arcReducer = (state = initialState, action: any) => {
       const redemptionsKey = `${proposalId}-${accountAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Pending:
-          return update(state, {
-            redemptions: {
-              [redemptionsKey]: {
-                $apply: (redemptions: IRedemptionState) => ({
-                  ...redemptions,
-                  transactionState: TransactionStates.Unconfirmed
-                })
-              }
-            }
-          });
         case AsyncActionSequence.Success: {
           const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
