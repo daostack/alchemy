@@ -395,66 +395,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
               />
             </div>
           </div>
-          { !proposalEnded(proposal) && (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) ?
-              <div>
-                <div className={css.proposalDetails}>
-                  <div className={css.createdBy}>
-                    CREATED BY
-                    <AccountPopupContainer
-                      accountAddress={proposal.proposer}
-                      daoAvatarAddress={proposal.daoAvatarAddress}
-                    />
-
-                    ON {submittedTime.format("MMM DD, YYYY")}
-                  </div>
-
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
-                  </a>
-                </div>
-                <PredictionBox
-                  isPredictingFail={isPredictingFail}
-                  isPredictingPass={isPredictingPass}
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStakeAmount}
-                  currentAccountGens={currentAccountGens}
-                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  dao={dao}
-                  proposal={proposal}
-                  stakeProposal={stakeProposal}
-                  approveStakingGens={approveStakingGens}
+          <div>
+            <div className={css.proposalDetails}>
+              <div className={css.createdBy}>
+                CREATED BY
+                <AccountPopupContainer
+                  accountAddress={proposal.proposer}
+                  daoAvatarAddress={proposal.daoAvatarAddress}
                 />
-              </div>
-            : !proposalEnded(proposal) && proposal.state == ProposalStates.PreBoosted ?
-              <div>
-                <div className={css.proposalDetails}>
-                  <div className={css.createdBy}>
-                    CREATED BY
-                    <AccountPopupContainer
-                      accountAddress={proposal.proposer}
-                      daoAvatarAddress={proposal.daoAvatarAddress}
-                    />
-                    ON {submittedTime.format("MMM DD, YYYY")}
-                  </div>
 
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
-                  </a>
-                </div>
-                <PredictionBox
-                  isPredictingFail={isPredictingFail}
-                  isPredictingPass={isPredictingPass}
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStakeAmount}
-                  currentAccountGens={currentAccountGens}
-                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  dao={dao}
-                  proposal={proposal}
-                  stakeProposal={stakeProposal}
-                  approveStakingGens={approveStakingGens}
-                />
+                ON {submittedTime.format("MMM DD, YYYY")}
               </div>
-            : proposalEnded(proposal) ?
+
+              <a href={proposal.description} target="_blank" className={css.viewProposal}>
+                <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
+              </a>
+            </div>
+            { proposalEnded(proposal) ?
               <div>
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
@@ -474,14 +431,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
                       </Tooltip>
                     : ''
                   }
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
-                  </a>
                 </div>
               </div>
-            : ""
-
-          }
+            :
+              <PredictionBox
+                isPredictingFail={isPredictingFail}
+                isPredictingPass={isPredictingPass}
+                currentPrediction={currentAccountPrediction}
+                currentStake={currentAccountStakeAmount}
+                currentAccountGens={currentAccountGens}
+                currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+                dao={dao}
+                proposal={proposal}
+                stakeProposal={stakeProposal}
+                approveStakingGens={approveStakingGens}
+              />
+            }
+          </div>
         </div>
       );
     } else {
