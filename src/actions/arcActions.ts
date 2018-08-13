@@ -420,11 +420,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
     if (proposalEnded(proposal)) {
       // Find all current rewards waiting to be redeemed
-      let associatedAccounts = [proposal.beneficiaryAddress];
-      if (proposal.proposer != "0x0000000000000000000000000000000000000000") {
-        // XXX: Need to do this check because GenesisProtocol sets proposer to 0 after calling redeem, and then returns proposer reputation even after redeeming...
-        associatedAccounts.push(proposal.proposer);
-      }
+      let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
       proposal.votes.forEach((vote: IVoteState) => {
         associatedAccounts.push(vote.voterAddress);
       });
@@ -540,11 +536,7 @@ async function getProposalRedemptions(proposal: IProposalState, state: IRootStat
 
   // Gather redemptions for all people who interacted with the proposal
   // Doing this here instead of on proposal executed because we need to show redemptions for expired proposals too (TODO: does this make sense?)
-  let associatedAccounts = [proposal.beneficiaryAddress];
-  if (proposal.proposer !== "0x0000000000000000000000000000000000000000") {
-    // XXX: Need to do this check because GenesisProtocol sets proposer to 0 after calling redeem, and then returns proposer reputation even after redeeming...
-    associatedAccounts.push(proposal.proposer);
-  }
+  let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
   proposal.votes.forEach((vote: IVoteState) => {
     associatedAccounts.push(vote.voterAddress);
   });
