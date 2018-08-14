@@ -283,7 +283,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   const avatarAddress = daoInstance.avatar.address;
 
   const votingMachineParamsHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, avatarAddress);
-  const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
+  const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamsHash);
 
   const proposalDetails = await votingMachineInstance.getProposal(proposalId);
   const proposalStatus = await votingMachineInstance.getProposalStatus({ proposalId });
@@ -332,7 +332,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     redemptions: [],
     reputationChange: Util.fromWei(contributionProposal.reputationChange),
     periodLength: Number(contributionProposal.periodLength),
-    preBoostedVotePeriodLimit: Number(votingMachineParams[1]),
+    preBoostedVotePeriodLimit: Number(votingMachineParams.preBoostedVotePeriodLimit),
     proposer,
     stakes: [],
     stakesNo: Util.fromWei(proposalStatus.stakesNo),
@@ -673,11 +673,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
 
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-      const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
-      const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
-
       const descriptionHash = Arc.Utils.SHA3(description);
       const submittedTime = Math.round((new Date()).getTime() / 1000);
 
@@ -1011,8 +1006,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
-      const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
-      const minimumStakingFee = votingMachineParam[5]; // 5 is the index of minimumStakingFee in the Parameters struct.
+      const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamHash);
+      const minimumStakingFee = votingMachineParams.minimumStakingFee;
 
       const amount = new BigNumber(Util.toWei(stakeAmount));
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee)}!`); }
