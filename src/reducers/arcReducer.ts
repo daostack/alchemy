@@ -452,17 +452,6 @@ const arcReducer = (state = initialState, action: any) => {
       const redemptionsKey = `${proposalId}-${accountAddress}`;
 
       switch (sequence) {
-        case AsyncActionSequence.Pending:
-          return update(state, {
-            redemptions: {
-              [redemptionsKey]: {
-                $apply: (redemptions: IRedemptionState) => ({
-                  ...redemptions,
-                  transactionState: TransactionStates.Unconfirmed
-                })
-              }
-            }
-          });
         case AsyncActionSequence.Success: {
           const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
@@ -477,6 +466,28 @@ const arcReducer = (state = initialState, action: any) => {
               }
             }
           });
+
+          if (beneficiaryRedemptions) {
+            // Still redemptions left for this proposal & beneficiary combo
+            state = update(state, {
+              redemptions: { [redemptionsKey] : { $set: beneficiaryRedemptions }}
+            });
+          } else {
+            // No redemptions left for this proposal & beneficiary combo so remove from the state
+            state = update(state, {
+              accounts: {
+                [accountKey]: {
+                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey)
+                }
+              },
+              proposals: {
+                [proposalId]: {
+                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey),
+                }
+              },
+              redemptions: { $unset: [redemptionsKey] }
+            });
+          }
 
           if (currentAccount) {
             const currentAccountKey = `${currentAccount.address}-${avatarAddress}`;
@@ -493,9 +504,31 @@ const arcReducer = (state = initialState, action: any) => {
                 }
               }
             });
+
+            if (currentAccountRedemptions) {
+              // Still redemptions left for this proposal for current account
+              state = update(state, {
+                redemptions: { [currentAccountRedemptionsKey] : { $set: currentAccountRedemptions }}
+              });
+            } else {
+              // No redemptions left for this proposal & current account combo so remove from the state
+              state = update(state, {
+                accounts: {
+                  [currentAccountKey]: {
+                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey)
+                  }
+                },
+                proposals: {
+                  [proposalId]: {
+                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey),
+                  }
+                },
+                redemptions: { $unset: [currentAccountRedemptionsKey] }
+              });
+            }
           }
 
-          // Also update the dao, proposal state and redemption's transactionState
+          // Also update the dao and proposal
           return update(state, {
             daos: { [avatarAddress]: { $merge: dao } },
             proposals: { [proposalId]: { $merge: proposal }}

@@ -7,7 +7,6 @@ export const openProposal: string;
 export const failedProposal: string;
 export const proposalInfo: string;
 export const passedProposal: string;
-export const unconfirmedProposal: string;
 export const disabled: string;
 export const redeemable: string;
 export const voteTooltip: string;
