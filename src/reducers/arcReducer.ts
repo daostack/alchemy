@@ -146,8 +146,6 @@ export interface IProposalState {
   submittedTime: number;
   title: string;
   transactionState: TransactionStates;
-  totalStakes: number;
-  totalVotes: number;
   votes: Array<IVoteState | string>; // Either normalized (string) or denormalized (object)
   votesYes: number;
   votesNo: number;
@@ -180,8 +178,6 @@ export const emptyProposal: IProposalState = {
   submittedTime: 0,
   title: "",
   transactionState: TransactionStates.Unconfirmed,
-  totalStakes: 0,
-  totalVotes: 0,
   votes: [],
   votesYes: 0,
   votesNo: 0,
