@@ -79,7 +79,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
         failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR NO VOTES";
         rules = <div>
-                  <p>When you vote, 1% of your reputation is taken away for the duration of the vote. If you vote for something to pass and it does, you gain reputation in addition to the reputation you lost.</p>
+                  <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote.</p>
                   <p>If you vote for something to pass and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>If you vote for something to fail and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
