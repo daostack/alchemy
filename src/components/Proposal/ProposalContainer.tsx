@@ -159,8 +159,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: redeemable,
-        [css.unconfirmedProposal]: proposal.transactionState == TransactionStates.Unconfirmed,
+        [css.redeemable]: redeemable
       });
 
       const submittedTime = moment.unix(proposal.submittedTime);
@@ -189,29 +188,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.disabled]: !redeemable && !executable
       });
 
-      const redeemButton = (
-        <button
-          style={{whiteSpace: 'nowrap'}}
-          disabled={!redeemable && !executable}
-          className={redeemRewards}
-          onClick={this.handleClickRedeem.bind(this)}
-        >
-          {
-            isRedeemPending ?
-              'Redeeming in progress' :
-            beneficiaryHasRewards && !accountHasRewards ?
-              'Redeem for beneficiary' :
-            accountHasRewards || currentRedemptions ?
-              'Redeem' :
-              'Execute'
-          }
-          <img src="/assets/images/Icon/Loading-black.svg"/>
-        </button>
-      )
-
       redemptionsTip =
         <div>
-          {beneficiaryRedemptions && (beneficiaryRedemptions.beneficiaryEth || beneficiaryRedemptions.beneficiaryReputation) ?
+          {beneficiaryHasRewards ?
             <div>
               <strong>
                 {currentAccount.address === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccount.address === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
@@ -264,12 +243,34 @@ class ProposalContainer extends React.Component<IProps, IState> {
             </React.Fragment>
             : ''
           }
-          {!accountHasRewards && !beneficiaryHasRewards && executable ?
+          {!currentRedemptions && !beneficiaryHasRewards && executable ?
             <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
             : ''
           }
           {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
         </div>;
+
+      const redeemButton = (currentRedemptions || beneficiaryHasRewards || executable ?
+        <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+          <button
+            style={{whiteSpace: 'nowrap'}}
+            disabled={false}
+            className={redeemRewards}
+            onClick={this.handleClickRedeem.bind(this)}
+          >
+            {
+              isRedeemPending ?
+                'Redeem in progress' :
+              beneficiaryHasRewards && !accountHasRewards ?
+                'Redeem for beneficiary' :
+              currentRedemptions ?
+                'Redeem' :
+                'Execute'
+            }
+            <img src="/assets/images/Icon/Loading-black.svg"/>
+          </button>
+        </Tooltip>
+      : "");
 
       let rewards = [];
       if (proposal.nativeTokenReward) {
@@ -283,7 +284,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       if (proposal.ethReward) {
         rewards.push(proposal.ethReward + " ETH");
       }
-      const rewardsString = <strong>{rewards.reduce((acc, v) => <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>, '')}</strong>;
+      const rewardsString = <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>, null)}</strong>;
 
       const styles = {
         forBar: {
@@ -328,13 +329,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                   </div>
                   <div className={css.decisionGraph}>
-                      <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
+                      <span className={css.forLabel}>{proposal.votesYes.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
                       <div className={css.graph}>
                         <div className={css.forBar} style={styles.forBar}></div>
                         <div className={css.againstBar} style={styles.againstBar}></div>
                         <div className={css.divider}></div>
                       </div>
-                      <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
+                      <span className={css.againstLabel}>{proposal.votesNo.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
                   </div>
                 </div>
               :  proposalFailed(proposal) ?
@@ -343,13 +344,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                   </div>
                   <div className={css.decisionGraph}>
-                      <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%)</span>
+                      <span className={css.forLabel}>{proposal.votesYes.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
                       <div className={css.graph}>
                         <div className={css.forBar} style={styles.forBar}></div>
                         <div className={css.againstBar} style={styles.againstBar}></div>
                         <div className={css.divider}></div>
                       </div>
-                      <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%)</span>
+                      <span className={css.againstLabel}>{proposal.votesNo.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
                   </div>
                 </div>
               : ""
@@ -395,66 +396,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
               />
             </div>
           </div>
-          { !proposalEnded(proposal) && (proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod) ?
-              <div>
-                <div className={css.proposalDetails}>
-                  <div className={css.createdBy}>
-                    CREATED BY
-                    <AccountPopupContainer
-                      accountAddress={proposal.proposer}
-                      daoAvatarAddress={proposal.daoAvatarAddress}
-                    />
-
-                    ON {submittedTime.format("MMM DD, YYYY")}
-                  </div>
-
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
-                  </a>
-                </div>
-                <PredictionBox
-                  isPredictingFail={isPredictingFail}
-                  isPredictingPass={isPredictingPass}
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStakeAmount}
-                  currentAccountGens={currentAccountGens}
-                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  dao={dao}
-                  proposal={proposal}
-                  stakeProposal={stakeProposal}
-                  approveStakingGens={approveStakingGens}
+          <div>
+            <div className={css.proposalDetails}>
+              <div className={css.createdBy}>
+                CREATED BY
+                <AccountPopupContainer
+                  accountAddress={proposal.proposer}
+                  daoAvatarAddress={proposal.daoAvatarAddress}
                 />
-              </div>
-            : !proposalEnded(proposal) && proposal.state == ProposalStates.PreBoosted ?
-              <div>
-                <div className={css.proposalDetails}>
-                  <div className={css.createdBy}>
-                    CREATED BY
-                    <AccountPopupContainer
-                      accountAddress={proposal.proposer}
-                      daoAvatarAddress={proposal.daoAvatarAddress}
-                    />
-                    ON {submittedTime.format("MMM DD, YYYY")}
-                  </div>
 
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
-                  </a>
-                </div>
-                <PredictionBox
-                  isPredictingFail={isPredictingFail}
-                  isPredictingPass={isPredictingPass}
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStakeAmount}
-                  currentAccountGens={currentAccountGens}
-                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  dao={dao}
-                  proposal={proposal}
-                  stakeProposal={stakeProposal}
-                  approveStakingGens={approveStakingGens}
-                />
+                ON {submittedTime.format("MMM DD, YYYY")}
               </div>
-            : proposalEnded(proposal) ?
+
+              <a href={proposal.description} target="_blank" className={css.viewProposal}>
+                <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
+              </a>
+            </div>
+            { proposalEnded(proposal) ?
               <div>
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
@@ -468,20 +426,24 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 }
 
                 <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  { currentRedemptions || beneficiaryRedemptions || executable ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                        {redeemButton}
-                      </Tooltip>
-                    : ''
-                  }
-                  <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                    <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
-                  </a>
+                  {redeemButton}
                 </div>
               </div>
-            : ""
-
-          }
+            :
+              <PredictionBox
+                isPredictingFail={isPredictingFail}
+                isPredictingPass={isPredictingPass}
+                currentPrediction={currentAccountPrediction}
+                currentStake={currentAccountStakeAmount}
+                currentAccountGens={currentAccountGens}
+                currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+                dao={dao}
+                proposal={proposal}
+                stakeProposal={stakeProposal}
+                approveStakingGens={approveStakingGens}
+              />
+            }
+          </div>
         </div>
       );
     } else {

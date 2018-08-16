@@ -18,7 +18,7 @@ const store = createStore(
     applyMiddleware(
       operationsTracker,
       notificationUpdater,
-      successDismisser(),
+      successDismisser(15000),
       thunkMiddleware,
       routerMiddleware(history),
       loggerMiddleware,

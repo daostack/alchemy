@@ -60,7 +60,7 @@
     "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\""
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.76",
+    "@daostack/arc.js": "0.0.0-alpha.78",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",

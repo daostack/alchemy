@@ -283,19 +283,12 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   const avatarAddress = daoInstance.avatar.address;
 
   const votingMachineParamsHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, avatarAddress);
-  const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash);
+  const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamsHash);
 
   const proposalDetails = await votingMachineInstance.getProposal(proposalId);
-  const preBoostedVotePeriodLimit = Number(votingMachineParams[1]);
+  const proposalStatus = await votingMachineInstance.getProposalStatus({ proposalId });
+
   const submittedTime = Number(proposalDetails.submittedTime);
-  const boostedTime = Number(proposalDetails.boostedPhaseTime);
-  const boostedVotePeriodLimit = Number(proposalDetails.currentBoostedVotePeriodLimit);
-
-  const yesVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes });
-  const noVotes = await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No });
-
-  const yesStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes });
-  const noStakes = await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No });
 
   // Use title and description from the server
   let description = "";
@@ -323,10 +316,12 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     }
   }
 
+  const proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
+
   const proposal: IProposalState = {...contributionProposal, ...{
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
-    boostedTime,
-    boostedVotePeriodLimit,
+    boostedTime: Number(proposalDetails.boostedPhaseTime),
+    boostedVotePeriodLimit: Number(proposalDetails.currentBoostedVotePeriodLimit),
     daoAvatarAddress: avatarAddress,
     description,
     ethReward: Util.fromWei(contributionProposal.ethReward),
@@ -337,20 +332,18 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     redemptions: [],
     reputationChange: Util.fromWei(contributionProposal.reputationChange),
     periodLength: Number(contributionProposal.periodLength),
-    preBoostedVotePeriodLimit,
-    proposer: proposalDetails.proposer,
+    preBoostedVotePeriodLimit: Number(votingMachineParams.preBoostedVotePeriodLimit),
+    proposer,
     stakes: [],
-    stakesNo: Util.fromWei(noStakes),
-    stakesYes: Util.fromWei(yesStakes),
+    stakesNo: Util.fromWei(proposalStatus.stakesNo),
+    stakesYes: Util.fromWei(proposalStatus.stakesYes),
     state: Number(proposalDetails.state), // TODO: using our own enum instead of from Arc.js because we add new states, have arc.js do this?,
     submittedTime,
     title,
-    totalStakes: 0, //Util.fromWei(proposalDetails[8]),
-    totalVotes: Util.fromWei(proposalDetails.totalVotes),
     transactionState: TransactionStates.Confirmed,
     votes: [],
-    votesYes: Util.fromWei(yesVotes),
-    votesNo: Util.fromWei(noVotes),
+    votesYes: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes })),
+    votesNo: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No })),
     winningVote: proposalDetails.winningVote,
   }};
 
@@ -418,11 +411,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
     if (proposalEnded(proposal)) {
       // Find all current rewards waiting to be redeemed
-      let associatedAccounts = [proposal.beneficiaryAddress];
-      if (proposal.proposer != "0x0000000000000000000000000000000000000000") {
-        // XXX: Need to do this check because GenesisProtocol sets proposer to 0 after calling redeem, and then returns proposer reputation even after redeeming...
-        associatedAccounts.push(proposal.proposer);
-      }
+      let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
       proposal.votes.forEach((vote: IVoteState) => {
         associatedAccounts.push(vote.voterAddress);
       });
@@ -484,7 +473,8 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
 
   const proposalId = proposal.proposalId;
 
-  const stakerBountyTokens = Util.fromWei(await votingMachineInstance.getRedeemableTokensStakerBounty({ proposalId, beneficiaryAddress: accountAddress }));
+  const redeemerInstance = await Arc.RedeemerFactory.deployed();
+  const rewards = await redeemerInstance.redeemables({ proposalId, avatarAddress: proposal.daoAvatarAddress, beneficiaryAddress: accountAddress });
 
   const redemptions = {
     accountAddress,
@@ -492,12 +482,12 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
     beneficiaryEth: 0,
     beneficiaryNativeToken: 0,
     beneficiaryReputation: 0,
-    proposerReputation: 0,
-    stakerReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationStaker({ proposalId, beneficiaryAddress: accountAddress })),
-    stakerTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensStaker({ proposalId, beneficiaryAddress: accountAddress })),
-    stakerBountyTokens,
-    voterReputation: Util.fromWei(await votingMachineInstance.getRedeemableReputationVoter({ proposalId, beneficiaryAddress: accountAddress })),
-    voterTokens: Util.fromWei(await votingMachineInstance.getRedeemableTokensVoter({ proposalId, beneficiaryAddress: accountAddress })),
+    proposerReputation: Util.fromWei(rewards.proposerReputationAmount),
+    stakerReputation: Util.fromWei(rewards.stakerReputationAmount),
+    stakerTokens: Util.fromWei(rewards.stakerTokenAmount),
+    stakerBountyTokens: Util.fromWei(rewards.daoStakingBountyPotentialReward),
+    voterReputation: Util.fromWei(rewards.voterReputationAmount),
+    voterTokens: Util.fromWei(rewards.voterTokenAmount),
   };
 
   // Beneficiary rewards
@@ -513,12 +503,6 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
       redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.NativeToken)) * proposal.nativeTokenReward;
       redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.Reputation)) * proposal.reputationChange;
     }
-  }
-
-  // Get the proposer from the blockchain instead of the state because it won't be zeroed after redeem.
-  const proposer = (await votingMachineInstance.getProposal(proposal.proposalId)).proposer
-  if (proposal.proposer === accountAddress && proposer != "0x0000000000000000000000000000000000000000") {
-    redemptions.proposerReputation = Util.fromWei(await votingMachineInstance.getRedeemableReputationProposer({ proposalId }));
   }
 
   return anyRedemptions(redemptions) ? redemptions : null;
@@ -538,11 +522,7 @@ async function getProposalRedemptions(proposal: IProposalState, state: IRootStat
 
   // Gather redemptions for all people who interacted with the proposal
   // Doing this here instead of on proposal executed because we need to show redemptions for expired proposals too (TODO: does this make sense?)
-  let associatedAccounts = [proposal.beneficiaryAddress];
-  if (proposal.proposer !== "0x0000000000000000000000000000000000000000") {
-    // XXX: Need to do this check because GenesisProtocol sets proposer to 0 after calling redeem, and then returns proposer reputation even after redeeming...
-    associatedAccounts.push(proposal.proposer);
-  }
+  let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
   proposal.votes.forEach((vote: IVoteState) => {
     associatedAccounts.push(vote.voterAddress);
   });
@@ -685,11 +665,6 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
 
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-      const votingMachineParamsHash = await dao.controller.getSchemeParameters(votingMachineInstance.contract.address, dao.avatar.address)
-      const votingMachineParams = await votingMachineInstance.contract.parameters(votingMachineParamsHash)
-
       const descriptionHash = Arc.Utils.SHA3(description);
       const submittedTime = Math.round((new Date()).getTime() / 1000);
 
@@ -818,8 +793,8 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       proposal.reputationWhenExecuted = reputationWhenExecuted;
       proposal.winningVote = decision;
 
-      const gpProposalDetails = await votingMachineInstance.getProposal(proposalId);
-      proposal.proposer = gpProposalDetails.proposer; // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+      // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
+      proposal.proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
 
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
@@ -1023,8 +998,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
-      const votingMachineParam = await votingMachineInstance.contract.parameters(votingMachineParamHash);
-      const minimumStakingFee = votingMachineParam[5]; // 5 is the index of minimumStakingFee in the Parameters struct.
+      const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamHash);
+      const minimumStakingFee = votingMachineParams.minimumStakingFee;
 
       const amount = new BigNumber(Util.toWei(stakeAmount));
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee)}!`); }
@@ -1065,9 +1040,10 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     }
 
     const proposalDetails = await votingMachineInstance.getProposal(proposalId);
+    const proposalStatus = await votingMachineInstance.getProposalStatus({ proposalId });
+    proposal.stakesYes = Util.fromWei(proposalStatus.stakesYes);
+    proposal.stakesNo = Util.fromWei(proposalStatus.stakesNo);
     proposal.boostedTime = Number(proposalDetails.boostedPhaseTime);
-    proposal.stakesYes = Util.fromWei(await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.Yes }));
-    proposal.stakesNo = Util.fromWei(await votingMachineInstance.getVoteStake({ proposalId, vote: VoteOptions.No }));
     proposal.state = Number(await votingMachineInstance.getState({ proposalId }));
     proposal.state = checkProposalExpired(proposal);
 
@@ -1127,6 +1103,57 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     try {
       const redeemerInstance = await Arc.RedeemerFactory.deployed();
       await redeemerInstance.redeem({ avatarAddress: daoAvatarAddress, beneficiaryAddress: accountAddress, proposalId: proposal.proposalId });
+
+      // Get all the latest info about redemptions for the success event
+      const daoInstance = await Arc.DAO.at(daoAvatarAddress);
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
+      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+      const proposalDetails = await contributionRewardInstance.getProposal(daoAvatarAddress, proposal.proposalId);
+      const beneficiaryAddress = proposalDetails.beneficiaryAddress;
+
+      const beneficiaryRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, beneficiaryAddress);
+
+      proposal.state = Number(await votingMachineInstance.getState({ proposalId: proposal.proposalId }));
+      proposal.state = checkProposalExpired(proposal);
+
+      let payload: any = {
+        // Update account of the beneficiary
+        beneficiary: {
+          tokens: Util.fromWei(await daoInstance.token.getBalanceOf(beneficiaryAddress)),
+          reputation: Util.fromWei(await daoInstance.reputation.reputationOf(beneficiaryAddress))
+        },
+        // Update DAO total reputation and tokens
+        //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
+        dao: {
+          reputationCount: Util.fromWei(await daoInstance.reputation.contract.totalSupply()), // TODO: replace with wrapper function when available.
+          tokenCount: Util.fromWei(await daoInstance.token.getTotalSupply()),
+        },
+        proposal: {
+          proposer: proposal.proposer,
+          state: proposal.state
+        },
+        beneficiaryRedemptions
+      };
+
+      if (accountAddress !== beneficiaryAddress) {
+        payload.currentAccount = {
+          address: accountAddress,
+          reputation: Util.fromWei(await daoInstance.reputation.reputationOf(accountAddress)),
+          tokens: Util.fromWei(await daoInstance.token.getBalanceOf(accountAddress))
+        }
+        const currentAccountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
+        payload.currentAccountRedemptions = currentAccountRedemptions;
+      }
+
+      dispatch({
+        type: arcConstants.ARC_REDEEM,
+        sequence: AsyncActionSequence.Success,
+        meta,
+        payload
+      } as RedeemAction);
+
     } catch (err) {
       console.error(err);
       dispatch({
