@@ -485,7 +485,7 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
     proposerReputation: Util.fromWei(rewards.proposerReputationAmount),
     stakerReputation: Util.fromWei(rewards.stakerReputationAmount),
     stakerTokens: Util.fromWei(rewards.stakerTokenAmount),
-    stakerBountyTokens: Util.fromWei(rewards.daoStakingBountyReward),
+    stakerBountyTokens: Util.fromWei(rewards.daoStakingBountyPotentialReward),
     voterReputation: Util.fromWei(rewards.voterReputationAmount),
     voterTokens: Util.fromWei(rewards.voterTokenAmount),
   };
