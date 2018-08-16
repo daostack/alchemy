@@ -1,0 +1,56 @@
+{
+    "name": "Matan DAO",
+    "tokenName": "Matan Token",
+    "tokenSymbol": "MTN",
+    "params": {
+        "boostedVotePeriodLimit": 30,
+        "quietEndingPeriod": 30
+    },
+    "founders": [
+        {"id": 0, "reputation": 32},
+        {"id": 1, "reputation": 42},
+        {"id": 2, "reputation": 37}
+    ],
+    "steps": [
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 1,
+                "title": "Hello",
+                "description": "Some desc",
+                "beneficiary": "0xb0c908140fe6fd6fbd4990a5c2e35ca6dc12bfb2",
+                "eth": 3,
+                "reputation": 3
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 1,
+                "vote": "Yes"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 1,
+                "vote": "Yes",
+                "amount": 2
+            }
+        },
+        {
+            "action": "SwitchAccount",
+            "args": {
+                "id": 1
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 1,
+                "vote": "Yes",
+                "amount": 3
+            }
+        }
+    ]
+}
