@@ -94,7 +94,7 @@ async function main(options: Opts) {
     if (!infuraKey) {
         throw new Error('Please include a line `INFURA_KEY=...` in a .env file in the current directory');
     }
-    const provider = new HDWalletProvider(mnemonic, network === 'ganache' ? 'http://localhost:8545' : `https://${network}.infura.io/` + infuraKey, 0, 10);
+    const provider = new HDWalletProvider(mnemonic, network === 'private' ? 'http://localhost:8545' : `https://${network}.infura.io/` + infuraKey, 0, 10);
 
     // Needed to track nonces correctly https://ethereum.stackexchange.com/questions/44349/truffle-infura-on-mainnet-nonce-too-low-error
     const nonceTracker = new NonceTrackerSubprovider();
