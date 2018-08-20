@@ -7,6 +7,10 @@ import { VoteOptions, DAO } from '@daostack/arc.js';
 import Util from '../src/lib/util';
 import axios from "axios";
 import { ContributionRewardWrapper, GenesisProtocolWrapper } from '@daostack/arc.js';
+import HDWalletProvider from "../src/lib/truffle-hdwallet-provider";
+// tslint:disable-next-line:no-var-requires
+const Web3 = require("web3");
+import promisify = require("es6-promisify");
 
 enum Level {
     Success = 'success',
@@ -69,7 +73,9 @@ type Step =
 interface Opts extends CreateDAOOpts {
     steps: Step[];
     api: string;
+    network: string;
     logfile: string;
+    mnemonic: string;
 }
 
 async function main(options: Opts) {
@@ -77,14 +83,19 @@ async function main(options: Opts) {
     const approved: {[address: string]: boolean} = {};
     let i: number = 0;
 
-    const { steps, api, logfile, params, name, tokenName, tokenSymbol, founders } = options;
+    const { steps, api, network, mnemonic, logfile, params, name, tokenName, tokenSymbol, founders } = options;
+
+    const infuraKey = 'UeW8cwaou03qFgsAHoDP';
+    const provider = new HDWalletProvider(mnemonic, network === 'ganache' ? 'http://localhost:8545' : `https://${network}.infura.io/` + infuraKey, 0, 10);
+    (global as any).web3 = new Web3(provider.engine);
 
     await Arc.InitializeArcJs();
     const web3 = await Arc.Utils.getWeb3();
-    const network = await Arc.Utils.getNetworkName();
 
-    log(Level.Info, `Using network: ${network}, ${web3.eth.accounts.length} unlocked accounts`);
-    log(Level.Info, `Current account #${web3.eth.accounts.indexOf(web3.eth.defaultAccount)}: ${web3.eth.defaultAccount}`);
+    const accounts = await promisify(web3.eth.getAccounts)()
+
+    log(Level.Info, `Using network: ${network}, ${accounts.length} unlocked accounts`);
+    log(Level.Info, `Current account #${accounts.indexOf(web3.eth.defaultAccount)}: ${web3.eth.defaultAccount}`);
 
     function log(level: Level, msg: any) {
         const color = {
@@ -117,15 +128,17 @@ async function main(options: Opts) {
             name: `${name}-${Math.floor(Math.random() * 1000)}`,
             tokenName,
             tokenSymbol,
-            founders: founders.map((x) => ({address: web3.eth.accounts[x.id] , tokens: Util.toWei(0), reputation: Util.toWei(x.reputation)})) as any,
+            founders: founders.map((x) => ({address: accounts[x.id] , tokens: Util.toWei(0), reputation: Util.toWei(x.reputation)})) as any,
             schemes: [
                 { name: "SchemeRegistrar" },
                 { name: "ContributionReward" },
-                { name: "GenesisProtocol" }
+                {
+                    name: "GenesisProtocol",
+                    ...params
+                }
             ],
             votingMachineParams: {
-                votingMachineName: "GenesisProtocol",
-                ...params
+                votingMachineName: "GenesisProtocol"
             }
         })
 
@@ -214,11 +227,11 @@ async function main(options: Opts) {
             switch (step.action) {
                 case Action.SwitchAccount:
                     const { id } = step.args;
-                    if (id < 0 || id >= web3.eth.accounts.length) {
-                        throw new Error(`Account id ${id} cannot be found (maximum id can be ${web3.eth.accounts.length - 1})`)
+                    if (id < 0 || id >= accounts.length) {
+                        throw new Error(`Account id ${id} cannot be found (maximum id can be ${accounts.length - 1})`)
                     }
-                    log(Level.Info, `Switching to account #${id}: ${web3.eth.accounts[id]}`);
-                    web3.eth.defaultAccount = web3.eth.accounts[id];
+                    log(Level.Info, `Switching to account #${id}: ${accounts[id]}`);
+                    web3.eth.defaultAccount = accounts[id];
 
                     if (!approved[web3.eth.defaultAccount]) {
                         await approve();
@@ -269,6 +282,20 @@ const argv: any =
             'api', {
                 describe: 'api root url',
                 default: 'https://daostack-alchemy.herokuapp.com',
+                type: 'string'
+            }
+        )
+        .option(
+            'network', {
+                describe: 'network to use',
+                default: 'kovan',
+                type: 'string'
+            }
+        )
+        .option(
+            'mnemonic', {
+                describe: 'mnemonic from which to generate accounts',
+                default: 'behave pipe turkey animal voyage dial relief menu blush match jeans general',
                 type: 'string'
             }
         )
