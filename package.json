@@ -57,7 +57,8 @@
     "test:watch": "jest --watch",
     "start": "webpack-dev-server --config webpack.dev.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
-    "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\""
+    "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\"",
+    "populate-dao": "ts-node scripts/populateDAO.ts"
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.77.1",
