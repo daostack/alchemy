@@ -14,6 +14,9 @@ import promisify = require("es6-promisify");
 // tslint:disable-next-line:no-var-requires
 const NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker");
 
+// tslint:disable-next-line:no-var-requires
+require('dotenv').config();
+
 enum Level {
     Success = 'success',
     Info = 'info',
@@ -87,7 +90,10 @@ async function main(options: Opts) {
 
     const { steps, api, network, mnemonic, logfile, params, name, tokenName, tokenSymbol, founders } = options;
 
-    const infuraKey = 'UeW8cwaou03qFgsAHoDP';
+    const infuraKey = process.env.INFURA_KEY;
+    if (!infuraKey) {
+        throw new Error('Please include a line `INFURA_KEY=...` in a .env file in the current directory');
+    }
     const provider = new HDWalletProvider(mnemonic, network === 'ganache' ? 'http://localhost:8545' : `https://${network}.infura.io/` + infuraKey, 0, 10);
 
     // Needed to track nonces correctly https://ethereum.stackexchange.com/questions/44349/truffle-infura-on-mainnet-nonce-too-low-error
