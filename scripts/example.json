@@ -8,8 +8,8 @@
     },
     "founders": [
         {"id": 0, "reputation": 32},
-        {"id": 1, "reputation": 42},
-        {"id": 2, "reputation": 37}
+        {"id": 1, "reputation": 64},
+        {"id": 2, "reputation": 128}
     ],
     "steps": [
         {

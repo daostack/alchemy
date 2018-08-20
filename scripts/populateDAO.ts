@@ -11,6 +11,8 @@ import HDWalletProvider from "../src/lib/truffle-hdwallet-provider";
 // tslint:disable-next-line:no-var-requires
 const Web3 = require("web3");
 import promisify = require("es6-promisify");
+// tslint:disable-next-line:no-var-requires
+const NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker");
 
 enum Level {
     Success = 'success',
@@ -87,6 +89,12 @@ async function main(options: Opts) {
 
     const infuraKey = 'UeW8cwaou03qFgsAHoDP';
     const provider = new HDWalletProvider(mnemonic, network === 'ganache' ? 'http://localhost:8545' : `https://${network}.infura.io/` + infuraKey, 0, 10);
+
+    // Needed to track nonces correctly https://ethereum.stackexchange.com/questions/44349/truffle-infura-on-mainnet-nonce-too-low-error
+    const nonceTracker = new NonceTrackerSubprovider();
+    provider.engine._providers.unshift(nonceTracker);
+    nonceTracker.setEngine(provider.engine);
+
     (global as any).web3 = new Web3(provider.engine);
 
     await Arc.InitializeArcJs();
@@ -141,6 +149,8 @@ async function main(options: Opts) {
                 votingMachineName: "GenesisProtocol"
             }
         })
+
+        log(Level.Info, `   avatarAddress: ${dao.avatar.address}`)
 
         return dao;
     }
@@ -259,8 +269,10 @@ async function main(options: Opts) {
             }
         }
         log(Level.Success, 'Done.');
+        process.exit(0)
     } catch (e) {
         log(Level.Error, `An error occured during script execution: ${e.stack}`);
+        process.exit(1)
     }
 }
 
