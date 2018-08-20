@@ -290,14 +290,15 @@ const argv: any =
             (path) => JSON.parse(fs.readFileSync(path, 'utf-8'))
         )
         .option(
-            'l', {
-                alias: 'logfile',
+            'logfile', {
+                alias: 'l',
                 describe: 'path to a log file to save results',
                 type: 'string'
             }
         )
         .option(
             'api', {
+                alias: 'a',
                 describe: 'api root url',
                 default: 'https://daostack-alchemy.herokuapp.com',
                 type: 'string'
@@ -305,6 +306,7 @@ const argv: any =
         )
         .option(
             'network', {
+                alias: 'n',
                 describe: 'network to use',
                 default: 'kovan',
                 type: 'string'
@@ -312,6 +314,7 @@ const argv: any =
         )
         .option(
             'mnemonic', {
+                alias: 'm',
                 describe: 'mnemonic from which to generate accounts',
                 default: 'behave pipe turkey animal voyage dial relief menu blush match jeans general',
                 type: 'string'
