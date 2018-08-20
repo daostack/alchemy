@@ -39,12 +39,6 @@
             }
         },
         {
-            "action": "SwitchAccount",
-            "args": {
-                "id": 1
-            }
-        },
-        {
             "action": "Stake",
             "args": {
                 "id": 1,
