@@ -31,6 +31,7 @@ interface Founder {
 }
 
 interface CreateDAOOpts {
+    address?: string;
     name: string,
     tokenName: string,
     tokenSymbol: string,
@@ -88,10 +89,10 @@ async function main(options: Opts) {
     const approved: {[address: string]: boolean} = {};
     let i: number = 0;
 
-    const { steps, api, network, mnemonic, logfile, params, name, tokenName, tokenSymbol, founders } = options;
+    const { address, steps, api, network, mnemonic, logfile, params, name, tokenName, tokenSymbol, founders } = options;
 
     const infuraKey = process.env.INFURA_KEY;
-    if (!infuraKey) {
+    if (network !== 'private' && !infuraKey) {
         throw new Error('Please include a line `INFURA_KEY=...` in a .env file in the current directory');
     }
     const provider = new HDWalletProvider(mnemonic, network === 'private' ? 'http://localhost:8545' : `https://${network}.infura.io/` + infuraKey, 0, 10);
@@ -108,6 +109,12 @@ async function main(options: Opts) {
 
     const accounts = await promisify(web3.eth.getAccounts)()
 
+    if (logfile && fs.existsSync(logfile)) {
+        log(Level.Warn, `Appending to an already existing logfile`);
+    }
+    if (address && (name || tokenName || tokenSymbol || params || founders)) {
+        log(Level.Warn, `DAO parameters specified for an existing DAO, ignoring.`);
+    }
     log(Level.Info, `Using network: ${network}, ${accounts.length} unlocked accounts`);
     log(Level.Info, `Current account #${accounts.indexOf(web3.eth.defaultAccount)}: ${web3.eth.defaultAccount}`);
 
@@ -128,7 +135,7 @@ async function main(options: Opts) {
     }
 
     function logTx(network: string, hash: string) {
-        if (network.toLowerCase() === 'ganache') {
+        if (network.toLowerCase() === 'private') {
             log(Level.Info, `   txHash: ${hash}`)
         } else {
             log(Level.Info, `   https://${network !== 'live' ? network.toLowerCase() + '.' : ''}etherscan.io/tx/${hash}`)
@@ -162,11 +169,14 @@ async function main(options: Opts) {
     }
 
     try {
-        if (logfile && fs.existsSync(logfile)) {
-            throw new Error(`Logfile ${logfile} already exists, please move or delete it before running the script`)
+        let dao: DAO;
+        if (address) {
+            dao = await Arc.DAO.at(address);
+            log(Level.Info, `Fetched existing DAO from: ${address}`);
+        } else {
+            dao = await createDAO();
         }
 
-        const dao = await createDAO();
         const avatarAddress = dao.avatar.address;
         const cr = (await dao.getSchemes('ContributionReward'))[0].wrapper as ContributionRewardWrapper;
         const gp = (await dao.getSchemes('GenesisProtocol'))[0].wrapper as GenesisProtocolWrapper;
