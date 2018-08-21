@@ -46,7 +46,7 @@ class HomeContainer extends React.Component<IProps, null> {
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
             { process.env.NODE_ENV == 'production'
-                ? <a href='https://alchemy.daostack.io/#/dao/0x7b11dfb29504abc8c0dfa60dc7e0aa2aae836db0'>View Alchemy</a>
+                ? <a href='https://alchemy.daostack.io/#/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>View Alchemy</a>
                 : <Link to='/daos'>View Alchemy</Link>
             }
           </div>
@@ -71,7 +71,7 @@ class HomeContainer extends React.Component<IProps, null> {
           </div>
         </div>
         <div className={css.footer}>
-          <a href='https://alchemy.daostack.io/#/dao/0x7b11dfb29504abc8c0dfa60dc7e0aa2aae836db0'>Genesis Alpha</a>
+          <a href='https://alchemy.daostack.io/#/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>Genesis Alpha</a>
           <a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target='_blank'>FAQ</a>
           <a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target='_blank'>Alchemy 101</a>
           <a href="https://www.daostack.io/" target='_blank'>About DAOstack</a>

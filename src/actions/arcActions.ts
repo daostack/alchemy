@@ -66,7 +66,7 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
 
     for (let index = 0; index < newOrgEvents.length; index++) {
       const event = newOrgEvents[index];
-      const daoData = await getDAOData(event.args._avatar);
+      const daoData = await getDAOData(event.args._avatar, null, fromBlock, toBlock);
       if (daoData) {
         daos[event.args._avatar] = daoData;
       }
