@@ -45,7 +45,9 @@ if (process.env.NODE_ENV == 'production') {
 
   if (arcjsNetwork == 'live') {
     // Use our Quiknode on production
-    provider = new HDWalletProvider(mnemonic, "https://sadly-exact-hen.quiknode.io/d5ba26f2-ea9b-4b16-9247-2a8858623c68/b3URb1n1WPG35IpElyDBog==/");
+    //provider = new HDWalletProvider(mnemonic, "https://sadly-exact-hen.quiknode.io/d5ba26f2-ea9b-4b16-9247-2a8858623c68/b3URb1n1WPG35IpElyDBog==/");
+    const infuraKey = process.env.INFURA_KEY;
+    provider = new HDWalletProvider(mnemonic, "https://mainnet.infura.io/" + infuraKey);
   } else {
     // Use infura on Kovan right now
     const infuraKey = process.env.INFURA_KEY;
