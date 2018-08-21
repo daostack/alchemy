@@ -190,7 +190,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       redemptionsTip =
         <div>
-          {beneficiaryHasRewards ?
+          {beneficiaryHasRewards || (beneficiaryRedemptions && beneficiaryRedemptions.beneficiaryEth) ?
             <div>
               <strong>
                 {currentAccount.address === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccount.address === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
