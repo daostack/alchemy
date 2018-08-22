@@ -322,7 +322,7 @@ const argv: any =
       'api', {
         alias: 'a',
         describe: 'api root url',
-        default: 'https://daostack-alchemy.herokuapp.com',
+        default: 'https://daostack-alchemy-server-stage.herokuapp.com',
         type: 'string'
       }
     )
