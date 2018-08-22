@@ -25,6 +25,12 @@ enum Level {
   Debug = 'debug'
 }
 
+enum Network {
+  Mainnet = 'mainnet',
+  Kovan = 'kovan',
+  Private = 'private',
+}
+
 interface Founder {
   id: number,
   reputation: number;
@@ -78,8 +84,7 @@ type Step =
 
 interface Opts extends CreateDAOOpts {
   steps: Step[];
-  api: string;
-  network: string;
+  network: Network;
   logfile: string;
   mnemonic: string;
 }
@@ -92,7 +97,6 @@ async function main(options: Opts) {
   const {
     address,
     steps,
-    api,
     network,
     mnemonic,
     logfile,
@@ -103,11 +107,20 @@ async function main(options: Opts) {
     founders
   } = options;
 
+  const api =
+    network === Network.Private ?
+      'http://127.0.0.1:3001/' :
+    network === Network.Mainnet ?
+      'https://daostack-alchemy.herokuapp.com/' :
+      'https://daostack-alchemy-server-stage.herokuapp.com/'
+  ;
+  log(Level.Info, `Using api URL: ${api}`)
+
   const infuraKey = process.env.INFURA_KEY;
   if (network !== 'private' && !infuraKey) {
     throw new Error('Please include a line `INFURA_KEY=...` in a .env file in the current directory');
   }
-  const provider = new HDWalletProvider(mnemonic, network === 'private' ? 'http://localhost:8545' : `https://${network}.infura.io/` + infuraKey, 0, 10);
+  const provider = new HDWalletProvider(mnemonic, network === 'private' ? 'http://localhost:8545' : `https://${network === Network.Mainnet ? '' : network + '.'}infura.io/` + infuraKey, 0, 10);
 
   // Needed to track nonces correctly https://ethereum.stackexchange.com/questions/44349/truffle-infura-on-mainnet-nonce-too-low-error
   const nonceTracker = new NonceTrackerSubprovider();
@@ -319,17 +332,9 @@ const argv: any =
       }
     )
     .option(
-      'api', {
-        alias: 'a',
-        describe: 'api root url',
-        default: 'https://daostack-alchemy-server-stage.herokuapp.com',
-        type: 'string'
-      }
-    )
-    .option(
       'network', {
         alias: 'n',
-        describe: 'network to use',
+        describe: 'network to use <mainnet|kovan|private>',
         default: 'kovan',
         type: 'string'
       }
