@@ -82,6 +82,12 @@
   display: inline;
 }
 
+.pendingTransaction.pending {
+  .notificationControls {
+    width: 75px;
+  }
+}
+
 .pendingTransaction.minimized {
   min-width: 50px;
   width: 50px;
