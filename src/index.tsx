@@ -9,7 +9,7 @@ import "./assets/styles/global.scss";
 
 async function renderApp() {
   try {
-    Arc.ConfigService.set("estimateGas", true);
+    Arc.ConfigService.set("estimateGas", false);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
 
     await Arc.InitializeArcJs({ watchForAccountChanges: true });
