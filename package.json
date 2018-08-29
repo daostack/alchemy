@@ -57,10 +57,11 @@
     "test:watch": "jest --watch",
     "start": "webpack-dev-server --config webpack.dev.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
-    "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\""
+    "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\"",
+    "populate-dao": "ts-node scripts/populateDAO.ts"
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.79",
+    "@daostack/arc.js": "0.0.0-alpha.80",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
@@ -130,9 +131,12 @@
     "@types/redux-logger": "^3.0.3",
     "@types/redux-promise-middleware": "^0.0.8",
     "@types/webpack-env": "^1.13.0",
+    "@types/yargs": "^11.1.1",
     "awesome-typescript-loader": "^3.2.3",
+    "chalk": "^2.4.1",
     "copy-webpack-plugin": "^4.5.0",
     "cross-env": "^5.1.3",
+    "dotenv": "^6.0.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "ganache-cli": "^6.0.3",
     "html-webpack-plugin": "^3.0.6",
@@ -144,12 +148,14 @@
     "sass-resources-loader": "^1.3.0",
     "source-map-loader": "^0.2.1",
     "ts-jest": "^22.4.1",
+    "ts-node": "^5.0.1",
     "tslint": "^5.9.1",
     "tslint-react": "^3.5.1",
     "typescript": "^2.9",
     "typings-for-css-modules-loader": "^1.5.0",
     "uglifyjs-webpack-plugin": "^1.2.2",
     "webpack-dev-server": "^2.7.1",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "yargs": "^12.0.1"
   }
 }
