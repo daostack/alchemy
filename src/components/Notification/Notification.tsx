@@ -27,9 +27,6 @@ interface IProps {
 export default class Notification extends React.Component<IProps, null> {
   constructor(props: IProps) {
     super(props);
-
-    this.handleClose = this.handleClose.bind(this);
-    this.copyToClipboard = this.copyToClipboard.bind(this);
   }
 
   public handleClose(e: any) {
