@@ -10,25 +10,29 @@ import {
 } from "react-share";
 import * as css from "./SharingButtons.scss";
 
-class ViewSharingButtonsContainer extends React.Component<RouteComponentProps<{}>, null> {
+interface IProps {
+  size: number
+}
+
+class SharingButtons extends React.Component<IProps, null> {
 
   public render() {
     const href = window.location.href;
     return (
-      <div className={css.socialMediaShareButtonContainer}>
+      <div className={css.sharingButtons}>
         Share on:
         <FacebookShareButton url={href}>
-          <FacebookIcon size={16} />
+          <FacebookIcon size={this.props.size} />
         </FacebookShareButton>
         <TwitterShareButton url={href}>
-          <TwitterIcon size={16} />
+          <TwitterIcon size={this.props.size} />
         </TwitterShareButton>
         <LinkedinShareButton url={href}>
-          <LinkedinIcon size={16} />
+          <LinkedinIcon size={this.props.size} />
         </LinkedinShareButton>
       </div>
     );
   }
 }
 
-export default ViewSharingButtonsContainer;
+export default SharingButtons;
