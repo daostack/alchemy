@@ -56,7 +56,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
           <div className={css.singleProposal}>
             <ProposalContainer proposalId={proposal.proposalId}/>
           </div>
-          <SharingButtons size={16} />
+          <SharingButtons size={16} shareText={proposal.title}/>
         </div>
       );
     } else {

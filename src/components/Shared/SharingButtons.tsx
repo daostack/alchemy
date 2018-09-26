@@ -11,7 +11,8 @@ import {
 import * as css from "./SharingButtons.scss";
 
 interface IProps {
-  size: number
+  size: number;
+  shareText: string;
 }
 
 class SharingButtons extends React.Component<IProps, null> {
@@ -21,13 +22,13 @@ class SharingButtons extends React.Component<IProps, null> {
     return (
       <div className={css.sharingButtons}>
         Share on:
-        <FacebookShareButton url={href}>
+        <FacebookShareButton url={href} quote={this.props.shareText}>
           <FacebookIcon size={this.props.size} />
         </FacebookShareButton>
-        <TwitterShareButton url={href}>
+        <TwitterShareButton url={href} title={this.props.shareText}>
           <TwitterIcon size={this.props.size} />
         </TwitterShareButton>
-        <LinkedinShareButton url={href}>
+        <LinkedinShareButton url={href} title={this.props.shareText}>
           <LinkedinIcon size={this.props.size} />
         </LinkedinShareButton>
       </div>
