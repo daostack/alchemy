@@ -318,13 +318,15 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
   const proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
 
-  const proposal: IProposalState = {...contributionProposal, ...{
+  const proposal: IProposalState = {
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
     boostedTime: Number(proposalDetails.boostedPhaseTime),
     boostedVotePeriodLimit: Number(proposalDetails.currentBoostedVotePeriodLimit),
+    contributionDescriptionHash: contributionProposal.contributionDescriptionHash,
     daoAvatarAddress: avatarAddress,
     description,
     ethReward: Util.fromWei(contributionProposal.ethReward),
+    externalToken: contributionProposal.externalToken,
     externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
     executionTime: Number(contributionProposal.executionTime),
     nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
@@ -333,6 +335,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     reputationChange: Util.fromWei(contributionProposal.reputationChange),
     periodLength: Number(contributionProposal.periodLength),
     preBoostedVotePeriodLimit: Number(votingMachineParams.preBoostedVotePeriodLimit),
+    proposalId: contributionProposal.proposalId,
     proposer,
     stakes: [],
     stakesNo: Util.fromWei(proposalStatus.stakesNo),
@@ -345,7 +348,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     votesYes: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes })),
     votesNo: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No })),
     winningVote: proposalDetails.winningVote,
-  }};
+  };
 
   delete (proposal as any).votingMachine;
 
