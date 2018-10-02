@@ -488,7 +488,7 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
   const redeemerInstance = await Arc.RedeemerFactory.deployed();
   const rewards = await redeemerInstance.redeemables({ proposalId, avatarAddress: proposal.daoAvatarAddress, beneficiaryAddress: accountAddress });
 
-  const redemptions : IRedemptionState = {
+  const redemptions: IRedemptionState = {
     accountAddress,
     proposalId,
     beneficiaryEth: 0,
