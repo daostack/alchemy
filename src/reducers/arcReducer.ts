@@ -71,6 +71,9 @@ export interface IDaoState {
   controllerAddress: string;
   currentThresholdToBoost: number;
   ethCount: number;
+  externalTokenAddress?: string; // The address of an external token (e.g. DAI) to use instead of ETH for rewards
+  externalTokenSymbol?: string;
+  externalTokenCount?: number;
   fromBlock?: number;
   genCount: number;
   lastBlock: string | number; // The last block on the chain processed for this DAO
@@ -94,6 +97,7 @@ export interface IRedemptionState {
   beneficiaryEth: number;
   beneficiaryNativeToken: number;
   beneficiaryReputation: number;
+  beneficiaryExternalToken: number;
   proposalId: string;
   proposerReputation: number;
   proposal?: IProposalState;
@@ -109,6 +113,7 @@ export function anyRedemptions(redemptions: IRedemptionState) {
     redemptions.beneficiaryEth ||
     redemptions.beneficiaryReputation ||
     redemptions.beneficiaryNativeToken ||
+    redemptions.beneficiaryExternalToken ||
     redemptions.proposerReputation ||
     redemptions.stakerReputation ||
     redemptions.stakerTokens ||
@@ -555,6 +560,8 @@ const arcReducer = (state = initialState, action: any) => {
           (
             type === RewardType.Eth ?
               { beneficiaryEth: {$set: 0} } :
+            type === RewardType.ExternalToken ?
+              { beneficiaryExternalToken: {$set: 0} } :
             type === RewardType.Reputation ?
               { beneficiaryReputation: {$set: 0} } :
             type === RewardType.NativeToken ?
@@ -675,6 +682,18 @@ const arcReducer = (state = initialState, action: any) => {
         daos: {
           [avatarAddress]: {
             ethCount: { $set: balance || state.daos[avatarAddress].ethCount}
+          }
+        }
+      })
+    }
+
+    case ActionTypes.ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE: {
+      const { avatarAddress, balance } = payload;
+
+      return update(state, {
+        daos: {
+          [avatarAddress]: {
+            externalTokenCount: { $set: balance || state.daos[avatarAddress].externalTokenCount}
           }
         }
       })

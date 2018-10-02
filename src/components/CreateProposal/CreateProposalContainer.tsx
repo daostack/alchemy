@@ -130,11 +130,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
         {this.state.preTransactionModalOpen ?
           <PreTransactionModal
             actionType={ActionTypes.CreateProposal}
-            action={createProposal.bind(null, dao.avatarAddress, title, description, nativeTokenReward, reputationChange, ethReward, beneficiaryAddress)}
+            action={createProposal.bind(null, dao.avatarAddress, title, description, nativeTokenReward, reputationChange, ethReward, externalTokenReward, beneficiaryAddress)}
             closeAction={this.closePreTransactionModal.bind(this)}
             currentAccount={currentAccount}
             dao={dao}
-            effectText={<span>Budget: <ReputationView reputation={reputationChange} totalReputation={dao.reputationCount} daoName={dao.name}/> and {ethReward} ETH</span>}
+            effectText={<span>Budget: <ReputationView reputation={reputationChange} totalReputation={dao.reputationCount} daoName={dao.name}/> and {ethReward || externalTokenReward} {externalTokenReward ? dao.externalTokenSymbol : "ETH"}</span>}
             proposal={this.state.proposalDetails}
           /> : ""
         }
@@ -292,21 +292,41 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   Reputation reward:
                   {touched.reputationChange && errors.reputationChange && <span className={css.errorMessage}>{errors.reputationChange}</span>}
                 </label>
-                <Field
-                  id="ethRewardInput"
-                  placeholder="How much ETH to reward"
-                  name='ethReward'
-                  type="number"
-                  className={touched.ethReward && errors.ethReward ? css.error : null}
-                  min={0}
-                  step={0.1}
-                />
-                <label htmlFor="ethRewardInput">
-                  Proposal budget (ETH):
-                  {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
-                </label>
 
-                {touched.ethReward && touched.reputationChange && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
+                {dao.externalTokenAddress
+                  ? <div>
+                      <Field
+                        id="externalTokenRewardInput"
+                        placeholder={`How much ${dao.externalTokenSymbol} to reward`}
+                        name='externalTokenReward'
+                        type="number"
+                        className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
+                        min={0}
+                        step={0.1}
+                      />
+                      <label htmlFor="externalRewardInput">
+                        Proposal budget {dao.externalTokenSymbol}:
+                        {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
+                      </label>
+                    </div>
+                  : <div>
+                      <Field
+                        id="ethRewardInput"
+                        placeholder="How much ETH to reward"
+                        name='ethReward'
+                        type="number"
+                        className={touched.ethReward && errors.ethReward ? css.error : null}
+                        min={0}
+                        step={0.1}
+                      />
+                      <label htmlFor="ethRewardInput">
+                        Proposal budget (ETH):
+                        {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
+                      </label>
+                    </div>
+                }
+
+                {(touched.ethReward || touched.externalTokenReward) && touched.reputationChange && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
               </div>
               {/*
               <div className={css.transactionList}>

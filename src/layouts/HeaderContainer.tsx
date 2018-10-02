@@ -24,13 +24,15 @@ import promisify = require("es6-promisify");
 
 interface IStateProps {
   accounts: string[];
+  currentAccountEthBalance: number;
+  currentAccountExternalTokenBalance: number;
   currentAccountGenBalance: number;
   currentAccountGenStakingAllowance: number;
   currentAccount: IAccountState;
   dao: IDaoState;
   daoAvatarAddress: string;
   ethAccountAddress: string | null;
-  ethAccountBalance: number;
+
   networkId: number;
 }
 
@@ -38,12 +40,13 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     accounts: state.web3.accounts,
     currentAccount: state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.daoAvatarAddress}`],
+    currentAccountEthBalance: state.web3.currentAccountEthBalance,
+    currentAccountExternalTokenBalance: state.web3.currentAccountExternalTokenBalance,
     currentAccountGenBalance: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
     dao: state.arc.daos[ownProps.daoAvatarAddress],
     daoAvatarAddress: ownProps.daoAvatarAddress,
     ethAccountAddress: state.web3.ethAccountAddress,
-    ethAccountBalance: state.web3.ethAccountBalance,
     networkId: state.web3.networkId
   };
 };
@@ -52,6 +55,7 @@ interface IDispatchProps {
   setCurrentAccount: typeof web3Actions.setCurrentAccount;
   onApprovedStakingGens: typeof web3Actions.onApprovedStakingGens;
   onEthBalanceChanged: typeof web3Actions.onEthBalanceChanged;
+  onExternalTokenBalanceChanged: typeof web3Actions.onExternalTokenBalanceChanged
   onGenBalanceChanged: typeof web3Actions.onGenBalanceChanged;
   onGenStakingAllowanceChanged: typeof web3Actions.onGenStakingAllowanceChanged;
   showNotification: typeof showNotification;
@@ -62,6 +66,7 @@ const mapDispatchToProps = {
   setCurrentAccount: web3Actions.setCurrentAccount,
   onApprovedStakingGens: web3Actions.onApprovedStakingGens,
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
+  onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
   onGenBalanceChanged: web3Actions.onGenBalanceChanged,
   onGenStakingAllowanceChanged: web3Actions.onGenStakingAllowanceChanged,
   showNotification,
@@ -96,7 +101,24 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public async componentDidMount() {
-    const { accounts, currentAccountGenStakingAllowance, currentAccountGenBalance, dao, daoAvatarAddress, ethAccountAddress, ethAccountBalance, networkId, onApprovedStakingGens, onEthBalanceChanged, onGenBalanceChanged, onGenStakingAllowanceChanged, setCurrentAccount } = this.props;
+    const {
+      accounts,
+      currentAccountGenStakingAllowance,
+      currentAccountGenBalance,
+      currentAccountEthBalance,
+      currentAccount,
+      dao,
+      daoAvatarAddress,
+      ethAccountAddress,
+      networkId,
+      onApprovedStakingGens,
+      onEthBalanceChanged,
+      onExternalTokenBalanceChanged,
+      onGenBalanceChanged,
+      onGenStakingAllowanceChanged,
+      setCurrentAccount
+    } = this.props;
+
     const web3 = await Arc.Utils.getWeb3();
 
     await setCurrentAccount(ethAccountAddress, daoAvatarAddress ? daoAvatarAddress : null);
@@ -121,6 +143,12 @@ class HeaderContainer extends React.Component<IProps, null> {
         onGenBalanceChanged(newGenBalance);
         const newGenStakingAllowance = Util.fromWei(await stakingToken.allowance(ethAccountAddress, votingMachineInstance.address));
         onGenStakingAllowanceChanged(newGenStakingAllowance);
+
+        if (dao && dao.externalTokenAddress) {
+          const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
+          const newExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(ethAccountAddress));
+          onExternalTokenBalanceChanged(newExternalTokenBalance);
+        }
       }
     });
 
@@ -159,7 +187,19 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    let { accounts, currentAccount, currentAccountGenBalance, currentAccountGenStakingAllowance, dao, daoAvatarAddress, ethAccountAddress, ethAccountBalance, networkId, showTour } = this.props;
+    let {
+      accounts,
+      currentAccount,
+      currentAccountEthBalance,
+      currentAccountExternalTokenBalance,
+      currentAccountGenBalance,
+      currentAccountGenStakingAllowance,
+      dao,
+      daoAvatarAddress,
+      ethAccountAddress,
+      networkId,
+      showTour
+    } = this.props;
 
     if (!currentAccount) {
       currentAccount = newAccount(daoAvatarAddress, ethAccountAddress);
@@ -227,7 +267,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               <div className={css.balances}>
                 <div className={css.userBalance}>
                   <div>
-                    <AccountBalance tokenSymbol="ETH" balance={ethAccountBalance} accountAddress={ethAccountAddress} />
+                    <AccountBalance tokenSymbol="ETH" balance={currentAccountEthBalance} accountAddress={ethAccountAddress} />
                   </div>
                   <div>
                     <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={ethAccountAddress} />
@@ -235,6 +275,12 @@ class HeaderContainer extends React.Component<IProps, null> {
                   <div>
                     {currentAccountGenStakingAllowance} GEN approved for staking
                   </div>
+                  { dao && dao.externalTokenAddress
+                    ? <div>
+                        <AccountBalance tokenSymbol={dao.externalTokenSymbol} balance={currentAccountExternalTokenBalance} accountAddress={ethAccountAddress} />
+                      </div>
+                    : ""
+                  }
                 </div>
                 { dao
                   ? <div className={css.daoBalance}>

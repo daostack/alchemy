@@ -44,10 +44,11 @@ export function initializeWeb3() {
 
     const payload: IWeb3State = {
       accounts: web3.eth.accounts,
+      currentAccountEthBalance: 0,
+      currentAccountExternalTokenBalance: 0,
       currentAccountGenBalance: 0,
       currentAccountGenStakingAllowance: 0,
       ethAccountAddress: null as string,
-      ethAccountBalance: 0,
       networkId,
     };
 
@@ -67,7 +68,7 @@ export function initializeWeb3() {
     }
 
     const getBalance = promisify(web3.eth.getBalance);
-    payload.ethAccountBalance = Util.fromWei(await getBalance(payload.ethAccountAddress));
+    payload.currentAccountEthBalance = Util.fromWei(await getBalance(payload.ethAccountAddress));
 
     dispatch({
       type: ActionTypes.WEB3_CONNECT,
@@ -88,12 +89,12 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
       currentAccountGenBalance: 0,
       currentAccountGenStakingAllowance: 0,
       ethAccountAddress: accountAddress,
-      ethAccountBalance: 0,
+      currentAccountEthBalance: 0,
     }
 
     const getBalance = promisify(web3.eth.getBalance);
     const balance = await getBalance(accountAddress);
-    payload.ethAccountBalance = Util.fromWei(balance);
+    payload.currentAccountEthBalance = Util.fromWei(balance);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
     if (daoAvatarAddress !== null) {
@@ -118,7 +119,7 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
 
 export function onEthBalanceChanged(balance: Number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const ethBalance = getState().web3.ethAccountBalance;
+    const ethBalance = getState().web3.currentAccountEthBalance;
     if (ethBalance !== balance) {
       dispatch({
         type: ActionTypes.WEB3_ON_ETH_BALANCE_CHANGE,
@@ -134,6 +135,18 @@ export function onGenBalanceChanged(balance: Number) {
     if (genBalance !== balance) {
       dispatch({
         type: ActionTypes.WEB3_ON_GEN_BALANCE_CHANGE,
+        payload: balance
+      });
+    }
+  };
+}
+
+export function onExternalTokenBalanceChanged(balance: Number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const currentBalance = getState().web3.currentAccountExternalTokenBalance;
+    if (currentBalance !== balance) {
+      dispatch({
+        type: ActionTypes.WEB3_ON_EXTERNAL_TOKEN_BALANCE_CHANGE,
         payload: balance
       });
     }
