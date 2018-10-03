@@ -7,6 +7,7 @@ import { Web3 } from "web3";
 import { ActionTypes } from "constants/web3Constants";
 import Util from "lib/util";
 import { IWeb3State } from "reducers/web3Reducer";
+import { IDaoState } from "reducers/arcReducer";
 import { IAsyncAction, AsyncActionSequence } from "./async";
 import { IRootState } from "reducers";
 
@@ -90,6 +91,7 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
       currentAccountGenStakingAllowance: 0,
       ethAccountAddress: accountAddress,
       currentAccountEthBalance: 0,
+      currentAccountExternalTokenBalance: 0
     }
 
     const getBalance = promisify(web3.eth.getBalance);
@@ -101,6 +103,13 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
       const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+
+      // Check for external token rewards in DAO and if exists update account's balance for that token
+      const dao = getState().arc.daos[daoAvatarAddress] as IDaoState;
+      if (dao && dao.externalTokenAddress) {
+        const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
+        payload.currentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(accountAddress));
+      }
     } else {
       votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
     }

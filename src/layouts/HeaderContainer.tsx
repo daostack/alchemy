@@ -143,12 +143,6 @@ class HeaderContainer extends React.Component<IProps, null> {
         onGenBalanceChanged(newGenBalance);
         const newGenStakingAllowance = Util.fromWei(await stakingToken.allowance(ethAccountAddress, votingMachineInstance.address));
         onGenStakingAllowanceChanged(newGenStakingAllowance);
-
-        if (dao && dao.externalTokenAddress) {
-          const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
-          const newExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(ethAccountAddress));
-          onExternalTokenBalanceChanged(newExternalTokenBalance);
-        }
       }
     });
 
