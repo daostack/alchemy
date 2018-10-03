@@ -305,7 +305,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         step={0.1}
                       />
                       <label htmlFor="externalRewardInput">
-                        Proposal budget {dao.externalTokenSymbol}:
+                        Proposal budget ({dao.externalTokenSymbol}):
                         {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
                       </label>
                     </div>
