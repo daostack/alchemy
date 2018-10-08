@@ -7,7 +7,7 @@ const { combine, colorize, timestamp, printf } = format;
 import axios from 'axios';
 import chalk from 'chalk';
 import HDWalletProvider from '../src/lib/truffle-hdwallet-provider';
-import { ContributionRewardWrapper, GenesisProtocolWrapper } from '@daostack/arc.js';
+import { ContributionRewardWrapper, GenesisProtocolWrapper, StandardTokenFactory } from '@daostack/arc.js';
 import { DAO, VoteOptions } from '@daostack/arc.js';
 // tslint:disable-next-line:no-var-requires
 const Web3 = require("web3");
@@ -46,7 +46,7 @@ interface CreateProposalOpts {
   description: string,
   title: string,
   beneficiary: string,
-  eth: number,
+  amount: number,
   reputation: number
 }
 
@@ -81,6 +81,7 @@ interface Opts extends CreateDAOOpts {
   network: Network;
   logfile: string;
   mnemonic: string;
+  dai: boolean
 }
 
 async function main(options: Opts) {
@@ -110,15 +111,16 @@ async function main(options: Opts) {
     name,
     tokenName,
     tokenSymbol,
-    founders
+    founders,
+    dai,
   } = options;
 
   const api =
     network === Network.Private ?
-      'http://127.0.0.1:3001/' :
+      'http://127.0.0.1:3001/api/' :
     network === Network.Mainnet ?
-      'https://daostack-alchemy.herokuapp.com/' :
-      'https://daostack-alchemy-server-stage.herokuapp.com/'
+      'https://daostack-alchemy.herokuapp.com/api/' :
+      'https://daostack-alchemy-server-stage.herokuapp.com/api/'
   ;
   logger.info(`Using api URL: ${api}`)
 
@@ -179,7 +181,7 @@ async function main(options: Opts) {
       }
     })
 
-    logger.info(`   avatarAddress: ${dao.avatar.address}`)
+    logger.info(`   avatarAddress: ${dao.avatar.address}`);
 
     return dao;
   }
@@ -193,21 +195,34 @@ async function main(options: Opts) {
       dao = await createDAO();
     }
 
+    let daiAddress;
+    if (network === Network.Private && dai) {
+      logger.info(`Creating mock DAI token`);
+      const daoToken = await Arc.StandardTokenFactory.new();
+      daiAddress = daoToken.address
+      logger.info(`   DAI address: ${daoToken.address}`);
+    } else {
+      daiAddress =
+        network === Network.Mainnet ?
+          '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359' : // mainnet DAI address
+          '0xc4375b7de8af5a38a93548eb8453a498222c4ff2'; // Kovan DAI address
+    }
+
     const avatarAddress = dao.avatar.address;
     const cr = (await dao.getSchemes('ContributionReward'))[0].wrapper as ContributionRewardWrapper;
     const gp = (await dao.getSchemes('GenesisProtocol'))[0].wrapper as GenesisProtocolWrapper;
     const stakingToken = await gp.getStakingToken();
 
     async function createProposal(options: CreateProposalOpts) {
-      const { id, description, title, beneficiary, eth, reputation } = options;
-      logger.info(`Creating proposal #${id}: {eth=${eth}, rep=${reputation}} -> ${beneficiary}`);
+      const { id, description, title, beneficiary, amount, reputation } = options;
+      logger.info(`Creating proposal #${id}: {${dai ? `DAI` : 'ETH'}=${amount}, rep=${reputation}} -> ${beneficiary}`);
 
       const descriptionHash = Arc.Utils.SHA3(description);
       const submittedTime = Math.round((new Date()).getTime() / 1000);
 
       // Save the proposal title, description and submitted time on the server
       try {
-        await axios.post(api + "/api/proposals", {
+        await axios.post(api + 'proposals', {
           daoAvatarAddress: avatarAddress,
           descriptionHash,
           description,
@@ -223,7 +238,9 @@ async function main(options: Opts) {
         avatar: avatarAddress,
         beneficiaryAddress: beneficiary,
         description,
-        ethReward: Util.toWei(eth),
+        ethReward: dai ? 0 : Util.toWei(amount),
+        externalToken: daiAddress,
+        externalTokenReward: dai ? Util.toWei(amount) : 0,
         numberOfPeriods: 1,
         periodLength: 0,
         reputationChange: Util.toWei(reputation),
@@ -336,6 +353,14 @@ const argv: any =
         describe: 'mnemonic from which to generate accounts',
         default: 'behave pipe turkey animal voyage dial relief menu blush match jeans general',
         type: 'string'
+      }
+    )
+    .option(
+      'dai', {
+        alias: 'd',
+        describe: 'DAI feature flag, use DAI instead of ETH when creating proposals',
+        default: false,
+        type: 'boolean'
       }
     )
     .argv

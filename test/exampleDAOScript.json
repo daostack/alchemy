@@ -1,5 +1,13 @@
 {
-    "address": "0x32c04159403c6ef8600539e0bccd968f255f6ddd",
+    "name": "Matan",
+    "tokenName": "Matan",
+    "tokenSymbol": "MTN",
+    "params": {},
+    "founders": [
+        {"id": 0, "reputation": 1000},
+        {"id": 1, "reputation": 1000},
+        {"id": 2, "reputation": 1000}
+    ],
     "steps": [
         {
             "action": "CreateProposal",
@@ -8,7 +16,7 @@
                 "title": "Hello",
                 "description": "Some desc",
                 "beneficiary": "0xb0c908140fe6fd6fbd4990a5c2e35ca6dc12bfb2",
-                "eth": 3,
+                "amount": 3,
                 "reputation": 3
             }
         },
