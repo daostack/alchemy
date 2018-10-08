@@ -36,8 +36,9 @@ export default class DaoHeader extends React.Component<IProps, null> {
         </div>
         <div className={css.holdings + " " + css.clearfix}>
           <h4>{dao.name} HOLDINGS</h4>
-          <div>{dao.ethCount} ETH</div>
+          { dao.externalTokenAddress ? <div>{dao.externalTokenCount} {dao.externalTokenSymbol}</div> : <div>{dao.ethCount} ETH </div> }
           <div>{dao.genCount} GEN</div>
+
         </div>
       </div>
     );

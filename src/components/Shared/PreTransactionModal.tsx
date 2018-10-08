@@ -8,7 +8,7 @@ import { Modal } from 'react-router-modal';
 import * as arcActions from "actions/arcActions";
 import { IDaoState, IProposalState, ProposalStates, proposalEnded } from "reducers/arcReducer";
 
-import ReputationView from "components/Account/ReputationView";
+import RewardsString from "components/Proposal/RewardsString";
 
 import * as css from "./PreTransactionModal.scss";
 
@@ -115,16 +115,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
 
         if (currentAccount == proposal.beneficiaryAddress) {
           let rewards = [];
-          if (proposal.reputationChange) {
-            rewards.push(
-              <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
-            );
-          }
-          if (proposal.ethReward) {
-            rewards.push(proposal.ethReward + " ETH");
-          }
-          const rewardsString = <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>, null)}</strong>;
-          passIncentive = <span>GAIN REPUTATION &amp; {rewardsString}</span>;
+          passIncentive = <span>GAIN REPUTATION &amp; <RewardsString proposal={proposal} dao={dao} /></span>;
         } else {
           passIncentive = <span>GAIN REPUTATION</span>;
         }
