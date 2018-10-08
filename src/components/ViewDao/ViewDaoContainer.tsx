@@ -270,25 +270,25 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const tourSteps = [
       {
         target: "." + css.daoInfo,
-        content: `Alchemy is a collaborative application used by the Genesis Alpha DAO to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in the Genesis Alpha DAO can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
+        content: `Alchemy is a collaborative application used by the ${dao.name} DAO to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in the ${dao.name} DAO can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },
       {
         target: "." + appCss.accountInfo,
-        content: "This icon represents your ETH wallet. Here you can view your reputation and token balances.",
+        content: "This icon represents your wallet. Here you can view your reputation and token balances.",
         placement: "bottom",
         disableBeacon: true
       },
       {
         target: "." + css.holdings,
-        content: "The amount in ETH represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.",
+        content: `The amount in ${dao.externalTokenAddress ? dao.externalTokenSymbol : "ETH"} represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.`,
         placement: "left",
         disableBeacon: true
       },
       {
         target: "." + css.createProposal,
-        content: "Do you have an idea for an initiative to improve the DAOstack project or ecosystem? Create a proposal to get it funded. If the proposal passes, funds will be transferred to the target account automatically and you will be rewarded with additional reputation and GEN. If a proposal fails, there is no penalty for the proposer.",
+        content: "Do you have an idea for an initiative? Create a proposal to get it funded. If the proposal passes, funds will be transferred to the target account automatically and you will be rewarded with additional reputation and GEN. If a proposal fails, there is no penalty for the proposer.",
         placement: "top",
         disableBeacon: true
       },
