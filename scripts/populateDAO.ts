@@ -2,6 +2,8 @@ import * as Arc from '@daostack/arc.js';
 import * as fs from 'fs';
 import * as moment from 'moment';
 import * as yargs from 'yargs';
+import { createLogger, transports, format } from 'winston';
+const { combine, colorize, timestamp, printf } = format;
 import axios from 'axios';
 import chalk from 'chalk';
 import HDWalletProvider from '../src/lib/truffle-hdwallet-provider';
@@ -16,14 +18,6 @@ const NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce
 require('dotenv').config(); // load .env file into `process.env`
 
 import Util from '../src/lib/util';
-
-enum Level {
-  Success = 'success',
-  Info = 'info',
-  Warn = 'warn',
-  Error = 'error',
-  Debug = 'debug'
-}
 
 enum Network {
   Mainnet = 'mainnet',
@@ -90,6 +84,18 @@ interface Opts extends CreateDAOOpts {
 }
 
 async function main(options: Opts) {
+
+  const logger = createLogger({
+    format: combine(
+      timestamp(),
+      colorize(),
+      printf(({level, timestamp, message}) => chalk`{bold ${moment(timestamp).format("DD/MM/YYYY hh:mm:ss A")} [${level}]: ${message}}`)
+    ),
+    transports: [
+      new transports.Console(),
+    ]
+  });
+
   const proposalIds: { [id: number]: string } = {}; // mapping from the script's ids to GP proposalIds
   const approved: { [address: string]: boolean } = {}; // did we already approve 1000 GEN for an address?
   let i: number = 0;
@@ -114,7 +120,7 @@ async function main(options: Opts) {
       'https://daostack-alchemy.herokuapp.com/' :
       'https://daostack-alchemy-server-stage.herokuapp.com/'
   ;
-  log(Level.Info, `Using api URL: ${api}`)
+  logger.info(`Using api URL: ${api}`)
 
   const infuraKey = process.env.INFURA_KEY;
   if (network !== 'private' && !infuraKey) {
@@ -135,41 +141,26 @@ async function main(options: Opts) {
   const accounts = await promisify(web3.eth.getAccounts)()
 
   if (logfile && fs.existsSync(logfile)) {
-    log(Level.Warn, `Appending to an already existing logfile`);
+    logger.add(new transports.File({filename: logfile}))
+    logger.warn(`Appending to an already existing logfile`);
   }
   if (address && (name || tokenName || tokenSymbol || params || founders)) {
-    log(Level.Warn, `DAO parameters specified for an existing DAO, ignoring.`);
+    logger.warn(`DAO parameters specified for an existing DAO, ignoring.`);
   }
-  log(Level.Info, `Using network: ${network}, ${accounts.length} unlocked accounts`);
-  log(Level.Info, `Current account #${accounts.indexOf(web3.eth.defaultAccount)}: ${web3.eth.defaultAccount}`);
-
-  function log(level: Level, msg: any) {
-    const color = {
-      [Level.Success]: 'green',
-      [Level.Info]: 'gray',
-      [Level.Warn]: 'yellow',
-      [Level.Error]: 'red',
-      [Level.Debug]: 'magenta'
-    };
-
-    console.info(chalk`{${color[level]} {bold ${moment().format("DD/MM/YYYY hh:mm:ss A")} ${level}}: ${typeof msg === 'string' ? msg : JSON.stringify(msg)}}`);
-
-    if (logfile) {
-      fs.appendFileSync(logfile, `${moment().format("DD/MM/YYYY hh:mm:ss A")} ${level}: ${typeof msg === 'string' ? msg : JSON.stringify(msg)}\n`, { encoding: 'utf-8' });
-    }
-  }
+  logger.info(`Using network: ${network}, ${accounts.length} unlocked accounts`);
+  logger.info(`Current account #${accounts.indexOf(web3.eth.defaultAccount)}: ${web3.eth.defaultAccount}`);
 
   function logTx(network: string, hash: string) {
     if (network.toLowerCase() === 'private') {
-      log(Level.Info, `   txHash: ${hash}`)
+      logger.info(`   txHash: ${hash}`)
     } else {
-      log(Level.Info, `   https://${network !== 'live' ? network.toLowerCase() + '.' : ''}etherscan.io/tx/${hash}`)
+      logger.info(`   https://${network !== 'live' ? network.toLowerCase() + '.' : ''}etherscan.io/tx/${hash}`)
     }
   }
 
   async function createDAO() {
 
-    log(Level.Info, `Creating DAO: {name='${name}',founders=${founders.map((x) => '#' + x.id)}}`);
+    logger.info(`Creating DAO: {name='${name}',founders=${founders.map((x) => '#' + x.id)}}`);
     const dao = await Arc.DAO.new({
       name: `${name}-${Math.floor(Math.random() * 1000)}`,
       tokenName,
@@ -188,7 +179,7 @@ async function main(options: Opts) {
       }
     })
 
-    log(Level.Info, `   avatarAddress: ${dao.avatar.address}`)
+    logger.info(`   avatarAddress: ${dao.avatar.address}`)
 
     return dao;
   }
@@ -197,7 +188,7 @@ async function main(options: Opts) {
     let dao: DAO;
     if (address) {
       dao = await Arc.DAO.at(address);
-      log(Level.Info, `Fetched existing DAO from: ${address}`);
+      logger.info(`Fetched existing DAO from: ${address}`);
     } else {
       dao = await createDAO();
     }
@@ -209,7 +200,7 @@ async function main(options: Opts) {
 
     async function createProposal(options: CreateProposalOpts) {
       const { id, description, title, beneficiary, eth, reputation } = options;
-      log(Level.Info, `Creating proposal #${id}: {eth=${eth}, rep=${reputation}} -> ${beneficiary}`);
+      logger.info(`Creating proposal #${id}: {eth=${eth}, rep=${reputation}} -> ${beneficiary}`);
 
       const descriptionHash = Arc.Utils.SHA3(description);
       const submittedTime = Math.round((new Date()).getTime() / 1000);
@@ -224,7 +215,7 @@ async function main(options: Opts) {
           title,
         });
       } catch (e) {
-        log(Level.Error, `Could not save proposal to server: ${e.message}`);
+        logger.error(`Could not save proposal to server: ${e.message}`);
       }
 
       const tx = await cr.proposeContributionReward({
@@ -239,14 +230,14 @@ async function main(options: Opts) {
       } as any);
       logTx(network, tx.tx);
       const proposalId = await tx.getProposalIdFromMinedTx();
-      log(Level.Info, `   proposalId: ${proposalId}`)
+      logger.info(`   proposalId: ${proposalId}`)
 
       return proposalId;
     }
 
     async function vote(options: VoteOpts) {
       const { id, proposalId, vote } = options;
-      log(Level.Info, `Voting ${vote} on #${id}`);
+      logger.info(`Voting ${vote} on #${id}`);
       const { tx } = await gp.vote({
         proposalId,
         vote: vote == 'Yes' ? 1 : 2
@@ -256,7 +247,7 @@ async function main(options: Opts) {
 
     async function stake(options: StakeOpts) {
       const { id, proposalId, vote, amount } = options;
-      log(Level.Info, `Staking ${vote} on #${id} with ${amount} GEN`);
+      logger.info(`Staking ${vote} on #${id} with ${amount} GEN`);
       const { tx } = await gp.stake({
         proposalId,
         vote: vote == 'Yes' ? 1 : 2,
@@ -266,7 +257,7 @@ async function main(options: Opts) {
     }
 
     async function approve() {
-      log(Level.Info, `Pre-approving 1000 GEN for current account`);
+      logger.info(`Pre-approving 1000 GEN for current account`);
       const { tx } = await stakingToken.approve({ spender: gp.address, amount: Util.toWei(1000) });
       approved[web3.eth.defaultAccount] = true;
       logTx(network, tx);
@@ -281,7 +272,7 @@ async function main(options: Opts) {
           if (id < 0 || id >= accounts.length) {
             throw new Error(`Account id ${id} cannot be found (maximum id can be ${accounts.length - 1})`)
           }
-          log(Level.Info, `Switching to account #${id}: ${accounts[id]}`);
+          logger.info(`Switching to account #${id}: ${accounts[id]}`);
           web3.eth.defaultAccount = accounts[id];
 
           if (!approved[web3.eth.defaultAccount]) {
@@ -309,10 +300,10 @@ async function main(options: Opts) {
           break;
       }
     }
-    log(Level.Success, 'Done.');
+    logger.info('Done.');
     process.exit(0)
   } catch (e) {
-    log(Level.Error, `An error occured during script execution: ${e.stack}`);
+    logger.error(`An error occured during script execution: ${e.stack}`);
     process.exit(1)
   }
 }
