@@ -1,8 +1,23 @@
 {
-    "name": "Matan",
-    "tokenName": "Matan",
-    "tokenSymbol": "MTN",
-    "params": {},
+    "name": "Circles",
+    "tokenName": "Circ",
+    "tokenSymbol": "CRL",
+    "params": {
+        "boostedVotePeriodLimit": 3600,
+        "daoBountyConst": 30,
+        "daoBountyLimit": 500,
+        "minimumStakingFee": 0,
+        "preBoostedVotePeriodLimit": 7200,
+        "preBoostedVoteRequiredPercentage": 50,
+        "proposingRepRewardConstA": 5,
+        "proposingRepRewardConstB": 10,
+        "quietEndingPeriod": 1800,
+        "stakerFeeRatioForVoters": 20,
+        "thresholdConstA": 100,
+        "thresholdConstB": 3,
+        "votersGainRepRatioFromLostRep": 90,
+        "votersReputationLossRatio": 4
+    },
     "founders": [
         {"id": 0, "reputation": 1000},
         {"id": 1, "reputation": 1000},
