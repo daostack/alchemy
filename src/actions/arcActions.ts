@@ -140,7 +140,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     tokenSymbol: await daoInstance.getTokenSymbol()
   };
 
-  // HACK: if the DAO has the word "circle" in the name, then use DAI instead of ETH for rewards
+  // HACK: if the DAO has the word "circles" in the name, then use DAI instead of ETH for rewards
   if (daoData.name.toLowerCase().includes("circles")) {
     const networkName = (await Arc.Utils.getNetworkName()).toLowerCase();
     const daiAddress = networkName == 'live' ? "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
@@ -764,7 +764,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
       contributionDescriptionHash: eventResult._contributionDescription,
       ethReward: eventResult._rewards[1],
       executionTime: 0,
-      externalToken: "0",
+      externalToken: eventResult._externalToken,
       externalTokenReward: eventResult._rewards[2],
       nativeTokenReward: eventResult._rewards[0],
       numberOfPeriods: 1,
