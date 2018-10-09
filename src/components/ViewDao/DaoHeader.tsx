@@ -1,3 +1,4 @@
+import * as classNames from "classnames";
 import * as React from "react";
 import { Link } from "react-router-dom";
 
@@ -16,12 +17,21 @@ export default class DaoHeader extends React.Component<IProps, null> {
   public render() {
     const { dao } = this.props;
 
+    const circlesDAO = dao.name.toLowerCase().includes("circles");
+    const iconClass = classNames({
+      [css.daoAvatar]: true,
+      [css.daoAvatarCircles]: circlesDAO
+    });
+
     return (
       <div className={css.daoHeader + " " + css.clearfix}>
         <div className={css.daoInfo}>
           <Link to={"/dao/" + dao.avatarAddress}>
-            <div className={css.daoAvatar}>
-              <img src="/assets/images/daostack-logo.png"/>
+            <div className={iconClass}>
+              { circlesDAO
+                ? <img src="/assets/images/circles_logo.png"/>
+                : <img src="/assets/images/daostack-logo.png"/>
+              }
             </div>
           </Link>
           <div className={css.daoDescription}>
