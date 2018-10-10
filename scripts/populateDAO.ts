@@ -98,7 +98,7 @@ async function main(options: Opts) {
   });
 
   const proposalIds: { [id: number]: string } = {}; // mapping from the script's ids to GP proposalIds
-  const approved: { [address: string]: boolean } = {}; // did we already approve 1000 GEN for an address?
+  const approved: { [address: string]: boolean } = {}; // did we already approve 100000 GEN for an address?
   let i: number = 0;
 
   const {
@@ -274,8 +274,8 @@ async function main(options: Opts) {
     }
 
     async function approve() {
-      logger.info(`Pre-approving 1000 GEN for current account`);
-      const { tx } = await stakingToken.approve({ spender: gp.address, amount: Util.toWei(1000) });
+      logger.info(`Pre-approving 100000 GEN for current account`);
+      const { tx } = await stakingToken.approve({ spender: gp.address, amount: Util.toWei(100000) });
       approved[web3.eth.defaultAccount] = true;
       logTx(network, tx);
     }
