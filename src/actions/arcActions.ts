@@ -142,7 +142,9 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
 
   // HACK: if the DAO has the word "circle" in the name, then use DAI instead of ETH for rewards
   if (daoData.name.toLowerCase().includes("circles")) {
-    const daiAddress = process.env.arcjs_network == 'live' ? "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359" : "0xc4375b7de8af5a38a93548eb8453a498222c4ff2";
+    const daiAddress = process.env.arcjs_network == 'live' ? "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
+                       : process.env.arcjs_network == 'kovan' ? "0xc4375b7de8af5a38a93548eb8453a498222c4ff2"
+                       : daoInstance.token.address; // on ganache hack to use the DAO token as the "DAI"
 
     const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(daiAddress) as any;
 
