@@ -210,7 +210,7 @@ class HeaderContainer extends React.Component<IProps, null> {
         <div className={css.notice}>
           <div>
             <img src="/assets/images/Icon/Alert.svg"/>
-            Alchemy and the Genesis Alpha arc release are in Alpha. There will be BUGS! All reputation accumulated will be reset. We don't guarantee complete security. <b>**Play at your own risk**</b>
+            Alchemy and Arc are in Alpha. There will be BUGS! All reputation accumulated will be reset. We don't guarantee complete security. <b>**Play at your own risk**</b>
           </div>
           <a className={css.reportBugs} href="mailto:bugs@daostack.io">REPORT BUGS</a>
         </div>

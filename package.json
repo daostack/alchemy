@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
   "license": "GPL-3.0",
@@ -56,12 +56,14 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "start": "webpack-dev-server --config webpack.dev.config.js",
+    "start-staging": "cross-env S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
     "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\"",
     "populate-dao": "ts-node scripts/populateDAO.ts"
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.80",
+    "@types/react-share": "^2.1.1",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
@@ -93,6 +95,7 @@
     "react-router-dom": "^4.2.2",
     "react-router-modal": "^1.3.5",
     "react-router-redux": "next",
+    "react-share": "^2.3.1",
     "react-transition-group": "^2.2.1",
     "redis": "^2.8.0",
     "redux": "^3.7.2",

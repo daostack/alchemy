@@ -287,6 +287,10 @@ a.navItem:hover {
   }
 }
 
+.daoAvatarCircles {
+  background-color: gray;
+}
+
 .holdings {
   float: right;
   width: 180px;
@@ -608,7 +612,7 @@ a.navItem:hover {
 
 @media only screen and (min-width: 645px) {
   .tourModal {
-    .accessTour {    
+    .accessTour {
       right: 66px;
       top: 61px;
     }

@@ -270,7 +270,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const tourSteps = [
       {
         target: "." + css.daoInfo,
-        content: `Alchemy is a collaborative application used by the ${dao.name} DAO to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in the ${dao.name} DAO can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
+        content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },
