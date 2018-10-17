@@ -140,6 +140,20 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     tokenSymbol: await daoInstance.getTokenSymbol()
   };
 
+  // HACK: if the DAO has the word "circles" in the name, then use DAI instead of ETH for rewards
+  if (daoData.name.toLowerCase().includes("circles")) {
+    const networkName = (await Arc.Utils.getNetworkName()).toLowerCase();
+    const daiAddress = networkName == 'live' ? "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
+                       : networkName == 'kovan' ? "0xc4375b7de8af5a38a93548eb8453a498222c4ff2"
+                       : daoInstance.token.address; // on ganache hack to use the DAO token as the "DAI"
+
+    const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(daiAddress) as any;
+
+    daoData.externalTokenAddress = daiAddress;
+    daoData.externalTokenSymbol = "DAI";
+    daoData.externalTokenCount = Util.fromWei(await externalToken.balanceOf(avatarAddress));
+  }
+
   // Get all "members" by seeing who has reputation in this DAO
   let memberAddresses: string[] = [];
 
@@ -318,13 +332,15 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
   const proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
 
-  const proposal: IProposalState = {...contributionProposal, ...{
+  const proposal: IProposalState = {
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
     boostedTime: Number(proposalDetails.boostedPhaseTime),
     boostedVotePeriodLimit: Number(proposalDetails.currentBoostedVotePeriodLimit),
+    contributionDescriptionHash: contributionProposal.contributionDescriptionHash,
     daoAvatarAddress: avatarAddress,
     description,
     ethReward: Util.fromWei(contributionProposal.ethReward),
+    externalToken: contributionProposal.externalToken,
     externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
     executionTime: Number(contributionProposal.executionTime),
     nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
@@ -333,6 +349,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     reputationChange: Util.fromWei(contributionProposal.reputationChange),
     periodLength: Number(contributionProposal.periodLength),
     preBoostedVotePeriodLimit: Number(votingMachineParams.preBoostedVotePeriodLimit),
+    proposalId: contributionProposal.proposalId,
     proposer,
     stakes: [],
     stakesNo: Util.fromWei(proposalStatus.stakesNo),
@@ -345,7 +362,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     votesYes: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes })),
     votesNo: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No })),
     winningVote: proposalDetails.winningVote,
-  }};
+  };
 
   delete (proposal as any).votingMachine;
 
@@ -476,12 +493,13 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
   const redeemerInstance = await Arc.RedeemerFactory.deployed();
   const rewards = await redeemerInstance.redeemables({ proposalId, avatarAddress: proposal.daoAvatarAddress, beneficiaryAddress: accountAddress });
 
-  const redemptions = {
+  const redemptions: IRedemptionState = {
     accountAddress,
     proposalId,
     beneficiaryEth: 0,
     beneficiaryNativeToken: 0,
     beneficiaryReputation: 0,
+    beneficiaryExternalToken: 0,
     proposerReputation: Util.fromWei(rewards.proposerReputationAmount),
     stakerReputation: Util.fromWei(rewards.stakerReputationAmount),
     stakerTokens: Util.fromWei(rewards.stakerTokenAmount),
@@ -496,10 +514,12 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
       // Boosted proposal that passed by expiring with more yes votes than no
       // have to manually calculate beneficiary rewards
       redemptions.beneficiaryEth = proposal.numberOfPeriods * proposal.ethReward;
+      redemptions.beneficiaryExternalToken = proposal.numberOfPeriods * proposal.externalTokenReward;
       redemptions.beneficiaryNativeToken = proposal.numberOfPeriods * proposal.nativeTokenReward;
       redemptions.beneficiaryReputation = proposal.numberOfPeriods * proposal.reputationChange;
     } else {
       redemptions.beneficiaryEth = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.Eth)) * proposal.ethReward;
+      redemptions.beneficiaryExternalToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.ExternalToken)) * proposal.externalTokenReward;
       redemptions.beneficiaryNativeToken = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.NativeToken)) * proposal.nativeTokenReward;
       redemptions.beneficiaryReputation = (await proposalInstance.contract.getPeriodsToPay(proposalId, proposal.daoAvatarAddress, RewardType.Reputation)) * proposal.reputationChange;
     }
@@ -612,6 +632,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         controllerAddress: dao.controller.address,
         currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: dao.avatar.address })),
         ethCount: 0,
+        externalTokenCount: 0,
         genCount: 0,
         lastBlock: await Util.getLatestBlock(),
         name: daoName,
@@ -648,7 +669,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
 export type CreateProposalAction = IAsyncAction<'ARC_CREATE_PROPOSAL', { avatarAddress: string }, any>;
 
-export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, ethReward: number, beneficiaryAddress: string): ThunkAction<any, IRootState, null> {
+export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, ethReward: number, externalTokenReward: number, beneficiaryAddress: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const meta = {
       avatarAddress: daoAvatarAddress
@@ -661,7 +682,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
 
       const ethAccountAddress: string = getState().web3.ethAccountAddress;
-      const dao = await Arc.DAO.at(daoAvatarAddress);
+      const dao = getState().arc.daos[daoAvatarAddress];
 
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
@@ -696,6 +717,8 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         beneficiaryAddress,
         description,
         ethReward: Util.toWei(ethReward),
+        externalToken: dao.externalTokenAddress ? dao.externalTokenAddress : "",
+        externalTokenReward: dao.externalTokenAddress && externalTokenReward ? Util.toWei(externalTokenReward) : 0,
         nativeTokenReward: Util.toWei(nativeTokenReward),
         numberOfPeriods: 1,
         periodLength: 0,
@@ -741,7 +764,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
       contributionDescriptionHash: eventResult._contributionDescription,
       ethReward: eventResult._rewards[1],
       executionTime: 0,
-      externalToken: "0",
+      externalToken: eventResult._externalToken,
       externalTokenReward: eventResult._rewards[2],
       nativeTokenReward: eventResult._rewards[0],
       numberOfPeriods: 1,
@@ -1252,6 +1275,27 @@ export function onDAOGenBalanceChanged(avatarAddress: string, balance: Number) {
     if (genCount != balance) {
       dispatch({
         type: arcConstants.ARC_ON_DAO_GEN_BALANCE_CHANGE,
+        payload: {
+          avatarAddress,
+          balance
+        }
+      });
+    }
+  };
+}
+
+export function onDAOExternalTokenBalanceChanged(avatarAddress: string, balance: Number) {
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const dao = getState().arc.daos[avatarAddress];
+    if (!dao) {
+      return;
+    }
+
+    const { externalTokenCount } = dao;
+
+    if (externalTokenCount != balance) {
+      dispatch({
+        type: arcConstants.ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE,
         payload: {
           avatarAddress,
           balance

@@ -14,7 +14,8 @@ export interface IWeb3State {
   connectionStatus?: ConnectionStatus;
   currentAccountGenBalance: number;
   currentAccountGenStakingAllowance: number;
-  ethAccountBalance: number;
+  currentAccountExternalTokenBalance: number;
+  currentAccountEthBalance: number;
   ethAccountAddress: string | null;
   networkId: number;
 }
@@ -24,7 +25,8 @@ export const initialState: IWeb3State = {
   connectionStatus: ConnectionStatus.Pending,
   currentAccountGenBalance: 0,
   currentAccountGenStakingAllowance: 0,
-  ethAccountBalance: 0,
+  currentAccountExternalTokenBalance: 0,
+  currentAccountEthBalance: 0,
   ethAccountAddress: null,
   networkId: 0 // unknown network
 };
@@ -67,7 +69,10 @@ const web3Reducer = (state = initialState, action: any) => {
       return {...state, ...action.payload };
 
     case ActionTypes.WEB3_ON_ETH_BALANCE_CHANGE:
-      return {...state, ethAccountBalance: action.payload };
+      return {...state, currentAccountEthBalance: action.payload };
+
+    case ActionTypes.WEB3_ON_EXTERNAL_TOKEN_BALANCE_CHANGE:
+      return {...state, currentAccountExternalTokenBalance: action.payload };
 
     case ActionTypes.WEB3_ON_GEN_BALANCE_CHANGE:
       return {...state, currentAccountGenBalance: action.payload };

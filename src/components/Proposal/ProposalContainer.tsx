@@ -15,6 +15,7 @@ import * as schemas from "schemas";
 
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import ReputationView from "components/Account/ReputationView";
+import RewardsString from "components/Proposal/RewardsString";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
@@ -136,7 +137,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
     const beneficiaryHasRewards = beneficiaryRedemptions && (
       beneficiaryRedemptions.beneficiaryReputation ||
       beneficiaryRedemptions.beneficiaryNativeToken ||
-      (beneficiaryRedemptions.beneficiaryEth && dao.ethCount >= beneficiaryRedemptions.beneficiaryEth)
+      (beneficiaryRedemptions.beneficiaryEth && dao.ethCount >= beneficiaryRedemptions.beneficiaryEth) ||
+      (beneficiaryRedemptions.beneficiaryExternalToken && dao.externalTokenCount >= beneficiaryRedemptions.beneficiaryExternalToken)
     ) as boolean;
 
     const accountHasRewards = currentRedemptions && (
@@ -190,7 +192,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       redemptionsTip =
         <div>
-          {beneficiaryHasRewards || (beneficiaryRedemptions && beneficiaryRedemptions.beneficiaryEth) ?
+          {beneficiaryHasRewards || (beneficiaryRedemptions && beneficiaryRedemptions.beneficiaryEth) || (beneficiaryRedemptions && beneficiaryRedemptions.beneficiaryExternalToken) ?
             <div>
               <strong>
                 {currentAccount.address === proposal.beneficiaryAddress ? 'As the' : 'The'} beneficiary of the proposal {currentAccount.address === proposal.beneficiaryAddress ? 'you ' : ''}will receive:
@@ -200,6 +202,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   <li>
                     {beneficiaryRedemptions.beneficiaryEth} ETH
                     {dao.ethCount < beneficiaryRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
+                  </li> : ""
+                }
+                {beneficiaryRedemptions.beneficiaryExternalToken ?
+                  <li>
+                    {beneficiaryRedemptions.beneficiaryExternalToken} {dao.externalTokenSymbol}
+                    {dao.externalTokenCount < beneficiaryRedemptions.beneficiaryExternalToken ? " (Insufficient funds in DAO)" : ""}
                   </li> : ""
                 }
                 {beneficiaryRedemptions.beneficiaryReputation ? <li><ReputationView reputation={beneficiaryRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
@@ -271,20 +279,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
           </button>
         </Tooltip>
       : "");
-
-      let rewards = [];
-      if (proposal.nativeTokenReward) {
-        rewards.push(proposal.nativeTokenReward + " " + dao.tokenSymbol);
-      }
-      if (proposal.reputationChange) {
-        rewards.push(
-          <ReputationView daoName={dao.name} totalReputation={totalReputation} reputation={proposal.reputationChange}/>
-        );
-      }
-      if (proposal.ethReward) {
-        rewards.push(proposal.ethReward + " ETH");
-      }
-      const rewardsString = <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>and</em> {v}</React.Fragment>, null)}</strong>;
 
       const styles = {
         forBar: {
@@ -386,7 +380,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
             </h3>
             <div className={css.transferDetails}>
-              <span className={css.transferType}>Transfer of {rewardsString}</span>
+              <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>
               <strong className={css.transferAmount}></strong>
               <img src="/assets/images/Icon/Transfer.svg"/>
 
