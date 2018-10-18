@@ -21,7 +21,7 @@ class SharingButtons extends React.Component<IProps, null> {
     const href = window.location.href;
     return (
       <div className={css.sharingButtons}>
-        Share on:
+        Share with:
         <FacebookShareButton url={href} quote={this.props.shareText}>
           <FacebookIcon size={this.props.size} />
         </FacebookShareButton>
