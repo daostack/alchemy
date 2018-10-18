@@ -1,5 +1,5 @@
 import * as classNames from "classnames";
-import { DiscussionEmbed, CommentCount } from 'disqus-react';
+import { DiscussionEmbed } from 'disqus-react';
 import * as moment from "moment";
 import { denormalize } from "normalizr";
 import * as React from "react";

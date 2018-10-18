@@ -1117,3 +1117,9 @@ button.cancelPrediction {
   	cursor: pointer;
   }
 }
+
+:global .disqus-comment-count {
+	font-size: 12px;
+	top: 37px;
+	position: relative;
+}

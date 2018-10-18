@@ -14,5 +14,10 @@ declare module "disqus-react" {
     title: string;
   }
 
-  export class CommentCount extends React.Component {}
+  export class CommentCount extends React.Component<CommentCountProps, null> {}
+
+  interface CommentCountProps {
+    shortname: string;
+    config: DiscussionEmbedConfig;
+  }
 }
