@@ -11,7 +11,7 @@ declare module "disqus-react" {
   interface DiscussionEmbedConfig {
     url: string;
     identifier: string;
-    title: string;
+    title?: string;
   }
 
   export class CommentCount extends React.Component<CommentCountProps, null> {}

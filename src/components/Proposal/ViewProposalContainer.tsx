@@ -45,7 +45,6 @@ class ViewProposalContainer extends React.Component<IProps, null> {
   public render() {
     const { proposal } = this.props;
 
-    const disqusShortname = 'daostack-alchemy';
     const disqusConfig = {
       url: process.env.BASE_URL + "/" + this.props.location.pathname,
       identifier: proposal.proposalId,
@@ -64,7 +63,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
           <div className={css.proposal}>
             <ProposalContainer proposalId={proposal.proposalId}/>
           </div>
-          <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
         </div>
       );
     } else {
