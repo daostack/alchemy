@@ -1,5 +1,6 @@
 node_modules/
 dist/
+build/
 coverage/
 kovan_pass.txt
 ropsten_pass.txt
@@ -9,3 +10,4 @@ PRIVATE_README.md
 *sublime*
 yarn*
 .env
+*.swp
