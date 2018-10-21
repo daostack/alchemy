@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="16px" viewBox="0 0 24 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Shape</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="DAO-Header" transform="translate(-13.000000, -53.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M13,69 L37,69 L37,66.3333333 L13,66.3333333 L13,69 Z M13,62.3333333 L37,62.3333333 L37,59.6666667 L13,59.6666667 L13,62.3333333 Z M13,53 L13,55.6666667 L37,55.6666667 L37,53 L13,53 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

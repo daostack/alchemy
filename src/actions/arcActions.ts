@@ -37,8 +37,8 @@ export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_PENDING, payload: null });
     try {
-      const networkName = (await Arc.Utils.getNetworkName()).toLowerCase();
-      const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/' + process.env.S3_BUCKET + '/initialArcState-' + networkName + '.json');
+      const networkName = process.env.arcjs_network ? process.env.arcjs_network.toLowerCase() : 'unknown';
+      const cachedState = await axios.get(`${process.env.CACHE_SERVER_URL}/initialArcState-${networkName}.json`);
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: cachedState.data });
     } catch (e) {
       console.error(e);
@@ -51,6 +51,7 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
     const daoCreator = await Arc.DaoCreatorFactory.deployed();
+    console.log(`Fetching DAOs from DaoCreator at ${daoCreator.address}`)
 
     if (toBlock == 'latest') {
       // make sure we use same toBlock for every call to the blockchain so everything is in sync
@@ -68,6 +69,7 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
       const event = newOrgEvents[index];
       const daoData = await getDAOData(event.args._avatar, null, fromBlock, toBlock);
       if (daoData) {
+        console.log(`Found a DAO at address ${event.args._avatar}`)
         daos[event.args._avatar] = daoData;
       }
     }
@@ -175,7 +177,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   // Get all proposals' details like title and description from the server
   let serverProposals: { [key: string]: any } = {};
   try {
-    const results = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '"}}');
+    const results = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '"}}');
     serverProposals = _.keyBy(results.data, "arcId");
   } catch (e) {
     console.error(e);
@@ -259,7 +261,7 @@ export function getProposal(avatarAddress: string, proposalId: string, fromBlock
 
     let serverProposal: any = false;
     try {
-      let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
+      let response = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
       if (response.data.length > 0) {
         serverProposal = response.data[0];
       }
@@ -298,14 +300,14 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     title = serverProposal.title;
   } else {
     // If we didn't find the proposal by proposalId, see if there is one that matches by description hash that doesnt yet have a proposalId added to it
-    let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
+    let response = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
     if (response.data.length > 0) {
       serverProposal = response.data[0];
       description = serverProposal.description;
       title = serverProposal.title;
 
       // If we found one, then update the database with the proposalId
-      response = await axios.patch(process.env.API_URL + '/api/proposals/' + serverProposal.id, {
+      response = await axios.patch(process.env.API_URL + '/proposals/' + serverProposal.id, {
         arcId: proposalId,
         daoAvatarAddress: avatarAddress,
         descriptionHash,
@@ -670,7 +672,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
 
       // Save the proposal title, description and submitted time on the server
       try {
-        const response = await axios.post(process.env.API_URL + "/api/proposals", {
+        const response = await axios.post(process.env.API_URL + "/proposals", {
           daoAvatarAddress,
           descriptionHash,
           description,
@@ -726,7 +728,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     let serverProposal: any = false;
     try {
       // See if this proposalId is already stored in the database, and if so load title and description data from there
-      const response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
+      const response = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
       if (response.data.length > 0) {
         serverProposal = response.data[0];
       }

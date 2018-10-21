@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "./build/",
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
@@ -9,7 +9,6 @@
     "baseUrl": "src"
   },
   "include": [
-    "./src/**/*",
-    "./typings/*"
+    "./src/**/*"
   ]
 }

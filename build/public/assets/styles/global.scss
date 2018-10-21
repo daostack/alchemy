@@ -1,0 +1,16 @@
+@import 'rc-tooltip';
+
+:global html {
+	min-height: 100%;
+	position: relative;
+	width: 100%;
+}
+
+:global body {
+	background-color: rgba(243, 243, 243, 1.000);
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	color: $black;
+}

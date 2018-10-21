@@ -1,35 +1,33 @@
-// tslint:disable:no-var-requires
-// tslint:disable:no-console
-
-// Hack to be able to find all our modules with relative paths
-process.env.NODE_PATH = __dirname;
-require('module').Module._initPaths();
-
+import * as fs from 'fs';
 import * as Arc from "@daostack/arc.js";
-import * as aws from 'aws-sdk';
-import promisify = require("es6-promisify");
+const promisify = require("es6-promisify");
 import * as moment from "moment";
 import { denormalize, normalize } from "normalizr";
 import * as Redis from 'redis';
 import * as Redux from 'redux';
 import loggerMiddleware from "redux-logger";
 import thunkMiddleware from "redux-thunk";
-
-import HDWalletProvider from "./lib/truffle-hdwallet-provider";
-
-// haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
-// v1.0 may improve on this entire Web3 typings experience
 const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
-import * as arcConstants from "constants/arcConstants";
-import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState, RewardType } from "./reducers/arcReducer";
-import * as selectors from "selectors/daoSelectors";
-import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
-
-import * as ActionTypes from "constants/arcConstants";
-import * as schemas from "./schemas";
+import * as arcConstants from "./constants/arcConstants";
+import HDWalletProvider from "./lib/truffle-hdwallet-provider";
 import Util from "./lib/util";
+import {
+  default as arcReducer,
+  initialState as arcInitialState,
+  checkProposalExpired,
+  IArcState,
+  IDaoState,
+  IProposalState,
+  ProposalStates,
+  TransactionStates,
+  IVoteState,
+  RewardType
+} from "./reducers/arcReducer";
+import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
+import * as schemas from "./schemas";
+import * as selectors from "./selectors/daoSelectors";
 
 require('dotenv').config();
 
@@ -37,35 +35,16 @@ const redisClient = Redis.createClient(process.env.REDIS_URL || "redis://127.0.0
 const redisGet = promisify(redisClient.get.bind(redisClient));
 const redisSet = promisify(redisClient.set.bind(redisClient));
 
+// Setup web3 ourselves so we can use Infura or Quiknode instead of letting Arc.js setup web3
+const ethProvider = process.env.ETH_PROVIDER
+const networkId = process.env.ETH_NETWORK_ID;
+const mnemonic = process.env.ETH_MNEMONIC;
+
+const provider = new HDWalletProvider(mnemonic, ethProvider);
+global.web3 = new Web3(provider.engine);
+
 const arcjsNetwork = process.env.arcjs_network;
-
-if (process.env.NODE_ENV == 'production') {
-  const mnemonic = process.env.DEFAULT_ACCOUNT_MNEMONIC;
-  let provider;
-
-  if (arcjsNetwork == 'live') {
-    // Use our Quiknode on production
-    //provider = new HDWalletProvider(mnemonic, "https://sadly-exact-hen.quiknode.io/d5ba26f2-ea9b-4b16-9247-2a8858623c68/b3URb1n1WPG35IpElyDBog==/");
-    const infuraKey = process.env.INFURA_KEY;
-    provider = new HDWalletProvider(mnemonic, "https://mainnet.infura.io/" + infuraKey);
-  } else {
-    // Use infura on Kovan right now
-    const infuraKey = process.env.INFURA_KEY;
-    provider = new HDWalletProvider(mnemonic, "https://kovan.infura.io/" + infuraKey);
-  }
-
-  // Setup web3 ourselves so we can use Infura or Quiknode instead of letting Arc.js setup web3
-  global.web3 = new Web3(provider.engine);
-
-  process.env.API_URL = process.env.API_URL || "https://daostack-alchemy.herokuapp.com";
-} else {
-  process.env.API_URL = process.env.API_URL || "http://127.0.0.1:3001";
-}
-
-aws.config.region = 'us-west-2';
-const s3 = new aws.S3();
-const s3FileName = 'initialArcState-' + arcjsNetwork + '.json';
-const s3FileType = 'application/json';
+const cacheFileName = '/app/cache/initialArcState-' + arcjsNetwork + '.json';
 
 // Use redux store for the state
 interface IRootState {
@@ -84,19 +63,29 @@ let store = Redux.createStore(
   Redux.applyMiddleware(thunkMiddleware)
 );
 
-// Subscribe to the redux store changes
-const unsubscribe = store.subscribe(() => {
-  // XXX: dont need to do anything here
-});
-
 process.on('SIGTERM', async () => {
-  console.log("Got SIGTERM so exiting process");
-  unsubscribe();
+  console.log("[LOCK OFF] Got SIGTERM so exiting & resetting lock");
   await redisSet('alchemy-caching-' + arcjsNetwork, 0);
   process.exit(0);
 });
 
+process.on('SIGUSR2', async () => {
+  console.log(`[LOCK OFF] Got restart signal from nodemon`);
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
+})
+
+process.on('unhandledRejection', async (error) => {
+  await redisSet('alchemy-caching-' + arcjsNetwork, 0);
+  console.log(`[LOCK OFF] Got unhandled rejection so resetting lock`);
+  console.error(error);
+  process.exit(1)
+})
+
 Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
+
+console.log(`Starting app in environment: ${JSON.stringify(process.env,null,2)}`);
+
+Arc.ConfigService.set("logLevel", 15);
 
 (async () => {
   await Arc.InitializeArcJs();
@@ -104,9 +93,10 @@ Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
 
 async function updateCache() {
   if (Number(await redisGet('alchemy-caching-' + arcjsNetwork))) {
-    console.log("The cache is already being updated.");
+    console.log(`The cache is already being updated for network ${arcjsNetwork}.`);
     return false;
   }
+  console.log(`[LOCK ON] Updating cache for network ${arcjsNetwork}`);
   await redisSet('alchemy-caching-' + arcjsNetwork, 1);
 
   const startTime = moment();
@@ -122,11 +112,12 @@ async function updateCache() {
     console.log("Starting to cache the "  + arcjsNetwork + " blockchain from the beginning");
     await store.dispatch(arcActions.getDAOs(0, latestBlock));
   } else {
-    console.log("Pulling current cached state for " + arcjsNetwork + " from S3 bucket " + process.env.S3_BUCKET);
+    console.log("Pulling current cached state for " + arcjsNetwork + " from " + cacheFileName);
     try {
-      const s3Get = promisify(s3.getObject.bind(s3));
-      const resp = await s3Get({Bucket: process.env.S3_BUCKET || 'daostack-alchemy', Key: s3FileName})
-      initialState = JSON.parse(resp.Body.toString('utf-8'));
+      const s = JSON.parse(fs.readFileSync(cacheFileName, 'utf8'));
+      const keylen = (obj: Object): Number => Object.keys(obj).length
+      console.log(`Loaded: ${keylen(s.accounts)} accounts, ${keylen(s.daos)} daos, ${keylen(s.proposals)} proposals, ${keylen(s.votes)} votes, ${keylen(s.stakes)} stakes`)
+      initialState = s;
       await store.dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: initialState });
     } catch (e) {
       console.log("error = ", e);
@@ -291,23 +282,13 @@ async function updateCache() {
   const arcState = (store.getState() as IRootState).arc;
   if (arcState.daosLoaded) {
     // Write cached blockchain data to S3
-    console.log("Writing state to S3");
+    console.log("Writing state to disk");
 
-    const s3Params = {
-      Body: JSON.stringify(arcState),
-      Bucket: process.env.S3_BUCKET || 'daostack-alchemy',
-      Key: s3FileName,
-      //Expires: 60,
-      ContentType: s3FileType,
-      ACL: 'public-read'
-    };
-
-    const s3Put = promisify(s3.putObject.bind(s3));
     try {
-      const data = await s3Put(s3Params);
-      console.log("Successfully wrote cached data for " + arcjsNetwork + " to S3. ", data);
+      fs.writeFileSync(cacheFileName, JSON.stringify(arcState), 'utf8')
+      console.log("Successfully wrote cached data for " + arcjsNetwork + " to disk.");
     } catch (e) {
-      console.error("Error writing data to S3: ", e, e.stack);
+      console.error("Error writing data to disk: ", e, e.stack);
     }
 
     console.log("Updating last block read on redis: ", latestBlock);
@@ -320,6 +301,7 @@ async function updateCache() {
   } else {
     console.log("Something weird happened, DAOs not loaded so didn't write the data");
   }
+  console.log(`[LOCK OFF] Done caching`);
   await redisSet('alchemy-caching-' + arcjsNetwork, 0);
   return true;
 }
