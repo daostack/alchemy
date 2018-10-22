@@ -231,7 +231,7 @@ async function updateCache() {
 
     const state = (store.getState() as IRootState);
     for (const avatarAddress of Object.keys(state.arc.daos)) {
-      const dao = denormalize(state.arc.daos[avatarAddress], schemas.daoSchema, state.arc);
+      const dao = denormalize(state.arc.daos[avatarAddress], schemas.daoSchema, state.arc) as IDaoState;
       const daoInstance = await Arc.DAO.at(avatarAddress);
 
       console.log(`Looking at DAO ${avatarAddress}, updating reputation balances`);
@@ -254,17 +254,23 @@ async function updateCache() {
         await store.dispatch(arcActions.onReputationChangeEvent(avatarAddress, event.args._from));
       }
 
-      console.log("Done updating reputation, now update DAO ETH and GEN balances");
+      console.log("Done updating reputation, now update DAO balances");
 
       const newEthBalance = Util.fromWei(await promisify(global.web3.eth.getBalance)(avatarAddress));
       await store.dispatch(arcActions.onDAOEthBalanceChanged(avatarAddress, newEthBalance));
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(avatarAddress));
       await store.dispatch(arcActions.onDAOGenBalanceChanged(avatarAddress, newGenBalance));
 
+      if (dao.externalTokenAddress) {
+        const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
+        const balance = Util.fromWei(await externalToken.balanceOf(avatarAddress));
+        await store.dispatch(arcActions.onDAOExternalTokenBalanceChanged(avatarAddress, balance));
+      }
+
       console.log("Done updating balances, now look for any expired proposals");
 
       // Check all open proposals to see if any expired and if so update state and gather redemptions
-      let proposals = dao.proposals;
+      let proposals = dao.proposals as IProposalState[];
       proposals = proposals.filter((proposal: IProposalState) => (
         proposal.state === ProposalStates.PreBoosted ||
         proposal.state === ProposalStates.Boosted ||

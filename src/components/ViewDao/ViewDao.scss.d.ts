@@ -27,6 +27,7 @@ export const redemptionNotification: string;
 export const buyGen: string;
 export const selected: string;
 export const daoAvatar: string;
+export const daoAvatarCircles: string;
 export const holdings: string;
 export const daoDescription: string;
 export const daoInfo: string;

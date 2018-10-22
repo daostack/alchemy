@@ -10,6 +10,7 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import * as uiActions from "actions/uiActions";
+import * as web3Actions from "actions/web3Actions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { checkProposalExpired, IAccountState, IDaoState, IProposalState, IRedemptionState, ProposalStates, proposalPassed } from "reducers/arcReducer";
@@ -65,6 +66,8 @@ interface IDispatchProps {
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
   onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
   onDAOGenBalanceChanged: typeof arcActions.onDAOGenBalanceChanged;
+  onDAOExternalTokenBalanceChanged: typeof arcActions.onDAOExternalTokenBalanceChanged;
+  onExternalTokenBalanceChanged: typeof web3Actions.onExternalTokenBalanceChanged;
   onProposalExpired: typeof arcActions.onProposalExpired;
   updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
   hideTour: typeof uiActions.hideTour;
@@ -77,6 +80,8 @@ const mapDispatchToProps = {
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
   onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
   onDAOGenBalanceChanged: arcActions.onDAOGenBalanceChanged,
+  onDAOExternalTokenBalanceChanged: arcActions.onDAOExternalTokenBalanceChanged,
+  onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
   onProposalExpired: arcActions.onProposalExpired,
   updateDAOLastBlock: arcActions.updateDAOLastBlock,
   hideTour: uiActions.hideTour,
@@ -157,12 +162,15 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     }
 
     const {
+      currentAccountAddress,
       daoAvatarAddress,
       dao,
       onTransferEvent,
       onReputationChangeEvent,
       onDAOEthBalanceChanged,
       onDAOGenBalanceChanged,
+      onDAOExternalTokenBalanceChanged,
+      onExternalTokenBalanceChanged,
       onProposalExpired,
       showNotification,
       updateDAOLastBlock
@@ -189,11 +197,27 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
 
+    // If the DAO has an external token, update the balance of the current account for that token
+    const externalToken = dao.externalTokenAddress ? await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any : false;
+    if (externalToken) {
+      onExternalTokenBalanceChanged(Util.fromWei(await externalToken.balanceOf(currentAccountAddress)));
+    }
+
     this.blockInterval = setInterval(async () => {
       const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
       await onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
       await onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
+
+      if (externalToken) {
+        // watch for updates to the DAO's balance of the external token
+        const newDaoExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(daoAvatarAddress));
+        onDAOExternalTokenBalanceChanged(daoAvatarAddress, newDaoExternalTokenBalance);
+
+        // Watch for updates to the current account's balance of the external token
+        const newCurrentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(currentAccountAddress));
+        onExternalTokenBalanceChanged(newCurrentAccountExternalTokenBalance);
+      }
 
       // Check all proposals to see if any expired
       for (const proposal of this.props.openProposals) {
@@ -246,25 +270,25 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const tourSteps = [
       {
         target: "." + css.daoInfo,
-        content: `Alchemy is a collaborative application used by the Genesis Alpha DAO to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in the Genesis Alpha DAO can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
+        content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },
       {
         target: "." + appCss.accountInfo,
-        content: "This icon represents your ETH wallet. Here you can view your reputation and token balances.",
+        content: "This icon represents your wallet. Here you can view your reputation and token balances.",
         placement: "bottom",
         disableBeacon: true
       },
       {
         target: "." + css.holdings,
-        content: "The amount in ETH represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.",
+        content: `The amount in ${dao.externalTokenAddress ? dao.externalTokenSymbol : "ETH"} represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.`,
         placement: "left",
         disableBeacon: true
       },
       {
         target: "." + css.createProposal,
-        content: "Do you have an idea for an initiative to improve the DAOstack project or ecosystem? Create a proposal to get it funded. If the proposal passes, funds will be transferred to the target account automatically and you will be rewarded with additional reputation and GEN. If a proposal fails, there is no penalty for the proposer.",
+        content: "Do you have an idea for an initiative? Create a proposal to get it funded. If the proposal passes, funds will be transferred to the target account automatically and you will be rewarded with additional reputation and GEN. If a proposal fails, there is no penalty for the proposer.",
         placement: "top",
         disableBeacon: true
       },

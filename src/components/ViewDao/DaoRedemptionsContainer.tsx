@@ -67,10 +67,11 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} />);
     });
 
-    let redeemAllTip: JSX.Element | string = "", ethReward = 0, genReward = 0, reputationReward = 0;
+    let redeemAllTip: JSX.Element | string = "", ethReward = 0, genReward = 0, reputationReward = 0, externalTokenReward = 0;
     if (redemptions.length > 0) {
       redemptions.forEach((redemption) => {
         ethReward += redemption.beneficiaryEth;
+        externalTokenReward += redemption.beneficiaryExternalToken;
         genReward += redemption.voterTokens + redemption.stakerTokens + redemption.stakerBountyTokens;
         reputationReward += redemption.voterReputation + redemption.stakerReputation + redemption.beneficiaryReputation + redemption.proposerReputation;
       });
@@ -79,6 +80,9 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     let totalRewards = [];
     if (ethReward) {
       totalRewards.push(ethReward.toFixed(2).toLocaleString() + " ETH");
+    }
+    if (externalTokenReward) {
+      totalRewards.push(externalTokenReward.toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
     }
     if (genReward) {
       totalRewards.push(genReward.toFixed(2).toLocaleString() + " GEN");
