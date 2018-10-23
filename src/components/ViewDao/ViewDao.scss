@@ -180,11 +180,11 @@ a.createProposal {
   transform: rotate(-45deg);
   background-image: linear-gradient(-206deg, #6CDBEA 0%, #3AB4D0 95%);
   box-shadow: 0 10px 15px 0 rgba(0,0,0,0.16);
-  width: 36px;
-  height: 36px;
-  position: absolute;
-  right: 40px;
-  top: 20px;
+  width: 42px;
+  height: 42px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
   z-index: 10000;
 
   img {
