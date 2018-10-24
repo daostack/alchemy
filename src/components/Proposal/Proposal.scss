@@ -864,7 +864,7 @@ button.disabled {
 
 .boostedAmount {
 	display: block;
-	margin-bottom: 3px;
+	margin-bottom: 10px;
 }
 
 .predictions.unconfirmedPrediction {
@@ -885,7 +885,7 @@ button.disabled {
     right: 0;
     z-index: 100;
     text-align: right;
-    top: 25px;
+    top: 22px;
     transform: translateY(-50%);
     text-transform: uppercase;
 
@@ -1120,6 +1120,6 @@ button.cancelPrediction {
 
 :global .disqus-comment-count {
 	font-size: 12px;
-	top: 37px;
+	top: 35px;
 	position: relative;
 }
