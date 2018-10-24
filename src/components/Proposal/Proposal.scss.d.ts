@@ -93,8 +93,6 @@ export const placePrediction: string;
 export const cancelPrediction: string;
 export const newPassPrediction: string;
 export const newFailPrediction: string;
-export const viewProposalWrapper: string;
-export const singleProposal: string;
 export const preApproval: string;
 export const preapproveBackdrop: string;
 export const preapproveWrapper: string;

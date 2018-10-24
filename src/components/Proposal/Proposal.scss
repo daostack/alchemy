@@ -864,7 +864,7 @@ button.disabled {
 
 .boostedAmount {
 	display: block;
-	margin-bottom: 3px;
+	margin-bottom: 10px;
 }
 
 .predictions.unconfirmedPrediction {
@@ -885,7 +885,7 @@ button.disabled {
     right: 0;
     z-index: 100;
     text-align: right;
-    top: 25px;
+    top: 22px;
     transform: translateY(-50%);
     text-transform: uppercase;
 
@@ -1076,19 +1076,6 @@ button.cancelPrediction {
 	}
 }
 
-/****** View Proposal Page ******/
-.viewProposalWrapper {
-	width: 100%;
-}
-
-.singleProposal {
-	width: 100%;
-	position: relative;
-	margin-top: 15px;
-	background-color: $white;
-}
-
-
 /**** Pre-approve *****/
 .preApproval {
 	position: fixed;
@@ -1129,4 +1116,10 @@ button.cancelPrediction {
   	font-size: $body;
   	cursor: pointer;
   }
+}
+
+:global .disqus-comment-count {
+	font-size: 12px;
+	top: 35px;
+	position: relative;
 }
