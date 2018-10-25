@@ -16,8 +16,6 @@ import ProposalContainer from "./ProposalContainer";
 
 import * as css from "./ViewProposal.scss";
 
-import SharingButtons from "../Shared/SharingButtons";
-
 interface IStateProps extends RouteComponentProps<any> {
   proposal: IProposalState;
 }
@@ -56,9 +54,6 @@ class ViewProposalContainer extends React.Component<IProps, null> {
         <div>
           <div className={css.proposalsHeader}>
             Viewing proposal: {proposal.title}
-            <div className={css.sharingButtons}>
-              <SharingButtons size={16} shareText={proposal.title}/>
-            </div>
           </div>
           <div className={css.proposal}>
             <ProposalContainer proposalId={proposal.proposalId}/>
