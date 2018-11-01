@@ -41,25 +41,25 @@
     }
   },
   "scripts": {
+    "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\"",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "cache-arc-dev": "ts-node src/run_cache_worker.ts",
     "cache-arc-staging": "cross-env NODE_ENV=production arcjs_network=kovan ts-node src/run_cache_worker.ts",
     "cache-arc-prod": "cross-env NODE_ENV=production arcjs_network=live ts-node src/run_cache_worker.ts",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
-    "heroku-postbuild": "npm run build && tsc",
     "ganache": "npm explore @daostack/arc.js -- npm start ganache.run",
     "ganacheDb": "npm explore @daostack/arc.js -- npm start ganacheDb.run",
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start ganacheDb.clean",
     "ganacheDb-save": "npm explore @daostack/arc.js -- npm start ganacheDb.zip",
     "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start ganacheDb.restoreFromZip",
-    "migrate-ganache": "npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
+    "heroku-postbuild": "npm run build && tsc",
     "lint": "tslint --project .",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
+    "migrate-ganache": "npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
+    "populate-dao": "ts-node scripts/populateDAO.ts",
     "start": "webpack-dev-server --config webpack.dev.config.js",
-    "start-staging": "cross-env S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
-    "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\"",
-    "populate-dao": "ts-node scripts/populateDAO.ts"
+    "start-staging": "cross-env S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.80",
