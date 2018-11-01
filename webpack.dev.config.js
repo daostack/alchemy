@@ -8,7 +8,7 @@ const baseConfig = require('./webpack.base.config.js');
 require('dotenv').config();
 
 module.exports = merge(baseConfig, {
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval-source-map',
 
   devServer: {
     contentBase: path.resolve(__dirname, 'src'),
