@@ -298,7 +298,7 @@ const arcReducer = (state = initialState, action: any) => {
 
   switch (action.type) {
     case ActionTypes.ARC_LOAD_CACHED_STATE_FULFILLED: {
-      return update(state, { $merge: payload});
+      return state
     }
 
     case ActionTypes.ARC_GET_DAOS_FULFILLED: {
