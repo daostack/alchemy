@@ -252,7 +252,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     }, 10000);
   }
 
-
   public handleClickStartTour = (e: any) => {
     const { showTour } = this.props;
     this.setState({ showTourIntro: false });
