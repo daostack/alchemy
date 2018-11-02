@@ -196,14 +196,29 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
+    const externalToken = dao.externalTokenAddress ? await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any : false;
 
     // If the DAO has an external token, update the balance of the current account for that token
-    const externalToken = dao.externalTokenAddress ? await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any : false;
-    if (externalToken) {
-      onExternalTokenBalanceChanged(Util.fromWei(await externalToken.balanceOf(currentAccountAddress)));
-    }
+    // if (externalToken) {
+    //   onExternalTokenBalanceChanged(Util.fromWei(await externalToken.balanceOf(currentAccountAddress)));
+    // }
+    const updateState = async () => {
+      const {
+        currentAccountAddress,
+        daoAvatarAddress,
+        dao,
+        onTransferEvent,
+        onReputationChangeEvent,
+        onDAOEthBalanceChanged,
+        onDAOGenBalanceChanged,
+        onDAOExternalTokenBalanceChanged,
+        onExternalTokenBalanceChanged,
+        onProposalExpired,
+        showNotification,
+        updateDAOLastBlock
+      } = this.props;
+      const web3 = await Arc.Utils.getWeb3();
 
-    this.blockInterval = setInterval(async () => {
       const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
       await onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
@@ -229,8 +244,14 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
       updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
       this.setState({ readyToShow: true });
+    }
+
+    updateState()
+    this.blockInterval = setInterval(async () => {
+      updateState()
     }, 10000);
   }
+
 
   public handleClickStartTour = (e: any) => {
     const { showTour } = this.props;

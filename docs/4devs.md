@@ -23,3 +23,7 @@ This will start the development server in the following way:
   - connected to main net
   - getting initial data from main net
   - connected to public data server
+
+Now visit http://127.0.0.1:3000/ or http://127.0.0.1:3000/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1 and start profiling
+
+For _very_ rough statistics, open devTools -> Network and look at the line that says something like "64 requests; XMB transfered; etc." The "finish" time (after the page has rendered) gives a rough indication about when the page is rendered... 
