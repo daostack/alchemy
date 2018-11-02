@@ -56,6 +56,7 @@
     "migrate-ganache": "npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
     "populate-dao": "ts-node scripts/populateDAO.ts",
     "start": "webpack-dev-server --config webpack.dev.config.js",
+    "start-dev-profiling": "cross-env NODE_ENV=dev-profiling API_URL=https://daostack-alchemy.herokuapp.com webpack-dev-server --config webpack.dev.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
     "start-staging": "cross-env S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "test": "jest --coverage",

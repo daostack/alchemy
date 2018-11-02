@@ -60,11 +60,11 @@ module.exports = merge(baseConfig, {
     extractSass,
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify("production"),
-        'S3_BUCKET': JSON.stringify(process.env.S3_BUCKET || "daostack-alchemy"),
         'API_URL': JSON.stringify(process.env.API_URL || "https://daostack-alchemy.herokuapp.com"),
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io"),
         'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy')
+        'NODE_ENV': JSON.stringify("production"),
+        'S3_BUCKET': JSON.stringify(process.env.S3_BUCKET || "daostack-alchemy"),
       },
     }),
     new CopyWebpackPlugin([

@@ -45,8 +45,8 @@ class HomeContainer extends React.Component<IProps, null> {
           <h1>Alchemy</h1>
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
-            { process.env.NODE_ENV == 'production'
-                ? <a href='https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>View Alchemy</a>
+            { (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'dev-profiling')
+                ? <a href='/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>View Alchemy</a>
                 : <Link to='/daos'>View Alchemy</Link>
             }
           </div>
