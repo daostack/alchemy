@@ -203,6 +203,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     //   onExternalTokenBalanceChanged(Util.fromWei(await externalToken.balanceOf(currentAccountAddress)));
     // }
     const updateState = async () => {
+      console.time('updateState')
       const {
         currentAccountAddress,
         daoAvatarAddress,
@@ -243,7 +244,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       }
 
       updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
+      console.timeEnd('updateState')
       this.setState({ readyToShow: true });
+      console.timeEnd('Time until readyToShow');
     }
 
     updateState()

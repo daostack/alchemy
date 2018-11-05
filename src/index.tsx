@@ -11,13 +11,18 @@ import "./assets/styles/global.scss";
 import Util from 'lib/util';
 
 async function renderApp() {
+  console.time('Time until readyToShow');
   try {
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
 
+    console.time('InitalizeArcJs')
     await Arc.InitializeArcJs({ watchForAccountChanges: true });
+    console.timeEnd('InitalizeArcJs')
 
+    console.time('Arc.Utils.getWeb3()')
     const web3 = await Arc.Utils.getWeb3();
+    console.timeEnd('Arc.Utils.getWeb3()')
     Arc.ConfigService.set("gasPriceAdjustment", async (defaultGasPrice: BigNumber) => {
       try {
         const network = await Arc.Utils.getNetworkName();

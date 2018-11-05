@@ -38,8 +38,10 @@ export function loadCachedState() {
     dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_PENDING, payload: null });
     try {
       const networkName = (await Arc.Utils.getNetworkName()).toLowerCase();
+      console.time('Load initial arc state')
       const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/' + process.env.S3_BUCKET + '/initialArcState-' + networkName + '.json');
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: cachedState.data });
+      console.timeEnd('Load initial arc state')
     } catch (e) {
       console.error(e);
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_REJECTED, payload: e });
