@@ -1,8 +1,6 @@
 import createHistory from "history/createBrowserHistory";
 import { routerMiddleware } from "react-router-redux";
 import { applyMiddleware, compose, createStore } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-import loggerMiddleware from "redux-logger";
 import thunkMiddleware from "redux-thunk";
 
 import reducers from "./reducers";
@@ -14,18 +12,10 @@ export const history = createHistory();
 
 let store: any
 
-if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'dev-profiling') {
-  store = createStore(
-    reducers,
-    applyMiddleware(
-      operationsTracker,
-      notificationUpdater,
-      successDismisser(15000),
-      thunkMiddleware,
-      routerMiddleware(history),
-    ),
-  )
-} else {
+if (process.env.NODE_ENV === 'development') {
+  // require these modules only in developmetn, to save some space in the bundle
+  const composeWithDevTools = require('redux-devtools-extension').composeWithDevTools
+  const loggerMiddleware = require("redux-logger")
   store = createStore(
     reducers,
     composeWithDevTools(   // makes the store available to the Chrome redux dev tools
@@ -39,6 +29,17 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'dev-profi
       ),
     ),
   );
+} else {
+  store = createStore(
+    reducers,
+    applyMiddleware(
+      operationsTracker,
+      notificationUpdater,
+      successDismisser(15000),
+      thunkMiddleware,
+      routerMiddleware(history),
+    ),
+  )
 }
 const persistor = persistStore(store);
 export default store;
