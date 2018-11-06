@@ -12,20 +12,33 @@ import { persistStore, createTransform } from 'redux-persist';
 
 export const history = createHistory();
 
-const store = createStore(
-  reducers,
-  composeWithDevTools(   // makes the store available to the Chrome redux dev tools
+let store: any
+
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'dev-profiling') {
+  store = createStore(
+    reducers,
     applyMiddleware(
       operationsTracker,
       notificationUpdater,
       successDismisser(15000),
       thunkMiddleware,
       routerMiddleware(history),
-      loggerMiddleware,
     ),
-  ),
-);
-
+  )
+} else {
+  store = createStore(
+    reducers,
+    composeWithDevTools(   // makes the store available to the Chrome redux dev tools
+      applyMiddleware(
+        operationsTracker,
+        notificationUpdater,
+        successDismisser(15000),
+        thunkMiddleware,
+        routerMiddleware(history),
+        loggerMiddleware,
+      ),
+    ),
+  );
+}
 const persistor = persistStore(store);
-
 export default store;
