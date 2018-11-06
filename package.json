@@ -63,7 +63,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.80",
+    "@daostack/arc.js": "0.0.0-alpha.82",
     "@types/react-share": "^2.1.1",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",

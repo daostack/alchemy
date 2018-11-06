@@ -127,7 +127,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     ethCount: Util.fromWei(await getBalance(avatarAddress)),
     genCount: Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance),
     lastBlock: toBlock,
-    name: await daoInstance.getName(),
+    name: daoInstance.name,
     members: [],
     rank: 1, // TODO
     promotedAmount: 0,
