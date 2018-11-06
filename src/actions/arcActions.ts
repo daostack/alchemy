@@ -252,43 +252,6 @@ export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
   }
 }
 
-export function getProposal(avatarAddress: string, proposalId: string, fromBlock = 0, toBlock = 'latest') {
-  return async (dispatch: any, getState: any) => {
-    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_PENDING, payload: null });
-
-    const web3 = await Arc.Utils.getWeb3();
-    const dao = await Arc.DAO.at(avatarAddress);
-    const currentAccountAddress: string = getState().web3.ethAccountAddress;
-
-    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-    const votableProposals = await (await contributionRewardInstance.getVotableProposals(dao.avatar.address))({proposalId}, { fromBlock, toBlock }).get();
-    const executedProposals = await (await contributionRewardInstance.getExecutedProposals(dao.avatar.address))({proposalId}, { fromBlock, toBlock }).get();
-    const proposals = [...votableProposals, ...executedProposals];
-
-    const contributionProposal = proposals[0];
-
-    let serverProposal: any = false;
-    try {
-      let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
-      if (response.data.length > 0) {
-        serverProposal = response.data[0];
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress, fromBlock, toBlock);
-    const payload = normalize(proposal, schemas.proposalSchema);
-    // TODO: Add votes and stakes and redemptions to accounts too, or maybe just get rid of this function because we load everything up front?
-
-    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload });
-  };
-}
-
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
 // TODO: put in a lib/util class somewhere?
 async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {

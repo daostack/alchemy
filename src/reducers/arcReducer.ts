@@ -355,18 +355,6 @@ const arcReducer = (state = initialState, action: any) => {
       }
     }
 
-    case ActionTypes.ARC_GET_PROPOSAL_FULFILLED: {
-      const proposal = action.payload.entities.proposals[0] as IProposalState;
-      const avatarAddress = proposal.daoAvatarAddress;
-
-      // Add the new proposal to the DAO's state if not already there
-      if (state.daos[avatarAddress].proposals.indexOf(action.payload.result) === -1) {
-        return update(state , { daos : { [avatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
-      }
-
-      return state;
-    }
-
     case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
       const { dao, proposal } = payload;
 
