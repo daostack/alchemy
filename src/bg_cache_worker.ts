@@ -159,11 +159,11 @@ async function updateCache() {
 
     const stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastCachedBlock, toBlock: latestBlock });
     const getStakeEvents = promisify(stakeEventWatcher.get);
-    const stakeEvents: Array<Arc.DecodedLogEntryEvent<Arc.StakeEventResult>> = await getStakeEvents(null, -1);
+    const stakeEvents: Array<Arc.DecodedLogEntryEvent<Arc.GpStakeEventResult>> = await getStakeEvents(null, -1);
     for (let index = 0; index < stakeEvents.length; index++) {
       const event = stakeEvents[index];
       console.log("Got new stake", event.args);
-      await store.dispatch(arcActions.onStakeEvent(event.args._avatar, event.args._proposalId, event.args._staker, Number(event.args._vote), Util.fromWei(event.args._amount)));
+      await store.dispatch(arcActions.onStakeEvent(event.args._organization, event.args._proposalId, event.args._staker, Number(event.args._vote), Util.fromWei(event.args._amount)));
     }
 
     console.log("Done looking for new stakes, now looking for new votes");
@@ -174,7 +174,7 @@ async function updateCache() {
     for (let index = 0; index < voteEvents.length; index++) {
       const event = voteEvents[index];
       console.log("Got new vote", event.args);
-      await store.dispatch(arcActions.onVoteEvent(event.args._avatar, event.args._proposalId, event.args._voter, Number(event.args._vote), Util.fromWei(event.args._reputation)));
+      await store.dispatch(arcActions.onVoteEvent(event.args._organization, event.args._proposalId, event.args._voter, Number(event.args._vote), Util.fromWei(event.args._reputation)));
     }
 
     console.log("Done looking for new votes, now looking for executed proposals");
@@ -185,8 +185,8 @@ async function updateCache() {
     for (let index = 0; index < executedProposalEvents.length; index++) {
       const event = executedProposalEvents[index];
       console.log("Proposal executed", event);
-      const { avatarAddress, proposalId, decision, totalReputation, executionState } = event;
-      await store.dispatch(arcActions.onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation)));
+      const { creatorAddress, proposalId, decision, totalReputation, executionState } = event;
+      await store.dispatch(arcActions.onProposalExecuted(creatorAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation)));
     }
 
     console.log("Done with executed proposals, now looking for redemptions");
@@ -216,21 +216,21 @@ async function updateCache() {
     }));
 
     const redeem = await votingMachineInstance.Redeem({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    await Promise.all(redeem.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+    await Promise.all(redeem.map(({args: {_proposalId, _organization, _beneficiary}}) => {
       console.log(`Redeeming GenesisProtocol GEN for account ${_beneficiary} on proposal ${_proposalId}`);
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false))
+      store.dispatch(arcActions.onRedeemReward(_organization, _proposalId, _beneficiary, RewardType.GEN, false))
     }));
 
     const redeemDaoBounty = await votingMachineInstance.RedeemDaoBounty({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    await Promise.all(redeemDaoBounty.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+    await Promise.all(redeemDaoBounty.map(({args: {_proposalId, _organization, _beneficiary}}) => {
       console.log(`Redeeming GenesisProtocol staker bounty GEN for account ${_beneficiary} on proposal ${_proposalId}`);
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.BountyGEN, false))
+      store.dispatch(arcActions.onRedeemReward(_organization, _proposalId, _beneficiary, RewardType.BountyGEN, false))
     }));
 
     const redeemRepGP = await votingMachineInstance.RedeemReputation({}, {fromBlock: lastCachedBlock, toBlock: latestBlock}).get(undefined, -1);
-    await Promise.all(redeemRepGP.map(({args: {_proposalId, _avatar, _beneficiary}}) => {
+    await Promise.all(redeemRepGP.map(({args: {_proposalId, _organization, _beneficiary}}) => {
       console.log(`Redeeming GenesisProtocol reputation for account ${_beneficiary} on proposal ${_proposalId}`);
-      store.dispatch(arcActions.onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, false))
+      store.dispatch(arcActions.onRedeemReward(_organization, _proposalId, _beneficiary, RewardType.Reputation, false))
     }));
 
     console.log("Done with redemptions, now updating DAOs");

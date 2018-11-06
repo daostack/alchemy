@@ -58,6 +58,7 @@ async function renderApp() {
     })
   } catch (e) {
     console.error(e);
+    throw(e)
   }
 
   ReactDOM.render(
