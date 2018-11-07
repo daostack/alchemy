@@ -1,14 +1,16 @@
 import * as Arc from "@daostack/arc.js";
+import axios from "axios";
 import * as BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
 import * as Redux from "redux";
 import { Web3 } from "web3";
 
-import Util from "lib/util";
-import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
-import { IDaoState } from "reducers/arcReducer";
 import { IAsyncAction, AsyncActionSequence } from "./async";
 import { IRootState } from "reducers";
+import { IDaoState } from "reducers/arcReducer";
+import { ActionTypes as profileActionTypes, IProfileState } from "reducers/profilesReducer";
+import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
+import Util from "lib/util";
 
 export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, IWeb3State>;
 
@@ -116,6 +118,21 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
     payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress));
     payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address));
+
+    try {
+      // Get profile data for this account
+      const response = await axios.get(process.env.API_URL + '/api/accounts?filter={"where":{"ethereumAccountAddress":"' + accountAddress + '"}}');
+      if (response.data.length > 0) {
+        // Update profiles state with profile data for this account
+        dispatch({
+          type: profileActionTypes.GET_PROFILE_DATA,
+          sequence: AsyncActionSequence.Success,
+          payload: { profiles: response.data }
+        });
+      }
+    } catch (e) {
+      console.error("Error getting account profile data from the server: ", e);
+    }
 
     const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,

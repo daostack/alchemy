@@ -9,6 +9,7 @@ import { connect, Dispatch } from "react-redux";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
+import * as profilesActions from "actions/profilesActions";
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import Util from "lib/util";
@@ -62,6 +63,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
+  getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
+  hideTour: typeof uiActions.hideTour;
   onTransferEvent: typeof arcActions.onTransferEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
   onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
@@ -69,13 +72,14 @@ interface IDispatchProps {
   onDAOExternalTokenBalanceChanged: typeof arcActions.onDAOExternalTokenBalanceChanged;
   onExternalTokenBalanceChanged: typeof web3Actions.onExternalTokenBalanceChanged;
   onProposalExpired: typeof arcActions.onProposalExpired;
-  updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
-  hideTour: typeof uiActions.hideTour;
   showTour: typeof uiActions.showTour;
   showNotification: typeof showNotification;
+  updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
 }
 
 const mapDispatchToProps = {
+  getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
+  hideTour: uiActions.hideTour,
   onTransferEvent: arcActions.onTransferEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
   onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
@@ -83,10 +87,9 @@ const mapDispatchToProps = {
   onDAOExternalTokenBalanceChanged: arcActions.onDAOExternalTokenBalanceChanged,
   onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
   onProposalExpired: arcActions.onProposalExpired,
-  updateDAOLastBlock: arcActions.updateDAOLastBlock,
-  hideTour: uiActions.hideTour,
   showTour: uiActions.showTour,
-  showNotification
+  showNotification,
+  updateDAOLastBlock: arcActions.updateDAOLastBlock,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -165,6 +168,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       currentAccountAddress,
       daoAvatarAddress,
       dao,
+      getProfilesForAllAccounts,
       onTransferEvent,
       onReputationChangeEvent,
       onDAOEthBalanceChanged,
@@ -175,6 +179,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       showNotification,
       updateDAOLastBlock
     } = this.props;
+
+    getProfilesForAllAccounts();
 
     // We have the DAO loaded but haven't set up the watchers yet, so set them up
     // TODO: move all this to app container and just setup watchers for each DAO, plus one blockInterval looking at every block

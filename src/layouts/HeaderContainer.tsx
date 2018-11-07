@@ -10,6 +10,7 @@ import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, newAccount } from "reducers/arcReducer";
+import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import AccountBalance from "components/Account/AccountBalance";
@@ -28,6 +29,7 @@ interface IStateProps {
   currentAccountExternalTokenBalance: number;
   currentAccountGenBalance: number;
   currentAccountGenStakingAllowance: number;
+  currentAccountProfile: IProfileState;
   currentAccount: IAccountState;
   dao: IDaoState;
   daoAvatarAddress: string;
@@ -44,6 +46,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     currentAccountExternalTokenBalance: state.web3.currentAccountExternalTokenBalance,
     currentAccountGenBalance: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
+    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao: state.arc.daos[ownProps.daoAvatarAddress],
     daoAvatarAddress: ownProps.daoAvatarAddress,
     ethAccountAddress: state.web3.ethAccountAddress,
@@ -188,6 +191,7 @@ class HeaderContainer extends React.Component<IProps, null> {
       currentAccountExternalTokenBalance,
       currentAccountGenBalance,
       currentAccountGenStakingAllowance,
+      currentAccountProfile,
       dao,
       daoAvatarAddress,
       ethAccountAddress,
@@ -253,6 +257,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               <div className={css.walletDetails}>
                 <div className={css.holdingsLabel}>Your wallet</div>
                 <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
+                  <span>{currentAccountProfile ? currentAccountProfile.name : ""}</span>
                   <span>{ethAccountAddress.slice(0, 40)}</span>
                   <img src="/assets/images/Icon/Copy-white.svg"/>
                   <div className={css.fade}></div>

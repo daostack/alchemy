@@ -16,6 +16,7 @@ import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
 import Util from "lib/util";
 
+import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
@@ -259,7 +260,8 @@ class AppContainer extends React.Component<IProps, IState> {
             )} />
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-              <Route exact path="/daos" component={DaoListContainer}/>
+              <Route exact path="/daos" component={DaoListContainer} />
+              <Route path="/account" component={AccountProfileContainer} />
               <Route path="/" component={HomeContainer} />
             </Switch>
             <ModalRoute

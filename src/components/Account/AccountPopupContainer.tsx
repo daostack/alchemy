@@ -8,6 +8,7 @@ import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
 import * as schemas from "schemas";
 import Util from "lib/util";
 
@@ -19,6 +20,7 @@ import * as css from "./Account.scss";
 interface IStateProps {
   accountAddress: string;
   dao: IDaoState;
+  profile: IProfileState;
   reputation: number;
   tokens: number;
 }
@@ -30,6 +32,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     accountAddress: ownProps.accountAddress,
     dao,
+    profile: state.profiles[ownProps.accountAddress],
     reputation: account ? account.reputation : 0,
     tokens: account ? account.tokens : 0,
   };
@@ -54,7 +57,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, dao, reputation, tokens } = this.props;
+    const { accountAddress, dao, profile, reputation, tokens } = this.props;
 
     return (
       <div className={css.targetAccount}>
@@ -63,6 +66,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
         </div>
         <div className={css.accountInfo}>
           <div className={css.beneficiaryAddress}>
+            <h3>{profile ? profile.name : ""}</h3>
             <span>{accountAddress}</span>
             <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
           </div>
