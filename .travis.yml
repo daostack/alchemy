@@ -2,7 +2,7 @@ language: node_js
 node_js: 10.13.0
 
 before_install:
-- docker-compose up --detach
+- docker-compose up -d
 
 script:
 - npm run lint
