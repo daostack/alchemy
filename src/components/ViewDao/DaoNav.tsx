@@ -1,3 +1,4 @@
+import Tooltip from 'rc-tooltip';
 import * as React from "react";
 import { NavLink } from "react-router-dom";
 
@@ -28,9 +29,11 @@ export default class DaoNav extends React.Component<IProps, null> {
             </NavLink>
           : ""
         }
-        <NavLink className={css.createProposal} activeClassName={css.selected} to={`/dao/${dao.avatarAddress}/proposals/create`}>
-          <img src="/assets/images/Icon/Draft-white.svg"/>
-        </NavLink>
+        <Tooltip placement="left" trigger={["hover"]} overlay="Create a New Proposal">
+          <NavLink className={css.createProposal} activeClassName={css.selected} to={`/dao/${dao.avatarAddress}/proposals/create`}>
+            <img src="/assets/images/Icon/Draft-white.svg"/>
+          </NavLink>
+        </Tooltip>
         <div className={css.borderBottom}></div>
       </div>
     );

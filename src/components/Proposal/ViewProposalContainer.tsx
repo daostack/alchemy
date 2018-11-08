@@ -1,4 +1,5 @@
 import * as classNames from "classnames";
+import { DiscussionEmbed } from 'disqus-react';
 import * as moment from "moment";
 import { denormalize } from "normalizr";
 import * as React from "react";
@@ -13,10 +14,7 @@ import * as schemas from "schemas";
 
 import ProposalContainer from "./ProposalContainer";
 
-import * as css from "./Proposal.scss";
-import * as daoCss from "../ViewDao/ViewDao.scss";
-
-import SharingButtons from "../Shared/SharingButtons";
+import * as css from "./ViewProposal.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
   proposal: IProposalState;
@@ -40,23 +38,27 @@ type IProps = IStateProps & IDispatchProps;
 
 class ViewProposalContainer extends React.Component<IProps, null> {
 
-  public componentDidMount() {
-    this.props.getProposal(this.props.proposal.daoAvatarAddress, this.props.proposal.proposalId);
-  }
+  public componentDidMount() {}
 
   public render() {
     const { proposal } = this.props;
 
+    const disqusConfig = {
+      url: `${window.location.origin}/${this.props.location.pathname}`,
+      identifier: proposal.proposalId,
+      title: proposal.title
+    };
+
     if (proposal) {
       return(
         <div>
-          <div className={daoCss.proposalsHeader}>
+          <div className={css.proposalsHeader}>
             Viewing proposal: {proposal.title}
           </div>
-          <div className={css.singleProposal}>
+          <div className={css.proposal}>
             <ProposalContainer proposalId={proposal.proposalId}/>
           </div>
-          <SharingButtons size={16} shareText={proposal.title}/>
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
         </div>
       );
     } else {

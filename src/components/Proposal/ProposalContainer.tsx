@@ -1,4 +1,5 @@
 import * as classNames from "classnames";
+import { CommentCount } from 'disqus-react';
 import * as moment from "moment";
 import { denormalize } from "normalizr";
 import Tooltip from 'rc-tooltip';
@@ -289,6 +290,11 @@ class ProposalContainer extends React.Component<IProps, IState> {
         },
       };
 
+      const disqusConfig = {
+        url: `${window.location.origin}/dao/${dao.avatarAddress}/proposal/${proposal.proposalId}`,
+        identifier: proposal.proposalId
+      };
+
       return (
         <div className={proposalClass + " " + css.clearfix}>
           { !proposalEnded(proposal) ?
@@ -401,7 +407,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
                 ON {submittedTime.format("MMM DD, YYYY")}
               </div>
-
+              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>
+                <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
+              </Link>
               <a href={proposal.description} target="_blank" className={css.viewProposal}>
                 <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
               </a>

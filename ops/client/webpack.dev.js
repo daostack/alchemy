@@ -90,6 +90,7 @@ module.exports = merge(baseConfig, {
         'NODE_ENV': JSON.stringify('development'),
         'API_URL': JSON.stringify(config.API_URL),
         'CACHE_SERVER_URL': JSON.stringify(config.CACHE_SERVER_URL),
+        'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy')
         'arcjs_network': JSON.stringify(config.arcjs_network),
         'arcjs_providerPort': JSON.stringify(config.arcjs_providerPort),
         'arcjs_providerUrl': JSON.stringify(config.arcjs_providerUrl),
