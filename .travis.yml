@@ -1,11 +1,12 @@
 language: node_js
-node_js: 9.5.0
+node_js: 10.13.0
 
-before_script:
-- docker-compose up
+before_install:
+- docker-compose up --detach
 
 script:
 - npm run lint
+- curl http://localhost:3000
 
 deploy:
   provider: pages

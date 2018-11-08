@@ -35,9 +35,7 @@ To interact with the test instance in Chrome (or another browser):
 
 ## Using Ganache with MetaMask
 
-In this mode, keys are handled by Metamask - every time the application sends a transaction, it will need to be confirmed by Metamask.
-This is closest to the regular user experience of the application.
-
+[]
 First you must install Metamask and configure an account.
 1. Install and enable [MetaMask extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) in Chrome
 1. Click on the MetaMask extension icon in the toolbar and log in
