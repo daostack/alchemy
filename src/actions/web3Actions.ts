@@ -180,7 +180,7 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
   numTokensApproved: number
 }>
 
-// Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
+// Approve transfer of a trillion GENs from accountAddress to the GenesisProtocol contract for use in staking
 export function approveStakingGens(daoAvatarAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
@@ -203,7 +203,7 @@ export function approveStakingGens(daoAvatarAddress: string) {
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
       const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
       const stakingToken = await Arc.StandardTokenFactory.at(stakingTokenAddress);
-      await stakingToken.approve({spender: votingMachineAddress, amount: Util.toWei(100000)})
+      await stakingToken.approve({spender: votingMachineAddress, amount: Util.toWei(1000000000000)})
     } catch (err) {
       console.error(err);
       dispatch({

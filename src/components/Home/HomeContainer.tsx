@@ -31,6 +31,10 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
+declare global {
+  interface Window { origin: any; }
+}
+
 class HomeContainer extends React.Component<IProps, null> {
 
   public render() {
@@ -45,7 +49,18 @@ class HomeContainer extends React.Component<IProps, null> {
           <h1>Alchemy</h1>
           <h2>Budgeting and resource allocation for decentralized organizations</h2>
           <div className={css.topCta}>
-              <Link to='/daos'>View Alchemy</Link>
+            { process.env.NODE_ENV == 'production'
+                ? <a href='https://alchemy.daostack.io/#/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>Participate in Alchemy (MetaMask Required)</a>
+                : <Link to='/daos'>Participate in Alchemy (MetaMask Required)</Link>
+            }
+          </div>
+          <br/>
+          <div className={css.topCta}>
+            <a href={window.origin + '/explorer'}>Explore Alchemy</a>
+          </div>
+          <br/>
+          <div className={css.topCta}>
+            <a href={window.origin + '/graphiql'}>Explore Alchemy (Advanced)</a>
           </div>
         </div>
         <div className={css.aboutAlchemy + " " + css.clearfix}>

@@ -9,6 +9,7 @@ import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
 
+import * as home from "../Home/Home.scss";
 import * as css from "./Errors.scss";
 
 interface IStateProps {
@@ -31,6 +32,10 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
+declare global {
+  interface Window { origin: any; }
+}
+
 class NoEthAccountContainer extends React.Component<IProps, null> {
   public interval: any;
 
@@ -50,10 +55,17 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
         <div className={css.notification}>
           <img src="/assets/images/metamask.png"/>
           <h1>Found Web3 but there is no default account available.<br/>Please make sure that MetaMask is unlocked.</h1>
+          <div className={home.topCta}>
+            <a href={window.origin + '/explorer'}>Explore Alchemy</a>
+          </div>
+          <div className={home.topCta}>
+            <a className={home.topCta} href={window.origin + '/graphiql'}>Explore Alchemy (Advanced)</a>
+          </div>
         </div>
         <div className={css.unlockMetamask}>
           Make sure <img className={css.icon} src="/assets/images/metamask-icon.png"/> Metamask is unlocked! <img src="/assets/images/metamask-arrow.svg"/>
         </div>
+
       </div>
     );
   }

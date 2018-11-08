@@ -113,7 +113,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <p>
                 In order to activate predictions, you must authorize our smart
                 contract to receive GENs from you. Upon activation, the smart contract
-                will be authorized to receive up to 100000 GENs. This transaction will not
+                will be authorized to receive up to a trillion GENs. This transaction will not
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
               <p>
