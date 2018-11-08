@@ -1,0 +1,48 @@
+version: "3"
+services:
+  alchemy:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    links:
+      - ganache
+      - alchemy-server
+    working_dir: /alchemy/
+    volumes:
+      - ./src:/alchemy/src
+      - ./test:/alchemy/test
+      - ./webpack.docker.config.js:/alchemy/webpack.docker.config.js
+    ports:
+      - 3000:3000
+      - 8545:8545
+  ganache:
+    build:
+      dockerfile: ganache.dockerfile
+      context: ./docker/ganache
+    ports:
+      - 8549:8545
+    environment:
+      test_mnemonic: $test_mnemonic
+    command: >
+      --deterministic
+      --mnemonic "$test_mnemonic"
+      --gasLimit 8000000
+  alchemy-server:
+    build:
+      dockerfile: alchemy-server.dockerfile
+      context: ./docker/alchemy-server
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    ports:
+      - 3001:3001
+    working_dir: /alchemy-server/
+    environment:
+      WAIT_HOSTS: postgres:5432
+  postgres:
+    build:
+      dockerfile: postgres.dockerfile
+      context: ./docker/postgres/
+    ports:
+      - 5433:5432

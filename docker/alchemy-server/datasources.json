@@ -1,0 +1,11 @@
+{
+  "postgresql": {
+    "host": "postgres",
+    "port": 5432,
+    "url": "postgres://alchemist:njksdfyuieyui34y@postgres:5432/alchemy",
+    "database": "alchemy",
+    "password": "njksdfyuieyui34y",
+    "user": "alchemist",
+    "connector": "postgresql"
+  }
+}
