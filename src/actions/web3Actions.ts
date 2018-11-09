@@ -8,7 +8,7 @@ import { Web3 } from "web3";
 import { IAsyncAction, AsyncActionSequence } from "./async";
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
-import { ActionTypes as profileActionTypes, IProfileState } from "reducers/profilesReducer";
+import { ActionTypes as profileActionTypes, IProfileState, newProfile } from "reducers/profilesReducer";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
 import Util from "lib/util";
 
@@ -128,6 +128,13 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
           type: profileActionTypes.GET_PROFILE_DATA,
           sequence: AsyncActionSequence.Success,
           payload: { profiles: response.data }
+        });
+      } else {
+        // Setup blank profile for the current account
+        dispatch({
+          type: profileActionTypes.GET_PROFILE_DATA,
+          sequence: AsyncActionSequence.Success,
+          payload: { profiles: [newProfile(accountAddress)] }
         });
       }
     } catch (e) {

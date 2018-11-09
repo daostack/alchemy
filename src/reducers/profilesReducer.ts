@@ -8,14 +8,24 @@ export enum ActionTypes {
 }
 
 export interface IProfileState {
-  name: string;
+  ethereumAccountAddress?: string;
   description: string;
   githubURL: string;
+  name: string;
 }
 
 export interface IProfilesState {
   [accountAddress: string]: IProfileState
 };
+
+export function newProfile(ethereumAccountAddress: string): IProfileState {
+  return {
+    ethereumAccountAddress,
+    name: "",
+    description: "",
+    githubURL: ""
+  };
+}
 
 export const initialState: IProfilesState = {};
 
