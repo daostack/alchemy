@@ -15,7 +15,7 @@ let store: any
 if (process.env.NODE_ENV === 'development') {
   // require these modules only in developmetn, to save some space in the bundle
   const composeWithDevTools = require('redux-devtools-extension').composeWithDevTools
-  const loggerMiddleware = require("redux-logger")
+  const loggerMiddleware = require("redux-logger").default
   store = createStore(
     reducers,
     composeWithDevTools(   // makes the store available to the Chrome redux dev tools
@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'development') {
       notificationUpdater,
       successDismisser(15000),
       thunkMiddleware,
-      routerMiddleware(history),
+      routerMiddleware(history)
     ),
   )
 }
