@@ -136,6 +136,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     return (
       <div className={css.profileContainer}>
          <h3>{ currentAccountProfile && currentAccountProfile.name ? "Edit Profile" : "Set Profile"}</h3>
+         { currentAccountProfile && currentAccountProfile.name ? "" : <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div>}
          { typeof(currentAccountProfile) === 'undefined' ? "Loading..." :
             <Formik
               initialValues={{
