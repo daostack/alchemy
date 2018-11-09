@@ -10,14 +10,13 @@ export function getProfilesForAllAccounts() {
     const accounts = getState().arc.accounts;
 
     let accountFilters = [];
-    for (let accountKey in accounts) {
+    for (const accountKey of Object.keys(accounts)) {
       const account = accounts[accountKey];
       accountFilters.push('{"ethereumAccountAddress":"' + account.address + '"}');
     }
 
     try {
       const results = await axios.get(process.env.API_URL + '/api/accounts?filter={"where":{"or":[' + accountFilters.join(",") + ']}}');
-      console.log("got all profiles = ", results.data);
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Success,

@@ -25,7 +25,6 @@ const profilesReducer = (state = initialState, action: any) => {
   switch (action.type) {
 
     case ActionTypes.UPDATE_PROFILE: {
-      console.log("yoyo profile", payload);
       switch (action.sequence) {
         case AsyncActionSequence.Success:
           return {...state, ...payload };
@@ -37,11 +36,8 @@ const profilesReducer = (state = initialState, action: any) => {
 
    case ActionTypes.GET_PROFILE_DATA: {
       const { profiles } = payload;
-      console.log("updates1 = ", profiles);
 
       for (const profile of profiles) {
-        //const accountKey = account.ethereumAccountAddress + "-" + avatarAddress;
-        console.log("got ", profile);
         state = update(state, { [profile.ethereumAccountAddress]: { $set: profile } });
       }
 
