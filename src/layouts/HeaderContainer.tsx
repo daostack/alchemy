@@ -251,63 +251,66 @@ class HeaderContainer extends React.Component<IProps, null> {
             <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo-white.svg"/></Link>
             <span className={css.version}><em>Alchemy {Util.networkName(networkId)}</em> <span> v.{VERSION}</span></span>
           </div>
-          <div className={css.accountInfo}>
-            <div className={css.holdings}>
-              <div className={css.pointer}></div>
-              <div className={css.walletDetails}>
-                <div className={css.holdingsLabel}>Your wallet</div>
-                <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
-                  <span>{currentAccountProfile ? currentAccountProfile.name : ""}</span>
-                  <span>{ethAccountAddress.slice(0, 40)}</span>
-                  <img src="/assets/images/Icon/Copy-white.svg"/>
-                  <div className={css.fade}></div>
-                </div>
+          <div className={css.headerRight}>
+            <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>
+            <div className={css.accountInfo}>
+              <div className={css.accountImage}>
+                <AccountImage accountAddress={ethAccountAddress} />
               </div>
-              <div className={css.balances}>
-                <div className={css.userBalance}>
-                  <div>
-                    <AccountBalance tokenSymbol="ETH" balance={currentAccountEthBalance} accountAddress={ethAccountAddress} />
+              <div className={css.holdings}>
+                <div className={css.pointer}></div>
+                <div className={css.walletDetails}>
+                  <div className={css.profileName}>{currentAccountProfile ? currentAccountProfile.name : ""}</div>
+                  <div className={css.holdingsLabel}>Your wallet</div>
+                  <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
+                    <span>{ethAccountAddress.slice(0, 40)}</span>
+                    <img src="/assets/images/Icon/Copy-white.svg"/>
+                    <div className={css.fade}></div>
                   </div>
-                  <div>
-                    <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={ethAccountAddress} />
+                </div>
+                <div className={css.balances}>
+                  <div className={css.userBalance}>
+                    <div>
+                      <AccountBalance tokenSymbol="ETH" balance={currentAccountEthBalance} accountAddress={ethAccountAddress} />
+                    </div>
+                    <div>
+                      <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={ethAccountAddress} />
+                    </div>
+                    <div>
+                      {currentAccountGenStakingAllowance} GEN approved for staking
+                    </div>
+                    { dao && dao.externalTokenAddress
+                      ? <div>
+                          <AccountBalance tokenSymbol={dao.externalTokenSymbol} balance={currentAccountExternalTokenBalance} accountAddress={ethAccountAddress} />
+                        </div>
+                      : ""
+                    }
                   </div>
-                  <div>
-                    {currentAccountGenStakingAllowance} GEN approved for staking
-                  </div>
-                  { dao && dao.externalTokenAddress
-                    ? <div>
-                        <AccountBalance tokenSymbol={dao.externalTokenSymbol} balance={currentAccountExternalTokenBalance} accountAddress={ethAccountAddress} />
+                  { dao
+                    ? <div className={css.daoBalance}>
+                        <h3>{dao.name}</h3>
+                        <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccount.reputation}/>
+                        <label>REPUTATION</label>
                       </div>
                     : ""
                   }
                 </div>
-                { dao
-                  ? <div className={css.daoBalance}>
-                      <h3>{dao.name}</h3>
-                      <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccount.reputation}/>
-                      <label>REPUTATION</label>
-                    </div>
-                  : ""
+                { accounts.length > 1 ?
+                  <div className={css.testAccounts}>
+                    <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={ethAccountAddress}>
+                      {accountOptionNodes}
+                    </select>
+                    <button className={css.selectTestAccount}>Switch accounts</button>
+                  </div>
+                : ""
                 }
               </div>
-              { accounts.length > 1 ?
-                <div className={css.testAccounts}>
-                  <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={ethAccountAddress}>
-                    {accountOptionNodes}
-                  </select>
-                  <button className={css.selectTestAccount}>Switch accounts</button>
-                </div>
+            </div>
+            { dao
+              ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
               : ""
-              }
-            </div>
-            <div className={css.profileLink}>
-              <AccountImage accountAddress={ethAccountAddress} />
-            </div>
+            }
           </div>
-          { dao
-            ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
-            : ""
-          }
         </nav>
       </div>
     );

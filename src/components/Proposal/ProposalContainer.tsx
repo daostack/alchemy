@@ -11,6 +11,7 @@ import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
+import { IProfileState } from "reducers/profilesReducer";
 import { isStakePending, isVotePending, isRedeemPending } from "selectors/operations";
 import * as schemas from "schemas";
 
@@ -25,11 +26,12 @@ import * as css from "./Proposal.scss";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 
 interface IStateProps {
+  beneficiaryRedemptions: IRedemptionState;
   currentAccount: IAccountState;
   currentAccountGens: number;
   currentAccountGenStakingAllowance: number;
+  currentAccountProfile?: IProfileState;
   currentRedemptions: IRedemptionState;
-  beneficiaryRedemptions: IRedemptionState;
   currentStake: IStakeState;
   currentVote: IVoteState;
   dao?: IDaoState;
@@ -58,6 +60,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
     currentAccount,
     currentAccountGens: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
+    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     currentRedemptions,
     beneficiaryRedemptions,
     currentStake,
@@ -117,6 +120,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccount,
       currentAccountGens,
       currentAccountGenStakingAllowance,
+      currentAccountProfile,
       currentRedemptions,
       beneficiaryRedemptions,
       currentStake,
@@ -394,6 +398,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 accountAddress={proposal.beneficiaryAddress}
                 daoAvatarAddress={proposal.daoAvatarAddress}
               />
+              { currentAccountProfile && currentAccountProfile.name }
             </div>
           </div>
           <div>
@@ -404,8 +409,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   accountAddress={proposal.proposer}
                   daoAvatarAddress={proposal.daoAvatarAddress}
                 />
-
-                ON {submittedTime.format("MMM DD, YYYY")}
+                { currentAccountProfile && currentAccountProfile.name }
+                &nbsp; ON {submittedTime.format("MMM DD, YYYY")}
               </div>
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>
                 <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />

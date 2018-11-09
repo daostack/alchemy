@@ -261,7 +261,7 @@ class AppContainer extends React.Component<IProps, IState> {
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
               <Route exact path="/daos" component={DaoListContainer} />
-              <Route path="/account" component={AccountProfileContainer} />
+              <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
               <Route path="/" component={HomeContainer} />
             </Switch>
             <ModalRoute

@@ -66,6 +66,11 @@
     border-radius: 3px;
     transition: all .25s ease;
     box-shadow: $shadow-3;
+    text-align: center;
+
+    .name {
+      font-size: 14px;
+    }
 
     .beneficiaryAddress {
       overflow: hidden;
@@ -98,7 +103,7 @@
 
     .holdings {
       padding: 20px 0;
-      margin-top: 20px;
+      margin-top: 10px;
       text-align: center;
       background-color: rgba(242, 242, 242, 1.000);
 
@@ -133,13 +138,92 @@
   }
   .accountInfo {
     opacity: 1;
-    top: 10px;
+    top: 0px;
     transform: translateX(-50%) scale(1);
   }
 }
 
 
 /***** Account Profile ******/
+.profileContainer {
+  max-width: 1080px;
+  margin: 0 auto;
+  margin-top: 40px;
+  padding: 0 20px;
+
+  form {
+    padding: 30px;
+    background-color: $white;
+  }
+
+  .profileContent {
+    display: flex;
+  }
+
+  .userAvatarContainer {
+    width: 100px;
+
+    img {
+      transform: rotate(45deg);
+    }
+  }
+
+  .profileDataContainer {
+    width: 250px;
+
+    label {
+      font-weight: bold;
+    }
+
+    .charLimit {
+      font-size: 12px;
+      text-align: right;
+    }
+  }
+
+  .otherInfoContainer {
+    padding-left: 50px;
+
+    span {
+      //color: #6abed4;
+      color: #76c9de;
+      font-weight: bold;
+    }
+
+    .tokens {
+      // display: flex;
+      // width: 100%;
+      > div {
+        display: inline-block;
+        width: 33%;
+      }
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+
+    .copyButton {
+      border: none;
+      vertical-align: middle;
+    }
+
+    p {
+      padding: 0;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+  }
+
+  input, textarea {
+    background-color: #EDEDED;
+    border: none;
+    padding: 4px;
+    width: 250px;
+    font-size: 13px;
+  }
+}
+
 input {
   &.error {
     border-bottom: 2px solid red;
@@ -148,17 +232,16 @@ input {
 
 .errorMessage {
   position: relative;
-  left: 10px;
   color: red
 }
 
 .submitButton {
-  border: 1px solid $accent-4;
+  border: 1px solid black;
   height: 40px;
   display: inline-block;
   line-height: 30px;
   margin: 0 auto;
-  color: $accent-4;
+  color: black;
   font-weight: normal;
   font-size: $body;
   padding: 0 15px;
