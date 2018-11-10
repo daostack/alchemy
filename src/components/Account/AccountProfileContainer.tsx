@@ -22,8 +22,9 @@ import * as css from "./Account.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
   accountAddress: string;
-  currentAccountInfo?: IAccountState;
-  currentAccountProfile?: IProfileState;
+  accountInfo?: IAccountState;
+  accountProfile?: IProfileState;
+  currentAccountAddress: string;
   dao?: IDaoState;
 }
 
@@ -31,9 +32,10 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   const queryValues = queryString.parse(ownProps.location.search);
 
   return {
-    accountAddress: state.web3.ethAccountAddress,
-    currentAccountInfo: state.arc.accounts[state.web3.ethAccountAddress + "-" + queryValues.daoAvatarAddress],
-    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
+    accountAddress: ownProps.match.params.accountAddress,
+    accountInfo: state.arc.accounts[state.web3.ethAccountAddress + "-" + queryValues.daoAvatarAddress],
+    accountProfile: state.profiles[state.web3.ethAccountAddress],
+    currentAccountAddress: state.web3.ethAccountAddress,
     dao: queryValues.daoAvatarAddress ? state.arc.daos[queryValues.daoAvatarAddress as string] : null
   };
 };
@@ -128,21 +130,22 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { accountAddress, currentAccountInfo, currentAccountProfile, dao } = this.props;
+    const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
     const { ethCount, genCount } = this.state;
 
-    const hasProfile = currentAccountProfile && currentAccountProfile.name;
+    const hasProfile = accountProfile && accountProfile.name;
+    const editing = accountAddress == currentAccountAddress;
 
     return (
       <div className={css.profileContainer}>
-         <h3>{ currentAccountProfile && currentAccountProfile.name ? "Edit Profile" : "Set Profile"}</h3>
-         { currentAccountProfile && currentAccountProfile.name ? "" : <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div>}
-         { typeof(currentAccountProfile) === 'undefined' ? "Loading..." :
+         <h3>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</h3>
+         { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
+         { typeof(accountProfile) === 'undefined' ? "Loading..." :
             <Formik
               initialValues={{
-                description: currentAccountProfile ? currentAccountProfile.description || "" : "",
-                githubURL: currentAccountProfile ? currentAccountProfile.githubURL || "" : "",
-                name: currentAccountProfile ? currentAccountProfile.name || "" : ""
+                description: accountProfile ? accountProfile.description || "" : "",
+                githubURL: accountProfile ? accountProfile.githubURL || "" : "",
+                name: accountProfile ? accountProfile.name || "" : ""
               } as FormValues}
               validate={(values: FormValues) => {
                 const { name } = values;
@@ -170,64 +173,76 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                 isValid,
               }) =>
                 <form onSubmit={handleSubmit} noValidate>
-                <div className={css.profileContent}>
-                  <div className={css.userAvatarContainer}>
-                    <AccountImage accountAddress={accountAddress} />
-                  </div>
-                  <div className={css.profileDataContainer}>
-                    <label htmlFor="nameInput">
-                      Real Name:&nbsp;
-                    </label>
-                    <Field
-                      autoFocus
-                      id="nameInput"
-                      placeholder="e.g. John Doe"
-                      name='name'
-                      type="text"
-                      className={touched.name && errors.name ? css.error : null}
-                    />
-                    {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
-                    <br />
-                    <br />
-                    <label htmlFor="descriptionInput">
-                      Personal Description:&nbsp;
-                    </label>
-                    <Field
-                      id="descriptionInput"
-                      placeholder="Tell the DAO a bit about yourself"
-                      name='description'
-                      component="textarea"
-                      maxLength="150"
-                      rows="7"
-                      className={touched.description && errors.description ? css.error : null}
-                    />
-                    <div className={css.charLimit}>Limit 150 characters</div>
-                  </div>
-                  <div className={css.otherInfoContainer}>
-                    <div className={css.tokens}>
-                      {currentAccountInfo
-                         ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={currentAccountInfo.reputation} totalReputation={dao.reputationCount} daoName={dao.name}/> </div>
-                         : ""}
-                      <div><strong>GEN:</strong><br/><span>{genCount}</span></div>
-                      <div><strong>ETH:</strong><br/><span>{ethCount}</span></div>
+                  <div className={css.profileContent}>
+                    <div className={css.userAvatarContainer}>
+                      <AccountImage accountAddress={accountAddress} />
                     </div>
-                    <div>
-                      <strong>ETH Address:</strong><br/>
-                      <span>{accountAddress.substr(0, 20)}...</span>
-                      <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
+                    <div className={css.profileDataContainer}>
+                      <label htmlFor="nameInput">
+                        Real Name:&nbsp;
+                      </label>
+                      { editing ?
+                        <div>
+                          <Field
+                            autoFocus
+                            id="nameInput"
+                            placeholder="e.g. John Doe"
+                            name='name'
+                            type="text"
+                            className={touched.name && errors.name ? css.error : null}
+                          />
+                          {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
+                        </div>
+                        : <div>{accountProfile.name}</div>
+                      }
+                      <br />
+                      <label htmlFor="descriptionInput">
+                        Personal Description:&nbsp;
+                      </label>
+                      { editing ?
+                        <div>
+                          <Field
+                            id="descriptionInput"
+                            placeholder="Tell the DAO a bit about yourself"
+                            name='description'
+                            component="textarea"
+                            maxLength="150"
+                            rows="7"
+                            className={touched.description && errors.description ? css.error : null}
+                          />
+                          <div className={css.charLimit}>Limit 150 characters</div>
+                        </div>
+                        : <div>{accountProfile.description}</div>
+                      }
                     </div>
-                    <div>
-                      <strong>Prove it's you by linking your social accounts:</strong>
-                      <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                    <div className={css.otherInfoContainer}>
+                      <div className={css.tokens}>
+                        {accountInfo
+                           ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationCount} daoName={dao.name}/> </div>
+                           : ""}
+                        <div><strong>GEN:</strong><br/><span>{genCount}</span></div>
+                        <div><strong>ETH:</strong><br/><span>{ethCount}</span></div>
+                      </div>
+                      <div>
+                        <strong>ETH Address:</strong><br/>
+                        <span>{accountAddress.substr(0, 20)}...</span>
+                        <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
+                      </div>
+                      <div>
+                        <strong>Prove it's you by linking your social accounts:</strong>
+                        <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className={css.alignCenter}>
-                  <button className={css.submitButton} type="submit" disabled={isSubmitting}>
-                    <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
-                    SUBMIT
-                  </button>
-                </div>
+                  { editing ?
+                    <div className={css.alignCenter}>
+                      <button className={css.submitButton} type="submit" disabled={isSubmitting}>
+                        <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
+                        SUBMIT
+                      </button>
+                    </div>
+                    : ""
+                  }
                 </form>
               }
             />
