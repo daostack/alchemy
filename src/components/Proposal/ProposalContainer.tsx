@@ -39,6 +39,7 @@ interface IStateProps {
   isPredictingPass: boolean;
   isPredictingFail: boolean;
   isRedeemPending: boolean;
+  threshold: number;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
@@ -48,6 +49,9 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const currentStake = state.arc.stakes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const currentVote = state.arc.votes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const dao = denormalize(state.arc.daos[proposal.daoAvatarAddress], schemas.daoSchema, state.arc) as IDaoState;
+  // TODO: this obviously won't work.. -- need to get threshold in the state...
+  // const threshold = await dao.votingMachineInstance.getThreshold(ownProps.proposalId)
+  const threshold = 12345
 
   let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${proposal.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
   if (!currentAccount) {
@@ -68,7 +72,8 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
     isVotingNo: isVotePending(proposal.proposalId, VoteOptions.No)(state),
     isPredictingPass: isStakePending(proposal.proposalId, VoteOptions.Yes)(state),
     isPredictingFail: isStakePending(proposal.proposalId, VoteOptions.No)(state),
-    isRedeemPending: isRedeemPending(proposal.proposalId, state.web3.ethAccountAddress)(state)
+    isRedeemPending: isRedeemPending(proposal.proposalId, state.web3.ethAccountAddress)(state),
+    threshold
   };
 };
 
@@ -132,7 +137,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isPredictingPass,
       isVotingNo,
       isVotingYes,
-      isRedeemPending
+      isRedeemPending,
+      threshold
     } = this.props;
 
     const beneficiaryHasRewards = beneficiaryRedemptions && (
@@ -442,6 +448,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 dao={dao}
                 proposal={proposal}
                 stakeProposal={stakeProposal}
+                threshold={threshold}
                 approveStakingGens={approveStakingGens}
               />
             }

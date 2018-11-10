@@ -157,20 +157,20 @@ class AppContainer extends React.Component<IProps, IState> {
 
     const executeProposalEventWatcher = votingMachineInstance.ExecutedProposals({}, { fromBlock: lastBlock });
     executeProposalEventWatcher.watch((error, result) => {
-      const { avatarAddress, proposalId, decision, totalReputation, executionState } = result;
-      onProposalExecuted(avatarAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation));
+      const { creatorAddress, proposalId, decision, totalReputation, executionState } = result;
+      onProposalExecuted(creatorAddress, proposalId, executionState, Number(decision), Util.fromWei(totalReputation));
     }, -1);
     this.watchers.push(executeProposalEventWatcher);
 
     const stakeEventWatcher = votingMachineInstance.Stake({ }, { fromBlock: lastBlock });
-    stakeEventWatcher.watch((error: Error, result: Arc.DecodedLogEntryEvent<Arc.StakeEventResult>) => {
-      onStakeEvent(result.args._avatar, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount));
+    stakeEventWatcher.watch((error: Error, result: Arc.DecodedLogEntryEvent<Arc.GpStakeEventResult>) => {
+      onStakeEvent(result.args._organization, result.args._proposalId, result.args._staker, Number(result.args._vote), Util.fromWei(result.args._amount));
     }, -1);
     this.watchers.push(stakeEventWatcher);
 
     const voteEventWatcher = votingMachineInstance.VoteProposal({ }, { fromBlock: lastBlock });
     voteEventWatcher.watch((error, result: Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>) => {
-      onVoteEvent(result.args._avatar, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation));
+      onVoteEvent(result.args._organization, result.args._proposalId, result.args._voter, Number(result.args._vote), Util.fromWei(result.args._reputation));
     }, -1);
     this.watchers.push(voteEventWatcher);
 
@@ -206,22 +206,22 @@ class AppContainer extends React.Component<IProps, IState> {
     // GenesisProtocol Redemptions
     const redeem = votingMachineInstance.Redeem({}, { fromBlock: lastBlock });
     redeem.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.GEN, false);
+      const { _beneficiary, _organization, _proposalId, _amount } = result.args;
+      onRedeemReward(_organization, _proposalId, _beneficiary, RewardType.GEN, false);
     }, -1);
     this.watchers.push(redeem);
 
     const redeemDaoBounty = votingMachineInstance.RedeemDaoBounty({}, { fromBlock: lastBlock });
     redeemDaoBounty.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.BountyGEN, false);
+      const { _beneficiary, _organization, _proposalId, _amount } = result.args;
+      onRedeemReward(_organization, _proposalId, _beneficiary, RewardType.BountyGEN, false);
     }, -1);
     this.watchers.push(redeemDaoBounty);
 
     const redeemRepGP = votingMachineInstance.RedeemReputation({}, { fromBlock: lastBlock });
     redeemRepGP.watch((err, result) => {
-      const { _beneficiary, _avatar, _proposalId, _amount } = result.args;
-      onRedeemReward(_avatar, _proposalId, _beneficiary, RewardType.Reputation, false);
+      const { _beneficiary, _organization, _proposalId, _amount } = result.args;
+      onRedeemReward(_organization, _proposalId, _beneficiary, RewardType.Reputation, false);
     }, -1);
     this.watchers.push(redeemRepGP);
   }

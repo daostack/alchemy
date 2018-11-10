@@ -123,7 +123,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const daoData: IDaoState = {
     avatarAddress,
     controllerAddress: "",
-    currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress })),
+    // currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress })),
     ethCount: Util.fromWei(await getBalance(avatarAddress)),
     genCount: Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance),
     lastBlock: toBlock,
@@ -178,7 +178,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     const member: IAccountState = newAccount(avatarAddress, address);
     const tokens = await daoInstance.token.getBalanceOf(address);
     member.tokens = Util.fromWei(tokens);
-    const reputation = await daoInstance.reputation.reputationOf(address);
+    const reputation = await daoInstance.reputation.getBalanceOf(address);
     member.reputation = Util.fromWei(reputation);
     members[address] = member;
   }
@@ -401,11 +401,11 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   } else {
     // No current account so caching all data, pull all the votes and stakes and redemptions on this proposal ever
     const stakeEventWatcher = votingMachineInstance.Stake({ _proposalId: proposalId }, { fromBlock: 0, toBlock });
-    await stakeEventWatcher.get((error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.StakeEventResult>>) => {
+    await stakeEventWatcher.get((error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.GpStakeEventResult>>) => {
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
         proposal.stakes.push({
-          avatarAddress: event.args._avatar,
+          avatarAddress: event.args._organization,
           proposalId: event.args._proposalId,
           stakerAddress: event.args._staker,
           stakeAmount: Number(Util.fromWei(event.args._amount)),
@@ -419,7 +419,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
       for (let index = 0; index < eventsArray.length; index++) {
         const event = eventsArray[index];
         proposal.votes.push({
-          avatarAddress: event.args._avatar,
+          avatarAddress: event.args._organization,
           proposalId: event.args._proposalId,
           reputation: Number(Util.fromWei(event.args._reputation)),
           voterAddress: event.args._voter,
@@ -632,7 +632,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
-        currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: dao.avatar.address })),
+        // currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: dao.avatar.address })),
         ethCount: 0,
         externalTokenCount: 0,
         genCount: 0,
@@ -827,9 +827,10 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       const normalizedProposal = normalize(proposal, schemas.proposalSchema);
       entities = {...entities, ...normalizedProposal.entities };
 
+    // TODO: commented currentThresholdToBoost, need to refactor
       const daoUpdates = {
         avatarAddress,
-        currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
+        // currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
       };
 
       return dispatch({
@@ -862,9 +863,10 @@ export function onProposalExpired(proposal: IProposalState) {
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
+    // TODO: commented currentThresholdToBoost, need to refactor
     const daoUpdates = {
       avatarAddress: proposal.daoAvatarAddress,
-      currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: proposal.daoAvatarAddress }))
+      // currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: proposal.daoAvatarAddress }))
     };
 
     return dispatch({
@@ -975,7 +977,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       // Update voter tokens and reputation
       voter: {
         tokens: Util.fromWei(await daoInstance.token.getBalanceOf(voterAddress)),
-        reputation: Util.fromWei(await daoInstance.reputation.reputationOf(voterAddress)),
+        reputation: Util.fromWei(await daoInstance.reputation.getBalanceOf(voterAddress)),
       }
     };
 
@@ -1080,13 +1082,14 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
       stakerAddress
     };
 
+    // TODO: commented currentThresholdToBoost, need to refactor
     dispatch({
       type: arcConstants.ARC_STAKE,
       sequence: AsyncActionSequence.Success,
       meta,
       payload: {
         dao: {
-          currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
+          // currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress }))
         },
         proposal
       }
@@ -1147,7 +1150,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         // Update account of the beneficiary
         beneficiary: {
           tokens: Util.fromWei(await daoInstance.token.getBalanceOf(beneficiaryAddress)),
-          reputation: Util.fromWei(await daoInstance.reputation.reputationOf(beneficiaryAddress))
+          reputation: Util.fromWei(await daoInstance.reputation.getBalanceOf(beneficiaryAddress))
         },
         // Update DAO total reputation and tokens
         //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
@@ -1165,7 +1168,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       if (accountAddress !== beneficiaryAddress) {
         payload.currentAccount = {
           address: accountAddress,
-          reputation: Util.fromWei(await daoInstance.reputation.reputationOf(accountAddress)),
+          reputation: Util.fromWei(await daoInstance.reputation.getBalanceOf(accountAddress)),
           tokens: Util.fromWei(await daoInstance.token.getBalanceOf(accountAddress))
         }
         const currentAccountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
@@ -1229,7 +1232,7 @@ export function onTransferEvent(avatarAddress: string, from: string, to: string)
 export function onReputationChangeEvent(avatarAddress: string, address: string) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const reputation = Util.fromWei(await daoInstance.reputation.reputationOf(address));
+    const reputation = Util.fromWei(await daoInstance.reputation.getBalanceOf(address));
     const totalReputation = Util.fromWei(await daoInstance.reputation.contract.totalSupply()); // TODO: replace with wrapper function when available.
 
     dispatch({
