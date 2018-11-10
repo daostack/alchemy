@@ -32,7 +32,7 @@ export function getProfilesForAllAccounts() {
   }
 }
 
-export type UpdateProfileAction = IAsyncAction<'UPDATE_PROFILE', { accountAddress: string }, { name: string }>
+export type UpdateProfileAction = IAsyncAction<'UPDATE_PROFILE', { accountAddress: string }, { description: string, name: string }>
 
 export function updateProfile(accountAddress: string, name: string, description: string, signature: string) {
   return async (dispatch: any, getState: any) => {

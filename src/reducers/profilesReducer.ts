@@ -37,7 +37,7 @@ const profilesReducer = (state = initialState, action: any) => {
     case ActionTypes.UPDATE_PROFILE: {
       switch (action.sequence) {
         case AsyncActionSequence.Success:
-          return {...state, ...payload };
+          return update(state, { [action.meta.accountAddress]: { $set: payload } });
         default: {
           return state;
         }
