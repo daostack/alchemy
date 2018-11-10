@@ -107,14 +107,14 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const msg = ethUtil.bufferToHex(Buffer.from(text, 'utf8'));
     const fromAddress = this.props.accountAddress;
 
-    let signature = localStorage.getItem("signature");
+    let signature = localStorage.getItem("signature-" + fromAddress);
     if (!signature) {
       const method = 'personal_sign';
       const sendAsync = promisify(web3.currentProvider.sendAsync);
       const params = [msg, fromAddress];
       const result = await sendAsync({ method, params, fromAddress });
       signature = result.result;
-      localStorage.setItem("signature", signature);
+      localStorage.setItem("signature-" + fromAddress, signature);
     }
 
     const recoveredAddress = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
