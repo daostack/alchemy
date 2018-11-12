@@ -632,7 +632,9 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
-        // currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: dao.avatar.address })),
+        currentThresholdToBoost: Util.fromWei(
+          await votingMachineInstance.getThresholdForSchemeAndCreator({ avatar: dao.avatar.address,
+          schemeInfo: { address: }})),
         ethCount: 0,
         externalTokenCount: 0,
         genCount: 0,
