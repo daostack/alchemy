@@ -124,7 +124,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     if (recoveredAddress == this.props.accountAddress) {
       await updateProfile(accountAddress, values.name, values.description, signature);
     } else {
-      console.error("Signing in failed, please ensure you are logged in to MetaMask with an address that you own");
+      console.error("Signing failed");
     }
     setSubmitting(false);
   }
@@ -189,6 +189,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                             placeholder="e.g. John Doe"
                             name='name'
                             type="text"
+                            maxLength="35"
                             className={touched.name && errors.name ? css.error : null}
                           />
                           {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
