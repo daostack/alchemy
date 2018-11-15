@@ -16,7 +16,7 @@ export function getProfilesForAllAccounts() {
     }
 
     try {
-      const results = await axios.get(process.env.API_URL + '/api/accounts?filter={"where":{"or":[' + accountFilters.join(",") + ']}}');
+      const results = await axios.get(process.env.API_URL + '/api/accounts');
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Success,
