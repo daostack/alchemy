@@ -50,10 +50,11 @@ type IProps = IStateProps & IDispatchProps;
 
 class AccountPopupContainer extends React.Component<IProps, null> {
 
-  public copyAddress = () => {
+  public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
     Util.copyToClipboard(accountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    e.preventDefault();
   }
 
   public render() {

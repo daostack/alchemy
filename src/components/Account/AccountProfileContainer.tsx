@@ -95,14 +95,15 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     this.setState({ ethCount: Util.fromWei(ethBalance), genCount: Util.fromWei(genBalance)});
   }
 
-  public copyAddress = () => {
+  public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
     Util.copyToClipboard(accountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    e.preventDefault();
   }
 
   public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
-    const { accountAddress, updateProfile } = this.props;
+    const { accountAddress, showNotification, updateProfile } = this.props;
 
     const web3 = await Arc.Utils.getWeb3();
     const text = "Please sign in to Alchemy";
@@ -115,16 +116,25 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
       const sendAsync = promisify(web3.currentProvider.sendAsync);
       const params = [msg, fromAddress];
       const result = await sendAsync({ method, params, fromAddress });
-      signature = result.result;
-      localStorage.setItem("signature-" + fromAddress, signature);
+      if (result.error) {
+        console.log("Signing canceled, data was not saved");
+        showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
+        setSubmitting(false);
+        return;
+      } else {
+        signature = result.result;
+        localStorage.setItem("signature-" + fromAddress, signature);
+      }
     }
 
     const recoveredAddress = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
 
     if (recoveredAddress == this.props.accountAddress) {
       await updateProfile(accountAddress, values.name, values.description, signature);
+      showNotification(NotificationStatus.Success, `Profile data saved`);
     } else {
       console.error("Signing failed");
+      showNotification(NotificationStatus.Failure, `Saving profile failed, please try again`);
     }
     setSubmitting(false);
   }
