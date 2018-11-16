@@ -12,21 +12,14 @@ services:
       - ./src:/alchemy/src
       - ./test:/alchemy/test
       - ./webpack.docker.config.js:/alchemy/webpack.docker.config.js
+      - ./entry.sh:/entry.sh
     ports:
       - 3000:3000
-      - 8545:8545
   ganache:
-    build:
-      dockerfile: ganache.dockerfile
-      context: ./docker/ganache
+    image: daostack/ganache
+    command: --hostname=0.0.0.0
     ports:
-      - 8549:8545
-    environment:
-      test_mnemonic: $test_mnemonic
-    command: >
-      --deterministic
-      --mnemonic "$test_mnemonic"
-      --gasLimit 8000000
+      - 8545:8545
   alchemy-server:
     build:
       dockerfile: alchemy-server.dockerfile

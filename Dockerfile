@@ -1,7 +1,5 @@
 FROM node:10.13.0
 
-
-
 COPY . /alchemy/
 RUN ls -l /alchemy/
 RUN cd /alchemy && npm install
