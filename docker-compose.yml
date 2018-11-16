@@ -16,7 +16,7 @@ services:
     ports:
       - 3000:3000
   ganache:
-    image: daostack/ganache
+    image: daostack/ganache:0.0.0-alpha.50-v3
     command: --hostname=0.0.0.0
     ports:
       - 8545:8545
