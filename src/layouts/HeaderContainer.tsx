@@ -163,13 +163,12 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.approvalWatcher.stopWatching();
   }
 
-  public copyAddress() {
+  public copyAddress(e: any) {
     const { showNotification, ethAccountAddress } = this.props;
-
     // Copy the address to clipboard
     Util.copyToClipboard(ethAccountAddress);
-
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    e.preventDefault();
   }
 
   public handleChangeAccount = (e: any) => {
