@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { IRootState } from "reducers/index";
-import { ActionTypes } from "reducers/profilesReducer";
+import { ActionTypes, newProfile } from "reducers/profilesReducer";
 
 // Load account profile data from our database for all the "members" of the DAO
 export function getProfilesForAllAccounts() {
@@ -27,6 +27,36 @@ export function getProfilesForAllAccounts() {
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
         payload: e.toString()
+      });
+    }
+  }
+}
+
+export function getProfile(accountAddress: string) {
+  return async (dispatch: any, getState: () => IRootState) => {
+    try {
+      // Get profile data for this account
+      const response = await axios.get(process.env.API_URL + '/api/accounts?filter={"where":{"ethereumAccountAddress":"' + accountAddress + '"}}');
+      if (response.data.length > 0) {
+        // Update profiles state with profile data for this account
+        dispatch({
+          type: ActionTypes.GET_PROFILE_DATA,
+          sequence: AsyncActionSequence.Success,
+          payload: { profiles: response.data }
+        });
+      } else {
+        // Setup blank profile for the account
+        dispatch({
+          type: ActionTypes.GET_PROFILE_DATA,
+          sequence: AsyncActionSequence.Success,
+          payload: { profiles: [newProfile(accountAddress)] }
+        });
+      }
+    } catch (e) {
+      dispatch({
+        type: ActionTypes.GET_PROFILE_DATA,
+        sequence: AsyncActionSequence.Failure,
+        payload: e.getMessage()
       });
     }
   }

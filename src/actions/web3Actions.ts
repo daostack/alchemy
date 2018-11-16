@@ -6,6 +6,7 @@ import * as Redux from "redux";
 import { Web3 } from "web3";
 
 import { IAsyncAction, AsyncActionSequence } from "./async";
+import { getProfile } from "actions/profilesActions";
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
 import { ActionTypes as profileActionTypes, IProfileState, newProfile } from "reducers/profilesReducer";
@@ -119,27 +120,7 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
     payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress));
     payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address));
 
-    try {
-      // Get profile data for this account
-      const response = await axios.get(process.env.API_URL + '/api/accounts?filter={"where":{"ethereumAccountAddress":"' + accountAddress + '"}}');
-      if (response.data.length > 0) {
-        // Update profiles state with profile data for this account
-        dispatch({
-          type: profileActionTypes.GET_PROFILE_DATA,
-          sequence: AsyncActionSequence.Success,
-          payload: { profiles: response.data }
-        });
-      } else {
-        // Setup blank profile for the current account
-        dispatch({
-          type: profileActionTypes.GET_PROFILE_DATA,
-          sequence: AsyncActionSequence.Success,
-          payload: { profiles: [newProfile(accountAddress)] }
-        });
-      }
-    } catch (e) {
-      console.error("Error getting account profile data from the server: ", e);
-    }
+    dispatch(getProfile(accountAddress));
 
     const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,

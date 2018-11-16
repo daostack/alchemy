@@ -33,8 +33,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
   return {
     accountAddress: ownProps.match.params.accountAddress,
-    accountInfo: state.arc.accounts[state.web3.ethAccountAddress + "-" + queryValues.daoAvatarAddress],
-    accountProfile: state.profiles[state.web3.ethAccountAddress],
+    accountInfo: state.arc.accounts[ownProps.match.params.accountAddress + "-" + queryValues.daoAvatarAddress],
+    accountProfile: state.profiles[ownProps.match.params.accountAddress],
     currentAccountAddress: state.web3.ethAccountAddress,
     dao: queryValues.daoAvatarAddress ? state.arc.daos[queryValues.daoAvatarAddress as string] : null
   };
@@ -42,11 +42,13 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
+  getProfile: typeof profileActions.getProfile;
   updateProfile: typeof profileActions.updateProfile;
 }
 
 const mapDispatchToProps = {
   showNotification,
+  getProfile: profileActions.getProfile,
   updateProfile: profileActions.updateProfile
 };
 
@@ -75,7 +77,10 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    const { accountAddress, dao } = this.props;
+    const { accountAddress, dao, getProfile } = this.props;
+
+    getProfile(accountAddress);
+
     const web3 = await Arc.Utils.getWeb3();
     const getBalance = promisify(web3.eth.getBalance);
     const ethBalance = await getBalance(accountAddress);
@@ -152,6 +157,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
          { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
          { typeof(accountProfile) === 'undefined' ? "Loading..." :
             <Formik
+              enableReinitialize={true}
               initialValues={{
                 description: accountProfile ? accountProfile.description || "" : "",
                 githubURL: accountProfile ? accountProfile.githubURL || "" : "",
