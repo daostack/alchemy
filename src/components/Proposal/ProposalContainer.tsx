@@ -15,6 +15,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { isStakePending, isVotePending, isRedeemPending } from "selectors/operations";
 import * as schemas from "schemas";
 
+import AccountProfileName from "components/Account/AccountProfileName";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import ReputationView from "components/Account/ReputationView";
 import RewardsString from "components/Proposal/RewardsString";
@@ -401,7 +402,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 accountAddress={proposal.beneficiaryAddress}
                 daoAvatarAddress={proposal.daoAvatarAddress}
               />
-              { beneficiaryProfile && beneficiaryProfile.name }
+              <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.avatarAddress} />
             </div>
           </div>
           <div>
@@ -412,7 +413,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   accountAddress={proposal.proposer}
                   daoAvatarAddress={proposal.daoAvatarAddress}
                 />
-                { creatorProfile && creatorProfile.name }
+                <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.avatarAddress} />
                 &nbsp; ON {submittedTime.format("MMM DD, YYYY")}
               </div>
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>

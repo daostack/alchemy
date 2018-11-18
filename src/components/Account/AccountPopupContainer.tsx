@@ -13,6 +13,7 @@ import * as schemas from "schemas";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
+import AccountProfileName from "components/Account/AccountProfileName";
 import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./Account.scss";
@@ -66,7 +67,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
           <AccountImage accountAddress={accountAddress} />
         </div>
         <div className={css.accountInfo}>
-          <span className={css.name}>{profile ? profile.name : ""}</span>
+          <span className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.avatarAddress} /></span>
           <div className={css.beneficiaryAddress}>
             <span>{accountAddress}</span>
             <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
