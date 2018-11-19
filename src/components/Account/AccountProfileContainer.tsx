@@ -112,7 +112,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     const web3 = await Arc.Utils.getWeb3();
     const timestamp = new Date().getTime().toString();
-    const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. [" + timestamp + "]";
+    const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. Timestamp:" + timestamp;
     const msg = ethUtil.bufferToHex(Buffer.from(text, 'utf8'));
     const fromAddress = this.props.accountAddress;
 
