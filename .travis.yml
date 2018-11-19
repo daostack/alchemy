@@ -19,7 +19,7 @@ before_install:
 
 script:
 - npm run lint
-- curl http://localhost:3000
+- npm run test:e2e
 
 deploy:
   provider: pages
