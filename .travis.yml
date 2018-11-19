@@ -22,6 +22,7 @@ addons:
 script:
 - npm run lint
 - npm run test:e2e:headless
+- npm run test
 
 deploy:
   provider: pages

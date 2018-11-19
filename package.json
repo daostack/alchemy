@@ -38,6 +38,7 @@
       "^lib(.*)$": "<rootDir>/src/lib$1",
       "^reducers(.*)$": "<rootDir>/src/reducers$1",
       "^selectors(.*)$": "<rootDir>/src/selectors$1",
+      "^schemas(.*)$": "<rootDir>/src/schemas$1",
       "^src(.*)$": "<rootDir>/src$1"
     }
   },
@@ -106,7 +107,7 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-logger": "^3.0.6",
-    "redux-persist": "5.9.1",
+    "redux-persist": "^5.9.1",
     "redux-promise-middleware": "^4.4.1",
     "redux-thunk": "2.2.0",
     "reselect": "^3.0.1",
@@ -143,6 +144,7 @@
     "@types/webpack-env": "^1.13.0",
     "@types/yargs": "^11.1.1",
     "awesome-typescript-loader": "^3.2.3",
+    "axios-mock-adapter": "^1.15.0",
     "chalk": "^2.4.1",
     "copy-webpack-plugin": "^4.5.0",
     "cross-env": "^5.1.3",

@@ -14,6 +14,7 @@ export const history = createHistory();
 
 const store = createStore(
   reducers,
+  // TODO: only compose with devtools in when ENV === 'dev'
   composeWithDevTools(   // makes the store available to the Chrome redux dev tools
     applyMiddleware(
       operationsTracker,
@@ -23,6 +24,18 @@ const store = createStore(
       routerMiddleware(history),
       loggerMiddleware,
     ),
+  ),
+);
+
+// A store for testing purposes
+export const mockStore = () => createStore(
+  reducers,
+  applyMiddleware(
+    operationsTracker,
+    notificationUpdater,
+    successDismisser(15000),
+    thunkMiddleware,
+    routerMiddleware(history),
   ),
 );
 
