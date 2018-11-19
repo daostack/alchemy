@@ -83,7 +83,6 @@ describe('arcActions', () => {
 
       const daoInstance = await Arc.DAO.at(daoAddress);
 
-      console.log(dao)
       expect(dao).toMatchObject({
         avatarAddress: daoAddress,
         name: daoName,

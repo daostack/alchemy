@@ -31,7 +31,7 @@ script:
 # allows for setting the contract address we need to test with a local ganache :(
 - docker-compose down
 - nohup npm run ganacheDb &
-- npm run migrate-ganache
+- npm run migrate-ganache > /dev/null
 - npm run test
 
 deploy:
