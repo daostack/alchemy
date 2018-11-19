@@ -16,6 +16,8 @@ bundler_args: "--jobs=4 --retry=3"
 #   # Load cached docker images
 #   - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 #   - docker-compose up -d
+addons:
+  chrome: stable
 
 script:
 - npm run lint
