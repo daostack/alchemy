@@ -64,7 +64,7 @@ export function getProfile(accountAddress: string) {
 
 export type UpdateProfileAction = IAsyncAction<'UPDATE_PROFILE', { accountAddress: string }, { description: string, name: string }>
 
-export function updateProfile(accountAddress: string, name: string, description: string, signature: string) {
+export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
   return async (dispatch: any, getState: any) => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
@@ -78,6 +78,7 @@ export function updateProfile(accountAddress: string, name: string, description:
         ethereumAccountAddress: accountAddress,
         name,
         description,
+        timestamp,
         signature
       });
 

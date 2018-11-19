@@ -111,7 +111,8 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const { accountAddress, showNotification, updateProfile } = this.props;
 
     const web3 = await Arc.Utils.getWeb3();
-    const text = "Please sign in to Alchemy";
+    const timestamp = new Date().getTime().toString();
+    const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. [" + timestamp + "]";
     const msg = ethUtil.bufferToHex(Buffer.from(text, 'utf8'));
     const fromAddress = this.props.accountAddress;
 
@@ -135,7 +136,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const recoveredAddress = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
 
     if (recoveredAddress == this.props.accountAddress) {
-      await updateProfile(accountAddress, values.name, values.description, signature);
+      await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
       showNotification(NotificationStatus.Success, `Profile data saved`);
     } else {
       console.error("Signing failed");
