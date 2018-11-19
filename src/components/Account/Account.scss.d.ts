@@ -7,6 +7,7 @@ export const name: string;
 export const beneficiaryAddress: string;
 export const holdings: string;
 export const viewProfile: string;
+export const daoHeader: string;
 export const profileContainer: string;
 export const profileContent: string;
 export const userAvatarContainer: string;
