@@ -86,30 +86,18 @@ button:hover {
 
 .member {
   padding: 5px 0;
-  vertical-align: middle;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
+  img {
+    flex: none;
+    width: 40px;
+  }
 
   .memberAddress {
-    float: left;
-    padding: 13px 15px;
+    flex: auto;
   }
-
-  .memberHoldings {
-    float: right;
-    position: relative;
-    top: 8px;
-  }
-
-  .verticalDivider {
-    display: inline-block;
-    height: 24px;
-    width: 1px;
-    background-color: rgba(234, 234, 234, 1.000);
-    margin: 0 15px;
-    position: relative;
-    top: 5px;
-  }
-
 }
 
 .proposalsContainer, .membersContainer {
