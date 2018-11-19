@@ -16,6 +16,7 @@ before_install:
   # Load cached docker images
   - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
   - docker-compose up -d
+  - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
 addons:
   chrome: stable
 
