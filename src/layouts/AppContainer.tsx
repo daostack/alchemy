@@ -121,8 +121,8 @@ class AppContainer extends React.Component<IProps, IState> {
     await this.setupWatchers();
   }
 
-   public async componentDidUpdate(prevProps: IProps) {
-    if (this.props.daosLoaded && !prevProps.daosLoaded) {
+  public async componentDidUpdate(prevProps: IProps) {
+    if (this.props.ethAccountAddress && this.props.daosLoaded && (!prevProps.daosLoaded || !prevProps.ethAccountAddress)) {
       // If DAOs just finally loaded then setup the watchers
       await this.setupWatchers();
     }
@@ -130,7 +130,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async setupWatchers() {
     // Check if already setup
-    if (this.watchers.length || !this.props.daosLoaded) {
+    if (this.watchers.length || !this.props.ethAccountAddress || !this.props.daosLoaded) {
       return;
     }
 
