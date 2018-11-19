@@ -22,6 +22,11 @@ addons:
 script:
 - npm run lint
 - npm run test:e2e:headless
+# test should be run agains the docker ganache image but before arc.js
+# allows for setting the contract address we need to test with a local ganache :(
+- docker-compose down
+- npm run ganacheDb
+- npm run migrate-ganache
 - npm run test
 
 deploy:
