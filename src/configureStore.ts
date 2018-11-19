@@ -22,7 +22,7 @@ const store = createStore(
       successDismisser(15000),
       thunkMiddleware,
       routerMiddleware(history),
-      loggerMiddleware,
+      // loggerMiddleware,
     ),
   ),
 );
