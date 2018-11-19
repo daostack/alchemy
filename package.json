@@ -19,7 +19,8 @@
     },
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/lib/"
+      "/lib/",
+      "/test/e2e/"
     ],
     "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleFileExtensions": [
