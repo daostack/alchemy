@@ -237,18 +237,18 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                       {accountInfo
                          ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationCount} daoName={dao.name}/> </div>
                          : ""}
-                      <div><strong>GEN:</strong><br/><span>{genCount}</span></div>
-                      <div><strong>ETH:</strong><br/><span>{ethCount}</span></div>
+                      <div><strong>GEN:</strong><br/><span>{genCount ? genCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
+                      <div><strong>ETH:</strong><br/><span>{ethCount ? ethCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
                     </div>
                     <div>
                       <strong>ETH Address:</strong><br/>
                       <span>{accountAddress.substr(0, 20)}...</span>
                       <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
                     </div>
-                    <div>
+                    {/*<div>
                       <strong>Prove it's you by linking your social accounts:</strong>
                       <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
-                    </div>
+                    </div>*/}
                   </div>
                 </div>
                 { editing ?
