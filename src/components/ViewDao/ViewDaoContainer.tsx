@@ -16,6 +16,7 @@ import Util from "lib/util";
 import { IRootState } from "reducers";
 import { checkProposalExpired, IAccountState, IDaoState, IProposalState, IRedemptionState, ProposalStates, proposalPassed } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
 
@@ -35,6 +36,7 @@ import * as proposalCss from "../Proposal/Proposal.scss";
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
   currentAccountAddress: string;
+  currentAccountProfile: IProfileState;
   dao: IDaoState;
   daoAvatarAddress: string;
   lastBlock: number;
@@ -54,6 +56,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
+    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     numRedemptions,
@@ -267,7 +270,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   };
 
   public render() {
-    const { currentAccountAddress, dao, numRedemptions, tourVisible } = this.props;
+    const { currentAccountAddress, currentAccountProfile, dao, numRedemptions, tourVisible } = this.props;
 
     if (!dao || !this.state.readyToShow) {
       return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
@@ -283,6 +286,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       {
         target: "." + appCss.accountInfo,
         content: "This icon represents your wallet. Here you can view your reputation and token balances.",
+        placement: "bottom",
+        disableBeacon: true
+      },
+      {
+        target: "." + appCss.profileLink,
+        content: currentAccountProfile && currentAccountProfile.name ? "Click here to modify your profile, this will help others to trust you." : "Click here to create your profile, this will help others to trust you.",
         placement: "bottom",
         disableBeacon: true
       },
