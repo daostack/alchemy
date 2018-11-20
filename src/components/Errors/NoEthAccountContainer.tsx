@@ -56,7 +56,10 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
       <div className={css.wrapper}>
         <div className={css.notification}>
           <img src="/assets/images/metamask.png"/>
-          <h1>Found Web3 but there is no default account available.<br/><a onClick={this.enableAccountAccess} className={css.link}>Click here</a> to enable Alchemy to access to your Ethereum account.</h1>
+          <h1>
+            In order to use Alchemy we need permission to view your public ethereum account.&nbsp;
+            <a onClick={this.enableAccountAccess} className={css.link}>Click here</a> to open a Metamask pop-up that will request your permission.
+          </h1>
         </div>
       </div>
     );
