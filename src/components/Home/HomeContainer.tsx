@@ -11,31 +11,19 @@ import * as schemas from "schemas";
 
 import * as css from "./Home.scss";
 
-interface IStateProps {
-  daos: { [key: string]: IDaoState };
-  daosLoaded: boolean;
-}
+interface IStateProps {}
 
-const mapStateToProps = (state: IRootState, ownProps: any) => ({
-  daos: denormalize(state.arc.daos, schemas.daoList, state.arc),
-  daosLoaded: state.arc.daosLoaded,
-});
+const mapStateToProps = (state: IRootState, ownProps: any) => ({});
 
-interface IDispatchProps {
-  getDAOs: typeof arcActions.getDAOs;
-}
+interface IDispatchProps {}
 
-const mapDispatchToProps = {
-  getDAOs: arcActions.getDAOs,
-};
+const mapDispatchToProps = {};
 
 type IProps = IStateProps & IDispatchProps;
 
 class HomeContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { daos, daosLoaded, getDAOs } = this.props;
-
     return (
       <div className={css.homeWrapper}>
         <div className={css.leftTriangle}></div>
