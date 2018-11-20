@@ -199,7 +199,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 It will set a default gas limit and gas price. It's fine to stick with these defaults.
                 You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
               </p>
-              <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)}>
+              <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
                 <img src="/assets/images/Tx/MetaMask.svg"/>
                 Launch MetaMask
               </button>
