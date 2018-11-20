@@ -1,27 +1,28 @@
 import * as Arc from "@daostack/arc.js";
+import promisify = require("es6-promisify");
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
+import { FilterResult } from "web3";
 
-import { showNotification, NotificationStatus } from 'reducers/notifications'
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, newAccount } from "reducers/arcReducer";
+import { showNotification, NotificationStatus } from 'reducers/notifications'
 import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { IWeb3State } from "reducers/web3Reducer";
+import Util from "lib/util";
 
 import AccountBalance from "components/Account/AccountBalance";
 import AccountImage from "components/Account/AccountImage";
+import AccountProfileName from "components/Account/AccountProfileName";
+import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./App.scss";
-import Util from "lib/util";
-import Tooltip from "rc-tooltip";
-import ReputationView from "components/Account/ReputationView";
-import { FilterResult } from "web3";
-import promisify = require("es6-promisify");
 
 interface IStateProps {
   accounts: string[];
@@ -259,7 +260,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               <div className={css.holdings}>
                 <div className={css.pointer}></div>
                 <div className={css.walletDetails}>
-                  <div className={css.profileName}>{currentAccountProfile ? currentAccountProfile.name : ""}</div>
+                  <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
                   <div className={css.holdingsLabel}>Your wallet</div>
                   <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
                     <span>{ethAccountAddress.slice(0, 40)}</span>
