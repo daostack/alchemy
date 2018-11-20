@@ -1,6 +1,7 @@
 import * as Arc from '@daostack/arc.js';
 import axios from "axios";
 import * as History from "history";
+import * as queryString from 'query-string';
 import * as React from "react";
 import { withCookies, Cookies } from 'react-cookie';
 import { connect, Dispatch } from "react-redux";
@@ -255,9 +256,10 @@ class AppContainer extends React.Component<IProps, IState> {
       connectionStatus == ConnectionStatus.Connected ?
         <div className={css.outer}>
           <div className={css.container}>
-            <Route path="/dao/:daoAvatarAddress" children={(props) => (
-              <HeaderContainer daoAvatarAddress={props.match ? props.match.params.daoAvatarAddress : null} />
-            )} />
+            <Route path="/dao/:daoAvatarAddress" children={(props) => {
+              const queryValues = queryString.parse(props.location.search);
+              return <HeaderContainer daoAvatarAddress={props.match ? props.match.params.daoAvatarAddress : queryValues.daoAvatarAddress} />;
+            }} />
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
               <Route exact path="/daos" component={DaoListContainer} />
