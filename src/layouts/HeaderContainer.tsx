@@ -35,8 +35,8 @@ interface IStateProps {
   dao: IDaoState;
   daoAvatarAddress: string;
   ethAccountAddress: string | null;
-
   networkId: number;
+  pageURL: string;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -51,7 +51,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao: state.arc.daos[ownProps.daoAvatarAddress],
     daoAvatarAddress: ownProps.daoAvatarAddress,
     ethAccountAddress: state.web3.ethAccountAddress,
-    networkId: state.web3.networkId
+    networkId: state.web3.networkId,
+    pageURL: ownProps.location.pathname
   };
 };
 
@@ -196,12 +197,15 @@ class HeaderContainer extends React.Component<IProps, null> {
       daoAvatarAddress,
       ethAccountAddress,
       networkId,
+      pageURL,
       showTour
     } = this.props;
 
     if (!currentAccount) {
       currentAccount = newAccount(daoAvatarAddress, ethAccountAddress);
     }
+
+    const isProfilePage = pageURL.includes("profile");
 
     const accountOptionNodes = accounts.map((account: string) => (
       <option key={"account_" + account}>
@@ -252,7 +256,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             <span className={css.version}><em>Alchemy {Util.networkName(networkId)}</em> <span> v.{VERSION}</span></span>
           </div>
           <div className={css.headerRight}>
-            <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>
+            {isProfilePage ? "" : <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>}
             <div className={css.accountInfo}>
               <div className={css.accountImage}>
                 <AccountImage accountAddress={ethAccountAddress} />
@@ -306,7 +310,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                 }
               </div>
             </div>
-            { dao
+            { dao && !isProfilePage
               ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
               : ""
             }
