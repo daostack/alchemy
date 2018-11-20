@@ -6,26 +6,24 @@
 * You will  need [alchemy-server](https://github.com/daostack/alchemy-server) running locally for the app to function
 
 ## Installation
+
 ```sh
 git clone https://github.com/daostack/alchemy.git
 cd alchemy
-npm install
 ```
 
 # Run app locally
 
-## Run the Alchemy Server
-Follow instructions [here](https://github.com/daostack/alchemy-server) to start the Alchemy Server
-
-There are three ways of interacting with the test server, depending on how the account and private key of the user are managed.
-
+There are two ways to work with the alchemy stack.
+We are providing a convenient `docker-compose` file for quick setup. Alternatively,
+you can recreated the docker environement by installing an starting all [services locally](./docs/nodocker.md).
 ## Working with docker
 
 The easiest way to start developing is to work with docker.  After you have installed docker, run the following steps:
 ```sh
-docker-compose up
+docker-compose up alchemy
 ```
-This will start a sserver on http://localhost:3000.
+This will start a server on http://localhost:3000.
 
 To interact with the test instance in Chrome (or another browser):
 1. Go to http://localhost:3000
@@ -33,9 +31,11 @@ To interact with the test instance in Chrome (or another browser):
 1. If you'd like an account with some ether to start with,  choose "import account" and use the following private key:
  `6695C8EF58FECFC7410BF8B80C17319EAACA8B9481CC9C682FD5DA116F20EF05`
 
+See [working with docker](./docs/docker.md) for details.
+
 ## Using Ganache with MetaMask
 
-[]
+
 First you must install Metamask and configure an account.
 1. Install and enable [MetaMask extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) in Chrome
 1. Click on the MetaMask extension icon in the toolbar and log in

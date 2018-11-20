@@ -5,10 +5,14 @@ set -e
 # wait for required containers
 /wait
 
-# TODO: ganache shoudl run in a separate container
-# this is a quick hack to ahve ganache running and deploy the contracts we need
- # nohup npm run ganacheDb &
-nohup npm explore ganache-cli -- npm start --  -h 0.0.0.0 --networkId 1512051714758 --quiet --mnemonic "behave pipe turkey animal voyage dial relief menu blush match jeans general" & 
+# TODO: ganache runs in a separate container and we should use that process
+# this is a quick hack to  play nice with arc.js
+echo "starting ganache..."
+npm explore ganache-cli -- npm start --  -h 0.0.0.0 --networkId 1512051714758 --quiet --mnemonic "behave pipe turkey animal voyage dial relief menu blush match jeans general"   > /dev/null &
+echo "ganache started"
 
-npm run migrate-ganache
+echo "deploying contracts..."
+npm run migrate-ganache > /dev/null
+echo "deployed contracts"
+
 npm run start-docker

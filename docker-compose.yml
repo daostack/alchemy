@@ -9,10 +9,14 @@ services:
       - alchemy-server
     working_dir: /alchemy/
     volumes:
-      - ./src:/alchemy/src
+      - ./src:/alcemy/src
       - ./test:/alchemy/test
+      - ./webpack.base.config.js:/alchemy/webpack.base.config.js
+      - ./app.json:/alchemy/app.json
+      - ./webpack.dev.config.js:/alchemy/webpack.dev.config.js
       - ./webpack.docker.config.js:/alchemy/webpack.docker.config.js
       - ./entry.sh:/entry.sh
+      #- ./:/alchemy
     ports:
       - 3000:3000
       - 8545:8545

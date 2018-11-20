@@ -14,6 +14,7 @@
     "npm": "=5.10"
   },
   "jest": {
+    "testURL": "http://localhost:3000/",
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
@@ -43,6 +44,7 @@
     }
   },
   "scripts": {
+    "analyze": "NODE_ENV=production ANALYZE=1 node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js --progress --colors",
     "cache-arc-dev": "ts-node src/run_cache_worker.ts",
     "cache-arc-staging": "cross-env NODE_ENV=production arcjs_network=kovan ts-node src/run_cache_worker.ts",
     "cache-arc-prod": "cross-env NODE_ENV=production arcjs_network=live ts-node src/run_cache_worker.ts",
@@ -55,7 +57,7 @@
     "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start ganacheDb.restoreFromZip",
     "migrate-ganache": "npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
     "lint": "tslint --project .",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "wdio ./test/e2e/wdio.conf.js",
     "test:e2e:headless": "wdio ./test/e2e/wdio-headless.conf.js",
