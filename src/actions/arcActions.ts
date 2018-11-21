@@ -124,6 +124,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     avatarAddress,
     controllerAddress: "",
     // currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThreshold({ avatar: avatarAddress })),
+    currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThresholdForSchemeAndCreator(contributionRewardInstance, avatarAddress)),
     ethCount: Util.fromWei(await getBalance(avatarAddress)),
     genCount: Util.fromWei((await votingMachineInstance.getTokenBalances({avatarAddress})).stakingTokenBalance),
     lastBlock: toBlock,
@@ -632,9 +633,11 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       const daoData: IDaoState = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
-        currentThresholdToBoost: Util.fromWei(
-          await votingMachineInstance.getThresholdForSchemeAndCreator({ avatar: dao.avatar.address,
-          schemeInfo: { address: }})),
+        // TODO: get the schemeInfo right
+        currentThresholdToBoost: 123,
+        // Util.fromWei(
+        //   await votingMachineInstance.getThresholdForSchemeAndCreator({ avatar: dao.avatar.address,
+        //   schemeInfo: { address: 0 }})),
         ethCount: 0,
         externalTokenCount: 0,
         genCount: 0,

@@ -69,7 +69,7 @@ export function newAccount(
 export interface IDaoState {
   avatarAddress: string;
   controllerAddress: string;
-  // currentThresholdToBoost: number;
+  currentThresholdToBoost: number;
   ethCount: number;
   externalTokenAddress?: string; // The address of an external token (e.g. DAI) to use instead of ETH for rewards
   externalTokenSymbol?: string;
