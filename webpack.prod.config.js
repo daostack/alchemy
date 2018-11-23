@@ -8,11 +8,12 @@ const webpack = require('webpack');
 
 const baseConfig = require('./webpack.base.config.js');
 
+
 const extractSass = new ExtractTextPlugin({
   filename: "[name].[contenthash].css"
 });
 
-module.exports = merge(baseConfig, {
+const config = merge(baseConfig, {
   devtool: 'nosources-source-map',
 
   output: {
@@ -84,3 +85,10 @@ module.exports = merge(baseConfig, {
     })
   ],
 });
+
+if (process.env.ANALYZE) {
+  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+  config.plugins.push(new BundleAnalyzerPlugin())
+}
+
+module.exports = config
