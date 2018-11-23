@@ -2,7 +2,7 @@ import { getDAOs, createDAO, CreateDAOAction, createProposal, CreateProposalActi
 import { Dispatch } from "react-redux";
 import { IRootState } from "reducers";
 import * as Arc from "@daostack/arc.js";
-import * as arcConstants from "constants/arcConstants";
+import { ActionTypes } from "reducers/arcReducer"
 import { mockStore } from "../configureStore";
 import axios from "axios";
 import MockAdapter from 'axios-mock-adapter';
@@ -57,7 +57,7 @@ describe('arcActions', () => {
     for (let i = 0; i < actions.length ; i++) {
       const action = actions[i];
       expect(action).toMatchObject({
-        type: arcConstants.ARC_CREATE_DAO,
+        type: ActionTypes.ARC_CREATE_DAO,
         // sequence: AsyncActionSequence.Pendings,
         // operation: {
         //   // Fails:
@@ -69,7 +69,7 @@ describe('arcActions', () => {
     if (last.sequence === AsyncActionSequence.Success) {
       // Verify last action is a success with proper payload
       expect(last).toMatchObject({
-        type: arcConstants.ARC_CREATE_DAO,
+        type: ActionTypes.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Success,
         payload: {entities: {
           daos: {}
@@ -117,7 +117,7 @@ describe('arcActions', () => {
     } else {
       // Verify last action is a failure with proper payload
       expect(last).toMatchObject({
-        type: arcConstants.ARC_CREATE_DAO,
+        type: ActionTypes.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure
       } as CreateDAOAction)
     }
@@ -152,7 +152,7 @@ describe('arcActions', () => {
     for (let i = 0; i < actions.length ; i++) {
       const action = actions[i];
       expect(action).toMatchObject({
-        type: arcConstants.ARC_CREATE_PROPOSAL,
+        type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Pending,
         // operation: {
         //   totalSteps: actions.length
@@ -163,7 +163,7 @@ describe('arcActions', () => {
     if (!last || last.sequence === AsyncActionSequence.Pending) {
       if (last) {
         expect(last).toMatchObject({
-          type: arcConstants.ARC_CREATE_PROPOSAL,
+          type: ActionTypes.ARC_CREATE_PROPOSAL,
           sequence: AsyncActionSequence.Pending,
           // operation: {
           //   totalSteps: actions.length + 1
@@ -179,7 +179,7 @@ describe('arcActions', () => {
     } else {
       // Verify last action is a failure with proper payload
       expect(last).toMatchObject({
-        type: arcConstants.ARC_CREATE_PROPOSAL,
+        type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure
       } as CreateProposalAction)
     }
