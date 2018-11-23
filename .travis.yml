@@ -12,27 +12,25 @@ bundler_args: "--jobs=4 --retry=3"
 #   - >
 #     mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
 #     | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
-before_install:
+# before_install:
   # Load cached docker images
   # - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
-  - docker-compose up -d
-  - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
 addons:
   chrome: stable
 
 script:
-- npm run lint
-# sleep for 30 seconds to give the docker container time to build the app
-- curl http://127.0.0.1:3000
-- sleep 30
-# - curl http://127.0.0.1:3000
-- npm run test:e2e:headless
-# test should be run agains the docker ganache image but before arc.js
-# allows for setting the contract address we need to test with a local ganache :(
-- npm run test:unit
-# - nohup npm run ganacheDb &
-# - npm run migrate-ganache > /dev/null
-# - npm run test
+  - docker-compose up -d
+  - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
+  - curl http://127.0.0.1:3000
+  - sleep 30
+  - npm run lint
+  # sleep for 30 seconds to give the docker container time to build the app
+  - npm run test:e2e:headless
+  # unit tests should be run in the docker container
+  - docker-compose exec alchemy npm run test:unit
+  # - nohup npm run ganacheDb &
+  # - npm run migrate-ganache > /dev/null
+  # - npm run test:unit
 
 deploy:
   provider: pages
