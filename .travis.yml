@@ -16,7 +16,7 @@ before_install:
   # Load cached docker images
   # - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
   - docker-compose up -d
-  # - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
+  - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
 addons:
   chrome: stable
 
@@ -29,10 +29,10 @@ script:
 - npm run test:e2e:headless
 # test should be run agains the docker ganache image but before arc.js
 # allows for setting the contract address we need to test with a local ganache :(
-- docker-compose down
-- nohup npm run ganacheDb &
-- npm run migrate-ganache > /dev/null
-- npm run test
+- npm run test:unit
+# - nohup npm run ganacheDb &
+# - npm run migrate-ganache > /dev/null
+# - npm run test
 
 deploy:
   provider: pages
