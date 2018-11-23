@@ -21,10 +21,10 @@ addons:
 script:
   - docker-compose up -d
   - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
-  - curl http://127.0.0.1:3000
+  # - curl http://127.0.0.1:3000
+  # sleep for 30 seconds to give the docker container time to build the app
   - sleep 30
   - npm run lint
-  # sleep for 30 seconds to give the docker container time to build the app
   - npm run test:e2e:headless
   # unit tests should be run in the docker container
   - docker-compose exec alchemy npm run test:unit
