@@ -2,6 +2,7 @@ import axios from "axios";
 
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { IRootState } from "reducers/index";
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, newProfile } from "reducers/profilesReducer";
 
 // Load account profile data from our database for all the "members" of the DAO
@@ -86,13 +87,16 @@ export function updateProfile(accountAddress: string, name: string, description:
         serverAccount = response.data[0];
       }
     } catch (e) {
-      console.error(e);
+      console.error("Error saving profile to server: ", e.response.data.error.message);
 
-      return dispatch({
+      dispatch({
         type: ActionTypes.UPDATE_PROFILE,
         sequence: AsyncActionSequence.Failure,
         meta: { accountAddress },
       } as UpdateProfileAction);
+
+      dispatch(showNotification(NotificationStatus.Failure, `Saving profile failed: ${e.response.data.error.message}`));
+      return false;
     }
 
     dispatch({
@@ -101,5 +105,8 @@ export function updateProfile(accountAddress: string, name: string, description:
       meta: { accountAddress },
       payload: { name, description }
     } as UpdateProfileAction);
+
+    dispatch(showNotification(NotificationStatus.Success, `Profile data saved`));
+    return true;
   };
 }

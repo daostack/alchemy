@@ -133,7 +133,6 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     if (recoveredAddress == this.props.accountAddress) {
       await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
-      showNotification(NotificationStatus.Success, `Profile data saved`);
     } else {
       console.error("Signing failed");
       showNotification(NotificationStatus.Failure, `Saving profile failed, please try again`);
