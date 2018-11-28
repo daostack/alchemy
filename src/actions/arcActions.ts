@@ -38,7 +38,6 @@ import { Dispatch } from "redux";
 import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
 
-// Fetch cache JSON blob from cacher server
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Pending, payload: null });
@@ -53,7 +52,6 @@ export function loadCachedState() {
   };
 }
 
-// Get events from DaoCreator to see if any new DAOs are available
 export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
@@ -86,7 +84,6 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   };
 }
 
-// Calls getDAOData (below) for some avatar address
 export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: any, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null });
@@ -100,7 +97,6 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest')
   };
 }
 
-// Get all details associated w some DAO
 export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest') {
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);

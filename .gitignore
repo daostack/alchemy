@@ -9,4 +9,6 @@ PRIVATE_README.md
 *sublime*
 yarn*
 .env
+build
+.cache
 *.swp
