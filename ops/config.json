@@ -1,14 +1,16 @@
 {
   "development": {
-    "API_URL": "/api/data",
     "CACHE_SERVER_URL": "/api/cache",
+    "DISQUS_SITE": "daostack-alchemy",
     "arcjs_network": "ganache",
     "arcjs_providerUrl": "http://localhost",
     "arcjs_providerPort": "8545"
   },
   "production": {
     "CACHE_SERVER_URL": "/api/cache",
-    "API_URL": "/api/data",
-    "arcjs_network": "live"
+    "DISQUS_SITE": "daostack-alchemy",
+    "arcjs_network": "live",
+    "arcjs_providerUrl": "http://eth.bohendo.com",
+    "arcjs_providerPort": "8545"
   }
 }

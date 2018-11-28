@@ -1,20 +1,19 @@
 #!/bin/bash
 
 function wait_for {
-  target=$1;
-  echo "Waiting for $target to wake up."
-  while true; do
+  target=$1
+  echo "Waiting for $target to wake up..."
+  while true
+  do
     ping -c1 -w1 $target > /dev/null 2> /dev/null
-    if [[ "$?" == "0" ]]; then
-      echo "Good morning!";echo;
-      break
+    if [[ "$?" == "0" ]]
+    then sleep 3 && break
+    else sleep 3 && echo "Waiting for $target to wake up..."
     fi
-    echo "Waiting for $target to wake up."
-    sleep 3
   done
 }
 
-wait_for server
+wait_for ipfs
 wait_for ethprovider
 
 redis-server &
