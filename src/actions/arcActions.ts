@@ -10,10 +10,10 @@ import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
 
-import * as arcConstants from "constants/arcConstants";
 import Util from "lib/util";
 import { IRootState } from "reducers/index";
-import { checkProposalExpired,
+import { ActionTypes,
+         checkProposalExpired,
          newAccount,
          IAccountState,
          IDaoState,
@@ -34,24 +34,28 @@ import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "
 import * as schemas from "schemas";
 
 export function loadCachedState() {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
-    dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_PENDING, payload: null });
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Pending, payload: null });
     try {
       const networkName = (await Arc.Utils.getNetworkName()).toLowerCase();
       console.time('Load initial arc state')
       const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/' + process.env.S3_BUCKET + '/initialArcState-' + networkName + '.json');
+<<<<<<< HEAD
       dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: cachedState.data });
       console.timeEnd('Load initial arc state')
+=======
+      dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Success, payload: cachedState.data });
+>>>>>>> dev
     } catch (e) {
       console.error(e);
-      dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_REJECTED, payload: e });
+      dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Failure, payload: e });
     }
   };
 }
 
 export function getDAOs(fromBlock = 0, toBlock = 'latest') {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
-    dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
+  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
     const daoCreator = await Arc.DaoCreatorFactory.deployed();
 
     if (toBlock == 'latest') {
@@ -77,19 +81,19 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
     const payload = normalize(daos, schemas.daoList);
     (payload as any).lastBlock = toBlock;
 
-    dispatch({ type: arcConstants.ARC_GET_DAOS_FULFILLED, payload });
+    dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Success, payload });
   };
 }
 
 export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest') {
-  return async (dispatch: any, getState: any) => {
-    dispatch({ type: arcConstants.ARC_GET_DAO_PENDING, payload: null });
+  return async (dispatch: any, getState: () => IRootState) => {
+    dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null });
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
     const daoData = await getDAOData(avatarAddress, currentAccountAddress, fromBlock, toBlock);
     if (daoData) {
-      dispatch({ type: arcConstants.ARC_GET_DAO_FULFILLED, payload: normalize(daoData, schemas.daoSchema) });
+      dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Success, payload: normalize(daoData, schemas.daoSchema) });
     } else {
-      dispatch({ type: arcConstants.ARC_GET_DAO_REJECTED, payload: "Not a valid DAO" });
+      dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Failure, payload: "Not a valid DAO" });
     }
   };
 }
@@ -239,13 +243,13 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
 }
 
 export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
-  return async (dispatch: any, getState: any) => {
+  return async (dispatch: any, getState: () => IRootState) => {
     const dao: IDaoState = getState().arc.daos[avatarAddress];
     const { lastBlock } = dao;
 
     if (Number(lastBlock) != Number(blockNumber)) {
       dispatch({
-        type: arcConstants.ARC_UPDATE_DAO_LAST_BLOCK,
+        type: ActionTypes.ARC_UPDATE_DAO_LAST_BLOCK,
         payload: {
           avatarAddress,
           blockNumber
@@ -253,43 +257,6 @@ export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
       });
     }
   }
-}
-
-export function getProposal(avatarAddress: string, proposalId: string, fromBlock = 0, toBlock = 'latest') {
-  return async (dispatch: any, getState: any) => {
-    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_PENDING, payload: null });
-
-    const web3 = await Arc.Utils.getWeb3();
-    const dao = await Arc.DAO.at(avatarAddress);
-    const currentAccountAddress: string = getState().web3.ethAccountAddress;
-
-    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-    const votableProposals = await (await contributionRewardInstance.getVotableProposals(dao.avatar.address))({proposalId}, { fromBlock, toBlock }).get();
-    const executedProposals = await (await contributionRewardInstance.getExecutedProposals(dao.avatar.address))({proposalId}, { fromBlock, toBlock }).get();
-    const proposals = [...votableProposals, ...executedProposals];
-
-    const contributionProposal = proposals[0];
-
-    let serverProposal: any = false;
-    try {
-      let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
-      if (response.data.length > 0) {
-        serverProposal = response.data[0];
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress, fromBlock, toBlock);
-    const payload = normalize(proposal, schemas.proposalSchema);
-    // TODO: Add votes and stakes and redemptions to accounts too, or maybe just get rid of this function because we load everything up front?
-
-    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload });
-  };
 }
 
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
@@ -606,7 +573,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       }
 
       dispatch({
-        type: arcConstants.ARC_CREATE_DAO,
+        type: ActionTypes.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Pending
       } as CreateDAOAction);
 
@@ -658,7 +625,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       };
 
       dispatch({
-        type: arcConstants.ARC_CREATE_DAO,
+        type: ActionTypes.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Success,
         payload: normalize(daoData, schemas.daoSchema)
       } as CreateDAOAction);
@@ -667,7 +634,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
     } catch (err) {
       console.error(err);
       dispatch({
-        type: arcConstants.ARC_CREATE_DAO,
+        type: ActionTypes.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure,
       } as CreateDAOAction)
     }
@@ -710,7 +677,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       }
 
       dispatch({
-        type: arcConstants.ARC_CREATE_PROPOSAL,
+        type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Pending,
         meta,
       } as CreateProposalAction);
@@ -735,7 +702,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
     } catch (err) {
       console.error(err);
       dispatch({
-        type: arcConstants.ARC_CREATE_PROPOSAL,
+        type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
         meta,
       } as CreateProposalAction)
@@ -788,7 +755,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     };
 
     dispatch({
-      type: arcConstants.ARC_CREATE_PROPOSAL,
+      type: ActionTypes.ARC_CREATE_PROPOSAL,
       sequence: AsyncActionSequence.Success,
       meta,
       payload
@@ -839,7 +806,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       };
 
       return dispatch({
-        type: arcConstants.ARC_ON_PROPOSAL_EXECUTED,
+        type: ActionTypes.ARC_ON_PROPOSAL_EXECUTED,
         payload: { entities, dao: daoUpdates }
       })
     }
@@ -875,7 +842,7 @@ export function onProposalExpired(proposal: IProposalState) {
     };
 
     return dispatch({
-      type: arcConstants.ARC_ON_PROPOSAL_EXPIRED,
+      type: ActionTypes.ARC_ON_PROPOSAL_EXPIRED,
       payload: { entities, dao: daoUpdates }
     })
   }
@@ -915,7 +882,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       dispatch({
-        type: arcConstants.ARC_VOTE,
+        type: ActionTypes.ARC_VOTE,
         sequence: AsyncActionSequence.Pending,
         meta,
       } as VoteAction)
@@ -928,7 +895,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
     } catch (err) {
       console.error(err);
       dispatch({
-        type: arcConstants.ARC_VOTE,
+        type: ActionTypes.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
         meta
       } as VoteAction)
@@ -987,7 +954,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     };
 
     dispatch({
-      type: arcConstants.ARC_VOTE,
+      type: ActionTypes.ARC_VOTE,
       sequence: AsyncActionSequence.Success,
       meta,
       payload
@@ -1037,7 +1004,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       if (amount.lt(minimumStakingFee)) { throw new Error(`Staked less than the minimum: ${Util.fromWei(minimumStakingFee)}!`); }
 
       dispatch({
-        type: arcConstants.ARC_STAKE,
+        type: ActionTypes.ARC_STAKE,
         sequence: AsyncActionSequence.Pending,
         meta
       } as StakeAction)
@@ -1050,7 +1017,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
     } catch (err) {
       console.error(err);
       dispatch({
-        type: arcConstants.ARC_STAKE,
+        type: ActionTypes.ARC_STAKE,
         sequence: AsyncActionSequence.Failure,
         meta,
       } as StakeAction)
@@ -1089,7 +1056,7 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
 
     // TODO: commented currentThresholdToBoost, need to refactor
     dispatch({
-      type: arcConstants.ARC_STAKE,
+      type: ActionTypes.ARC_STAKE,
       sequence: AsyncActionSequence.Success,
       meta,
       payload: {
@@ -1128,7 +1095,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     };
 
     dispatch({
-      type: arcConstants.ARC_REDEEM,
+      type: ActionTypes.ARC_REDEEM,
       sequence: AsyncActionSequence.Pending,
       meta
     } as RedeemAction);
@@ -1181,7 +1148,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       }
 
       dispatch({
-        type: arcConstants.ARC_REDEEM,
+        type: ActionTypes.ARC_REDEEM,
         sequence: AsyncActionSequence.Success,
         meta,
         payload
@@ -1190,7 +1157,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     } catch (err) {
       console.error(err);
       dispatch({
-        type: arcConstants.ARC_REDEEM,
+        type: ActionTypes.ARC_REDEEM,
         sequence: AsyncActionSequence.Failure,
         meta,
       } as RedeemAction);
@@ -1201,7 +1168,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
 export function onRedeemReward(avatarAddress: string, proposalId: string, beneficiary: string, rewardType: RewardType, isTarget: boolean) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
     dispatch({
-      type: arcConstants.ARC_ON_REDEEM_REWARD,
+      type: ActionTypes.ARC_ON_REDEEM_REWARD,
       payload: {
         avatarAddress,
         rewardType,
@@ -1221,7 +1188,7 @@ export function onTransferEvent(avatarAddress: string, from: string, to: string)
     const totalTokens = Util.fromWei(await daoInstance.token.getTotalSupply());
 
     dispatch({
-      type: arcConstants.ARC_ON_TRANSFER,
+      type: ActionTypes.ARC_ON_TRANSFER,
       payload: {
         avatarAddress,
         from,
@@ -1241,7 +1208,7 @@ export function onReputationChangeEvent(avatarAddress: string, address: string) 
     const totalReputation = Util.fromWei(await daoInstance.reputation.contract.totalSupply()); // TODO: replace with wrapper function when available.
 
     dispatch({
-      type: arcConstants.ARC_ON_REPUTATION_CHANGE,
+      type: ActionTypes.ARC_ON_REPUTATION_CHANGE,
       payload: {
         avatarAddress,
         address,
@@ -1263,7 +1230,7 @@ export function onDAOEthBalanceChanged(avatarAddress: string, balance: Number) {
 
     if (ethCount != balance) {
       dispatch({
-        type: arcConstants.ARC_ON_DAO_ETH_BALANCE_CHANGE,
+        type: ActionTypes.ARC_ON_DAO_ETH_BALANCE_CHANGE,
         payload: {
           avatarAddress,
           balance
@@ -1284,7 +1251,7 @@ export function onDAOGenBalanceChanged(avatarAddress: string, balance: Number) {
 
     if (genCount != balance) {
       dispatch({
-        type: arcConstants.ARC_ON_DAO_GEN_BALANCE_CHANGE,
+        type: ActionTypes.ARC_ON_DAO_GEN_BALANCE_CHANGE,
         payload: {
           avatarAddress,
           balance
@@ -1305,7 +1272,7 @@ export function onDAOExternalTokenBalanceChanged(avatarAddress: string, balance:
 
     if (externalTokenCount != balance) {
       dispatch({
-        type: arcConstants.ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE,
+        type: ActionTypes.ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE,
         payload: {
           avatarAddress,
           balance

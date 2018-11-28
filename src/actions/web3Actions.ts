@@ -4,9 +4,8 @@ import promisify = require("es6-promisify");
 import * as Redux from "redux";
 import { Web3 } from "web3";
 
-import { ActionTypes } from "constants/web3Constants";
 import Util from "lib/util";
-import { IWeb3State } from "reducers/web3Reducer";
+import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
 import { IDaoState } from "reducers/arcReducer";
 import { IAsyncAction, AsyncActionSequence } from "./async";
 import { IRootState } from "reducers";

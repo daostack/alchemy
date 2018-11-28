@@ -22,12 +22,11 @@ import HDWalletProvider from "./lib/truffle-hdwallet-provider";
 const Web3 = require("web3");
 
 import * as arcActions from "./actions/arcActions";
-import * as arcConstants from "constants/arcConstants";
-import { default as arcReducer, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState, RewardType } from "./reducers/arcReducer";
+import { AsyncActionSequence } from "actions/async";
+import { default as arcReducer, ActionTypes, initialState as arcInitialState, checkProposalExpired, IArcState, IDaoState, IProposalState, ProposalStates, TransactionStates, IVoteState, RewardType } from "./reducers/arcReducer";
 import * as selectors from "selectors/daoSelectors";
 import web3Reducer, { IWeb3State } from "./reducers/web3Reducer";
 
-import * as ActionTypes from "constants/arcConstants";
 import * as schemas from "./schemas";
 import Util from "./lib/util";
 
@@ -127,7 +126,7 @@ async function updateCache() {
       const s3Get = promisify(s3.getObject.bind(s3));
       const resp = await s3Get({Bucket: process.env.S3_BUCKET || 'daostack-alchemy', Key: s3FileName})
       initialState = JSON.parse(resp.Body.toString('utf-8'));
-      await store.dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_FULFILLED, payload: initialState });
+      await store.dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Success, payload: initialState });
     } catch (e) {
       console.log("error = ", e);
     }

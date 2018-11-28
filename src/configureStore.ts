@@ -10,36 +10,32 @@ import { persistStore, createTransform } from 'redux-persist';
 
 export const history = createHistory();
 
-let store: any
-
-if (process.env.NODE_ENV === 'development') {
-  // require these modules only in developmetn, to save some space in the bundle
-  const composeWithDevTools = require('redux-devtools-extension').composeWithDevTools
-  const loggerMiddleware = require("redux-logger").default
-  store = createStore(
-    reducers,
-    composeWithDevTools(   // makes the store available to the Chrome redux dev tools
-      applyMiddleware(
-        operationsTracker,
-        notificationUpdater,
-        successDismisser(15000),
-        thunkMiddleware,
-        routerMiddleware(history),
-        loggerMiddleware,
-      ),
-    ),
-  );
-} else {
-  store = createStore(
-    reducers,
+const store = createStore(
+  reducers,
+  // TODO: only compose with devtools in when ENV === 'dev'
+  composeWithDevTools(   // makes the store available to the Chrome redux dev tools
     applyMiddleware(
       operationsTracker,
       notificationUpdater,
       successDismisser(15000),
       thunkMiddleware,
-      routerMiddleware(history)
+      routerMiddleware(history),
+      // loggerMiddleware,
     ),
-  )
-}
+  ),
+);
+
+// A store for testing purposes
+export const mockStore = () => createStore(
+  reducers,
+  applyMiddleware(
+    operationsTracker,
+    notificationUpdater,
+    successDismisser(15000),
+    thunkMiddleware,
+    routerMiddleware(history),
+  ),
+);
+
 const persistor = persistStore(store);
 export default store;

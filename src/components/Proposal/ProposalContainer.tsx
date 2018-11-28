@@ -362,7 +362,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               : ""
             }
             <h3>
-              <span>
+              <span data-test-id="proposal-closes-in">
                 { proposal.state == ProposalStates.QuietEndingPeriod ?
                     <strong>
                       <img src="/assets/images/Icon/Overtime.svg"/> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
@@ -389,7 +389,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>{proposal.title}</Link>
+              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId} data-test-id="proposal-title">{proposal.title}</Link>
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>
