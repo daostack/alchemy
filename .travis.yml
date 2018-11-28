@@ -1,13 +1,36 @@
 language: node_js
-node_js: 9.5.0
+node_js: 10.13.0
 
-before_script:
-- npm run ganacheDb &>/dev/null & # run ganache in the backgroud
+bundler_args: "--jobs=4 --retry=3"
+# cache:
+#   bundler: true
+#   directories:
+#     - $HOME/docker
+
+# before_cache:
+#   # Save tagged docker images
+#   - >
+#     mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+#     | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
+# before_install:
+  # Load cached docker images
+  # - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+addons:
+  chrome: stable
 
 script:
-- npm run lint
-- npm run migrate-ganache
-- npm run build
+  - docker-compose up -d
+  - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
+  # - curl http://127.0.0.1:3000
+  # sleep for 30 seconds to give the docker container time to build the app
+  - sleep 30
+  - npm run lint
+  - npm run test:e2e:headless
+  # unit tests should be run in the docker container
+  - docker-compose exec alchemy npm run test:unit
+  # - nohup npm run ganacheDb &
+  # - npm run migrate-ganache > /dev/null
+  # - npm run test:unit
 
 deploy:
   provider: pages

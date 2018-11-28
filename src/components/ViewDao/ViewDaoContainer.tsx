@@ -346,7 +346,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
             <span>Decentralized budgeting powered by <img src="/assets/images/Tour/DAOstackLogo.svg"/> DAOstack.</span>
             <p>New to Alchemy? Take this tour to learn how <strong>voting, reputation, predictions,</strong> and <strong>proposals</strong> work.</p>
             <div>
-              <button onClick={this.handleClickSkipTour}><img src="/assets/images/Tour/SkipTour.svg"/> Skip for now</button>
+              <button onClick={this.handleClickSkipTour} data-test-id="skip-tour"><img src="/assets/images/Tour/SkipTour.svg"/> Skip for now</button>
               <button className={css.startButton} onClick={this.handleClickStartTour}><img src="/assets/images/Tour/StartTour.svg"/> Take a quick tour</button>
             </div>
           </div>

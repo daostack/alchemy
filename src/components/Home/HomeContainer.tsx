@@ -35,7 +35,7 @@ class HomeContainer extends React.Component<IProps, null> {
           <div className={css.topCta}>
             { process.env.NODE_ENV == 'production'
                 ? <a href='https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>View Alchemy</a>
-                : <Link to='/daos'>View Alchemy</Link>
+                : <Link to='/daos' data-test-id="link-to-alchemy">View Alchemy</Link>
             }
           </div>
         </div>

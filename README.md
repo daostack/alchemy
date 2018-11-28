@@ -6,24 +6,35 @@
 * You will  need [alchemy-server](https://github.com/daostack/alchemy-server) running locally for the app to function
 
 ## Installation
+
 ```sh
 git clone https://github.com/daostack/alchemy.git
 cd alchemy
-npm install
 ```
 
 # Run app locally
 
-## Run the Alchemy Server
-Follow instructions [here](https://github.com/daostack/alchemy-server) to start the Alchemy Server
+There are two ways to work with the alchemy stack.
+We are providing a convenient `docker-compose` file for quick setup. Alternatively,
+you can recreated the docker environement by installing an starting all [services locally](./docs/nodocker.md).
+## Working with docker
 
-There are three ways of interacting with the test server, depending on how the account and private key of the user are managed.
+The easiest way to start developing is to work with docker.  After you have installed docker, run the following steps:
+```sh
+docker-compose up alchemy
+```
+This will start a server on http://localhost:3000.
 
+To interact with the test instance in Chrome (or another browser):
+1. Go to http://localhost:3000
+1. Connect metamask to http://localhost:8545.
+1. If you'd like an account with some ether to start with,  choose "import account" and use the following private key:
+ `6695C8EF58FECFC7410BF8B80C17319EAACA8B9481CC9C682FD5DA116F20EF05`
+
+See [working with docker](./docs/docker.md) for details.
 
 ## Using Ganache with MetaMask
 
-In this mode, keys are handled by Metamask - every time the application sends a transaction, it will need to be confirmed by Metamask.
-This is closest to the regular user experience of the application.
 
 First you must install Metamask and configure an account.
 1. Install and enable [MetaMask extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) in Chrome
@@ -40,23 +51,10 @@ Now you are ready to start the server:
 1. Run `npm run start`
 1. Go to http://localhost:3000/ in Chrome
 
-## Working with Ganache without MetaMask
-
-1. Make sure plugins such as MetaMask or Parity extension are deactivated
-1. Run `npm run auto-start-ganache`
-1. Go to http://localhost:3000/ in your favorite browser
-
-
-## Working with Kovan testnet and Parity locally
-1. Install parity - `bash <(curl https://get.parity.io -Lk)`
-1. Create a file in the root of the project called 'kovan_pass.txt' with your parity wallet password
-1. Run `parity --no-warp --unlock KOVAN_ACCOUNT_PUBLIC_ADDRESS --password kovan_pass.txt --chain=kovan` in one terminal tab
-1. Run `npm run start` in a separate tab
-1. Go to http://localhost:3000/ in your favorite browser
 
 # Regular end users - use MetaMask
 
 * Go to https://alchemy.daostack.io
 * Install [Metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) or the [Parity Chrome Extension](https://chrome.google.com/webstore/detail/himekenlppkgeaoeddcliojfddemadig)
-* In MetaMask switch to the desired network. Note that we are only deployed on Kovan right now.
+* In MetaMask switch to the desired network.
 * Unlock your account

@@ -33,7 +33,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         loader: ['react-hot-loader/webpack', "awesome-typescript-loader" ],
-        exclude: [/node_modules/]
+        exclude: [/node_modules/, /\.spec\.ts$/]
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
