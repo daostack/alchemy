@@ -56,7 +56,7 @@ class HomeContainer extends React.Component<IProps, null> {
           </div>
           <br/>
           <div className={css.topCta}>
-            <a href={window.origin + '/explorer'}>Explore Alchemy</a>
+            <a href='https://dao-explorer.com'>Explore Alchemy</a>
           </div>
           <br/>
           <div className={css.topCta}>

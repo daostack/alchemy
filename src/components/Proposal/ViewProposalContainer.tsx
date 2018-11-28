@@ -27,11 +27,11 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  getProposal: typeof arcActions.getProposal;
+  // getProposal: typeof arcActions.getProposal;
 }
 
 const mapDispatchToProps = {
-  getProposal: arcActions.getProposal
+  // getProposal: arcActions.getProposal
 };
 
 type IProps = IStateProps & IDispatchProps;

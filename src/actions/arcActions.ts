@@ -9,6 +9,11 @@ import { push } from "react-router-redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
+const ethers = require('ethers');
+import ipfs from '../lib/ipfs';
+
+import getWallet from '../lib/wallet';
+const contributionRewardArtifacts = require('@daostack/arc.js/migrated_contracts/ContributionReward.json');
 
 import * as arcConstants from "constants/arcConstants";
 import Util from "lib/util";
@@ -33,6 +38,7 @@ import { Dispatch } from "redux";
 import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
 
+// Fetch cache JSON blob from cacher server
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_LOAD_CACHED_STATE_PENDING, payload: null });
@@ -47,11 +53,11 @@ export function loadCachedState() {
   };
 }
 
+// Get events from DaoCreator to see if any new DAOs are available
 export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     dispatch({ type: arcConstants.ARC_GET_DAOS_PENDING, payload: null });
     const daoCreator = await Arc.DaoCreatorFactory.deployed();
-    console.log(`Fetching DAOs from DaoCreator at ${daoCreator.address}`)
 
     if (toBlock == 'latest') {
       // make sure we use same toBlock for every call to the blockchain so everything is in sync
@@ -69,7 +75,6 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
       const event = newOrgEvents[index];
       const daoData = await getDAOData(event.args._avatar, null, fromBlock, toBlock);
       if (daoData) {
-        console.log(`Found a DAO at address ${event.args._avatar}`)
         daos[event.args._avatar] = daoData;
       }
     }
@@ -81,6 +86,7 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   };
 }
 
+// Calls getDAOData (below) for some avatar address
 export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: any, getState: any) => {
     dispatch({ type: arcConstants.ARC_GET_DAO_PENDING, payload: null });
@@ -94,6 +100,7 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest')
   };
 }
 
+// Get all details associated w some DAO
 export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest') {
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
@@ -188,11 +195,15 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const executedProposals = await (await contributionRewardInstance.getExecutedProposals(daoInstance.avatar.address))({}, { fromBlock, toBlock }).get();
   const proposals = [...votableProposals, ...executedProposals];
 
-  // Get all proposals' details like title and description from the server
+  // Get all proposals' details like title and url from the server
   let serverProposals: { [key: string]: any } = {};
   try {
-    const results = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"daoAvatarAddress":"' + avatarAddress + '"}}');
-    serverProposals = _.keyBy(results.data, "arcId");
+    const promises = proposals.map(async (proposal) => {
+      const ipfsHash = ipfs.hexToHash(proposal.contributionDescriptionHash)
+      const result = await ipfs.get(ipfsHash)
+      return result
+    })
+    serverProposals = await Promise.all(promises)
   } catch (e) {
     console.error(e);
   }
@@ -254,43 +265,6 @@ export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
   }
 }
 
-export function getProposal(avatarAddress: string, proposalId: string, fromBlock = 0, toBlock = 'latest') {
-  return async (dispatch: any, getState: any) => {
-    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_PENDING, payload: null });
-
-    const web3 = await Arc.Utils.getWeb3();
-    const dao = await Arc.DAO.at(avatarAddress);
-    const currentAccountAddress: string = getState().web3.ethAccountAddress;
-
-    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-    const votableProposals = await (await contributionRewardInstance.getVotableProposals(dao.avatar.address))({proposalId}, { fromBlock, toBlock }).get();
-    const executedProposals = await (await contributionRewardInstance.getExecutedProposals(dao.avatar.address))({proposalId}, { fromBlock, toBlock }).get();
-    const proposals = [...votableProposals, ...executedProposals];
-
-    const contributionProposal = proposals[0];
-
-    let serverProposal: any = false;
-    try {
-      let response = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
-      if (response.data.length > 0) {
-        serverProposal = response.data[0];
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress, fromBlock, toBlock);
-    const payload = normalize(proposal, schemas.proposalSchema);
-    // TODO: Add votes and stakes and redemptions to accounts too, or maybe just get rid of this function because we load everything up front?
-
-    dispatch({ type: arcConstants.ARC_GET_PROPOSAL_FULFILLED, payload });
-  };
-}
-
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
 // TODO: put in a lib/util class somewhere?
 async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {
@@ -306,30 +280,17 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
   const submittedTime = Number(proposalDetails.submittedTime);
 
-  // Use title and description from the server
-  let description = "";
+  // Use title and url from the server
+  let url = "";
   let title = "[no title]";
   if (serverProposal) {
-    description = serverProposal.description;
+    url = serverProposal.url;
     title = serverProposal.title;
   } else {
-    // If we didn't find the proposal by proposalId, see if there is one that matches by description hash that doesnt yet have a proposalId added to it
-    let response = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
-    if (response.data.length > 0) {
-      serverProposal = response.data[0];
-      description = serverProposal.description;
-      title = serverProposal.title;
-
-      // If we found one, then update the database with the proposalId
-      response = await axios.patch(process.env.API_URL + '/proposals/' + serverProposal.id, {
-        arcId: proposalId,
-        daoAvatarAddress: avatarAddress,
-        descriptionHash,
-        description,
-        submittedAt: submittedTime,
-        title
-      });
-    }
+    let ipfsHash = ipfs.hexToHash(descriptionHash)
+    let serverProposal = await ipfs.get(ipfsHash)
+    url = serverProposal.url;
+    title = serverProposal.title;
   }
 
   const proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
@@ -340,7 +301,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     boostedVotePeriodLimit: Number(proposalDetails.currentBoostedVotePeriodLimit),
     contributionDescriptionHash: contributionProposal.contributionDescriptionHash,
     daoAvatarAddress: avatarAddress,
-    description,
+    description: url,
     ethReward: Util.fromWei(contributionProposal.ethReward),
     externalToken: contributionProposal.externalToken,
     externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
@@ -671,7 +632,8 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
 export type CreateProposalAction = IAsyncAction<'ARC_CREATE_PROPOSAL', { avatarAddress: string }, any>;
 
-export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, ethReward: number, externalTokenReward: number, beneficiaryAddress: string): ThunkAction<any, IRootState, null> {
+
+export function createProposal(daoAvatarAddress: string, title: string, url: string, nativeTokenReward: number, reputationReward: number, ethReward: number, externalTokenReward: number, beneficiaryAddress: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const meta = {
       avatarAddress: daoAvatarAddress
@@ -679,29 +641,23 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
 
     try {
       const web3: Web3 = await Arc.Utils.getWeb3();
-
-      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
-      beneficiaryAddress = beneficiaryAddress.toLowerCase();
-
-      const ethAccountAddress: string = getState().web3.ethAccountAddress;
-      const dao = getState().arc.daos[daoAvatarAddress];
-
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-      const descriptionHash = Arc.Utils.SHA3(description);
       const submittedTime = Math.round((new Date()).getTime() / 1000);
 
-      // Save the proposal title, description and submitted time on the server
+      const description = {
+        title,
+        url,
+        daoAvatarAddress,
+        submittedTime,
+      }
+
+      // Save the proposal title, url and submitted time on the server
+      let ipfsHash
       try {
-        const response = await axios.post(process.env.API_URL + "/proposals", {
-          daoAvatarAddress,
-          descriptionHash,
-          description,
-          submittedAt: submittedTime,
-          title,
-        });
+        ipfsHash = await ipfs.add(description)
+        console.log(`Uploaded ipfs file sucessfully: ${ipfsHash}`)
       } catch (e) {
         console.error(e);
+        return(e); // don't submit the tx if we couldn't save the description data
       }
 
       dispatch({
@@ -713,19 +669,37 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
 
-      await contributionRewardInstance.proposeContributionReward({
-        title,
-        avatar: daoAvatarAddress,
-        beneficiaryAddress,
-        description,
-        ethReward: Util.toWei(ethReward),
-        externalToken: dao.externalTokenAddress ? dao.externalTokenAddress : "",
-        externalTokenReward: dao.externalTokenAddress && externalTokenReward ? Util.toWei(externalTokenReward) : 0,
-        nativeTokenReward: Util.toWei(nativeTokenReward),
-        numberOfPeriods: 1,
-        periodLength: 0,
-        reputationChange: Util.toWei(reputationReward),
-      } as any);
+      const dao = getState().arc.daos[daoAvatarAddress];
+      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+      const wallet = await getWallet()
+      const contributionReward = new ethers.Contract(contributionRewardInstance.address, contributionRewardArtifacts.abi, wallet)
+
+      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
+      beneficiaryAddress = beneficiaryAddress.toLowerCase();
+
+      const hash = ipfs.hashToHex(ipfsHash)
+
+      const externalTokenAddress = dao.externalTokenAddress ? dao.externalTokenAddress : "0x0000000000000000000000000000000000000000"
+
+      const arg = [
+        daoAvatarAddress,
+        hash,
+        Util.toWei(reputationReward),
+        [
+          Util.toWei(nativeTokenReward),
+          Util.toWei(ethReward),
+          Util.toWei(externalTokenReward),
+          "0",
+          "1"
+        ],
+        externalTokenAddress,
+        beneficiaryAddress
+      ]
+
+      const gasLimit = await contributionReward.estimate.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5])
+      const txReceipt = await contributionReward.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit })
+
+      console.log(JSON.stringify(txReceipt,null,2))
 
     } catch (err) {
       console.error(err);
@@ -750,11 +724,9 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
 
     let serverProposal: any = false;
     try {
-      // See if this proposalId is already stored in the database, and if so load title and description data from there
-      const response = await axios.get(process.env.API_URL + '/proposals?filter={"where":{"and":[{"daoAvatarAddress":"' + avatarAddress + '"}, {"arcId":"' + proposalId + '"}]}}');
-      if (response.data.length > 0) {
-        serverProposal = response.data[0];
-      }
+      // See if this proposalId data is already stored in ipfs and if so, load title and url data from there
+      const ipfsHash = ipfs.hexToHash(eventResult._contributionDescription)
+      serverProposal = await ipfs.get(ipfsHash)
     } catch (e) {
       console.error(e);
     }

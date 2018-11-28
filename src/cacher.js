@@ -7,8 +7,9 @@ const updateCache = require('./bg_cache_worker').default;
 
 // Update cache once immediately when the dyno starts
 updateCache();
+
 // Every minute check the blockchain for updates
-setInterval(updateCache, 60000);
+if (process.env.NODE_ENV === 'production') setInterval(updateCache, 60000);
 
 // Serve the cache to clients
 const app = express();
