@@ -16,7 +16,7 @@ cd alchemy
 
 There are two ways to work with the alchemy stack.
 We are providing a convenient `docker-compose` file for quick setup. Alternatively,
-you can recreated the docker environement by installing an starting all [services locally](./docs/nodocker.md).
+you can recreated the docker enviroement by installing an starting all [services locally](./docs/nodocker.md).
 ## Working with docker
 
 The easiest way to start developing is to work with docker.  After you have installed docker, run the following steps:
