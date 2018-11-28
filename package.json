@@ -71,7 +71,7 @@
     "start-docker": "webpack-dev-server --config webpack.docker.config.js"
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.90",
+    "@daostack/arc.js": "0.0.0-alpha.93",
     "@types/react-share": "^2.1.1",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",

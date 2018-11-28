@@ -7,6 +7,8 @@ import reducers from "./reducers";
 import { operationsTracker } from "reducers/operations";
 import { successDismisser, notificationUpdater } from "reducers/notifications";
 import { persistStore, createTransform } from 'redux-persist';
+import { composeWithDevTools } from "redux-devtools-extension";
+import loggerMiddleware from "redux-logger";
 
 export const history = createHistory();
 
