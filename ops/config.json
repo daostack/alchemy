@@ -9,8 +9,6 @@
   "production": {
     "CACHE_SERVER_URL": "/api/cache",
     "DISQUS_SITE": "daostack-alchemy",
-    "arcjs_network": "live",
-    "arcjs_providerUrl": "http://eth.bohendo.com",
-    "arcjs_providerPort": "8545"
+    "arcjs_network": "live"
   }
 }
