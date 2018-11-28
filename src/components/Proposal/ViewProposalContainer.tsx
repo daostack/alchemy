@@ -26,13 +26,9 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   };
 };
 
-interface IDispatchProps {
-  // getProposal: typeof arcActions.getProposal;
-}
+interface IDispatchProps {}
 
-const mapDispatchToProps = {
-  // getProposal: arcActions.getProposal
-};
+const mapDispatchToProps = {};
 
 type IProps = IStateProps & IDispatchProps;
 

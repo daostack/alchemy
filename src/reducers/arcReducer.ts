@@ -2,9 +2,28 @@ import { ExecutionState } from "@daostack/arc.js";
 import * as update from "immutability-helper";
 import * as moment from "moment";
 
-import * as ActionTypes from "constants/arcConstants";
 import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
+
+export enum ActionTypes {
+  ARC_CREATE_DAO = "ARC_CREATE_DAO",
+  ARC_CREATE_PROPOSAL = "ARC_CREATE_PROPOSAL",
+  ARC_GET_DAOS = "ARC_GET_DAOS",
+  ARC_GET_DAO = "ARC_GET_DAO",
+  ARC_LOAD_CACHED_STATE = "ARC_LOAD_CACHED_STATE",
+  ARC_ON_DAO_ETH_BALANCE_CHANGE = "ARC_ON_DAO_ETH_BALANCE_CHANGE",
+  ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE = "ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE",
+  ARC_ON_DAO_GEN_BALANCE_CHANGE = "ARC_ON_DAO_GEN_BALANCE_CHANGE",
+  ARC_ON_PROPOSAL_EXECUTED = "ARC_ON_PROPOSAL_EXECUTED",
+  ARC_ON_PROPOSAL_EXPIRED = "ARC_ON_PROPOSAL_EXPIRED",
+  ARC_ON_REDEEM_REWARD = "ARC_ON_REDEEM_REWARD",
+  ARC_ON_REPUTATION_CHANGE = "ARC_ON_REPUTATION_CHANGE",
+  ARC_ON_TRANSFER = "ARC_ON_TRANSFER",
+  ARC_REDEEM = "ARC_REDEEM",
+  ARC_STAKE = "ARC_STAKE",
+  ARC_UPDATE_DAO_LAST_BLOCK = "ARC_UPDATE_DAO_LAST_BLOCK",
+  ARC_VOTE = "ARC_VOTE",
+}
 
 export enum ProposalStates {
   None,
@@ -297,12 +316,17 @@ const arcReducer = (state = initialState, action: any) => {
   }
 
   switch (action.type) {
-    case ActionTypes.ARC_LOAD_CACHED_STATE_FULFILLED: {
-      return payload;
+    case ActionTypes.ARC_LOAD_CACHED_STATE: {
+      if (action.sequence == AsyncActionSequence.Success) { return payload; }
+      return state;
     }
 
-    case ActionTypes.ARC_GET_DAOS_FULFILLED: {
-      return update(state, { daosLoaded : { $set : true }, lastBlock: { $set: payload.lastBlock } });
+    case ActionTypes.ARC_GET_DAOS: {
+      if (action.sequence == AsyncActionSequence.Success) {
+        return update(state, { daosLoaded : { $set : true }, lastBlock: { $set: payload.lastBlock } });
+      } else {
+        return state;
+      }
     }
 
     case ActionTypes.ARC_UPDATE_DAO_LAST_BLOCK: {
@@ -329,18 +353,6 @@ const arcReducer = (state = initialState, action: any) => {
         default:
           return state;
       }
-    }
-
-    case ActionTypes.ARC_GET_PROPOSAL_FULFILLED: {
-      const proposal = action.payload.entities.proposals[0] as IProposalState;
-      const avatarAddress = proposal.daoAvatarAddress;
-
-      // Add the new proposal to the DAO's state if not already there
-      if (state.daos[avatarAddress].proposals.indexOf(action.payload.result) === -1) {
-        return update(state , { daos : { [avatarAddress] : { proposals: { $push : [action.payload.result] } } } } );
-      }
-
-      return state;
     }
 
     case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
