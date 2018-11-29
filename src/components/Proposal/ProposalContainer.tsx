@@ -49,9 +49,7 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const currentStake = state.arc.stakes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const currentVote = state.arc.votes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const dao = denormalize(state.arc.daos[proposal.daoAvatarAddress], schemas.daoSchema, state.arc) as IDaoState;
-  // TODO: this obviously won't work.. -- need to get threshold in the state...
-  // const threshold = await dao.votingMachineInstance.getThreshold(ownProps.proposalId)
-  const threshold = 12345
+  const threshold = dao.currentThresholdToBoost;
 
   let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${proposal.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
   if (!currentAccount) {
@@ -217,7 +215,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     {dao.externalTokenCount < beneficiaryRedemptions.beneficiaryExternalToken ? " (Insufficient funds in DAO)" : ""}
                   </li> : ""
                 }
-                {beneficiaryRedemptions.beneficiaryReputation ? <li><ReputationView reputation={beneficiaryRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+                {beneficiaryRedemptions.beneficiaryReputation ? <li><ReputationView reputation={beneficiaryRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li> : ""}
               </ul>
             </div> : ""
           }
@@ -227,7 +225,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 <div>
                   <strong>For creating the proposal you will receive:</strong>
                   <ul>
-                    <li><ReputationView reputation={currentRedemptions.proposerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li>
+                    <li><ReputationView reputation={currentRedemptions.proposerReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li>
                   </ul>
                 </div> : ""
               }
@@ -235,7 +233,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 <div>
                   <strong>For voting on the proposal you will receive:</strong>
                   <ul>
-                    {currentRedemptions.voterReputation ? <li><ReputationView reputation={currentRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+                    {currentRedemptions.voterReputation ? <li><ReputationView reputation={currentRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li> : ""}
                     {currentRedemptions.voterTokens ? <li>{currentRedemptions.voterTokens} GEN</li> : ""}
                   </ul>
                 </div> : ""
@@ -251,7 +249,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                         {dao.genCount < currentRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
                       </li> : ""
                     }
-                    {currentRedemptions.stakerReputation ? <li><ReputationView reputation={currentRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name}/></li> : ""}
+                    {currentRedemptions.stakerReputation ? <li><ReputationView reputation={currentRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li> : ""}
                   </ul>
                 </div> : ""
               }
@@ -268,7 +266,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const redeemButton = (currentRedemptions || beneficiaryHasRewards || executable ?
         <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
           <button
-            style={{whiteSpace: 'nowrap'}}
+            style={{ whiteSpace: 'nowrap' }}
             disabled={false}
             className={redeemRewards}
             onClick={this.handleClickRedeem.bind(this)}
@@ -276,16 +274,16 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {
               isRedeemPending ?
                 'Redeem in progress' :
-              beneficiaryHasRewards && !accountHasRewards ?
-                'Redeem for beneficiary' :
-              currentRedemptions ?
-                'Redeem' :
-                'Execute'
+                beneficiaryHasRewards && !accountHasRewards ?
+                  'Redeem for beneficiary' :
+                  currentRedemptions ?
+                    'Redeem' :
+                    'Execute'
             }
-            <img src="/assets/images/Icon/Loading-black.svg"/>
+            <img src="/assets/images/Icon/Loading-black.svg" />
           </button>
         </Tooltip>
-      : "");
+        : "");
 
       const styles = {
         forBar: {
@@ -303,7 +301,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
-          { !proposalEnded(proposal) ?
+          {!proposalEnded(proposal) ?
             <VoteBox
               isVotingNo={isVotingNo}
               isVotingYes={isVotingYes}
@@ -316,77 +314,77 @@ class ProposalContainer extends React.Component<IProps, IState> {
             />
             : proposalPassed(proposal) ?
               <div className={css.decidedProposal}>
-                  <div className={css.result}>
-                    <div><img src="/assets/images/Icon/Passed.svg"/></div>
-                  </div>
+                <div className={css.result}>
+                  <div><img src="/assets/images/Icon/Passed.svg" /></div>
+                </div>
               </div>
-            : proposalFailed(proposal) ?
-              <div className={css.decidedProposal}>
+              : proposalFailed(proposal) ?
+                <div className={css.decidedProposal}>
                   <div className={css.result}>
-                    <div><img src="/assets/images/Icon/Failed.svg"/></div>
-                  </div>
-              </div>
-            : ""
-          }
-          <div className={css.proposalInfo}>
-            { proposalPassed(proposal) ?
-                <div className="css.clearfix">
-                  <div className={css.proposalPassInfo}>
-                    <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
-                  </div>
-                  <div className={css.decisionGraph}>
-                      <span className={css.forLabel}>{proposal.votesYes.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
-                      <div className={css.graph}>
-                        <div className={css.forBar} style={styles.forBar}></div>
-                        <div className={css.againstBar} style={styles.againstBar}></div>
-                        <div className={css.divider}></div>
-                      </div>
-                      <span className={css.againstLabel}>{proposal.votesNo.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
+                    <div><img src="/assets/images/Icon/Failed.svg" /></div>
                   </div>
                 </div>
-              :  proposalFailed(proposal) ?
+                : ""
+          }
+          <div className={css.proposalInfo}>
+            {proposalPassed(proposal) ?
+              <div className="css.clearfix">
+                <div className={css.proposalPassInfo}>
+                  <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
+                </div>
+                <div className={css.decisionGraph}>
+                  <span className={css.forLabel}>{proposal.votesYes.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
+                  <div className={css.graph}>
+                    <div className={css.forBar} style={styles.forBar}></div>
+                    <div className={css.againstBar} style={styles.againstBar}></div>
+                    <div className={css.divider}></div>
+                  </div>
+                  <span className={css.againstLabel}>{proposal.votesNo.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
+                </div>
+              </div>
+              : proposalFailed(proposal) ?
                 <div className="css.clearfix">
                   <div className={css.proposalFailInfo}>
                     <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                   </div>
                   <div className={css.decisionGraph}>
-                      <span className={css.forLabel}>{proposal.votesYes.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
-                      <div className={css.graph}>
-                        <div className={css.forBar} style={styles.forBar}></div>
-                        <div className={css.againstBar} style={styles.againstBar}></div>
-                        <div className={css.divider}></div>
-                      </div>
-                      <span className={css.againstLabel}>{proposal.votesNo.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
+                    <span className={css.forLabel}>{proposal.votesYes.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
+                    <div className={css.graph}>
+                      <div className={css.forBar} style={styles.forBar}></div>
+                      <div className={css.againstBar} style={styles.againstBar}></div>
+                      <div className={css.divider}></div>
+                    </div>
+                    <span className={css.againstLabel}>{proposal.votesNo.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
                   </div>
                 </div>
-              : ""
+                : ""
             }
             <h3>
               <span data-test-id="proposal-closes-in">
-                { proposal.state == ProposalStates.QuietEndingPeriod ?
-                    <strong>
-                      <img src="/assets/images/Icon/Overtime.svg"/> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                      <div className={css.help}>
-                        <img src="/assets/images/Icon/Help-light.svg"/>
-                        <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg"/>
-                        <div className={css.helpBox}>
-                          <div className={css.pointer}></div>
-                          <div className={css.bg}></div>
-                          <div className={css.bridge}></div>
-                          <div className={css.header}>
-                            <h2>Genesis Protocol</h2>
-                            <h3>RULES FOR OVERTIME</h3>
-                          </div>
-                          <div className={css.body}>
-                            <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                          </div>
-                          <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                {proposal.state == ProposalStates.QuietEndingPeriod ?
+                  <strong>
+                    <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
+                    <div className={css.help}>
+                      <img src="/assets/images/Icon/Help-light.svg" />
+                      <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
+                      <div className={css.helpBox}>
+                        <div className={css.pointer}></div>
+                        <div className={css.bg}></div>
+                        <div className={css.bridge}></div>
+                        <div className={css.header}>
+                          <h2>Genesis Protocol</h2>
+                          <h3>RULES FOR OVERTIME</h3>
                         </div>
+                        <div className={css.body}>
+                          <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
+                        </div>
+                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
                       </div>
-                    </strong>
+                    </div>
+                  </strong>
                   : !proposalEnded(proposal) ?
                     `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
-                  : " "
+                    : " "
                 }
               </span>
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId} data-test-id="proposal-title">{proposal.title}</Link>
@@ -394,7 +392,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>
               <strong className={css.transferAmount}></strong>
-              <img src="/assets/images/Icon/Transfer.svg"/>
+              <img src="/assets/images/Icon/Transfer.svg" />
 
               <AccountPopupContainer
                 accountAddress={proposal.beneficiaryAddress}
@@ -417,10 +415,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
               </Link>
               <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                <img src="/assets/images/Icon/View.svg"/> <span>View proposal</span>
+                <img src="/assets/images/Icon/View.svg" /> <span>View proposal</span>
               </a>
             </div>
-            { proposalEnded(proposal) ?
+            {proposalEnded(proposal) ?
               <div>
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
@@ -437,7 +435,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   {redeemButton}
                 </div>
               </div>
-            :
+              :
               <PredictionBox
                 isPredictingFail={isPredictingFail}
                 isPredictingPass={isPredictingPass}
