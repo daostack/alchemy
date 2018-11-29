@@ -13,7 +13,7 @@
   height: 40px;
   width: 40px;
   float: left;
-  margin: 3px 15px 0 15px;
+  margin: 3px 20px 0 15px;
 }
 
 .targetAccount {
@@ -66,6 +66,11 @@
     border-radius: 3px;
     transition: all .25s ease;
     box-shadow: $shadow-3;
+    text-align: center;
+
+    .name {
+      font-size: 14px;
+    }
 
     .beneficiaryAddress {
       overflow: hidden;
@@ -98,7 +103,7 @@
 
     .holdings {
       padding: 20px 0;
-      margin-top: 20px;
+      margin-top: 10px;
       text-align: center;
       background-color: rgba(242, 242, 242, 1.000);
 
@@ -133,7 +138,153 @@
   }
   .accountInfo {
     opacity: 1;
-    top: 10px;
+    top: 0px;
     transform: translateX(-50%) scale(1);
   }
+}
+
+
+/***** Account Profile ******/
+  .daoHeader {
+    background-color: white;
+    padding: 20px 30px 30px 30px;
+  }
+
+.profileContainer {
+  max-width: 1080px;
+  margin: 0 auto;
+  margin-top: 40px;
+  padding: 0 20px;
+
+  form {
+    padding: 30px;
+    background-color: $white;
+  }
+
+  .profileContent {
+    display: flex;
+  }
+
+  .userAvatarContainer {
+    width: 100px;
+
+    img {
+      transform: rotate(45deg);
+    }
+  }
+
+  .profileDataContainer {
+    width: 250px;
+
+    label {
+      font-weight: bold;
+    }
+
+    .charLimit {
+      font-size: 12px;
+      text-align: right;
+    }
+  }
+
+  .otherInfoContainer {
+    padding-left: 50px;
+    width: 100%;
+
+    span {
+      //color: #6abed4;
+      color: #76c9de;
+      font-weight: bold;
+    }
+
+    .tokens {
+      // display: flex;
+      // width: 100%;
+      > div {
+        display: inline-block;
+        width: 33%;
+      }
+    }
+
+    div {
+      margin-bottom: 20px;
+    }
+
+    .copyButton {
+      border: none;
+      vertical-align: middle;
+    }
+
+    p {
+      padding: 0;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+  }
+
+  input, textarea {
+    background-color: #EDEDED;
+    border: none;
+    padding: 4px;
+    width: 250px;
+    font-size: 13px;
+  }
+}
+
+input {
+  &.error {
+    border-bottom: 2px solid red;
+  }
+}
+
+.errorMessage {
+  position: relative;
+  color: red
+}
+
+.submitButton {
+  border: 1px solid black;
+  height: 40px;
+  display: inline-block;
+  line-height: 30px;
+  margin: 0 auto;
+  color: black;
+  font-weight: normal;
+  font-size: $body;
+  padding: 0 15px;
+  font-family: $body-font;
+  transition: all .25s ease;
+  background-color: rgba(200,200,200,0);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  img {
+    position: relative;
+    top: 4px;
+    margin-right: 8px;
+  }
+
+  .loading {
+    width: 18px;
+    display: none;
+  }
+}
+.submitButton:disabled .loading {
+  display: inline-block;
+}
+
+.submitButton:disabled {
+  background-color: rgba(200,200,200,.5);
+  border: 1px solid rgba(200,200,200,1);
+  color: rgba(75,75,75,1);
+}
+
+.submitButton:disabled .sendIcon {
+  display: none;
+}
+
+.alignCenter {
+  text-align: center;
+  margin-top: 30px;
 }

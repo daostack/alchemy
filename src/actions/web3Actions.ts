@@ -1,14 +1,17 @@
 import * as Arc from "@daostack/arc.js";
+import axios from "axios";
 import * as BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
 import * as Redux from "redux";
 import { Web3 } from "web3";
 
-import Util from "lib/util";
-import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
-import { IDaoState } from "reducers/arcReducer";
 import { IAsyncAction, AsyncActionSequence } from "./async";
+import { getProfile } from "actions/profilesActions";
 import { IRootState } from "reducers";
+import { IDaoState } from "reducers/arcReducer";
+import { ActionTypes as profileActionTypes, IProfileState, newProfile } from "reducers/profilesReducer";
+import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
+import Util from "lib/util";
 
 export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, IWeb3State>;
 
@@ -116,6 +119,8 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
     payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress));
     payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address));
+
+    dispatch(getProfile(accountAddress));
 
     const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,

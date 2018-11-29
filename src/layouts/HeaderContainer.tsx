@@ -1,26 +1,28 @@
 import * as Arc from "@daostack/arc.js";
+import promisify = require("es6-promisify");
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
+import { FilterResult } from "web3";
 
-import { showNotification, NotificationStatus } from 'reducers/notifications'
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, newAccount } from "reducers/arcReducer";
+import { showNotification, NotificationStatus } from 'reducers/notifications'
+import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { IWeb3State } from "reducers/web3Reducer";
+import Util from "lib/util";
 
 import AccountBalance from "components/Account/AccountBalance";
 import AccountImage from "components/Account/AccountImage";
+import AccountProfileName from "components/Account/AccountProfileName";
+import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./App.scss";
-import Util from "lib/util";
-import Tooltip from "rc-tooltip";
-import ReputationView from "components/Account/ReputationView";
-import { FilterResult } from "web3";
-import promisify = require("es6-promisify");
 
 interface IStateProps {
   accounts: string[];
@@ -28,12 +30,13 @@ interface IStateProps {
   currentAccountExternalTokenBalance: number;
   currentAccountGenBalance: number;
   currentAccountGenStakingAllowance: number;
+  currentAccountProfile: IProfileState;
   currentAccount: IAccountState;
   dao: IDaoState;
   daoAvatarAddress: string;
   ethAccountAddress: string | null;
-
   networkId: number;
+  pageURL: string;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -44,10 +47,12 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     currentAccountExternalTokenBalance: state.web3.currentAccountExternalTokenBalance,
     currentAccountGenBalance: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
+    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao: state.arc.daos[ownProps.daoAvatarAddress],
     daoAvatarAddress: ownProps.daoAvatarAddress,
     ethAccountAddress: state.web3.ethAccountAddress,
-    networkId: state.web3.networkId
+    networkId: state.web3.networkId,
+    pageURL: ownProps.location.pathname
   };
 };
 
@@ -160,13 +165,12 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.approvalWatcher.stopWatching();
   }
 
-  public copyAddress() {
+  public copyAddress(e: any) {
     const { showNotification, ethAccountAddress } = this.props;
-
     // Copy the address to clipboard
     Util.copyToClipboard(ethAccountAddress);
-
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    e.preventDefault();
   }
 
   public handleChangeAccount = (e: any) => {
@@ -188,16 +192,20 @@ class HeaderContainer extends React.Component<IProps, null> {
       currentAccountExternalTokenBalance,
       currentAccountGenBalance,
       currentAccountGenStakingAllowance,
+      currentAccountProfile,
       dao,
       daoAvatarAddress,
       ethAccountAddress,
       networkId,
+      pageURL,
       showTour
     } = this.props;
 
     if (!currentAccount) {
       currentAccount = newAccount(daoAvatarAddress, ethAccountAddress);
     }
+
+    const isProfilePage = pageURL.includes("profile");
 
     const accountOptionNodes = accounts.map((account: string) => (
       <option key={"account_" + account}>
@@ -247,62 +255,66 @@ class HeaderContainer extends React.Component<IProps, null> {
             <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo-white.svg"/></Link>
             <span className={css.version}><em>Alchemy {Util.networkName(networkId)}</em> <span> v.{VERSION}</span></span>
           </div>
-          <div className={css.accountInfo}>
-            <div className={css.holdings}>
-              <div className={css.pointer}></div>
-              <div className={css.walletDetails}>
-                <div className={css.holdingsLabel}>Your wallet</div>
-                <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
-                  <span>{ethAccountAddress.slice(0, 40)}</span>
-                  <img src="/assets/images/Icon/Copy-white.svg"/>
-                  <div className={css.fade}></div>
-                </div>
+          <div className={css.headerRight}>
+            {isProfilePage ? "" : <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>}
+            <div className={css.accountInfo}>
+              <div className={css.accountImage}>
+                <AccountImage accountAddress={ethAccountAddress} />
               </div>
-              <div className={css.balances}>
-                <div className={css.userBalance}>
-                  <div>
-                    <AccountBalance tokenSymbol="ETH" balance={currentAccountEthBalance} accountAddress={ethAccountAddress} />
+              <div className={css.holdings}>
+                <div className={css.pointer}></div>
+                <div className={css.walletDetails}>
+                  <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
+                  <div className={css.holdingsLabel}>Your wallet</div>
+                  <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
+                    <span>{ethAccountAddress.slice(0, 40)}</span>
+                    <img src="/assets/images/Icon/Copy-white.svg"/>
+                    <div className={css.fade}></div>
                   </div>
-                  <div>
-                    <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={ethAccountAddress} />
+                </div>
+                <div className={css.balances}>
+                  <div className={css.userBalance}>
+                    <div>
+                      <AccountBalance tokenSymbol="ETH" balance={currentAccountEthBalance} accountAddress={ethAccountAddress} />
+                    </div>
+                    <div>
+                      <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={ethAccountAddress} />
+                    </div>
+                    <div>
+                      {currentAccountGenStakingAllowance} GEN approved for staking
+                    </div>
+                    { dao && dao.externalTokenAddress
+                      ? <div>
+                          <AccountBalance tokenSymbol={dao.externalTokenSymbol} balance={currentAccountExternalTokenBalance} accountAddress={ethAccountAddress} />
+                        </div>
+                      : ""
+                    }
                   </div>
-                  <div>
-                    {currentAccountGenStakingAllowance} GEN approved for staking
-                  </div>
-                  { dao && dao.externalTokenAddress
-                    ? <div>
-                        <AccountBalance tokenSymbol={dao.externalTokenSymbol} balance={currentAccountExternalTokenBalance} accountAddress={ethAccountAddress} />
+                  { dao
+                    ? <div className={css.daoBalance}>
+                        <h3>{dao.name}</h3>
+                        <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccount.reputation}/>
+                        <label>REPUTATION</label>
                       </div>
                     : ""
                   }
                 </div>
-                { dao
-                  ? <div className={css.daoBalance}>
-                      <h3>{dao.name}</h3>
-                      <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccount.reputation}/>
-                      <label>REPUTATION</label>
-                    </div>
-                  : ""
+                { accounts.length > 1 ?
+                  <div className={css.testAccounts}>
+                    <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={ethAccountAddress}>
+                      {accountOptionNodes}
+                    </select>
+                    <button className={css.selectTestAccount}>Switch accounts</button>
+                  </div>
+                : ""
                 }
               </div>
-              { accounts.length > 1 ?
-                <div className={css.testAccounts}>
-                  <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={ethAccountAddress}>
-                    {accountOptionNodes}
-                  </select>
-                  <button className={css.selectTestAccount}>Switch accounts</button>
-                </div>
+            </div>
+            { dao && !isProfilePage
+              ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
               : ""
-              }
-            </div>
-            <div className={css.profileLink}>
-              <AccountImage accountAddress={ethAccountAddress} />
-            </div>
+            }
           </div>
-          { dao
-            ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
-            : ""
-          }
         </nav>
       </div>
     );

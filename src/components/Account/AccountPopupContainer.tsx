@@ -8,10 +8,12 @@ import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
 import * as schemas from "schemas";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
+import AccountProfileName from "components/Account/AccountProfileName";
 import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./Account.scss";
@@ -19,6 +21,7 @@ import * as css from "./Account.scss";
 interface IStateProps {
   accountAddress: string;
   dao: IDaoState;
+  profile: IProfileState;
   reputation: number;
   tokens: number;
 }
@@ -30,6 +33,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     accountAddress: ownProps.accountAddress,
     dao,
+    profile: state.profiles[ownProps.accountAddress],
     reputation: account ? account.reputation : 0,
     tokens: account ? account.tokens : 0,
   };
@@ -47,14 +51,15 @@ type IProps = IStateProps & IDispatchProps;
 
 class AccountPopupContainer extends React.Component<IProps, null> {
 
-  public copyAddress = () => {
+  public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
     Util.copyToClipboard(accountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    e.preventDefault();
   }
 
   public render() {
-    const { accountAddress, dao, reputation, tokens } = this.props;
+    const { accountAddress, dao, profile, reputation, tokens } = this.props;
 
     return (
       <div className={css.targetAccount}>
@@ -62,6 +67,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
           <AccountImage accountAddress={accountAddress} />
         </div>
         <div className={css.accountInfo}>
+          <span className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.avatarAddress} /></span>
           <div className={css.beneficiaryAddress}>
             <span>{accountAddress}</span>
             <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>

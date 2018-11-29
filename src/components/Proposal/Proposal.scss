@@ -880,14 +880,13 @@ button.disabled {
 .createdBy {
 	font-size: $small;
 	color: $black-thirdtone;
-    position: absolute;
-    width: 175px;
-    right: 0;
-    z-index: 100;
-    text-align: right;
-    top: 22px;
-    transform: translateY(-50%);
-    text-transform: uppercase;
+  position: absolute;
+  width: 250px;
+  right: 0;
+  z-index: 100;
+  text-align: right;
+  top: 22px;
+  transform: translateY(-50%);
 
 	.targetAccount {
 		top: 7px;

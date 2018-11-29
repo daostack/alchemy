@@ -44,15 +44,22 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
     clearInterval(this.interval);
   }
 
+  public enableAccountAccess = async (e: any) => {
+    const web3 = await Arc.Utils.getWeb3();
+    try {
+      await (web3 as any).currentProvider.enable();
+    } catch (e) {}
+  }
+
   public render() {
     return(
       <div className={css.wrapper}>
         <div className={css.notification}>
           <img src="/assets/images/metamask.png"/>
-          <h1>Found Web3 but there is no default account available.<br/>Please make sure that MetaMask is unlocked.</h1>
-        </div>
-        <div className={css.unlockMetamask}>
-          Make sure <img className={css.icon} src="/assets/images/metamask-icon.png"/> Metamask is unlocked! <img src="/assets/images/metamask-arrow.svg"/>
+          <h1>
+            In order to use Alchemy we need permission to view your public ethereum account.&nbsp;
+            <a onClick={this.enableAccountAccess} className={css.link}>Click here</a> to open a Metamask pop-up that will request your permission.
+          </h1>
         </div>
       </div>
     );
