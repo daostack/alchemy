@@ -70,7 +70,7 @@
     "populate-dao": "ts-node scripts/populateDAO.ts"
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.80.2",
+    "@daostack/arc.js": "0.0.0-alpha.80.3",
     "@daostack/client": "git+https://github.com/daostack/client.git#dev",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
