@@ -11,9 +11,11 @@ import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, IDaoState, IProposalState, ProposalStates, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
+import { IProfileState } from "reducers/profilesReducer";
 import { isStakePending, isVotePending, isRedeemPending } from "selectors/operations";
 import * as schemas from "schemas";
 
+import AccountProfileName from "components/Account/AccountProfileName";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import ReputationView from "components/Account/ReputationView";
 import RewardsString from "components/Proposal/RewardsString";
@@ -25,11 +27,13 @@ import * as css from "./Proposal.scss";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 
 interface IStateProps {
+  beneficiaryRedemptions: IRedemptionState;
+  beneficiaryProfile?: IProfileState;
+  creatorProfile?: IProfileState;
   currentAccount: IAccountState;
   currentAccountGens: number;
   currentAccountGenStakingAllowance: number;
   currentRedemptions: IRedemptionState;
-  beneficiaryRedemptions: IRedemptionState;
   currentStake: IStakeState;
   currentVote: IVoteState;
   dao?: IDaoState;
@@ -55,20 +59,22 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   }
 
   return {
+    beneficiaryRedemptions,
+    beneficiaryProfile: state.profiles[proposal.beneficiaryAddress],
+    creatorProfile: state.profiles[proposal.proposer],
     currentAccount,
     currentAccountGens: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
     currentRedemptions,
-    beneficiaryRedemptions,
     currentStake,
     currentVote,
     dao,
-    proposal,
     isVotingYes: isVotePending(proposal.proposalId, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.proposalId, VoteOptions.No)(state),
     isPredictingPass: isStakePending(proposal.proposalId, VoteOptions.Yes)(state),
     isPredictingFail: isStakePending(proposal.proposalId, VoteOptions.No)(state),
-    isRedeemPending: isRedeemPending(proposal.proposalId, state.web3.ethAccountAddress)(state)
+    isRedeemPending: isRedeemPending(proposal.proposalId, state.web3.ethAccountAddress)(state),
+    proposal
   };
 };
 
@@ -114,6 +120,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
   public render() {
     const {
+      beneficiaryProfile,
+      creatorProfile,
       currentAccount,
       currentAccountGens,
       currentAccountGenStakingAllowance,
@@ -394,6 +402,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 accountAddress={proposal.beneficiaryAddress}
                 daoAvatarAddress={proposal.daoAvatarAddress}
               />
+              <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.avatarAddress} />
             </div>
           </div>
           <div>
@@ -404,8 +413,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   accountAddress={proposal.proposer}
                   daoAvatarAddress={proposal.daoAvatarAddress}
                 />
-
-                ON {submittedTime.format("MMM DD, YYYY")}
+                <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.avatarAddress} />
+                &nbsp; ON {submittedTime.format("MMM DD, YYYY")}
               </div>
               <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId}>
                 <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />

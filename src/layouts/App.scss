@@ -38,19 +38,6 @@ body {
   background-color: rgba(244, 244, 244, 1.000);
 }
 
-.openTour {
-  position: absolute;
-  right: 65px;
-  top: 9px;
-  border: none;
-  outline: none;
-  background: none;
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
 .fadeEnter {
   opacity: 0.01;
 }
@@ -148,7 +135,7 @@ body {
             transform: scale(0);
             transition: all .25s ease;
 
-            li { 
+            li {
               text-align: center;
 
               img {
@@ -232,14 +219,44 @@ body {
     padding: 2px 0;
   }
 
-  .accountInfo {
+  .headerRight {
     position: absolute;
-    top: 0;
+    height: 50px;
+    top:0;
     right: 0;
+    text-align: right;
+  }
+
+  .accountInfo {
+    position: relative;
+    display: inline-block;
+    text-align: center;
     height: 50px;
     width: 65px;
     background-color: rgba(42, 42, 42, 0);
     transition: all .25s ease;
+
+    .accountImage {
+      border: none;
+      background: transparent;
+
+      padding: 0;
+      margin: 13px 0 0 0;
+      height: 50px;
+
+      img {
+        width: 24px;
+        transform: rotate(45deg);
+      }
+    }
+
+    .profileName {
+      text-align: center;
+      font-size: 14px;
+      padding-top: 10px;
+
+      a { color: white; }
+    }
 
     .holdings {
       position: absolute;
@@ -268,7 +285,7 @@ body {
         position: relative;
         padding-bottom: 5px;
         border-bottom: 2px solid rgba(59, 59, 59, 1.000);
-        
+
         .holdingsLabel {
           font-weight: bold;
           text-align: center;
@@ -365,27 +382,6 @@ body {
         width: 100%;
       }
     }
-
-    .profileLink {
-      border: none;
-      background: transparent;
-      position: absolute;
-      top: 50%;
-      right: 21px;
-      transform: translateY(-50%);
-      padding: 0;
-      margin: 0;
-      height: 24px;
-      
-      img {
-        width: 24px;
-        transform: rotate(45deg);
-      }
-    }
-
-    .profileLink:hover {
-      cursor: pointer;
-    }
   }
 
   .accountInfo:hover{
@@ -400,6 +396,31 @@ body {
 
   .etherBalance {
     display: inline;
+  }
+
+  .openTour {
+    position: relative;
+    top: 2px;
+    padding: 0 10px;
+    display: inline-block;
+    border: none;
+    outline: none;
+    background: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .profileLink {
+    border: 1px solid rgba(255,255,255,.7);
+    color: rgba(255,255,255,1);
+    font-size: 14px;
+    display: inline-block;
+    padding: 4px;
+    height: 20px;
+    vertical-align: top;
+    margin: 10px 10px;
   }
 }
 
@@ -466,7 +487,7 @@ body {
       color: $accent-3;
     }
   }
-  
+
   img {
     position: absolute;
     top: 50%;
@@ -510,3 +531,4 @@ body {
     transform: translate3d(0, 0, 0);
   }
 }
+/* EO Header */
