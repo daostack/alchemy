@@ -15,7 +15,15 @@ async function renderApp() {
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
 
-    await Arc.InitializeArcJs({ watchForAccountChanges: true });
+    await Arc.InitializeArcJs({
+      watchForAccountChanges: true,
+      filter: {
+        ContributionReward: true,
+        DaoCreator: true,
+        GenesisProtocol: true,
+        SchemeRegistrar: true
+      }
+    });
 
     const web3 = await Arc.Utils.getWeb3();
     Arc.ConfigService.set("gasPriceAdjustment", async (defaultGasPrice: BigNumber) => {
@@ -34,7 +42,7 @@ async function renderApp() {
       }
     })
 
-    Arc.LoggingService.logLevel = Arc.LogLevel.all;
+    //Arc.LoggingService.logLevel = Arc.LogLevel.all;
 
     // Silence 240 sec error
     Arc.ContractWrappers.AbsoluteVote.contract.constructor.synchronization_timeout = 0;

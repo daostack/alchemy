@@ -7,6 +7,7 @@ import * as queryString from 'query-string';
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
+import TwitterLogin from 'components/Account/TwitterLogin';
 
 import * as profileActions from "actions/profilesActions";
 import { IRootState } from "reducers";
@@ -140,6 +141,14 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     setSubmitting(false);
   }
 
+  public onSuccess(e: any) : any {
+    console.log("Success ", e);
+  }
+
+  public onFailed(e: any) : any {
+    console.log("Failure ", e);
+  }
+
   public render() {
     const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
     const { ethCount, genCount } = this.state;
@@ -244,6 +253,11 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                       <span>{accountAddress.substr(0, 20)}...</span>
                       <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
                     </div>
+                    <TwitterLogin loginUrl="http://localhost:3001/link/twitter/callback/"
+                      onFailure={this.onFailed} onSuccess={this.onSuccess}
+                      requestTokenUrl="http://localhost:3001/link/twitter/"
+                      credentials='include'
+                      customHeaders={{'Accept': 'application/json', 'Cache': 'no-cache'}} />
                     {/*<div>
                       <strong>Prove it's you by linking your social accounts:</strong>
                       <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
