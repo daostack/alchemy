@@ -128,6 +128,7 @@
     "zeppelin-solidity": "^1.2.0"
   },
   "devDependencies": {
+    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#ea2f0e15b92b4e1bba8578aa813aa42d49b40390",
     "@types/classnames": "^2.2.3",
     "@types/es6-promisify": "^5.0.0",
     "@types/ethereumjs-util": "^5.2.0",

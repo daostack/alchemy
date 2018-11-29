@@ -1,3 +1,6 @@
+# A composition of services that are needed to run Alchemy
+# This is for DEVELOPMENT, not production
+
 version: "3"
 services:
   alchemy:
@@ -18,27 +21,77 @@ services:
       - ./entry.sh:/entry.sh
     ports:
       - 3000:3000
-      - 8545:8545
+      - 8546:8545
   # ganache:
   #   image: daostack/ganache:0.0.0-alpha.50-v3
   #   command: --hostname=0.0.0.0
   alchemy-server:
     build:
-      dockerfile: alchemy-server.dockerfile
       context: ./docker/alchemy-server
     depends_on:
-      - postgres
+      - postgres4alchemyserver
     links:
-      - postgres
+      - postgres4alchemyserver
     ports:
       - 3001:3001
     working_dir: /alchemy-server/
     environment:
-      WAIT_HOSTS: postgres:5432
+      WAIT_HOSTS: postgres4alchemyserver:5432
 
-  postgres:
+  postgres4alchemyserver:
     build:
-      dockerfile: postgres.dockerfile
       context: ./docker/postgres/
     ports:
       - 5433:5432
+  subgraph:
+    build:
+      context: ./node_modules/@daostack/subgraph
+    links:
+      - ipfs
+      - graph-node
+      - ganache
+    environment:
+      ethereum: http://ganache:8545
+      test_mnemonic: behave pipe turkey animal voyage dial relief menu blush match jeans general
+      node_http: http://graph-node:8000/by-name/daostack/graphql
+      node_ws: http://graph-node:8001/by-name/daostack
+      node_rpc: http://graph-node:8020
+      ipfs_host: ipfs
+      ipfs_port: 5001
+      WAIT_HOSTS: ipfs:5001, graph-node:8020
+  graph-node:
+    image: graphprotocol/graph-node:v0.4.1
+    ports:
+      - 8000:8000
+      - 8001:8001
+      - 8020:8020
+    links:
+      - ipfs
+      - postgres4graphnode
+      - ganache
+    environment:
+      postgres_host: postgres4graphnode:5432
+      postgres_user: postgres
+      postgres_pass: 'letmein'
+      postgres_db: postgres
+      ipfs: ipfs:5001
+      ethereum: development:http://ganache:8545
+  ipfs:
+    image: ipfs/go-ipfs
+    ports:
+      - 5001:5001
+  postgres4graphnode:
+    image: postgres
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_PASSWORD: 'letmein'
+  ganache:
+    image: trufflesuite/ganache-cli:v6.2.1
+    ports:
+      - 8545:8545
+    command: >
+      --deterministic
+      --mnemonic "behave pipe turkey animal voyage dial relief menu blush match jeans general"
+      --gasLimit 8000000
+      --networkId 1543492792088
