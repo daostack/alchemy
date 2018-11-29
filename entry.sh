@@ -11,6 +11,8 @@ echo "starting ganache..."
 npm explore ganache-cli -- npm start --  -h 0.0.0.0 --networkId 1512051714758 --quiet --mnemonic "behave pipe turkey animal voyage dial relief menu blush match jeans general" > /dev/null &
 echo "ganache started"
 
+/alchemy/scripts/wait-for-it.sh 0.0.0.0:8545
+
 echo "deploying contracts..."
 npm run migrate-ganache > /dev/null
 echo "deployed contracts"
