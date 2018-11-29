@@ -1,10 +1,12 @@
 language: node_js
 node_js: 10.13.0
-
+addons:
+  apt:
+    update: true
 bundler_args: "--jobs=4 --retry=3"
 
 before_install:
-  - RUN apt-get update -y && apt-get install libsecret-1-dev -y
+  - RUN sudo apt-get install -y libsecret-1-dev
 addons:
   chrome: stable
 
