@@ -35,6 +35,7 @@ services:
     working_dir: /alchemy-server/
     environment:
       WAIT_HOSTS: postgres:5432
+
   postgres:
     build:
       dockerfile: postgres.dockerfile
