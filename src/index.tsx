@@ -15,6 +15,17 @@ async function renderApp() {
   try {
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
+    console.log('-----------------------------------------------------------')
+    const graphqlHttpProvider: string = 'http://127.0.0.1:8000/by-name/daostack/graphql'
+    const graphqlWsProvider: string = 'ws://127.0.0.1:8001/by-name/daostack'
+    const web3Provider: string = 'http://127.0.0.1:8545'
+    let arc = new ArcNew.Arc({
+      graphqlHttpProvider,
+      graphqlWsProvider,
+      web3Provider
+    })
+    console.log(arc.daos())
+    console.log('-----------------------------------------------------------')
 
     await Arc.InitializeArcJs({ watchForAccountChanges: true });
 
