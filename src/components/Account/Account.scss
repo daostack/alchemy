@@ -145,10 +145,10 @@
 
 
 /***** Account Profile ******/
-  .daoHeader {
-    background-color: white;
-    padding: 20px 30px 30px 30px;
-  }
+.daoHeader {
+  background-color: white;
+  padding: 20px 30px 30px 30px;
+}
 
 .profileContainer {
   max-width: 1080px;
@@ -227,6 +227,30 @@
     padding: 4px;
     width: 250px;
     font-size: 13px;
+  }
+
+  .socialButton {
+    width: 33%;
+    display: inline-block;
+
+    button {
+      border: none;
+
+      :hover {
+        color: #76c9de;
+      }
+    }
+
+    .icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .socialButtonAuthenticated {
+    .icon {
+      color: #76c9de;
+    }
   }
 }
 

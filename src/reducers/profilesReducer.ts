@@ -8,10 +8,10 @@ export enum ActionTypes {
 }
 
 export interface IProfileState {
-  ethereumAccountAddress?: string;
   description: string;
-  githubURL: string;
+  ethereumAccountAddress?: string;
   name: string;
+  socialURLs: { [provider : string] : string };
 }
 
 export interface IProfilesState {
@@ -20,11 +20,28 @@ export interface IProfilesState {
 
 export function newProfile(ethereumAccountAddress: string): IProfileState {
   return {
+    description: "",
     ethereumAccountAddress,
     name: "",
-    description: "",
-    githubURL: ""
+    socialURLs: {}
   };
+}
+
+export function profileDbToRedux(dbProfile: any) {
+  const reduxProfile = dbProfile;
+  if (!dbProfile.socialURLs) {
+    reduxProfile.socialURLs = {};
+  }
+  if (dbProfile.facebookURL) {
+    reduxProfile.socialURLs['facebook'] = dbProfile.facebookURL;
+  }
+  if (dbProfile.githubURL) {
+    reduxProfile.socialURLs['github'] = dbProfile.githubURL;
+  }
+  if (dbProfile.twitterURL) {
+    reduxProfile.socialURLs['twitter'] = dbProfile.twitterURL;
+  }
+  return reduxProfile;
 }
 
 export const initialState: IProfilesState = {};
@@ -37,18 +54,20 @@ const profilesReducer = (state = initialState, action: any) => {
     case ActionTypes.UPDATE_PROFILE: {
       switch (action.sequence) {
         case AsyncActionSequence.Success:
-          return update(state, { [action.meta.accountAddress]: { $set: payload } });
+          return update(state, { [action.meta.accountAddress]: (profile: any) => {
+            return update(profile || newProfile(action.meta.accountAddress), { $merge: payload });
+          }});
         default: {
           return state;
         }
       }
     }
 
-   case ActionTypes.GET_PROFILE_DATA: {
+    case ActionTypes.GET_PROFILE_DATA: {
       const { profiles } = payload;
 
       for (const profile of profiles) {
-        state = update(state, { [profile.ethereumAccountAddress]: { $set: profile } });
+        state = update(state, { [profile.ethereumAccountAddress]: { $set: profileDbToRedux(profile) } });
       }
 
       return state;

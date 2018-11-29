@@ -3,7 +3,7 @@ import axios from "axios";
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { ActionTypes, newProfile } from "reducers/profilesReducer";
+import { ActionTypes, IProfileState, newProfile, profileDbToRedux } from "reducers/profilesReducer";
 
 // Load account profile data from our database for all the "members" of the DAO
 export function getProfilesForAllAccounts() {
@@ -63,7 +63,7 @@ export function getProfile(accountAddress: string) {
   }
 }
 
-export type UpdateProfileAction = IAsyncAction<'UPDATE_PROFILE', { accountAddress: string }, { description: string, name: string }>
+export type UpdateProfileAction = IAsyncAction<'UPDATE_PROFILE', { accountAddress: string }, { description: string, name: string, socialURLs?: any }>
 
 export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
   return async (dispatch: any, getState: any) => {
@@ -75,7 +75,7 @@ export function updateProfile(accountAddress: string, name: string, description:
 
     let serverAccount: any = false;
     try {
-      const response = await axios.put(process.env.API_URL + "/api/accounts", {
+      const response = await axios.patch(process.env.API_URL + "/api/accounts", {
         ethereumAccountAddress: accountAddress,
         name,
         description,
@@ -109,4 +109,15 @@ export function updateProfile(accountAddress: string, name: string, description:
     dispatch(showNotification(NotificationStatus.Success, `Profile data saved`));
     return true;
   };
+}
+
+export function verifySocialAccount(accountAddress: string, account: IProfileState) {
+  return async (dispatch: any, getState: any) => {
+    dispatch({
+      type: ActionTypes.UPDATE_PROFILE,
+      sequence: AsyncActionSequence.Success,
+      meta: { accountAddress },
+      payload: profileDbToRedux(account)
+    });
+  }
 }
