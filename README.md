@@ -23,11 +23,11 @@ The easiest way to start developing is to work with docker.  After you have inst
 ```sh
 docker-compose up alchemy
 ```
-This will start a server on http://localhost:3000.
+This will start a server on http://127.0.0.1:3000.
 
 To interact with the test instance in Chrome (or another browser):
-1. Go to http://localhost:3000
-1. Connect metamask to http://localhost:8545.
+1. Go to http://127.0.0.1:3000
+1. Connect metamask to http://127.0.0.1:8545.
 1. If you'd like an account with some ether to start with,  choose "import account" and use the following private key:
  `6695C8EF58FECFC7410BF8B80C17319EAACA8B9481CC9C682FD5DA116F20EF05`
 
@@ -42,14 +42,14 @@ First you must install Metamask and configure an account.
 1. Click on the avatar icon int he top right, and choose "Import Account"
 1. Choose "Private Key" and paste the string `0x8d4408014d165ec69d8cc9f091d8f4578ac5564f376f21887e98a6d33a6e3549` and click "Import"
 1. Give it a name like "Alchemy Test Account" so you won't get confused later
-1. Make sure that Metamask is connected to `localhost:8545` (choose from the "Networks" picklist in Metamask)
+1. Make sure that Metamask is connected to `127.0.0.1:8545` (choose from the "Networks" picklist in Metamask)
 
 Now you are ready to start the server:
 
 1. Run `npm run ganacheDb` in one terminal tab
 1. In a separate tab run `npm run migrate-ganache`
 1. Run `npm run start`
-1. Go to http://localhost:3000/ in Chrome
+1. Go to http://127.0.0.1:3000/ in Chrome
 
 
 # Regular end users - use MetaMask

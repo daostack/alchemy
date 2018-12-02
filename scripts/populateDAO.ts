@@ -7,7 +7,7 @@ const { combine, colorize, timestamp, printf } = format;
 import axios from 'axios';
 import chalk from 'chalk';
 import HDWalletProvider from '../src/lib/truffle-hdwallet-provider';
-import { ContributionRewardWrapper, GenesisProtocolWrapper, StandardTokenFactory } from '@daostack/arc.js';
+import { ContributionRewardWrapper, GenesisProtocolFactory, StandardTokenFactory } from '@daostack/arc.js';
 import { DAO, VoteOptions } from '@daostack/arc.js';
 // tslint:disable-next-line:no-var-requires
 const Web3 = require("web3");
@@ -90,7 +90,7 @@ async function main(options: Opts) {
     format: combine(
       timestamp(),
       colorize(),
-      printf(({level, timestamp, message}) => chalk`{bold ${moment(timestamp).format("DD/MM/YYYY hh:mm:ss A")} [${level}]: ${message}}`)
+      printf(({ level, timestamp, message }) => chalk`{bold ${moment(timestamp).format("DD/MM/YYYY hh:mm:ss A")} [${level}]: ${message}}`)
     ),
     transports: [
       new transports.Console(),
@@ -118,17 +118,17 @@ async function main(options: Opts) {
   const api =
     network === Network.Private ?
       'http://127.0.0.1:3001/api/' :
-    network === Network.Mainnet ?
-      'https://daostack-alchemy.herokuapp.com/api/' :
-      'https://daostack-alchemy-server-stage.herokuapp.com/api/'
-  ;
+      network === Network.Mainnet ?
+        'https://daostack-alchemy.herokuapp.com/api/' :
+        'https://daostack-alchemy-server-stage.herokuapp.com/api/'
+    ;
   logger.info(`Using api URL: ${api}`)
 
   const infuraKey = process.env.INFURA_KEY;
   if (network !== 'private' && !infuraKey) {
     throw new Error('Please include a line `INFURA_KEY=...` in a .env file in the current directory');
   }
-  const provider = new HDWalletProvider(mnemonic, network === 'private' ? 'http://localhost:8545' : `https://${network === Network.Mainnet ? '' : network + '.'}infura.io/` + infuraKey, 0, 10);
+  const provider = new HDWalletProvider(mnemonic, network === 'private' ? 'http://127.0.0.1:8545' : `https://${network === Network.Mainnet ? '' : network + '.'}infura.io/` + infuraKey, 0, 10);
 
   // Needed to track nonces correctly https://ethereum.stackexchange.com/questions/44349/truffle-infura-on-mainnet-nonce-too-low-error
   const nonceTracker = new NonceTrackerSubprovider();
@@ -143,7 +143,7 @@ async function main(options: Opts) {
   const accounts = await promisify(web3.eth.getAccounts)()
 
   if (logfile && fs.existsSync(logfile)) {
-    logger.add(new transports.File({filename: logfile}))
+    logger.add(new transports.File({ filename: logfile }))
     logger.warn(`Appending to an already existing logfile`);
   }
   if (address && (name || tokenName || tokenSymbol || params || founders)) {
@@ -210,7 +210,9 @@ async function main(options: Opts) {
 
     const avatarAddress = dao.avatar.address;
     const cr = (await dao.getSchemes('ContributionReward'))[0].wrapper as ContributionRewardWrapper;
-    const gp = (await dao.getSchemes('GenesisProtocol'))[0].wrapper as GenesisProtocolWrapper;
+    const gpAddress = await cr.getVotingMachineAddress(avatarAddress);
+    const gp = await GenesisProtocolFactory.at(gpAddress);
+
     const stakingToken = await gp.getStakingToken();
 
     async function createProposal(options: CreateProposalOpts) {

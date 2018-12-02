@@ -14,7 +14,7 @@
     "npm": "=5.10"
   },
   "jest": {
-    "testURL": "http://localhost:3000/",
+    "testURL": "http://127.0.0.1:3000/",
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
@@ -71,7 +71,7 @@
     "start-docker": "webpack-dev-server --config webpack.docker.config.js"
   },
   "dependencies": {
-    "@daostack/arc.js": "0.0.0-alpha.93",
+    "@daostack/arc.js": "0.0.0-alpha.94",
     "@types/react-share": "^2.1.1",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
@@ -119,7 +119,6 @@
     "style-loader": "^0.18.2",
     "truffle-contract": "^3.0.1",
     "ts-node": "^5.0.1",
-    "web3": "^0.20.4",
     "web3-provider-engine": "^14.0.5",
     "webdriverio": "^4.14.0",
     "webpack": "^3.11.0",
@@ -153,7 +152,7 @@
     "copy-webpack-plugin": "^4.5.0",
     "cross-env": "^5.1.3",
     "extract-text-webpack-plugin": "^3.0.0",
-    "ganache-cli": "^6.0.3",
+    "ganache-cli": "^6.2.3",
     "html-webpack-plugin": "^3.0.6",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^22.4.2",

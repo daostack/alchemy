@@ -32,7 +32,7 @@ import {
 
 import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
-import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
+import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper, ContributionRewardWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
 
 export function loadCachedState() {
@@ -761,8 +761,10 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
 export function executeProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: Dispatch<any>) => {
     const dao = await Arc.DAO.at(avatarAddress)
-    const votingMachineInstance = (await dao.getSchemes('GenesisProtocol'))[0].wrapper as GenesisProtocolWrapper
-    await votingMachineInstance.execute({ proposalId });
+    const cr = (await dao.getSchemes('ContributionReward'))[0].wrapper as ContributionRewardWrapper;
+    const gpAddress = await cr.getVotingMachineAddress(avatarAddress);
+    const gp = await GenesisProtocolFactory.at(gpAddress);
+    await gp.execute({ proposalId });
   }
 }
 
