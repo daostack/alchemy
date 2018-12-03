@@ -25,7 +25,7 @@ services:
       - ./entry.sh:/entry.sh
     ports:
       - 3000:3000
-      - 8546:8545
+      - 8545:8545
   # ganache:
   #   image: daostack/ganache:0.0.0-alpha.50-v3
   #   command: --hostname=0.0.0.0
