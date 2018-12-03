@@ -1003,8 +1003,11 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-      const votingMachineParamHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, daoInstance.avatar.address);
-      const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamHash);
+      const votingMachineParamsHash = await
+        (await contributionRewardInstance.getSchemeParameters(daoInstance.avatar.address)).voteParametersHash;
+
+      const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamsHash);
+
       const minimumStakingFee = votingMachineParams.minimumStakingFee;
 
       const amount = new BigNumber(Util.toWei(stakeAmount));
