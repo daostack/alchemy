@@ -13,6 +13,7 @@ services:
     working_dir: /alchemy/
     volumes:
       - ./src:/alchemy/src
+      - ./scripts:/alchemy/scripts
       - ./test:/alchemy/test
       - ./webpack.base.config.js:/alchemy/webpack.base.config.js
       - ./app.json:/alchemy/app.json
