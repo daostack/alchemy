@@ -258,12 +258,23 @@ export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
 
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
 // TODO: put in a lib/util class somewhere?
-async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {
+async function getProposalDetails(
+  daoInstance: Arc.DAO,
+  votingMachineInstance: Arc.GenesisProtocolWrapper,
+  contributionRewardInstance: Arc.ContributionRewardWrapper,
+  contributionProposal: Arc.ContributionProposal,
+  serverProposal: any,
+  currentAccountAddress: string = null,
+  fromBlock = 0,
+  toBlock = 'latest'): Promise<IProposalState> {
+
   const proposalId = contributionProposal.proposalId;
   const descriptionHash = contributionProposal.contributionDescriptionHash;
   const avatarAddress = daoInstance.avatar.address;
 
-  const votingMachineParamsHash = await daoInstance.controller.getSchemeParameters(votingMachineInstance.contract.address, avatarAddress);
+  const votingMachineParamsHash = await
+    (await contributionRewardInstance.getSchemeParameters(daoInstance.avatar.address)).voteParametersHash;
+
   const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamsHash);
 
   const proposalDetails = await votingMachineInstance.getProposal(proposalId);
