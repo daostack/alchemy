@@ -21,7 +21,7 @@ You can run all needed services locally
 5. Go to http://localhost:3000/ in Chrome
 6. Click on the MetaMask extension icon in the toolbar
 7. Click on Restore from Seed Phrase
-8. Enter `behave pipe turkey animal voyage dial relief menu blush match jeans general` into the box labeled Wallet Seed, and any password you want.
+8. Enter `myth like bonus scare over problem client lizard pioneer submit female collect` into the box labeled Wallet Seed, and any password you want.
 9. Now all transactions will require confirmation through MetaMask
 
 ## Working with Kovan testnet and Parity locally

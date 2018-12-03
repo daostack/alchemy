@@ -55,7 +55,8 @@
     "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start ganacheDb.clean",
     "ganacheDb-save": "npm explore @daostack/arc.js -- npm start ganacheDb.zip",
     "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start ganacheDb.restoreFromZip",
-    "migrate-ganache": "npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
+    "migrate-ganache-arcjs": "npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
+    "setup-env": "node scripts/setupenv.js",
     "lint": "tslint --project .",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
@@ -128,6 +129,7 @@
     "zeppelin-solidity": "^1.2.0"
   },
   "devDependencies": {
+    "@daostack/migration": "0.0.0-alpha.56-v6",
     "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#ea2f0e15b92b4e1bba8578aa813aa42d49b40390",
     "@types/classnames": "^2.2.3",
     "@types/es6-promisify": "^5.0.0",
@@ -158,7 +160,7 @@
     "copy-webpack-plugin": "^4.5.0",
     "cross-env": "^5.1.3",
     "extract-text-webpack-plugin": "^3.0.0",
-    "ganache-cli": "^6.0.3",
+    "ganache-cli": "^6.2.3",
     "html-webpack-plugin": "^3.0.6",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^22.4.2",

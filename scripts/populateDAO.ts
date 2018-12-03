@@ -351,7 +351,7 @@ const argv: any =
       'mnemonic', {
         alias: 'm',
         describe: 'mnemonic from which to generate accounts',
-        default: 'behave pipe turkey animal voyage dial relief menu blush match jeans general',
+        default: 'myth like bonus scare over problem client lizard pioneer submit female collect',
         type: 'string'
       }
     )

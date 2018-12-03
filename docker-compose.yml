@@ -10,6 +10,7 @@ services:
     links:
       # - ganache
       - alchemy-server
+      - subgraph
     working_dir: /alchemy/
     volumes:
       # - .:/alchemy
@@ -25,10 +26,7 @@ services:
       - ./entry.sh:/entry.sh
     ports:
       - 3000:3000
-      - 8545:8545
-  # ganache:
-  #   image: daostack/ganache:0.0.0-alpha.50-v3
-  #   command: --hostname=0.0.0.0
+
   alchemy-server:
     build:
       context: ./docker/alchemy-server
@@ -56,7 +54,7 @@ services:
       - ganache
     environment:
       ethereum: http://ganache:8545
-      test_mnemonic: behave pipe turkey animal voyage dial relief menu blush match jeans general
+      test_mnemonic: myth like bonus scare over problem client lizard pioneer submit female collect
       node_http: http://graph-node:8000/by-name/daostack/graphql
       node_ws: http://graph-node:8001/by-name/daostack
       node_rpc: http://graph-node:8020
@@ -90,12 +88,12 @@ services:
       - 5435:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
+      
   ganache:
     image: trufflesuite/ganache-cli:v6.2.1
     ports:
       - 8545:8545
     command: >
       --deterministic
-      --mnemonic "behave pipe turkey animal voyage dial relief menu blush match jeans general"
       --gasLimit 8000000
-      --networkId 1543492792088
+      --networkId ganache
