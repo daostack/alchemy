@@ -29,6 +29,7 @@ interface IProps {
   dao: IDaoState;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
+  threshold: number;
   approveStakingGens: typeof web3Actions.approveStakingGens;
   isPredictingFail: boolean;
   isPredictingPass: boolean;
@@ -91,7 +92,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       proposal,
       isPredictingFail,
       isPredictingPass,
-      stakeProposal
+      stakeProposal,
+      threshold
     } = this.props;
 
     const {
@@ -142,7 +144,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     }
 
     // round second decimal up
-    const stakingLeftToBoost = Math.ceil((dao.currentThresholdToBoost - (proposal.stakesYes - proposal.stakesNo)) * 100) / 100;
+    const stakingLeftToBoost = Math.ceil((threshold - (proposal.stakesYes - proposal.stakesNo)) * 100) / 100;
 
     let wrapperClass = classNames({
       [css.predictions] : true,

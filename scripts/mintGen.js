@@ -1,9 +1,10 @@
-const Arc = require('@daostack/arc.js');
 const { BigNumber } = require('bignumber.js');
+const Arc = require('@daostack/arc.js');
+const { InitializeArcJs } = require("@daostack/arc.js");
 
 async function main() {
   const web3 = await Arc.Utils.getWeb3()
-
+  await InitializeArcJs()
   const genTokenAddress = await Arc.Utils.getGenTokenAddress()
   const DAOToken = await Arc.Utils.requireContract('DAOToken');
   const genToken = await DAOToken.at(genTokenAddress)

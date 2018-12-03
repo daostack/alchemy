@@ -1,14 +1,14 @@
 import createHistory from "history/createBrowserHistory";
 import { routerMiddleware } from "react-router-redux";
 import { applyMiddleware, compose, createStore } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
-import loggerMiddleware from "redux-logger";
 import thunkMiddleware from "redux-thunk";
 
 import reducers from "./reducers";
 import { operationsTracker } from "reducers/operations";
 import { successDismisser, notificationUpdater } from "reducers/notifications";
 import { persistStore, createTransform } from 'redux-persist';
+import { composeWithDevTools } from "redux-devtools-extension";
+import loggerMiddleware from "redux-logger";
 
 export const history = createHistory();
 
@@ -40,5 +40,4 @@ export const mockStore = () => createStore(
 );
 
 const persistor = persistStore(store);
-
 export default store;

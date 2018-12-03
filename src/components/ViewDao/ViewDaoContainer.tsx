@@ -205,14 +205,26 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
     const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-
-    // If the DAO has an external token, update the balance of the current account for that token
     const externalToken = dao.externalTokenAddress ? await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any : false;
-    if (externalToken) {
-      onExternalTokenBalanceChanged(Util.fromWei(await externalToken.balanceOf(currentAccountAddress)));
-    }
 
-    this.blockInterval = setInterval(async () => {
+    const updateState = async () => {
+      console.time('updateState')
+      const {
+        currentAccountAddress,
+        daoAvatarAddress,
+        dao,
+        onTransferEvent,
+        onReputationChangeEvent,
+        onDAOEthBalanceChanged,
+        onDAOGenBalanceChanged,
+        onDAOExternalTokenBalanceChanged,
+        onExternalTokenBalanceChanged,
+        onProposalExpired,
+        showNotification,
+        updateDAOLastBlock
+      } = this.props;
+      const web3 = await Arc.Utils.getWeb3();
+
       const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
       await onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
       const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
@@ -237,8 +249,21 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       }
 
       updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
-      this.setState({ readyToShow: true });
+      console.timeEnd('updateState')
+    }
+
+    // update the state, and poll every 10 seconds for new changes
+    updateState()
+    this.blockInterval = setInterval(async () => {
+      updateState()
     }, 10000);
+
+    // we are waiting 10 seconds for all the event handlers in the Appcontainer
+    // to finish, before showing the main page
+    setTimeout(() =>  {
+      this.setState({ readyToShow: true });
+      console.timeEnd('Time until readyToShow');
+    }, 10000)
   }
 
   public handleClickStartTour = (e: any) => {

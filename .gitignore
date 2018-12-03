@@ -9,3 +9,5 @@ PRIVATE_README.md
 *sublime*
 yarn*
 .env
+.chrome
+.vscode

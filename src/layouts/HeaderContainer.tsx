@@ -229,7 +229,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               <div className={css.backgroundBlock}></div>
               <ul>
                 <li><Link to='/'>Home</Link></li>
-                { process.env.NODE_ENV == 'production'
+                { (process.env.NODE_ENV === 'production')
                   ? <li><a href='https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>Genesis Alpha</a></li>
                   : <li><Link to='/daos'>View DAOs</Link></li>
                 }
