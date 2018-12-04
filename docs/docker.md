@@ -10,9 +10,9 @@
 The `docker-compose up` command will build and start up a number of different container with services that alchemy needs to function well
 
 
-| name    | port |
-|-----------------
-| alchemy | 3000 | The main application
+| name    | port |  Description  |
+|---------|------|---------------|
+| alchemy | 3000 | The main application | 
 | alchemy-server | 3001 | A database that stores specific alchemy info
 | ganache |  8545 | An ethereum node for testing
 | graph-node (http) | 8000 | The graph node aggregates data from Ethereum
