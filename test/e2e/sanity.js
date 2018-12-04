@@ -5,7 +5,7 @@ describe('Sanity', () => {
       var chai = require('chai');
       global.expect = chai.expect;
       chai.Should();
-      browser.url('http://0.0.0.0:3000/')
+      browser.url('http://127.0.0.1:3000/')
     });
 
     it('Go through the flow', async () => {

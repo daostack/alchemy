@@ -1,7 +1,5 @@
 config  = require('./wdio.conf.js').config
-// config.capabilities.chromeOptions = {
-//   args: ['headless', 'disable-gpu']
-// }
+
 exports.config = Object.assign(config, {
   capabilities: [{
     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
@@ -11,7 +9,7 @@ exports.config = Object.assign(config, {
     //
     browserName: 'chrome',
     chromeOptions: {
-        args: ['headless', 'disable-gpu']
+        args: ['headless', 'disable-gpu', 'disable-web-security']
     }
   }]
 })
