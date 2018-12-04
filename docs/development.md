@@ -1,15 +1,32 @@
 # Your development environment
 
-Here is a typical session:
+There are different ways a developer can use the docker environment for development.
+
+Probably the most straightfoward is to run the services that alchemy depends on in one terminal,
+and run the alchemy server in a seperate terminal:
 ```sh
-  docker-compose build # run this the first time, or if you changed package.json
-  docker-compose up # start the containers
-  npm run configure-dev-env # create some configuration files on ./config
+  docker-compose build
+  docker-compose up graph-node alchemy-server # start the services needed by alchemy
+  # in another terminal run:
+  npm run setup-env
+  npm run start # start the development server
   # ...  point your browser to 127.0.0.1:3000
   # ... develop away
   # ... commit your changes
   docker-compose down -v
 ```
+Alternatively you can run the webserver inside the `alchemy` container
+```sh
+  docker-compose build # run this the first time, or if you changed package.json
+  docker-compose up # start all the containers
+  # in another shell run this:
+  npm run setup-env # deploy contracts, configure subgraph...
+  # ...  point your browser to 127.0.0.1:3000
+  # ... develop away
+  # ... commit your changes
+  docker-compose down -v
+```
+**TBD: Due to a bug in ganache, the state is not persistent, so you must re-run `npm run setup-env` after you (re-)start docker**
 
 # Developing @daostack/client in tandem with alchemy
 
