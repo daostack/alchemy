@@ -8,8 +8,10 @@
 ## Installation
 
 ```sh
+sudo apt-get install -y libsecret-1-dev
 git clone https://github.com/daostack/alchemy.git
 cd alchemy
+npm install
 ```
 
 # Run app locally
