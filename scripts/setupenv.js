@@ -8,8 +8,9 @@ async function main() {
   // const subgraphRepo = require.resolve('@daostack/subgraph')
   const subgraphRepo = path.resolve('./node_modules/@daostack/subgraph')
   console.log(`Deploying Daostack contracts to ${provider}`)
-  let { options, migrationResult } = await deployDaoStack({provider})
-  console.log(`Deployed Daostack contracts, information written to ${options.output}`)
+  console.log('SKIPPING')
+  // let { options, migrationResult } = await deployDaoStack({provider})
+  // console.log(`Deployed Daostack contracts, information written to ${options.output}`)
 
   console.log('Creating config files for subgraph')
   await configureSubgraph({
@@ -18,7 +19,8 @@ async function main() {
   })
   console.log('Deploying subgraph configuration')
   const cwd = subgraphRepo
-  await deploySubgraph(cwd)
+  const deploymentResult = await deploySubgraph(cwd)
+  console.log(deploymentResult[1])
   console.log(`All done!`)
 }
 

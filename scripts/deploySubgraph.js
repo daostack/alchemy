@@ -35,17 +35,32 @@ const runGraphCli = async (args = [], cwd = process.cwd()) => {
 }
 
 async function deploySubgraph(cwd) {
-  await runGraphCli([
+  const result = await runGraphCli([
     'deploy',
     '--access-token \"\"',
     '--ipfs ${ipfs-/ip4/127.0.0.1/tcp/5001}',
     '--node ${node_rpc-http://127.0.0.1:8020/}',
     '-n daostack',
     // './config/subgraph.yaml',
-    '../subgraph/subgraph.yaml'
+    // path.resolve('../subgraph/subgraph.yaml')
+    path.resolve('./node_modules/@daostack/subgraph/subgraph.yaml')
   ], cwd)
+  if (result[0] === 1) {
+    throw Error(`Deploymnet failed! ${result[1]}`)
+  }
+  return result
 }
 
-module.exports = {
-  deploySubgraph
+
+
+if (require.main === module) {
+  // const subgraphRepo = path.resolve('./node_modules/@daostack/subgraph')
+  // const subgraphRepo = path.resolve('../subgraph')
+  const subgraphRepo = path.resolve('.')
+  console.log(`running command in ${subgraphRepo}`)
+  deploySubgraph(subgraphRepo)
+} else {
+  module.exports = {
+    deploySubgraph
+  }
 }

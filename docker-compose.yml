@@ -45,7 +45,7 @@ services:
       context: ./docker/postgres/
     ports:
       - 5433:5432
-      
+
   subgraph:
     build:
       context: ./node_modules/@daostack/subgraph
@@ -80,6 +80,7 @@ services:
       postgres_db: postgres
       ipfs: ipfs:5001
       ethereum: development:http://ganache:8545
+      GRAPH_LOG: "graph.log"
 
   ipfs:
     image: ipfs/go-ipfs
