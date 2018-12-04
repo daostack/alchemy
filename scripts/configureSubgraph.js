@@ -1,9 +1,18 @@
 const path = require('path')
 
+
+/**
+ * Take the output of the @doastack/migration repo and combine it into a subgraph.yaml
+ * that can be deployed
+ * Usage:
+ *  configureSubgraph({ aoAddressesFile: 'path/to/config/migration.json'})
+ */
+
 async function configureSubgraph(options) {
-  // const subgraphConfigure = require('@daostack/subgraph/ops/index.js').configure
-  subgraphRepo = options.subgraphRepo || require.resolve('@doastack/subgraph')
+  // path to the source file
   daoAddressesFile = options.daoAddressesFile || `${__dirname}/../config/migration.json`
+  // path to the subgraph repository
+  subgraphRepo = options.subgraphRepo || require.resolve('@doastack/subgraph')
   const subgraphConfigure = require(`${subgraphRepo}/ops/index.js`).configure
   const migrationAddresses = require(daoAddressesFile).private
   if (migrationAddresses === undefined) {
@@ -24,7 +33,6 @@ async function configureSubgraph(options) {
     development: { addresses },
     // outputDir: path.resolve(`${__dirname}/../config`)
   })
-  // console.log(`Output written to ${config.outputDir}`)
 }
 
 async function main() {
