@@ -5,7 +5,8 @@ const deployDaoStack = require('./deployDaoStack').deployDaoStack
 
 async function main() {
   const provider = 'http://localhost:8545'
-  const subgraphRepo = path.resolve('../subgraph')
+  // const subgraphRepo = require.resolve('@daostack/subgraph')
+  const subgraphRepo = path.resolve('./node_modules/@daostack/subgraph')
   console.log(`Deploying Daostack contracts to ${provider}`)
   let { options, migrationResult } = await deployDaoStack({provider})
   console.log(`Deployed Daostack contracts, information written to ${options.output}`)
