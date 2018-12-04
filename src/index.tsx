@@ -57,7 +57,7 @@ async function renderApp() {
 
     // Silence 240 sec error
     if (Arc.ContractWrappers.AbsoluteVote === undefined) {
-      throw Error(`Could not find all DAOStack contracts -- are you sure they are deployed in the current network?\n(Arc.ContractWrappers.AbsoluteVote is undefined)`)
+      throw Error(`Arc.js could not find all DAOStack contracts -- are you sure they are deployed in the current network?\n(Arc.ContractWrappers.AbsoluteVote is undefined)`)
     }
     Arc.ContractWrappers.AbsoluteVote.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.ContributionReward.contract.constructor.synchronization_timeout = 0;

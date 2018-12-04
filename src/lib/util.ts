@@ -35,7 +35,7 @@ export default class Util {
       case 1512051714758:
         return "Ganache"
       default:
-        return "Unknown network"
+        return "Ganache"
     }
   }
 
