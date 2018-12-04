@@ -53,6 +53,5 @@ Now you should find a link to your local `client` directory in `node_modules/@da
 The alchemy webpack process uses the compiled `.js` files in `@daostack/client/dist`.
 That means that when you make changes in the typescript `.ts` files in the client library, they will not be picked up until they are compiled to new `dist/*.js` files. You can do that by running:
 ```sh
-npm run build
+npm run build:watch
 ```
-TBD: define a watcher process so we can do `npm run build:watch` and forget about it.
