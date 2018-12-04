@@ -45,6 +45,7 @@ services:
       context: ./docker/postgres/
     ports:
       - 5433:5432
+      
   subgraph:
     build:
       context: ./node_modules/@daostack/subgraph
@@ -61,6 +62,7 @@ services:
       ipfs_host: ipfs
       ipfs_port: 5001
       WAIT_HOSTS: ipfs:5001, graph-node:8020
+
   graph-node:
     image: graphprotocol/graph-node:v0.4.1
     ports:
@@ -78,6 +80,7 @@ services:
       postgres_db: postgres
       ipfs: ipfs:5001
       ethereum: development:http://ganache:8545
+
   ipfs:
     image: ipfs/go-ipfs
     ports:
@@ -88,7 +91,7 @@ services:
       - 5435:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
-      
+
   ganache:
     image: trufflesuite/ganache-cli:v6.2.1
     ports:

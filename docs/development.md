@@ -1,4 +1,15 @@
-#
+# Your development environment
+
+Here is a typical session:
+```sh
+  docker-compose build # run this the first time, or if you changed package.json
+  docker-compose up # start the containers
+  npm run configure-dev-env # create some configuration files on ./config
+  # ...  point your browser to 127.0.0.1:3000
+  # ... develop away
+  # ... commit your changes
+  docker-compose down -v
+```
 
 # Developing @daostack/client in tandem with alchemy
 
