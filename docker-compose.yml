@@ -30,21 +30,19 @@ services:
   alchemy-server:
     build:
       context: ./docker/alchemy-server
-    depends_on:
-      - postgres4alchemyserver
     links:
-      - postgres4alchemyserver
+      - postgres
     ports:
       - 3001:3001
     working_dir: /alchemy-server/
     environment:
-      WAIT_HOSTS: postgres4alchemyserver:5432
+      WAIT_HOSTS: postgres:5432
 
-  postgres4alchemyserver:
+  postgres:
     build:
       context: ./docker/postgres/
-    ports:
-      - 5433:5432
+    # ports:
+      # - 5435:5432
 
   subgraph:
     build:
@@ -86,6 +84,7 @@ services:
     image: ipfs/go-ipfs
     ports:
       - 5001:5001
+
   postgres4graphnode:
     image: postgres
     ports:
