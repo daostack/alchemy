@@ -44,18 +44,11 @@
     }
   },
   "scripts": {
-    "auto-start-ganache": "run-with-ganache --ganache-cmd ganache-cli \"npm run migrate-ganache && npm run start\"",
     "analyze": "NODE_ENV=production ANALYZE=1 node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js --progress --colors",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "cache-arc-dev": "ts-node src/run_cache_worker.ts",
     "cache-arc-staging": "cross-env NODE_ENV=production arcjs_network=kovan ts-node src/run_cache_worker.ts",
     "cache-arc-prod": "cross-env NODE_ENV=production arcjs_network=live ts-node src/run_cache_worker.ts",
-    "ganache": "npm explore @daostack/arc.js -- npm start ganache.run",
-    "ganacheDb": "npm explore @daostack/arc.js -- npm start ganacheDb.run",
-    "ganacheDb-clean": "npm explore @daostack/arc.js -- npm start ganacheDb.clean",
-    "ganacheDb-save": "npm explore @daostack/arc.js -- npm start ganacheDb.zip",
-    "ganacheDb-restore": "npm explore @daostack/arc.js -- npm start ganacheDb.restoreFromZip",
-    "migrate-ganache-arcjs": "npm explore @daostack/arc.js -- npm start migrateContracts && npm explore @daostack/arc.js -- npm start createGenesisDao && node ./scripts/mintGen.js",
     "setup-env": "node scripts/setupenv.js",
     "lint": "tslint --project .",
     "populate-dao": "ts-node scripts/populateDAO.ts",
