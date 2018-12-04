@@ -37,10 +37,17 @@ module.exports = {
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      // TODO; does this end up in the budnle? If so, we may only want to do this in dev
       {
         enforce: "pre",
         test: /\.js$/,
-        loader: "source-map-loader"
+        loader: "source-map-loader",
+        exclude: [
+          /node_modules\/xhr2\-cookies/,
+          /node_modules\/apollo-cache-inmemory/,
+          /node_modules\/subscriptions-transport-ws/,
+          /node_modules\/apollo-client/,
+        ]
       },
 
       // CSS handling
