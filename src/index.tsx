@@ -1,5 +1,4 @@
 import * as Arc from '@daostack/arc.js';
-import * as Arc2 from '@daostack/client'
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
@@ -10,18 +9,11 @@ import { App } from "./App";
 
 import "./assets/styles/global.scss";
 import Util from 'lib/util';
+import { arc } from './arc'
 
 async function renderApp() {
   console.time('Time until readyToShow');
   try {
-    const graphqlHttpProvider: string = 'http://127.0.0.1:8000/by-name/daostack/graphql'
-    const graphqlWsProvider: string = 'ws://127.0.0.1:8001/by-name/daostack'
-    const web3Provider: string = 'http://127.0.0.1:8545'
-    let arc = new Arc2.Arc({
-      graphqlHttpProvider,
-      graphqlWsProvider,
-      web3Provider
-    })
 
     let daos = arc.daos()
     const consumer = await daos.subscribe(
@@ -37,6 +29,8 @@ async function renderApp() {
     console.time('InitalizeArcJs')
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
+    // TODO: the address in ../config/migration.json are crate by npm run setup-env
+    // and will only be valid for the test scenario
     const deployedContractAddresses = require('../config/migration.json')
 
     await Arc.InitializeArcJs({
