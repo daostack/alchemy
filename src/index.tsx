@@ -24,11 +24,14 @@ async function renderApp() {
       graphqlWsProvider,
       web3Provider
     })
-    // console.log(arc.daos())
-    // console.log('-----------------------------------------------------------')
 
     console.time('InitalizeArcJs')
-    await Arc.InitializeArcJs({ watchForAccountChanges: true });
+    const deployedContractAddresses = require('../config/migration.json')
+
+    await Arc.InitializeArcJs({
+      deployedContractAddresses,
+      watchForAccountChanges: true
+    })
     console.timeEnd('InitalizeArcJs')
 
     console.time('Arc.Utils.getWeb3()')
@@ -53,6 +56,9 @@ async function renderApp() {
     Arc.LoggingService.logLevel = Arc.LogLevel.all;
 
     // Silence 240 sec error
+    if (Arc.ContractWrappers.AbsoluteVote === undefined) {
+      throw Error(`Could not find all DAOStack contracts -- are you sure they are deployed in the current network?\n(Arc.ContractWrappers.AbsoluteVote is undefined)`)
+    }
     Arc.ContractWrappers.AbsoluteVote.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.ContributionReward.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.DaoCreator.contract.constructor.synchronization_timeout = 0;
