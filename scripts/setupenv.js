@@ -90,7 +90,8 @@ async function deploySubgraph() {
 }
 
 async function main() {
-  await deployDaoStack()
+  // await deployDaoStack()
+  await configureSubgraph()
   // await deploySubgraph()
 }
 
