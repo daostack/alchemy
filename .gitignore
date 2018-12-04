@@ -11,3 +11,4 @@ yarn*
 .env
 .chrome
 .vscode
+config/migration.json

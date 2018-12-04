@@ -1,9 +1,11 @@
 const path = require('path')
-async function configureSubgraph() {
+
+async function configureSubgraph(options) {
   // const subgraphConfigure = require('@daostack/subgraph/ops/index.js').configure
-  const subgraphConfigure = require('../../subgraph/ops/index.js').configure
-  const migrationAddressesFile = `${__dirname}/../config/migration.json`
-  const migrationAddresses = require(migrationAddressesFile).private
+  subgraphRepo = options.subgraphRepo || require.resolve('@doastack/subgraph')
+  daoAddressesFile = options.daoAddressesFile || `${__dirname}/../config/migration.json`
+  const subgraphConfigure = require(`${subgraphRepo}/ops/index.js`).configure
+  const migrationAddresses = require(daoAddressesFile).private
   if (migrationAddresses === undefined) {
     throw Error(`No address from migration found. Did you run "setupenv.js"? Is here a file in ${migrationAddressesFile}?`)
   }
@@ -20,13 +22,19 @@ async function configureSubgraph() {
   const config = await subgraphConfigure({
     env: 'development',
     development: { addresses },
-    subgraphOutputFile: path.resolve(`${__dirname}/../config/subgraph.yaml`)
+    // outputDir: path.resolve(`${__dirname}/../config`)
   })
-  console.log(`Output written to ${config.subgraphOutputFile}`)
+  // console.log(`Output written to ${config.outputDir}`)
 }
 
 async function main() {
   configureSubgraph()
 }
 
-main()
+if (require.main === module) {
+  main()
+} else {
+  module.exports = {
+    configureSubgraph
+  }
+}
