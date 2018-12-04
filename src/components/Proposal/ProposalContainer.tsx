@@ -165,9 +165,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const redeemable = accountHasRewards || beneficiaryHasRewards;
 
-    const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
-
     if (proposal) {
+      const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
       const proposalClass = classNames({
         [css.proposal]: true,
         [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod,
