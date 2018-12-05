@@ -19,8 +19,19 @@ async function main() {
   console.log('Deploying subgraph configuration')
   const cwd = subgraphRepo
   const deploymentResult = await deploySubgraph(cwd)
-  console.log(deploymentResult[1])
-  console.log(`All done!`)
+  // deploymentResult[0] is the status code
+  // but it is not very helpful, because it returns 0 also on some errors
+  // console.log(deploymentResult[0])
+  const msg = deploymentResult[1]
+  if (msg.toLowerCase().indexOf('error') > 0) {
+    console.log(msg)
+    throw Error(msg)
+  } else {
+    console.log(msg)
+    console.log(`All done!`)
+  }
 }
 
-main()
+main().catch(error => {
+  console.log(error);
+});

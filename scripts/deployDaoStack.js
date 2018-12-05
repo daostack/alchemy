@@ -1,6 +1,6 @@
-const DAOstackMigration = require('@daostack/migration');
+const DAOstackMigration = require('@daostack/migration')
 
-async function deployDaoStack(options) {
+async function deployDaoStack (options) {
   // console.log(DAOstackMigration.migration('private'))
 
   options = {
