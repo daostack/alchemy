@@ -90,7 +90,7 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
   public watchers: Array<Arc.EventFetcher<any> | Arc.EntityFetcher<any, any>> = []
-
+public console.
   constructor(props: IProps) {
     super(props);
     this.state = { notificationsMinimized: false };
@@ -110,19 +110,13 @@ class AppContainer extends React.Component<IProps, IState> {
     const { daosLoaded, getDAOs, initializeWeb3, loadCachedState } = this.props;
     await initializeWeb3();
 
-    // If not using local testnet then load cached blockchain data from S3
-    const networkName = await Arc.Utils.getNetworkName()
-    if (networkName !== 'Ganache' && networkName !== 'Private') {
-      await loadCachedState();
-    } else {
-      if (!daosLoaded) {
-        await getDAOs();
-      }
+    if (!daosLoaded) {
+      await getDAOs();
     }
-
+    console.log('x')
     await this.setupWatchers();
   }
-
+public log('x')
   public async componentDidUpdate(prevProps: IProps) {
     if (this.props.ethAccountAddress && this.props.daosLoaded && (!prevProps.daosLoaded || !prevProps.ethAccountAddress)) {
       // If DAOs just finally loaded then setup the watchers

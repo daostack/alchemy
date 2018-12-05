@@ -15,17 +15,6 @@ async function renderApp() {
   console.time('Time until readyToShow');
   try {
 
-    let daos = arc.daos()
-    const consumer = await daos.subscribe(
-      (eventData: any) => {
-        // Do something on receipt of the event
-        console.log(eventData)
-      },
-      (err: any) => {
-        throw err
-      }
-    )
-
     console.time('InitalizeArcJs')
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
