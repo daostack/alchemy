@@ -1,41 +1,42 @@
-import * as Arc from '@daostack/arc.js';
+import * as Arc from "@daostack/arc.js";
 import axios from "axios";
 import * as History from "history";
-import * as queryString from 'query-string';
+import * as queryString from "query-string";
 import * as React from "react";
-import { withCookies, Cookies } from 'react-cookie';
+import { Cookies, withCookies } from "react-cookie";
 import { connect, Dispatch } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { replace as routerReplace } from "react-router-redux";
 import { bindActionCreators } from "redux";
+import { Subscription } from "rxjs";
 
 import { IRootState } from "reducers";
 import { IArcState, RewardType } from "reducers/arcReducer";
 import { ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
 
-import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
+import * as web3Actions from "actions/web3Actions";
 import Util from "lib/util";
 
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
-import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
 import NoWeb3Container from "components/Errors/NoWeb3Container";
 import HomeContainer from "components/Home/HomeContainer";
+import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import HeaderContainer from "layouts/HeaderContainer";
-//@ts-ignore
-import { ModalContainer, ModalRoute } from 'react-router-modal';
+// @ts-ignore
+import { ModalContainer, ModalRoute } from "react-router-modal";
 
 import * as css from "./App.scss";
 
-import { sortedNotifications } from '../selectors/notifications';
-import { dismissNotification, NotificationStatus, INotificationsState, showNotification } from 'reducers/notifications';
-import { OperationStatus, OperationError } from 'reducers/operations';
-import MinimizedNotifications from 'components/Notification/MinimizedNotifications';
+import MinimizedNotifications from "components/Notification/MinimizedNotifications";
+import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
+import { OperationError, OperationStatus } from "reducers/operations";
+import { sortedNotifications } from "../selectors/notifications";
 
 interface IStateProps {
   connectionStatus: ConnectionStatus;
@@ -58,9 +59,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
 
 interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
-  getDAOs: typeof arcActions.getDAOs;
   initializeWeb3: typeof web3Actions.initializeWeb3;
-  loadCachedState: typeof arcActions.loadCachedState;
   onRedeemReward: typeof arcActions.onRedeemReward;
   onProposalCreateEvent: typeof arcActions.onProposalCreateEvent;
   onProposalExecuted: typeof arcActions.onProposalExecuted;
@@ -71,12 +70,10 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   dismissNotification,
-  getDAOs: arcActions.getDAOs,
   initializeWeb3: web3Actions.initializeWeb3,
-  loadCachedState: arcActions.loadCachedState,
-  onRedeemReward: arcActions.onRedeemReward,
   onProposalCreateEvent: arcActions.onProposalCreateEvent,
   onProposalExecuted: arcActions.onProposalExecuted,
+  onRedeemReward: arcActions.onRedeemReward,
   onStakeEvent: arcActions.onStakeEvent,
   onVoteEvent: arcActions.onVoteEvent,
   showNotification,
@@ -90,7 +87,7 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
 
-  public watchers: Array<Arc.EventFetcher<any> | Arc.EntityFetcher<any, any>> = []
+  public watchers: Array<Arc.EventFetcher<any> | Arc.EntityFetcher<any, any>> = [];
 
   constructor(props: IProps) {
     super(props);
@@ -101,21 +98,27 @@ class AppContainer extends React.Component<IProps, IState> {
     const { cookies, history } = this.props;
 
     // If this person has not seen the disclaimer, show them the home page
-    if (!cookies.get('seen_disclaimer')) {
-      cookies.set('seen_disclaimer', "true", { path: '/' });
+    if (!cookies.get("seen_disclaimer")) {
+      cookies.set("seen_disclaimer", "true", { path: "/" });
       history.replace("/");
     }
   }
 
   public async componentDidMount() {
-    const { daosLoaded, getDAOs, initializeWeb3, loadCachedState } = this.props;
+    const { daosLoaded, initializeWeb3 } = this.props;
     await initializeWeb3();
-    getDAOs();
     this.setupWatchers();
   }
 
+  public componentWillUnmount() {
+    this.watchers.forEach((watch) => {
+      watch.stopWatching();
+    });
+  }
+
   public async componentDidUpdate(prevProps: IProps) {
-    if (this.props.ethAccountAddress && this.props.daosLoaded && (!prevProps.daosLoaded || !prevProps.ethAccountAddress)) {
+    if (this.props.ethAccountAddress && this.props.daosLoaded &&
+      (!prevProps.daosLoaded || !prevProps.ethAccountAddress)) {
       // If DAOs just finally loaded then setup the watchers
       await this.setupWatchers();
     }
@@ -220,12 +223,6 @@ class AppContainer extends React.Component<IProps, IState> {
     this.watchers.push(redeemRepGP);
   }
 
- public componentWillUnmount() {
-    this.watchers.forEach((watch) => {
-      watch.stopWatching();
-    })
-  }
-
   public render() {
     const {
       connectionStatus,
@@ -233,7 +230,7 @@ class AppContainer extends React.Component<IProps, IState> {
       dismissNotification,
       showNotification,
       ethAccountAddress,
-      sortedNotifications
+      sortedNotifications,
     } = this.props;
 
     const { notificationsMinimized } = this.state;
@@ -254,18 +251,18 @@ class AppContainer extends React.Component<IProps, IState> {
             }} />
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-              <Route exact path="/daos" component={DaoListContainer} />
+              <Route exact={true} path="/daos" component={DaoListContainer} />
               <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
               <Route path="/" component={HomeContainer} />
             </Switch>
             <ModalRoute
-              exact
-              path='/create-dao'
-              parentPath='/'
+              exact={true}
+              path="/create-dao"
+              parentPath="/"
               component={CreateDaoContainer}
             />
             <ModalRoute
-              path='/dao/:daoAvatarAddress/proposals/create'
+              path="/dao/:daoAvatarAddress/proposals/create"
               parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
               component={CreateProposalContainer}
             />

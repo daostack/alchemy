@@ -17,10 +17,10 @@ const store = createStore(
   // TODO: only compose with devtools in when ENV === 'dev'
   composeWithDevTools(   // makes the store available to the Chrome redux dev tools
     applyMiddleware(
+      thunkMiddleware,
       operationsTracker,
       notificationUpdater,
       successDismisser(15000),
-      thunkMiddleware,
       routerMiddleware(history),
       // loggerMiddleware,
     ),
@@ -31,10 +31,10 @@ const store = createStore(
 export const mockStore = () => createStore(
   reducers,
   applyMiddleware(
+    thunkMiddleware,
     operationsTracker,
     notificationUpdater,
     successDismisser(15000),
-    thunkMiddleware,
     routerMiddleware(history),
   ),
 );

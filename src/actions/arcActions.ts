@@ -9,56 +9,39 @@ import { push } from "react-router-redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
-import { arc } from "../arc"
+import { arc } from "../arc";
 // import { DAO } from "@daostack/client"
 
 import Util from "lib/util";
-import { IRootState } from "reducers/index";
 import {
   ActionTypes,
+  anyRedemptions,
   checkProposalExpired,
-  newAccount,
   IAccountState,
   IDaoState,
-  IRedemptionState,
   IProposalState,
+  IRedemptionState,
   IStakeState,
   IVoteState,
+  newAccount,
   proposalEnded,
   ProposalStates,
+  RewardType,
   TransactionStates,
   VoteOptions,
-  anyRedemptions,
-  RewardType
 } from "reducers/arcReducer";
+import { IRootState } from "reducers/index";
 
-import { IAsyncAction, AsyncActionSequence } from "actions/async";
+import { ContributionRewardWrapper, ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
+import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { Dispatch } from "redux";
-import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper, ContributionRewardWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
 
-export function loadCachedState() {
-  throw Error(`loadCachedState is obsolete`)
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Pending, payload: null });
-    try {
-      const networkName = (await Arc.Utils.getNetworkName()).toLowerCase();
-      console.time('Load initial arc state')
-      const cachedState = await axios.get('https://s3-us-west-2.amazonaws.com/' + process.env.S3_BUCKET + '/initialArcState-' + networkName + '.json');
-      dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Success, payload: cachedState.data });
-      console.timeEnd('Load initial arc state')
-    } catch (e) {
-      console.error(e);
-      dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Failure, payload: e });
-    }
-  };
-}
-
 export function getDAOs(fromBlock = 0, toBlock = "latest") {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  return (dispatch: Redux.Dispatch<any>) => {
     dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
-    const daoObservable = arc.daos()
-    const observer = await daoObservable.subscribe(
+    const daoObservable = arc.daos();
+    const observer = daoObservable.subscribe(
       // TODO: use DAO type here
       (daoList: any[]) => {
         // TODO: this is a content place holder - we need to get actual content from the observable
@@ -82,23 +65,22 @@ export function getDAOs(fromBlock = 0, toBlock = "latest") {
           tokenName: "Genesis Test",
           tokenSupply: 6e15,
           tokenSymbol: "GDT",
+        };
+        const daoDict: { [address: string]: IDaoState } = {};
+        for (const dao of daoList) {
+          daocontentplaceholder.avatarAddress = dao.address;
+          daoDict[dao.address] = {...daocontentplaceholder, avatarAddress: dao.address};
         }
-        const daoDict: { [address: string]: IDaoState } = {}
-        for (let i in daoList) {
-          const dao = daoList[i]
-          daocontentplaceholder.avatarAddress = dao.address
-          daoDict[dao.address] = {...daocontentplaceholder, avatarAddress: dao.address}
-        }
-        const payload = normalize(daoDict, schemas.daoList)
+        const payload = normalize(daoDict, schemas.daoList);
         dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Success, payload });
       },
       (err: any) => {
-        throw err
-      }
-    )
+        throw err;
+      },
+    );
     // return the observer so we can unsubscribe later
     // TODO: do not forget to unsubscribe!
-    return observer
+    return observer;
     // const daoCreator = await Arc.DaoCreatorFactory.deployed();
     //
     // if (toBlock == 'latest') {
@@ -128,7 +110,7 @@ export function getDAOs(fromBlock = 0, toBlock = "latest") {
   };
 }
 
-export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest') {
+export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest") {
   return async (dispatch: any, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null });
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
@@ -141,7 +123,7 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest')
   };
 }
 
-export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest') {
+export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = "latest") {
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -186,14 +168,14 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     tokenCount: Util.fromWei(await daoInstance.token.getBalanceOf(avatarAddress)),
     tokenName: await daoInstance.getTokenName(),
     tokenSupply: Util.fromWei(await daoInstance.token.getTotalSupply()),
-    tokenSymbol: await daoInstance.getTokenSymbol()
+    tokenSymbol: await daoInstance.getTokenSymbol(),
   };
 
   // HACK: if the DAO has the word "circles" in the name, then use DAI instead of ETH for rewards
   if (daoData.name.toLowerCase().includes("circles")) {
     const networkName = (await Arc.Utils.getNetworkName()).toLowerCase();
-    const daiAddress = networkName == 'live' ? "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
-      : networkName == 'kovan' ? "0xc4375b7de8af5a38a93548eb8453a498222c4ff2"
+    const daiAddress = networkName == "live" ? "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
+      : networkName == "kovan" ? "0xc4375b7de8af5a38a93548eb8453a498222c4ff2"
         : daoInstance.token.address; // on ganache hack to use the DAO token as the "DAI"
 
     const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(daiAddress) as any;
@@ -208,7 +190,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
 
   const mintReputationEvents = daoInstance.reputation.Mint({}, { fromBlock, toBlock });
   const getMintReputationEvents = promisify(mintReputationEvents.get.bind(mintReputationEvents));
-  let eventsArray = await getMintReputationEvents();
+  const eventsArray = await getMintReputationEvents();
   for (let cnt = 0; cnt < eventsArray.length; cnt++) {
     memberAddresses.push(eventsArray[cnt].args._to.toLowerCase());
   }
@@ -230,7 +212,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     members[address] = member;
   }
 
-  //**** Get all proposals ****//
+  // **** Get all proposals ****//
   const votableProposals = await (await contributionRewardInstance.getVotableProposals(daoInstance.avatar.address))({}, { fromBlock, toBlock }).get();
   const executedProposals = await (await contributionRewardInstance.getExecutedProposals(daoInstance.avatar.address))({}, { fromBlock, toBlock }).get();
   const proposals = [...votableProposals, ...executedProposals];
@@ -257,7 +239,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     proposal.redemptions.forEach((redemption: IRedemptionState) => {
       // If this account is not a current "member" of the DAO then add it to the list because they still have some pending redemptions
       if (!members[redemption.accountAddress]) {
-        members[redemption.accountAddress] = newAccount(avatarAddress, redemption.accountAddress)
+        members[redemption.accountAddress] = newAccount(avatarAddress, redemption.accountAddress);
       }
       members[redemption.accountAddress].redemptions.push(redemption);
     });
@@ -294,11 +276,11 @@ export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
         type: ActionTypes.ARC_UPDATE_DAO_LAST_BLOCK,
         payload: {
           avatarAddress,
-          blockNumber
-        }
+          blockNumber,
+        },
       });
     }
-  }
+  };
 }
 
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
@@ -311,7 +293,7 @@ async function getProposalDetails(
   serverProposal: any,
   currentAccountAddress: string = null,
   fromBlock = 0,
-  toBlock = 'latest'): Promise<IProposalState> {
+  toBlock = "latest"): Promise<IProposalState> {
 
   const proposalId = contributionProposal.proposalId;
   const descriptionHash = contributionProposal.contributionDescriptionHash;
@@ -342,18 +324,18 @@ async function getProposalDetails(
       title = serverProposal.title;
 
       // If we found one, then update the database with the proposalId
-      response = await axios.patch(process.env.API_URL + '/api/proposals/' + serverProposal.id, {
+      response = await axios.patch(process.env.API_URL + "/api/proposals/" + serverProposal.id, {
         arcId: proposalId,
         daoAvatarAddress: avatarAddress,
         descriptionHash,
         description,
         submittedAt: submittedTime,
-        title
+        title,
       });
     }
   }
 
-  const proposer = (await votingMachineInstance.NewProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock: 'latest' }).get(undefined, -1))[0].args._proposer;
+  const proposer = (await votingMachineInstance.NewProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock: "latest" }).get(undefined, -1))[0].args._proposer;
 
   const proposal: IProposalState = {
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
@@ -403,12 +385,12 @@ async function getProposalDetails(
 
   // Check for votes, stakes and redemptions for the current account on this proposal
   if (currentAccountAddress !== null) {
-    const voterInfo = await getVoterInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress)
+    const voterInfo = await getVoterInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress);
     if (voterInfo) {
       proposal.votes.push(voterInfo as IVoteState);
     }
 
-    const stakerInfo = await getStakerInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress)
+    const stakerInfo = await getStakerInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress);
     if (stakerInfo) {
       proposal.stakes.push(stakerInfo as IStakeState);
     }
@@ -430,7 +412,7 @@ async function getProposalDetails(
           proposalId: event.args._proposalId,
           stakerAddress: event.args._staker,
           stakeAmount: Number(Util.fromWei(event.args._amount)),
-          prediction: Number(event.args._vote)
+          prediction: Number(event.args._vote),
         });
       }
     });
@@ -444,7 +426,7 @@ async function getProposalDetails(
           proposalId: event.args._proposalId,
           reputation: Number(Util.fromWei(event.args._reputation)),
           voterAddress: event.args._voter,
-          voteOption: Number(event.args._vote)
+          voteOption: Number(event.args._vote),
         });
       }
     });
@@ -482,8 +464,8 @@ async function getVoterInfo(avatarAddress: string, votingMachineInstance: Arc.Ge
       proposalId,
       reputation: Util.fromWei(voterInfo.reputation),
       voteOption: Number(voterInfo.vote),
-      voterAddress
-    }
+      voterAddress,
+    };
   } else {
     return false;
   }
@@ -498,8 +480,8 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
       proposalId,
       stakeAmount: Util.fromWei(stakerInfo.stake),
       prediction: Number(stakerInfo.vote),
-      stakerAddress
-    }
+      stakerAddress,
+    };
   } else {
     return false;
   }
@@ -560,8 +542,8 @@ async function getProposalRedemptions(proposal: IProposalState, state: IRootStat
   const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(proposal.daoAvatarAddress)).votingMachineAddress;
   const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-  let redemptions: IRedemptionState[] = [];
-  let accountsToUpdate: { [key: string]: IAccountState } = {};
+  const redemptions: IRedemptionState[] = [];
+  const accountsToUpdate: { [key: string]: IAccountState } = {};
 
   // Gather redemptions for all people who interacted with the proposal
   // Doing this here instead of on proposal executed because we need to show redemptions for expired proposals too (TODO: does this make sense?)
@@ -601,7 +583,7 @@ async function getProposalRedemptions(proposal: IProposalState, state: IRootStat
   return { entities, redemptions: redemptionsStrings };
 }
 
-export type CreateDAOAction = IAsyncAction<'ARC_CREATE_DAO', {}, any>;
+export type CreateDAOAction = IAsyncAction<"ARC_CREATE_DAO", {}, any>;
 
 export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: IAccountState[]): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
@@ -627,7 +609,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
       dispatch({
         type: ActionTypes.ARC_CREATE_DAO,
-        sequence: AsyncActionSequence.Pending
+        sequence: AsyncActionSequence.Pending,
       } as CreateDAOAction);
 
       const dao = await Arc.DAO.new({
@@ -641,11 +623,11 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
           // { name: "GlobalConstraintRegistrar" },
           { name: "SchemeRegistrar" },
           { name: "ContributionReward" },
-          { name: "GenesisProtocol" }
+          { name: "GenesisProtocol" },
         ],
         votingMachineParams: {
-          votingMachineName: "GenesisProtocol"
-        }
+          votingMachineName: "GenesisProtocol",
+        },
       });
 
       const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
@@ -672,13 +654,13 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
         tokenCount: 0,
         tokenSupply: totalTokens,
         tokenName,
-        tokenSymbol
+        tokenSymbol,
       };
 
       dispatch({
         type: ActionTypes.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Success,
-        payload: normalize(daoData, schemas.daoSchema)
+        payload: normalize(daoData, schemas.daoSchema),
       } as CreateDAOAction);
 
       dispatch(push("/dao/" + dao.avatar.address));
@@ -687,17 +669,17 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       dispatch({
         type: ActionTypes.ARC_CREATE_DAO,
         sequence: AsyncActionSequence.Failure,
-      } as CreateDAOAction)
+      } as CreateDAOAction);
     }
   }; /* EO createDAO */
 }
 
-export type CreateProposalAction = IAsyncAction<'ARC_CREATE_PROPOSAL', { avatarAddress: string }, any>;
+export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
 export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, ethReward: number, externalTokenReward: number, beneficiaryAddress: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const meta = {
-      avatarAddress: daoAvatarAddress
+      avatarAddress: daoAvatarAddress,
     };
 
     try {
@@ -756,9 +738,9 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
         meta,
-      } as CreateProposalAction)
+      } as CreateProposalAction);
     }
-  }
+  };
 }
 
 export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEventResult) {
@@ -794,34 +776,34 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
       nativeTokenReward: eventResult._rewards[0],
       numberOfPeriods: 1,
       periodLength: 0,
-      reputationChange: eventResult._reputationChange
-    }
+      reputationChange: eventResult._reputationChange,
+    };
 
     const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress);
 
     const payload = normalize(proposal, schemas.proposalSchema);
 
     const meta = {
-      avatarAddress
+      avatarAddress,
     };
 
     dispatch({
       type: ActionTypes.ARC_CREATE_PROPOSAL,
       sequence: AsyncActionSequence.Success,
       meta,
-      payload
+      payload,
     } as CreateProposalAction);
-  }
+  };
 }
 
 export function executeProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: Dispatch<any>) => {
-    const dao = await Arc.DAO.at(avatarAddress)
-    const cr = (await dao.getSchemes('ContributionReward'))[0].wrapper as ContributionRewardWrapper;
+    const dao = await Arc.DAO.at(avatarAddress);
+    const cr = (await dao.getSchemes("ContributionReward"))[0].wrapper as ContributionRewardWrapper;
     const gpAddress = await cr.getVotingMachineAddress(avatarAddress);
     const gp = await GenesisProtocolFactory.at(gpAddress);
     await gp.execute({ proposalId });
-  }
+  };
 }
 
 export function onProposalExecuted(avatarAddress: string, proposalId: string, executionState: ExecutionState, decision: VoteOptions, reputationWhenExecuted: number) {
@@ -844,7 +826,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
       proposal.winningVote = decision;
 
       // Have to do this because redeem sets proposer to 0, to prevent future redemptions for proposer
-      proposal.proposer = (await votingMachineInstance.NewProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock: 'latest' }).get(undefined, -1))[0].args._proposer;
+      proposal.proposer = (await votingMachineInstance.NewProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock: "latest" }).get(undefined, -1))[0].args._proposer;
 
       let { redemptions, entities } = await getProposalRedemptions(proposal, getState());
       proposal.redemptions = redemptions;
@@ -860,10 +842,10 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
 
       return dispatch({
         type: ActionTypes.ARC_ON_PROPOSAL_EXECUTED,
-        payload: { entities, dao: daoUpdates }
-      })
+        payload: { entities, dao: daoUpdates },
+      });
     }
-  }
+  };
 }
 
 export function onProposalExpired(proposal: IProposalState) {
@@ -895,12 +877,12 @@ export function onProposalExpired(proposal: IProposalState) {
 
     return dispatch({
       type: ActionTypes.ARC_ON_PROPOSAL_EXPIRED,
-      payload: { entities, dao: daoUpdates }
-    })
-  }
+      payload: { entities, dao: daoUpdates },
+    });
+  };
 }
 
-export type VoteAction = IAsyncAction<'ARC_VOTE', {
+export type VoteAction = IAsyncAction<"ARC_VOTE", {
   avatarAddress: string,
   proposalId: string,
   reputation: number,
@@ -909,8 +891,8 @@ export type VoteAction = IAsyncAction<'ARC_VOTE', {
 }, {
     entities: any,
     proposal: any,
-    voter: any
-  }>
+    voter: any,
+  }>;
 
 export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalState, voteOption: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
@@ -937,11 +919,11 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
         type: ActionTypes.ARC_VOTE,
         sequence: AsyncActionSequence.Pending,
         meta,
-      } as VoteAction)
+      } as VoteAction);
 
       await votingMachineInstance.vote({
         proposalId,
-        vote: voteOption
+        vote: voteOption,
       });
 
     } catch (err) {
@@ -949,8 +931,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
       dispatch({
         type: ActionTypes.ARC_VOTE,
         sequence: AsyncActionSequence.Failure,
-        meta
-      } as VoteAction)
+        meta,
+      } as VoteAction);
     }
   };
 }
@@ -962,7 +944,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       proposalId,
       reputation,
       voteOption,
-      voterAddress
+      voterAddress,
     };
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
@@ -1002,19 +984,19 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
       voter: {
         tokens: Util.fromWei(await daoInstance.token.getBalanceOf(voterAddress)),
         reputation: Util.fromWei(await daoInstance.reputation.getBalanceOf(voterAddress)),
-      }
+      },
     };
 
     dispatch({
       type: ActionTypes.ARC_VOTE,
       sequence: AsyncActionSequence.Success,
       meta,
-      payload
+      payload,
     } as VoteAction);
-  }
+  };
 }
 
-export type StakeAction = IAsyncAction<'ARC_STAKE', {
+export type StakeAction = IAsyncAction<"ARC_STAKE", {
   avatarAddress: string,
   proposalId: string,
   prediction: VoteOptions,
@@ -1022,8 +1004,8 @@ export type StakeAction = IAsyncAction<'ARC_STAKE', {
   stakerAddress: string,
 }, {
     dao: any,
-    proposal: any
-  }>
+    proposal: any,
+  }>;
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
@@ -1061,21 +1043,21 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
       dispatch({
         type: ActionTypes.ARC_STAKE,
         sequence: AsyncActionSequence.Pending,
-        meta
-      } as StakeAction)
+        meta,
+      } as StakeAction);
 
       await votingMachineInstance.stake({
         proposalId,
         vote: prediction,
-        amount
-      })
+        amount,
+      });
     } catch (err) {
       console.error(err);
       dispatch({
         type: ActionTypes.ARC_STAKE,
         sequence: AsyncActionSequence.Failure,
         meta,
-      } as StakeAction)
+      } as StakeAction);
     }
   };
 }
@@ -1106,7 +1088,7 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
       proposalId,
       prediction,
       stakeAmount,
-      stakerAddress
+      stakerAddress,
     };
 
     dispatch({
@@ -1118,13 +1100,13 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
           currentThresholdToBoost:
             Util.fromWei(await votingMachineInstance.getThresholdForSchemeAndCreator(contributionRewardInstance, avatarAddress)),
         },
-        proposal
-      }
+        proposal,
+      },
     } as StakeAction);
-  }
+  };
 }
 
-export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
+export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   avatarAddress: string,
   proposalId: string,
   accountAddress: string,
@@ -1135,7 +1117,7 @@ export type RedeemAction = IAsyncAction<'ARC_REDEEM', {
     proposal: any;
     beneficiaryRedemptions: IRedemptionState,
     currentAccountRedemptions: IRedemptionState,
-  }>
+  }>;
 
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
@@ -1152,7 +1134,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
     dispatch({
       type: ActionTypes.ARC_REDEEM,
       sequence: AsyncActionSequence.Pending,
-      meta
+      meta,
     } as RedeemAction);
 
     try {
@@ -1173,11 +1155,11 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
       proposal.state = Number(await votingMachineInstance.getState({ proposalId: proposal.proposalId }));
       proposal.state = checkProposalExpired(proposal);
 
-      let payload: any = {
+      const payload: any = {
         // Update account of the beneficiary
         beneficiary: {
           tokens: Util.fromWei(await daoInstance.token.getBalanceOf(beneficiaryAddress)),
-          reputation: Util.fromWei(await daoInstance.reputation.getBalanceOf(beneficiaryAddress))
+          reputation: Util.fromWei(await daoInstance.reputation.getBalanceOf(beneficiaryAddress)),
         },
         // Update DAO total reputation and tokens
         //   XXX: this doesn't work with MetaMask and ganache right now, there is some weird caching going on
@@ -1187,17 +1169,17 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         },
         proposal: {
           proposer: proposal.proposer,
-          state: proposal.state
+          state: proposal.state,
         },
-        beneficiaryRedemptions
+        beneficiaryRedemptions,
       };
 
       if (accountAddress !== beneficiaryAddress) {
         payload.currentAccount = {
           address: accountAddress,
           reputation: Util.fromWei(await daoInstance.reputation.getBalanceOf(accountAddress)),
-          tokens: Util.fromWei(await daoInstance.token.getBalanceOf(accountAddress))
-        }
+          tokens: Util.fromWei(await daoInstance.token.getBalanceOf(accountAddress)),
+        };
         const currentAccountRedemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
         payload.currentAccountRedemptions = currentAccountRedemptions;
       }
@@ -1206,7 +1188,7 @@ export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStat
         type: ActionTypes.ARC_REDEEM,
         sequence: AsyncActionSequence.Success,
         meta,
-        payload
+        payload,
       } as RedeemAction);
 
     } catch (err) {
@@ -1229,10 +1211,10 @@ export function onRedeemReward(avatarAddress: string, proposalId: string, benefi
         rewardType,
         proposalId,
         beneficiary,
-        isTarget
-      }
-    })
-  }
+        isTarget,
+      },
+    });
+  };
 }
 
 export function onTransferEvent(avatarAddress: string, from: string, to: string) {
@@ -1250,10 +1232,10 @@ export function onTransferEvent(avatarAddress: string, from: string, to: string)
         fromBalance,
         to,
         toBalance,
-        totalTokens
-      }
-    })
-  }
+        totalTokens,
+      },
+    });
+  };
 }
 
 export function onReputationChangeEvent(avatarAddress: string, address: string) {
@@ -1268,10 +1250,10 @@ export function onReputationChangeEvent(avatarAddress: string, address: string) 
         avatarAddress,
         address,
         reputation,
-        totalReputation
-      }
-    })
-  }
+        totalReputation,
+      },
+    });
+  };
 }
 
 export function onDAOEthBalanceChanged(avatarAddress: string, balance: Number) {
@@ -1288,8 +1270,8 @@ export function onDAOEthBalanceChanged(avatarAddress: string, balance: Number) {
         type: ActionTypes.ARC_ON_DAO_ETH_BALANCE_CHANGE,
         payload: {
           avatarAddress,
-          balance
-        }
+          balance,
+        },
       });
     }
   };
@@ -1309,8 +1291,8 @@ export function onDAOGenBalanceChanged(avatarAddress: string, balance: Number) {
         type: ActionTypes.ARC_ON_DAO_GEN_BALANCE_CHANGE,
         payload: {
           avatarAddress,
-          balance
-        }
+          balance,
+        },
       });
     }
   };
@@ -1330,8 +1312,8 @@ export function onDAOExternalTokenBalanceChanged(avatarAddress: string, balance:
         type: ActionTypes.ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE,
         payload: {
           avatarAddress,
-          balance
-        }
+          balance,
+        },
       });
     }
   };
