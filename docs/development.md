@@ -2,26 +2,28 @@
 
 There are different ways a developer can use the docker environment for development.
 
-Probably the most straightfoward is to run the services that alchemy depends on in one terminal,
+Probably the most flexible way is to run the services that alchemy depends on in one terminal,
 and run the alchemy server in a seperate terminal:
+
 ```sh
-  docker-compose build
+  docker-compose build # run this if package.json has changed
   docker-compose up graph-node alchemy-server # start the services needed by alchemy
   # in another terminal run:
   npm run setup-env
   npm run start # start the development server
-  # ...  point your browser to 127.0.0.1:3000
+  # ...  point your browser to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK
   # ... develop away
   # ... commit your changes
   docker-compose down -v
 ```
-Alternatively you can run the webserver inside the `alchemy` container
+
+Alternatively you can run the webserver inside the `alchemy` container. This would be typical for quick fixes:
 ```sh
-  docker-compose build # run this the first time, or if you changed package.json
-  docker-compose up # start all the containers
+  docker-compose build # run this if package.json has changed
+  docker-compose up alchemy # start alchemy and all the containers that depend on it
   # in another shell run this:
   npm run setup-env # deploy contracts, configure subgraph...
-  # ...  point your browser to 127.0.0.1:3000
+  # ...  point your browser to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK and connect to localhost:8545
   # ... develop away
   # ... commit your changes
   docker-compose down -v
@@ -31,13 +33,13 @@ See [docker](./docker.md) for details about the docker containers.
 
 *Due to a bug in ganache, the state is not persistent, so you must re-run `npm run setup-env` after you (re-)start docker (TBD: link to issue)*
 
-# Developing @daostack/client in tandem with alchemy
+# Developing @daostack/client in tandem with alchemy with npm link
 
 ## The setup
 
 Download and install the client package and use `npm link` for local development
 ```sh
-# get the dev branch ofthe client repository
+# get the dev branch from the client repository
 git clone https://github.com/daostack/client.git#dev
 cd client
 npm install
