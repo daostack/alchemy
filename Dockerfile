@@ -10,4 +10,4 @@ COPY . /alchemy
 WORKDIR /alchemy
 RUN npm ci  --silent
 
-ENTRYPOINT [ "/wait && npm run start-docker" ]
+ENTRYPOINT [ "npm","run","start-docker" ]
