@@ -256,7 +256,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             <span className={css.version}><em>Alchemy {Util.networkName(networkId)}</em> <span> v.{VERSION}</span></span>
           </div>
           <div className={css.headerRight}>
-            {isProfilePage ? "" : <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>}
+            <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>
             <div className={css.accountInfo}>
               <div className={css.accountImage}>
                 <AccountImage accountAddress={ethAccountAddress} />
