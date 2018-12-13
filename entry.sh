@@ -1,3 +1,7 @@
-\wait
+#!/bin/bash
 
-ls
+set -e
+
+\wait
+cd /alchemy
+npm run start-docker
