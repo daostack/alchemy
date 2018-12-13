@@ -8,9 +8,8 @@ services:
       dockerfile: Dockerfile
       context: .
     links:
-      # - ganache
       - alchemy-server
-      - subgraph
+      - graph-node
     working_dir: /alchemy/
     volumes:
       # - .:/alchemy
@@ -43,23 +42,6 @@ services:
       context: ./docker/postgres/
     # ports:
       # - 5435:5432
-
-  subgraph:
-    build:
-      context: ./node_modules/@daostack/subgraph
-    links:
-      - ipfs
-      - graph-node
-      - ganache
-    environment:
-      ethereum: http://ganache:8545
-      test_mnemonic: myth like bonus scare over problem client lizard pioneer submit female collect
-      node_http: http://graph-node:8000/by-name/daostack/graphql
-      node_ws: http://graph-node:8001/by-name/daostack
-      node_rpc: http://graph-node:8020
-      ipfs_host: ipfs
-      ipfs_port: 5001
-      WAIT_HOSTS: ipfs:5001, graph-node:8020
 
   graph-node:
     image: graphprotocol/graph-node:v0.4.1
