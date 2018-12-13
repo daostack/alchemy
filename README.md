@@ -19,11 +19,16 @@ npm install
 There are two ways to work with the alchemy stack.
 We are providing a convenient `docker-compose` file for quick setup. Alternatively,
 you can recreated the docker enviroement by installing an starting all [services locally](./docs/nodocker.md).
+
 ## Working with docker
 
 The easiest way to start developing is to work with docker.  After you have installed docker, run the following steps:
 ```sh
 docker-compose up alchemy
+```
+And in other terminal you will need to deploy the contracts:
+```
+npm run setup-env
 ```
 This will start a server on http://127.0.0.1:3000.
 
