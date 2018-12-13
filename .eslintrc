@@ -1,0 +1,14 @@
+{
+    "extends": "eslint:recommended",
+    "env": {
+      "amd": true,
+      "node": true,
+      "es6": true,
+    },
+    "rules": {
+        "semi": 2,
+        "eol-last": 2,
+        "eqeqeq": "error",
+        "no-console": 0
+    }
+}
