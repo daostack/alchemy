@@ -12,3 +12,6 @@ yarn*
 .chrome
 .vscode
 config/migration.json
+abis/
+schema.graphql
+subgraph.yaml
