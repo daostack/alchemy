@@ -202,6 +202,7 @@ if (require.main === module) {
 } else {
   module.exports = {
     configure,
-    migrate
+    migrate,
+    generateAbis
   };
 }

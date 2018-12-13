@@ -1,6 +1,5 @@
 const path = require('path')
 
-
 /**
  * Take the output of the @doastack/migration repo and combine it into a subgraph.yaml
  * that can be deployed
