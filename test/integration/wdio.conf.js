@@ -10,7 +10,7 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './test/integration/*.js'
+        './test/integration/*.ts'
     ],
     // Patterns to exclude.
     exclude: [
@@ -247,4 +247,4 @@ exports.config = {
      */
     // onComplete: function(exitCode, config, capabilities) {
     // }
-}
+};
