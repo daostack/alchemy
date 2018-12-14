@@ -48,7 +48,8 @@
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
     "lint": "tslint --project .",
     "populate-dao": "ts-node scripts/populateDAO.ts",
-    "setup-env": "node scripts/setup-env.js",
+    "setup-env": "npm run subgraph:deploy",
+    "subgraph:deploy": "npm explore @daostack/subgraph -- npm i && npm explore @daostack/subgraph -- npm run deploy",
     "start": "webpack-dev-server --config webpack.dev.config.js",
     "start-dev-profiling": "cross-env NODE_ENV=dev-profiling API_URL=https://daostack-alchemy.herokuapp.com S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-docker": "webpack-dev-server --config webpack.docker.config.js",
@@ -63,6 +64,7 @@
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.94",
     "@daostack/client": "0.0.1",
+    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",

@@ -18,7 +18,7 @@ npm install
 
 There are two ways to work with the alchemy stack.
 We are providing a convenient `docker-compose` file for quick setup. Alternatively,
-you can recreated the docker enviroement by installing an starting all [services locally](./docs/nodocker.md).
+you can recreate the docker environment by installing an starting all [services locally](./docs/nodocker.md).
 
 ## Working with docker
 
