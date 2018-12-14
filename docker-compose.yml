@@ -44,7 +44,7 @@ services:
       # - 5435:5432
 
   graph-node:
-    image: graphprotocol/graph-node:v0.4.1
+    image: graphprotocol/graph-node:v0.5.0
     ports:
       - 8000:8000
       - 8001:8001
