@@ -4,6 +4,7 @@ export const outer: string;
 export const top: string;
 export const loading: string;
 export const daoHeader: string;
+export const daoHeadings: string;
 export const nav: string;
 export const borderBottom: string;
 export const columnHeader: string;
