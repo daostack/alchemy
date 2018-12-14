@@ -2,6 +2,7 @@ import * as Arc from "@daostack/arc.js";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
+import ethers from "ethers';
 import * as _ from "lodash";
 import * as moment from "moment";
 import { denormalize, normalize } from "normalizr";
@@ -9,13 +10,13 @@ import { push } from "react-router-redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
-const ethers = require('ethers');
-import ipfs from '../lib/ipfs';
 
-import getWallet from '../lib/wallet';
 const contributionRewardArtifacts = require('@daostack/arc.js/migrated_contracts/ContributionReward.json');
 
+import * as arcConstants from "constants/arcConstants";
+import ipfs from "lib/ipfs";
 import Util from "lib/util";
+import getWallet from 'lib/wallet';
 import { IRootState } from "reducers/index";
 import { ActionTypes,
          checkProposalExpired,
@@ -191,7 +192,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const executedProposals = await (await contributionRewardInstance.getExecutedProposals(daoInstance.avatar.address))({}, { fromBlock, toBlock }).get();
   const proposals = [...votableProposals, ...executedProposals];
 
-  // Get all proposals' details like title and url from the server
+  // Get all proposals' details like title and url from the ipfs server
   let serverProposals: { [key: string]: any } = {};
   try {
     const promises = proposals.map(async (proposal) => {
@@ -261,7 +262,7 @@ export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
   }
 }
 
-// Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
+// Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the ipfs server
 // TODO: put in a lib/util class somewhere?
 async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {
   const proposalId = contributionProposal.proposalId;
@@ -276,7 +277,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
 
   const submittedTime = Number(proposalDetails.submittedTime);
 
-  // Use title and url from the server
+  // Use title and url from the ipfs server
   let url = "";
   let title = "[no title]";
   if (serverProposal) {
@@ -646,7 +647,7 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         submittedTime,
       }
 
-      // Save the proposal title, url and submitted time on the server
+      // Save the proposal title, url and submitted time on the ipfs server
       let ipfsHash
       try {
         ipfsHash = await ipfs.add(description)

@@ -9,6 +9,7 @@
     "baseUrl": "src"
   },
   "include": [
+    "./node_modules/**/index.d.ts",
     "./src/**/*",
     "./typings/*"
   ]
