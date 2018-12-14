@@ -10,6 +10,7 @@ import { IDaoState } from "reducers/arcReducer";
 import * as schemas from "schemas";
 
 import * as css from "./DaoList.scss";
+import DaoContainer from "./DaoContainer"
 
 interface IStateProps {
   daos: { [key: string]: IDaoState };
@@ -17,6 +18,7 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
+  // TODO: only get the addresses here..
   daos: denormalize(state.arc.daos, schemas.daoList, state.arc),
   daosLoaded: state.arc.daosLoaded,
 });
@@ -48,25 +50,8 @@ class DaoListContainer extends React.Component<IProps, null> {
 
     const daoNodes = Object.keys(daos).map((key: string) => {
       const dao = daos[key];
-      return (
-        <Link
-          className={css.daoLink}
-          to={"/dao/" + dao.avatarAddress}
-          key={"dao_" + dao.avatarAddress}
-          data-test-id="dao-link"
-        >
-          <div className={css.dao}>
-            <div className={css.daoAvatar}>
-              <img src="/assets/images/daostack-logo.png"/>
-            </div>
-            <h3 className={css.daoName}>{dao.name}</h3>
-            <div className={css.daoInfo}>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-            <div className={css.daoInfo}>Num tokens: {Math.round(dao.tokenCount).toLocaleString()}</div>
-            <div className={css.daoInfo}>Reputation: {Math.round(dao.reputationCount).toLocaleString()}</div>
-          </div>
-        </Link>
-      );
-    });
+      return <DaoContainer key={dao.address}  daoAddress={dao.address}/>
+    })
 
     return (
       daosLoaded ? (

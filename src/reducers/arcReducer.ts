@@ -5,6 +5,8 @@ import * as moment from "moment";
 import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
+import { Address, IDaoState as IClientDAOState, Reputation, Token } from '@daostack/client'
+
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",
   ARC_CREATE_PROPOSAL = "ARC_CREATE_PROPOSAL",
@@ -85,7 +87,17 @@ export function newAccount(
   }
 }
 
+// TODO: this should be, or extend, the IClientDAOState
 export interface IDaoState {
+  // props from IClientDAOState
+  address: Address // address of the avatar
+  // members: number
+  name: string
+  reputation: Reputation
+  token: Token
+
+  // Legacy props
+  // TODO: props below should be culled as much as possible
   avatarAddress: string;
   controllerAddress: string;
   currentThresholdToBoost: number;
@@ -97,7 +109,7 @@ export interface IDaoState {
   genCount: number;
   lastBlock: string | number; // The last block on the chain processed for this DAO
   members: Array<IAccountState | string>; // Either normalized (string) or denormalized (object)
-  name: string;
+  // name: string;
   rank: number;
   promotedAmount: number;
   proposals: Array<IProposalState | string>; // Either normalized (string) or denormalized (IProposalState)

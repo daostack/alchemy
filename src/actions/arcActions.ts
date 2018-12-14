@@ -10,7 +10,7 @@ import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
 import { arc } from "../arc";
-// import { DAO } from "@daostack/client"
+import { Address, IDaoState as IClientDAOState, Reputation, Token } from '@daostack/client'
 
 import Util from "lib/util";
 import {
@@ -44,32 +44,9 @@ export function getDAOs(fromBlock = 0, toBlock = "latest") {
     const observer = daoObservable.subscribe(
       // TODO: use DAO type here
       (daoList: any[]) => {
-        // TODO: this is a content place holder - we need to get actual content from the observable
-        const daocontentplaceholder: IDaoState = {
-          avatarAddress: "0x6a79390ea08e0a8f1c33f89a2269883d3530a0a4",
-          controllerAddress: "",
-          currentThresholdToBoost: 7e9,
-          ethCount: 0,
-          genCount: 0,
-          lastBlock: 57,
-          members: [],
-          name: "Genesis Test",
-          promotedAmount: 0,
-          proposals: [],
-          proposalsLoaded: true,
-          rank: 1,
-          reputationAddress: "0xa731fd65a36c720ca6fd54a640c573839ed7825a",
-          reputationCount: 6e15,
-          tokenAddress: "0x8656bd7114d0a6da1726cb69bc31799ca691f684",
-          tokenCount: 0,
-          tokenName: "Genesis Test",
-          tokenSupply: 6e15,
-          tokenSymbol: "GDT",
-        };
-        const daoDict: { [address: string]: IDaoState } = {};
+        const daoDict: { [address: string]: { address: string, avatarAddress: string } } = {};
         for (const dao of daoList) {
-          daocontentplaceholder.avatarAddress = dao.address;
-          daoDict[dao.address] = {...daocontentplaceholder, avatarAddress: dao.address};
+          daoDict[dao.address] = { address: dao.address, avatarAddress: dao.address};
         }
         const payload = normalize(daoDict, schemas.daoList);
         dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Success, payload });
@@ -78,52 +55,34 @@ export function getDAOs(fromBlock = 0, toBlock = "latest") {
         throw err;
       },
     );
-    // return the observer so we can unsubscribe later
-    // TODO: do not forget to unsubscribe!
     return observer;
-    // const daoCreator = await Arc.DaoCreatorFactory.deployed();
-    //
-    // if (toBlock == 'latest') {
-    //   // make sure we use same toBlock for every call to the blockchain so everything is in sync
-    //   toBlock = await Util.getLatestBlock();
-    // }
-    //
-    // // Get the list of daos we populated on the blockchain during genesis by looking for NewOrg events
-    // const newOrgEventsWatcher = daoCreator.InitialSchemesSet({}, { fromBlock, toBlock });
-    // const getNewOrgEvents = promisify(newOrgEventsWatcher.get.bind(newOrgEventsWatcher));
-    // const newOrgEvents = await getNewOrgEvents();
-    //
-    // const daos = {} as { [key: string]: IDaoState };
-    //
-    // for (let index = 0; index < newOrgEvents.length; index++) {
-    //   const event = newOrgEvents[index];
-    //   const daoData = await getDAOData(event.args._avatar, null, fromBlock, toBlock);
-    //   if (daoData) {
-    //     daos[event.args._avatar] = daoData;
-    //   }
-    // }
-    //
-    // const payload = normalize(daos, schemas.daoList);
-    // (payload as any).lastBlock = toBlock;
-    //
-    // dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Success, payload });
-  };
+  }
 }
 
 export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest") {
   return async (dispatch: any, getState: () => IRootState) => {
-    dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null });
-    const currentAccountAddress: string = getState().web3.ethAccountAddress;
-    const daoData = await getDAOData(avatarAddress, currentAccountAddress, fromBlock, toBlock);
-    if (daoData) {
-      dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Success, payload: normalize(daoData, schemas.daoSchema) });
-    } else {
-      dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Failure, payload: "Not a valid DAO" });
-    }
-  };
+    dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null })
+    const observer = arc.dao(avatarAddress).state.subscribe(
+      (daoData) => {
+        // daoData.avatarAddress = daoData.address
+        const payload = normalize(daoData, schemas.daoSchema)
+        dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Success, payload })
+      },
+      (err: any) => { throw err}
+    )
+    // const currentAccountAddress: string = getState().web3.ethAccountAddress;
+    // const daoData = await getDAOData(avatarAddress, currentAccountAddress, fromBlock, toBlock);
+    // if (daoData) {
+    //   dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Success, payload: normalize(daoData, schemas.daoSchema) });
+    // } else {
+    //   dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Failure, payload: "Not a valid DAO" });
+    // }
+    return observer
+  }
 }
 
 export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = "latest") {
+  // THIS FUNCTION IS NOT USED ANYMORE, BUT DO NOT DELETE UNTIL YOU ARE SURE ALL FUNCTIONALITY IS PORTED
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
@@ -149,7 +108,12 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
 
   const getBalance = promisify(web3.eth.getBalance);
 
-  const daoData: IDaoState = {
+  const daoData: any = {
+    // address: avatarAddress,
+    // reputation: new Reputation( daoInstance.reputation.address),
+    // token: new Token(daoInstance.token.address),
+
+    // TODO: following is legacy and should be culled as much as possible
     avatarAddress,
     controllerAddress: "",
     currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThresholdForSchemeAndCreator(contributionRewardInstance, avatarAddress)),
@@ -169,6 +133,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     tokenName: await daoInstance.getTokenName(),
     tokenSupply: Util.fromWei(await daoInstance.token.getTotalSupply()),
     tokenSymbol: await daoInstance.getTokenSymbol(),
+
   };
 
   // HACK: if the DAO has the word "circles" in the name, then use DAI instead of ETH for rewards
@@ -633,7 +598,7 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
       const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
-      const daoData: IDaoState = {
+      const daoData: any = {
         avatarAddress: dao.avatar.address,
         controllerAddress: dao.controller.address,
         currentThresholdToBoost:
