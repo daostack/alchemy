@@ -15,7 +15,7 @@ function timeout(promise, ms) {
 
 const ipfsHashPrefix = '1220';
 // Stores a static snapshot of the proposal data from before the ipfs migration
-const legacyIpfsHash = 'QmNaTgnLUAWneQwifeeLZHc5N1k2wqFKSfWPRjTS9ZjTxZ';
+const legacyIpfsHash = 'QmQFu4LzbD8zAPf4wjpcxAkgYAywJnvfi3CAThfedUj7Ba';
 
 let host;
 let protocol;
