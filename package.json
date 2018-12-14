@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.94",
-    "@daostack/client": "0.0.2",
+    "@daostack/client": "0.0.3",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
