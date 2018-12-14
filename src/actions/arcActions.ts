@@ -10,7 +10,7 @@ import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
 import { arc } from "../arc";
-import { Address, IDaoState as IClientDAOState, Reputation, Token } from '@daostack/client'
+import { Address, IDAOState as IClientDAOState, Reputation, Token } from '@daostack/client'
 
 import Util from "lib/util";
 import {
