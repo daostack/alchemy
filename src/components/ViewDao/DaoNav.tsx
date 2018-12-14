@@ -30,7 +30,7 @@ export default class DaoNav extends React.Component<IProps, null> {
           : ""
         }
         <Tooltip placement="left" trigger={["hover"]} overlay="Create a New Proposal">
-          <NavLink className={css.createProposal} activeClassName={css.selected} to={`/dao/${dao.avatarAddress}/proposals/create`}>
+          <NavLink className={css.createProposal} activeClassName={css.selected} to={`/dao/${dao.avatarAddress}/proposals/create`} data-test-id="create-proposal">
             <img src="/assets/images/Icon/Draft-white.svg"/>
           </NavLink>
         </Tooltip>

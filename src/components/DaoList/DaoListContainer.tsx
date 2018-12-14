@@ -37,7 +37,7 @@ class DaoListContainer extends React.Component<IProps, null> {
     const daoNodes = Object.keys(daos).map((key: string) => {
       const dao = daos[key];
       return (
-        <Link className={css.daoLink} to={"/dao/" + dao.avatarAddress} key={"dao_" + dao.avatarAddress}>
+        <Link className={css.daoLink} to={"/dao/" + dao.avatarAddress} key={"dao_" + dao.avatarAddress} data-test-id="dao-link">
           <div className={css.dao}>
             <div className={css.daoAvatar}>
               <img src="/assets/images/daostack-logo.png"/>
@@ -55,7 +55,7 @@ class DaoListContainer extends React.Component<IProps, null> {
       daosLoaded ?
         <div className={css.wrapper}>
           <div className={css.daoListHeader + " " + css.clearfix}>
-            <h2>All DAOs</h2>
+            <h2 data-test-id="header-all-daos">All DAOs</h2>
           </div>
           {daoNodes ? daoNodes : "None"}
         </div>

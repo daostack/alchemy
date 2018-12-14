@@ -1,0 +1,54 @@
+input {
+  &.error {
+    border-bottom: 2px solid red;
+  }
+}
+
+.errorMessage {
+  position: relative;
+  left: 10px;
+  color: red
+}
+
+.submitButton {
+  border: 1px solid $accent-4;
+  height: 40px;
+  display: inline-block;
+  line-height: 30px;
+  margin: 0 auto;
+  color: $accent-4;
+  font-weight: normal;
+  font-size: $body;
+  padding: 0 15px;
+  font-family: $body-font;
+  transition: all .25s ease;
+  background-color: rgba(200,200,200,0);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  img {
+    position: relative;
+    top: 4px;
+    margin-right: 8px;
+  }
+
+  .loading {
+    width: 18px;
+    display: none;
+  }
+}
+.submitButton:disabled .loading {
+  display: inline-block;
+}
+
+.submitButton:disabled {
+  background-color: rgba(200,200,200,.5);
+  border: 1px solid rgba(200,200,200,1);
+  color: rgba(75,75,75,1);
+}
+
+.submitButton:disabled .sendIcon {
+  display: none;
+}

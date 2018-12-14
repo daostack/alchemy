@@ -9,12 +9,14 @@ import { connect, Dispatch } from "react-redux";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
+import * as profilesActions from "actions/profilesActions";
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { checkProposalExpired, IAccountState, IDaoState, IProposalState, IRedemptionState, ProposalStates, proposalPassed } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
 
@@ -34,6 +36,7 @@ import * as proposalCss from "../Proposal/Proposal.scss";
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
   currentAccountAddress: string;
+  currentAccountProfile: IProfileState;
   dao: IDaoState;
   daoAvatarAddress: string;
   lastBlock: number;
@@ -53,6 +56,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
+    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     numRedemptions,
@@ -62,6 +66,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
+  getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
+  hideTour: typeof uiActions.hideTour;
   onTransferEvent: typeof arcActions.onTransferEvent;
   onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
   onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
@@ -69,13 +75,14 @@ interface IDispatchProps {
   onDAOExternalTokenBalanceChanged: typeof arcActions.onDAOExternalTokenBalanceChanged;
   onExternalTokenBalanceChanged: typeof web3Actions.onExternalTokenBalanceChanged;
   onProposalExpired: typeof arcActions.onProposalExpired;
-  updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
-  hideTour: typeof uiActions.hideTour;
   showTour: typeof uiActions.showTour;
   showNotification: typeof showNotification;
+  updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
 }
 
 const mapDispatchToProps = {
+  getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
+  hideTour: uiActions.hideTour,
   onTransferEvent: arcActions.onTransferEvent,
   onReputationChangeEvent: arcActions.onReputationChangeEvent,
   onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
@@ -83,10 +90,9 @@ const mapDispatchToProps = {
   onDAOExternalTokenBalanceChanged: arcActions.onDAOExternalTokenBalanceChanged,
   onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
   onProposalExpired: arcActions.onProposalExpired,
-  updateDAOLastBlock: arcActions.updateDAOLastBlock,
-  hideTour: uiActions.hideTour,
   showTour: uiActions.showTour,
-  showNotification
+  showNotification,
+  updateDAOLastBlock: arcActions.updateDAOLastBlock,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -165,6 +171,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       currentAccountAddress,
       daoAvatarAddress,
       dao,
+      getProfilesForAllAccounts,
       onTransferEvent,
       onReputationChangeEvent,
       onDAOEthBalanceChanged,
@@ -175,6 +182,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       showNotification,
       updateDAOLastBlock
     } = this.props;
+
+    getProfilesForAllAccounts();
 
     // We have the DAO loaded but haven't set up the watchers yet, so set them up
     // TODO: move all this to app container and just setup watchers for each DAO, plus one blockInterval looking at every block
@@ -261,7 +270,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   };
 
   public render() {
-    const { currentAccountAddress, dao, numRedemptions, tourVisible } = this.props;
+    const { currentAccountAddress, currentAccountProfile, dao, numRedemptions, tourVisible } = this.props;
 
     if (!dao || !this.state.readyToShow) {
       return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
@@ -277,6 +286,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       {
         target: "." + appCss.accountInfo,
         content: "This icon represents your wallet. Here you can view your reputation and token balances.",
+        placement: "bottom",
+        disableBeacon: true
+      },
+      {
+        target: "." + appCss.profileLink,
+        content: currentAccountProfile && currentAccountProfile.name ? "Click here to modify your profile, this will help others to trust you." : "Click here to create your profile, this will help others to trust you.",
         placement: "bottom",
         disableBeacon: true
       },
@@ -346,7 +361,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
             <span>Decentralized budgeting powered by <img src="/assets/images/Tour/DAOstackLogo.svg"/> DAOstack.</span>
             <p>New to Alchemy? Take this tour to learn how <strong>voting, reputation, predictions,</strong> and <strong>proposals</strong> work.</p>
             <div>
-              <button onClick={this.handleClickSkipTour}><img src="/assets/images/Tour/SkipTour.svg"/> Skip for now</button>
+              <button onClick={this.handleClickSkipTour} data-test-id="skip-tour"><img src="/assets/images/Tour/SkipTour.svg"/> Skip for now</button>
               <button className={css.startButton} onClick={this.handleClickStartTour}><img src="/assets/images/Tour/StartTour.svg"/> Take a quick tour</button>
             </div>
           </div>

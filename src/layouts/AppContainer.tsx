@@ -1,6 +1,7 @@
 import * as Arc from '@daostack/arc.js';
 import axios from "axios";
 import * as History from "history";
+import * as queryString from 'query-string';
 import * as React from "react";
 import { withCookies, Cookies } from 'react-cookie';
 import { connect, Dispatch } from "react-redux";
@@ -16,6 +17,7 @@ import * as web3Actions from 'actions/web3Actions';
 import * as arcActions from "actions/arcActions";
 import Util from "lib/util";
 
+import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
@@ -120,8 +122,8 @@ class AppContainer extends React.Component<IProps, IState> {
     await this.setupWatchers();
   }
 
-   public async componentDidUpdate(prevProps: IProps) {
-    if (this.props.daosLoaded && !prevProps.daosLoaded) {
+  public async componentDidUpdate(prevProps: IProps) {
+    if (this.props.ethAccountAddress && this.props.daosLoaded && (!prevProps.daosLoaded || !prevProps.ethAccountAddress)) {
       // If DAOs just finally loaded then setup the watchers
       await this.setupWatchers();
     }
@@ -129,7 +131,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async setupWatchers() {
     // Check if already setup
-    if (this.watchers.length || !this.props.daosLoaded) {
+    if (this.watchers.length || !this.props.ethAccountAddress || !this.props.daosLoaded) {
       return;
     }
 
@@ -254,12 +256,14 @@ class AppContainer extends React.Component<IProps, IState> {
       connectionStatus == ConnectionStatus.Connected ?
         <div className={css.outer}>
           <div className={css.container}>
-            <Route path="/dao/:daoAvatarAddress" children={(props) => (
-              <HeaderContainer daoAvatarAddress={props.match ? props.match.params.daoAvatarAddress : null} />
-            )} />
+            <Route path="/dao/:daoAvatarAddress" children={(props) => {
+              const queryValues = queryString.parse(props.location.search);
+              return <HeaderContainer daoAvatarAddress={props.match ? props.match.params.daoAvatarAddress : queryValues.daoAvatarAddress} location={props.location} />;
+            }} />
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-              <Route exact path="/daos" component={DaoListContainer}/>
+              <Route exact path="/daos" component={DaoListContainer} />
+              <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
               <Route path="/" component={HomeContainer} />
             </Switch>
             <ModalRoute

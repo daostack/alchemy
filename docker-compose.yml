@@ -1,0 +1,44 @@
+version: "3"
+services:
+  alchemy:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    links:
+      # - ganache
+      - alchemy-server
+    working_dir: /alchemy/
+    volumes:
+      - ./src:/alchemy/src
+      - ./test:/alchemy/test
+      - ./webpack.base.config.js:/alchemy/webpack.base.config.js
+      - ./app.json:/alchemy/app.json
+      - ./webpack.dev.config.js:/alchemy/webpack.dev.config.js
+      - ./webpack.docker.config.js:/alchemy/webpack.docker.config.js
+      - ./entry.sh:/entry.sh
+    ports:
+      - 3000:3000
+      - 8545:8545
+  # ganache:
+  #   image: daostack/ganache:0.0.0-alpha.50-v3
+  #   command: --hostname=0.0.0.0
+  alchemy-server:
+    build:
+      dockerfile: alchemy-server.dockerfile
+      context: ./docker/alchemy-server
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    ports:
+      - 3001:3001
+    working_dir: /alchemy-server/
+    environment:
+      WAIT_HOSTS: postgres:5432
+
+  postgres:
+    build:
+      dockerfile: postgres.dockerfile
+      context: ./docker/postgres/
+    ports:
+      - 5433:5432
