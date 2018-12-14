@@ -64,7 +64,6 @@
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.94",
     "@daostack/client": "0.0.2",
-    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git",
     "aws-sdk": "^2.212.1",
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
@@ -120,7 +119,7 @@
   },
   "devDependencies": {
     "@daostack/migration": "0.0.0-alpha.56-v6",
-    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#29ed7eb38edb8e3bcbfb073f6d0f3aff3c1b036b",
+    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git",
     "@types/classnames": "^2.2.3",
     "@types/es6-promisify": "^5.0.0",
     "@types/ethereumjs-util": "^5.2.0",
