@@ -64,19 +64,14 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest")
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null })
     const observer = arc.dao(avatarAddress).state.subscribe(
       (daoData) => {
-        // daoData.avatarAddress = daoData.address
         const payload = normalize(daoData, schemas.daoSchema)
         dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Success, payload })
       },
-      (err: any) => { throw err}
+      (err: Error) => {
+        dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Failure, payload: "Not a valid DAO" });
+        throw err
+      }
     )
-    // const currentAccountAddress: string = getState().web3.ethAccountAddress;
-    // const daoData = await getDAOData(avatarAddress, currentAccountAddress, fromBlock, toBlock);
-    // if (daoData) {
-    //   dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Success, payload: normalize(daoData, schemas.daoSchema) });
-    // } else {
-    //   dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Failure, payload: "Not a valid DAO" });
-    // }
     return observer
   }
 }
@@ -109,11 +104,6 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const getBalance = promisify(web3.eth.getBalance);
 
   const daoData: any = {
-    // address: avatarAddress,
-    // reputation: new Reputation( daoInstance.reputation.address),
-    // token: new Token(daoInstance.token.address),
-
-    // TODO: following is legacy and should be culled as much as possible
     avatarAddress,
     controllerAddress: "",
     currentThresholdToBoost: Util.fromWei(await votingMachineInstance.getThresholdForSchemeAndCreator(contributionRewardInstance, avatarAddress)),
