@@ -15,8 +15,13 @@ export default class DaoHeadings extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
+    console.log(dao);
 
-    var latestHeadingProposal = { executionTime: 0, title: "DAO Heading: Placeholder heading" };
+    var latestHeadingProposal = {
+      executionTime: 0,
+      title: 'DAO Heading: Pass a proposal with a title that starts with \
+             "DAO Heading:" to replace this text.'
+    };
 
     dao.proposals.forEach((proposal: IProposalState) => {
       if(proposal.executionTime > latestHeadingProposal.executionTime &&
@@ -24,7 +29,7 @@ export default class DaoHeadings extends React.Component<IProps, null> {
         latestHeadingProposal = proposal;
       }
     });
-
+    
     return (
       <div className={css.daoHeadings + " " + css.clearfix}>
         { latestHeadingProposal.title.slice(13) }
