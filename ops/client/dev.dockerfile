@@ -1,5 +1,8 @@
-FROM client_builder:dev
+FROM builder:dev
 
+RUN yarn global add webpack-dev-server
+
+COPY package.json package.json
 COPY ops ops
 COPY src src
 COPY build build

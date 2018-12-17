@@ -1,20 +1,9 @@
 #!/bin/bash
+set -e
 
-function wait_for {
-  target=$1
-  echo "Waiting for $target to wake up..."
-  while true
-  do
-    ping -c1 -w1 $target > /dev/null 2> /dev/null
-    if [[ "$?" == "0" ]]
-    then sleep 3 && break
-    else sleep 3 && echo "Waiting for $target to wake up..."
-    fi
-  done
-}
-
-wait_for ipfs
-wait_for ethprovider
+echo "Waiting for $IPFS_URL and ${ETH_PROVIDER#*://}"
+bash /ops/wait-for.sh -t 60 $IPFS_URL 2> /dev/null
+bash /ops/wait-for.sh -t 60 ${ETH_PROVIDER#*://} 2> /dev/null
 
 redis-server &
 

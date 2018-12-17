@@ -1,3 +1,9 @@
-node_modules
+# We need to put node_modules into the cacher image so can't ignore that (yet)
+# We bind-mount this whole dir while building so can ignore installation cache
 .cache
-*.swp
+.config
+.git
+.node-gyp
+.npm
+.yarn
+.yarnrc

@@ -1,4 +1,9 @@
 build
 node_modules
 .cache
+.config
+.node-gyp
+.npm
+.yarn
+.yarnrc
 *.swp
