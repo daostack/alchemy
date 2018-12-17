@@ -60,12 +60,15 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     numRedemptions,
-    openProposals: dao ? selectors.createOpenProposalsSelector()(state, ownProps) : [],
+    // TODO: get open proposals
+    openProposals: [] as IProposalState[],
+    // openProposals: dao ? selectors.createOpenProposalsSelector()(state, ownProps) : [],
     tourVisible: state.ui.tourVisible
   };
 };
 
 interface IDispatchProps {
+  getDAO: typeof arcActions.getDAO
   getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
   hideTour: typeof uiActions.hideTour;
   onTransferEvent: typeof arcActions.onTransferEvent;
@@ -81,6 +84,7 @@ interface IDispatchProps {
 }
 
 const mapDispatchToProps = {
+  getDAO: arcActions.getDAO,
   getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
   hideTour: uiActions.hideTour,
   onTransferEvent: arcActions.onTransferEvent,
@@ -109,6 +113,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public mintEventWatcher: any;
   public burnEventWatcher: any;
   public blockInterval: any;
+  public daoSubscription: any;
 
   constructor(props: IProps) {
     super(props);
@@ -130,6 +135,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       cookies.set('seen_tour', "true", { path: '/' });
       this.setState({ showTourIntro: true });
     }
+
+    this.daoSubscription = this.props.getDAO(this.props.daoAvatarAddress);
   }
 
   public componentDidMount() {
@@ -159,6 +166,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     if (this.blockInterval) {
       clearInterval(this.blockInterval);
     }
+
+    this.daoSubscription.unsubscribe();
+
   }
 
   // Setup event watchers if they are not setup already and if the dao is loaded

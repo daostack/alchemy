@@ -16,7 +16,7 @@ const getDaoProposals = createSelector(
     if (!dao) {
       return [];
     }
-    return denormalize(dao.proposals, schemas.proposalList, entities);
+    return denormalize(dao.proposals, schemas.proposalList, entities) || [];
   },
 );
 
