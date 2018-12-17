@@ -24,12 +24,12 @@ export default class DaoHeadings extends React.Component<IProps, null> {
     };
 
     dao.proposals.forEach((proposal: IProposalState) => {
-      if(proposal.executionTime > latestHeadingProposal.executionTime &&
-      proposal.title.slice(0, 12) === "DAO Heading:") {
-        latestHeadingProposal = proposal;
+      if (proposal.executionTime > latestHeadingProposal.executionTime &&
+          proposal.title.slice(0, 12) === "DAO Heading:") {
+            latestHeadingProposal = proposal;
       }
     });
-    
+
     return (
       <div className={css.daoHeadings + " " + css.clearfix}>
         { latestHeadingProposal.title.slice(13) }
