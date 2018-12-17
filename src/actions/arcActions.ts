@@ -7,10 +7,12 @@ import * as moment from "moment";
 import { denormalize, normalize } from "normalizr";
 import { push } from "react-router-redux";
 import * as Redux from "redux";
+import { Action, ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
 import { arc } from "../arc";
 import { Address, IDAOState as IClientDAOState, Reputation, Token } from '@daostack/client'
+import { Subscription } from 'rxjs'
 
 import Util from "lib/util";
 import {
@@ -34,11 +36,10 @@ import { IRootState } from "reducers/index";
 
 import { ContributionRewardWrapper, ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
-import { Dispatch } from "redux";
 import * as schemas from "schemas";
 
 // TODO: the fromblock and toBlock are legacy, and should be removed
-export function getDAOs(fromBlock = 0, toBlock = "latest") {
+export function getDAOs(fromBlock = 0, toBlock = "latest"): ActionCreator<Subscription> {
   return (dispatch: Redux.Dispatch<any>) => {
     dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
     const daoObservable = arc.daos();
@@ -61,12 +62,16 @@ export function getDAOs(fromBlock = 0, toBlock = "latest") {
 }
 
 // TODO: the fromblock and toBlock are legacy, and should be removed
-export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest") {
-  return async (dispatch: any, getState: () => IRootState) => {
+export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest"): ActionCreator<Subscription> {
+  return (dispatch: Dispatch<IRootState>, getState: () => IRootState): Subscription => {
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null })
     const observer = arc.dao(avatarAddress).state.subscribe(
       (daoData) => {
         const payload = normalize(daoData, schemas.daoSchema)
+
+        // TODO: use real data, not mock data, here
+        payload.entities.daos[daoData.address].proposals = []
+        payload.entities.daos[daoData.address].members = []
         dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Success, payload })
       },
       (err: Error) => {
