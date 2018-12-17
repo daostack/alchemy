@@ -35,14 +35,16 @@ type IProps = IStateProps & IDispatchProps;
 
 class DaoListContainer extends React.Component<IProps, null> {
 
-  public daoSubscription: any;
+  public daoSubscription: any
 
   public async componentWillMount() {
     this.daoSubscription = this.props.getDAOs();
   }
 
-  public componentWillUnmount() {
-    this.daoSubscription.unsubscribe();
+  public async componentWillUnmount() {
+    if (this.daoSubscription) {
+      this.daoSubscription.unsubscribe();
+    }
   }
 
   public render() {

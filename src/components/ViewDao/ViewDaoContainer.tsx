@@ -167,7 +167,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       clearInterval(this.blockInterval);
     }
 
-    this.daoSubscription.unsubscribe();
+    if (this.daoSubscription) {
+      this.daoSubscription.unsubscribe()
+    }
 
   }
 

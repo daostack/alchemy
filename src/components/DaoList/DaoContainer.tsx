@@ -38,8 +38,11 @@ class DaoContainer extends React.Component<IProps, null> {
     this.daoSubscription = this.props.getDAO(this.props.daoAddress);
   }
 
-  public componentWillUnmount() {
-    this.daoSubscription.unsubscribe();
+  public async componentWillUnmount() {
+    const subscription = await this.daoSubscription
+    if (subscription) {
+      subscription.unsubscribe();
+    }
   }
 
   public render() {
