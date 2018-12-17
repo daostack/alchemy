@@ -35,7 +35,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     const { onSuccess, provider, socket } = this.props
 
     socket.on(provider, (account: any) => {
-      //this.popup.close();
+      this.popup.close();
       onSuccess(account);
     })
   }
