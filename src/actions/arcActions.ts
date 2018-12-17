@@ -36,6 +36,7 @@ import { Dispatch } from "redux";
 import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
 
+// TODO remove this & ethers dependency by using the truffle contract instance instead
 const contributionRewardArtifacts = require('@daostack/arc.js/migrated_contracts/ContributionReward.json');
 
 // Fetch cache JSON blob from cacher server
@@ -289,6 +290,7 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   } else {
     let ipfsHash = ipfs.hexToHash(descriptionHash);
     let serverProposal = await ipfs.get(ipfsHash);
+    // TODO Better error handling
     url = serverProposal.url;
     title = serverProposal.title;
   }

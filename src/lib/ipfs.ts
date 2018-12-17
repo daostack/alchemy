@@ -51,6 +51,7 @@ ipfs.add = (data: Object) => {
   return promisify(ipfsApi.addJSON.bind(ipfsApi))(data);
 }
 
+// TODO: remove cache system here bc the bg_cache worker will be phased out soon.
 const cache: any = {};
 
 const getLegacyData = () => {
