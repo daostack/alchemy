@@ -21,7 +21,7 @@ interface IState {
 }
 
 export default class OAuthLogin extends React.Component<IProps, IState> {
-  popup: Window;
+  public popup: Window;
 
   constructor(props: IProps) {
     super(props);
@@ -31,7 +31,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     };
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     const { onSuccess, provider, socket } = this.props
 
     socket.on(provider, (account: any) => {
@@ -43,7 +43,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // Routinely checks the popup to re-enable the login button
   // if the user closes the popup without authenticating.
   // Also checks if somehow the socket failed to close the popup and closes it if done
-  checkPopup() {
+  public checkPopup() {
     const check = setInterval(() => {
       const { popup } = this;
       if (!popup || popup.closed || popup.closed === undefined) {
@@ -56,7 +56,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // Launches the popup by making a request to the server and then
   // passes along the socket id so it can be used to send back user
   // data to the appropriate socket on the connected client.
-  openPopup() {
+  public openPopup() {
     const { accountAddress, provider, socket } = this.props;
     const width = 600, height = 600;
     const left = (window.innerWidth / 2) - (width / 2);
@@ -73,7 +73,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // Kicks off the processes of opening the popup on the server and listening
   // to the popup. It also disables the login button so the user can not
   // attempt to login to the provider twice.
-  startAuth(e: any) {
+  public startAuth(e: any) {
     if (!this.state.disabled) {
       e.preventDefault();
       this.popup = this.openPopup();
@@ -82,7 +82,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     }
   }
 
-  render() {
+  public render() {
     const { editing, profile, provider } = this.props;
     const { disabled } = this.state;
 

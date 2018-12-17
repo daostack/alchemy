@@ -32,7 +32,7 @@
         "quotemark": false,
         "ordered-imports": false,
         "trailing-comma": false,
-        "semicolon": true
+        "semicolon": false
     },
     "rulesDirectory": []
 }

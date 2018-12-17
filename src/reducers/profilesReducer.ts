@@ -11,7 +11,7 @@ export interface IProfileState {
   description: string;
   ethereumAccountAddress?: string;
   name: string;
-  socialURLs: { [provider : string] : string };
+  socialURLs: { [provider: string]: string };
 }
 
 export interface IProfilesState {
@@ -33,13 +33,13 @@ export function profileDbToRedux(dbProfile: any) {
     reduxProfile.socialURLs = {};
   }
   if (dbProfile.facebookURL) {
-    reduxProfile.socialURLs['facebook'] = dbProfile.facebookURL;
+    reduxProfile.socialURLs.facebook = dbProfile.facebookURL;
   }
   if (dbProfile.githubURL) {
-    reduxProfile.socialURLs['github'] = dbProfile.githubURL;
+    reduxProfile.socialURLs.github = dbProfile.githubURL;
   }
   if (dbProfile.twitterURL) {
-    reduxProfile.socialURLs['twitter'] = dbProfile.twitterURL;
+    reduxProfile.socialURLs.twitter = dbProfile.twitterURL;
   }
   return reduxProfile;
 }
