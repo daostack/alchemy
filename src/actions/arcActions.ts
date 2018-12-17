@@ -196,11 +196,11 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   let serverProposals: { [key: string]: any } = {};
   try {
     const promises = proposals.map(async (proposal) => {
-      const ipfsHash = ipfs.hexToHash(proposal.contributionDescriptionHash)
-      const result = await ipfs.get(ipfsHash)
-      return result
+      const ipfsHash = ipfs.hexToHash(proposal.contributionDescriptionHash);
+      const result = await ipfs.get(ipfsHash);
+      return result;
     })
-    serverProposals = await Promise.all(promises)
+    serverProposals = await Promise.all(promises);
   } catch (e) {
     console.error(e);
   }
@@ -284,8 +284,8 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
     url = serverProposal.url;
     title = serverProposal.title;
   } else {
-    let ipfsHash = ipfs.hexToHash(descriptionHash)
-    let serverProposal = await ipfs.get(ipfsHash)
+    let ipfsHash = ipfs.hexToHash(descriptionHash);
+    let serverProposal = await ipfs.get(ipfsHash);
     url = serverProposal.url;
     title = serverProposal.title;
   }
@@ -648,10 +648,10 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
       }
 
       // Save the proposal title, url and submitted time on the ipfs server
-      let ipfsHash
+      let ipfsHash;
       try {
-        ipfsHash = await ipfs.add(description)
-        console.log(`Uploaded ipfs file: ${ipfsHash}`)
+        ipfsHash = await ipfs.add(description);
+        console.log(`Uploaded ipfs file sucessfully: ${ipfsHash}`);
       } catch (e) {
         console.error(e);
         return(e); // don't submit the tx if we couldn't save the description data
@@ -668,15 +668,15 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
 
       const dao = getState().arc.daos[daoAvatarAddress];
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const wallet = await getWallet()
-      const contributionReward = new ethers.Contract(contributionRewardInstance.address, contributionRewardArtifacts.abi, wallet)
+      const wallet = await getWallet();
+      const contributionReward = new ethers.Contract(contributionRewardInstance.address, contributionRewardArtifacts.abi, wallet);
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
 
-      const hash = ipfs.hashToHex(ipfsHash)
+      const hash = ipfs.hashToHex(ipfsHash);
 
-      const externalTokenAddress = dao.externalTokenAddress ? dao.externalTokenAddress : "0x0000000000000000000000000000000000000000"
+      const externalTokenAddress = dao.externalTokenAddress ? dao.externalTokenAddress : "0x0000000000000000000000000000000000000000";
 
       const arg = [
         daoAvatarAddress,
@@ -693,10 +693,9 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         beneficiaryAddress
       ]
 
-      const gasLimit = await contributionReward.estimate.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5])
-      const txReceipt = await contributionReward.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit })
-
-      console.log(JSON.stringify(txReceipt,null,2))
+      const gasLimit = await contributionReward.estimate.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
+      const txReceipt = await contributionReward.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit });
+      console.log(JSON.stringify(txReceipt,null,2));
 
     } catch (err) {
       console.error(err);
@@ -704,7 +703,7 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
         meta,
-      } as CreateProposalAction)
+      } as CreateProposalAction);
     }
   }
 }
@@ -722,8 +721,8 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     let serverProposal: any = false;
     try {
       // See if this proposalId data is already stored in ipfs and if so, load title and url data from there
-      const ipfsHash = ipfs.hexToHash(eventResult._contributionDescription)
-      serverProposal = await ipfs.get(ipfsHash)
+      const ipfsHash = ipfs.hexToHash(eventResult._contributionDescription);
+      serverProposal = await ipfs.get(ipfsHash);
     } catch (e) {
       console.error(e);
     }
