@@ -16,7 +16,9 @@ describe('Sanity', () => {
       browser.waitForExist('*[data-test-id="header-all-daos"]');
       // browser.getValue()
       browser.click('*[data-test-id="dao-link"]');
-      // browser.click('*[data-test-id="skip-tour"]');
+      if (browser.isExisting('*[data-test-id="skip-tour"]')) {
+        browser.click('*[data-test-id="skip-tour"]');
+      }
       browser.click('*[data-test-id="create-proposal"]');
       browser.setValue('*[id="titleInput"]', 'Free Edward Snowden');
       // using uuid value so that the test will pass also if there is already a proposal with thi description
