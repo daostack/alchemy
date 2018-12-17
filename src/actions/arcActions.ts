@@ -2,7 +2,7 @@ import * as Arc from "@daostack/arc.js";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
-import ethers from "ethers';
+import * as ethers from "ethers";
 import * as _ from "lodash";
 import * as moment from "moment";
 import { denormalize, normalize } from "normalizr";
@@ -10,8 +10,6 @@ import { push } from "react-router-redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
-
-const contributionRewardArtifacts = require('@daostack/arc.js/migrated_contracts/ContributionReward.json');
 
 import * as arcConstants from "constants/arcConstants";
 import ipfs from "lib/ipfs";
@@ -37,6 +35,8 @@ import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
 import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
+
+const contributionRewardArtifacts = require('@daostack/arc.js/migrated_contracts/ContributionReward.json');
 
 // Fetch cache JSON blob from cacher server
 export function loadCachedState() {

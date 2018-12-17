@@ -7,8 +7,11 @@
     "jsx": "react",
     "baseUrl": "src"
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
-    "./node_modules/**/index.d.ts",
-    "./src/**/*"
+    "src/**/*",
+    "node_modules/**/index.d.ts"
   ]
 }
