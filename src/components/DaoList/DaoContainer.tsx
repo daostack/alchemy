@@ -48,8 +48,8 @@ class DaoContainer extends React.Component<IProps, null> {
     return  (
       <Link
         className={css.daoLink}
-        to={"/dao/" + dao.avatarAddress}
-        key={"dao_" + dao.avatarAddress}
+        to={"/dao/" + dao.address}
+        key={"dao_" + dao.address}
         data-test-id="dao-link"
       >
         <div className={css.dao}>
@@ -58,8 +58,8 @@ class DaoContainer extends React.Component<IProps, null> {
           </div>
           <h3 className={css.daoName}>{dao.name}</h3>
           <div className={css.daoInfo}>Token: {dao.tokenName} ({dao.tokenSymbol})</div>
-          <div className={css.daoInfo}>Num tokens: { dao.token  && dao.token.address }{Math.round(dao.tokenCount).toLocaleString()}</div>
-          <div className={css.daoInfo}>Reputation: {Math.round(dao.reputationCount).toLocaleString()}</div>
+          <div className={css.daoInfo}>Num tokens: {Math.round(dao.tokenTotalSupply).toLocaleString()}</div>
+          <div className={css.daoInfo}>Reputation: {Math.round(dao.reputationTotalSupply).toLocaleString()}</div>
         </div>
       </Link>
     )

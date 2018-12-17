@@ -37,6 +37,7 @@ import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { Dispatch } from "redux";
 import * as schemas from "schemas";
 
+// TODO: the fromblock and toBlock are legacy, and should be removed
 export function getDAOs(fromBlock = 0, toBlock = "latest") {
   return (dispatch: Redux.Dispatch<any>) => {
     dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
@@ -59,6 +60,7 @@ export function getDAOs(fromBlock = 0, toBlock = "latest") {
   }
 }
 
+// TODO: the fromblock and toBlock are legacy, and should be removed
 export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest") {
   return async (dispatch: any, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null })

@@ -5,7 +5,8 @@ import * as moment from "moment";
 import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { Address, IDAOState as IClientDAOState, Reputation, Token } from '@daostack/client'
+import { Address, IDAOState as IClientDAOState, ITokenState, Reputation, Token } from '@daostack/client'
+export { ITokenState } from '@daostack/client'
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",
@@ -89,12 +90,15 @@ export function newAccount(
 
 // TODO: this should be, or extend, the IClientDAOState
 export interface IDaoState {
-  // props from IClientDAOState
   address: Address // address of the avatar
   // members: number
   name: string
   reputation: Reputation
-  token: Token
+  reputationTotalSupply: number,
+  token: Token,
+  tokenName: string,
+  tokenSymbol: string,
+  tokenTotalSupply: number
 
   // Legacy props
   // TODO: props below should be culled as much as possible
@@ -118,9 +122,9 @@ export interface IDaoState {
   reputationCount: number;
   tokenAddress: string;
   tokenCount: number; // How much is actually "owned" by the DAO
-  tokenName: string;
-  tokenSupply: number; // total amount in circulation
-  tokenSymbol: string;
+  // tokenName: string;
+  // tokenSupply: number; // total amount in circulation
+  // tokenSymbol: string;
 }
 
 export interface IRedemptionState {
