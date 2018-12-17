@@ -21,6 +21,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', express.static('/app/cache'));
+app.use('/', express.static('cache'));
 app.listen(port)
 console.log(`Listening at http://localhost:${port}`)

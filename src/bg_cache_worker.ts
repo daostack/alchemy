@@ -44,7 +44,7 @@ const provider = new HDWalletProvider(mnemonic, ethProvider);
 global.web3 = new Web3(provider.engine);
 
 const arcjsNetwork = process.env.arcjs_network;
-const cacheFileName = '/app/cache/initialArcState-' + arcjsNetwork + '.json';
+const cacheFileName = 'cache/initialArcState-' + arcjsNetwork + '.json';
 
 // Use redux store for the state
 interface IRootState {
