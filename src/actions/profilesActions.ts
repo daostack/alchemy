@@ -57,7 +57,7 @@ export function getProfile(accountAddress: string) {
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
-        payload: e.getMessage()
+        payload: e.toString()
       });
     }
   }
@@ -86,8 +86,10 @@ export function updateProfile(accountAddress: string, name: string, description:
       if (response.data.length > 0) {
         serverAccount = response.data[0];
       }
+
     } catch (e) {
-      console.error("Error saving profile to server: ", e.response.data.error.message);
+      const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
+      console.error("Error saving profile to server: ", errorMsg);
 
       dispatch({
         type: ActionTypes.UPDATE_PROFILE,
@@ -95,7 +97,7 @@ export function updateProfile(accountAddress: string, name: string, description:
         meta: { accountAddress },
       } as UpdateProfileAction);
 
-      dispatch(showNotification(NotificationStatus.Failure, `Saving profile failed: ${e.response.data.error.message}`));
+      dispatch(showNotification(NotificationStatus.Failure, `Saving profile failed: ${errorMsg}`));
       return false;
     }
 
