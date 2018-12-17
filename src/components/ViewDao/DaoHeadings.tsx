@@ -15,6 +15,7 @@ export default class DaoHeadings extends React.Component<IProps, null> {
 
   public render() {
     const { dao } = this.props;
+    console.log(dao);
 
     var latestHeadingProposal = {
       executionTime: 0,
