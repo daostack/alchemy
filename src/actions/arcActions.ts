@@ -1,4 +1,5 @@
 import * as Arc from "@daostack/arc.js";
+import { DAO } from "@daostack/client";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
@@ -38,18 +39,20 @@ import { ContributionRewardWrapper, ExecutionState, GenesisProtocolFactory, Gene
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import * as schemas from "schemas";
 
-// TODO: the fromblock and toBlock are legacy, and should be removed
-export function getDAOs(fromBlock = 0, toBlock = "latest"): ActionCreator<Subscription> {
+export function getDAOs(): ActionCreator<Subscription> {
   return (dispatch: Redux.Dispatch<any>) => {
     dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
     const daoObservable = arc.daos();
-    const observer = daoObservable.subscribe(
-      // TODO: use DAO type here
-      (daoList: any[]) => {
+    const subscription = daoObservable.subscribe(
+      (daoList: DAO[]) => {
         const daoDict: { [address: string]: { address: string, avatarAddress: string } } = {};
         for (const dao of daoList) {
           daoDict[dao.address] = { address: dao.address, avatarAddress: dao.address};
         }
+        // TODO: if we already have DAO details, we are overwriting them here, which is unfortunate as we need to refetch them
+        // again later. Also, storign the list in a dictionsary makes us loose any ordering information
+        // An idea may be to ahve a `daoList` in the state that is cotnains an order list of addresses, and only
+        // update that in this action
         const payload = normalize(daoDict, schemas.daoList);
         dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Success, payload });
       },
@@ -57,15 +60,14 @@ export function getDAOs(fromBlock = 0, toBlock = "latest"): ActionCreator<Subscr
         throw err;
       },
     );
-    return observer;
+    return subscription;
   }
 }
 
-// TODO: the fromblock and toBlock are legacy, and should be removed
-export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest"): ActionCreator<Subscription> {
+export function getDAO(avatarAddress: string): ActionCreator<Subscription> {
   return (dispatch: Dispatch<IRootState>, getState: () => IRootState): Subscription => {
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null })
-    const observer = arc.dao(avatarAddress).state.subscribe(
+    const subscription = arc.dao(avatarAddress).state.subscribe(
       (daoData) => {
         const payload = normalize(daoData, schemas.daoSchema)
 
@@ -79,7 +81,7 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = "latest")
         throw err
       }
     )
-    return observer
+    return subscription
   }
 }
 
