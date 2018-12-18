@@ -55,7 +55,7 @@ class DaoListContainer extends React.Component<IProps, null> {
     const daoNodes = Object.keys(daos).map((key: string) => {
       const dao = daos[key];
       return (
-        <DaoContainer key={dao.address}  address={dao.address}/>
+        <DaoContainer key={dao.avatarAddress}  address={dao.avatarAddress}/>
       )
     })
 

@@ -640,7 +640,16 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-export function createProposal(daoAvatarAddress: string, title: string, description: string, nativeTokenReward: number, reputationReward: number, ethReward: number, externalTokenReward: number, beneficiaryAddress: string): ThunkAction<any, IRootState, null> {
+export function createProposal(
+  daoAvatarAddress: string,
+  title: string,
+  description: string,
+  nativeTokenReward: number,
+  reputationReward: number,
+  ethReward: number,
+  externalTokenReward: number,
+  beneficiaryAddress: string
+): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const meta = {
       avatarAddress: daoAvatarAddress,
@@ -653,7 +662,7 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
 
       const ethAccountAddress: string = getState().web3.ethAccountAddress;
-      const dao = getState().arc.daos[daoAvatarAddress];
+      // const dao = getState().arc.daos[daoAvatarAddress];
 
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
 
@@ -688,8 +697,11 @@ export function createProposal(daoAvatarAddress: string, title: string, descript
         beneficiaryAddress,
         description,
         ethReward: Util.toWei(ethReward),
-        externalToken: dao.externalTokenAddress ? dao.externalTokenAddress : "",
-        externalTokenReward: dao.externalTokenAddress && externalTokenReward ? Util.toWei(externalTokenReward) : 0,
+        // TODO: disabled externalToken logic - is that ok?
+        externalToken: "",
+        externalTokenReward: 0,
+        // externalToken: dao.externalTokenAddress ? dao.externalTokenAddress : "",
+        // externalTokenReward: dao.externalTokenAddress && externalTokenReward ? Util.toWei(externalTokenReward) : 0,
         nativeTokenReward: Util.toWei(nativeTokenReward),
         numberOfPeriods: 1,
         periodLength: 0,

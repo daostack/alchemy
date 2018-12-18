@@ -28,9 +28,9 @@ export default class Subscribe extends React.Component<IProps, IState> {
   public setupSubscription() {
     this.subscription = this.props.observable.subscribe(
       (next: object) => {
-        if (Array.isArray(next)) {
-          throw new TypeError('<Subscribe> streams cannot return arrays because of React limitations');
-        }
+        // if (Array.isArray(next)) {
+        //   throw new TypeError('<Subscribe> streams cannot return arrays because of React limitations');
+        // }
         this.setState({
           data: next,
           isLoading: false,

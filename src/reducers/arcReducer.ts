@@ -88,20 +88,7 @@ export function newAccount(
   }
 }
 
-// TODO: this should be, or extend, the IClientDAOState
 export interface IDaoState {
-  address: Address // address of the avatar
-  // members: number
-  name: string
-  reputation: Reputation
-  reputationTotalSupply: number,
-  token: Token,
-  tokenName: string,
-  tokenSymbol: string,
-  tokenTotalSupply: number
-
-  // Legacy props
-  // TODO: props below should be culled as much as possible
   avatarAddress: string;
   controllerAddress: string;
   currentThresholdToBoost: number;
@@ -113,7 +100,7 @@ export interface IDaoState {
   genCount: number;
   lastBlock: string | number; // The last block on the chain processed for this DAO
   members: Array<IAccountState | string>; // Either normalized (string) or denormalized (object)
-  // name: string;
+  name: string;
   rank: number;
   promotedAmount: number;
   proposals: Array<IProposalState | string>; // Either normalized (string) or denormalized (IProposalState)
@@ -122,9 +109,9 @@ export interface IDaoState {
   reputationCount: number;
   tokenAddress: string;
   tokenCount: number; // How much is actually "owned" by the DAO
-  // tokenName: string;
-  // tokenSupply: number; // total amount in circulation
-  // tokenSymbol: string;
+  tokenName: string;
+  tokenSupply: number; // total amount in circulation
+  tokenSymbol: string;
 }
 
 export interface IRedemptionState {

@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { IDaoState, IProposalState, ProposalStates, proposalEnded } from "reducers/arcReducer";
 import ReputationView from "components/Account/ReputationView";
+import { IDAOState } from '@daostack/client'
 
 interface IProps {
   dao: IDaoState;

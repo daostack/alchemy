@@ -36,6 +36,7 @@ import * as proposalCss from "../Proposal/Proposal.scss";
 import { arc } from 'arc'
 import { Subscription, Observable } from 'rxjs'
 import { IDAOState } from '@daostack/client'
+import { mockLegacyDaoState} from '../../tmp'
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
@@ -351,33 +352,14 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     }
 
     // TODO: A quick hacks follow to get the page to show, do not forget to remove these later
-    const legacyDao: IDaoState = {
-       ...dao,
-      avatarAddress: dao.address,
-      controllerAddress: undefined,
-      currentThresholdToBoost: undefined,
-      ethCount: 0,
-      externalTokenSymbol: 'TDB',
-      externalTokenCount: 0,
-      genCount: 0,
-      lastBlock: 0, // The last block on the chain processed for this DAO
-      members: [],
-      // name: string;
-      rank: 0,
-      promotedAmount: 0,
-      proposals: [],
-      proposalsLoaded: false,
-      reputationAddress: '',
-      reputationCount: 0,
-      tokenAddress: '',
-      tokenCount: 0,
-    }
+    const legacyDao = mockLegacyDaoState(dao)
 
     // TODO: move the tour in its own file for clarity
     const tourSteps = [
       {
         target: "." + css.daoInfo,
-        content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationTotalSupply).toLocaleString()} reputation`,
+        content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently,
+          ${dao.name} has ${dao.memberCount} members with a total of ${Math.round(dao.reputationTotalSupply).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },

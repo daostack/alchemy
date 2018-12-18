@@ -14,8 +14,10 @@ import * as schemas from "schemas";
 import ProposalContainer from "../Proposal/ProposalContainer";
 import DaoHeader from "./DaoHeader";
 import DaoNav from "./DaoNav";
-
+import Subscribe from "components/Shared/Subscribe"
+import { arc } from "arc";
 import * as css from "./ViewDao.scss";
+import { combineLatest } from 'rxjs'
 
 interface IStateProps extends RouteComponentProps<any> {
   daoAvatarAddress: string;
@@ -59,90 +61,104 @@ const Fade = ({ children, ...props }: any) => (
 class DaoProposalsContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { proposalsLoaded, proposalsBoosted, proposalsPreBoosted } = this.props;
+    const {   daoAvatarAddress, proposalsLoaded } = this.props;
 
-    const boostedProposalsHTML = (
-      <TransitionGroup className="boosted-proposals-list">
-        { proposalsBoosted.map((proposal: IProposalState) => (
-          <Fade key={"proposal_" + proposal.proposalId}>
-            <ProposalContainer proposalId={proposal.proposalId} />
-          </Fade>
-        ))}
-      </TransitionGroup>
-    );
+    const observable = combineLatest(
+      // TODO: add queries here, like `proposals({boosted: true})` or whatever (TBD)
+      arc.dao(daoAvatarAddress).proposals(), // the list of boosted proposals
+      arc.dao(daoAvatarAddress).proposals(), // the list of pre-boosted proposals
+    )
+    return <Subscribe observable={observable}>{
+      ({ complete, data, error }: any): any => {
+        if ( data !== null ) {
+          const proposalsBoosted = data[0]
+          const proposalsPreBoosted = data[1]
+          const boostedProposalsHTML = (
+            <TransitionGroup className="boosted-proposals-list">
+              { proposalsBoosted.map((proposal: IProposalState) => (
+                <Fade key={"proposal_" + proposal.proposalId}>
+                  <ProposalContainer proposalId={proposal.proposalId} />
+                </Fade>
+              ))}
+            </TransitionGroup>
+          );
 
-    const preBoostedProposalsHTML = (
-      <TransitionGroup className="boosted-proposals-list">
-        { proposalsPreBoosted.map((proposal: IProposalState) => (
-          <Fade key={"proposal_" + proposal.proposalId}>
-            <ProposalContainer proposalId={proposal.proposalId} />
-          </Fade>
-        ))}
-      </TransitionGroup>
-    );
+          const preBoostedProposalsHTML = (
+            <TransitionGroup className="boosted-proposals-list">
+              { proposalsPreBoosted.map((proposal: IProposalState) => (
+                <Fade key={"proposal_" + proposal.proposalId}>
+                  <ProposalContainer proposalId={proposal.proposalId} />
+                </Fade>
+              ))}
+            </TransitionGroup>
+          );
 
-    return(
-      <div>
-        { !proposalsLoaded
-            ? <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>
-            : proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
-              ? <div className={css.noDecisions}>
-                  <img className={css.relax} src="/assets/images/meditate.svg"/>
+          return (
+            <div>
+              { proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
+                    ? <div className={css.noDecisions}>
+                        <img className={css.relax} src="/assets/images/meditate.svg"/>
+                        <div className={css.proposalsHeader}>
+                          No upcoming proposals
+                        </div>
+                        <div className={css.cta}>
+                          <Link to={`/dao/${this.props.daoAvatarAddress}/proposals/create`} data-test-id="create-proposal">Create a proposal</Link>
+                        </div>
+                      </div>
+                    : ""
+              }
+
+              { proposalsBoosted.length > 0 ?
+                <div className={css.boostedContainer}>
                   <div className={css.proposalsHeader}>
-                    No upcoming proposals
+                    Boosted Proposals
+
+                   {/* <span>Available funds: <span>13,000 ETH - 327 KIN</span></span> */}
+
                   </div>
-                  <div className={css.cta}>
-                    <Link to={`/dao/${this.props.daoAvatarAddress}/proposals/create`} data-test-id="create-proposal">Create a proposal</Link>
+                  <div className={css.columnHeader + " " + css.clearfix}>
+                    <div className={css.votes}>
+                      VOTES
+                    </div>
+                    <div className={css.predictions}>
+                      PREDICTIONS
+                    </div>
+                  </div>
+                  <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
+                    {boostedProposalsHTML}
                   </div>
                 </div>
-              : ""
+                : ""
+              }
+
+              { proposalsPreBoosted.length > 0 ?
+                <div className={css.regularContainer}>
+                  <div className={css.proposalsHeader}>
+                    Regular Proposals
+                  </div>
+                  <div className={css.columnHeader + " " + css.clearfix}>
+                    <div className={css.votes}>
+                      VOTES
+                    </div>
+                    <div className={css.predictions}>
+                      PREDICTIONS
+                    </div>
+                  </div>
+                  <div className={css.proposalsContainer}>
+                    {preBoostedProposalsHTML}
+                  </div>
+                </div>
+                : ""
+              }
+
+            </div>
+          )
+
+        } else {
+          return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>
         }
-
-        { proposalsBoosted.length > 0 ?
-          <div className={css.boostedContainer}>
-            <div className={css.proposalsHeader}>
-              Boosted Proposals
-
-             {/* <span>Available funds: <span>13,000 ETH - 327 KIN</span></span> */}
-
-            </div>
-            <div className={css.columnHeader + " " + css.clearfix}>
-              <div className={css.votes}>
-                VOTES
-              </div>
-              <div className={css.predictions}>
-                PREDICTIONS
-              </div>
-            </div>
-            <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
-              {boostedProposalsHTML}
-            </div>
-          </div>
-          : ""
-        }
-
-        { proposalsPreBoosted.length > 0 ?
-          <div className={css.regularContainer}>
-            <div className={css.proposalsHeader}>
-              Regular Proposals
-            </div>
-            <div className={css.columnHeader + " " + css.clearfix}>
-              <div className={css.votes}>
-                VOTES
-              </div>
-              <div className={css.predictions}>
-                PREDICTIONS
-              </div>
-            </div>
-            <div className={css.proposalsContainer}>
-              {preBoostedProposalsHTML}
-            </div>
-          </div>
-          : ""
-        }
-
-      </div>
-    );
+      }
+    }</Subscribe>
   }
 
 }
