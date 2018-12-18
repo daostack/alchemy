@@ -3,7 +3,6 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
-import { withSubscription } from "components/Shared/withSubscription"
 import { IRootState } from "reducers";
 import { IDaoState } from "reducers/arcReducer";
 import { IDAOState } from '@daostack/client'
@@ -71,7 +70,7 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
     }
   }
 }
-// const DaoHeader: React.ComponentType<{ address: string }> = (props: { address: string}) => withSubscription(DaoHeaderComponent, arc.dao(props.address).state)
-const DaoHeader = (props: { address: string}) => <Subscribe observable={arc.dao(props.address).state}>{(state: any) => <DaoHeaderComponent state={state} />}</Subscribe>
-
-export default DaoHeader
+export default (props: { address: string}) =>
+  <Subscribe observable={arc.dao(props.address).state}>{(state: any) =>
+    <DaoHeaderComponent state={state} />
+  }</Subscribe>

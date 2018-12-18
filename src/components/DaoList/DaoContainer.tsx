@@ -6,47 +6,17 @@ import Subscribe from "components/Shared/Subscribe"
 import { arc } from "arc"
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
 import { IDAOState } from "@daostack/client";
 
 import * as schemas from "schemas";
 
 import * as css from "./DaoList.scss";
 
-interface IStateProps {
-  // dao: IDAOState,
+interface IProps {
   address: string
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => ({
-  // dao: state.arc.daos[ownProps.daoAddress]
-});
-
-// interface IDispatchProps {
-//   getDAO: typeof arcActions.getDAO
-// }
-//
-// const mapDispatchToProps = {
-//   getDAO: arcActions.getDAO
-// };
-//
-type IProps = IStateProps // & IDispatchProps;
-
 class DaoContainer extends React.Component<IProps, null> {
-
-  // public daoSubscription: any;
-
-  // public async componentWillMount() {
-  //   this.daoSubscription = this.props.getDAO(this.props.daoAddress);
-  // }
-  //
-  // public async componentWillUnmount() {
-  //   const subscription = await this.daoSubscription
-  //   if (subscription) {
-  //     subscription.unsubscribe();
-  //   }
-  // }
-
   public render() {
     const { address } = this.props
 
@@ -87,5 +57,4 @@ class DaoContainer extends React.Component<IProps, null> {
   }
 }
 
-// export default connect(mapStateToProps, undefined)(DaoContainer);
 export default DaoContainer
