@@ -32,7 +32,7 @@ describe('Sanity', () => {
       browser.click('*[data-test-id="launch-metamask"]');
       // since we are working with unlocked accounts (are we?) and we do not haver metamask installed
       // we do not need to confirm at all..
-      // browser.waitForExist('*[data-test-id="proposal-title"]');
+      browser.waitForExist('*[data-test-id="proposal-title"]');
       // browser.getText('*[data-test-id="proposal-title"]').should.be.equal('Free Edward Snowden');
       // browser.getText('*[data-test-id="proposal-closes-in"]').should.be.equal('CLOSES IN 21 DAYS');
     });

@@ -8,17 +8,17 @@ interface IProps {
   // render: any | undefined
 }
 
-interface IState {
+export interface IObservableState<IData> {
   isLoading: boolean
-  data: object
+  data: IData
   error: Error
   complete: boolean
 }
 
-export default class Subscribe extends React.Component<IProps, IState> {
+export default class Subscribe extends React.Component<IProps, IObservableState<object>> {
   public subscription: Subscription;
 
-  public state: IState = {
+  public state: IObservableState<object> = {
     isLoading: true,
     data: null,
     error: null,
