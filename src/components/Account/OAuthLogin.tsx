@@ -1,3 +1,4 @@
+import classNames = require("classnames");
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -9,11 +10,12 @@ import * as css from "./Account.scss";
 
 interface IProps {
   accountAddress: string;
+  className?: string;
   editing: boolean;
-  onSuccess: (profileData: IProfileState) => any,
+  onSuccess?: (profileData: IProfileState) => any,
   profile: IProfileState;
   provider: 'github' | 'facebook' | 'twitter';
-  socket: any;
+  socket?: any;
 }
 
 interface IState {
@@ -34,10 +36,12 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   public componentDidMount() {
     const { onSuccess, provider, socket } = this.props
 
-    socket.on(provider, (account: any) => {
-      this.popup.close();
-      onSuccess(account);
-    })
+    if (socket) {
+      socket.on(provider, (account: any) => {
+        this.popup.close();
+        onSuccess(account);
+      });
+    }
   }
 
   // Routinely checks the popup to re-enable the login button
@@ -83,11 +87,16 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { editing, profile, provider } = this.props;
+    const { className, editing, profile, provider } = this.props;
     const { disabled } = this.state;
 
+    const buttonClass = classNames({
+      [css.socialButton]: true,
+      [className]: !!className
+    });
+
     return (
-      <div className={css.socialButton}>
+      <div className={buttonClass}>
         {profile && profile.socialURLs[provider]
           ? <a href={profile.socialURLs[provider]} className={css.socialButtonAuthenticated} target='_blank'>
               <FontAwesomeIcon icon={['fab', provider]} className={css.icon} />

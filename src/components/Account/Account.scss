@@ -101,6 +101,16 @@
       }
     }
 
+    .socialButton {
+      padding: 5px 4px;
+      display: inline-block;
+
+      .icon {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
     .holdings {
       padding: 20px 0;
       margin-top: 10px;
