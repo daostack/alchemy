@@ -33,11 +33,15 @@ import * as css from "./ViewDao.scss";
 import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
 
+import { arc } from 'arc'
+import { Subscription, Observable } from 'rxjs'
+import { IDAOState } from '@daostack/client'
+
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
-  dao: IDaoState;
+  // dao: IDAOState;
   daoAvatarAddress: string;
   lastBlock: number;
   numRedemptions: number;
@@ -46,7 +50,7 @@ interface IStateProps extends RouteComponentProps<any> {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc) as IDaoState;
+  // const dao = denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc) as IDaoState;
   const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.match.params.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
   let numRedemptions = 0;
 
@@ -57,7 +61,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
-    dao,
+    // dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     numRedemptions,
     // TODO: get open proposals
@@ -102,10 +106,14 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  readyToShow: boolean;
-  showTourIntro: boolean;
-  showTourOutro: boolean;
-  tourCount: number;
+  readyToShow: boolean
+  showTourIntro: boolean
+  showTourOutro: boolean
+  tourCount: number
+  isLoading: boolean
+  dao: IDAOState
+  error: Error
+  complete: boolean
 }
 
 class ViewDaoContainer extends React.Component<IProps, IState> {
@@ -114,6 +122,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public burnEventWatcher: any;
   public blockInterval: any;
   public daoSubscription: any;
+  public subscription: Subscription
 
   constructor(props: IProps) {
     super(props);
@@ -123,8 +132,31 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       readyToShow: process.env.NODE_ENV == 'development',
       showTourIntro: false,
       showTourOutro: false,
-      tourCount: 0
+      tourCount: 0,
+      isLoading: true,
+      dao: undefined,
+      error: undefined,
+      complete: false,
     };
+  }
+  public setupSubscription() {
+    const observable =  arc.dao(this.props.daoAvatarAddress).state
+    this.subscription = observable.subscribe(
+      (next: IDAOState) => {
+        this.setState({
+          dao: next,
+          isLoading: false,
+      })
+      },
+      (error: Error) => { throw error },
+      () => { this.setState({complete: true})}
+    )
+  }
+
+  public teardownSubscription() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   public async componentWillMount() {
@@ -136,18 +168,19 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       this.setState({ showTourIntro: true });
     }
 
-    this.daoSubscription = this.props.getDAO(this.props.daoAvatarAddress);
+    // this.daoSubscription = this.props.getDAO(this.props.daoAvatarAddress);
+    this.setupSubscription()
   }
 
   public componentDidMount() {
-    this.setupWatchers();
+    // this.setupWatchers();
   }
 
   public async componentDidUpdate(prevProps: IProps) {
-    if (this.props.dao && !prevProps.dao) {
-      // Make sure watchers get setup when DAO is loaded
-      await this.setupWatchers();
-    }
+    // if (this.props.dao && !prevProps.dao) {
+    //   // Make sure watchers get setup when DAO is loaded
+    //   await this.setupWatchers();
+    // }
   }
 
   public componentWillUnmount() {
@@ -173,110 +206,113 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
   }
 
-  // Setup event watchers if they are not setup already and if the dao is loaded
-  public async setupWatchers() {
-    if (this.mintEventWatcher || !this.props.dao) {
-      return;
-    }
-
-    const {
-      currentAccountAddress,
-      daoAvatarAddress,
-      dao,
-      getProfilesForAllAccounts,
-      onTransferEvent,
-      onReputationChangeEvent,
-      onDAOEthBalanceChanged,
-      onDAOGenBalanceChanged,
-      onDAOExternalTokenBalanceChanged,
-      onExternalTokenBalanceChanged,
-      onProposalExpired,
-      showNotification,
-      updateDAOLastBlock
-    } = this.props;
-
-    getProfilesForAllAccounts();
-
-    // We have the DAO loaded but haven't set up the watchers yet, so set them up
-    // TODO: move all this to app container and just setup watchers for each DAO, plus one blockInterval looking at every block
-    const web3 = await Arc.Utils.getWeb3();
-    const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-    const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-    const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
-    const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-    this.mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: dao.lastBlock });
-    this.mintEventWatcher.watch((error: any, result: any) => {
-      onReputationChangeEvent(daoAvatarAddress, result.args._to);
-    }, -1);
-
-    this.burnEventWatcher = daoInstance.reputation.Burn({}, { fromBlock: dao.lastBlock });
-    this.burnEventWatcher.watch((error: any, result: any) => {
-      onReputationChangeEvent(daoAvatarAddress, result.args._from);
-    }, -1);
-
-    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-    const externalToken = dao.externalTokenAddress ? await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any : false;
-
-    const updateState = async () => {
-      console.time('updateState')
-      const {
-        currentAccountAddress,
-        daoAvatarAddress,
-        dao,
-        onTransferEvent,
-        onReputationChangeEvent,
-        onDAOEthBalanceChanged,
-        onDAOGenBalanceChanged,
-        onDAOExternalTokenBalanceChanged,
-        onExternalTokenBalanceChanged,
-        onProposalExpired,
-        showNotification,
-        updateDAOLastBlock
-      } = this.props;
-      const web3 = await Arc.Utils.getWeb3();
-
-      const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
-      await onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
-      const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
-      await onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
-
-      if (externalToken) {
-        // watch for updates to the DAO's balance of the external token
-        const newDaoExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(daoAvatarAddress));
-        onDAOExternalTokenBalanceChanged(daoAvatarAddress, newDaoExternalTokenBalance);
-
-        // Watch for updates to the current account's balance of the external token
-        const newCurrentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(currentAccountAddress));
-        onExternalTokenBalanceChanged(newCurrentAccountExternalTokenBalance);
-      }
-
-      // Check all proposals to see if any expired
-      for (const proposal of this.props.openProposals) {
-        const newState = checkProposalExpired(proposal);
-        if (newState != proposal.state) {
-          await Promise.resolve(onProposalExpired(proposal));
-        }
-      }
-
-      updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
-      console.timeEnd('updateState')
-    }
-
-    // update the state, and poll every 10 seconds for new changes
-    updateState()
-    this.blockInterval = setInterval(async () => {
-      updateState()
-    }, 10000);
-
-    // we are waiting 10 seconds for all the event handlers in the Appcontainer
-    // to finish, before showing the main page
-    setTimeout(() =>  {
-      this.setState({ readyToShow: true });
-      console.timeEnd('Time until readyToShow');
-    }, 10000)
-  }
+  // // Setup event watchers if they are not setup already and if the dao is loaded
+  // public async setupWatchers() {
+  //
+  //   if (this.mintEventWatcher || !this.state.dao) {
+  //     return;
+  //   }
+  //
+  //   const {
+  //     currentAccountAddress,
+  //     daoAvatarAddress,
+  //     // dao,
+  //     getProfilesForAllAccounts,
+  //     onTransferEvent,
+  //     onReputationChangeEvent,
+  //     onDAOEthBalanceChanged,
+  //     onDAOGenBalanceChanged,
+  //     onDAOExternalTokenBalanceChanged,
+  //     onExternalTokenBalanceChanged,
+  //     onProposalExpired,
+  //     showNotification,
+  //     updateDAOLastBlock
+  //   } = this.props
+  //
+  //   const { dao } = this.state
+  //
+  //   getProfilesForAllAccounts();
+  //
+  //   // We have the DAO loaded but haven't set up the watchers yet, so set them up
+  //   // TODO: move all this to app container and just setup watchers for each DAO, plus one blockInterval looking at every block
+  //   const web3 = await Arc.Utils.getWeb3();
+  //   const daoInstance = await Arc.DAO.at(daoAvatarAddress);
+  //   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
+  //   const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
+  //   const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
+  //
+  //   this.mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: dao.lastBlock });
+  //   this.mintEventWatcher.watch((error: any, result: any) => {
+  //     onReputationChangeEvent(daoAvatarAddress, result.args._to);
+  //   }, -1);
+  //
+  //   this.burnEventWatcher = daoInstance.reputation.Burn({}, { fromBlock: dao.lastBlock });
+  //   this.burnEventWatcher.watch((error: any, result: any) => {
+  //     onReputationChangeEvent(daoAvatarAddress, result.args._from);
+  //   }, -1);
+  //
+  //   const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
+  //   const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
+  //   const externalToken = dao.externalTokenAddress ? await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any : false;
+  //
+  //   const updateState = async () => {
+  //     console.time('updateState')
+  //     const {
+  //       currentAccountAddress,
+  //       daoAvatarAddress,
+  //       // dao,
+  //       onTransferEvent,
+  //       onReputationChangeEvent,
+  //       onDAOEthBalanceChanged,
+  //       onDAOGenBalanceChanged,
+  //       onDAOExternalTokenBalanceChanged,
+  //       onExternalTokenBalanceChanged,
+  //       onProposalExpired,
+  //       showNotification,
+  //       updateDAOLastBlock
+  //     } = this.props;
+  //     const web3 = await Arc.Utils.getWeb3();
+  //
+  //     const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
+  //     await onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
+  //     const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
+  //     await onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
+  //
+  //     if (externalToken) {
+  //       // watch for updates to the DAO's balance of the external token
+  //       const newDaoExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(daoAvatarAddress));
+  //       onDAOExternalTokenBalanceChanged(daoAvatarAddress, newDaoExternalTokenBalance);
+  //
+  //       // Watch for updates to the current account's balance of the external token
+  //       const newCurrentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(currentAccountAddress));
+  //       onExternalTokenBalanceChanged(newCurrentAccountExternalTokenBalance);
+  //     }
+  //
+  //     // Check all proposals to see if any expired
+  //     for (const proposal of this.props.openProposals) {
+  //       const newState = checkProposalExpired(proposal);
+  //       if (newState != proposal.state) {
+  //         await Promise.resolve(onProposalExpired(proposal));
+  //       }
+  //     }
+  //
+  //     updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
+  //     console.timeEnd('updateState')
+  //   }
+  //
+  //   // update the state, and poll every 10 seconds for new changes
+  //   updateState()
+  //   this.blockInterval = setInterval(async () => {
+  //     updateState()
+  //   }, 10000);
+  //
+  //   // we are waiting 10 seconds for all the event handlers in the Appcontainer
+  //   // to finish, before showing the main page
+  //   setTimeout(() =>  {
+  //     this.setState({ readyToShow: true });
+  //     console.timeEnd('Time until readyToShow');
+  //   }, 10000)
+  // }
 
   public handleClickStartTour = (e: any) => {
     const { showTour } = this.props;
@@ -307,16 +343,41 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   };
 
   public render() {
-    const { currentAccountAddress, currentAccountProfile, dao, numRedemptions, tourVisible } = this.props;
+    const { currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
+    const dao = this.state.dao
 
     if (!dao || !this.state.readyToShow) {
       return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
     }
 
+    // TODO: A quick hacks follow to get the page to show, do not forget to remove these later
+    const legacyDao: IDaoState = {
+       ...dao,
+      avatarAddress: dao.address,
+      controllerAddress: undefined,
+      currentThresholdToBoost: undefined,
+      ethCount: 0,
+      externalTokenSymbol: 'TDB',
+      externalTokenCount: 0,
+      genCount: 0,
+      lastBlock: 0, // The last block on the chain processed for this DAO
+      members: [],
+      // name: string;
+      rank: 0,
+      promotedAmount: 0,
+      proposals: [],
+      proposalsLoaded: false,
+      reputationAddress: '',
+      reputationCount: 0,
+      tokenAddress: '',
+      tokenCount: 0,
+    }
+
+    // TODO: move the tour in its own file for clarity
     const tourSteps = [
       {
         target: "." + css.daoInfo,
-        content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationCount).toLocaleString()} reputation`,
+        content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently, ${dao.name} has ${Object.keys(dao.members).length} members with a total of ${Math.round(dao.reputationTotalSupply).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },
@@ -334,7 +395,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       },
       {
         target: "." + css.holdings,
-        content: `The amount in ${dao.externalTokenAddress ? dao.externalTokenSymbol : "ETH"} represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.`,
+        // TODO: Not clear to me how to get the "externalTokenAddress" from the DAO (seems part of proposals...)
+        // content: `The amount in ${dao.externalTokenAddress ? dao.externalTokenSymbol : "ETH"} represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.`,
+        content: `The amount in ETH represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.`,
         placement: "left",
         disableBeacon: true
       },
@@ -466,8 +529,8 @@ For additional information check out our <a href="https://docs.google.com/docume
           }}
         />
         <div className={css.top}>
-          <DaoHeader dao={dao} />
-          <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
+          <DaoHeader address={dao.address} />
+          <DaoNav currentAccountAddress={currentAccountAddress} address={dao.address} numRedemptions={numRedemptions} />
         </div>
         <div className={css.wrapper}>
           <Switch>

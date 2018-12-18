@@ -2,6 +2,8 @@ import { denormalize } from "normalizr";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { arc } from "arc"
+import Subscribe from "components/Shared/Subscribe"
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
@@ -52,7 +54,9 @@ class DaoListContainer extends React.Component<IProps, null> {
 
     const daoNodes = Object.keys(daos).map((key: string) => {
       const dao = daos[key];
-      return <DaoContainer key={dao.address}  daoAddress={dao.address}/>
+      return (
+        <DaoContainer key={dao.address}  address={dao.address}/>
+      )
     })
 
     return (

@@ -149,7 +149,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     return (
       <div>
-        { dao ? <div className={css.daoHeader}><DaoHeader dao={dao} /></div> : ""}
+        { dao ? <div className={css.daoHeader}><DaoHeader address={dao.address} /></div> : ""}
 
       <div className={css.profileContainer}>
         <h3>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</h3>

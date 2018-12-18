@@ -28,7 +28,7 @@ interface IStateProps extends RouteComponentProps<any> {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
-    proposalsLoaded: state.arc.daos[ownProps.match.params.daoAvatarAddress].proposalsLoaded,
+    proposalsLoaded: state.arc.daos[ownProps.match.params.daoAvatarAddress] && state.arc.daos[ownProps.match.params.daoAvatarAddress].proposalsLoaded,
     proposalsBoosted: selectors.createBoostedProposalsSelector()(state, ownProps),
     proposalsPreBoosted: selectors.createPreBoostedProposalsSelector()(state, ownProps),
     web3: state.web3,

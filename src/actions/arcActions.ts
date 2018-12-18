@@ -11,7 +11,7 @@ import * as Redux from "redux";
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
-import { arc } from "../arc";
+import { arc } from "arc";
 import { Address, IDAOState as IClientDAOState, Reputation, Token } from '@daostack/client'
 import { Subscription } from 'rxjs'
 

@@ -15,6 +15,7 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
 
     alias: {
+      arc: path.resolve(basePath, 'src/arc'),
       actions: path.resolve(basePath, 'src/actions'),
       components: path.resolve(basePath, 'src/components'),
       constants: path.resolve(basePath, 'src/constants'),

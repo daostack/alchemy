@@ -11,8 +11,7 @@ import "./assets/styles/global.scss";
 import Util from 'lib/util';
 import { arc } from './arc'
 
-async function renderApp() {
-  console.time('Time until readyToShow');
+async function initializeArcJs() {
   try {
 
     console.time('InitalizeArcJs')
@@ -71,7 +70,10 @@ async function renderApp() {
     console.error(e);
     throw(e)
   }
-
+}
+async function renderApp() {
+  console.time('Time until readyToShow');
+  initializeArcJs()
   ReactDOM.render(
     <AppContainer>
       <App />
