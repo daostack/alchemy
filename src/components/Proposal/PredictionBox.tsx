@@ -8,8 +8,9 @@ import { Modal } from 'react-router-modal';
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDaoState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import { IProposalState, ProposalStage } from '@daostack/client'
 
 import * as css from "./Proposal.scss";
 
@@ -144,7 +145,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     }
 
     // round second decimal up
-    const stakingLeftToBoost = Math.ceil((threshold - (proposal.stakesYes - proposal.stakesNo)) * 100) / 100;
+    const stakingLeftToBoost = Math.ceil((threshold - (proposal.stakesFor - proposal.stakesAgainst)) * 100) / 100;
 
     let wrapperClass = classNames({
       [css.predictions] : true,
@@ -209,7 +210,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={stakeProposal.bind(null, proposal.daoAvatarAddress, proposal.proposalId, pendingPrediction, Number(stakeAmount))}
+            action={stakeProposal.bind(null, proposal.dao.address, proposal.id, pendingPrediction, Number(stakeAmount))}
             closeAction={this.closePreStakeModal.bind(this)}
             dao={dao}
             effectText={<span>Prediction amount: {stakeAmount} GENs<br/>You are predicting the proposal will be {pendingPrediction == VoteOptions.Yes ? "accepted" : "rejected"} by the DAO</span>}
@@ -273,28 +274,35 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         </div>
         <div>
           <span className={css.boostedAmount}>
-            {proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
+            // TODO: check if commented line is presented well below
+            // proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
+            {proposal.stage == ProposalStage.Open && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
           </span>
           <table>
             <tbody>
               <tr className={stakeUpClass}>
                 <td className={passPrediction}>
-                  { proposal.state == ProposalStates.PreBoosted ?
-                    (
+                  // TODO: check if commented line is presented well below
+                  // proposal.state == ProposalStates.PreBoosted
+                  { proposal.stage === ProposalStage.Open
+                    ? (
                       tip(VoteOptions.No) != '' ?
                         <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
                           {passButton}
                         </Tooltip> :
                         passButton
-                    ) :
-                    "PASS"
+                      )
+                    : "PASS"
                   }
                 </td>
-                <td>{proposal.stakesYes} GEN</td>
+                <td>{proposal.stakesFor} GEN</td>
               </tr>
               <tr className={stakeDownClass} >
                 <td className={failPrediction}>
-                  { proposal.state == ProposalStates.PreBoosted
+                  // TODO: check if commented line is presented well below
+                  // tslint:disable-next-line
+                  // proposal.state == ProposalStates.PreBoosted // tslint:disable-line
+                  { proposal.stage === ProposalStage.Open
                     ? (
                         tip(VoteOptions.Yes) != '' ?
                           <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
@@ -305,7 +313,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                     : "FAIL"
                   }
                 </td>
-                <td>{proposal.stakesNo} GEN</td>
+                <td>{proposal.stakesAgainst} GEN</td>
               </tr>
             </tbody>
           </table>

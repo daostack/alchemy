@@ -16,7 +16,7 @@ import * as css from "./CreateProposal.scss";
 
 import AccountImage from "components/Account/AccountImage";
 import DaoHeader from "../ViewDao/DaoHeader";
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModalArc";
 import ReputationView from "components/Account/ReputationView";
 
 import { Formik, Field, FormikBag } from 'formik';
@@ -137,7 +137,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   closeAction={this.closePreTransactionModal.bind(this)}
                   currentAccount={currentAccount}
                   dao={legacydao}
-                  effectText={<span>Budget: <ReputationView reputation={reputationChange} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> and {ethReward || externalTokenReward} {externalTokenReward ? dao.externalTokenSymbol : "ETH"}</span>}
+                  effectText={<span>Budget: <ReputationView reputation={reputationChange}
+                    totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> and
+                    {ethReward || externalTokenReward} {externalTokenReward ? dao.externalTokenSymbol : "ETH"}</span>}
                   proposal={this.state.proposalDetails}
                 /> : ""
               }

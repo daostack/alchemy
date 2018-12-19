@@ -14,25 +14,26 @@ import * as schemas from "schemas";
 import ProposalContainer from "../Proposal/ProposalContainer";
 import DaoHeader from "./DaoHeader";
 import DaoNav from "./DaoNav";
-import Subscribe from "components/Shared/Subscribe"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { arc } from "arc";
 import * as css from "./ViewDao.scss";
 import { combineLatest } from 'rxjs'
+import { IProposalState as IProposalStateFromDaoStackClient } from '@daostack/client'
 
 interface IStateProps extends RouteComponentProps<any> {
   daoAvatarAddress: string;
-  proposalsLoaded: boolean;
-  proposalsBoosted: IProposalState[];
-  proposalsPreBoosted: IProposalState[];
+  // proposalsLoaded: boolean;
+  // proposalsBoosted: IProposalState[];
+  // proposalsPreBoosted: IProposalState[];
   web3: IWeb3State;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
-    proposalsLoaded: state.arc.daos[ownProps.match.params.daoAvatarAddress] && state.arc.daos[ownProps.match.params.daoAvatarAddress].proposalsLoaded,
-    proposalsBoosted: selectors.createBoostedProposalsSelector()(state, ownProps),
-    proposalsPreBoosted: selectors.createPreBoostedProposalsSelector()(state, ownProps),
+    // proposalsLoaded: state.arc.daos[ownProps.match.params.daoAvatarAddress] && state.arc.daos[ownProps.match.params.daoAvatarAddress].proposalsLoaded,
+    // proposalsBoosted: selectors.createBoostedProposalsSelector()(state, ownProps),
+    // proposalsPreBoosted: selectors.createPreBoostedProposalsSelector()(state, ownProps),
     web3: state.web3,
   };
 };
@@ -61,7 +62,7 @@ const Fade = ({ children, ...props }: any) => (
 class DaoProposalsContainer extends React.Component<IProps, null> {
 
   public render() {
-    const {   daoAvatarAddress, proposalsLoaded } = this.props;
+    const { daoAvatarAddress } = this.props;
 
     const observable = combineLatest(
       // TODO: add queries here, like `proposals({boosted: true})` or whatever (TBD)
@@ -69,15 +70,16 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
       arc.dao(daoAvatarAddress).proposals(), // the list of pre-boosted proposals
     )
     return <Subscribe observable={observable}>{
-      ({ complete, data, error }: any): any => {
+      (state: IObservableState<[IProposalStateFromDaoStackClient[], IProposalStateFromDaoStackClient[]]>): any => {
+        const data = state.data
         if ( data !== null ) {
           const proposalsBoosted = data[0]
           const proposalsPreBoosted = data[1]
           const boostedProposalsHTML = (
             <TransitionGroup className="boosted-proposals-list">
-              { proposalsBoosted.map((proposal: IProposalState) => (
-                <Fade key={"proposal_" + proposal.proposalId}>
-                  <ProposalContainer proposalId={proposal.proposalId} />
+              { proposalsBoosted.map((proposal: IProposalStateFromDaoStackClient) => (
+                <Fade key={"proposal_" + proposal.id}>
+                  <ProposalContainer proposalId={proposal.id} />
                 </Fade>
               ))}
             </TransitionGroup>
@@ -85,9 +87,9 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
 
           const preBoostedProposalsHTML = (
             <TransitionGroup className="boosted-proposals-list">
-              { proposalsPreBoosted.map((proposal: IProposalState) => (
-                <Fade key={"proposal_" + proposal.proposalId}>
-                  <ProposalContainer proposalId={proposal.proposalId} />
+              { proposalsPreBoosted.map((proposal: IProposalStateFromDaoStackClient) => (
+                <Fade key={"proposal_" + proposal.id}>
+                  <ProposalContainer proposalId={proposal.id} />
                 </Fade>
               ))}
             </TransitionGroup>

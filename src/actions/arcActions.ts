@@ -12,7 +12,7 @@ import { Action, ActionCreator, Dispatch } from 'redux';
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
 import { arc } from "arc";
-import { Address, IDAOState as IClientDAOState, Reputation, Token } from '@daostack/client'
+import { Address, IDAOState as IClientDAOState, Reputation, Token, IProposalState } from '@daostack/client'
 import { Subscription } from 'rxjs'
 
 import Util from "lib/util";
@@ -22,12 +22,12 @@ import {
   checkProposalExpired,
   IAccountState,
   IDaoState,
-  IProposalState,
+  IProposalState as IProposalStateLegacy,
   IRedemptionState,
   IStakeState,
   IVoteState,
   newAccount,
-  proposalEnded,
+  proposalEndedArc,
   ProposalStates,
   RewardType,
   TransactionStates,
@@ -190,7 +190,7 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
     console.error(e);
   }
 
-  let contributionProposal: Arc.ContributionProposal, proposalId: string, serverProposal: any, proposal: IProposalState, voterInfo, stakerInfo, redemptions;
+  let contributionProposal: Arc.ContributionProposal, proposalId: string, serverProposal: any, proposal: IProposalStateLegacy, voterInfo, stakerInfo, redemptions;
   for (let cnt = 0; cnt < proposals.length; cnt++) {
     contributionProposal = proposals[cnt];
     proposalId = contributionProposal.proposalId;
@@ -257,7 +257,7 @@ async function getProposalDetails(
   serverProposal: any,
   currentAccountAddress: string = null,
   fromBlock = 0,
-  toBlock = "latest"): Promise<IProposalState> {
+  toBlock = "latest"): Promise<IProposalStateLegacy> {
 
   const proposalId = contributionProposal.proposalId;
   const descriptionHash = contributionProposal.contributionDescriptionHash;
@@ -301,7 +301,7 @@ async function getProposalDetails(
 
   const proposer = (await votingMachineInstance.NewProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock: "latest" }).get(undefined, -1))[0].args._proposer;
 
-  const proposal: IProposalState = {
+  const proposal: IProposalStateLegacy = {
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
     boostedTime: Number(proposalDetails.boostedPhaseTime),
     boostedVotePeriodLimit: Number(proposalDetails.currentBoostedVotePeriodLimit),
@@ -359,7 +359,7 @@ async function getProposalDetails(
       proposal.stakes.push(stakerInfo as IStakeState);
     }
 
-    if (proposalEnded(proposal)) {
+    if (proposalEndedArc(proposal)) {
       const redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
       if (redemptions) {
         proposal.redemptions.push(redemptions as IRedemptionState);
@@ -395,7 +395,7 @@ async function getProposalDetails(
       }
     });
 
-    if (proposalEnded(proposal)) {
+    if (proposalEndedArc(proposal)) {
       // Find all current rewards waiting to be redeemed
       let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
       proposal.votes.forEach((vote: IVoteState) => {
@@ -452,8 +452,8 @@ async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.G
 }
 
 // TODO: move this to a separate Util/lib class
-async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalState, accountAddress: string): Promise<IRedemptionState> {
-  if (!proposalEnded(proposal)) {
+async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalStateLegacy, accountAddress: string): Promise<IRedemptionState> {
+  if (!proposalEndedArc(proposal)) {
     return null;
   }
 
@@ -497,8 +497,8 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
   return anyRedemptions(redemptions) ? redemptions : null;
 }
 
-async function getProposalRedemptions(proposal: IProposalState, state: IRootState): Promise<{ entities: any, redemptions: string[] }> {
-  if (!proposalEnded(proposal)) {
+async function getProposalRedemptions(proposal: IProposalStateLegacy, state: IRootState): Promise<{ entities: any, redemptions: string[] }> {
+  if (!proposalEndedArc(proposal)) {
     return { entities: {}, redemptions: [] };
   }
 
@@ -824,7 +824,7 @@ export function onProposalExecuted(avatarAddress: string, proposalId: string, ex
   };
 }
 
-export function onProposalExpired(proposal: IProposalState) {
+export function onProposalExpired(proposal: IProposalStateLegacy) {
   return async (dispatch: Dispatch<any>, getState: () => IRootState) => {
 
     const expiredState = checkProposalExpired(proposal);
@@ -870,7 +870,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
     voter: any,
   }>;
 
-export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalState, voteOption: number) {
+export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStateLegacy, voteOption: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const web3: Web3 = await Arc.Utils.getWeb3();
     const currentAccountAddress = getState().web3.ethAccountAddress;
@@ -924,7 +924,7 @@ export function onVoteEvent(avatarAddress: string, proposalId: string, voterAddr
     };
 
     const daoInstance = await Arc.DAO.at(avatarAddress);
-    const proposal: IProposalState = getState().arc.proposals[proposalId];
+    const proposal: IProposalStateLegacy = getState().arc.proposals[proposalId];
     if (!proposal) {
       return;
     }
@@ -987,7 +987,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const web3: Web3 = await Arc.Utils.getWeb3();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
-    const proposal: IProposalState = getState().arc.proposals[proposalId];
+    const proposal: IProposalStateLegacy = getState().arc.proposals[proposalId];
 
     const meta = {
       avatarAddress: daoAvatarAddress,
@@ -1045,7 +1045,7 @@ export function onStakeEvent(avatarAddress: string, proposalId: string, stakerAd
     const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(avatarAddress)).votingMachineAddress;
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
-    const proposal: IProposalState = getState().arc.proposals[proposalId];
+    const proposal: IProposalStateLegacy = getState().arc.proposals[proposalId];
     if (!proposal) {
       // Seeing this on production. Shouldn't really happen but may as well check for safety. Must be from past issues with cache script?
       return;
@@ -1095,7 +1095,7 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
     currentAccountRedemptions: IRedemptionState,
   }>;
 
-export function redeemProposal(daoAvatarAddress: string, proposal: IProposalState, accountAddress: string) {
+export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStateLegacy, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const redemption = getState().arc.redemptions[`${proposal.proposalId}-${accountAddress}`];
     const dao = getState().arc.daos[daoAvatarAddress];

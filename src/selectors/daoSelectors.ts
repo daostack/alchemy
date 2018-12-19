@@ -3,7 +3,7 @@ import { denormalize } from "normalizr";
 import { createSelector } from "reselect";
 
 import { IRootState } from "reducers";
-import { IProposalState, ProposalStates, closingTime } from "reducers/arcReducer";
+import { IProposalState, ProposalStates, closingTimeLegacy } from "reducers/arcReducer";
 import * as schemas from "schemas";
 
 const getArcEntities = (state: IRootState) => state.arc;
@@ -56,7 +56,7 @@ export const createHistoryProposalsSelector = () => createSelector(
       proposal.state === ProposalStates.PreBoostedTimedOut
     ));
 
-    result.sort((a, b) => closingTime(b).unix() - closingTime(a).unix())
+    result.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
     return result;
   }
 );

@@ -1,3 +1,7 @@
+//
+// This is a "legacy" copy of pretransactionmodal.tsx
+// Plz remove when refactor is finished
+//
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -6,10 +10,9 @@ import { Link } from "react-router-dom";
 import { Modal } from 'react-router-modal';
 
 import * as arcActions from "actions/arcActions";
-import { IDaoState, ProposalStates, proposalEnded } from "reducers/arcReducer";
-import { IProposalState, ProposalStage } from '@daostack/client'
+import { IDaoState, IProposalState, ProposalStates, proposalEndedArc } from "reducers/arcReducer";
 
-import RewardsString from "components/Proposal/RewardsString";
+import RewardsString from "components/Proposal/RewardsStringArc";
 
 import * as css from "./PreTransactionModal.scss";
 
@@ -43,13 +46,11 @@ export default class PreTransactionModal extends React.Component<IProps> {
   public render() {
     const { actionType, currentAccount, dao, effectText, proposal } = this.props;
 
-    // TODO: calculate reputationWhenExecuted
-    // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-    const totalReputation = dao.reputationCount;
+    const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    const yesPercentage = totalReputation && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / totalReputation * 100)) : 0;
-    const noPercentage = totalReputation  && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / totalReputation * 100)) : 0;
+    const yesPercentage = totalReputation && proposal.votesYes ? Math.max(2, Math.ceil(proposal.votesYes / totalReputation * 100)) : 0;
+    const noPercentage = totalReputation  && proposal.votesNo ? Math.max(2, Math.ceil(proposal.votesNo / totalReputation * 100)) : 0;
 
     const styles = {
       forBar: {
@@ -65,11 +66,8 @@ export default class PreTransactionModal extends React.Component<IProps> {
       case ActionTypes.VoteUp:
         icon = <img src="/assets/images/Tx/Upvote.svg" />;
         transactionInfo = <span><strong className={css.passVote}>Pass</strong> vote</span>;
-        // TODO: check if the commented lines are correctly refactored
-        // passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
-        // failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
-        passIncentive = proposal.stage == ProposalStage.Open ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
-        failIncentive = proposal.stage == ProposalStage.Open ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
+        passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
+        failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR YES VOTES";
         rules = <div>
                   <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
@@ -81,9 +79,8 @@ export default class PreTransactionModal extends React.Component<IProps> {
       case ActionTypes.VoteDown:
         icon = <img src="/assets/images/Tx/Downvote.svg" />;
         transactionInfo = <span><strong className={css.failVote}>Fail</strong> vote</span>;
-        // TODO: check if the commented lines are correctly refactored
-        passIncentive = proposal.stage == ProposalStage.Open ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
-        failIncentive = proposal.stage == ProposalStage.Open ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
+        passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
+        failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR NO VOTES";
         rules = <div>
                   <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
@@ -120,7 +117,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
         icon = <img src="/assets/images/Tx/NewProposal.svg"/>;
         transactionInfo = <span>Create <strong className={css.redeem}>proposal</strong></span>;
 
-        if (currentAccount == proposal.beneficiary) {
+        if (currentAccount == proposal.beneficiaryAddress) {
           let rewards = [];
           passIncentive = <span>GAIN REPUTATION &amp; <RewardsString proposal={proposal} dao={dao} /></span>;
         } else {
@@ -187,15 +184,15 @@ export default class PreTransactionModal extends React.Component<IProps> {
                 </span>
               </div> : ""
             }
-            { !proposalEnded(proposal) ?
+            { !proposalEndedArc(proposal) ?
               <div className={css.decisionGraph}>
-                  <span className={css.forLabel}>{proposal.votesFor} ({yesPercentage}%) PASS</span>
+                  <span className={css.forLabel}>{proposal.votesYes} ({yesPercentage}%) PASS</span>
                   <div className={css.graph}>
                     <div className={css.forBar} style={styles.forBar}></div>
                     <div className={css.againstBar} style={styles.againstBar}></div>
                     <div className={css.divider}></div>
                   </div>
-                  <span className={css.againstLabel}>{proposal.votesAgainst} ({noPercentage}%) FAIL</span>
+                  <span className={css.againstLabel}>{proposal.votesNo} ({noPercentage}%) FAIL</span>
               </div>
               : ""
             }

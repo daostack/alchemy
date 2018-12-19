@@ -5,7 +5,8 @@ import Tooltip from 'rc-tooltip';
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDaoState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IProposalState, ProposalStage } from '@daostack/client'
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
@@ -64,8 +65,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
     const isVoting = isVotingNo || isVotingYes;
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    let yesPercentage = dao.reputationCount && proposal.votesYes ? Math.max(2, Math.ceil(proposal.votesYes / dao.reputationCount * 100)) : 0;
-    let noPercentage = dao.reputationCount && proposal.votesNo ? Math.max(2, Math.ceil(proposal.votesNo / dao.reputationCount * 100)) : 0;
+    let yesPercentage = dao.reputationCount && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / dao.reputationCount * 100)) : 0;
+    let noPercentage = dao.reputationCount && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / dao.reputationCount * 100)) : 0;
 
     const styles = {
       yesGraph: {
@@ -119,7 +120,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
         {this.state.showPreVoteModal ?
           <PreTransactionModal
             actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-            action={voteOnProposal.bind(null, proposal.daoAvatarAddress, proposal, this.state.currentVote)}
+            action={voteOnProposal.bind(null, proposal.dao.address, proposal, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
             currentAccount={currentAccountAddress}
             dao={dao}
@@ -179,14 +180,14 @@ export default class VoteBox extends React.Component<IProps, IState> {
                         <ReputationView
                           daoName={dao.name}
                           totalReputation={dao.reputationCount}
-                          reputation={proposal.votesYes}
+                          reputation={proposal.votesFor}
                         /> for
                       </span>
                       <span className={css.againstLabel}>
                         <ReputationView
                           daoName={dao.name}
                           totalReputation={dao.reputationCount}
-                          reputation={proposal.votesNo}
+                          reputation={proposal.votesAgainst}
                         /> against
                       </span>
                     </div>

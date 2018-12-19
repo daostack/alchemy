@@ -36,7 +36,7 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
           isLoading: false,
       })
       },
-      (error: Error) => { throw error },
+      (error: Error) => { this.setState({ error })},
       () => { this.setState({complete: true})}
     )
   }

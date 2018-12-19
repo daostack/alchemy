@@ -29,3 +29,10 @@ export function mockLegacyDaoState(dao: IDAOState ) {
   }
   return legacyDao
 }
+
+// export function castAsClientDaoState(dao: IDaoState) {
+//   const clientDao: IDAOState = {
+//       address:
+//   }
+//   return clientDao
+// }

@@ -7,7 +7,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, IProposalState, IRedemptionState, closingTime } from "reducers/arcReducer";
+import { IAccountState, IDaoState, IProposalState, IRedemptionState, closingTimeLegacy } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
@@ -39,7 +39,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
       redemption.proposal = state.arc.proposals[redemption.proposalId];
       proposals.push(state.arc.proposals[redemption.proposalId]);
     });
-    proposals.sort((a, b) => closingTime(b).unix() - closingTime(a).unix())
+    proposals.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
   }
 
   return {

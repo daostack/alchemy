@@ -1,8 +1,13 @@
+//
+// Old version of RewardsString from before the client refactor
+// please remove when not necessary anymore
+//
+
 import * as React from "react";
 
-import { IDaoState, proposalEnded } from "reducers/arcReducer";
+import { IDaoState, IProposalState, ProposalStates, proposalEnded } from "reducers/arcReducer";
 import ReputationView from "components/Account/ReputationView";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState } from '@daostack/client'
 
 interface IProps {
   dao: IDaoState;
@@ -21,12 +26,12 @@ export default class RewardsString extends React.Component<IProps, null> {
     if (proposal.externalTokenReward) {
       rewards.push(proposal.externalTokenReward.toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
     }
-    if (proposal.tokensReward) {
-      rewards.push(proposal.tokensReward.toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
+    if (proposal.nativeTokenReward) {
+      rewards.push(proposal.nativeTokenReward.toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
     }
-    if (proposal.reputationReward) {
+    if (proposal.reputationChange) {
       rewards.push(
-        <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={proposal.reputationReward}/>
+        <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={proposal.reputationChange}/>
       );
     }
     return <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "and"}</em> {v}</React.Fragment>, null)}</strong>;
