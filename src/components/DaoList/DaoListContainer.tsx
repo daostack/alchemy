@@ -1,6 +1,4 @@
-import { denormalize } from "normalizr";
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { arc } from "arc"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
@@ -14,26 +12,6 @@ import * as schemas from "schemas";
 
 import * as css from "./DaoList.scss";
 import DaoContainer from "./DaoContainer"
-
-// interface IStateProps {
-//   daos: { [key: string]: IDaoState };
-//   daosLoaded: boolean;
-// }
-
-// const mapStateToProps = (state: IRootState, ownProps: any) => ({
-//   // TODO: only get the addresses here..
-//   daos: denormalize(state.arc.daos, schemas.daoList, state.arc),
-//   daosLoaded: state.arc.daosLoaded,
-// });
-//
-// interface IDispatchProps {
-//   getDAOs: typeof arcActions.getDAOs;
-// }
-//
-// const mapDispatchToProps = {
-//   getDAOs: arcActions.getDAOs,
-// };
-//
 
 interface IProps {
   state: IObservableState<IDAOState[]>

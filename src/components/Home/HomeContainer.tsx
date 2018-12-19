@@ -4,24 +4,13 @@ import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
 
 import * as arcActions from "actions/arcActions";
 import * as schemas from "schemas";
 
 import * as css from "./Home.scss";
 
-interface IStateProps {}
-
-const mapStateToProps = (state: IRootState, ownProps: any) => ({});
-
-interface IDispatchProps {}
-
-const mapDispatchToProps = {};
-
-type IProps = IStateProps & IDispatchProps;
-
-class HomeContainer extends React.Component<IProps, null> {
+class HomeContainer extends React.Component<null, null> {
 
   public render() {
     return (
@@ -70,4 +59,4 @@ class HomeContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeContainer);
+export default HomeContainer

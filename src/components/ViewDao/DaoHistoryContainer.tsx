@@ -6,7 +6,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IProposalState } from "reducers/arcReducer";
+import { IProposalState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
@@ -30,11 +30,9 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  getDAO: typeof arcActions.getDAO;
 }
 
 const mapDispatchToProps = {
-  getDAO: arcActions.getDAO,
 };
 
 type IProps = IStateProps & IDispatchProps;

@@ -2,9 +2,7 @@ import * as classNames from "classnames";
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
 import { IDAOState } from '@daostack/client'
 import { arc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"

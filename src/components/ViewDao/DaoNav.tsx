@@ -6,14 +6,13 @@ import Subscribe from "components/Shared/Subscribe"
 import { arc } from "arc";
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, IRedemptionState } from "reducers/arcReducer";
+import { IRedemptionState } from "reducers/arcReducer";
 import { IDAOState } from '@daostack/client'
 
 import * as css from "./ViewDao.scss";
 
 interface IProps {
   currentAccountAddress: string;
-  // dao: IDaoState;
   address: string
   numRedemptions: number;
 }
