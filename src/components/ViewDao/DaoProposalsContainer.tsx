@@ -11,6 +11,7 @@ import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
 
+// import { ConnectedProposalContainer as ProposalContainer } from "../Proposal/ProposalContainer";
 import ProposalContainer from "../Proposal/ProposalContainer";
 import DaoHeader from "./DaoHeader";
 import DaoNav from "./DaoNav";

@@ -28,7 +28,7 @@ import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReduc
 
 import { arc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 interface IStateProps {
   beneficiaryRedemptions: IRedemptionState;
@@ -40,7 +40,7 @@ interface IStateProps {
   currentRedemptions: IRedemptionState;
   currentStake: IStakeState;
   currentVote: IVoteState;
-  dao?: IDaoState;
+  dao: IDAOState;
   proposal: IProposalState;
   isVotingYes: boolean;
   isVotingNo: boolean;
@@ -57,8 +57,11 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const beneficiaryRedemptions = state.arc.redemptions[`${ownProps.proposalId}-${proposal.beneficiary}`];
   const currentStake = state.arc.stakes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const currentVote = state.arc.votes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
-  const dao = denormalize(state.arc.daos[proposal.daoAvatarAddress], schemas.daoSchema, state.arc) as IDaoState;
-  const threshold = dao.currentThresholdToBoost;
+  const dao = ownProps.dao
+  // const dao = denormalize(state.arc.daos[proposal.dao.address], schemas.daoSchema, state.arc) as IDaoState;
+  // TODO: get the threshold from somewhere!
+  // const threshold = dao.currentThresholdToBoost;
+  const threshold = 12345
 
   let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${proposal.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
   if (!currentAccount) {
@@ -152,11 +155,16 @@ class ProposalContainer extends React.Component<IProps, IState> {
       threshold
     } = this.props;
 
+    // TODO: fix this: get the amount of ETH of the DAO
+    const ethBalance = 0
+    const genBalance = 0
+    const externalTokenBalance = 0
+
     const beneficiaryHasRewards = beneficiaryRedemptions && (
       beneficiaryRedemptions.beneficiaryReputation ||
       beneficiaryRedemptions.beneficiaryNativeToken ||
-      (beneficiaryRedemptions.beneficiaryEth && dao.ethCount >= beneficiaryRedemptions.beneficiaryEth) ||
-      (beneficiaryRedemptions.beneficiaryExternalToken && dao.externalTokenCount >= beneficiaryRedemptions.beneficiaryExternalToken)
+      (beneficiaryRedemptions.beneficiaryEth && ethBalance >= beneficiaryRedemptions.beneficiaryEth) ||
+      (beneficiaryRedemptions.beneficiaryExternalToken && externalTokenBalance >= beneficiaryRedemptions.beneficiaryExternalToken)
     ) as boolean;
 
     const accountHasRewards = currentRedemptions && (
@@ -166,7 +174,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentRedemptions.stakerTokens ||
       currentRedemptions.voterReputation ||
       currentRedemptions.voterTokens ||
-      (currentRedemptions.stakerBountyTokens && dao.genCount >= currentRedemptions.stakerBountyTokens)
+      (currentRedemptions.stakerBountyTokens && genBalance >= currentRedemptions.stakerBountyTokens)
     ) as boolean;
 
     const redeemable = accountHasRewards || beneficiaryHasRewards;
@@ -190,7 +198,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       // Calculate reputation percentages
       // TODO: calculate "reputationWhenExecuted" as in the commented line
       // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-      const totalReputation: number = dao.reputationCount
+      const totalReputation: number = dao.reputationTotalSupply
 
       const yesPercentage = totalReputation && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / totalReputation * 100)) : 0;
       const noPercentage = totalReputation && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / totalReputation * 100)) : 0;
@@ -225,16 +233,16 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 {beneficiaryRedemptions.beneficiaryEth ?
                   <li>
                     {beneficiaryRedemptions.beneficiaryEth} ETH
-                    {dao.ethCount < beneficiaryRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
+                    {ethBalance < beneficiaryRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
                   </li> : ""
                 }
                 {beneficiaryRedemptions.beneficiaryExternalToken ?
                   <li>
                     {beneficiaryRedemptions.beneficiaryExternalToken} {dao.externalTokenSymbol}
-                    {dao.externalTokenCount < beneficiaryRedemptions.beneficiaryExternalToken ? " (Insufficient funds in DAO)" : ""}
+                    {externalTokenBalance < beneficiaryRedemptions.beneficiaryExternalToken ? " (Insufficient funds in DAO)" : ""}
                   </li> : ""
                 }
-                {beneficiaryRedemptions.beneficiaryReputation ? <li><ReputationView reputation={beneficiaryRedemptions.beneficiaryReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li> : ""}
+                {beneficiaryRedemptions.beneficiaryReputation ? <li><ReputationView reputation={beneficiaryRedemptions.beneficiaryReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
               </ul>
             </div> : ""
           }
@@ -244,7 +252,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 <div>
                   <strong>For creating the proposal you will receive:</strong>
                   <ul>
-                    <li><ReputationView reputation={currentRedemptions.proposerReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li>
+                    <li><ReputationView reputation={currentRedemptions.proposerReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
                   </ul>
                 </div> : ""
               }
@@ -252,7 +260,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 <div>
                   <strong>For voting on the proposal you will receive:</strong>
                   <ul>
-                    {currentRedemptions.voterReputation ? <li><ReputationView reputation={currentRedemptions.voterReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li> : ""}
+                    {currentRedemptions.voterReputation ? <li><ReputationView reputation={currentRedemptions.voterReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
                     {currentRedemptions.voterTokens ? <li>{currentRedemptions.voterTokens} GEN</li> : ""}
                   </ul>
                 </div> : ""
@@ -265,10 +273,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     {currentRedemptions.stakerBountyTokens ?
                       <li>
                         {currentRedemptions.stakerBountyTokens} GEN bounty
-                        {dao.genCount < currentRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
+                        {genBalance < currentRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
                       </li> : ""
                     }
-                    {currentRedemptions.stakerReputation ? <li><ReputationView reputation={currentRedemptions.stakerReputation} totalReputation={dao.reputationCount} daoName={dao.name} /></li> : ""}
+                    {currentRedemptions.stakerReputation ? <li><ReputationView reputation={currentRedemptions.stakerReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
                   </ul>
                 </div> : ""
               }
@@ -314,7 +322,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       };
 
       const disqusConfig = {
-        url: process.env.BASE_URL + "/dao/" + dao.avatarAddress + "/proposal/" + proposal.id,
+        url: process.env.BASE_URL + "/dao/" + dao.address + "/proposal/" + proposal.id,
         identifier: proposal.id
       };
 
@@ -406,7 +414,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title}</Link>
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>
@@ -415,9 +423,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
               <AccountPopupContainer
                 accountAddress={proposal.beneficiary}
-                daoAvatarAddress={proposal.dao.address}
+                dao={dao}
               />
-              <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.avatarAddress} />
+              <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
             </div>
           </div>
           <div>
@@ -426,12 +434,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 CREATED BY
                 <AccountPopupContainer
                   accountAddress={proposal.proposer}
-                  daoAvatarAddress={proposal.dao.address}
+                  dao={dao}
                 />
-                <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.avatarAddress} />
+                <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
                 &nbsp; ON {submittedTime.format("MMM DD, YYYY")}
               </div>
-              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.id}>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
                 <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
               </Link>
               <a href={proposal.description} target="_blank" className={css.viewProposal}>
@@ -443,7 +451,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
                     actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                    action={executable && !redeemable ? executeProposal.bind(null, dao.avatarAddress, proposal.id) : redeemProposal.bind(null, dao.avatarAddress, proposal, currentAccount.address)}
+                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal, currentAccount.address)}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}
                     effectText={redemptionsTip}
@@ -478,12 +486,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
     }
   }
 }
+
 export const ConnectedProposalContainer = connect(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
 export default (props: { proposalId: string}) =>
   <Subscribe observable={arc.proposal(props.proposalId).state}>{(state: IObservableState<IProposalState>) => {
-      if (state.data) {
-        return <ConnectedProposalContainer proposal={state.data} />
+      const proposal = state.data
+      if (proposal) {
+        return <Subscribe observable={proposal.dao.state} >
+            {(state: IObservableState<IProposalState>) => {
+              const dao = state.data
+              if (dao) {
+                return <ConnectedProposalContainer proposal={proposal} dao={dao} />
+              } else {
+                return <div>Loading...</div>
+              }
+            }
+          }</Subscribe>
       } else if (state.error) {
         console.log(state.error)
         return <div>{ state.error.message }</div>

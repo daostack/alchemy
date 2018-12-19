@@ -10,7 +10,7 @@ import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IDaoState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import { IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 import * as css from "./Proposal.scss";
 
@@ -27,7 +27,7 @@ interface IProps {
   currentStake: number;
   currentAccountGens: number;
   currentAccountGenStakingAllowance: number;
-  dao: IDaoState;
+  dao: IDAOState;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   threshold: number;
@@ -79,7 +79,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
   public handleClickPreApprove(event: any) {
     const { approveStakingGens } = this.props;
-    approveStakingGens(this.props.dao.avatarAddress);
+    approveStakingGens(this.props.dao.address);
     this.setState({ showApproveModal: false });
   }
 

@@ -27,7 +27,8 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = denormalize(state.arc.daos[ownProps.daoAvatarAddress], schemas.daoSchema, state.arc);
+  // const dao = denormalize(state.arc.daos[ownProps.daoAvatarAddress], schemas.daoSchema, state.arc);
+  const dao = ownProps.dao
   const account = state.arc.accounts[`${ownProps.accountAddress}-${ownProps.daoAvatarAddress}`] as IAccountState;
 
   return {

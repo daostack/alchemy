@@ -5,8 +5,8 @@ import Tooltip from 'rc-tooltip';
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState, ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
-import { IProposalState, ProposalStage } from '@daostack/client'
+import { ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
@@ -16,7 +16,7 @@ interface IProps {
   currentAccountAddress: string;
   currentAccountReputation: number;
   currentVote: number;
-  dao: IDaoState;
+  dao: IDAOState;
   proposal: IProposalState;
   voteOnProposal: typeof arcActions.voteOnProposal;
   isVotingNo: boolean;
@@ -65,8 +65,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
     const isVoting = isVotingNo || isVotingYes;
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    let yesPercentage = dao.reputationCount && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / dao.reputationCount * 100)) : 0;
-    let noPercentage = dao.reputationCount && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / dao.reputationCount * 100)) : 0;
+    let yesPercentage = dao.reputationTotalSupply && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / dao.reputationTotalSupply * 100)) : 0;
+    let noPercentage = dao.reputationTotalSupply && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / dao.reputationTotalSupply * 100)) : 0;
 
     const styles = {
       yesGraph: {
@@ -124,7 +124,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
             closeAction={this.closePreVoteModal.bind(this)}
             currentAccount={currentAccountAddress}
             dao={dao}
-            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccountReputation} /></strong></span>}
+            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountReputation} /></strong></span>}
             proposal={proposal}
           /> : ""
         }
@@ -179,14 +179,14 @@ export default class VoteBox extends React.Component<IProps, IState> {
                       <span className={css.forLabel}>
                         <ReputationView
                           daoName={dao.name}
-                          totalReputation={dao.reputationCount}
+                          totalReputation={dao.reputationTotalSupply}
                           reputation={proposal.votesFor}
                         /> for
                       </span>
                       <span className={css.againstLabel}>
                         <ReputationView
                           daoName={dao.name}
-                          totalReputation={dao.reputationCount}
+                          totalReputation={dao.reputationTotalSupply}
                           reputation={proposal.votesAgainst}
                         /> against
                       </span>
@@ -199,8 +199,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
                     <div className={css.reputationThreshold}>
                       <ReputationView
                         daoName={dao.name}
-                        totalReputation={dao.reputationCount}
-                        reputation={dao.reputationCount / 2}
+                        totalReputation={dao.reputationTotalSupply}
+                        reputation={dao.reputationTotalSupply / 2}
                       /> NEEDED FOR DECISION BY VOTE
                     </div>
                   </div>

@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import { Modal } from 'react-router-modal';
 
 import * as arcActions from "actions/arcActions";
-import { IDaoState, ProposalStates, proposalEnded } from "reducers/arcReducer";
-import { IProposalState, ProposalStage } from '@daostack/client'
+import { ProposalStates, proposalEnded } from "reducers/arcReducer";
+import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 import RewardsString from "components/Proposal/RewardsString";
 
@@ -28,7 +28,7 @@ interface IProps {
   actionType: ActionTypes;
   closeAction: any;
   currentAccount?: string;
-  dao: IDaoState;
+  dao: IDAOState;
   effectText: JSX.Element;
   proposal: IProposalState;
 }
@@ -45,7 +45,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
 
     // TODO: calculate reputationWhenExecuted
     // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-    const totalReputation = dao.reputationCount;
+    const totalReputation = dao.reputationTotalSupply;
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     const yesPercentage = totalReputation && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / totalReputation * 100)) : 0;

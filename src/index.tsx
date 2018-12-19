@@ -13,7 +13,6 @@ import { arc } from './arc'
 
 async function initializeArcJs() {
   try {
-
     console.time('InitalizeArcJs')
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
@@ -25,11 +24,8 @@ async function initializeArcJs() {
       deployedContractAddresses,
       watchForAccountChanges: true
     })
-    console.timeEnd('InitalizeArcJs')
 
-    console.time('Arc.Utils.getWeb3()')
     const web3 = await Arc.Utils.getWeb3();
-    console.timeEnd('Arc.Utils.getWeb3()')
     Arc.ConfigService.set("gasPriceAdjustment", async (defaultGasPrice: BigNumber) => {
       try {
         const network = await Arc.Utils.getNetworkName();
@@ -63,6 +59,7 @@ async function initializeArcJs() {
     Arc.ContractWrappers.VestingScheme.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.VoteInOrganizationScheme.contract.constructor.synchronization_timeout = 0;
 
+    console.timeEnd('InitalizeArcJs')
     Arc.AccountService.subscribeToAccountChanges(() => {
       window.location.reload()
     })
@@ -72,7 +69,6 @@ async function initializeArcJs() {
   }
 }
 async function renderApp() {
-  console.time('Time until readyToShow');
   initializeArcJs()
   ReactDOM.render(
     <AppContainer>

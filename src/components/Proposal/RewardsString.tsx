@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import { IDaoState, proposalEnded } from "reducers/arcReducer";
+import { proposalEnded } from "reducers/arcReducer";
 import ReputationView from "components/Account/ReputationView";
 import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 interface IProps {
-  dao: IDaoState;
+  dao: IDAOState;
   proposal: IProposalState;
   separator?: string;
 }
@@ -26,7 +26,7 @@ export default class RewardsString extends React.Component<IProps, null> {
     }
     if (proposal.reputationReward) {
       rewards.push(
-        <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={proposal.reputationReward}/>
+        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.reputationReward}/>
       );
     }
     return <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "and"}</em> {v}</React.Fragment>, null)}</strong>;
