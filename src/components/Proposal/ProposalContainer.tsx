@@ -421,10 +421,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <strong className={css.transferAmount}></strong>
               <img src="/assets/images/Icon/Transfer.svg" />
 
-              <AccountPopupContainer
-                accountAddress={proposal.beneficiary}
-                dao={dao}
-              />
+              <AccountPopupContainer accountAddress={proposal.beneficiary} dao={dao} />
               <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
             </div>
           </div>
@@ -432,9 +429,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <div className={css.proposalDetails}>
               <div className={css.createdBy}>
                 CREATED BY
-                <AccountPopupContainer
-                  accountAddress={proposal.proposer}
-                  dao={dao}
+                <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}
                 />
                 <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
                 &nbsp; ON {submittedTime.format("MMM DD, YYYY")}

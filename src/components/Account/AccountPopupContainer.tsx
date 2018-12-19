@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, IProposalState, ProposalStates } from "reducers/arcReducer";
+import { IAccountState, IProposalState, ProposalStates } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import * as schemas from "schemas";
@@ -17,17 +17,22 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./Account.scss";
+import { IDAOState, Address } from '@daostack/client'
 
 interface IStateProps {
-  accountAddress: string;
-  dao: IDaoState;
-  profile: IProfileState;
-  reputation: number;
-  tokens: number;
+  accountAddress: string
+  profile: IProfileState
+  dao: IDAOState
+  reputation: number
+  tokens: number
+}
+
+interface IOwnProps {
+  dao: IDAOState
+  accountAddress: Address
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  // const dao = denormalize(state.arc.daos[ownProps.daoAvatarAddress], schemas.daoSchema, state.arc);
   const dao = ownProps.dao
   const account = state.arc.accounts[`${ownProps.accountAddress}-${ownProps.daoAvatarAddress}`] as IAccountState;
 
@@ -68,14 +73,14 @@ class AccountPopupContainer extends React.Component<IProps, null> {
           <AccountImage accountAddress={accountAddress} />
         </div>
         <div className={css.accountInfo}>
-          <span className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.avatarAddress} /></span>
+          <span className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} /></span>
           <div className={css.beneficiaryAddress}>
             <span>{accountAddress}</span>
             <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>
-            <div><ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={reputation}/></div>
+            <div><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputation}/></div>
           </div>
         </div>
       </div>
