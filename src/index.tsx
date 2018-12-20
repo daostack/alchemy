@@ -1,9 +1,11 @@
+import axios from "axios";
+import BigNumber from "bignumber.js";
 import * as Arc from '@daostack/arc.js';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faGithub, faTwitter, faFacebook } from '@fortawesome/free-brands-svg-icons';
 import { AppContainer } from "react-hot-loader";
-import axios from "axios";
-import BigNumber from "bignumber.js";
 
 import { App } from "./App";
 
@@ -22,8 +24,14 @@ async function initializeArcJs() {
 
     await Arc.InitializeArcJs({
       deployedContractAddresses,
-      watchForAccountChanges: true
-    })
+      watchForAccountChanges: true,
+      filter: {
+        ContributionReward: true,
+        DaoCreator: true,
+        GenesisProtocol: true,
+        SchemeRegistrar: true
+      }
+    });
 
     const web3 = await Arc.Utils.getWeb3();
     Arc.ConfigService.set("gasPriceAdjustment", async (defaultGasPrice: BigNumber) => {
@@ -42,7 +50,7 @@ async function initializeArcJs() {
       }
     })
 
-    Arc.LoggingService.logLevel = Arc.LogLevel.all;
+    //Arc.LoggingService.logLevel = Arc.LogLevel.all;
 
     // Silence 240 sec error
     if (Arc.ContractWrappers.AbsoluteVote === undefined) {
@@ -52,17 +60,13 @@ async function initializeArcJs() {
     Arc.ContractWrappers.ContributionReward.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.DaoCreator.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.GenesisProtocol.contract.constructor.synchronization_timeout = 0;
-    Arc.ContractWrappers.GlobalConstraintRegistrar.contract.constructor.synchronization_timeout = 0;
+    //Arc.ContractWrappers.GlobalConstraintRegistrar.contract.constructor.synchronization_timeout = 0;
     Arc.ContractWrappers.SchemeRegistrar.contract.constructor.synchronization_timeout = 0;
-    Arc.ContractWrappers.TokenCapGC.contract.constructor.synchronization_timeout = 0;
-    Arc.ContractWrappers.UpgradeScheme.contract.constructor.synchronization_timeout = 0;
-    Arc.ContractWrappers.VestingScheme.contract.constructor.synchronization_timeout = 0;
-    Arc.ContractWrappers.VoteInOrganizationScheme.contract.constructor.synchronization_timeout = 0;
 
     console.timeEnd('InitalizeArcJs')
     Arc.AccountService.subscribeToAccountChanges(() => {
       window.location.reload()
-    })
+    });
   } catch (e) {
     console.error(e);
     throw(e)
@@ -70,6 +74,9 @@ async function initializeArcJs() {
 }
 async function renderApp() {
   initializeArcJs()
+  // Add icons we want to use from FontAwesome
+  library.add(faGithub, faTwitter, faFacebook);
+
   ReactDOM.render(
     <AppContainer>
       <App />

@@ -12,6 +12,7 @@ import * as schemas from "schemas";
 
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
+import OAuthLogin from 'components/Account/OAuthLogin';
 
 import * as css from "./ViewDao.scss";
 
@@ -48,7 +49,20 @@ class DaoMembersContainer extends React.Component<IProps, null> {
             className="membersPage"
           />
           <div className={css.memberAddress}>
-            <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.avatarAddress} />{profile ? <br/> : "" }
+            { profile ?
+              <div>
+                <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.avatarAddress} />
+                {Object.keys(profile.socialURLs).length == 0 ? "" :
+                  <span>
+                    <OAuthLogin editing={false} provider='facebook' accountAddress={member.address} profile={profile} className={css.socialButton}/>
+                    <OAuthLogin editing={false} provider='twitter' accountAddress={member.address} profile={profile} className={css.socialButton} />
+                    <OAuthLogin editing={false} provider='github' accountAddress={member.address} profile={profile} className={css.socialButton} />
+                  </span>
+                }
+                <br/>
+              </div>
+              : ""
+            }
             <div>{member.address}</div>
           </div>
           <div>

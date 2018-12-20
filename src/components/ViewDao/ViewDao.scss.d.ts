@@ -12,6 +12,7 @@ export const predictions: string;
 export const membersContainer: string;
 export const member: string;
 export const memberAddress: string;
+export const socialButton: string;
 export const proposalsContainer: string;
 export const boostedProposalsContainer: string;
 export const openProposal: string;

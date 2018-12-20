@@ -71,10 +71,10 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
       return children(this.state)
     }
 
-    const childrenWithProps = React.Children.map(children, (child) =>
-      React.cloneElement(child, this.state)
-    )
-
-    return <div>{childrenWithProps}</div>
+    // const childrenWithProps = React.Children.map(children, (child) =>
+    //   React.cloneElement(child, this.state)
+    // )
+    //
+    // return <div>{childrenWithProps}</div>
   }
 }
