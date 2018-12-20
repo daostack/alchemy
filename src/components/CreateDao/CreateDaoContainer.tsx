@@ -4,7 +4,7 @@ import { connect, Dispatch } from "react-redux";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { newAccount, IAccountState, IDaoState } from "reducers/arcReducer";
+import { newAccount, IAccountState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 
 import * as css from "./CreateDao.scss";

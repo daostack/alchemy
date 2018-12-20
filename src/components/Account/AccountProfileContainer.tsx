@@ -21,12 +21,16 @@ import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./Account.scss";
 
+import { IDAOState } from '@daostack/client'
+import { arc } from 'arc'
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+
 interface IStateProps extends RouteComponentProps<any> {
   accountAddress: string;
   accountInfo?: IAccountState;
   accountProfile?: IProfileState;
   currentAccountAddress: string;
-  dao?: IDaoState;
+  dao: IDAOState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -37,7 +41,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     accountInfo: state.arc.accounts[ownProps.match.params.accountAddress + "-" + queryValues.daoAvatarAddress],
     accountProfile: state.profiles[ownProps.match.params.accountAddress],
     currentAccountAddress: state.web3.ethAccountAddress,
-    dao: queryValues.daoAvatarAddress ? state.arc.daos[queryValues.daoAvatarAddress as string] : null
+    dao: ownProps.dao
   };
 };
 
@@ -89,7 +93,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
     if (dao) {
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(dao.avatarAddress)).votingMachineAddress;
+      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(dao.address)).votingMachineAddress;
       votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
     } else {
       votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
@@ -149,7 +153,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     return (
       <div>
-        { dao ? <div className={css.daoHeader}><DaoHeader address={dao.avatarAddress} /></div> : ""}
+        { dao ? <div className={css.daoHeader}><DaoHeader address={dao.address} /></div> : ""}
 
       <div className={css.profileContainer}>
         <h3>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</h3>
@@ -234,7 +238,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                   <div className={css.otherInfoContainer}>
                     <div className={css.tokens}>
                       {accountInfo
-                         ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationCount} daoName={dao.name}/> </div>
+                         ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> </div>
                          : ""}
                       <div><strong>GEN:</strong><br/><span>{genCount ? genCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
                       <div><strong>ETH:</strong><br/><span>{ethCount ? ethCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
@@ -270,4 +274,19 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountProfileContainer);
+const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToProps)(AccountProfileContainer);
+
+export default (props: RouteComponentProps<any>) => {
+  const queryValues = queryString.parse(props.location.search)
+  const address = queryValues.daoAvatarAddress as string
+  return <Subscribe observable={arc.dao(address).state}>{
+    (state: IObservableState<IDAOState>) => {
+      const dao = state.data
+      if (dao) {
+        return <ConnectedAccountProfileContainer dao={dao} />
+      } else {
+        return <div>Loading...</div>
+      }
+    }
+  }</Subscribe>
+}

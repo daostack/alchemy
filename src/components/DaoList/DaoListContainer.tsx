@@ -5,7 +5,6 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
 import { IDAOState } from "@daostack/client";
 
 import * as schemas from "schemas";

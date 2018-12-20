@@ -73,7 +73,6 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  getDAO: typeof arcActions.getDAO
   getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
   hideTour: typeof uiActions.hideTour;
   onTransferEvent: typeof arcActions.onTransferEvent;
@@ -89,7 +88,6 @@ interface IDispatchProps {
 }
 
 const mapDispatchToProps = {
-  getDAO: arcActions.getDAO,
   getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
   hideTour: uiActions.hideTour,
   onTransferEvent: arcActions.onTransferEvent,
@@ -169,7 +167,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       this.setState({ showTourIntro: true });
     }
 
-    // this.daoSubscription = this.props.getDAO(this.props.daoAvatarAddress);
     this.setupSubscription()
   }
 

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
+import { IAccountState, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { isStakePending, isVotePending, isRedeemPending } from "selectors/operations";
 import * as schemas from "schemas";
@@ -58,7 +58,6 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const currentStake = state.arc.stakes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const currentVote = state.arc.votes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const dao = ownProps.dao
-  // const dao = denormalize(state.arc.daos[proposal.dao.address], schemas.daoSchema, state.arc) as IDaoState;
   // TODO: get the threshold from somewhere!
   // const threshold = dao.currentThresholdToBoost;
   const threshold = 12345
