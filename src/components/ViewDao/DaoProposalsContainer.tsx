@@ -6,7 +6,6 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IProposalState } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
@@ -19,7 +18,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { arc } from "arc";
 import * as css from "./ViewDao.scss";
 import { combineLatest } from 'rxjs'
-import { IProposalState as IProposalStateFromDaoStackClient } from '@daostack/client'
+import { IProposalState, ProposalStage } from '@daostack/client'
 
 interface IStateProps extends RouteComponentProps<any> {
   daoAvatarAddress: string;
@@ -67,18 +66,18 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
 
     const observable = combineLatest(
       // TODO: add queries here, like `proposals({boosted: true})` or whatever (TBD)
-      arc.dao(daoAvatarAddress).proposals(), // the list of boosted proposals
-      arc.dao(daoAvatarAddress).proposals(), // the list of pre-boosted proposals
+      arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Boosted }), // the list of boosted proposals
+      arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Open }), // the list of pre-boosted proposals
     )
     return <Subscribe observable={observable}>{
-      (state: IObservableState<[IProposalStateFromDaoStackClient[], IProposalStateFromDaoStackClient[]]>): any => {
+      (state: IObservableState<[IProposalState[], IProposalState[]]>): any => {
         const data = state.data
         if ( data !== null ) {
           const proposalsBoosted = data[0]
           const proposalsPreBoosted = data[1]
           const boostedProposalsHTML = (
             <TransitionGroup className="boosted-proposals-list">
-              { proposalsBoosted.map((proposal: IProposalStateFromDaoStackClient) => (
+              { proposalsBoosted.map((proposal: IProposalState) => (
                 <Fade key={"proposal_" + proposal.id}>
                   <ProposalContainer proposalId={proposal.id} />
                 </Fade>
@@ -88,7 +87,7 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
 
           const preBoostedProposalsHTML = (
             <TransitionGroup className="boosted-proposals-list">
-              { proposalsPreBoosted.map((proposal: IProposalStateFromDaoStackClient) => (
+              { proposalsPreBoosted.map((proposal: IProposalState) => (
                 <Fade key={"proposal_" + proposal.id}>
                   <ProposalContainer proposalId={proposal.id} />
                 </Fade>

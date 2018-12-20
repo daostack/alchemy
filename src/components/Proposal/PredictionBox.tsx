@@ -274,17 +274,21 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         </div>
         <div>
           <span className={css.boostedAmount}>
-            // TODO: check if commented line is presented well below
-            // proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
-            {proposal.stage == ProposalStage.Open && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
+            {
+              // TODO: check if commented line is presented well below
+              // proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
+              proposal.stage == ProposalStage.Open && stakingLeftToBoost > 0 ?
+             <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''
+           }
           </span>
           <table>
             <tbody>
               <tr className={stakeUpClass}>
                 <td className={passPrediction}>
-                  // TODO: check if commented line is presented well below
-                  // proposal.state == ProposalStates.PreBoosted
-                  { proposal.stage === ProposalStage.Open
+                  {
+                    // TODO: check if commented line is presented well below
+                    // proposal.state == ProposalStates.PreBoosted
+                   proposal.stage === ProposalStage.Open
                     ? (
                       tip(VoteOptions.No) != '' ?
                         <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -299,10 +303,11 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               </tr>
               <tr className={stakeDownClass} >
                 <td className={failPrediction}>
-                  // TODO: check if commented line is presented well below
-                  // tslint:disable-next-line
-                  // proposal.state == ProposalStates.PreBoosted // tslint:disable-line
-                  { proposal.stage === ProposalStage.Open
+                  {
+                    // TODO: check if commented line is presented well below
+                    // tslint:disable-next-line
+                    // proposal.state == ProposalStates.PreBoosted
+                    proposal.stage === ProposalStage.Open
                     ? (
                         tip(VoteOptions.Yes) != '' ?
                           <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>

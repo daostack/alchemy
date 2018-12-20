@@ -69,8 +69,9 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
 
 export default (props: { address: string}) =>
   <Subscribe observable={arc.dao(props.address).state}>{(state: IObservableState<IDAOState>) => {
-      if (state.data) {
-        return <DaoHeaderComponent dao={state.data} />
+      const daoState = state.data
+      if (daoState) {
+        return <DaoHeaderComponent dao={daoState} />
       } else {
         return null
       }

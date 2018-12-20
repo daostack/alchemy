@@ -53,11 +53,11 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   // const proposal = state.arc.proposals[ownProps.proposalId];
   const proposal = ownProps.proposal
-  const currentRedemptions = state.arc.redemptions[`${proposal.id}-${state.web3.ethAccountAddress}`];
-  const beneficiaryRedemptions = state.arc.redemptions[`${ownProps.proposalId}-${proposal.beneficiary}`];
-  const currentStake = state.arc.stakes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
-  const currentVote = state.arc.votes[`${ownProps.proposalId}-${state.web3.ethAccountAddress}`];
   const dao = ownProps.dao
+  const currentRedemptions = state.arc.redemptions[`${proposal.id}-${state.web3.ethAccountAddress}`];
+  const beneficiaryRedemptions = state.arc.redemptions[`${proposal.id}-${proposal.beneficiary}`];
+  const currentStake = state.arc.stakes[`${proposal.id}-${state.web3.ethAccountAddress}`];
+  const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   // TODO: get the threshold from somewhere!
   // const threshold = dao.currentThresholdToBoost;
   const threshold = 12345

@@ -26,6 +26,7 @@ async function initializeArcJs() {
       deployedContractAddresses,
       watchForAccountChanges: true,
       filter: {
+        AbsoluteVote: true,
         ContributionReward: true,
         DaoCreator: true,
         GenesisProtocol: true,

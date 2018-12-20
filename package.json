@@ -49,7 +49,7 @@
     "lint": "tslint --project .",
     "populate-dao": "ts-node scripts/populateDAO.ts",
     "setup-env": "npm run subgraph:deploy",
-    "subgraph:deploy": "npm explore @daostack/subgraph -- npm i && npm explore @daostack/subgraph -- npm run deploy",
+    "subgraph:deploy": "npm explore @daostack/subgraph -- npm install && npm explore @daostack/subgraph -- npm run deploy",
     "start": "webpack-dev-server --config webpack.dev.config.js",
     "start-dev-profiling": "cross-env NODE_ENV=dev-profiling API_URL=https://daostack-alchemy.herokuapp.com S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-docker": "webpack-dev-server --config webpack.docker.config.js",
