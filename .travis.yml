@@ -31,6 +31,7 @@ script:
   # - nohup npm run ganacheDb &
   # - npm run migrate-ganache > /dev/null
   # - npm run test:unit
+  - npm run build
 
 deploy:
   provider: pages
