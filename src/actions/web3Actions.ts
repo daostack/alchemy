@@ -108,7 +108,6 @@ export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
       votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       // Check for external token rewards in DAO and if exists update account's balance for that token
-      // const dao = getState().arc.daos[daoAvatarAddress] as IDaoState;
       if (dao && dao.externalTokenAddress) {
         const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
         payload.currentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(accountAddress));

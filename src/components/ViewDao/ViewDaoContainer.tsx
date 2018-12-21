@@ -484,7 +484,7 @@ For additional information check out our <a href="https://docs.google.com/docume
         <div className={css.wrapper}>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/history" component={DaoHistoryContainer} />
-            <Route exact path="/dao/:daoAvatarAddress/members" component={DaoMembersContainer} />
+            <Route exact path="/dao/:daoAvatarAddress/members" render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions" component={DaoRedemptionsContainer} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId" component={ViewProposalContainer} />
             <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} />

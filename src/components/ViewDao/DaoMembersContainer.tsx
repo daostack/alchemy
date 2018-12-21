@@ -15,32 +15,32 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from 'components/Account/OAuthLogin';
 
 import * as css from "./ViewDao.scss";
+import { arc } from 'arc'
+import { Subscription, Observable } from 'rxjs'
+import { Address, DAO, Member, IDAOState, IMemberState } from '@daostack/client'
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
-interface IStateProps extends RouteComponentProps<any> {
-  dao: IDaoState;
-  profiles: IProfilesState;
+interface IProps extends RouteComponentProps<any> {
+  dao: IDAOState
+  members: Member[]
+  profiles: IProfilesState
 }
 
 // TODO: can i make this not a container and just take the dao passed in as a prop?
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    dao: denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc),
+    dao: ownProps.dao,
+    members: ownProps.members,
     profiles: state.profiles
-  };
-};
-
-interface IDispatchProps {}
-
-const mapDispatchToProps = {};
-
-type IProps = IStateProps & IDispatchProps;
+  }
+}
 
 class DaoMembersContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { dao, profiles } = this.props;
+    const { dao, members, profiles } = this.props;
 
-    const membersHTML = dao.members.map((member: IAccountState) => {
+    const membersHTML = members.map((member) => {
       const profile = profiles[member.address];
       return (
         <div className={css.member + " " + css.clearfix} key={"member_" + member.address}>
@@ -51,7 +51,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
           <div className={css.memberAddress}>
             { profile ?
               <div>
-                <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.avatarAddress} />
+                <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} />
                 {Object.keys(profile.socialURLs).length == 0 ? "" :
                   <span>
                     <OAuthLogin editing={false} provider='facebook' accountAddress={member.address} profile={profile} className={css.socialButton}/>
@@ -66,7 +66,13 @@ class DaoMembersContainer extends React.Component<IProps, null> {
             <div>{member.address}</div>
           </div>
           <div>
-            Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ({(100 * member.reputation / dao.reputationCount).toFixed(1)}%)</span>
+
+            {
+            // TODO: get reptuation of member (probably best wrapping this whole component in a separate container thatSubscribes to member.stat)
+            // Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}
+            //   ({(100 * member.reputation / dao.reputationTotalSupply).toFixed(1)}%)</span>
+            }
+            Reputation: <span><b>TBD</b></span>
           </div>
         </div>
       );
@@ -81,4 +87,23 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DaoMembersContainer);
+const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContainer);
+
+export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
+  const daoAddress = props.match.params.daoAvatarAddress
+  if (daoAddress) {
+      const dao = new DAO(daoAddress, arc)
+      return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
+          if (state.error) {
+            return <div>{ state.error.message }</div>
+          } else if (state.data) {
+            return <ConnectedDaoMembersContainer members={state.data} />
+          } else {
+            return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+          }
+        }
+      }</Subscribe>
+  } else {
+    throw Error(`no dao! `)
+  }
+}
