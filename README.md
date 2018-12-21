@@ -22,7 +22,10 @@ you can recreate the docker environment by installing an starting all [services 
 
 ## Working with docker
 
-The easiest way to start developing is to work with docker.  After you have installed docker, run the following steps:
+The easiest way to start developing is to work with docker.
+Here is a quick setup; there are more detailed instructions in [here](./documentation/development.md).
+
+After you have installed docker, run the following command:
 ```sh
 docker-compose up alchemy
 ```
