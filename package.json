@@ -127,7 +127,7 @@
     "zeppelin-solidity": "^1.12.0"
   },
   "devDependencies": {
-    "@daostack/migration": "0.0.0-alpha.56-v6",
+    "@daostack/migration": "0.0.0-alpha.56-v7",
     "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git",
     "@types/classnames": "^2.2.6",
     "@types/es6-promisify": "^5.0.0",
