@@ -16,15 +16,14 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IProps {
   proposals: IProposalState[];
-  web3: IWeb3State;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
-  return {
-    web3: state.web3,
-    proposals: ownProps.proposals
-  };
-};
+// const mapStateToProps = (state: IRootState, ownProps: any) => {
+//   return {
+//     web3: state.web3,
+//     proposals: ownProps.proposals
+//   };
+// };
 
 class DaoHistoryContainer extends React.Component<IProps, null> {
 
@@ -51,18 +50,18 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 
 }
 
-const ConnectedDaoHistoryContainer = connect(mapStateToProps)(DaoHistoryContainer);
+// const ConnectedDaoHistoryContainer = connect(mapStateToProps)(DaoHistoryContainer);
 
 export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress
   if (daoAddress) {
       const dao = new DAO(daoAddress, arc)
       // TODO: get only executed proposals, cf.  proposalsExecuted: selectors.createHistoryProposalsSelector()(state, ownProps),
-      return <Subscribe observable={dao.proposals()}>{(state: IObservableState<IDAOState>) => {
+      return <Subscribe observable={dao.proposals()}>{(state: IObservableState<IProposalState[]>) => {
           if (state.error) {
             return <div>{ state.error.message }</div>
           } else if (state.data) {
-            return <ConnectedDaoHistoryContainer proposals={state.data} {...props }/>
+            return <DaoHistoryContainer proposals={state.data} />
           } else {
             return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
           }
