@@ -163,7 +163,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
       <div>
         { dao ? <div className={css.daoHeader}><DaoHeader address={dao.address} /></div> : ""}
 
-      <div className={css.profileContainer}>
+      <div className={css.profileContainer} data-test-id="profile-container">
         <h3>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</h3>
         { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
         { typeof(accountProfile) === 'undefined' ? "Loading..." :
@@ -299,10 +299,12 @@ export default (props: RouteComponentProps<any>) => {
   return <Subscribe observable={arc.dao(address).state}>{
     (state: IObservableState<IDAOState>) => {
       const dao = state.data
-      if (dao) {
-        return <ConnectedAccountProfileContainer dao={dao} />
+      if (state.error) {
+        return <div>${state.error}</div>
+      } else if (dao) {
+        return <ConnectedAccountProfileContainer dao={dao} {...props} />
       } else {
-        return <div>Loading...</div>
+        return <div>Loading...123.. </div>
       }
     }
   }</Subscribe>
