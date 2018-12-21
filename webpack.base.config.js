@@ -44,10 +44,11 @@ module.exports = {
         test: /\.js$/,
         loader: "source-map-loader",
         exclude: [
-          /node_modules\/xhr2\-cookies/,
+          /node_modules\/xhr2-cookies/,
           /node_modules\/apollo-cache-inmemory/,
           /node_modules\/subscriptions-transport-ws/,
           /node_modules\/apollo-client/,
+          /node_modules\/apollo-link-http/,
         ]
       },
 
