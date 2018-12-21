@@ -1,4 +1,4 @@
-const chai = require('chai')
+export const chai = require('chai')
 global.expect = chai.expect
 chai.Should()
 
