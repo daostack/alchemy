@@ -260,7 +260,7 @@ async function getProposalDetails(
   toBlock = "latest"): Promise<IProposalStateLegacy> {
 
   const proposalId = contributionProposal.proposalId;
-  const descriptionHash = contributionProposal.contributionDescriptionHash;
+  // const descriptionHash = contributionProposal.contributionDescriptionHash;
   const avatarAddress = daoInstance.avatar.address;
 
   const votingMachineParamsHash = await
@@ -281,7 +281,8 @@ async function getProposalDetails(
     title = serverProposal.title;
   } else {
     // If we didn't find the proposal by proposalId, see if there is one that matches by description hash that doesnt yet have a proposalId added to it
-    let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
+    // let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
+    let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"}]}}');
     if (response.data.length > 0) {
       serverProposal = response.data[0];
       description = serverProposal.description;
@@ -291,7 +292,7 @@ async function getProposalDetails(
       response = await axios.patch(process.env.API_URL + "/api/proposals/" + serverProposal.id, {
         arcId: proposalId,
         daoAvatarAddress: avatarAddress,
-        descriptionHash,
+        descriptionHash: '',
         description,
         submittedAt: submittedTime,
         title,
@@ -305,7 +306,7 @@ async function getProposalDetails(
     beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
     boostedTime: Number(proposalDetails.boostedPhaseTime),
     boostedVotePeriodLimit: Number(proposalDetails.currentBoostedVotePeriodLimit),
-    contributionDescriptionHash: contributionProposal.contributionDescriptionHash,
+    contributionDescriptionHash: '', // contributionProposal.contributionDescriptionHash,
     daoAvatarAddress: avatarAddress,
     description,
     ethReward: Util.fromWei(contributionProposal.ethReward),
@@ -673,7 +674,7 @@ export function createProposal(
       try {
         const response = await axios.post(process.env.API_URL + "/api/proposals", {
           daoAvatarAddress,
-          descriptionHash,
+          descriptionHash: '',
           description,
           submittedAt: submittedTime,
           title,
@@ -744,7 +745,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     const contributionProposal: Arc.ContributionProposal = {
       proposalId: eventResult._proposalId,
       beneficiaryAddress: eventResult._beneficiary,
-      contributionDescriptionHash: eventResult._contributionDescription,
+      // contributionDescriptionHash: '', // eventResult._contributionDescription,
       ethReward: eventResult._rewards[1],
       executionTime: 0,
       externalToken: eventResult._externalToken,
