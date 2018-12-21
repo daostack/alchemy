@@ -70,12 +70,12 @@ services:
   postgres4graphnode:
     image: postgres
     ports:
-      - 5435:5432
+      - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: trufflesuite/ganache-cli:v6.2.1
+    image: trufflesuite/ganache-cli:v6.2.3
     ports:
       - 8545:8545
     command: >
