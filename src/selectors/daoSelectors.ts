@@ -46,20 +46,20 @@ export const createOpenProposalsSelector = () => createSelector(
   }
 );
 
-export const createHistoryProposalsSelector = () => createSelector(
-  [ getDaoProposals ],
-  (proposals: IProposalState[]) => {
-    const result = proposals.filter((proposal: IProposalState) => (
-      proposal.state === ProposalStates.Executed ||
-      proposal.state === ProposalStates.Closed ||
-      proposal.state === ProposalStates.BoostedTimedOut ||
-      proposal.state === ProposalStates.PreBoostedTimedOut
-    ));
-
-    result.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
-    return result;
-  }
-);
+// export const createHistoryProposalsSelector = () => createSelector(
+//   [ getDaoProposals ],
+//   (proposals: IProposalState[]) => {
+//     const result = proposals.filter((proposal: IProposalState) => (
+//       proposal.state === ProposalStates.Executed ||
+//       proposal.state === ProposalStates.Closed ||
+//       proposal.state === ProposalStates.BoostedTimedOut ||
+//       proposal.state === ProposalStates.PreBoostedTimedOut
+//     ));
+//
+//     result.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
+//     return result;
+//   }
+// );
 
 // export const makeTotalDaoReputationSelector = () => {
 //   return createSelector(

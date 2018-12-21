@@ -37,21 +37,21 @@ import { arc } from 'arc'
 import { Subscription, Observable } from 'rxjs'
 import { IDAOState } from '@daostack/client'
 import { mockLegacyDaoState} from '../../tmp'
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
-  // dao: IDAOState;
+  dao: IDAOState;
   daoAvatarAddress: string;
   lastBlock: number;
   numRedemptions: number;
-  openProposals: IProposalState[];
+  // openProposals: IProposalState[];
   tourVisible: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  // const dao = denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc) as IDaoState;
   const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.match.params.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
   let numRedemptions = 0;
 
@@ -62,11 +62,9 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
-    // dao,
+    dao: ownProps.dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     numRedemptions,
-    // TODO: get open proposals
-    openProposals: [] as IProposalState[],
     // openProposals: dao ? selectors.createOpenProposalsSelector()(state, ownProps) : [],
     tourVisible: state.ui.tourVisible
   };
@@ -105,7 +103,6 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  readyToShow: boolean
   showTourIntro: boolean
   showTourOutro: boolean
   tourCount: number
@@ -128,7 +125,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     this.state = {
       // On production this is used to wait 10 seconds to load changes since last cache before showing the DAO
-      readyToShow: process.env.NODE_ENV == 'development',
       showTourIntro: false,
       showTourOutro: false,
       tourCount: 0,
@@ -138,40 +134,14 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       complete: false,
     };
   }
-  public setupSubscription() {
-    const observable =  arc.dao(this.props.daoAvatarAddress).state
-    this.subscription = observable.subscribe(
-      (next: IDAOState) => {
-        this.setState({
-          dao: next,
-          isLoading: false,
-      })
-      },
-      (error: Error) => { throw error },
-      () => { this.setState({complete: true})}
-    )
-  }
-
-  public teardownSubscription() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
 
   public async componentWillMount() {
     const { cookies, showTour } = this.props;
-
     // If this person has not seen the disclaimer, show them the home page
     if (!cookies.get('seen_tour')) {
       cookies.set('seen_tour', "true", { path: '/' });
       this.setState({ showTourIntro: true });
     }
-
-    this.setupSubscription()
-  }
-
-  public componentDidMount() {
-    // this.setupWatchers();
   }
 
   public async componentDidUpdate(prevProps: IProps) {
@@ -198,9 +168,9 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       clearInterval(this.blockInterval);
     }
 
-    if (this.daoSubscription) {
-      this.daoSubscription.unsubscribe()
-    }
+    // if (this.daoSubscription) {
+    //   this.daoSubscription.unsubscribe()
+    // }
 
   }
 
@@ -341,14 +311,14 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   };
 
   public render() {
-    const { currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
-    const dao = this.state.dao
+    const { dao, currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
+    // const dao = this.props.dao
 
-    if (!dao || !this.state.readyToShow) {
-      return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
-    }
+    // if (!dao || !this.state.readyToShow) {
+    //   return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+    // }
 
-    // TODO: A quick hacks follow to get the page to show, do not forget to remove these later
+    // TODO: A quick hack to get the page to show, do not forget to remove these later
     const legacyDao = mockLegacyDaoState(dao)
 
     // TODO: move the tour in its own file for clarity
@@ -525,4 +495,23 @@ For additional information check out our <a href="https://docs.google.com/docume
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withCookies(ViewDaoContainer));
+const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(withCookies(ViewDaoContainer));
+
+export default (props: RouteComponentProps<any>) => {
+  const daoAddress = props.match.params.daoAvatarAddress
+  if (daoAddress) {
+      return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
+          if (state.error) {
+            return <div>{ state.error.message }</div>
+          } else if (state.data) {
+            return <ConnectedViewDaoContainer dao={state.data} {...props }/>
+          } else {
+            return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+          }
+        }
+      }</Subscribe>
+  } else {
+    throw Error(`no address! `)
+    // return <ConnectedViewDaoContainer dao={undefined} {...props }/>
+  }
+}

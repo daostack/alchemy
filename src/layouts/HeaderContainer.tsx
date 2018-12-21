@@ -131,7 +131,9 @@ class HeaderContainer extends React.Component<IProps, null> {
 
     const web3 = await Arc.Utils.getWeb3();
 
-    await setCurrentAccount(ethAccountAddress, dao);
+    if (dao) {
+      await setCurrentAccount(ethAccountAddress, dao);
+    }
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
     if (daoAvatarAddress) {
@@ -181,7 +183,9 @@ class HeaderContainer extends React.Component<IProps, null> {
   public handleChangeAccount = (e: any) => {
     const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
     const newAddress = selectElement.value;
-    this.props.setCurrentAccount(newAddress, this.props.dao);
+    if (this.props.dao) {
+      this.props.setCurrentAccount(newAddress, this.props.dao);
+    }
   }
 
   public handleClickTour = (e: any) => {
