@@ -10,20 +10,12 @@ import ProposalContainer from "../Proposal/ProposalContainer";
 import * as css from "./ViewDao.scss";
 import { arc } from 'arc'
 import { Subscription, Observable } from 'rxjs'
-import { Address, DAO, IDAOState, IProposalState } from '@daostack/client'
-import { mockLegacyDaoState} from '../../tmp'
+import { Address, DAO, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IProps {
   proposals: IProposalState[];
 }
-
-// const mapStateToProps = (state: IRootState, ownProps: any) => {
-//   return {
-//     web3: state.web3,
-//     proposals: ownProps.proposals
-//   };
-// };
 
 class DaoHistoryContainer extends React.Component<IProps, null> {
 
@@ -50,14 +42,12 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 
 }
 
-// const ConnectedDaoHistoryContainer = connect(mapStateToProps)(DaoHistoryContainer);
-
 export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress
   if (daoAddress) {
       const dao = new DAO(daoAddress, arc)
       // TODO: get only executed proposals, cf.  proposalsExecuted: selectors.createHistoryProposalsSelector()(state, ownProps),
-      return <Subscribe observable={dao.proposals()}>{(state: IObservableState<IProposalState[]>) => {
+      return <Subscribe observable={dao.proposals({ stage: ProposalStage.Resolved })}>{(state: IObservableState<IProposalState[]>) => {
           if (state.error) {
             return <div>{ state.error.message }</div>
           } else if (state.data) {

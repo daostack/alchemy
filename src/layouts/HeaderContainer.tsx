@@ -168,8 +168,12 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public componentWillUnmount() {
-    this.ethBalanceWatcher.stopWatching();
-    this.approvalWatcher.stopWatching();
+    if (this.ethBalanceWatcher) {
+      this.ethBalanceWatcher.stopWatching();
+    }
+    if (this.approvalWatcher) {
+      this.approvalWatcher.stopWatching();
+    }
   }
 
   public copyAddress(e: any) {
