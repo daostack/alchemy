@@ -8,10 +8,10 @@ import { Web3 } from "web3";
 import { IAsyncAction, AsyncActionSequence } from "./async";
 import { getProfile } from "actions/profilesActions";
 import { IRootState } from "reducers";
-import { IDaoState } from "reducers/arcReducer";
 import { ActionTypes as profileActionTypes, IProfileState, newProfile } from "reducers/profilesReducer";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
 import Util from "lib/util";
+import { IDAOState } from '@daostack/client'
 
 export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, IWeb3State>;
 
@@ -84,11 +84,11 @@ export function initializeWeb3() {
   };
 }
 
-export function setCurrentAccount(accountAddress: string, daoAvatarAddress: string = null) {
+export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const web3 = await Arc.Utils.getWeb3();
 
-    let payload = {
+    const payload = {
       currentAccountGenBalance: 0,
       currentAccountGenStakingAllowance: 0,
       ethAccountAddress: accountAddress,
@@ -101,13 +101,14 @@ export function setCurrentAccount(accountAddress: string, daoAvatarAddress: stri
     payload.currentAccountEthBalance = Util.fromWei(balance);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
+    const daoAvatarAddress = dao.address
     if (daoAvatarAddress !== null) {
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
       const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
       votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       // Check for external token rewards in DAO and if exists update account's balance for that token
-      const dao = getState().arc.daos[daoAvatarAddress] as IDaoState;
+      // const dao = getState().arc.daos[daoAvatarAddress] as IDaoState;
       if (dao && dao.externalTokenAddress) {
         const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
         payload.currentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(accountAddress));

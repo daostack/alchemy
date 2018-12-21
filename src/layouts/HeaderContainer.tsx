@@ -24,6 +24,10 @@ import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./App.scss";
 
+import { IDAOState } from '@daostack/client'
+import { arc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+
 interface IStateProps {
   accounts: string[];
   currentAccountEthBalance: number;
@@ -32,7 +36,7 @@ interface IStateProps {
   currentAccountGenStakingAllowance: number;
   currentAccountProfile: IProfileState;
   currentAccount: IAccountState;
-  dao: IDaoState;
+  dao: IDAOState;
   daoAvatarAddress: string;
   ethAccountAddress: string | null;
   networkId: number;
@@ -40,15 +44,16 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
+  const dao = ownProps.dao
   return {
     accounts: state.web3.accounts,
-    currentAccount: state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.daoAvatarAddress}`],
+    currentAccount: dao && state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.dao.address}`],
     currentAccountEthBalance: state.web3.currentAccountEthBalance,
     currentAccountExternalTokenBalance: state.web3.currentAccountExternalTokenBalance,
     currentAccountGenBalance: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
     currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
-    dao: state.arc.daos[ownProps.daoAvatarAddress],
+    dao: ownProps.dao,
     daoAvatarAddress: ownProps.daoAvatarAddress,
     ethAccountAddress: state.web3.ethAccountAddress,
     networkId: state.web3.networkId,
@@ -126,7 +131,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 
     const web3 = await Arc.Utils.getWeb3();
 
-    await setCurrentAccount(ethAccountAddress, daoAvatarAddress ? daoAvatarAddress : null);
+    await setCurrentAccount(ethAccountAddress, dao);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
     if (daoAvatarAddress) {
@@ -176,7 +181,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   public handleChangeAccount = (e: any) => {
     const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
     const newAddress = selectElement.value;
-    this.props.setCurrentAccount(newAddress, this.props.daoAvatarAddress ? this.props.daoAvatarAddress : null);
+    this.props.setCurrentAccount(newAddress, this.props.dao);
   }
 
   public handleClickTour = (e: any) => {
@@ -294,7 +299,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                   { dao
                     ? <div className={css.daoBalance}>
                         <h3>{dao.name}</h3>
-                        <ReputationView daoName={dao.name} totalReputation={dao.reputationCount} reputation={currentAccount.reputation}/>
+                        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccount.reputation}/>
                         <label>REPUTATION</label>
                       </div>
                     : ""
@@ -322,4 +327,20 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
+const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
+
+export default (props: { daoAddress: string, location: any}) => {
+    if (props.daoAddress) {
+      return <Subscribe observable={arc.dao(props.daoAddress).state}>{(state: IObservableState<IDAOState>) => {
+          const daoState = state.data
+          if (daoState) {
+            return <ConnectedHeaderContainer dao={daoState} {...props }/>
+          } else {
+            return null
+          }
+        }
+      }</Subscribe>
+  } else {
+    return <ConnectedHeaderContainer dao={undefined} {...props }/>
+  }
+}

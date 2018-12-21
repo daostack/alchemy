@@ -11,7 +11,7 @@ import * as io from 'socket.io-client';
 
 import * as profileActions from "actions/profilesActions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState } from "reducers/arcReducer";
+import { IAccountState } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import Util from "lib/util";
@@ -296,16 +296,21 @@ const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToP
 export default (props: RouteComponentProps<any>) => {
   const queryValues = queryString.parse(props.location.search)
   const address = queryValues.daoAvatarAddress as string
-  return <Subscribe observable={arc.dao(address).state}>{
-    (state: IObservableState<IDAOState>) => {
-      const dao = state.data
-      if (state.error) {
-        return <div>${state.error}</div>
-      } else if (dao) {
-        return <ConnectedAccountProfileContainer dao={dao} {...props} />
-      } else {
-        return <div>Loading...123.. </div>
+  if (address) {
+
+    return <Subscribe observable={arc.dao(address).state}>{
+      (state: IObservableState<IDAOState>) => {
+        const dao = state.data
+        if (state.error) {
+          return <div>{state.error.message}</div>
+        } else if (dao) {
+          return <ConnectedAccountProfileContainer dao={dao} {...props} />
+        } else {
+          return <div>Loading... </div>
+        }
       }
-    }
-  }</Subscribe>
+    }</Subscribe>
+  } else {
+    return <ConnectedAccountProfileContainer {...props} />
+  }
 }

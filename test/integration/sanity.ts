@@ -1,20 +1,11 @@
-const uuid = require('uuid');
+import { chai, getContractAddresses, userAddresses } from './utils'
 
-function getContractAddresses() {
-  const path = '@daostack/subgraph/migration.json'
-  const addresses = { ...require(path).private.base, ...require(path).private.dao }
-  if (!addresses || addresses === {}) {
-    throw Error(`No addresses found, does the file at ${path} exist?`)
-  }
-  return addresses
-}
+const uuid = require('uuid');
 
 describe('Sanity', () => {
     before(() => {
-      let chai = require('chai');
-      global.expect = chai.expect;
-      chai.Should();
-      browser.url('http://127.0.0.1:3000/');
+    chai.Should()
+    browser.url('http://127.0.0.1:3000/');
     });
 
     it('Go through the flow', async () => {

@@ -488,7 +488,7 @@ export default (props: { proposalId: string}) =>
       const proposal = state.data
       if (proposal) {
         return <Subscribe observable={proposal.dao.state} >
-            {(state: IObservableState<IProposalState>) => {
+            {(state: IObservableState<IDAOState>) => {
               const dao = state.data
               if (dao) {
                 return <ConnectedProposalContainer proposal={proposal} dao={dao} />
