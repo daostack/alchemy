@@ -11,7 +11,7 @@ import { FilterResult } from "web3";
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState, newAccount } from "reducers/arcReducer";
+import { IAccountState, newAccount } from "reducers/arcReducer";
 import { showNotification, NotificationStatus } from 'reducers/notifications'
 import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { IWeb3State } from "reducers/web3Reducer";

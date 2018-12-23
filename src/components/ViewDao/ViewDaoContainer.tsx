@@ -1,23 +1,19 @@
-import * as Arc from "@daostack/arc.js";
 import * as classNames from "classnames";
-import * as moment from "moment";
 import { denormalize } from "normalizr";
 import * as React from "react";
 import { withCookies, Cookies } from 'react-cookie';
 import Joyride from 'react-joyride';
-import { connect, Dispatch } from "react-redux";
-import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { connect } from "react-redux";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import * as profilesActions from "actions/profilesActions";
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
-import Util from "lib/util";
 import { IRootState } from "reducers";
-import { checkProposalExpired, IAccountState, IDaoState, IProposalState, IRedemptionState, ProposalStates, proposalPassed } from "reducers/arcReducer";
-import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IAccountState } from "reducers/arcReducer";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
 
 import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
@@ -27,14 +23,13 @@ import DaoMembersContainer from "./DaoMembersContainer";
 import DaoNav from "./DaoNav";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
-import promisify = require("es6-promisify");
 
 import * as css from "./ViewDao.scss";
 import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
 
 import { arc } from 'arc'
-import { Subscription, Observable } from 'rxjs'
+import { Subscription } from 'rxjs'
 import { IDAOState } from '@daostack/client'
 import { mockLegacyDaoState} from '../../tmp'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
@@ -485,7 +480,7 @@ For additional information check out our <a href="https://docs.google.com/docume
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/history" component={DaoHistoryContainer} />
             <Route exact path="/dao/:daoAvatarAddress/members" render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
-            <Route exact path="/dao/:daoAvatarAddress/redemptions" component={DaoRedemptionsContainer} />
+            <Route exact path="/dao/:daoAvatarAddress/redemptions" render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId" component={ViewProposalContainer} />
             <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} />
           </Switch>

@@ -1,14 +1,9 @@
-import * as classNames from "classnames";
-import { denormalize } from "normalizr";
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
 
-import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IAccountState, IDaoState } from "reducers/arcReducer";
-import { IProfilesState, IProfileState } from "reducers/profilesReducer";
-import * as schemas from "schemas";
+import { IProfilesState } from "reducers/profilesReducer";
 
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -16,8 +11,7 @@ import OAuthLogin from 'components/Account/OAuthLogin';
 
 import * as css from "./ViewDao.scss";
 import { arc } from 'arc'
-import { Subscription, Observable } from 'rxjs'
-import { Address, DAO, Member, IDAOState, IMemberState } from '@daostack/client'
+import { DAO, Member, IDAOState } from '@daostack/client'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IProps extends RouteComponentProps<any> {
@@ -104,6 +98,6 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
         }
       }</Subscribe>
   } else {
-    throw Error(`no dao! `)
+    throw Error(`No dao address specified `)
   }
 }
