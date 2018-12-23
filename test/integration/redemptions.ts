@@ -1,6 +1,6 @@
 import { getContractAddresses, userAddresses } from './utils'
 
-describe('Redemptions page', () => {
+describe('Members page', () => {
     let addresses
     let daoAddress
     const userAddress = userAddresses[0]
@@ -15,7 +15,7 @@ describe('Redemptions page', () => {
     })
 
     it('should exist', async () => {
-      browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/redemptions`)
+      browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/members`)
       browser.getTitle().should.be.equal('Alchemy | DAOstack')
     })
 })
