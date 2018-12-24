@@ -251,12 +251,10 @@ export const initialState: IArcState = {
 };
 
 export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
-  return moment(proposal.executedAt)
-  // TODO: check if `resolvedAt` captures the logic in the commented code below
   // const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
-  // const start = boostedTime ? boostedTime : submittedTime;
-  // const duration = boostedTime ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
-  // return moment((executionTime || start + duration) * 1000);
+  const start = proposal.boostedAt || proposal.createdAt;
+  const duration = proposal.boostedAt ? proposal.boostedVotePeriodLimit : proposal.preBoostedVotePeriodLimit;
+  return moment((proposal.executedAt || start + duration) * 1000);
 }
 
 export const closingTimeLegacy = (proposal: IProposalState) => {

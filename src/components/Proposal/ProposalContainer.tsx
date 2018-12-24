@@ -4,13 +4,13 @@ import * as moment from "moment";
 import { denormalize } from "normalizr";
 import Tooltip from 'rc-tooltip';
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IAccountState, IRedemptionState, IStakeState, IVoteState, TransactionStates, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
+import { IAccountState, IRedemptionState, IStakeState, IVoteState, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { isStakePending, isVotePending, isRedeemPending } from "selectors/operations";
 import * as schemas from "schemas";
