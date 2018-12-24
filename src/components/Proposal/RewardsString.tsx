@@ -1,8 +1,7 @@
 import * as React from "react";
 
-import { proposalEnded } from "reducers/arcReducer";
 import ReputationView from "components/Account/ReputationView";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState } from '@daostack/client'
 
 interface IProps {
   dao: IDAOState;
@@ -14,7 +13,7 @@ export default class RewardsString extends React.Component<IProps, null> {
   public render() {
     const { dao, proposal, separator } = this.props;
 
-    let rewards = [];
+    const rewards = [];
     if (proposal.ethReward) {
       rewards.push(proposal.ethReward.toFixed(2).toLocaleString() + " ETH");
     }

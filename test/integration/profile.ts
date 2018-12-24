@@ -18,6 +18,7 @@ describe('Profile page', () => {
       browser.url(`http://127.0.0.1:3000/profile/${userAddress}?daoAvatarAddress=${daoAddress}`)
       browser.getTitle().should.be.equal('Alchemy | DAOstack')
       browser.waitForExist('*[data-test-id="profile-container"]')
+      browser.waitForExist('*[id="nameInput"]')
       browser.setValue('*[id="nameInput"]', 'Buster Scruggs')
       browser.setValue('*[id="descriptionInput"]', 'The ballad')
       browser.click('*[type="submit"]')

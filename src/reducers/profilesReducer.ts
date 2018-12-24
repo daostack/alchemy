@@ -64,13 +64,20 @@ const profilesReducer = (state = initialState, action: any) => {
     }
 
     case ActionTypes.GET_PROFILE_DATA: {
-      const { profiles } = payload;
+      switch (action.sequence) {
+        case AsyncActionSequence.Success: {
+          const { profiles } = payload;
 
-      for (const profile of profiles) {
-        state = update(state, { [profile.ethereumAccountAddress]: { $set: profileDbToRedux(profile) } });
+          for (const profile of profiles) {
+            state = update(state, { [profile.ethereumAccountAddress]: { $set: profileDbToRedux(profile) } });
+          }
+          return state;
+        }
+        case AsyncActionSequence.Failure: {
+          console.log(`ERROR: ${payload}`)
+          return state
+        }
       }
-
-      return state;
     }
 
     default: {

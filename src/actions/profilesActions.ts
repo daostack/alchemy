@@ -9,8 +9,8 @@ import { ActionTypes, IProfileState, newProfile, profileDbToRedux } from "reduce
 export function getProfilesForAllAccounts() {
   return async (dispatch: any, getState: () => IRootState) => {
     const accounts = getState().arc.accounts;
+    const accountFilters = [];
 
-    let accountFilters = [];
     for (const accountKey of Object.keys(accounts)) {
       const account = accounts[accountKey];
       accountFilters.push('{"ethereumAccountAddress":"' + account.address + '"}');
@@ -34,10 +34,11 @@ export function getProfilesForAllAccounts() {
 }
 
 export function getProfile(accountAddress: string) {
-  return async (dispatch: any, getState: () => IRootState) => {
+  return async (dispatch: any) => {
+    const url = process.env.API_URL + '/api/accounts?filter={"where":{"ethereumAccountAddress":"' + accountAddress + '"}}'
     try {
       // Get profile data for this account
-      const response = await axios.get(process.env.API_URL + '/api/accounts?filter={"where":{"ethereumAccountAddress":"' + accountAddress + '"}}');
+      const response = await axios.get(url)
       if (response.data.length > 0) {
         // Update profiles state with profile data for this account
         dispatch({
@@ -54,6 +55,7 @@ export function getProfile(accountAddress: string) {
         });
       }
     } catch (e) {
+      console.log(`Error getting ${url} (${e.message})`)
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,

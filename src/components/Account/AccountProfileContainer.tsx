@@ -174,7 +174,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
               name: accountProfile ? accountProfile.name || "" : ""
             } as FormValues}
             validate={(values: FormValues) => {
-              const { name } = values;
+              // const { name } = values;
               const errors: any = {};
 
               const require = (name: string) => {
@@ -306,7 +306,7 @@ export default (props: RouteComponentProps<any>) => {
         } else if (dao) {
           return <ConnectedAccountProfileContainer dao={dao} {...props} />
         } else {
-          return <div>Loading... </div>
+          return <div>Loading... xx</div>
         }
       }
     }</Subscribe>

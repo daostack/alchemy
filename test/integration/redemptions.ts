@@ -3,7 +3,6 @@ import { getContractAddresses, userAddresses } from './utils'
 describe('Members page', () => {
     let addresses
     let daoAddress
-    const userAddress = userAddresses[0]
 
     before(() => {
       const chai = require('chai')
