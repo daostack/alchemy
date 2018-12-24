@@ -118,7 +118,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
         transactionInfo = <span>Create <strong className={css.redeem}>proposal</strong></span>;
 
         if (currentAccount == proposal.beneficiaryAddress) {
-          let rewards = [];
+          const rewards = [];
           passIncentive = <span>GAIN REPUTATION &amp; <RewardsString proposal={proposal} dao={dao} /></span>;
         } else {
           passIncentive = <span>GAIN REPUTATION</span>;

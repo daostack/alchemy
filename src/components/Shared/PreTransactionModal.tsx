@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Modal } from 'react-router-modal';
 
 import * as arcActions from "actions/arcActions";
-import { ProposalStates, proposalEnded } from "reducers/arcReducer";
+import { proposalEnded } from "reducers/arcReducer";
 import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 import RewardsString from "components/Proposal/RewardsString";
@@ -121,7 +121,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
         transactionInfo = <span>Create <strong className={css.redeem}>proposal</strong></span>;
 
         if (currentAccount == proposal.beneficiary) {
-          let rewards = [];
+          const rewards = [];
           passIncentive = <span>GAIN REPUTATION &amp; <RewardsString proposal={proposal} dao={dao} /></span>;
         } else {
           passIncentive = <span>GAIN REPUTATION</span>;

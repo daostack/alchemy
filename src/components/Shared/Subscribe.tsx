@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Component, Children, isValidElement } from 'react';
 import { Subscription, Observable } from 'rxjs'
 
 interface IProps {

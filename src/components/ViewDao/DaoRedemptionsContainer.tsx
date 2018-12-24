@@ -1,11 +1,9 @@
-import { denormalize } from "normalizr";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
 import { IRootState } from "reducers";
-import { closingTimeLegacy, IAccountState, IDaoState, IProposalState, IRedemptionState } from "reducers/arcReducer";
-import * as schemas from "schemas";
+import { closingTimeLegacy, IProposalState, IRedemptionState } from "reducers/arcReducer";
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 

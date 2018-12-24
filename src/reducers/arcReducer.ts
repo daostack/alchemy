@@ -180,38 +180,6 @@ export interface IProposalState {
   winningVote: VoteOptions;
 }
 
-export const emptyProposal: IProposalState = {
-  beneficiaryAddress: null,
-  boostedTime: 0,
-  boostedVotePeriodLimit: 0,
-  preBoostedVotePeriodLimit: 0,
-  contributionDescriptionHash: "",
-  description: "",
-  daoAvatarAddress: null,
-  ethReward: 0,
-  executionTime: 0,
-  externalToken: "",
-  externalTokenReward: 0,
-  nativeTokenReward: 0,
-  numberOfPeriods: 1,
-  periodLength: 0,
-  proposalId: null,
-  proposer: null,
-  redemptions: [],
-  reputationChange: 0,
-  stakes: [],
-  stakesNo: 0,
-  stakesYes: 0,
-  state: ProposalStates.None,
-  submittedTime: 0,
-  title: "",
-  transactionState: TransactionStates.Unconfirmed,
-  votes: [],
-  votesYes: 0,
-  votesNo: 0,
-  winningVote: VoteOptions.No,
-}
-
 export interface IStakeState {
   avatarAddress: string;
   prediction: VoteOptions;

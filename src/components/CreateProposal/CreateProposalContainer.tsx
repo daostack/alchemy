@@ -1,32 +1,51 @@
 import * as Arc from "@daostack/arc.js";
 import * as H from "history";
-import { denormalize } from "normalizr";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { connect, Dispatch } from "react-redux";
+import { connect } from "react-redux";
 import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IProposalState, emptyProposal } from "reducers/arcReducer";
 import { IWeb3State } from "reducers/web3Reducer";
-import * as schemas from "schemas";
 
 import * as css from "./CreateProposal.scss";
 
-import AccountImage from "components/Account/AccountImage";
-import DaoHeader from "../ViewDao/DaoHeader";
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModalArc";
+import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import ReputationView from "components/Account/ReputationView";
 
-import { Formik, Field, FormikBag } from 'formik';
-import { proposalEnded } from "reducers/arcReducer";
+import { Formik, Field } from 'formik';
 
-import Subscribe from "components/Shared/Subscribe"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { arc } from "arc";
-import { combineLatest } from 'rxjs'
-import { IDAOState } from '@daostack/client'
-import { mockLegacyDaoState } from '../../tmp'
+import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
+
+const emptyProposal: IProposalState = {
+  beneficiary: null,
+  boostedAt: 0,
+  boostedVotePeriodLimit: 0,
+  boostingThreshold: 0,
+  createdAt: 0,
+  description: "",
+  dao: null,
+  ethReward: 0,
+  executedAt: 0,
+  externalTokenReward: 0,
+  tokensReward: 0,
+  id: null,
+  ipfsHash: "",
+  preBoostedVotePeriodLimit: 0,
+  proposer: null,
+  quietEndingPeriodBeganAt: 0,
+  reputationReward: 0,
+  resolvedAt: 0,
+  stakesFor: 0,
+  stakesAgainst: 0,
+  stage: ProposalStage.Open,
+  title: "",
+  votesFor: 0,
+  votesAgainst: 0,
+  winningOutcome: ProposalOutcome.Fail,
+}
 
 interface IState {
   preTransactionModalOpen: boolean;
@@ -65,7 +84,7 @@ interface FormValues {
   ethReward: number;
   externalTokenReward: number;
   nativeTokenReward: number;
-  reputationChange: number;
+  reputationReward: number;
   title: string;
 
   [key: string]: any;
@@ -113,14 +132,13 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
   public render() {
     const { createProposal, currentAccount, daoAvatarAddress } = this.props;
-    const { beneficiaryAddress, description, ethReward, externalTokenReward, nativeTokenReward, reputationChange, title } = this.state.proposalDetails;
+    const { beneficiary, description, ethReward, externalTokenReward, tokensReward, reputationReward, title } = this.state.proposalDetails;
 
     return <Subscribe observable={arc.dao(daoAvatarAddress).state}>{
-      ({ complete, data, error }: any): any => {
-        if ( data !== null ) {
-          const dao: IDAOState = data
+      (state: IObservableState<IDAOState>) => {
+        if ( state.data !== null ) {
+          const dao: IDAOState = state.data
 
-          const legacydao = mockLegacyDaoState(dao)
           // TODO: this is used to check uniqueness of proposalDescriptions,
           // it is disabled at this moment, but should be restored
           // const proposalDescriptions = (dao.proposals as IProposalState[])
@@ -133,11 +151,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               {this.state.preTransactionModalOpen ?
                 <PreTransactionModal
                   actionType={ActionTypes.CreateProposal}
-                  action={createProposal.bind(null, dao.address, title, description, nativeTokenReward, reputationChange, ethReward, externalTokenReward, beneficiaryAddress)}
+                  action={createProposal.bind(null, dao.address, title, description, tokensReward, reputationReward, ethReward, externalTokenReward, beneficiary)}
                   closeAction={this.closePreTransactionModal.bind(this)}
                   currentAccount={currentAccount}
-                  dao={legacydao}
-                  effectText={<span>Budget: <ReputationView reputation={reputationChange}
+                  dao={dao}
+                  effectText={<span>Budget: <ReputationView reputation={reputationReward}
                     totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> and
                     {ethReward || externalTokenReward} {externalTokenReward ? dao.externalTokenSymbol : "ETH"}</span>}
                   proposal={this.state.proposalDetails}
@@ -158,19 +176,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   ethReward: 0,
                   externalTokenReward: 0,
                   nativeTokenReward: 0,
-                  reputationChange: 0,
+                  reputationReward: 0,
                   title: ''
                 } as FormValues}
                 validate={(values: FormValues) => {
-                  const {
-                    beneficiaryAddress,
-                    description,
-                    ethReward,
-                    externalTokenReward,
-                    nativeTokenReward,
-                    reputationChange,
-                    title
-                  } = values;
                   const errors: any = {};
 
                   const require = (name: string) => {
@@ -185,32 +194,33 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     }
                   };
 
-                  if (title.length > 120) {
+                  if (values.title.length > 120) {
                     errors.title = 'Title is too long (max 120 characters)';
                   }
 
-                  if (proposalDescriptions.indexOf(description) !== -1) {
+                  // ???
+                  if (proposalDescriptions.indexOf(values.description) !== -1) {
                     errors.description = 'Must be unique';
                   }
 
-                  if (!this.web3.isAddress(beneficiaryAddress)) {
+                  if (!this.web3.isAddress(values.beneficiaryAddress)) {
                     errors.beneficiaryAddress = 'Invalid address';
                   }
 
                   const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
-                  if (!pattern.test(description)) {
+                  if (!pattern.test(values.description)) {
                     errors.description = 'Invalid URL';
                   }
 
                   nonNegative('ethReward');
                   nonNegative('externalTokenReward');
-                  nonNegative('nativeTokenReward');
+                  nonNegative('tokensReward');
 
                   require('description');
                   require('title');
                   require('beneficiaryAddress');
 
-                  if (!ethReward && !reputationChange) {
+                  if (!values.ethReward && !values.reputationReward) {
                     errors.rewards = 'Please select at least some reward';
                   }
 
@@ -286,16 +296,16 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         </label>
                       </div>
                       <Field
-                        id="reputationChangeInput"
+                        id="reputationRewardInput"
                         placeholder="How much reputation to reward"
-                        name='reputationChange'
+                        name='reputationReward'
                         type="number"
-                        className={touched.reputationChange && errors.reputationChange ? css.error : null}
+                        className={touched.reputationReward && errors.reputationReward ? css.error : null}
                         step={0.1}
                       />
-                      <label htmlFor="reputationChangeInput">
+                      <label htmlFor="reputationRewardInput">
                         Reputation reward:
-                        {touched.reputationChange && errors.reputationChange && <span className={css.errorMessage}>{errors.reputationChange}</span>}
+                        {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
                       </label>
 
                       {dao.externalTokenAddress
@@ -331,30 +341,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                           </div>
                       }
 
-                      {(touched.ethReward || touched.externalTokenReward) && touched.reputationChange && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
+                      {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>
-                    {/*
-                    <div className={css.transactionList}>
-                      <h3 className={css.transactionListHeader}>
-                        Transactions
-                        <span>TOTAL</span>
-                      </h3>
-                      <table>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <span className={css.tokenAmount}>12.333 ETH </span>
-                              monthly for 6 months
-                              <img className={css.transferIcon} src='/assets/images/Icon/Send.svg'/>
-                              <AccountImage accountAddress={this.state.beneficiaryAddress} className={css.userAvatar} />
-                            </td>
-                            <td className={css.transferTotals}>
-                              <span className={css.tokenAmount}>79.98 ETH</span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>*/}
                     <div className={css.alignCenter}>
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                         <img className={css.sendIcon} src="/assets/images/Icon/Send.svg"/>

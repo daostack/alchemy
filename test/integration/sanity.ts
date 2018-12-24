@@ -4,8 +4,8 @@ const uuid = require('uuid');
 
 describe('Sanity', () => {
     before(() => {
-    chai.Should()
-    browser.url('http://127.0.0.1:3000/');
+      chai.Should()
+      browser.url('http://127.0.0.1:3000/');
     });
 
     it('Go through the flow', async () => {
@@ -27,7 +27,7 @@ describe('Sanity', () => {
       browser.setValue('*[id="descriptionInput"]', `https://this.must.be/a/valid/url${uuid()}`);
       browser.setValue('*[id="beneficiaryInput"]', '0x5fB320886aF629122736c0e1a5c94dCE841EA37B');
       // ask for 100 rep
-      browser.setValue('*[id="reputationChangeInput"]', '100');
+      browser.setValue('*[id="reputationRewardInput"]', '100');
       browser.click('*[type="submit"]');
       // we shoudl now see a dialog asking us to "launch metamask"
       browser.click('*[data-test-id="launch-metamask"]');
