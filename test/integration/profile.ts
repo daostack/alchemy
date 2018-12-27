@@ -14,7 +14,7 @@ describe('Profile page', () => {
       daoAddress = addresses.Avatar.toLowerCase()
     })
 
-    it('should exist and be editable', async () => {
+    it.skip('should exist and be editable', async () => {
       browser.url(`http://127.0.0.1:3000/profile/${userAddress}?daoAvatarAddress=${daoAddress}`)
       browser.getTitle().should.be.equal('Alchemy | DAOstack')
       browser.waitForExist('*[data-test-id="profile-container"]')

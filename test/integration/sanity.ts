@@ -1,6 +1,5 @@
 import { chai, getContractAddresses, userAddresses } from './utils'
-
-const uuid = require('uuid');
+import  * as uuid from 'uuid'
 
 describe('Sanity', () => {
     before(() => {
@@ -16,13 +15,14 @@ describe('Sanity', () => {
       // browser.getValue()
       browser.click('*[data-test-id="dao-link"]');
       if (browser.isVisible('*[data-test-id="skip-tour"]')) {
-        browser.click('*[data-test-id="skip-tour"]');
+        browser.click('*[data-test-id="skip-tour"]')
       }
       browser.waitForExist('*[data-test-id="create-proposal"]');
       browser.click('*[data-test-id="create-proposal"]')
 
+      browser.waitForExist('*[id="titleInput"]');
       browser.setValue('*[id="titleInput"]', 'Free Edward Snowden');
-      // using uuid value so that the test will pass also if there is already a proposal with thi description
+      // using uuid value so that the test will pass alsko if there is already a proposal with thi description
       // (which must be unique). TODO: find a way to reset the state
       browser.setValue('*[id="descriptionInput"]', `https://this.must.be/a/valid/url${uuid()}`);
       browser.setValue('*[id="beneficiaryInput"]', '0x5fB320886aF629122736c0e1a5c94dCE841EA37B');
