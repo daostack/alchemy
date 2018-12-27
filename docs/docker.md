@@ -12,7 +12,7 @@ The `docker-compose up` command will build and start up a number of different co
 
 | name    | port |  Description  |
 |---------|------|---------------|
-| alchemy | 3000 | The main application | 
+| alchemy | 3000 | The main application |
 | alchemy-server | 3001 | A database that stores specific alchemy info
 | ganache |  8545 | An ethereum node for testing
 | graph-node (http) | 8000 | The graph node aggregates data from Ethereum
@@ -32,7 +32,7 @@ When developing, you will probably be mostly interested in the output of the Rea
 ```sh
 docker-compose up alchemy
 ```
-The docker container will mount the current directly in the docker container
+The docker container will mount the current directory in the docker container
 (except for the files and directories from `.dockerignore`; for example the `node_modules` directory is not mounted).
 In practice, that means that you just edit the files on your local filesystem, and the alchemy server
 in the docker container will notice these changes and restart if necessary.
