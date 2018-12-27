@@ -25,6 +25,9 @@ script:
 
   # get some diagnostic info fo rdebubbing travis
   - echo 'docker-compose logs alchemy' && echo -en 'travis_fold:start:script.3\\r'
+  - docker-compose exec alchemy pwd
+  - docker-compose exec alchemy ls -l
+  - docker-compose exec alchemy ls -l config
   - docker-compose logs alchemy
   - echo -en 'travis_fold:end:script.3\\r'
   #- sleep 5
