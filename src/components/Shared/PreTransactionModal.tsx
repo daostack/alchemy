@@ -75,7 +75,7 @@ export default class PreTransactionModal extends React.Component<IProps> {
       case ActionTypes.VoteDown:
         icon = <img src="/assets/images/Tx/Downvote.svg" />;
         transactionInfo = <span><strong className={css.failVote}>Fail</strong> vote</span>;
-        passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
+        passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR NO VOTES";
         rules = <div>
