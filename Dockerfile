@@ -1,4 +1,4 @@
-FROM node:10.13.0
+FROM node:10.14.1
 
 RUN apt-get update -y && apt-get install libsecret-1-dev -y
 
