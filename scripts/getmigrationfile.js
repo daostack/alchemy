@@ -8,5 +8,5 @@ const destDir = path.resolve('./config')
 
 fs.copyFile(`${subgraphRepo}/migration.json`, `${destDir}/migration.json`, (err) => {
   if (err) throw err
-  console.log('copied migration file giti')
+  console.log('copied migration file')
 })
