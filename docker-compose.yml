@@ -23,6 +23,7 @@ services:
       - ./webpack.dev.config.js:/alchemy/webpack.dev.config.js
       - ./webpack.docker.config.js:/alchemy/webpack.docker.config.js
       - ./entry.sh:/entry.sh
+      - ./config:/alchemy/config
     ports:
       - 3000:3000
 

@@ -20,7 +20,8 @@ async function initializeArcJs() {
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
     // the address in migration.json are crate by npm run setup-env in the daostack/migration submodule
     // TODO: these are the local testing addresses, we should provide a way to get addresses for staging, prodution
-    const deployedContractAddresses = require(`${require.resolve('@daostack/migration')}/migration.json`)
+    // const deployedContractAddresses = require(`${require.resolve('@daostack/migration')}/migration.json`)
+    const deployedContractAddresses = require(`../config/migration.json`)
 
     await Arc.InitializeArcJs({
       deployedContractAddresses,
