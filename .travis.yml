@@ -14,7 +14,7 @@ script:
   - docker-compose up -d
   - ./scripts/wait-for-it.sh 127.0.0.1:8545 -t 30
   # setup the environment in the docker container (so migration.json is available)
-  - docker-compose exec alchemy npm run setup-env
+  - npm run setup-env
   #- sleep 5
   # - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
   # sleep for 30 seconds to give the docker container time to build the app

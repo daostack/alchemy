@@ -18,9 +18,9 @@ async function initializeArcJs() {
     console.time('InitalizeArcJs')
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
-    // TODO: the address in ../config/migration.json are crate by npm run setup-env
-    // and will only be valid for the test scenario
-    const deployedContractAddresses = require('../config/migration.json')
+    // the address in migration.json are crate by npm run setup-env in the daostack/migration submodule
+    // TODO: these are the local testing addresses, we should provide a way to get addresses for staging, prodution
+    const deployedContractAddresses = require(`${require.resolve('@daostack/migration')}/migration.json`)
 
     await Arc.InitializeArcJs({
       deployedContractAddresses,
