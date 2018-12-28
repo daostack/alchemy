@@ -83,11 +83,11 @@ exports.config = {
     baseUrl: 'http://0.0.0.0:3000',
     //
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 5000,
+    waitforTimeout: 10000,
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
-    connectionRetryTimeout: 5000,
+    connectionRetryTimeout: 30000,
     //
     // Default request retries count
     connectionRetryCount: 3,
@@ -135,7 +135,7 @@ exports.config = {
     mochaOpts: {
         ui: 'bdd',
         compilers: ['ts:ts-node/register'],
-        timeout: 60000
+        timeout: 300000 // 5 mins
     },
     //
     // =====
