@@ -6,7 +6,7 @@ Probably the most flexible way is to run the services that alchemy depends on in
 and run the alchemy server in a seperate terminal:
 
 ```sh
-  docker-compose build # run this if package.json has changed
+  docker-compose build --no-cache # run this if package.json has changed
   docker-compose up graph-node alchemy-server # start the services needed by alchemy
   # in another terminal run:
   npm run setup-env
