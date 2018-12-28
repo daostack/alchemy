@@ -18,7 +18,7 @@ async function main() {
     },
     {
       name: 'Graphiql interface for daostack',
-      url: 'http://127.0.0.1:8000/subgraphs/name/daostack/'
+      url: 'http://127.0.0.1:8000/subgraphs/name/daostack'
     },
     // {
     //   name: 'Graph node (ws)',
