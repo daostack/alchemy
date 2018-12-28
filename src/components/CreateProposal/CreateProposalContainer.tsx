@@ -79,7 +79,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface FormValues {
-  beneficiaryAddress: string;
+  beneficiary: string;
   description: string;
   ethReward: number;
   externalTokenReward: number;
@@ -145,13 +145,13 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           //   .filter((proposal) => !proposalEnded(proposal))
           //   .map((proposal) => proposal.description);
           const proposalDescriptions: string[] = []
-
+          const boundCreateProposal = createProposal.bind(null, dao.address, title, description, tokensReward, reputationReward, ethReward, externalTokenReward, beneficiary)
           return (
             <div className={css.createProposalWrapper}>
               {this.state.preTransactionModalOpen ?
                 <PreTransactionModal
                   actionType={ActionTypes.CreateProposal}
-                  action={createProposal.bind(null, dao.address, title, description, tokensReward, reputationReward, ethReward, externalTokenReward, beneficiary)}
+                  action={boundCreateProposal}
                   closeAction={this.closePreTransactionModal.bind(this)}
                   currentAccount={currentAccount}
                   dao={dao}
@@ -171,7 +171,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               </h2>
               <Formik
                 initialValues={{
-                  beneficiaryAddress: '',
+                  beneficiary: '',
                   description: '',
                   ethReward: 0,
                   externalTokenReward: 0,
@@ -203,8 +203,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.description = 'Must be unique';
                   }
 
-                  if (!this.web3.isAddress(values.beneficiaryAddress)) {
-                    errors.beneficiaryAddress = 'Invalid address';
+                  if (!this.web3.isAddress(values.beneficiary)) {
+                    errors.beneficiary = 'Invalid address';
                   }
 
                   const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
@@ -218,7 +218,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
                   require('description');
                   require('title');
-                  require('beneficiaryAddress');
+                  require('beneficiary');
 
                   if (!values.ethReward && !values.reputationReward) {
                     errors.rewards = 'Please select at least some reward';
@@ -271,14 +271,14 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       id="beneficiaryInput"
                       maxLength={42}
                       placeholder="Recipient's address public key"
-                      name='beneficiaryAddress'
+                      name='beneficiary'
                       type="text"
-                      className={touched.beneficiaryAddress && errors.beneficiaryAddress ? css.error : null}
+                      className={touched.beneficiary && errors.beneficiary ? css.error : null}
                     />
                     <label htmlFor="beneficiaryInput">
                       Target Address - Please make sure that the target ETH address can work with Metamask (no hardware wallets, no exchanges)
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      {touched.beneficiaryAddress && errors.beneficiaryAddress && <span className={css.errorMessage}>{errors.beneficiaryAddress}</span>}
+                      {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
                     </label>
                     <div className={css.addTransfer}>
                       <div style={{display: 'none'}}>

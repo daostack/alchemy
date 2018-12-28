@@ -10,8 +10,6 @@ import { AppContainer } from "react-hot-loader";
 import { App } from "./App";
 
 import "./assets/styles/global.scss";
-import Util from 'lib/util';
-import { arc } from './arc'
 
 async function initializeArcJs() {
   try {

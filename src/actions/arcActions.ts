@@ -674,7 +674,7 @@ export function createProposal(
       try {
         const response = await axios.post(process.env.API_URL + "/api/proposals", {
           daoAvatarAddress,
-          descriptionHash: '',
+          descriptionHash,
           description,
           submittedAt: submittedTime,
           title,
