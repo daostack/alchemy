@@ -30,6 +30,7 @@ script:
   - docker-compose exec alchemy ls -l config
   - docker-compose logs alchemy
   - wget -S -O - http://127.0.0.1:3000/
+  - npm run service-status
   - echo -en 'travis_fold:end:script.3\\r'
   #- sleep 5
   # - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
