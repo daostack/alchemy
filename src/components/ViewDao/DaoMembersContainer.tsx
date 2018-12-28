@@ -11,7 +11,7 @@ import OAuthLogin from 'components/Account/OAuthLogin';
 
 import * as css from "./ViewDao.scss";
 import { arc } from 'arc'
-import { DAO, Member, IDAOState } from '@daostack/client'
+import { DAO, Member, IDAOState, IMemberState } from '@daostack/client'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IProps extends RouteComponentProps<any> {
@@ -35,41 +35,47 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     const { dao, members, profiles } = this.props;
 
     const membersHTML = members.map((member) => {
-      const profile = profiles[member.address];
-      return (
-        <div className={css.member + " " + css.clearfix} key={"member_" + member.address}>
-          <AccountImage
-            accountAddress={member.address}
-            className="membersPage"
-          />
-          <div className={css.memberAddress}>
-            { profile ?
-              <div>
-                <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} />
-                {Object.keys(profile.socialURLs).length == 0 ? "" :
-                  <span>
-                    <OAuthLogin editing={false} provider='facebook' accountAddress={member.address} profile={profile} className={css.socialButton}/>
-                    <OAuthLogin editing={false} provider='twitter' accountAddress={member.address} profile={profile} className={css.socialButton} />
-                    <OAuthLogin editing={false} provider='github' accountAddress={member.address} profile={profile} className={css.socialButton} />
-                  </span>
+      <Subscribe observable={member.state}>{(state: IObservableState<IMemberState>) => {
+        if (state.error) {
+          return <div>{state.error.message}</div>
+        } else if (state.data) {
+          const memberState = state.data
+          const profile = profiles[memberState.address];
+          return (
+            <div className={css.member + " " + css.clearfix} key={"member_" + memberState.address}>
+              <AccountImage
+                accountAddress={memberState.address}
+                className="membersPage"
+              />
+              <div className={css.memberAddress}>
+                { profile ?
+                  <div>
+                    <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} />
+                    {Object.keys(profile.socialURLs).length == 0 ? "" :
+                      <span>
+                        <OAuthLogin editing={false} provider='facebook' accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
+                        <OAuthLogin editing={false} provider='twitter' accountAddress={memberState.address} profile={profile} className={css.socialButton} />
+                        <OAuthLogin editing={false} provider='github' accountAddress={memberState.address} profile={profile} className={css.socialButton} />
+                      </span>
+                    }
+                    <br/>
+                  </div>
+                  : ""
                 }
-                <br/>
+                <div>{memberState.address}</div>
               </div>
-              : ""
-            }
-            <div>{member.address}</div>
-          </div>
-          <div>
-
-            {
-            // TODO: get reptuation of member (probably best wrapping this whole component in a separate container thatSubscribes to member.stat)
-            // Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}
-            //   ({(100 * member.reputation / dao.reputationTotalSupply).toFixed(1)}%)</span>
-            }
-            Reputation: <span><b>TBD</b></span>
-          </div>
-        </div>
-      );
+              {
+              // TODO: get reptuation of member (probably best wrapping this whole component in a separate container thatSubscribes to member.stat)
+              // Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}
+              //   ({(100 * member.reputation / dao.reputationTotalSupply).toFixed(1)}%)</span>
+              }
+              <div>Reputation: <span>{state.data.reputation}</span></div>
+            </div>
+          );
+        } else {
+          return <div>...loading..</div>
+        }
+      }}</Subscribe>
     });
 
     return (
