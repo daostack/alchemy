@@ -15,7 +15,7 @@ describe('Redemptions page', () => {
     })
 
     it('should exist', async () => {
-      browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/redemptions`)
+      browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/members`)
       browser.getTitle().should.be.equal('Alchemy | DAOstack')
     })
 })
