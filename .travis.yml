@@ -25,12 +25,10 @@ script:
 
   # get some diagnostic info fo rdebubbing travis
   - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
-  - docker-compose exec alchemy pwd
-  - docker-compose exec alchemy ls -l
-  - docker-compose exec alchemy ls -l config
-  - docker-compose logs alchemy
-  - wget -S -O - http://127.0.0.1:3000/
   - npm run service-status
+  - wget -S -O - http://127.0.0.1:3000/
+  - docker-compose logs alchemy
+  - docker-compose logs graph-node
   - echo -en 'travis_fold:end:script.3\\r'
   #- sleep 5
   # - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
