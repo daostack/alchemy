@@ -54,10 +54,12 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
         <div><b>TBD</b> ETH </div>
         <Subscribe observable={dao.token.balanceOf(dao.address)}>{
           (state: IObservableState<number>) => {
-            if (state.data) {
+            if (state.error) {
+              return <div>{state.error.message}</div>
+            } else if (state.data) {
               return <div>{state.data } GEN</div>
             } else {
-              return null
+              return <div>(spinner) GEN</div>
             }
           }
         }</Subscribe>

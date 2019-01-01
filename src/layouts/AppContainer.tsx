@@ -35,7 +35,6 @@ import * as css from "./App.scss";
 
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
-import { OperationError, OperationStatus } from "reducers/operations";
 import { sortedNotifications } from "../selectors/notifications";
 
 interface IStateProps {
