@@ -8,6 +8,7 @@ describe('Members page', () => {
       // global.expect = chai.expect
       addresses = getContractAddresses()
       daoAddress = addresses.Avatar.toLowerCase()
+      browser.url(`http://127.0.0.1:3000`)
     })
 
     it('should exist', () => {
