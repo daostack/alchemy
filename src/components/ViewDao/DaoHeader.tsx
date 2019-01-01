@@ -52,6 +52,7 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
         // { dao.externalTokenAddress ? <div>{dao.externalTokenCount} {dao.externalTokenSymbol}</div> : <div>{dao.ethCount} ETH </div> }
         }
         <div><b>TBD</b> ETH </div>
+
         <Subscribe observable={dao.token.balanceOf(dao.address)}>{
           (state: IObservableState<number>) => {
             if (state.error) {

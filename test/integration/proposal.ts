@@ -1,23 +1,28 @@
 import { chai, getContractAddresses, userAddresses } from './utils'
 import * as uuid from 'uuid'
 
-describe('Sanity', () => {
+describe('Proposals', () => {
+    let daoAddress: string
+    let addresses
+
     before(() => {
       chai.Should()
-    });
+      addresses = getContractAddresses()
+      daoAddress = addresses.Avatar.toLowerCase()
+    })
 
-    it('Go through the flow', async () => {
-      browser.url('http://127.0.0.1:3000/')
-      browser.getTitle().should.be.equal('Alchemy | DAOstack')
-      browser.waitForExist('*[data-test-id="link-to-alchemy"]')
-      browser.click('*[data-test-id="link-to-alchemy"]')
-      browser.waitForExist('*[data-test-id="header-all-daos"]')
-      // browser.getValue()
-      browser.click('*[data-test-id="dao-link"]')
+    it.skip('Create a proposal', async () => {
+      browser.url('http://127.0.0.1:3000/ ')
+      const url = `http://127.0.0.1:3000/dao/${daoAddress}/`
+      browser.url(url)
+
+      browser.waitForExist('*[data-test-id="create-proposal"]');
+
+      /// skip the tour
       if (browser.isVisible('*[data-test-id="skip-tour"]')) {
         browser.click('*[data-test-id="skip-tour"]')
       }
-      // browser.waitForExist('*[data-test-id="create-proposal"]');
+
       browser.click('*[data-test-id="create-proposal"]')
 
       browser.waitForExist('*[id="titleInput"]')

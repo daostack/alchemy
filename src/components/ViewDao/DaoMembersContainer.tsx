@@ -66,11 +66,6 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                 }
                 <div>{memberState.address}</div>
               </div>
-              {
-              // TODO: get reptuation of member (probably best wrapping this whole component in a separate container thatSubscribes to member.stat)
-              // Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}
-              //   ({(100 * member.reputation / dao.reputationTotalSupply).toFixed(1)}%)</span>
-              }
               <div>Reputation: <span data-test-id="reputation">{state.data.reputation}</span></div>
             </div>
           );

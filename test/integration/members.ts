@@ -1,6 +1,6 @@
 import { getContractAddresses } from './utils'
 
-describe('Redemptions page', () => {
+describe('Members page', () => {
     let addresses
     let daoAddress
 
