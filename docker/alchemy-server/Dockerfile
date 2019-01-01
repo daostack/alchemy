@@ -1,7 +1,7 @@
 FROM node:10.13.0
 
 RUN apt install git
-RUN git clone https://github.com/jellegerbrandy/alchemy-server.git
+RUN git clone https://github.com/daostack/alchemy-server.git
 WORKDIR alchemy-server
 # checkout the social-verification branch
 # TODO: remove next line once changes are merged to master.
