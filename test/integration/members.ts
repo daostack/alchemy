@@ -1,21 +1,23 @@
-import { getContractAddresses, userAddresses } from './utils'
+import { getContractAddresses } from './utils'
 
 describe('Redemptions page', () => {
     let addresses
     let daoAddress
-    const userAddress = userAddresses[0]
 
     before(() => {
-      const chai = require('chai')
-      global.expect = chai.expect
-      chai.Should();
-      browser.url('http://127.0.0.1:3000/')
+      // global.expect = chai.expect
       addresses = getContractAddresses()
       daoAddress = addresses.Avatar.toLowerCase()
     })
 
-    it('should exist', async () => {
+    it('should exist', () => {
       browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/members`)
       browser.getTitle().should.be.equal('Alchemy | DAOstack')
+      // check if we see a member
+      const address = '0xb0c908140fe6fd6fbd4990a5c2e35ca6dc12bfb2'
+      browser.waitForExist(`*[data-test-id="member_${address}"]`)
+      // we should see the repuation of this member
+      browser.getText(`*[data-test-id="member_${address}"] *[data-test-id="reputation"]`)
+        .should.be.equal("1000")
     })
 })

@@ -42,7 +42,9 @@ class DaoMembersContainer extends React.Component<IProps, null> {
           const memberState = state.data
           const profile = profiles[memberState.address];
           return (
-            <div className={css.member + " " + css.clearfix} key={"member_" + memberState.address}>
+            <div className={css.member + " " + css.clearfix}
+              key={"member_" + memberState.address}
+              data-test-id={"member_" + memberState.address}>
               <AccountImage
                 accountAddress={memberState.address}
                 className="membersPage"
@@ -69,7 +71,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
               // Reputation: <span>{member.reputation.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}
               //   ({(100 * member.reputation / dao.reputationTotalSupply).toFixed(1)}%)</span>
               }
-              <div>Reputation: <span>{state.data.reputation}</span></div>
+              <div>Reputation: <span data-test-id="reputation">{state.data.reputation}</span></div>
             </div>
           );
         } else {
