@@ -2,6 +2,7 @@ config  = require('./wdio.conf.js').config
 
 exports.config = {
   ...config,
+  maxInstances: 1,
   capabilities: [{
     ...config.capabilities[0],
     chromeOptions: {
