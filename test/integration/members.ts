@@ -11,7 +11,7 @@ describe('Members page', () => {
       browser.url(`http://127.0.0.1:3000`)
     })
 
-    it.skip('should exist', () => {
+    it('should exist', () => {
       browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/members`)
       browser.getTitle().should.be.equal('Alchemy | DAOstack')
       // check if we see a member
