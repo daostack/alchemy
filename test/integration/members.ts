@@ -1,8 +1,8 @@
 import { getContractAddresses } from './utils'
 
 describe('Members page', () => {
-    let addresses
-    let daoAddress
+    let addresses: string[]
+    let daoAddress: string
 
     before(() => {
       // global.expect = chai.expect
@@ -11,7 +11,7 @@ describe('Members page', () => {
       browser.url(`http://127.0.0.1:3000`)
     })
 
-    it('should exist', () => {
+    it.skip('should exist', () => {
       browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/members`)
       browser.getTitle().should.be.equal('Alchemy | DAOstack')
       // check if we see a member
