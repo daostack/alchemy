@@ -7,6 +7,6 @@ exports.config = {
     chromeOptions: {
         args: ['headless', 'disable-gpu', 'disable-web-security']
     },
-    waitforTimeout: 60000,
-  }]
+  }],
+  waitforTimeout: 60000,
 }
