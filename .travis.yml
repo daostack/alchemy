@@ -36,7 +36,6 @@ script:
   # - sleep 20
   - npm run lint
   - npm run test:integration:headless
-  - npm run test:integration:headless -- --spec test/integration/sanity.ts
   # unit tests are run in the docker container
   # - docker-compose exec alchemy npm run test:unit
   - npm run build
