@@ -1,5 +1,4 @@
 import * as classNames from "classnames";
-import { denormalize } from "normalizr";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -12,8 +11,6 @@ import * as selectors from "selectors/daoSelectors";
 import * as schemas from "schemas";
 
 import ProposalContainer from "../Proposal/ProposalContainer";
-import DaoHeader from "./DaoHeader";
-import DaoNav from "./DaoNav";
 
 import * as css from "./ViewDao.scss";
 
