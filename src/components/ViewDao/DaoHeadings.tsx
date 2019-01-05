@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IDaoState, IProposalState } from "reducers/arcReducer";
+import HashtaggedTitle from "../shared/HashtaggedTitle";
 
 import * as css from "./ViewDao.scss";
 
@@ -16,22 +17,21 @@ export default class DaoHeadings extends React.Component<IProps, null> {
   public render() {
     const { dao } = this.props;
 
-    var latestHeadingProposal = {
-      executionTime: 0,
-      title: 'DAO Heading: Pass a proposal with a title that starts with \
-             "DAO Heading:" to replace this text.'
-    };
+    let latestHeadingProposal: IProposalState = {} as any;
+    latestHeadingProposal.executionTime = 0;
+    latestHeadingProposal.title = 'Pass a proposal that includes the hashtag \
+                                  #heading to replace this text.'
 
     dao.proposals.forEach((proposal: IProposalState) => {
       if (proposal.executionTime > latestHeadingProposal.executionTime &&
-          proposal.title.slice(0, 12) === "DAO Heading:") {
+          !!proposal.title.match(/\B\#\bheading\b/i)) {
             latestHeadingProposal = proposal;
       }
     });
 
     return (
       <div className={css.daoHeadings + " " + css.clearfix}>
-        { latestHeadingProposal.title.slice(13) }
+        <HashtaggedTitle proposal={latestHeadingProposal} />
       </div>
     );
   }

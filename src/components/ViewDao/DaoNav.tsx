@@ -21,7 +21,8 @@ export default class DaoNav extends React.Component<IProps, null> {
 
     return (
       <div className={css.nav}>
-        <NavLink exact className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress}>Proposals</NavLink>
+        <NavLink exact className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress}>Current Proposals</NavLink>
+        <NavLink className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress + "/ideas/"}>Proposal Ideas</NavLink>
         <NavLink className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress + "/history/"}>History</NavLink>
         {numRedemptions > 0
           ? <NavLink className={css.navRedemption} activeClassName={css.selected} to={"/dao/" + dao.avatarAddress + "/redemptions/"}>

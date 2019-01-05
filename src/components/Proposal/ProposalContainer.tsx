@@ -22,6 +22,7 @@ import RewardsString from "components/Proposal/RewardsString";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
+import HashtaggedTitle from "../shared/HashtaggedTitle";
 
 import * as css from "./Proposal.scss";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
@@ -391,7 +392,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId} data-test-id="proposal-title">{proposal.title}</Link>
+              <Link to={"/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId} data-test-id="proposal-title">
+                <HashtaggedTitle proposal={proposal} />
+              </Link>
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>

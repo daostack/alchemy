@@ -23,6 +23,7 @@ import * as schemas from "schemas";
 import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
 import DaoHeader from "./DaoHeader";
 import DaoHeadings from "./DaoHeadings";
+import DaoIdeasContainer from "./DaoIdeasContainer";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoNav from "./DaoNav";
@@ -436,6 +437,7 @@ For additional information check out our <a href="https://docs.google.com/docume
         </div>
         <div className={css.wrapper}>
           <Switch>
+            <Route exact path="/dao/:daoAvatarAddress/ideas" component={DaoIdeasContainer} />
             <Route exact path="/dao/:daoAvatarAddress/history" component={DaoHistoryContainer} />
             <Route exact path="/dao/:daoAvatarAddress/members" component={DaoMembersContainer} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions" component={DaoRedemptionsContainer} />

@@ -44,6 +44,7 @@ export const rightAlign: string;
 export const boostedContainer: string;
 export const regularContainer: string;
 export const proposalsHeader: string;
+export const proposalsSubheader: string;
 export const noDecisions: string;
 export const relax: string;
 export const subheader: string;

@@ -61,6 +61,19 @@ export const createHistoryProposalsSelector = () => createSelector(
   }
 );
 
+export const createIdeaProposalsSelector = () => createSelector(
+  [ getDaoProposals ],
+  (proposals: IProposalState[]) => {
+    const result = proposals.filter((proposal: IProposalState) => (
+      proposal.state === ProposalStates.Executed &&
+      !!proposal.title.match(/\B\#\bidea\b/i)
+    ));
+
+    result.sort((a, b) => b.votesYes - a.votesYes);
+    return result;
+  }
+);
+
 // export const makeTotalDaoReputationSelector = () => {
 //   return createSelector(
 //     [ getDaoMembers ],
