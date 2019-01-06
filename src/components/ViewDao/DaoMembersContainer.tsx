@@ -66,7 +66,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                 }
                 <div>{memberState.address}</div>
               </div>
-              <div>Reputation: <span data-test-id="reputation">{state.data.reputation}</span></div>
+              <div>Reputation: <span data-test-id="reputation">{state.data.reputation / 1e18}</span></div>
             </div>
           );
         } else {
