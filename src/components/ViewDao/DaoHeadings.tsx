@@ -23,6 +23,7 @@ export default class DaoHeadings extends React.Component<IProps, null> {
                                   #heading to replace this text.'
 
     dao.proposals.forEach((proposal: IProposalState) => {
+      console.log(proposal);
       if (proposal.executionTime > latestHeadingProposal.executionTime &&
           !!proposal.title.match(/\B\#\bheading\b/i)) {
             latestHeadingProposal = proposal;
