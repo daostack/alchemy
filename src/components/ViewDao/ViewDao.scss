@@ -42,8 +42,18 @@ button:hover {
 }
 
 .daoHeadings {
-  display: inline-block;
   padding: 30px 30px 5px 30px;
+}
+
+.hashtag {
+  font-style: italic;
+  display: inline-block;
+  color: $black-halftone;
+}
+
+.hashtagSegment {
+  display: inline-block;
+  paddingRight: 0.3ch;
 }
 
 .nav {
@@ -132,10 +142,6 @@ button:hover {
 
 a {
   text-decoration: none;
-
-  div {
-    display: inline-block;
-  }
 }
 
 a.navItem {
