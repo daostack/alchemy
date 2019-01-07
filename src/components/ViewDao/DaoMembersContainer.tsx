@@ -8,6 +8,7 @@ import { IProfilesState } from "reducers/profilesReducer";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from 'components/Account/OAuthLogin';
+import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./ViewDao.scss";
 import { arc } from 'arc'
@@ -66,7 +67,8 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                 }
                 <div>{memberState.address}</div>
               </div>
-              <div>Reputation: <span data-test-id="reputation">{state.data.reputation / dao.tokenTotalSupply} %</span></div>
+              <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={state.data.reputation}/>
+
             </div>
           );
         } else {

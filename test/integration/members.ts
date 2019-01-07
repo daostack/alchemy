@@ -24,7 +24,7 @@ describe('Members page', () => {
       const address = userAddresses[0]
       browser.waitForExist(`*[data-test-id="member_${address}"]`)
       // TODO: we should see the repuation of this member
-      // browser.getText(`*[data-test-id="member_${address}"] *[data-test-id="reputation"]`)
-      //   .should.be.equal("1000")
+      browser.getText(`*[data-test-id="member_${address}"] *[data-test-id="reputation"]`)
+        .should.have.string("16.67")
     })
 })

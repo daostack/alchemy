@@ -1,6 +1,5 @@
 import * as Arc from "@daostack/arc.js";
 import promisify = require("es6-promisify");
-import Tooltip from "rc-tooltip";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
@@ -13,8 +12,7 @@ import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState, newAccount } from "reducers/arcReducer";
 import { showNotification, NotificationStatus } from 'reducers/notifications'
-import { IProfilesState, IProfileState } from "reducers/profilesReducer";
-import { IWeb3State } from "reducers/web3Reducer";
+import { IProfileState } from "reducers/profilesReducer";
 import Util from "lib/util";
 
 import AccountBalance from "components/Account/AccountBalance";
