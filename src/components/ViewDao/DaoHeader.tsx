@@ -55,12 +55,12 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
 
         <Subscribe observable={dao.token.balanceOf(dao.address)}>{
           (state: IObservableState<number>) => {
-            if (state.error) {
-              return <div>{state.error.message}</div>
-            } else if (state.data) {
-              return <div>{state.data } GEN</div>
+            if (state.isLoading) {
+              return <div>... GEN</div>
+            } else if ( state.error) {
+              return <div>{ state.error.message}</div>
             } else {
-              return <div>(spinner) GEN</div>
+              return <div>{ state.data } GEN</div>
             }
           }
         }</Subscribe>

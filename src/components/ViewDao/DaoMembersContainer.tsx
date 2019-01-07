@@ -66,7 +66,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                 }
                 <div>{memberState.address}</div>
               </div>
-              <div>Reputation: <span data-test-id="reputation">{state.data.reputation / 1e18}</span></div>
+              <div>Reputation: <span data-test-id="reputation">{state.data.reputation / dao.tokenTotalSupply} %</span></div>
             </div>
           );
         } else {
@@ -87,20 +87,15 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContainer);
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
-  const daoAddress = props.match.params.daoAvatarAddress
-  if (daoAddress) {
-      const dao = new DAO(daoAddress, arc)
-      return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
-          if (state.error) {
-            return <div>{ state.error.message }</div>
-          } else if (state.data) {
-            return <ConnectedDaoMembersContainer members={state.data} />
-          } else {
-            return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
-          }
-        }
-      }</Subscribe>
-  } else {
-    throw Error(`No dao address specified `)
-  }
+  const dao = new DAO(props.dao.address, arc)
+  return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
+      if (state.isLoading) {
+        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+      } else if (state.error) {
+        return <div>{ state.error.message }</div>
+      } else {
+        return <ConnectedDaoMembersContainer members={state.data} dao={props.dao}/>
+      }
+    }
+  }</Subscribe>
 }
