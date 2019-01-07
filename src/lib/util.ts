@@ -60,3 +60,12 @@ export default class Util {
     return x;
   }
 }
+
+export function getLocalContractAddresses() {
+  const path = '@daostack/subgraph/migration.json'
+  const addresses = { ...require(path).private.base, ...require(path).private.dao }
+  if (!addresses || addresses === {}) {
+    throw Error(`No addresses found, does the file at ${path} exist?`)
+  }
+  return addresses
+}

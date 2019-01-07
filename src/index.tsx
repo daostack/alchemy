@@ -1,13 +1,13 @@
+import * as Arc from '@daostack/arc.js';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faFacebook, faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import * as Arc from '@daostack/arc.js';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faGithub, faTwitter, faFacebook } from '@fortawesome/free-brands-svg-icons';
 import { AppContainer } from "react-hot-loader";
-
 import { App } from "./App";
+import { getLocalContractAddresses } from './lib/util'
 
 import "./assets/styles/global.scss";
 
@@ -15,11 +15,10 @@ async function initializeArcJs() {
   console.time('InitalizeArcJs')
   Arc.ConfigService.set("estimateGas", true);
   Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
-  // the address in migration.json are crate by npm run setup-env in the daostack/migration submodule
+  // the address in migration.json are created by npm run setup-env in the daostack/migration submodule
   // TODO: these are the local testing addresses, we should provide a way to get addresses for staging, prodution
-  // const deployedContractAddresses = require(`${require.resolve('@daostack/migration')}/migration.json`)
-  const deployedContractAddresses = require(`../config/migration.json`)
-
+  // const deployedContractAddresses = require(`../config/migration.json`)
+  const deployedContractAddresses = getLocalContractAddresses()
   await Arc.InitializeArcJs({
     deployedContractAddresses,
     watchForAccountChanges: true,
