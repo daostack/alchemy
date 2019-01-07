@@ -129,7 +129,7 @@
     "zeppelin-solidity": "^1.12.0"
   },
   "devDependencies": {
-    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git",
+    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#dea1d1b75da11595ef354e3a6520b6d75ffbae15",
     "@types/chai": "^4.1.7",
     "@types/classnames": "^2.2.6",
     "@types/es6-promisify": "^5.0.0",
