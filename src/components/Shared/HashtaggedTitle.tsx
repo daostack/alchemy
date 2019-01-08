@@ -1,11 +1,19 @@
 import * as React from "react";
 import Tooltip from "rc-tooltip";
 import { IDaoState, IProposalState } from "reducers/arcReducer";
-const activeHashtags = require("./activeHashtags.json");
 
 interface IProps {
   proposal: IProposalState;
 }
+
+const activeHashtags: {[hashtag: string]: {[tooltip: string]: string}} = {
+  "#heading": {
+    "tooltip": "The most recent executed proposal with the #heading tag becomes the DAO's heading."
+  },
+  "#idea": {
+    "tooltip": "Executed proposals with the #idea tag appear in Proposal Ideas."
+  }
+};
 
 export default class HashtaggedTitle extends React.Component<IProps, null> {
   public render() {
@@ -15,13 +23,13 @@ export default class HashtaggedTitle extends React.Component<IProps, null> {
     let titleSplits: number[][] = [];
     let hashtags: string[] = [];
 
-    function findHashtagSplits(string: string, index: number) {
-      let match = string.match(/\B\#\w+\b/);
+    function findHashtagSplits(title: string, index: number) {
+      let match = title.match(/\B\#\w+\b/);
       if (!!match) {
         hashtags.push(match[0].toLowerCase());
         titleSplits.push([index + match.index, index + match.index + match[0].length]);
         findHashtagSplits(
-          string.slice(match.index + match[0].length),
+          title.slice(match.index + match[0].length),
           index + match.index + match[0].length
         );
       }
@@ -62,15 +70,15 @@ export default class HashtaggedTitle extends React.Component<IProps, null> {
         {title.slice(0, titleSplits[0][0])}
         {titleSplits.map((split, i) => {
           if (tooltips[`${i}+${proposal.proposalId}`]) {
-            if (!!titleSplits[i+1]) {
+            if (!!titleSplits[i + 1]) {
               return (
-                <div key={title.slice(split[0], titleSplits[i+1][0])} style={hashtagSegmentStyle}>
+                <div key={title.slice(split[0], titleSplits[i + 1][0])} style={hashtagSegmentStyle}>
                   <Tooltip overlay={tooltips[`${i}+${proposal.proposalId}`]} placement="top">
                     <div style={hashtagStyle}>
                       {title.slice(split[0], split[1])}
                     </div>
                   </Tooltip>
-                  {title.slice(split[1], titleSplits[i+1][0])}
+                  {title.slice(split[1], titleSplits[i + 1][0])}
                 </div>
               );
             }
@@ -85,13 +93,13 @@ export default class HashtaggedTitle extends React.Component<IProps, null> {
               </div>
             );
           }
-          if (!!titleSplits[i+1]) {
+          if (!!titleSplits[i + 1]) {
             return (
-              <div key={title.slice(split[0], titleSplits[i+1][0])} style={hashtagSegmentStyle}>
+              <div key={title.slice(split[0], titleSplits[i + 1][0])} style={hashtagSegmentStyle}>
                   <div style={hashtagStyle}>
                     {title.slice(split[0], split[1])}
                   </div>
-                {title.slice(split[1], titleSplits[i+1][0])}
+                {title.slice(split[1], titleSplits[i + 1][0])}
               </div>
             );
           }
