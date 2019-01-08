@@ -8,10 +8,10 @@ interface IProps {
 
 const activeHashtags: {[hashtag: string]: {[tooltip: string]: string}} = {
   "#heading": {
-    "tooltip": "The most recent executed proposal with the #heading tag becomes the DAO's heading."
+    tooltip: "The most recent executed proposal with the #heading tag becomes the DAO's heading."
   },
   "#idea": {
-    "tooltip": "Executed proposals with the #idea tag appear in Proposal Ideas."
+    tooltip: "Executed proposals with the #idea tag appear in Proposal Ideas."
   }
 };
 
