@@ -1,3 +1,5 @@
+// this config file is used for testing on travis
+
 config  = require('./wdio.conf.js').config
 
 exports.config = {
@@ -9,5 +11,9 @@ exports.config = {
         args: ['headless', 'disable-gpu', 'disable-web-security']
     },
   }],
-  waitforTimeout: 300000,
+  waitforTimeout: 900000, // 15 minutes
+  mochaOpts: {
+      ...config.mochaOpts,
+      timeout: 600000 // 10 mins
+  },
 }
