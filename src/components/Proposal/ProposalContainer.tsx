@@ -22,7 +22,7 @@ import RewardsString from "components/Proposal/RewardsString";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import PredictionBox from "./PredictionBox";
 import VoteBox from "./VoteBox";
-import HashtaggedTitle from "../shared/HashtaggedTitle";
+import HashtaggedTitle from "../Shared/HashtaggedTitle";
 
 import * as css from "./Proposal.scss";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";

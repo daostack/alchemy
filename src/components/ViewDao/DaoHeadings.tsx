@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import * as arcActions from "actions/arcActions";
 import { IDaoState, IProposalState } from "reducers/arcReducer";
-import HashtaggedTitle from "../shared/HashtaggedTitle";
+import HashtaggedTitle from "../Shared/HashtaggedTitle";
 
 import * as css from "./ViewDao.scss";
 
