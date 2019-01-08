@@ -15,10 +15,9 @@ import { showNotification, NotificationStatus } from 'reducers/notifications'
 import { IProfileState } from "reducers/profilesReducer";
 import Util from "lib/util";
 
-import AccountBalance from "components/Account/AccountBalance";
+import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./App.scss";
 
@@ -51,8 +50,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     currentAccountGenBalance: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
     currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
-    dao: ownProps.dao,
-    daoAvatarAddress: ownProps.daoAvatarAddress,
+    dao,
+    daoAvatarAddress: dao && dao.address || undefined,
     ethAccountAddress: state.web3.ethAccountAddress,
     networkId: state.web3.networkId,
     pageURL: ownProps.location.pathname
@@ -284,34 +283,8 @@ class HeaderContainer extends React.Component<IProps, null> {
                     <div className={css.fade}></div>
                   </div>
                 </div>
-                <div className={css.balances}>
-                  <div className={css.userBalance}>
-                    <div>
-                      <AccountBalance tokenSymbol="ETH" balance={currentAccountEthBalance} accountAddress={ethAccountAddress} />
-                    </div>
-                    <div>
-                      <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={ethAccountAddress} />
-                    </div>
-                    <div>
-                      {currentAccountGenStakingAllowance} GEN approved for staking
-                    </div>
-                    { dao && dao.externalTokenAddress
-                      ? <div>
-                          <AccountBalance tokenSymbol={dao.externalTokenSymbol} balance={currentAccountExternalTokenBalance} accountAddress={ethAccountAddress} />
-                        </div>
-                      : ""
-                    }
-                  </div>
-                  { dao
-                    ? <div className={css.daoBalance}>
-                        <h3>{dao.name}</h3>
-                        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccount.reputation}/>
-                        <label>REPUTATION</label>
-                      </div>
-                    : ""
-                  }
-                </div>
-                { accounts.length > 1 ?
+                <AccountBalances dao={dao} address={ethAccountAddress} />
+              { accounts.length > 1 ?
                   <div className={css.testAccounts}>
                     <select onChange={this.handleChangeAccount} ref="accountSelectNode" defaultValue={ethAccountAddress}>
                       {accountOptionNodes}
@@ -338,11 +311,12 @@ const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(He
 export default (props: { daoAddress: string, location: any}) => {
     if (props.daoAddress) {
       return <Subscribe observable={arc.dao(props.daoAddress).state}>{(state: IObservableState<IDAOState>) => {
-          const daoState = state.data
-          if (daoState) {
-            return <ConnectedHeaderContainer dao={daoState} {...props }/>
-          } else {
+          if (state.isLoading) {
             return null
+          } else if (state.error) {
+              return <div>{state.error}</div>
+          } else {
+            return <ConnectedHeaderContainer {...props} dao={state.data} />
           }
         }
       }</Subscribe>

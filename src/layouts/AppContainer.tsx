@@ -1,5 +1,4 @@
 import * as Arc from "@daostack/arc.js";
-import axios from "axios";
 import * as History from "history";
 import * as queryString from "query-string";
 import * as React from "react";

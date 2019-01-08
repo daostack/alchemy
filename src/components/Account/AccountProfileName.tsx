@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 
 import { IProfileState } from "reducers/profilesReducer";
 
-import * as css from "./Account.scss";
-
 interface IProps {
   accountProfile?: IProfileState;
   daoAvatarAddress?: string;

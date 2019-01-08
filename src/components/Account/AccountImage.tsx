@@ -1,9 +1,5 @@
-//import Blockies from 'react-blockies';
 import * as blockies from "ethereum-blockies-png";
 import * as React from "react";
-import { Link } from "react-router-dom";
-
-import * as css from "./Account.scss";
 
 interface IProps {
   accountAddress: string;
