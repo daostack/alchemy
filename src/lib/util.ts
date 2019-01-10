@@ -32,7 +32,7 @@ export default class Util {
         return "Rinkeby"
       case 42:
         return "Kovan"
-      case 1512051714758:
+      case 4447:
         return "Ganache"
       default:
         return "Unknown network"

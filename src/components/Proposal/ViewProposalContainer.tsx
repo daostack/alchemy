@@ -40,7 +40,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
     const { proposal } = this.props;
 
     const disqusConfig = {
-      url: process.env.BASE_URL + this.props.location.pathname,
+      url: `${window.location.origin}/${this.props.location.pathname}`,
       identifier: proposal.proposalId,
       title: proposal.title
     };

@@ -53,6 +53,7 @@ export function loadCachedState() {
   };
 }
 
+// Get events from DaoCreator to see if any new DAOs are available
 export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
@@ -85,6 +86,7 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   };
 }
 
+// Calls getDAOData (below) for some avatar address
 export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: any, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null });
@@ -98,6 +100,7 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest')
   };
 }
 
+// Get all details associated w some DAO
 export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest') {
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
@@ -193,24 +196,24 @@ export async function getDAOData(avatarAddress: string, currentAccountAddress: s
   const proposals = [...votableProposals, ...executedProposals];
 
   // Get all proposals' details like title and url from the ipfs server
-  let serverProposals: { [key: string]: any } = {};
+  let offChainProposalDetails: { [key: string]: any } = {};
   try {
     const promises = proposals.map(async (proposal) => {
       const ipfsHash = ipfs.hexToHash(proposal.contributionDescriptionHash);
       const result = await ipfs.get(ipfsHash);
       return result;
     })
-    serverProposals = await Promise.all(promises);
+    offChainProposalDetails = await Promise.all(promises);
   } catch (e) {
     console.error(e);
   }
 
-  let contributionProposal: Arc.ContributionProposal, proposalId: string, serverProposal: any, proposal: IProposalState, voterInfo, stakerInfo, redemptions;
+  let contributionProposal: Arc.ContributionProposal, proposalId: string, offChainProposalDetail: any, proposal: IProposalState, voterInfo, stakerInfo, redemptions;
   for (let cnt = 0; cnt < proposals.length; cnt++) {
     contributionProposal = proposals[cnt];
     proposalId = contributionProposal.proposalId;
-    serverProposal = serverProposals[proposalId] || false;
-    proposal = await getProposalDetails(daoInstance, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress, fromBlock, toBlock);
+    offChainProposalDetail = offChainProposalDetails[proposalId] || false;
+    proposal = await getProposalDetails(daoInstance, votingMachineInstance, contributionRewardInstance, contributionProposal, offChainProposalDetail, currentAccountAddress, fromBlock, toBlock);
     daoData.proposals.push(proposal);
 
     // Add any votes, stakes and redemptions on the proposal to each account too
@@ -264,7 +267,7 @@ export function updateDAOLastBlock(avatarAddress: string, blockNumber: number) {
 
 // Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the ipfs server
 // TODO: put in a lib/util class somewhere?
-async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, serverProposal: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {
+async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: Arc.GenesisProtocolWrapper, contributionRewardInstance: Arc.ContributionRewardWrapper, contributionProposal: Arc.ContributionProposal, offChainProposalDetail: any, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest'): Promise<IProposalState> {
   const proposalId = contributionProposal.proposalId;
   const descriptionHash = contributionProposal.contributionDescriptionHash;
   const avatarAddress = daoInstance.avatar.address;
@@ -280,14 +283,19 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   // Use title and url from the ipfs server
   let url = "";
   let title = "[no title]";
-  if (serverProposal) {
-    url = serverProposal.url;
-    title = serverProposal.title;
+  if (offChainProposalDetail) {
+    url = offChainProposalDetail.url;
+    title = offChainProposalDetail.title;
   } else {
     let ipfsHash = ipfs.hexToHash(descriptionHash);
-    let serverProposal = await ipfs.get(ipfsHash);
-    url = serverProposal.url;
-    title = serverProposal.title;
+    let offChainProposalDetail = await ipfs.get(ipfsHash);
+
+    if (offChainProposalDetail && offChainProposalDetail.url) {
+      url = offChainProposalDetail.url;
+    }
+    if (offChainProposalDetail && offChainProposalDetail.title) {
+      title = offChainProposalDetail.title;
+    }
   }
 
   const proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
@@ -668,8 +676,7 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
 
       const dao = getState().arc.daos[daoAvatarAddress];
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const wallet = await getWallet();
-      const contributionReward = new ethers.Contract(contributionRewardInstance.address, contributionRewardArtifacts.abi, wallet);
+      const contributionReward = contributionRewardInstance.contract
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
@@ -693,9 +700,11 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         beneficiaryAddress
       ]
 
-      const gasLimit = await contributionReward.estimate.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
-      const txReceipt = await contributionReward.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit });
-      console.log(JSON.stringify(txReceipt,null,2));
+      const gasLimit = await contributionReward.proposeContributionReward.estimateGas(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
+      //console.log(`I predict this tx will require ${gasLimit} gas`)
+
+      const txReceipt = await contributionReward.proposeContributionReward.sendTransaction(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit });
+      //console.log(JSON.stringify(txReceipt,null,2));
 
     } catch (err) {
       console.error(err);
@@ -718,11 +727,11 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
     const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
     const currentAccountAddress = getState().web3.ethAccountAddress;
 
-    let serverProposal: any = false;
+    let offChainProposalDetail: any = false;
     try {
       // See if this proposalId data is already stored in ipfs and if so, load title and url data from there
       const ipfsHash = ipfs.hexToHash(eventResult._contributionDescription);
-      serverProposal = await ipfs.get(ipfsHash);
+      offChainProposalDetail = await ipfs.get(ipfsHash);
     } catch (e) {
       console.error(e);
     }
@@ -742,7 +751,7 @@ export function onProposalCreateEvent(eventResult: Arc.NewContributionProposalEv
       reputationChange: eventResult._reputationChange
     }
 
-    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, serverProposal, currentAccountAddress);
+    const proposal = await getProposalDetails(dao, votingMachineInstance, contributionRewardInstance, contributionProposal, offChainProposalDetail, currentAccountAddress);
 
     const payload = normalize(proposal, schemas.proposalSchema);
 

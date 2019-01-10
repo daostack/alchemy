@@ -21,6 +21,10 @@ const mapDispatchToProps = {};
 
 type IProps = IStateProps & IDispatchProps;
 
+declare global {
+  interface Window { origin: any; }
+}
+
 class HomeContainer extends React.Component<IProps, null> {
 
   public render() {

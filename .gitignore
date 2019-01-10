@@ -7,8 +7,11 @@ PRIVATE_README.md
 .DS_Store
 *.log*
 *sublime*
+*.swp
 yarn*
 .env
 build
 .cache
-*.swp
+.config
+.node-gyp
+.yarnrc
