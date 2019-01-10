@@ -1,4 +1,4 @@
-# A composition of services that are needed to run Alchemy
+# A composition of services that are needed to run the tests of the client
 # This is for DEVELOPMENT, not production
 
 version: "3"
@@ -76,7 +76,7 @@ services:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: trufflesuite/ganache-cli:v6.2.3
+    image: trufflesuite/ganache-cli:v6.2.5
     ports:
       - 8545:8545
     command: >
