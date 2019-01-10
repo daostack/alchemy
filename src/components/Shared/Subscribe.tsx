@@ -69,7 +69,7 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     if (typeof children === 'function') {
       return children(this.state)
     }
-
+    throw Error(`Children of <Subscribe> must be a function`)
     // const childrenWithProps = React.Children.map(children, (child) =>
     //   React.cloneElement(child, this.state)
     // )
