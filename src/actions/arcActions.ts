@@ -2,7 +2,6 @@ import * as Arc from "@daostack/arc.js";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
-import * as ethers from "ethers";
 import * as _ from "lodash";
 import * as moment from "moment";
 import { denormalize, normalize } from "normalizr";
@@ -11,10 +10,8 @@ import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Web3 } from "web3";
 
-import * as arcConstants from "constants/arcConstants";
 import ipfs from "lib/ipfs";
 import Util from "lib/util";
-import getWallet from 'lib/wallet';
 import { IRootState } from "reducers/index";
 import { ActionTypes,
          checkProposalExpired,
@@ -37,8 +34,6 @@ import { Dispatch } from "redux";
 import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
 
-const contributionRewardArtifacts = require('@daostack/arc.js/migrated_contracts/ContributionReward.json');
-
 export function loadCachedState() {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_LOAD_CACHED_STATE, sequence: AsyncActionSequence.Pending, payload: null });
@@ -53,7 +48,6 @@ export function loadCachedState() {
   };
 }
 
-// Get events from DaoCreator to see if any new DAOs are available
 export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAOS, sequence: AsyncActionSequence.Pending, payload: null });
@@ -86,7 +80,6 @@ export function getDAOs(fromBlock = 0, toBlock = 'latest') {
   };
 }
 
-// Calls getDAOData (below) for some avatar address
 export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest') {
   return async (dispatch: any, getState: () => IRootState) => {
     dispatch({ type: ActionTypes.ARC_GET_DAO, sequence: AsyncActionSequence.Pending, payload: null });
@@ -100,7 +93,6 @@ export function getDAO(avatarAddress: string, fromBlock = 0, toBlock = 'latest')
   };
 }
 
-// Get all details associated w some DAO
 export async function getDAOData(avatarAddress: string, currentAccountAddress: string = null, fromBlock = 0, toBlock = 'latest') {
   const web3 = await Arc.Utils.getWeb3();
   const daoInstance = await Arc.DAO.at(avatarAddress);
@@ -647,13 +639,7 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
     try {
       const web3: Web3 = await Arc.Utils.getWeb3();
       const submittedTime = Math.round((new Date()).getTime() / 1000);
-
-      const description = {
-        title,
-        url,
-        daoAvatarAddress,
-        submittedTime,
-      }
+      const description = { title, url, daoAvatarAddress, submittedTime }
 
       // Save the proposal title, url and submitted time on the ipfs server
       let ipfsHash;
@@ -682,8 +668,9 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
 
       const hash = ipfs.hashToHex(ipfsHash);
-
-      const externalTokenAddress = dao.externalTokenAddress ? dao.externalTokenAddress : "0x0000000000000000000000000000000000000000";
+      const externalTokenAddress = dao.externalTokenAddress
+        ? dao.externalTokenAddress
+        : "0x0000000000000000000000000000000000000000";
 
       const arg = [
         daoAvatarAddress,
@@ -700,11 +687,8 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         beneficiaryAddress
       ]
 
-      const gasLimit = await contributionReward.proposeContributionReward.estimateGas(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
-      //console.log(`I predict this tx will require ${gasLimit} gas`)
-
+      const gasLimit = Number(await contributionReward.proposeContributionReward.estimateGas(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5])) * 2;
       const txReceipt = await contributionReward.proposeContributionReward.sendTransaction(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit });
-      //console.log(JSON.stringify(txReceipt,null,2));
 
     } catch (err) {
       console.error(err);
@@ -712,7 +696,7 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Failure,
         meta,
-      } as CreateProposalAction);
+      } as CreateProposalAction)
     }
   }
 }
