@@ -7,11 +7,5 @@ PRIVATE_README.md
 .DS_Store
 *.log*
 *sublime*
-*.swp
 yarn*
 .env
-build
-.cache
-.config
-.node-gyp
-.yarnrc
