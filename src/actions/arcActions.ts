@@ -2,7 +2,6 @@ import * as Arc from "@daostack/arc.js";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
-import * as ethers from "ethers";
 import * as _ from "lodash";
 import * as moment from "moment";
 import { denormalize, normalize } from "normalizr";
@@ -14,7 +13,6 @@ import { Web3 } from "web3";
 import * as arcConstants from "constants/arcConstants";
 import ipfs from "lib/ipfs";
 import Util from "lib/util";
-import getWallet from 'lib/wallet';
 import { IRootState } from "reducers/index";
 import { checkProposalExpired,
          newAccount,
@@ -35,9 +33,6 @@ import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { Dispatch } from "redux";
 import { ExecutionState, GenesisProtocolFactory, GenesisProtocolWrapper } from "@daostack/arc.js";
 import * as schemas from "schemas";
-
-// TODO remove this & ethers dependency by using the truffle contract instance instead
-const contributionRewardArtifacts = require('@daostack/arc.js/migrated_contracts/ContributionReward.json');
 
 // Fetch cache JSON blob from cacher server
 export function loadCachedState() {
@@ -673,8 +668,8 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
 
       const dao = getState().arc.daos[daoAvatarAddress];
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const wallet = await getWallet();
-      const contributionReward = new ethers.Contract(contributionRewardInstance.address, contributionRewardArtifacts.abi, wallet);
+
+      const contributionReward = contributionRewardInstance.contract
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
@@ -698,8 +693,11 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         beneficiaryAddress
       ]
 
-      const gasLimit = await contributionReward.estimate.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
-      const txReceipt = await contributionReward.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit });
+      const gasLimit = await contributionReward.methods.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]).estimateGas();
+      console.log(`I predict this tx will require ${gasLimit} gas`)
+
+      const txReceipt = await contributionReward.methods.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]).send({ gasLimit });
+
       console.log(JSON.stringify(txReceipt,null,2));
 
     } catch (err) {
