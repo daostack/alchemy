@@ -285,9 +285,13 @@ async function getProposalDetails(daoInstance: Arc.DAO, votingMachineInstance: A
   } else {
     let ipfsHash = ipfs.hexToHash(descriptionHash);
     let offChainProposalDetail = await ipfs.get(ipfsHash);
-    // TODO Better error handling
-    url = offChainProposalDetail.url;
-    title = offChainProposalDetail.title;
+
+    if (offChainProposalDetail && offChainProposalDetail.url) {
+      url = offChainProposalDetail.url;
+    }
+    if (offChainProposalDetail && offChainProposalDetail.title) {
+      title = offChainProposalDetail.title;
+    }
   }
 
   const proposer = (await votingMachineInstance.NewProposal({_proposalId: proposalId}, {fromBlock: 0, toBlock: 'latest'}).get(undefined, -1))[0].args._proposer;
