@@ -51,55 +51,38 @@ ipfs.add = (data: Object) => {
   return promisify(ipfsApi.addJSON.bind(ipfsApi))(data);
 }
 
-// TODO: remove cache system here bc the bg_cache worker will be phased out soon.
-const cache: any = {};
-
 const getLegacyData = () => {
-  if (cache[legacyIpfsHash]) {
-    return cache[legacyIpfsHash]
-  } else {
-    cache[legacyIpfsHash] = new Promise(async (resolve, reject) => {
-      try {
-        const response: any = await timeout(axios.get(`${protocol}://${host}/ipfs/${legacyIpfsHash}`), 1000);
-        if (response && response.data) {
-          console.log(`[IPFS] Retrieved legacy data`)
-          return resolve(response.data);
-        }
-      } catch (e) {
-        console.error(`[IPFS] Error retrieving legacy data: ${e.message}`)
-        return reject(false)
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response: any = await timeout(axios.get(`${protocol}://${host}/ipfs/${legacyIpfsHash}`), 1000);
+      if (response && response.data) {
+        return resolve(response.data);
       }
-    })
-    return cache[legacyIpfsHash]
-  }
+    } catch (e) {
+      console.warn(`[IPFS] Error retrieving legacy data: ${e.message}`)
+      return reject(false)
+    }
+  })
 }
 
 ipfs.get = async (ipfsHash: string) => {
-  // If we've already gotten this hash, retrieve it from the cache
-  if (cache[ipfsHash]) {
-    return cache[ipfsHash];
-  } else {
-    cache[ipfsHash] = new Promise(async (resolve, reject) => {
-      try {
-        const response: any = await timeout(axios.get(`${protocol}://${host}/ipfs/${ipfsHash}`), 1000);
-        if (response && response.data) {
-          console.log(`[IPFS] Got description from ipfs for: ${ipfs.hashToHex(ipfsHash)}`)
-          return resolve(response.data);
-        }
-      } catch (e) {}
-
-      const legacyData = await getLegacyData()
-      const hex = ipfs.hashToHex(ipfsHash)
-      if (legacyData && legacyData[hex]) {
-        console.log(`[IPFS] Got description from legacy data for: ${ipfs.hashToHex(ipfsHash)}`)
-        return resolve(legacyData[hex])
-      } else {
-        console.warn(`[IPFS] Couldn't find details for description hash: ${hex}`)
-        return resolve(false);
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response: any = await timeout(axios.get(`${protocol}://${host}/ipfs/${ipfsHash}`), 1000);
+      if (response && response.data) {
+        return resolve(response.data);
       }
-    })
-    return cache[ipfsHash];
-  }
+    } catch (e) {}
+
+    const legacyData = await getLegacyData()
+    const hex = ipfs.hashToHex(ipfsHash)
+    if (legacyData && legacyData[hex]) {
+      return resolve(legacyData[hex])
+    } else {
+      console.warn(`[IPFS] Couldn't find details for description hash: ${hex}`)
+      return resolve(false);
+    }
+  })
 }
 
 export default ipfs
