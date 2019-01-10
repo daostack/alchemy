@@ -21,17 +21,17 @@ let host;
 let protocol;
 try {
   host = window.location.host;
-  protocol = 'https'
+  protocol = window.location.protocol.replace(':', '');
 } catch (e) {
   // the cacher accesses this docker image directly
   host = process.env.IPFS_URL;
-  protocol = 'http'
+  protocol = 'http';
 }
 
 const ipfsApi: any = new IPFS({
   protocol,
   host,
-  port: '443',
+  port: protocol === 'https' ? '443' : '80',
   base: '/api/ipfs',
   pinning: true,
 });

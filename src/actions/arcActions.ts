@@ -697,10 +697,10 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         beneficiaryAddress
       ]
 
-      const gasLimit = await contributionReward.methods.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]).estimateGas();
+      const gasLimit = await contributionReward.proposeContributionReward.estimateGas(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]);
       console.log(`I predict this tx will require ${gasLimit} gas`)
 
-      const txReceipt = await contributionReward.methods.proposeContributionReward(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5]).send({ gasLimit });
+      const txReceipt = await contributionReward.proposeContributionReward.sendTransaction(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit });
 
       console.log(JSON.stringify(txReceipt,null,2));
 
