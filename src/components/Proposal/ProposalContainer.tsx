@@ -299,7 +299,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       };
 
       const disqusConfig = {
-        url: `${window.location.origin}/dao/${dao.avatarAddress}/proposal/${proposal.proposalId}`,
+        url: process.env.BASE_URL + "/dao/" + dao.avatarAddress + "/proposal/" + proposal.proposalId,
         identifier: proposal.proposalId
       };
 
