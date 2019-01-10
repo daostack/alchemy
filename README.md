@@ -1,5 +1,19 @@
 # Alchemy Client
 
+**Alchemy is a budgeting and resource-allocation tool for decentralized organizations.** It is an interface that enables thousands of individuals to coordinate towards a common purpose, by proposing and deciding on how to spend funds in alignment with their goals and values.
+
+Some example use cases for Alchemy include decentralized venture funds, charitable funds, innovation funds, a budget proposal system (like Dash but more sophisticated), or prioritizing features for an open-source project.
+
+Alchemy is a Dapp (decentralized application) built on top of [DAOstack](https://github.com/daostack), a platform for decentralized governance of DAOs (decentralized autonomous organizations).
+
+How does it work? **Alchemy makes it easy for DAO members to carry out three simple actions:**
+
+1. **Make proposals** for the DAO to take a specific action. A proposal is equivalent to a project pitch and includes details about the proposal such as objectives, methods, costs and milestones.
+2. **Predict** whether a proposal will be approved or rejected by the organization. This helps guide the collective voting process by sorting and prioritizing the proposals.
+3. **Vote** on whether a proposal should be accepted or rejected.
+
+While anyone can propose and predict, only people who hold reputation (voting power) can vote.
+
 ## Dependencies:
 * [NVM](https://github.com/creationix/nvm#installation) can be helpful to manage different versions of node
 * [NodeJS 9.4 or greater + NPM](https://github.com/creationix/nvm#usage)
