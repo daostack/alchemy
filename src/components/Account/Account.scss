@@ -101,6 +101,16 @@
       }
     }
 
+    .socialButton {
+      padding: 5px 4px;
+      display: inline-block;
+
+      .icon {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
     .holdings {
       padding: 20px 0;
       margin-top: 10px;
@@ -145,10 +155,10 @@
 
 
 /***** Account Profile ******/
-  .daoHeader {
-    background-color: white;
-    padding: 20px 30px 30px 30px;
-  }
+.daoHeader {
+  background-color: white;
+  padding: 20px 30px 30px 30px;
+}
 
 .profileContainer {
   max-width: 1080px;
@@ -227,6 +237,30 @@
     padding: 4px;
     width: 250px;
     font-size: 13px;
+  }
+
+  .socialButton {
+    width: 33%;
+    display: inline-block;
+
+    button {
+      border: none;
+
+      :hover {
+        color: #76c9de;
+      }
+    }
+
+    .icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+.socialButtonAuthenticated {
+  .icon {
+    color: #76c9de;
   }
 }
 

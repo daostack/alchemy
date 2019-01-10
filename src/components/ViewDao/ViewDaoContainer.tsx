@@ -22,6 +22,7 @@ import * as schemas from "schemas";
 
 import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
 import DaoHeader from "./DaoHeader";
+import DaoHeadings from "./DaoHeadings";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoNav from "./DaoNav";
@@ -430,6 +431,7 @@ For additional information check out our <a href="https://docs.google.com/docume
         />
         <div className={css.top}>
           <DaoHeader dao={dao} />
+          <DaoHeadings dao={dao} />
           <DaoNav currentAccountAddress={currentAccountAddress} dao={dao} numRedemptions={numRedemptions} />
         </div>
         <div className={css.wrapper}>

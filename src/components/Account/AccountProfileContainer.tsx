@@ -7,6 +7,7 @@ import * as queryString from 'query-string';
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
+import * as io from 'socket.io-client';
 
 import * as profileActions from "actions/profilesActions";
 import { IRootState } from "reducers";
@@ -16,10 +17,13 @@ import { IProfileState } from "reducers/profilesReducer";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
-import DaoHeader from "components/ViewDao/DaoHeader";
+import OAuthLogin from 'components/Account/OAuthLogin';
 import ReputationView from "components/Account/ReputationView";
+import DaoHeader from "components/ViewDao/DaoHeader";
 
 import * as css from "./Account.scss";
+
+const socket = io(process.env.API_URL);
 
 interface IStateProps extends RouteComponentProps<any> {
   accountAddress: string;
@@ -45,12 +49,14 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
   getProfile: typeof profileActions.getProfile;
   updateProfile: typeof profileActions.updateProfile;
+  verifySocialAccount: typeof profileActions.verifySocialAccount;
 }
 
 const mapDispatchToProps = {
   showNotification,
   getProfile: profileActions.getProfile,
-  updateProfile: profileActions.updateProfile
+  updateProfile: profileActions.updateProfile,
+  verifySocialAccount: profileActions.verifySocialAccount
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -62,7 +68,6 @@ interface IState {
 
 interface FormValues {
   description: string;
-  githubURL: string;
   name: string;
 }
 
@@ -140,6 +145,10 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     setSubmitting(false);
   }
 
+  public onOAuthSuccess(account: IProfileState) {
+    this.props.verifySocialAccount(this.props.accountAddress, account);
+  }
+
   public render() {
     const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
     const { ethCount, genCount } = this.state;
@@ -159,7 +168,6 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
             enableReinitialize={true}
             initialValues={{
               description: accountProfile ? accountProfile.description || "" : "",
-              githubURL: accountProfile ? accountProfile.githubURL || "" : "",
               name: accountProfile ? accountProfile.name || "" : ""
             } as FormValues}
             validate={(values: FormValues) => {
@@ -244,10 +252,19 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                       <span>{accountAddress.substr(0, 20)}...</span>
                       <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
                     </div>
-                    {/*<div>
-                      <strong>Prove it's you by linking your social accounts:</strong>
-                      <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
-                    </div>*/}
+                    {editing
+                      ? <div>
+                          <strong>Prove it's you by linking your social accounts:</strong>
+                          <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                        </div>
+                      : <div><strong>Social accounts:</strong></div>
+                    }
+                    {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
+                      <div>
+                        <OAuthLogin editing={editing} provider='twitter' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider='github' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                      </div>
+                    }
                   </div>
                 </div>
                 { editing ?
