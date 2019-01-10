@@ -6,9 +6,8 @@ import { ConnectedRouter } from "react-router-redux";
 
 import { default as store, history } from "./configureStore";
 
-import * as arcActions from "./actions/arcActions";
-
 import AppContainer from "layouts/AppContainer";
+import DebugContainer from "components/DebugContainer";
 
 export class App extends React.Component<undefined, undefined> {
 
@@ -17,7 +16,10 @@ export class App extends React.Component<undefined, undefined> {
       <Provider store={store}>
         <CookiesProvider>
           <ConnectedRouter history={history}>
-            <Route path="/" component={AppContainer}/>
+            <Switch>
+              <Route path="/dao/:daoAvatarAddress/debug" component={DebugContainer} />
+              <Route path="/" component={AppContainer}/>
+            </Switch>
           </ConnectedRouter>
         </CookiesProvider>
       </Provider>
