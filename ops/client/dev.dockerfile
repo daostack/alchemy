@@ -1,4 +1,4 @@
-FROM builder:dev
+FROM alchemy_builder:dev
 
 RUN yarn global add webpack-dev-server
 

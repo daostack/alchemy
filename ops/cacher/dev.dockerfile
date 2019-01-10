@@ -1,4 +1,4 @@
-FROM builder:dev
+FROM alchemy_builder:dev
 
 RUN apk add --update --no-cache redis
 RUN yarn global add nodemon
