@@ -12,8 +12,6 @@ import { App } from "./App";
 import "./assets/styles/global.scss";
 import Util from 'lib/util';
 
-console.log(`Starting App in Environment: ${JSON.stringify(process.env,null,2)}`)
-
 async function renderApp() {
   try {
     // Add icons we want to use from FontAwesome
@@ -21,9 +19,6 @@ async function renderApp() {
 
     Arc.ConfigService.set("estimateGas", true);
     Arc.ConfigService.set("txDepthRequiredForConfirmation", { kovan: 0, live: 0});
-    if (process.env.NODE_ENV === 'development') {
-      Arc.ConfigService.set("logLevel", 15);
-    }
 
     await Arc.InitializeArcJs({
       watchForAccountChanges: true,

@@ -1,0 +1,68 @@
+{
+    "name": "Circles",
+    "tokenName": "Circ",
+    "tokenSymbol": "CRL",
+    "params": {
+        "boostedVotePeriodLimit": 3600,
+        "daoBountyConst": 30,
+        "daoBountyLimit": 500,
+        "minimumStakingFee": 0,
+        "preBoostedVotePeriodLimit": 7200,
+        "preBoostedVoteRequiredPercentage": 50,
+        "proposingRepRewardConstA": 5,
+        "proposingRepRewardConstB": 10,
+        "quietEndingPeriod": 1800,
+        "stakerFeeRatioForVoters": 20,
+        "thresholdConstA": 100,
+        "thresholdConstB": 3,
+        "votersGainRepRatioFromLostRep": 90,
+        "votersReputationLossRatio": 4
+    },
+    "founders": [
+        {"id": 0, "reputation": 1000},
+        {"id": 1, "reputation": 1000},
+        {"id": 2, "reputation": 1000}
+    ],
+    "steps": [
+        {
+            "action": "CreateProposal",
+            "args": {
+                "id": 1,
+                "title": "Hello",
+                "description": "Some desc",
+                "beneficiary": "0xb0c908140fe6fd6fbd4990a5c2e35ca6dc12bfb2",
+                "amount": 3,
+                "reputation": 3
+            }
+        },
+        {
+            "action": "Vote",
+            "args": {
+                "id": 1,
+                "vote": "Yes"
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 1,
+                "vote": "Yes",
+                "amount": 2
+            }
+        },
+        {
+            "action": "SwitchAccount",
+            "args": {
+                "id": 1
+            }
+        },
+        {
+            "action": "Stake",
+            "args": {
+                "id": 1,
+                "vote": "Yes",
+                "amount": 3
+            }
+        }
+    ]
+}

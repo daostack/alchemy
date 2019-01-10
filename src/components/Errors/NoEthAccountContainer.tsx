@@ -9,7 +9,6 @@ import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
 
-import * as home from "../Home/Home.scss";
 import * as css from "./Errors.scss";
 
 interface IStateProps {
@@ -31,10 +30,6 @@ const mapDispatchToProps = {
 };
 
 type IProps = IStateProps & IDispatchProps;
-
-declare global {
-  interface Window { origin: any; }
-}
 
 class NoEthAccountContainer extends React.Component<IProps, null> {
   public interval: any;
@@ -66,7 +61,6 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
             <a onClick={this.enableAccountAccess} className={css.link}>Click here</a> to open a Metamask pop-up that will request your permission.
           </h1>
         </div>
-
       </div>
     );
   }
