@@ -1,11 +1,7 @@
-import * as classNames from "classnames";
-import Tooltip from "rc-tooltip";
 import * as React from "react";
-import { Link } from "react-router-dom";
 //@ts-ignore
 import { Modal } from 'react-router-modal';
 
-import * as arcActions from "actions/arcActions";
 import { proposalEnded } from "reducers/arcReducer";
 import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 

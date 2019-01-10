@@ -1,12 +1,10 @@
 import * as classNames from "classnames";
 import * as React from "react";
-import { Link } from "react-router-dom";
 import Tooltip from 'rc-tooltip';
 
 import * as arcActions from "actions/arcActions";
-import { IRootState } from "reducers";
-import { ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { VoteOptions } from "reducers/arcReducer";
+import { IDAOState, IProposalState } from '@daostack/client'
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";

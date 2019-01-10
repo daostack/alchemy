@@ -4,16 +4,11 @@ import { connect, Dispatch } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
-import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
-import * as selectors from "selectors/daoSelectors";
-import * as schemas from "schemas";
 
 // import { ConnectedProposalContainer as ProposalContainer } from "../Proposal/ProposalContainer";
 import ProposalContainer from "../Proposal/ProposalContainer";
-import DaoHeader from "./DaoHeader";
-import DaoNav from "./DaoNav";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { arc } from "arc";
 import * as css from "./ViewDao.scss";
@@ -22,9 +17,6 @@ import { IProposalState, ProposalStage } from '@daostack/client'
 
 interface IStateProps extends RouteComponentProps<any> {
   daoAvatarAddress: string;
-  // proposalsLoaded: boolean;
-  // proposalsBoosted: IProposalState[];
-  // proposalsPreBoosted: IProposalState[];
   web3: IWeb3State;
 }
 
@@ -71,8 +63,12 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
     )
     return <Subscribe observable={observable}>{
       (state: IObservableState<[IProposalState[], IProposalState[]]>): any => {
-        const data = state.data
-        if ( data !== null ) {
+        if (state.isLoading) {
+          return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>
+        } else if (state.error){
+          throw state.error
+        } else {
+          const data = state.data
           const proposalsBoosted = data[0]
           const proposalsPreBoosted = data[1]
           const boostedProposalsHTML = (
@@ -155,9 +151,6 @@ class DaoProposalsContainer extends React.Component<IProps, null> {
 
             </div>
           )
-
-        } else {
-          return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>
         }
       }
     }</Subscribe>

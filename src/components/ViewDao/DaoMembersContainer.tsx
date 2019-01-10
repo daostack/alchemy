@@ -21,7 +21,6 @@ interface IProps extends RouteComponentProps<any> {
   profiles: IProfilesState
 }
 
-// TODO: can i make this not a container and just take the dao passed in as a prop?
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     dao: ownProps.dao,

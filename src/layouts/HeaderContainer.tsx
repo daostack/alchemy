@@ -82,20 +82,20 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-const Fade = ({ children, ...props }: any) => (
-  <CSSTransition
-    {...props}
-    timeout={1000}
-    classNames={{
-     enter: css.fadeEnter,
-     enterActive: css.fadeEnterActive,
-     exit: css.fadeExit,
-     exitActive: css.fadeExitActive,
-    }}
-  >
-    {children}
-  </CSSTransition>
-);
+// const Fade = ({ children, ...props }: any) => (
+//   <CSSTransition
+//     {...props}
+//     timeout={1000}
+//     classNames={{
+//      enter: css.fadeEnter,
+//      enterActive: css.fadeEnterActive,
+//      exit: css.fadeExit,
+//      exitActive: css.fadeExitActive,
+//     }}
+//   >
+//     {children}
+//   </CSSTransition>
+// );
 
 class HeaderContainer extends React.Component<IProps, null> {
   private ethBalanceWatcher: FilterResult;
