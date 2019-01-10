@@ -7,12 +7,43 @@ import * as css from "layouts/App.scss";
 import ReputationView from "components/Account/ReputationView";
 import AccountBalance from "components/Account/AccountBalance";
 
-import { Address, IDAOState, IMemberState } from '@daostack/client'
+import { Address, DAO, IDAOState, IMemberState } from '@daostack/client'
 import { arc } from 'arc'
 
 interface Props {
   dao: IDAOState
   member: IMemberState;
+}
+
+const TokenAllowance = (props: {accountAddress: Address, daoAddress: Address}) => {
+  // TODO: move query logic to daostack/client
+  // TODO: we are net filtering by spender (which is the votingMachine associated with the proposal)
+  // but we probably should, in the future.
+  const query = gql`{
+    tokenApprovals (where: {owner: "${props.accountAddress}"} ){
+      id
+      contract
+      owner
+      spender
+      value
+    }
+  }`
+  return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
+    if (state.isLoading) {
+      return <div>loading..</div>
+    } else if (state.error) {
+      return <div>{state.error}</div>
+    } else {
+      // state.data is a list
+      const approvals = state.data.data.tokenApprovals
+      if (approvals.length === 0) {
+        return <span>0</span>
+      } else {
+        const approval = approvals[0] // TODO: if there are mnay this may be wrong
+        return <span>{approval.value}</span>
+      }
+    }
+  }}</Subscribe >
 }
 
 class AccountBalances extends React.Component<Props, null>  {
@@ -23,7 +54,7 @@ class AccountBalances extends React.Component<Props, null>  {
     const currentAccountEthBalance = 0
     const currentAccountGenBalance =  member.tokens
     // TODO: get allowance
-    const currentAccountGenStakingAllowance = 0
+    // const currentAccountGenStakingAllowance = 0
     // TODO: get external token balance
     const currentAccountExternalTokenBalance = 0
     return (
@@ -36,7 +67,7 @@ class AccountBalances extends React.Component<Props, null>  {
             <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={member.address} />
           </div>
           <div>
-            {currentAccountGenStakingAllowance} GEN approved for staking
+             <TokenAllowance accountAddress={member.address} daoAddress={dao.address} /> GEN approved for staking
           </div>
           { dao && dao.externalTokenAddress
             ? <div>
@@ -95,9 +126,13 @@ export default (props: { dao: IDAOState, address: Address}) => {
           // state.data is a list
           const members = state.data.data.members
           let member: any
-          if (members === []) {
+          if (members.length === 0) {
             member = {
-              name: 'not found'
+              name: 'not found',
+              id: '0x',
+              address: '0x',
+              reputation: 0,
+              tokens: 0
             }
           } else {
             member = itemMap(members[0])
