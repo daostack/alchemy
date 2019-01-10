@@ -681,6 +681,7 @@ export function createProposal(
         });
       } catch (e) {
         console.error(e);
+        throw e
       }
 
       dispatch({
@@ -692,7 +693,7 @@ export function createProposal(
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
 
-      await contributionRewardInstance.proposeContributionReward({
+      const response = await contributionRewardInstance.proposeContributionReward({
         title,
         avatar: daoAvatarAddress,
         beneficiaryAddress,
@@ -708,7 +709,7 @@ export function createProposal(
         periodLength: 0,
         reputationChange: Util.toWei(reputationReward),
       } as any);
-
+      // console.log(response)
     } catch (err) {
       console.error(err);
       dispatch({
@@ -716,6 +717,7 @@ export function createProposal(
         sequence: AsyncActionSequence.Failure,
         meta,
       } as CreateProposalAction);
+      throw err
     }
   };
 }
