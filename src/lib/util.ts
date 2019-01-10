@@ -49,9 +49,13 @@ export default class Util {
   }
 
   public static async getLatestBlock() {
-    const web3 = await Arc.Utils.getWeb3();
-    const getBlock = promisify(web3.eth.getBlock);
-    return (await getBlock('latest')).number;
+    try {
+      const web3 = await Arc.Utils.getWeb3();
+      const getBlock = promisify(web3.eth.getBlock);
+      return (await getBlock('latest')).number;
+    } catch(err) {
+      throw err
+    }
   }
 
   public static trace<T>(x: T, ...args: any[]): T {
@@ -62,10 +66,12 @@ export default class Util {
 }
 
 export function getLocalContractAddresses() {
-  const path = '@daostack/subgraph/migration.json'
-  const addresses = { ...require(path).private.base, ...require(path).private.dao }
+  const addresses = {
+    ...require('@daostack/subgraph/migration.json').private.base,
+    // ...require(path).private.dao
+   }
   if (!addresses || addresses === {}) {
-    throw Error(`No addresses found, does the file at ${path} exist?`)
+    throw Error(`No addresses found, does the file at ${'@daostack/subgraph/migration.json'} exist?`)
   }
   return addresses
 }
