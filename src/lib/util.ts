@@ -53,7 +53,7 @@ export default class Util {
       const web3 = await Arc.Utils.getWeb3();
       const getBlock = promisify(web3.eth.getBlock);
       return (await getBlock('latest')).number;
-    } catch(err) {
+    } catch (err) {
       throw err
     }
   }

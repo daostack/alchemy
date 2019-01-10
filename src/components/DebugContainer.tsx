@@ -11,7 +11,6 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
-
 import { arc } from 'arc'
 import { IDAOState, IProposalState } from '@daostack/client'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
@@ -62,7 +61,7 @@ const ProposalsContainer = (props: { daoAvatarAddress: string }) => {
     (state: IObservableState<IProposalState[]>): any => {
       if (state.isLoading) {
         return  <div>loading proposals</div>
-      } else if (state.error){
+      } else if (state.error) {
         throw state.error
       } else {
         if (state.data.length == 0) {
