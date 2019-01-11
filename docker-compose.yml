@@ -76,7 +76,8 @@ services:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: trufflesuite/ganache-cli:v6.2.5
+    # image: trufflesuite/ganache-cli:v6.2.5
+    image: trufflesuite/ganache-cli:v6.2.3
     ports:
       - 8545:8545
     command: >
