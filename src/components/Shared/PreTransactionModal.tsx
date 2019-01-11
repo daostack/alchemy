@@ -25,11 +25,15 @@ interface IProps {
   closeAction: any;
   currentAccount?: string;
   dao: IDAOState;
-  effectText: JSX.Element;
+  effectText: string | JSX.Element;
   proposal: IProposalState;
 }
 
-export default class PreTransactionModal extends React.Component<IProps> {
+interface IState {
+  preRedeemModalOpen: boolean;
+}
+
+export default class PreTransactionModal extends React.Component<IProps, IState> {
 
   public handleClickAction() {
     this.props.action();

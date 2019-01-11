@@ -44,9 +44,15 @@ export function initializeWeb3() {
     }
 
     const networkId = Number(await Arc.Utils.getNetworkId());
-
+    let accounts: string[]
+    try {
+      accounts = web3.eth.accounts
+    } catch (err) {
+      accounts = []
+      console.log(`Error getting web3.eth.accounts: ${err.message}`)
+    }
     const payload: IWeb3State = {
-      accounts: web3.eth.accounts,
+      accounts,
       currentAccountEthBalance: 0,
       currentAccountExternalTokenBalance: 0,
       currentAccountGenBalance: 0,

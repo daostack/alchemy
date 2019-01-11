@@ -1,14 +1,12 @@
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
-import { Link } from "react-router-dom";
 //@ts-ignore
 import { Modal } from 'react-router-modal';
 
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { IRootState } from "reducers";
-import { ProposalStates, TransactionStates, VoteOptions } from "reducers/arcReducer";
+import { VoteOptions } from "reducers/arcReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 

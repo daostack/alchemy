@@ -35,6 +35,7 @@ const emptyProposal: IProposalState = {
   ipfsHash: "",
   preBoostedVotePeriodLimit: 0,
   proposer: null,
+  proposingRepReward: 0,
   quietEndingPeriodBeganAt: 0,
   reputationReward: 0,
   resolvedAt: 0,

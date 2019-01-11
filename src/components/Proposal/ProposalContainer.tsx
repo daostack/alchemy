@@ -17,7 +17,6 @@ import * as schemas from "schemas";
 
 import AccountProfileName from "components/Account/AccountProfileName";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
-import ReputationView from "components/Account/ReputationView";
 import RewardsString from "components/Proposal/RewardsString";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import PredictionBox from "./PredictionBox";
@@ -25,13 +24,14 @@ import VoteBox from "./VoteBox";
 
 import * as css from "./Proposal.scss";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
-
+import gql from 'graphql-tag'
 import { arc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import RedeemButton from './RedeemButton'
+import RedemptionsTip from './RedemptionsTip'
 
 interface IStateProps {
-  beneficiaryRedemptions: IRedemptionState;
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccount: IAccountState;
@@ -51,14 +51,12 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
-  // const proposal = state.arc.proposals[ownProps.proposalId];
   const proposal = ownProps.proposal
   const dao = ownProps.dao
   const currentRedemptions = state.arc.redemptions[`${proposal.id}-${state.web3.ethAccountAddress}`];
-  const beneficiaryRedemptions = state.arc.redemptions[`${proposal.id}-${proposal.beneficiary}`];
   const currentStake = state.arc.stakes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
-  // TODO: get the threshold from somewhere!
+  // TODO: get the threshold from the proposals
   // const threshold = dao.currentThresholdToBoost;
   const threshold = 12345
 
@@ -68,7 +66,6 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   }
 
   return {
-    beneficiaryRedemptions,
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccount,
@@ -136,7 +133,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccountGens,
       currentAccountGenStakingAllowance,
       currentRedemptions,
-      beneficiaryRedemptions,
       currentStake,
       currentVote,
       dao,
@@ -154,16 +150,16 @@ class ProposalContainer extends React.Component<IProps, IState> {
       threshold
     } = this.props;
 
-    // TODO: fix this: get the amount of ETH of the DAO
+    // TODO: fix this: get the amount of ETH, GEN, and externalToken of the DAO
     const ethBalance = 0
     const genBalance = 0
     const externalTokenBalance = 0
 
-    const beneficiaryHasRewards = beneficiaryRedemptions && (
-      beneficiaryRedemptions.beneficiaryReputation ||
-      beneficiaryRedemptions.beneficiaryNativeToken ||
-      (beneficiaryRedemptions.beneficiaryEth && ethBalance >= beneficiaryRedemptions.beneficiaryEth) ||
-      (beneficiaryRedemptions.beneficiaryExternalToken && externalTokenBalance >= beneficiaryRedemptions.beneficiaryExternalToken)
+    const beneficiaryHasRewards = (
+      proposal.reputationReward ||
+      proposal.tokensReward ||
+      (proposal.ethReward && ethBalance >= proposal.ethReward) ||
+      (proposal.externalTokenReward && externalTokenBalance >= proposal.externalTokenReward)
     ) as boolean;
 
     const accountHasRewards = currentRedemptions && (
@@ -204,7 +200,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const passedByDecision = totalReputation ? (proposal.votesFor / totalReputation) > 0.5 : false;
       const failedByDecision = totalReputation ? (proposal.votesAgainst / totalReputation) > 0.5 : false;
 
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0, redemptionsTip: JSX.Element = null;
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0
+
+      const redeemProps = {
+        accountHasRewards,
+        isRedeemPending,
+        redeemable,
+        executable,
+        beneficiaryHasRewards,
+        currentRedemptions,
+        currentAccount,
+        dao,
+        proposal,
+        handleClickRedeem: this.handleClickRedeem.bind(this)
+      }
+      // const redeemButton = RedeemButton(redeemProps)
+      const redemptionsTip = RedemptionsTip(redeemProps)
+      const redeemButton = RedeemButton(redeemProps)
 
       if (currentVote) {
         currentAccountVote = currentVote.voteOption;
@@ -214,102 +226,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
         currentAccountPrediction = currentStake.prediction;
         currentAccountStakeAmount = currentStake.stakeAmount;
       }
-
-      const redeemRewards = classNames({
-        [css.redeemRewards]: true,
-        [css.pending]: isRedeemPending,
-        [css.disabled]: !redeemable && !executable
-      });
-
-      redemptionsTip =
-        <div>
-          {beneficiaryHasRewards || (beneficiaryRedemptions && beneficiaryRedemptions.beneficiaryEth) || (beneficiaryRedemptions && beneficiaryRedemptions.beneficiaryExternalToken) ?
-            <div>
-              <strong>
-                {currentAccount.address === proposal.beneficiary ? 'As the' : 'The'} beneficiary of the proposal {currentAccount.address === proposal.beneficiary ? 'you ' : ''}will receive:
-              </strong>
-              <ul>
-                {beneficiaryRedemptions.beneficiaryEth ?
-                  <li>
-                    {beneficiaryRedemptions.beneficiaryEth} ETH
-                    {ethBalance < beneficiaryRedemptions.beneficiaryEth ? " (Insufficient funds in DAO)" : ""}
-                  </li> : ""
-                }
-                {beneficiaryRedemptions.beneficiaryExternalToken ?
-                  <li>
-                    {beneficiaryRedemptions.beneficiaryExternalToken} {dao.externalTokenSymbol}
-                    {externalTokenBalance < beneficiaryRedemptions.beneficiaryExternalToken ? " (Insufficient funds in DAO)" : ""}
-                  </li> : ""
-                }
-                {beneficiaryRedemptions.beneficiaryReputation ? <li><ReputationView reputation={beneficiaryRedemptions.beneficiaryReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
-              </ul>
-            </div> : ""
-          }
-          {currentRedemptions ?
-            <React.Fragment>
-              {currentRedemptions.proposerReputation ?
-                <div>
-                  <strong>For creating the proposal you will receive:</strong>
-                  <ul>
-                    <li><ReputationView reputation={currentRedemptions.proposerReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-                  </ul>
-                </div> : ""
-              }
-              {currentRedemptions.voterReputation || currentRedemptions.voterTokens ?
-                <div>
-                  <strong>For voting on the proposal you will receive:</strong>
-                  <ul>
-                    {currentRedemptions.voterReputation ? <li><ReputationView reputation={currentRedemptions.voterReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
-                    {currentRedemptions.voterTokens ? <li>{currentRedemptions.voterTokens} GEN</li> : ""}
-                  </ul>
-                </div> : ""
-              }
-              {currentRedemptions.stakerTokens || currentRedemptions.stakerBountyTokens || currentRedemptions.stakerReputation ?
-                <div>
-                  <strong>For staking on the proposal you will receive:</strong>
-                  <ul>
-                    {currentRedemptions.stakerTokens ? <li>{currentRedemptions.stakerTokens} GEN</li> : ""}
-                    {currentRedemptions.stakerBountyTokens ?
-                      <li>
-                        {currentRedemptions.stakerBountyTokens} GEN bounty
-                        {genBalance < currentRedemptions.stakerBountyTokens ? " (Insufficient funds in DAO)" : ""}
-                      </li> : ""
-                    }
-                    {currentRedemptions.stakerReputation ? <li><ReputationView reputation={currentRedemptions.stakerReputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
-                  </ul>
-                </div> : ""
-              }
-            </React.Fragment>
-            : ''
-          }
-          {!currentRedemptions && !beneficiaryHasRewards && executable ?
-            <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
-            : ''
-          }
-          {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
-        </div>;
-
-      const redeemButton = (currentRedemptions || beneficiaryHasRewards || executable ?
-        <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-          <button
-            style={{ whiteSpace: 'nowrap' }}
-            disabled={false}
-            className={redeemRewards}
-            onClick={this.handleClickRedeem.bind(this)}
-          >
-            {
-              isRedeemPending ?
-                'Redeem in progress' :
-                beneficiaryHasRewards && !accountHasRewards ?
-                  'Redeem for beneficiary' :
-                  currentRedemptions ?
-                    'Redeem' :
-                    'Execute'
-            }
-            <img src="/assets/images/Icon/Loading-black.svg" />
-          </button>
-        </Tooltip>
-        : "");
 
       const styles = {
         forBar: {
@@ -483,25 +399,25 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalContainer = connect(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
-export default (props: { proposalId: string}) =>
-  <Subscribe observable={arc.proposal(props.proposalId).state}>{(state: IObservableState<IProposalState>) => {
+export default (props: { proposalId: string}) => {
+  // get proposal with all details here, including votes and stuff
+
+  return <Subscribe observable={arc.proposal(props.proposalId).state}>{(state: IObservableState<IProposalState>) => {
+    if (state.isLoading) {
+      return <div>Loading proposal</div>
+    } else if (state.error) {
+      return <div>{ state.error.message }</div>
+    } else {
       const proposal = state.data
-      if (proposal) {
-        return <Subscribe observable={proposal.dao.state} >
-            {(state: IObservableState<IDAOState>) => {
-              const dao = state.data
-              if (dao) {
-                return <ConnectedProposalContainer proposal={proposal} dao={dao} />
-              } else {
-                return <div>Loading...</div>
-              }
-            }
-          }</Subscribe>
-      } else if (state.error) {
-        console.log(state.error)
-        return <div>{ state.error.message }</div>
-      } else {
-        return <div>Loading...</div>
-      }
-    }
-  }</Subscribe>
+      return <Subscribe observable={proposal.dao.state}>{(state: IObservableState<IDAOState>) => {
+          const dao = state.data
+          if (dao) {
+            return <ConnectedProposalContainer proposal={proposal} dao={dao} />
+          } else {
+            return <div>Loading...</div>
+          }
+        }
+      }</Subscribe>
+  }
+  }}</Subscribe>
+}
