@@ -1,5 +1,4 @@
 import * as classNames from "classnames";
-import * as moment from "moment";
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
 import * as React from "react";

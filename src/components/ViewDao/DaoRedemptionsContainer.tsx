@@ -57,7 +57,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const { dao, proposals, redemptions } = this.props;
 
     const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} />);
+      return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} dao={dao} />);
     });
 
     // const redeemAllTip: JSX.Element | string = ""
@@ -113,7 +113,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
 }
 
-const ConnnectedDAoRedemptionsContainer = connect(mapStateToProps)(DaoRedemptionsContainer);
+const ConnnectedDaoRedemptionsContainer = connect(mapStateToProps)(DaoRedemptionsContainer);
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const daoAddress = props.dao.address
@@ -122,7 +122,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>
       } else if (state.data) {
-        return <ConnnectedDAoRedemptionsContainer {...props} rewards={state.data}  />
+        return <ConnnectedDaoRedemptionsContainer {...props} dao={props.dao} rewards={state.data}  />
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }

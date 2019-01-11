@@ -6,7 +6,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { arc } from "arc";
 import * as css from "./ViewDao.scss";
 import { combineLatest } from 'rxjs'
-import { Address, IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -26,15 +26,15 @@ const Fade = ({ children, ...props }: any) => (
 const ProposalsContainer = (props: {
   proposalsBoosted: IProposalState[],
   proposalsPreBoosted: IProposalState[],
-  daoAddress: Address
+  dao: IDAOState
 }) => {
-  const proposalsBoosted = props.proposalsBoosted
-  const proposalsPreBoosted = props.proposalsPreBoosted
+  const { proposalsBoosted, proposalsPreBoosted, dao } = props
+
   const boostedProposalsHTML = (
     <TransitionGroup className="boosted-proposals-list">
       { proposalsBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} />
+          <ProposalContainer proposalId={proposal.id} dao={dao} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -44,7 +44,7 @@ const ProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} />
+          <ProposalContainer proposalId={proposal.id} dao={dao} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -59,7 +59,7 @@ const ProposalsContainer = (props: {
                   No upcoming proposals
                 </div>
                 <div className={css.cta}>
-                  <Link to={`/dao/${props.daoAddress}/proposals/create`} data-test-id="create-proposal">Create a proposal</Link>
+                  <Link to={`/dao/${dao.address}/proposals/create`} data-test-id="create-proposal">Create a proposal</Link>
                 </div>
               </div>
             : ""
@@ -114,19 +114,19 @@ const ProposalsContainer = (props: {
 export default(props: RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress
   const observable = combineLatest(
-    // TODO: add queries here, like `proposals({boosted: true})` or whatever
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Boosted }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Open }), // the list of pre-boosted proposals
+    arc.dao(daoAvatarAddress).state
   )
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IProposalState[]]>): any => {
+    (state: IObservableState<[IProposalState[], IProposalState[], IDAOState]>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>
       } else if (state.error) {
         throw state.error
       } else {
         const data = state.data
-        return <ProposalsContainer proposalsBoosted={data[0]} proposalsPreBoosted={data[1]} daoAddress={daoAvatarAddress} />
+        return <ProposalsContainer proposalsBoosted={data[0]} proposalsPreBoosted={data[1]} dao={data[2]} />
       }
     }
   }</Subscribe>

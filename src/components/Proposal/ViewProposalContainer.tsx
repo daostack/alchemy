@@ -21,12 +21,13 @@ import * as css from "./ViewProposal.scss";
 import { arc } from "arc";
 
 interface IProps extends RouteComponentProps<any> {
-  proposal: IProposalState;
+  proposal: IProposalState
+  dao: IDAOState
 }
 
 class ViewProposalContainer extends React.Component<IProps, null> {
   public render() {
-    const { proposal } = this.props;
+    const { proposal, dao } = this.props;
 
     const disqusConfig = {
       url: process.env.BASE_URL + this.props.location.pathname,
@@ -40,7 +41,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
           Viewing proposal: {proposal.title}
         </div>
         <div className={css.proposal}>
-          <ProposalContainer proposalId={proposal.id} />
+          <ProposalContainer proposalId={proposal.id} dao={dao}/>
         </div>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
       </div>
@@ -48,8 +49,9 @@ class ViewProposalContainer extends React.Component<IProps, null> {
   }
 }
 
-export default (props: { proposalId: string} & RouteComponentProps<any>) =>
-  <Subscribe observable={arc.proposal(props.proposalId).state}>{(state: IObservableState<IProposalState>) => {
+export default (props: { dao: IDAOState} & RouteComponentProps<any>) => {
+  const proposalId = props.match.params.proposalId
+  return <Subscribe observable={arc.proposal(proposalId).state}>{(state: IObservableState<IProposalState>) => {
       if (state.data) {
         return <ViewProposalContainer proposal={state.data} {...props}/>
       } else if (state.error) {
@@ -59,3 +61,4 @@ export default (props: { proposalId: string} & RouteComponentProps<any>) =>
       }
     }
   }</Subscribe>
+}

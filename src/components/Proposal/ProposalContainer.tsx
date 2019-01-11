@@ -2,7 +2,6 @@ import * as classNames from "classnames";
 import { CommentCount } from 'disqus-react';
 import * as moment from "moment";
 import { denormalize } from "normalizr";
-import Tooltip from 'rc-tooltip';
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -151,9 +150,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     // TODO: fix this: get the amount of ETH, GEN, and externalToken of the DAO
-    const ethBalance = 0
-    const genBalance = 0
-    const externalTokenBalance = 0
+    const ethBalance = dao.ethBalance
+    const genBalance = dao.tokenBalance
+    const externalTokenBalance = dao.externalTokenBalance
 
     const beneficiaryHasRewards = (
       proposal.reputationReward ||
@@ -392,16 +391,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
         </div>
       );
     } else {
-      return (<div>Loading... </div>);
+      return (<div>Loading proposal... </div>);
     }
   }
 }
 
 export const ConnectedProposalContainer = connect(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
-export default (props: { proposalId: string}) => {
-  // get proposal with all details here, including votes and stuff
-
+export default (props: { proposalId: string, dao: IDAOState}) => {
   return <Subscribe observable={arc.proposal(props.proposalId).state}>{(state: IObservableState<IProposalState>) => {
     if (state.isLoading) {
       return <div>Loading proposal</div>
@@ -409,15 +406,8 @@ export default (props: { proposalId: string}) => {
       return <div>{ state.error.message }</div>
     } else {
       const proposal = state.data
-      return <Subscribe observable={proposal.dao.state}>{(state: IObservableState<IDAOState>) => {
-          const dao = state.data
-          if (dao) {
-            return <ConnectedProposalContainer proposal={proposal} dao={dao} />
-          } else {
-            return <div>Loading...</div>
-          }
-        }
-      }</Subscribe>
+      return <ConnectedProposalContainer proposal={proposal} dao={props.dao} />
+    }
   }
   }}</Subscribe>
 }

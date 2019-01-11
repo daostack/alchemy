@@ -169,114 +169,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
   }
 
-  // // Setup event watchers if they are not setup already and if the dao is loaded
-  // public async setupWatchers() {
-  //
-  //   if (this.mintEventWatcher || !this.state.dao) {
-  //     return;
-  //   }
-  //
-  //   const {
-  //     currentAccountAddress,
-  //     daoAvatarAddress,
-  //     // dao,
-  //     getProfilesForAllAccounts,
-  //     onTransferEvent,
-  //     onReputationChangeEvent,
-  //     onDAOEthBalanceChanged,
-  //     onDAOGenBalanceChanged,
-  //     onDAOExternalTokenBalanceChanged,
-  //     onExternalTokenBalanceChanged,
-  //     onProposalExpired,
-  //     showNotification,
-  //     updateDAOLastBlock
-  //   } = this.props
-  //
-  //   const { dao } = this.state
-  //
-  //   getProfilesForAllAccounts();
-  //
-  //   // We have the DAO loaded but haven't set up the watchers yet, so set them up
-  //   // TODO: move all this to app container and just setup watchers for each DAO, plus one blockInterval looking at every block
-  //   const web3 = await Arc.Utils.getWeb3();
-  //   const daoInstance = await Arc.DAO.at(daoAvatarAddress);
-  //   const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-  //   const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
-  //   const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-  //
-  //   this.mintEventWatcher = daoInstance.reputation.Mint({}, { fromBlock: dao.lastBlock });
-  //   this.mintEventWatcher.watch((error: any, result: any) => {
-  //     onReputationChangeEvent(daoAvatarAddress, result.args._to);
-  //   }, -1);
-  //
-  //   this.burnEventWatcher = daoInstance.reputation.Burn({}, { fromBlock: dao.lastBlock });
-  //   this.burnEventWatcher.watch((error: any, result: any) => {
-  //     onReputationChangeEvent(daoAvatarAddress, result.args._from);
-  //   }, -1);
-  //
-  //   const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-  //   const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-  //   const externalToken = dao.externalTokenAddress ? await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any : false;
-  //
-  //   const updateState = async () => {
-  //     console.time('updateState')
-  //     const {
-  //       currentAccountAddress,
-  //       daoAvatarAddress,
-  //       // dao,
-  //       onTransferEvent,
-  //       onReputationChangeEvent,
-  //       onDAOEthBalanceChanged,
-  //       onDAOGenBalanceChanged,
-  //       onDAOExternalTokenBalanceChanged,
-  //       onExternalTokenBalanceChanged,
-  //       onProposalExpired,
-  //       showNotification,
-  //       updateDAOLastBlock
-  //     } = this.props;
-  //     const web3 = await Arc.Utils.getWeb3();
-  //
-  //     const newEthBalance = Util.fromWei(await promisify(web3.eth.getBalance)(daoAvatarAddress));
-  //     await onDAOEthBalanceChanged(daoAvatarAddress, newEthBalance);
-  //     const newGenBalance = Util.fromWei(await stakingToken.balanceOf(daoAvatarAddress));
-  //     await onDAOGenBalanceChanged(daoAvatarAddress, newGenBalance);
-  //
-  //     if (externalToken) {
-  //       // watch for updates to the DAO's balance of the external token
-  //       const newDaoExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(daoAvatarAddress));
-  //       onDAOExternalTokenBalanceChanged(daoAvatarAddress, newDaoExternalTokenBalance);
-  //
-  //       // Watch for updates to the current account's balance of the external token
-  //       const newCurrentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(currentAccountAddress));
-  //       onExternalTokenBalanceChanged(newCurrentAccountExternalTokenBalance);
-  //     }
-  //
-  //     // Check all proposals to see if any expired
-  //     for (const proposal of this.props.openProposals) {
-  //       const newState = checkProposalExpired(proposal);
-  //       if (newState != proposal.state) {
-  //         await Promise.resolve(onProposalExpired(proposal));
-  //       }
-  //     }
-  //
-  //     updateDAOLastBlock(daoAvatarAddress, await Util.getLatestBlock());
-  //     console.timeEnd('updateState')
-  //   }
-  //
-  //   // update the state, and poll every 10 seconds for new changes
-  //   updateState()
-  //   this.blockInterval = setInterval(async () => {
-  //     updateState()
-  //   }, 10000);
-  //
-  //   // we are waiting 10 seconds for all the event handlers in the Appcontainer
-  //   // to finish, before showing the main page
-  //   setTimeout(() =>  {
-  //     this.setState({ readyToShow: true });
-  //     console.timeEnd('Time until readyToShow');
-  //   }, 10000)
-  // }
-
   public handleClickStartTour = (e: any) => {
     const { showTour } = this.props;
     this.setState({ showTourIntro: false });
@@ -312,9 +204,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     // if (!dao || !this.state.readyToShow) {
     //   return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
     // }
-
-    // TODO: A quick hack to get the page to show, do not forget to remove these later
-    const legacyDao = mockLegacyDaoState(dao)
 
     // TODO: move the tour in its own file for clarity
     const tourSteps = [
@@ -479,9 +368,12 @@ For additional information check out our <a href="https://docs.google.com/docume
         <div className={css.wrapper}>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/history" component={DaoHistoryContainer} />
-            <Route exact path="/dao/:daoAvatarAddress/members" render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
-            <Route exact path="/dao/:daoAvatarAddress/redemptions" render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
-            <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId" component={ViewProposalContainer} />
+            <Route exact path="/dao/:daoAvatarAddress/members"
+              render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
+            <Route exact path="/dao/:daoAvatarAddress/redemptions"
+              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
+            <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
+              render={(props) => <ViewProposalContainer {...props} dao={dao} />} />
             <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} />
           </Switch>
         </div>

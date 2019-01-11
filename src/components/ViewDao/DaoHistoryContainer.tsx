@@ -4,6 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
+import { combineLatest } from 'rxjs'
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 
@@ -14,16 +15,17 @@ import { Address, DAO, IDAOState, IProposalState, ProposalStage } from '@daostac
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IProps {
-  proposals: IProposalState[];
+  proposals: IProposalState[]
+  dao: IDAOState
 }
 
 class DaoHistoryContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { proposals } = this.props;
+    const { proposals, dao } = this.props;
 
     const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} />);
+      return (<ProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao}/>);
     });
 
     return(
@@ -43,21 +45,21 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 }
 
 export default (props: RouteComponentProps<any>) => {
-  const daoAddress = props.match.params.daoAvatarAddress
-  if (daoAddress) {
-      const dao = new DAO(daoAddress, arc)
-      // TODO: get only executed proposals, cf.  proposalsExecuted: selectors.createHistoryProposalsSelector()(state, ownProps),
-      return <Subscribe observable={dao.proposals({ stage: ProposalStage.Resolved })}>{(state: IObservableState<IProposalState[]>) => {
-          if (state.error) {
-            return <div>{ state.error.message }</div>
-          } else if (state.data) {
-            return <DaoHistoryContainer proposals={state.data} />
-          } else {
-            return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
-          }
-        }
-      }</Subscribe>
-  } else {
-    throw Error(`no dao! `)
-  }
+  const daoAvatarAddress = props.match.params.daoAvatarAddress
+  const observable = combineLatest(
+    // TODO: add queries here, like `proposals({boosted: true})` or whatever
+    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Resolved }), // the list of pre-boosted proposals
+    arc.dao(daoAvatarAddress).state
+  )
+  return <Subscribe observable={observable}>{
+    (state: IObservableState<[IProposalState[], IDAOState]>): any => {
+      if (state.isLoading) {
+        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+      } else if (state.error) {
+        return <div>{ state.error.message }</div>
+      } else  {
+        return <DaoHistoryContainer proposals={state.data[0]} dao={state.data[1]}/>
+      }
+    }
+  }</Subscribe>
 }
