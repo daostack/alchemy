@@ -43,7 +43,7 @@ ipfs.hashToHex = (hash: string): string => {
 }
 
 ipfs.hexToHash = (hex: string): string => {
-  if (hex.substring(0,2) === '0x') {
+  if (hex.substring(0, 2) === '0x') {
     hex = hex.substring(2);
   }
   return bs58.encode(Buffer.from(ipfsHashPrefix + hex, 'hex'));

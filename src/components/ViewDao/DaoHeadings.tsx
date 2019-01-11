@@ -16,7 +16,7 @@ export default class DaoHeadings extends React.Component<IProps, null> {
   public render() {
     const { dao } = this.props;
 
-    var latestHeadingProposal = {
+    let latestHeadingProposal = {
       executionTime: 0,
       title: 'DAO Heading: Pass a proposal with a title that starts with \
              "DAO Heading:" to replace this text.'
