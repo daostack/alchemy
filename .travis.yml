@@ -21,9 +21,12 @@ script:
     # setup the environment in the docker container (so migration.json is available)
   - echo 'npm run setup-env' && echo -en 'travis_fold:start:script.4\\r'
   - npm run setup-env
+  # move the migration.json file froms etup-env into the docker container
+  - cp node_modules/@daostack/subgraph/migration.json config/
+  - docker-compose exec alchemy /bin/bash -c "cp config/migration.json node_modules/@daostack/subgraph/"
   - echo -en 'travis_fold:end:script.4\\r'
 
-  # get some diagnostic info fo rdebubbing travis
+  # get some diagnostic info fo debugging travis
   - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
   - npm run service-status
   - wget -S -O - http://127.0.0.1:3000/
