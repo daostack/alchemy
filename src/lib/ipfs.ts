@@ -1,12 +1,12 @@
 import promisify = require("es6-promisify");
 import axios from "axios";
 import * as IPFS from 'ipfs-mini';
-const bs58 = require('bs58');
+import * as bs58 from 'bs58';
 
 // github.com/github/fetch/issues/175
-function timeout(promise, ms) {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
+const timeout = (promise, ms) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
       reject(new Error("timeout"))
     }, ms)
     promise.then(resolve, reject)
@@ -43,7 +43,9 @@ ipfs.hashToHex = (hash: string): string => {
 }
 
 ipfs.hexToHash = (hex: string): string => {
-  if (hex.substring(0,2) === '0x') hex = hex.substring(2);
+  if (hex.substring(0,2) === '0x') {
+    hex = hex.substring(2);
+  }
   return bs58.encode(Buffer.from(ipfsHashPrefix + hex, 'hex'));
 }
 

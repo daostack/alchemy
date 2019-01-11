@@ -629,7 +629,6 @@ export function createDAO(daoName: string, tokenName: string, tokenSymbol: strin
 
 export type CreateProposalAction = IAsyncAction<'ARC_CREATE_PROPOSAL', { avatarAddress: string }, any>;
 
-
 export function createProposal(daoAvatarAddress: string, title: string, url: string, nativeTokenReward: number, reputationReward: number, ethReward: number, externalTokenReward: number, beneficiaryAddress: string): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const meta = {
@@ -645,7 +644,7 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
       let ipfsHash;
       try {
         ipfsHash = await ipfs.add(description);
-        console.log(`Uploaded ipfs file sucessfully: ${ipfsHash}`);
+        //console.log(`Uploaded ipfs file sucessfully: ${ipfsHash}`);
       } catch (e) {
         console.error(e);
         return(e); // don't submit the tx if we couldn't save the description data
@@ -686,7 +685,6 @@ export function createProposal(daoAvatarAddress: string, title: string, url: str
         externalTokenAddress,
         beneficiaryAddress
       ]
-
       const gasLimit = Number(await contributionReward.proposeContributionReward.estimateGas(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5])) * 2;
       const txReceipt = await contributionReward.proposeContributionReward.sendTransaction(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], { gasLimit });
 
