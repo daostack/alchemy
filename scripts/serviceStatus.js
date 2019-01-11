@@ -6,24 +6,26 @@ async function main() {
   const services = [
     {
       name: 'Alchemy Application',
-      url: 'http://0.0.0.0:3000'
+      url: 'http://0.0.0.0:3000',
     },
     {
       name: 'Local Ethereum node [expect status 400]',
-      url: 'http://0.0.0.0:8545'
+      url: 'http://0.0.0.0:8545',
+      expectedStatus: 400
     },
     {
       name: 'Graph node (http)',
       url: 'http://0.0.0.0:8000'
     },
     {
+      name: 'Graph node (port 8020) [expect status 405]',
+      url: 'http://0.0.0.0:8020',
+      expectedStatus: 405
+    },
+    {
       name: 'Graphiql interface for daostack',
       url: 'http://127.0.0.1:8000/subgraphs/name/daostack'
     },
-    // {
-    //   name: 'Graph node (ws)',
-    //   url: 'http://0.0.0.0:8001'
-    // },
     {
       name: 'Alchemy Server',
       url: 'http://0.0.0.0:3001/explorer'
@@ -36,10 +38,19 @@ async function main() {
   const output = []
   for (service of services) {
       try {
-        response = await fetch(service.url)
-        console.log(`${service.url} (${service.name}): status ${response.status} ${response.statusText}`)
+        const response = await fetch(service.url)
+        const expectedStatus = service.expectedStatus || 200
+        let status
+        if (response.status === expectedStatus) {
+          status = 'OK'
+        } else  {
+          status = 'ERR'
+        }
+
+
+        console.log(`[${status}] ${service.url} (${service.name}): status ${response.status} ${response.statusText}`)
       } catch(err) {
-        console.log(`${service.url} (${service.name}): ${err}`)
+        console.log(`[ERR] ${service.url} (${service.name}): ${err}`)
       }
   }
   return output
