@@ -15,6 +15,7 @@ import { isStakePending, isVotePending, isRedeemPending } from "selectors/operat
 import * as schemas from "schemas";
 
 import AccountProfileName from "components/Account/AccountProfileName";
+import { combineLatest } from 'rxjs'
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import RewardsString from "components/Proposal/RewardsString";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
@@ -23,10 +24,9 @@ import VoteBox from "./VoteBox";
 
 import * as css from "./Proposal.scss";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
-import gql from 'graphql-tag'
 import { arc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IProposalState, IRewardState, ProposalStage } from '@daostack/client'
 import RedeemButton from './RedeemButton'
 import RedemptionsTip from './RedemptionsTip'
 
@@ -49,6 +49,12 @@ interface IStateProps {
   threshold: number;
 }
 
+interface IContainerProps {
+  dao: IDAOState
+  proposal: IProposalState
+  rewards: IRewardState[]
+}
+
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   const proposal = ownProps.proposal
   const dao = ownProps.dao
@@ -59,9 +65,9 @@ const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   // const threshold = dao.currentThresholdToBoost;
   const threshold = 12345
 
-  let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${proposal.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
+  let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${dao.address}`], schemas.accountSchema, state.arc) as IAccountState;
   if (!currentAccount) {
-    currentAccount = newAccount(proposal.daoAvatarAddress, state.web3.ethAccountAddress);
+    currentAccount = newAccount(dao.address, state.web3.ethAccountAddress);
   }
 
   return {
@@ -398,15 +404,24 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalContainer = connect(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
-export default (props: { proposalId: string, dao: IDAOState}) => {
-  return <Subscribe observable={arc.proposal(props.proposalId).state}>{(state: IObservableState<IProposalState>) => {
+export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
+  const observable = combineLatest(
+    // TODO: add queries here, like `proposals({boosted: true})` or whatever
+    arc.proposal(props.proposalId).state, // the list of pre-boosted proposals
+    arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
+  )
+  // return <Subscribe observable={observable}>{
+  //   (state: IObservableState<[IProposalState[], IDAOState]>): any =>
+  return <Subscribe observable={observable}>{
+    (state: IObservableState<[IProposalState, IRewardState[]]>) => {
     if (state.isLoading) {
       return <div>Loading proposal</div>
     } else if (state.error) {
       return <div>{ state.error.message }</div>
     } else {
-      const proposal = state.data
-      return <ConnectedProposalContainer proposal={proposal} dao={props.dao} />
+      const proposal = state.data[0]
+      const rewards = state.data[1]
+      return <ConnectedProposalContainer proposal={proposal} dao={props.dao} rewards={rewards}/>
     }
   }
   }}</Subscribe>

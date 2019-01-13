@@ -7,11 +7,10 @@ import { closingTimeLegacy, IProposalState, IRedemptionState } from "reducers/ar
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 
-import { DAO, IDAOState, Reward } from '@daostack/client'
+import { Address, DAO, IDAOState, Reward } from '@daostack/client'
 import { arc } from 'arc'
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { Observable, Subscription } from 'rxjs'
 import * as css from "./ViewDao.scss";
 
 interface IProps {
@@ -54,10 +53,10 @@ const mapStateToProps = (state: IRootState, ownProps: any ) => {
 class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { dao, proposals, redemptions } = this.props;
+    const { dao, proposals, redemptions, currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} dao={dao} />);
+      return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     // const redeemAllTip: JSX.Element | string = ""
@@ -122,7 +121,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>
       } else if (state.data) {
-        return <ConnnectedDaoRedemptionsContainer {...props} dao={props.dao} rewards={state.data}  />
+        return <ConnnectedDaoRedemptionsContainer {...props} dao={props.dao} rewards={state.data}/>
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }

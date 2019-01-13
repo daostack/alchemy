@@ -1,21 +1,11 @@
 import * as classNames from "classnames";
 import { DiscussionEmbed } from 'disqus-react';
-import * as moment from "moment";
-import { denormalize } from "normalizr";
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
-import * as arcActions from "actions/arcActions";
-import { IRootState } from "reducers";
-// import { IProposalState } from "reducers/arcReducer";
-import * as selectors from "selectors/daoSelectors";
-import * as schemas from "schemas";
-
-// import { ConnectedProposalContainer as ProposalContainer } from "./ProposalContainer";
 import ProposalContainer from "./ProposalContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 import * as css from "./ViewProposal.scss";
 import { arc } from "arc";
@@ -23,11 +13,12 @@ import { arc } from "arc";
 interface IProps extends RouteComponentProps<any> {
   proposal: IProposalState
   dao: IDAOState
+  currentAccountAddress: Address
 }
 
 class ViewProposalContainer extends React.Component<IProps, null> {
   public render() {
-    const { proposal, dao } = this.props;
+    const { proposal, dao, currentAccountAddress } = this.props;
 
     const disqusConfig = {
       url: process.env.BASE_URL + this.props.location.pathname,
@@ -41,7 +32,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
           Viewing proposal: {proposal.title}
         </div>
         <div className={css.proposal}>
-          <ProposalContainer proposalId={proposal.id} dao={dao}/>
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </div>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
       </div>
@@ -49,11 +40,12 @@ class ViewProposalContainer extends React.Component<IProps, null> {
   }
 }
 
-export default (props: { dao: IDAOState} & RouteComponentProps<any>) => {
+export default (props: { dao: IDAOState, currentAccountAddress: Address} & RouteComponentProps<any>) => {
   const proposalId = props.match.params.proposalId
+  const currentAccountAddress = props.currentAccountAddress
   return <Subscribe observable={arc.proposal(proposalId).state}>{(state: IObservableState<IProposalState>) => {
       if (state.data) {
-        return <ViewProposalContainer proposal={state.data} {...props}/>
+        return <ViewProposalContainer {...props} proposal={state.data} currentAccountAddress={currentAccountAddress} />
       } else if (state.error) {
         return <div>{ state.error.message }</div>
       } else {

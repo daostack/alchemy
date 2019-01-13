@@ -95,7 +95,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
       } else if (state.error) {
         return <div>{ state.error.message }</div>
       } else {
-        return <ConnectedDaoMembersContainer members={state.data} dao={props.dao}/>
+        return <ConnectedDaoMembersContainer members={state.data} dao={props.dao} />
       }
     }
   }</Subscribe>

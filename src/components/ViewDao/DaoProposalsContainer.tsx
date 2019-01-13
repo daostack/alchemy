@@ -6,7 +6,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { arc } from "arc";
 import * as css from "./ViewDao.scss";
 import { combineLatest } from 'rxjs'
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -26,15 +26,16 @@ const Fade = ({ children, ...props }: any) => (
 const ProposalsContainer = (props: {
   proposalsBoosted: IProposalState[],
   proposalsPreBoosted: IProposalState[],
-  dao: IDAOState
+  dao: IDAOState,
+  currentAccountAddress: Address
 }) => {
-  const { proposalsBoosted, proposalsPreBoosted, dao } = props
+  const { currentAccountAddress, proposalsBoosted, proposalsPreBoosted, dao } = props
 
   const boostedProposalsHTML = (
     <TransitionGroup className="boosted-proposals-list">
       { proposalsBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} />
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -44,7 +45,7 @@ const ProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} />
+          <ProposalContainer proposalId={proposal.id} dao={dao}  currentAccountAddress={currentAccountAddress}/>
         </Fade>
       ))}
     </TransitionGroup>
@@ -111,8 +112,9 @@ const ProposalsContainer = (props: {
     </div>
   )
 }
-export default(props: RouteComponentProps<any>) => {
+export default(props: {currentAccountAddress: Address } & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress
+  const currentAccountAddress =  props.currentAccountAddress
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Boosted }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Open }), // the list of pre-boosted proposals
@@ -126,7 +128,7 @@ export default(props: RouteComponentProps<any>) => {
         throw state.error
       } else {
         const data = state.data
-        return <ProposalsContainer proposalsBoosted={data[0]} proposalsPreBoosted={data[1]} dao={data[2]} />
+        return <ProposalsContainer proposalsBoosted={data[0]} proposalsPreBoosted={data[1]} dao={data[2]} currentAccountAddress={currentAccountAddress}/>
       }
     }
   }</Subscribe>

@@ -367,14 +367,15 @@ For additional information check out our <a href="https://docs.google.com/docume
         </div>
         <div className={css.wrapper}>
           <Switch>
-            <Route exact path="/dao/:daoAvatarAddress/history" component={DaoHistoryContainer} />
+            <Route exact path="/dao/:daoAvatarAddress/history"
+              render={(props) => <DaoHistoryContainer {...props} currentAccountAddress={currentAccountAddress} />} />
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions"
               render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
-              render={(props) => <ViewProposalContainer {...props} dao={dao} />} />
-            <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} />
+              render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
+            <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} currentAccountAddress={currentAccountAddress} />
           </Switch>
         </div>
       </div>
