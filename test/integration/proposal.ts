@@ -1,5 +1,5 @@
-import { chai, getContractAddresses, userAddresses } from './utils'
 import * as uuid from 'uuid'
+import { chai, getContractAddresses, userAddresses } from './utils'
 
 describe('Proposals', () => {
     let daoAddress: string
@@ -40,7 +40,7 @@ describe('Proposals', () => {
       // we do not need to confirm at all..
       // TODO: we should see the list of proposals being refreshed automatically, but subscriptions are broken for me, so we reload the page
       browser.refresh()
-      browser.debug()
+      // browser.debug()
       // browser.waitForExist('*[data-test-id="proposal-title"]')
       // // we are getting the closing date from the graph-node server
       // browser.getText('*[data-test-id="proposal-closes-in"]').should.be.equal('CLOSES IN 21 DAYS')
