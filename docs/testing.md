@@ -10,12 +10,14 @@ npm run test:integration -- --spec test/integration/profile.ts # run a specific 
 
 ## Unit tests:
 
+Unit tests have not been developed much yet.
 
 ```sh
-npm run test
+npm run test:unit
 ```
 
 ## Linting
+
 ```sh
 npm run lint
 ```

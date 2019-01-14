@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import ReputationView from "components/Account/ReputationView";
 import { IDAOState, IProposalState } from '@daostack/client'
+import ReputationView from "components/Account/ReputationView";
 
 interface IProps {
   dao: IDAOState;

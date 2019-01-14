@@ -32,14 +32,26 @@ describe('Proposals', () => {
       browser.setValue('*[id="descriptionInput"]', `https://this.must.be/a/valid/url${uuid()}`)
       browser.setValue('*[id="beneficiaryInput"]', '0x5fB320886aF629122736c0e1a5c94dCE841EA37B')
       // ask for 100 rep
-      browser.setValue('*[id="reputationRewardInput"]', '100')
+      const repReward = Math.floor(Math.random() * 1000)
+      browser.setValue('*[id="reputationRewardInput"]', `${repReward}` )
+      const ethReward = Math.floor(Math.random() * 1000)
+      browser.setValue('*[id="ethRewardInput"]', `${ethReward}` )
       browser.click('*[type="submit"]')
       // we shoudl now see a dialog asking us to "launch metamask"
       browser.click('*[data-test-id="launch-metamask"]')
       // since we are working with unlocked accounts (are we?) and we do not haver metamask installed
       // we do not need to confirm at all..
-      // TODO: we should see the list of proposals being refreshed automatically, but subscriptions are broken for me, so we reload the page
+
+      // wait a few seconds for the informatino to propagate
+
+      // TODO: once subscriptions work, https://github.com/daostack/subgraph/issues/58
+      // we should just wait for the expected element..
+      browser.pause(2000)
       browser.refresh()
+
+      // check that the proposal with the ethReward appears in the list
+      browser.waitForExist(`strong*=${ethReward}`)
+
       // browser.debug()
       // browser.waitForExist('*[data-test-id="proposal-title"]')
       // // we are getting the closing date from the graph-node server

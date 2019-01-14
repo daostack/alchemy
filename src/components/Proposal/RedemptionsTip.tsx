@@ -56,7 +56,7 @@ export default (props: IProps) => {
             </ul>
           </div> : ""
         }
-        {currentRedemptions.voterReputation || currentRedemptions.voterTokens ?
+        {currentRedemptions && (currentRedemptions.voterReputation || currentRedemptions.voterTokens) ?
           <div>
             <strong>For voting on the proposal you will receive:</strong>
             <ul>
@@ -65,7 +65,7 @@ export default (props: IProps) => {
             </ul>
           </div> : ""
         }
-        {currentRedemptions.stakerTokens || currentRedemptions.stakerBountyTokens || currentRedemptions.stakerReputation ?
+        {currentRedemptions && (currentRedemptions.stakerTokens || currentRedemptions.stakerBountyTokens || currentRedemptions.stakerReputation) ?
           <div>
             <strong>For staking on the proposal you will receive:</strong>
             <ul>
