@@ -1,10 +1,10 @@
+import { IDAOState, IProposalState, IRewardState, ProposalStage } from '@daostack/client'
 import * as classNames from "classnames";
-import * as css from "./Proposal.scss";
 import Tooltip from 'rc-tooltip';
 import * as React from "react";
+import { IAccountState, IRedemptionState } from "reducers/arcReducer";
+import * as css from "./Proposal.scss";
 import RedemptionsTip from './RedemptionsTip'
-import { IAccountState, IRedemptionState, IStakeState, IVoteState, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 interface IProps {
   accountHasRewards: boolean
@@ -17,11 +17,20 @@ interface IProps {
   dao: IDAOState
   proposal: IProposalState
   handleClickRedeem: any
+  rewards: IRewardState[]
 }
 
 const RedeemButton = (props: IProps) => {
-  const { isRedeemPending, redeemable, executable, beneficiaryHasRewards,
-    currentRedemptions, accountHasRewards, handleClickRedeem } = props
+  const {
+    isRedeemPending,
+    redeemable,
+    executable,
+    beneficiaryHasRewards,
+    currentRedemptions,
+    accountHasRewards,
+    handleClickRedeem,
+    rewards
+  } = props
   const redemptionsTip = RedemptionsTip(props)
 
   const redeemRewards = classNames({
@@ -30,7 +39,7 @@ const RedeemButton = (props: IProps) => {
     [css.disabled]: !redeemable && !executable
   });
 
-  return (currentRedemptions || beneficiaryHasRewards || executable ?
+  return (rewards.length > 0 || beneficiaryHasRewards || executable ?
     <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
       <button
         style={{ whiteSpace: 'nowrap' }}
@@ -43,7 +52,7 @@ const RedeemButton = (props: IProps) => {
             'Redeem in progress' :
             beneficiaryHasRewards && !accountHasRewards ?
               'Redeem for beneficiary' :
-              currentRedemptions ?
+              rewards.length > 0 ?
                 'Redeem' :
                 'Execute'
         }

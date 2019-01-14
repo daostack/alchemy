@@ -1,9 +1,7 @@
-import * as classNames from "classnames";
-import * as css from "./Proposal.scss";
+import { IDAOState, IProposalState, IRewardState, ProposalStage } from '@daostack/client'
 import ReputationView from "components/Account/ReputationView";
 import * as React from "react";
-import { IAccountState, IRedemptionState, IStakeState, IVoteState, VoteOptions, closingTime, newAccount } from "reducers/arcReducer";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { IAccountState, IRedemptionState, IStakeState, IVoteState, newAccount, VoteOptions } from "reducers/arcReducer";
 
 interface IProps {
   isRedeemPending: boolean
@@ -15,10 +13,17 @@ interface IProps {
   currentRedemptions: IRedemptionState
   proposal: IProposalState
   redeemable: boolean
-
+  rewards: IRewardState[]
 }
 export default (props: IProps) => {
-  const { proposal, currentAccount, dao, executable, beneficiaryHasRewards, isRedeemPending, currentRedemptions } = props
+  const { proposal, currentAccount, dao, executable, beneficiaryHasRewards, isRedeemPending, currentRedemptions, rewards } = props
+
+  const rewardComponents = []
+  for (const reward of rewards) {
+    rewardComponents.push(<div>
+      {reward.id}
+    </div>)
+  }
   return <div>
     {(props.beneficiaryHasRewards || proposal.ethReward || proposal.externalTokenReward) ?
       <div>
@@ -42,7 +47,6 @@ export default (props: IProps) => {
         </ul>
       </div> : ""
     }
-    {currentRedemptions ?
       <React.Fragment>
         {proposal.proposingRepReward ?
           <div>
@@ -77,9 +81,8 @@ export default (props: IProps) => {
           </div> : ""
         }
       </React.Fragment>
-      : ''
-    }
-    {!currentRedemptions && !beneficiaryHasRewards && executable ?
+
+    {rewards.length === 0 && !beneficiaryHasRewards && executable ?
       <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
       : ''
     }

@@ -1,12 +1,12 @@
+import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { arc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import * as React from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import ProposalContainer from "../Proposal/ProposalContainer";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { arc } from "arc";
-import * as css from "./ViewDao.scss";
 import { combineLatest } from 'rxjs'
-import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import ProposalContainer from "../Proposal/ProposalContainer";
+import * as css from "./ViewDao.scss";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -23,13 +23,13 @@ const Fade = ({ children, ...props }: any) => (
   </CSSTransition>
 );
 
-const ProposalsContainer = (props: {
-  proposalsBoosted: IProposalState[],
-  proposalsPreBoosted: IProposalState[],
+const DAOProposalsContainer = (props: {
+  currentAccountAddress: Address,
   dao: IDAOState,
-  currentAccountAddress: Address
+  proposalsBoosted: IProposalState[],
+  proposalsPreBoosted: IProposalState[]
 }) => {
-  const { currentAccountAddress, proposalsBoosted, proposalsPreBoosted, dao } = props
+  const { currentAccountAddress, dao, proposalsBoosted, proposalsPreBoosted } = props
 
   const boostedProposalsHTML = (
     <TransitionGroup className="boosted-proposals-list">
@@ -70,9 +70,6 @@ const ProposalsContainer = (props: {
         <div className={css.boostedContainer}>
           <div className={css.proposalsHeader}>
             Boosted Proposals
-
-           {/* <span>Available funds: <span>13,000 ETH - 327 KIN</span></span> */}
-
           </div>
           <div className={css.columnHeader + " " + css.clearfix}>
             <div className={css.votes}>
@@ -112,6 +109,7 @@ const ProposalsContainer = (props: {
     </div>
   )
 }
+
 export default(props: {currentAccountAddress: Address } & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress
   const currentAccountAddress =  props.currentAccountAddress
@@ -128,7 +126,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
         throw state.error
       } else {
         const data = state.data
-        return <ProposalsContainer proposalsBoosted={data[0]} proposalsPreBoosted={data[1]} dao={data[2]} currentAccountAddress={currentAccountAddress}/>
+        return <DAOProposalsContainer proposalsBoosted={data[0]} proposalsPreBoosted={data[1]} dao={data[2]} currentAccountAddress={currentAccountAddress}/>
       }
     }
   }</Subscribe>

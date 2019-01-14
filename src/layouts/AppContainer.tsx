@@ -7,12 +7,10 @@ import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 
 import { IRootState } from "reducers";
-import { RewardType } from "reducers/arcReducer";
 import { ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
 
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import Util from "lib/util";
 
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
@@ -236,11 +234,15 @@ class AppContainer extends React.Component<IProps, IState> {
         <div className={css.outer}>
           <div className={css.container}>
             <Route path="/dao/:daoAvatarAddress" children={(props) => {
+              if (props.match) {
               const queryValues = queryString.parse(props.location.search);
               return <HeaderContainer
                 daoAddress={props.match ? props.match.params.daoAvatarAddress : queryValues.daoAvatarAddress}
                 location={props.location}
-              />;
+                />;
+              } else {
+                return null
+              }
             }} />
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />

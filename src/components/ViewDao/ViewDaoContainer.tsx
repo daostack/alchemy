@@ -31,7 +31,6 @@ import * as proposalCss from "../Proposal/Proposal.scss";
 import { arc } from 'arc'
 import { Subscription } from 'rxjs'
 import { IDAOState } from '@daostack/client'
-import { mockLegacyDaoState} from '../../tmp'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IStateProps extends RouteComponentProps<any> {
