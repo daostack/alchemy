@@ -18,7 +18,7 @@ import { ActionTypes, default as PreTransactionModal } from "components/Shared/P
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
-import { closingTime, IAccountState, IRedemptionState, IStakeState, IVoteState, newAccount, VoteOptions } from "reducers/arcReducer";
+import { closingTime, IAccountState, IStakeState, IVoteState, newAccount, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from 'rxjs'
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
@@ -34,7 +34,6 @@ interface IStateProps {
   currentAccount: IAccountState
   currentAccountGens: number
   currentAccountGenStakingAllowance: number
-  currentRedemptions: IRedemptionState
   rewardsForCurrentUser: IRewardState[]
   currentStake: IStakeState
   currentVote: IVoteState
@@ -57,7 +56,6 @@ interface IContainerProps {
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
   const proposal = ownProps.proposal
   const dao = ownProps.dao
-  const currentRedemptions = state.arc.redemptions[`${proposal.id}-${state.web3.ethAccountAddress}`];
   const currentStake = state.arc.stakes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   // TODO: get the threshold from the proposals
@@ -75,7 +73,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     currentAccount,
     currentAccountGens: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
-    currentRedemptions,
     currentStake,
     currentVote,
     dao,
@@ -137,7 +134,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccount,
       currentAccountGens,
       currentAccountGenStakingAllowance,
-      currentRedemptions,
       currentStake,
       currentVote,
       dao,
@@ -168,15 +164,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       (proposal.externalTokenReward && externalTokenBalance >= proposal.externalTokenReward)
     ) as boolean;
 
-    // const accountHasRewards = currentRedemptions && (
-    //   (beneficiaryHasRewards && currentAccount.address === proposal.beneficiary) ||
-    //   currentRedemptions.proposerReputation ||
-    //   currentRedemptions.stakerReputation ||
-    //   currentRedemptions.stakerTokens ||
-    //   currentRedemptions.voterReputation ||
-    //   currentRedemptions.voterTokens ||
-    //   (currentRedemptions.stakerBountyTokens && genBalance >= currentRedemptions.stakerBountyTokens)
-    // ) as boolean;
     const accountHasRewards = rewardsForCurrentUser.length !== 0
 
     const redeemable = accountHasRewards || beneficiaryHasRewards;
@@ -215,14 +202,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
         redeemable,
         executable,
         beneficiaryHasRewards,
-        currentRedemptions,
         rewards: rewardsForCurrentUser,
         currentAccount,
         dao,
         proposal,
         handleClickRedeem: this.handleClickRedeem.bind(this)
       }
-      // const redeemButton = RedeemButton(redeemProps)
+
       const redemptionsTip = RedemptionsTip(redeemProps)
       const redeemButton = RedeemButton(redeemProps)
 

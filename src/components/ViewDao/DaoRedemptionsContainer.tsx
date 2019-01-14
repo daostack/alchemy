@@ -2,74 +2,70 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
-import { IRootState } from "reducers";
-import { closingTimeLegacy, IProposalState, IRedemptionState } from "reducers/arcReducer";
-
-import ProposalContainer from "../Proposal/ProposalContainer";
-
-import { Address, DAO, IDAOState, Reward } from '@daostack/client'
+import {  DAO, IDAOState, IRewardState, Proposal, RewardType } from '@daostack/client'
 import { arc } from 'arc'
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import { IRootState } from "reducers";
+import ProposalContainer from "../Proposal/ProposalContainer";
 import * as css from "./ViewDao.scss";
 
 interface IProps {
-  currentAccountAddress: string;
-  dao: IDAOState;
-  proposals: IProposalState[];
-  redemptions: IRedemptionState[];
+  currentAccountAddress: string
+  dao: IDAOState
+  proposals: Proposal[]
+  rewards: IRewardState[]
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any ) => {
-  // const dao = denormalize(state.arc.daos[ownProps.match.params.daoAvatarAddress], schemas.daoSchema, state.arc);
+interface IOwnProps {
+  dao: IDAOState,
+  rewards: IRewardState[]
+}
+const mapStateToProps = (state: IRootState, ownProps: IOwnProps ) => {
   // const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.dao.address}`], schemas.accountSchema, state.arc) as IAccountState;
 
-  const proposals: IProposalState[] = [];
-  const redemptionsList: IRedemptionState[] = [];
+  const proposals: Proposal[] = [];
 
-  // if (account) {
-  //   redemptionsList = account.redemptions as IRedemptionState[];
-  //   redemptionsList.forEach((redemption: IRedemptionState) => {
-  //     redemption.proposal = state.arc.proposals[redemption.proposalId];
-  //     proposals.push(state.arc.proposals[redemption.proposalId]);
-  //   });
-  //   proposals.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
-  // }
   const rewards = ownProps.rewards
-  rewards.forEach((reward: Reward) => {
-    // reward.proposal = state.arc.proposals[reward.proposal.id];
-    // proposals.push(state.arc.proposals[reward.proposal.id]);
+  rewards.forEach((reward: IRewardState) => {
+    proposals.push(reward.proposal);
   });
-  proposals.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
+  // proposals.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
 
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     dao: ownProps.dao,
     proposals,
-    redemptions: redemptionsList,
+    rewards: ownProps.rewards
   };
 };
 
 class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { dao, proposals, redemptions, currentAccountAddress } = this.props;
+    const { dao, proposals, rewards, currentAccountAddress } = this.props;
 
-    const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ProposalContainer key={"proposal_" + proposal.proposalId} proposalId={proposal.proposalId} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+    const proposalsHTML = proposals.map((proposal: Proposal) => {
+      return (<ProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     // const redeemAllTip: JSX.Element | string = ""
     let ethReward = 0, genReward = 0, reputationReward = 0, externalTokenReward = 0;
 
-    if (redemptions.length > 0) {
-      redemptions.forEach((redemption) => {
-        ethReward += redemption.beneficiaryEth;
-        externalTokenReward += redemption.beneficiaryExternalToken;
-        genReward += redemption.voterTokens + redemption.stakerTokens + redemption.stakerBountyTokens;
-        reputationReward += redemption.voterReputation + redemption.stakerReputation + redemption.beneficiaryReputation + redemption.proposerReputation;
-      });
-    }
+    rewards.forEach((reward) => {
+      if (reward.type === RewardType.ETH) {
+        ethReward += reward.amount
+      }
+      if (reward.type === RewardType.External) {
+        externalTokenReward += reward.amount
+      }
+      if (reward.type === RewardType.Token) {
+        genReward += reward.amount
+      }
+      if (reward.type === RewardType.Reputation) {
+        reputationReward += reward.amount
+      }
+    })
 
     const totalRewards = [];
     if (ethReward) {
@@ -90,7 +86,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     return(
       <div>
-        {redemptions.length > 0 ?
+        {rewards.length > 0 ?
             <div className={css.clearfix + " " + css.redeemAllContainer}>
               <div className={css.pendingRewards}>
                 Pending Rewards:&nbsp;{totalRewardsString}
@@ -117,7 +113,7 @@ const ConnnectedDaoRedemptionsContainer = connect(mapStateToProps)(DaoRedemption
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const daoAddress = props.dao.address
   const dao = new DAO(daoAddress, arc)
-  return <Subscribe observable={dao.rewards()}>{(state: IObservableState<Reward[]>) => {
+  return <Subscribe observable={dao.rewards()}>{(state: IObservableState<IRewardState[]>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>
       } else if (state.data) {

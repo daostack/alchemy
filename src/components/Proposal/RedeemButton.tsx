@@ -1,8 +1,8 @@
-import { IDAOState, IProposalState, IRewardState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, IRewardState } from '@daostack/client'
 import * as classNames from "classnames";
 import Tooltip from 'rc-tooltip';
 import * as React from "react";
-import { IAccountState, IRedemptionState } from "reducers/arcReducer";
+import { IAccountState } from "reducers/arcReducer";
 import * as css from "./Proposal.scss";
 import RedemptionsTip from './RedemptionsTip'
 
@@ -12,7 +12,6 @@ interface IProps {
   redeemable: boolean
   executable: boolean
   beneficiaryHasRewards: boolean
-  currentRedemptions: IRedemptionState
   currentAccount: IAccountState
   dao: IDAOState
   proposal: IProposalState
@@ -26,7 +25,6 @@ const RedeemButton = (props: IProps) => {
     redeemable,
     executable,
     beneficiaryHasRewards,
-    currentRedemptions,
     accountHasRewards,
     handleClickRedeem,
     rewards
