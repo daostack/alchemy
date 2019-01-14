@@ -1,26 +1,25 @@
-import { Address, IDAOState, IProposalState, IRewardState, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IProposalState, IRewardState, ProposalStage, Stake } from '@daostack/client'
+import * as arcActions from "actions/arcActions";
+import * as web3Actions from "actions/web3Actions";
+import { arc } from "arc";
 import * as classNames from "classnames";
+import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import AccountProfileName from "components/Account/AccountProfileName";
+import RewardsString from "components/Proposal/RewardsString";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { CommentCount } from 'disqus-react';
 import * as moment from "moment";
 import { denormalize } from "normalizr";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import * as schemas from "schemas";
-
-import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
-import { arc } from "arc";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
-import AccountProfileName from "components/Account/AccountProfileName";
-import RewardsString from "components/Proposal/RewardsString";
-import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
-import { closingTime, IAccountState, IStakeState, IVoteState, newAccount, VoteOptions } from "reducers/arcReducer";
+import { closingTime, IAccountState, IVoteState, newAccount, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from 'rxjs'
+import * as schemas from "schemas";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
@@ -35,7 +34,7 @@ interface IStateProps {
   currentAccountGens: number
   currentAccountGenStakingAllowance: number
   rewardsForCurrentUser: IRewardState[]
-  currentStake: IStakeState
+  stakesOfCurrentUser: Stake[]
   currentVote: IVoteState
   dao: IDAOState
   proposal: IProposalState
@@ -51,12 +50,12 @@ interface IContainerProps {
   dao: IDAOState
   proposal: IProposalState
   rewardsForCurrentUser: IRewardState[]
+  stakesOfCurrentUser: Stake[]
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
   const proposal = ownProps.proposal
   const dao = ownProps.dao
-  const currentStake = state.arc.stakes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   // TODO: get the threshold from the proposals
   // const threshold = dao.currentThresholdToBoost;
@@ -73,7 +72,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     currentAccount,
     currentAccountGens: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
-    currentStake,
     currentVote,
     dao,
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
@@ -83,6 +81,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     isRedeemPending: isRedeemPending(proposal.id, state.web3.ethAccountAddress)(state),
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
+    stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
     threshold
   };
 };
@@ -134,7 +133,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccount,
       currentAccountGens,
       currentAccountGenStakingAllowance,
-      currentStake,
       currentVote,
       dao,
       proposal,
@@ -149,6 +147,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isVotingYes,
       isRedeemPending,
       rewardsForCurrentUser,
+      stakesOfCurrentUser,
       threshold
     } = this.props;
 
@@ -216,9 +215,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
         currentAccountVote = currentVote.voteOption;
       }
 
+      let currentStake: Stake
+      if (stakesOfCurrentUser.length > 0) {
+        currentStake = stakesOfCurrentUser[0]
+      }
       if (currentStake) {
-        currentAccountPrediction = currentStake.prediction;
-        currentAccountStakeAmount = currentStake.stakeAmount;
+        currentAccountPrediction = currentStake.outcome
+        currentAccountStakeAmount = currentStake.amount
       }
 
       const styles = {
@@ -394,15 +397,16 @@ class ProposalContainer extends React.Component<IProps, IState> {
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
+  //  TODO: add logic for when props.currentAccountAddress is undefined
   const observable = combineLatest(
-    // TODO: add queries here, like `proposals({boosted: true})` or whatever
     arc.proposal(props.proposalId).state, // the list of pre-boosted proposals
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    arc.proposal(props.proposalId).rewards({})
+    arc.proposal(props.proposalId).rewards({}),
+    arc.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress})
   )
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IRewardState[]]>): any => {
+    (state: IObservableState<[IProposalState, IRewardState[], Stake[]]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal</div>
       } else if (state.error) {
@@ -410,7 +414,13 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
       } else {
         const proposal = state.data[0]
         const rewards = state.data[1]
-        return <ConnectedProposalContainer proposal={proposal} dao={props.dao} rewardsForCurrentUser={rewards}/>
+        const stakes = state.data[2]
+        return <ConnectedProposalContainer
+          proposal={proposal}
+          dao={props.dao}
+          rewardsForCurrentUser={rewards}
+          stakesOfCurrentUser={stakes}
+          />
       }
     }
   }</Subscribe>
