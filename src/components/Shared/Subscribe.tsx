@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Subscription, Observable } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 
 interface IProps {
   observable: Observable<any>
@@ -65,6 +65,10 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     const { children } = this.props;
 
     // if (render) { return render(this.state); }
+    if (this.state.error) {
+      console.log(this.state.error)
+      return <div>An error occurred (check the console)</div>
+    }
 
     if (typeof children === 'function') {
       return children(this.state)
