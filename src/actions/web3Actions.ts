@@ -1,17 +1,14 @@
 import * as Arc from "@daostack/arc.js";
-import axios from "axios";
-import * as BigNumber from "bignumber.js";
 import promisify = require("es6-promisify");
 import * as Redux from "redux";
 import { Web3 } from "web3";
 
-import { IAsyncAction, AsyncActionSequence } from "./async";
-import { getProfile } from "actions/profilesActions";
-import { IRootState } from "reducers";
-import { ActionTypes as profileActionTypes, IProfileState, newProfile } from "reducers/profilesReducer";
-import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
-import Util from "lib/util";
 import { IDAOState } from '@daostack/client'
+import { getProfile } from "actions/profilesActions";
+import Util from "lib/util";
+import { IRootState } from "reducers";
+import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
+import { AsyncActionSequence, IAsyncAction } from "./async";
 
 export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, IWeb3State>;
 
@@ -110,7 +107,8 @@ export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
     const daoAvatarAddress = dao.address
     if (daoAvatarAddress !== null) {
       const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
+      const schemeParameters = await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)
+      const votingMachineAddress = schemeParameters.votingMachineAddress;
       votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
 
       // Check for external token rewards in DAO and if exists update account's balance for that token

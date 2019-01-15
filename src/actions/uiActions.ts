@@ -1,7 +1,7 @@
 import * as Redux from "redux";
 
-import { ActionTypes, IUIState } from "reducers/uiReducer";
 import { IRootState } from "reducers";
+import { ActionTypes } from "reducers/uiReducer";
 
 export function showTour() {
   return (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {

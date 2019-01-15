@@ -1,7 +1,7 @@
 import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import * as React from "react";
-import { withCookies, Cookies } from 'react-cookie';
+import { Cookies, withCookies } from 'react-cookie';
 import Joyride from 'react-joyride';
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
@@ -24,14 +24,14 @@ import DaoNav from "./DaoNav";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 
-import * as css from "./ViewDao.scss";
 import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
+import * as css from "./ViewDao.scss";
 
-import { arc } from 'arc'
-import { Subscription } from 'rxjs'
 import { IDAOState } from '@daostack/client'
+import { arc } from 'arc'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import { Subscription } from 'rxjs'
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
@@ -41,7 +41,6 @@ interface IStateProps extends RouteComponentProps<any> {
   daoAvatarAddress: string;
   lastBlock: number;
   numRedemptions: number;
-  // openProposals: IProposalState[];
   tourVisible: boolean;
 }
 
@@ -67,32 +66,18 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 interface IDispatchProps {
   getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
   hideTour: typeof uiActions.hideTour;
-  onTransferEvent: typeof arcActions.onTransferEvent;
-  onReputationChangeEvent: typeof arcActions.onReputationChangeEvent;
-  onDAOEthBalanceChanged: typeof arcActions.onDAOEthBalanceChanged;
-  onDAOGenBalanceChanged: typeof arcActions.onDAOGenBalanceChanged;
-  onDAOExternalTokenBalanceChanged: typeof arcActions.onDAOExternalTokenBalanceChanged;
-  onExternalTokenBalanceChanged: typeof web3Actions.onExternalTokenBalanceChanged;
   onProposalExpired: typeof arcActions.onProposalExpired;
   showTour: typeof uiActions.showTour;
   showNotification: typeof showNotification;
-  updateDAOLastBlock: typeof arcActions.updateDAOLastBlock;
 }
 
 const mapDispatchToProps = {
   getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
   hideTour: uiActions.hideTour,
-  onTransferEvent: arcActions.onTransferEvent,
-  onReputationChangeEvent: arcActions.onReputationChangeEvent,
-  onDAOEthBalanceChanged: arcActions.onDAOEthBalanceChanged,
-  onDAOGenBalanceChanged: arcActions.onDAOGenBalanceChanged,
-  onDAOExternalTokenBalanceChanged: arcActions.onDAOExternalTokenBalanceChanged,
-  onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
   onProposalExpired: arcActions.onProposalExpired,
   showTour: uiActions.showTour,
   showNotification,
-  updateDAOLastBlock: arcActions.updateDAOLastBlock,
-};
+}
 
 type IProps = IStateProps & IDispatchProps;
 
@@ -107,10 +92,6 @@ interface IState {
 }
 
 class ViewDaoContainer extends React.Component<IProps, IState> {
-  public transferEventWatcher: any;
-  public mintEventWatcher: any;
-  public burnEventWatcher: any;
-  public blockInterval: any;
   public daoSubscription: any;
   public subscription: Subscription
 
@@ -130,7 +111,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    const { cookies, showTour } = this.props;
+    const { cookies } = this.props;
     // If this person has not seen the disclaimer, show them the home page
     if (!cookies.get('seen_tour')) {
       cookies.set('seen_tour', "true", { path: '/' });
@@ -138,47 +119,17 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async componentDidUpdate(prevProps: IProps) {
-    // if (this.props.dao && !prevProps.dao) {
-    //   // Make sure watchers get setup when DAO is loaded
-    //   await this.setupWatchers();
-    // }
-  }
-
-  public componentWillUnmount() {
-    if (this.transferEventWatcher) {
-      this.transferEventWatcher.stopWatching();
-    }
-
-    if (this.mintEventWatcher) {
-      this.mintEventWatcher.stopWatching();
-    }
-
-    if (this.burnEventWatcher) {
-      this.burnEventWatcher.stopWatching();
-    }
-
-    if (this.blockInterval) {
-      clearInterval(this.blockInterval);
-    }
-
-    // if (this.daoSubscription) {
-    //   this.daoSubscription.unsubscribe()
-    // }
-
-  }
-
-  public handleClickStartTour = (e: any) => {
+  public handleClickStartTour = () => {
     const { showTour } = this.props;
     this.setState({ showTourIntro: false });
     showTour();
   };
 
-  public handleClickSkipTour = (e: any) => {
+  public handleClickSkipTour = () => {
     this.setState({ showTourIntro: false });
   };
 
-  public handleClickEndTour = (e: any) => {
+  public handleClickEndTour = () => {
     this.setState({ showTourOutro: false });
   };
 
@@ -198,11 +149,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
   public render() {
     const { dao, currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
-    // const dao = this.props.dao
-
-    // if (!dao || !this.state.readyToShow) {
-    //   return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
-    // }
 
     // TODO: move the tour in its own file for clarity
     const tourSteps = [
@@ -386,19 +332,14 @@ const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(w
 
 export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress
-  if (daoAddress) {
-      return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
-          if (state.error) {
-            return <div>{ state.error.message }</div>
-          } else if (state.data) {
-            return <ConnectedViewDaoContainer dao={state.data} {...props }/>
-          } else {
-            return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
-          }
-        }
-      }</Subscribe>
-  } else {
-    throw Error(`no address! `)
-    // return <ConnectedViewDaoContainer dao={undefined} {...props }/>
-  }
+  return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
+      if (state.error) {
+        return <div>{ state.error.message }</div>
+      } else if (state.data) {
+        return <ConnectedViewDaoContainer dao={state.data} {...props }/>
+      } else {
+        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+      }
+    }
+  }</Subscribe>
 }

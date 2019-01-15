@@ -4,7 +4,6 @@ import { Observable, Subscription } from 'rxjs'
 interface IProps {
   observable: Observable<any>
   children: any
-  // render: any | undefined
 }
 
 export interface IObservableState<IData> {
@@ -27,9 +26,6 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
   public setupSubscription() {
     this.subscription = this.props.observable.subscribe(
       (next: object) => {
-        // if (Array.isArray(next)) {
-        //   throw new TypeError('<Subscribe> streams cannot return arrays because of React limitations');
-        // }
         this.setState({
           data: next,
           isLoading: false,
@@ -64,20 +60,9 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
   public render() {
     const { children } = this.props;
 
-    // if (render) { return render(this.state); }
-    if (this.state.error) {
-      console.log(this.state.error)
-      return <div>An error occurred (check the console)</div>
-    }
-
     if (typeof children === 'function') {
       return children(this.state)
     }
     throw Error(`Children of <Subscribe> must be a function`)
-    // const childrenWithProps = React.Children.map(children, (child) =>
-    //   React.cloneElement(child, this.state)
-    // )
-    //
-    // return <div>{childrenWithProps}</div>
   }
 }

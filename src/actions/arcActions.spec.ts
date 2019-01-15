@@ -1,16 +1,14 @@
-import { getDAOs, createDAO, CreateDAOAction, createProposal, CreateProposalAction } from "./arcActions";
-import { Dispatch } from "react-redux";
-import { IRootState } from "reducers";
+import { Web3 } from "@daostack/arc.js";
 import * as Arc from "@daostack/arc.js";
-import { ActionTypes } from "reducers/arcReducer"
-import { mockStore } from "../configureStore";
 import axios from "axios";
 import MockAdapter from 'axios-mock-adapter';
-import { Web3 } from "@daostack/arc.js";
+import { CALL_HISTORY_METHOD, LOCATION_CHANGE, push } from "react-router-redux";
+import { IRootState } from "reducers";
+import { ActionTypes } from "reducers/arcReducer"
+import { IAccountState, IDaoState } from "reducers/arcReducer";
+import { mockStore } from "../configureStore";
+import { createDAO, CreateDAOAction, createProposal, CreateProposalAction } from "./arcActions";
 import { AsyncActionSequence } from "./async";
-import { push, LOCATION_CHANGE, CALL_HISTORY_METHOD } from "react-router-redux";
-import { IDaoState, IAccountState } from "reducers/arcReducer";
-import { member } from "components/ViewDao/ViewDao.scss";
 
 describe('arcActions', () => {
 

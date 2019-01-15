@@ -1,13 +1,10 @@
-import { ExecutionState } from "@daostack/arc.js";
 import * as update from "immutability-helper";
 import * as moment from "moment";
 
-import { RedeemAction, StakeAction, VoteAction, CreateProposalAction } from "actions/arcActions";
+import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { Address, IDAOState as IClientDAOState, ITokenState, Reputation, Token } from '@daostack/client'
-export { ITokenState } from '@daostack/client'
-import { IProposalState as IProposalStateFromDaoStackClient, ProposalStage, ProposalOutcome } from '@daostack/client'
+import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, ProposalStage } from '@daostack/client'
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",

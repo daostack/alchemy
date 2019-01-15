@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState, ProposalStage, Stake } from '@daostack/client'
+import { Address, IDAOState, IProposalState, IRewardState, IStake, IVote, ProposalStage } from '@daostack/client'
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { arc } from "arc";
@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
-import { closingTime, IAccountState, IVoteState, newAccount, VoteOptions } from "reducers/arcReducer";
+import { closingTime, IAccountState, newAccount, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from 'rxjs'
 import * as schemas from "schemas";
@@ -34,8 +34,9 @@ interface IStateProps {
   currentAccountGens: number
   currentAccountGenStakingAllowance: number
   rewardsForCurrentUser: IRewardState[]
-  stakesOfCurrentUser: Stake[]
-  currentVote: IVoteState
+  stakesOfCurrentUser: IStake[]
+  votesOfCurrentUser: IVote[]
+  // currentVote: IVote
   dao: IDAOState
   proposal: IProposalState
   isVotingYes: boolean
@@ -50,13 +51,14 @@ interface IContainerProps {
   dao: IDAOState
   proposal: IProposalState
   rewardsForCurrentUser: IRewardState[]
-  stakesOfCurrentUser: Stake[]
+  stakesOfCurrentUser: IStake[],
+  votesOfCurrentUser: IVote[]
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
   const proposal = ownProps.proposal
   const dao = ownProps.dao
-  const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
+  // const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   // TODO: get the threshold from the proposals
   // const threshold = dao.currentThresholdToBoost;
   const threshold = 12345
@@ -72,7 +74,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     currentAccount,
     currentAccountGens: state.web3.currentAccountGenBalance,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
-    currentVote,
+    // currentVote,
     dao,
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
@@ -82,6 +84,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
+    votesOfCurrentUser: ownProps.votesOfCurrentUser,
     threshold
   };
 };
@@ -133,7 +136,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccount,
       currentAccountGens,
       currentAccountGenStakingAllowance,
-      currentVote,
+      // currentVote,
       dao,
       proposal,
       approveStakingGens,
@@ -148,6 +151,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       isRedeemPending,
       rewardsForCurrentUser,
       stakesOfCurrentUser,
+      votesOfCurrentUser,
       threshold
     } = this.props;
 
@@ -211,11 +215,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const redemptionsTip = RedemptionsTip(redeemProps)
       const redeemButton = RedeemButton(redeemProps)
 
-      if (currentVote) {
-        currentAccountVote = currentVote.voteOption;
+      let currentVote: IVote
+      if (votesOfCurrentUser.length > 0) {
+        currentVote = votesOfCurrentUser[0]
+        currentAccountVote = currentVote.outcome;
       }
 
-      let currentStake: Stake
+      let currentStake: IStake
       if (stakesOfCurrentUser.length > 0) {
         currentStake = stakesOfCurrentUser[0]
       }
@@ -403,10 +409,13 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
     arc.proposal(props.proposalId).rewards({}),
-    arc.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress})
+    arc.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
+    // TODO: filter by voter once that is implemented - see https://github.com/daostack/subgraph/issues/67
+    // arc.proposal(props.proposalId).votes({ voter: props.currentAccountAddress})
+    arc.proposal(props.proposalId).votes()
   )
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IRewardState[], Stake[]]>): any => {
+    (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[]]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal</div>
       } else if (state.error) {
@@ -415,11 +424,13 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const proposal = state.data[0]
         const rewards = state.data[1]
         const stakes = state.data[2]
+        const votes = state.data[3]
         return <ConnectedProposalContainer
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
           stakesOfCurrentUser={stakes}
+          votesOfCurrentUser={votes}
           />
       }
     }
