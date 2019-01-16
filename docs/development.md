@@ -3,7 +3,7 @@
 There are different ways a developer can use the docker environment for development.
 
 Probably the most flexible way is to run the services that alchemy depends on in one terminal,
-and run the alchemy server in a seperate terminal:
+and run the alchemy server in a separate terminal:
 
 ```sh
   docker-compose build --no-cache # run this if package.json has changed
@@ -17,7 +17,8 @@ and run the alchemy server in a seperate terminal:
   docker-compose down -v
 ```
 
-Alternatively you can run the webserver inside the `alchemy` container. This would be typical for quick fixes:
+Alternatively you can run the webserver inside the `alchemy` container. This is how the tests on travis are run.
+
 ```sh
   docker-compose build # run this if package.json has changed
   docker-compose up alchemy # start alchemy and all the containers that depend on it
@@ -32,6 +33,7 @@ Alternatively you can run the webserver inside the `alchemy` container. This wou
 See [docker](./docker.md) for details about the docker containers.
 
 *Due to a bug in ganache, the state is not persistent, so you must re-run `npm run setup-env` after you (re-)start docker (TBD: link to issue)*
+
 
 # Developing @daostack/client in tandem with alchemy with npm link
 
@@ -57,3 +59,9 @@ That means that when you make changes in the typescript `.ts` files in the clien
 ```sh
 npm run build:watch
 ```
+
+# Troubleshooting
+
+- `npm run service-status` will check quickly if all services are responding as expected.
+- `docker-compose logs graph-node` will show the logs of the graph-node docker container (check the `docker-compose.yml` file for the names of the other containers)
+- On Travis, there is a `Debug Info` section that is logged that contains some useful information
