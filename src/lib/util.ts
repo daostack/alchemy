@@ -6,6 +6,7 @@ import promisify = require("es6-promisify");
 // v1.0 may improve on this entire Web3 typings experience
 /* tslint:disable-next-line:no-var-requires */
 const Web3 = require("web3");
+const path = require('path')
 
 export default class Util {
 
@@ -66,8 +67,16 @@ export default class Util {
 }
 
 export function getLocalContractAddresses() {
+  let addressesFile
+  try {
+    addressesFile = require('@daostack/subgraph/migration.json')
+  } catch (err) {
+    console.log(err.name)
+
+    addressesFile = require(path.resolve('./config/migration.json'))
+  }
   const addresses = {
-    ...require('@daostack/subgraph/migration.json').private.base,
+    ...addressesFile.private.base,
     // ...require(path).private.dao
    }
   if (!addresses || addresses === {}) {
