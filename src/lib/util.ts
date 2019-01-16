@@ -12,13 +12,13 @@ export default class Util {
 
   public static fromWei(amount: BigNumber): number {
     const web3 = new Web3();
-    return Number(web3.fromWei(amount, "ether"));
+    return Number(web3.fromWei(amount, "ether"))
   }
 
   // TODO: should probably return a BigNumber instead of a string.
   public static toWei(amount: number): string {
     const web3 = new Web3();
-    return web3.toWei(amount, "ether");
+    return web3.toWei(amount, "ether")
   }
 
   public static networkName(id: number) {
@@ -67,20 +67,15 @@ export default class Util {
 }
 
 export function getLocalContractAddresses() {
-  let addressesFile
-  try {
-    addressesFile = require('@daostack/subgraph/migration.json')
-  } catch (err) {
-    console.log(err.name)
+  const deployedContractAddresses = require(`../../config/migration.json`)
 
-    addressesFile = require(path.resolve('./config/migration.json'))
-  }
   const addresses = {
-    ...addressesFile.private.base,
-    // ...require(path).private.dao
+      ...deployedContractAddresses.private.base,
+      // ...require(path).private.dao
    }
+  console.log(addresses)
   if (!addresses || addresses === {}) {
-    throw Error(`No addresses found, does the file at ${'@daostack/subgraph/migration.json'} exist?`)
-  }
+      throw Error(`No addresses found, does the file at ${'../../config/migration.json'} exist?`)
+    }
   return addresses
 }
