@@ -8,6 +8,6 @@ RUN chmod +x /wait
 
 COPY . /alchemy
 WORKDIR /alchemy
-RUN npm ci  --silent
+RUN npm ci
 
 ENTRYPOINT [ "/entry.sh"]
