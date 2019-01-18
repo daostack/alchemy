@@ -23,7 +23,8 @@ script:
   - docker-compose up -d
   - echo -en 'travis_fold:end:script.2\\r'
 
-  - ./scripts/wait-for-it.sh 127.0.0.1:8545 -t 30
+  # wait for alchemy (the slowest latest process to respond)
+  - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
   - npm run service-status
     # setup the environment in the docker container (so migration.json is available)
   - echo 'npm run setup-env' && echo -en 'travis_fold:start:script.4\\r'
