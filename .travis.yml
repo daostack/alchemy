@@ -11,11 +11,8 @@ addons:
   chrome: stable
 
 script:
-<<<<<<< Updated upstream
-=======
   - docker -v
   - docker-compose -v
->>>>>>> Stashed changes
   # fail on error
   - set -e
   - echo 'docker-compose build' && echo -en 'travis_fold:start:script.1\\r'
