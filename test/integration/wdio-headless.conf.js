@@ -14,6 +14,6 @@ exports.config = {
   waitforTimeout: 900000, // 15 minutes
   mochaOpts: {
       ...config.mochaOpts,
-      timeout: 600000 // 10 mins
+      timeout: 540000 // 9 mins (travis times out after 10)
   },
 }
