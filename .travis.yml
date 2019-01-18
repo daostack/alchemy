@@ -17,11 +17,14 @@ script:
   - set -e
   - echo 'docker-compose build' && echo -en 'travis_fold:start:script.1\\r'
   - docker-compose build
+
   - echo -en 'travis_fold:end:script.1\\r'
   - echo 'docker-compose up -d' && echo -en 'travis_fold:start:script.2\\r'
   - docker-compose up -d
   - echo -en 'travis_fold:end:script.2\\r'
+
   - ./scripts/wait-for-it.sh 127.0.0.1:8545 -t 30
+  - npm run service-status
     # setup the environment in the docker container (so migration.json is available)
   - echo 'npm run setup-env' && echo -en 'travis_fold:start:script.4\\r'
   - npm run setup-env
