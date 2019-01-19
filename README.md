@@ -35,36 +35,15 @@ npm run setup-env
 ```
 This will start a server on http://127.0.0.1:3000.
 
-To interact with the test instance in Chrome (or another browser):
-1. Go to http://127.0.0.1:3000
-1. Connect metamask to http://127.0.0.1:8545.
-1. If you'd like an account with some ether to start with,  choose "import account" and use the following private key:
- `6695C8EF58FECFC7410BF8B80C17319EAACA8B9481CC9C682FD5DA116F20EF05`
-
 See [working with docker](./docs/docker.md) for details.
 
-## Using Ganache with MetaMask
+## Interacting with your test instance using MetaMask
 
-
-First you must install Metamask and configure an account.
 1. Install and enable [MetaMask extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) in Chrome
 1. Click on the MetaMask extension icon in the toolbar and log in
-1. Click on the avatar icon int he top right, and choose "Import Account"
-1. Choose "Private Key" and paste the string `0x8d4408014d165ec69d8cc9f091d8f4578ac5564f376f21887e98a6d33a6e3549` and click "Import"
+1. Click on the avatar icon in the top right, and choose "Import Account"
+1. Choose "Private Key" and paste the string `0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d` and click "Import"
 1. Give it a name like "Alchemy Test Account" so you won't get confused later
+1. If you need more than one test account you can also import these private keys: `0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1`, `0x6370fd033278c143179d81c5526140625662b8daa446c22ee2d73db3707e620c` and `0x646f1ce2fdad0e6deeeb5c7e8e5543bdde65e86029e2fd9fc169899c440a7913`. Make sure to give them all differnent names.
 1. Make sure that Metamask is connected to `127.0.0.1:8545` (choose from the "Networks" picklist in Metamask)
-
-Now you are ready to start the server:
-
-1. Run `npm run ganacheDb` in one terminal tab
-1. In a separate tab run `npm run migrate-ganache`
-1. Run `npm run start`
-1. Go to http://127.0.0.1:3000/ in Chrome
-
-
-# Regular end users - use MetaMask
-
-* Go to https://alchemy.daostack.io
-* Install [Metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) or the [Parity Chrome Extension](https://chrome.google.com/webstore/detail/himekenlppkgeaoeddcliojfddemadig)
-* In MetaMask switch to the desired network.
-* Unlock your account
+1. Go to http://127.0.0.1:3000 to load Alchemy
