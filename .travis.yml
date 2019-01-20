@@ -14,7 +14,7 @@ script:
   - docker -v
   - docker-compose -v
   # fail on error
-  - set -e
+  # - set -e
   - echo 'docker-compose build' && echo -en 'travis_fold:start:script.1\\r'
   - docker-compose build
 
@@ -25,6 +25,8 @@ script:
 
   # wait for alchemy (the slowest latest process to respond)
   - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
+
+  - bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 127.0.0.1:3000)" != "200" ]]; do sleep 5; done'
   - npm run service-status
     # setup the environment in the docker container (so migration.json is available)
   - echo 'npm run setup-env' && echo -en 'travis_fold:start:script.4\\r'
