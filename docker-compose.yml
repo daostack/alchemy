@@ -45,7 +45,7 @@ services:
       # - 5435:5432
 
   graph-node:
-    image: graphprotocol/graph-node:v0.5.0
+    image: graphprotocol/graph-node:latest@sha256:a11adda030fcb4ac42d0c31c58cffaacadfda333fecfb1e361d9ec5a72ba1026
     ports:
       - 8000:8000
       - 8001:8001
@@ -76,11 +76,8 @@ services:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    # image: trufflesuite/ganache-cli:v6.2.5
-    image: trufflesuite/ganache-cli:v6.2.3
+    image: daostack/migration:0.0.1-rc.7-v2
     ports:
       - 8545:8545
     command: >
-      --deterministic
       --gasLimit 8000000
-      --networkId ganache
