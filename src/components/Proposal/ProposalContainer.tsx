@@ -162,7 +162,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const beneficiaryHasRewards = (
       proposal.reputationReward ||
-      proposal.tokensReward ||
+      proposal.nativeTokenReward ||
       (proposal.ethReward && ethBalance >= proposal.ethReward) ||
       (proposal.externalTokenReward && externalTokenBalance >= proposal.externalTokenReward)
     ) as boolean;
@@ -405,14 +405,14 @@ export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, I
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
   //  TODO: add logic for when props.currentAccountAddress is undefined
   const observable = combineLatest(
-    arc.proposal(props.proposalId).state, // the list of pre-boosted proposals
+    arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    arc.proposal(props.proposalId).rewards({}),
-    arc.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
+    arc.dao(props.dao.address).proposal(props.proposalId).rewards({}),
+    arc.dao(props.dao.address).proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
     // TODO: filter by voter once that is implemented - see https://github.com/daostack/subgraph/issues/67
     // arc.proposal(props.proposalId).votes({ voter: props.currentAccountAddress})
-    arc.proposal(props.proposalId).votes()
+    arc.dao(props.dao.address).proposal(props.proposalId).votes()
   )
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[]]>): any => {
