@@ -14,7 +14,7 @@ script:
   - docker -v
   - docker-compose -v
   # fail on error
-  - set -e
+  # - set -e
   - echo 'docker-compose build' && echo -en 'travis_fold:start:script.1\\r'
   - docker-compose build
 
@@ -23,15 +23,18 @@ script:
   - docker-compose up -d
   - echo -en 'travis_fold:end:script.2\\r'
 
-  # wait for alchemy (the slowest latest process to respond)
-  - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
+  # wait for alchemy (the slowest latest process to respond
+  - bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 127.0.0.1:3000)" != "200" ]]; do sleep 5; done'
+  # prin the status of the services
   - npm run service-status
-    # setup the environment in the docker container (so migration.json is available)
+
+  # setup the environment
   - echo 'npm run setup-env' && echo -en 'travis_fold:start:script.4\\r'
   - npm run setup-env
   # move the migration.json file froms etup-env into the docker container
   - cp node_modules/@daostack/subgraph/migration.json config/
   - docker-compose exec alchemy /bin/bash -c "cp config/migration.json node_modules/@daostack/subgraph/"
+
   - echo -en 'travis_fold:end:script.4\\r'
 
   # get some diagnostic info fo debugging travis
@@ -42,14 +45,12 @@ script:
   - docker-compose logs ganache
   - docker-compose logs graph-node
   - echo -en 'travis_fold:end:script.3\\r'
-  #- sleep 5
-  # - ./scripts/wait-for-it.sh 127.0.0.1:3000 -t 30
-  # sleep for 30 seconds to give the docker container time to build the app
-  # - sleep 20
+
+  # check lint
   - npm run lint
+  # run integration tests
   - npm run test:integration:headless
-  # unit tests are run in the docker container
-  # - docker-compose exec alchemy npm run test:unit
+  # see if the app builds correctly
   - npm run build
 
 deploy:
