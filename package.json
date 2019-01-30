@@ -128,7 +128,7 @@
     "ws": "^6.1.2"
   },
   "devDependencies": {
-    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#5ae1fa260e2a6a398c7d340b55c84a3df73c6575",
+    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#fd77ed3eb2a96882305c0bd5617a5eca37843232",
     "@types/chai": "^4.1.7",
     "@types/classnames": "^2.2.6",
     "@types/es6-promisify": "^5.0.0",

@@ -16,6 +16,10 @@ async function main() {
       url: 'http://0.0.0.0:8000'
     },
     {
+      name: 'IPFS (http)',
+      url: 'http://127.0.0.1:5001/api/v0/swarm/peers'
+    },
+    {
       name: 'Graph node (port 8020) [expect status 405]',
       url: 'http://0.0.0.0:8020',
       expectedStatus: 405
