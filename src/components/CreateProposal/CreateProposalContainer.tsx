@@ -11,6 +11,7 @@ import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import UserSearchField from "components/Shared/UserSearchField";
 import ReputationView from "components/Account/ReputationView";
 
 import { Formik, Field } from 'formik';
@@ -268,6 +269,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
+
+                    <UserSearchField daoAvatarAddress={daoAvatarAddress} />
+
                     <Field
                       id="beneficiaryInput"
                       maxLength={42}
