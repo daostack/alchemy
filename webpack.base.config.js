@@ -9,6 +9,7 @@ const isDev = ENV === 'development';
 const basePath = process.cwd();
 
 module.exports = {
+  devtool: 'eval',
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
@@ -24,7 +25,9 @@ module.exports = {
       reducers: path.resolve(basePath, 'src/reducers'),
       selectors: path.resolve(basePath, 'src/selectors'),
       schemas: path.resolve(basePath, 'src/schemas'),
-      src: path.resolve(basePath, 'src')
+      src: path.resolve(basePath, 'src'),
+      'ipfs-api': 'ipfs-api/dist',
+      'ipfs-http-client': 'ipfs-http-client/dist'
     },
   },
 
@@ -97,4 +100,9 @@ module.exports = {
       'VERSION': JSON.stringify(require('./package.json').version)
     }),
   ],
+  node: {
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty'
+  }
 };

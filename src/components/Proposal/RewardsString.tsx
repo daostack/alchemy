@@ -20,8 +20,8 @@ export default class RewardsString extends React.Component<IProps, null> {
     if (proposal.externalTokenReward) {
       rewards.push(proposal.externalTokenReward.toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
     }
-    if (proposal.tokensReward) {
-      rewards.push(proposal.tokensReward.toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
+    if (proposal.nativeTokenReward) {
+      rewards.push(proposal.nativeTokenReward.toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
     }
     if (proposal.reputationReward) {
       rewards.push(
