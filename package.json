@@ -48,6 +48,7 @@
   "scripts": {
     "analyze": "NODE_ENV=production ANALYZE=1 node --max_old_space_size=4096 node_modules/.bin/webpack --config webpack.prod.config.js --progress --colors",
     "build": "cross-env NODE_ENV=production webpack --config webpack.prod.config.js",
+    "build-travis": "cross-env NODE_ENV=production node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
     "lint": "tslint --project .",
     "populate-dao": "ts-node scripts/populateDAO.ts",
     "setup-env": "npm run subgraph:deploy && node scripts/getmigrationfile.js",

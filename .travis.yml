@@ -51,7 +51,7 @@ script:
   # run integration tests
   - npm run test:integration:headless
   # see if the app builds correctly
-  - npm run build
+  - npm run build-travis
 
 deploy:
   provider: pages
