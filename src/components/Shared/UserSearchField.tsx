@@ -1,22 +1,27 @@
 import * as React from "react";
 import * as Autosuggest from "react-autosuggest";
 import { connect } from "react-redux";
+import { first } from 'rxjs/operators';
 
 import { IRootState } from "reducers";
 import { IProfileState, IProfilesState } from "reducers/profilesReducer";
 
+import AccountImage from "components/Account/AccountImage"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { arc } from "arc";
 import { DAO, IDAOState, Member, IMemberState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
 
 import * as css from "./UserSearchField.scss";
 
-interface IUserSearchProps {
+interface IUserSearchInternalProps {
   members: Member[];
+  name?: string;
+  onBlur?: (touched: boolean) => any,
+  onChange?: (newValue: string) => any,
   profiles: IProfilesState;
 }
 
-interface IUserSearchState {
+interface IUserSearchInternalState {
   suggestions: IProfileState[];
   value: string;
 }
@@ -27,55 +32,51 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   }
 }
 
-class UserSearchField extends React.Component<IUserSearchProps, IUserSearchState> {
+class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSearchInternalState> {
 
-  constructor(props: IUserSearchProps) {
+  constructor(props: IUserSearchInternalProps) {
     super(props);
 
-    // Autosuggest is a controlled component.
-    // This means that you need to provide an input value
-    // and an onChange handler that updates this value (see below).
-    // Suggestions also need to be provided to the Autosuggest,
-    // and they are initially empty because the Autosuggest is closed.
     this.state = {
       suggestions: [],
       value: ''
     };
   }
 
-  onChange = (event: any, { newValue } : { newValue: string }) => {
+  handleBlur = (event: any) => {
+    this.props.onBlur(true);
+  };
+
+  handleChange = (event: any, { newValue } : { newValue: string }) => {
     this.setState({
       value: newValue
     });
+    this.props.onChange(newValue);
   };
 
-  getSuggestions = (value: string) => {
+  public async getSuggestions(value: string): Promise<IProfileState[]> {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
     const suggestedProfiles = [] as IProfileState[];
 
     if (inputLength === 0) return [];
 
-    this.props.members.forEach(async (member: Member) => {
-      console.log(1);
-      const memberState = await member.state.toPromise();
-      console.log(2);
+    await Promise.all(this.props.members.map(async (member: Member) => {
+      const memberState = await member.state.pipe(first()).toPromise();
       const profile = this.props.profiles[memberState.address];
-      console.log("member", member, memberState, profile)
 
-      if (profile.name.includes(inputValue)) {
+      if (profile && (profile.name.includes(inputValue) || profile.ethereumAccountAddress.includes(inputValue))) {
         suggestedProfiles.push(profile);
       }
-    });
-    console.log("members = ", this.props.members, ". ", suggestedProfiles);
+    }));
     return suggestedProfiles;
-  };
+  }
 
   // Autosuggest will call this function every time you need to update suggestions.
   // You already implemented this logic above, so just use it.
-  onSuggestionsFetchRequested = ({ value } : { value: string}) => {
+  onSuggestionsFetchRequested = async ({ value } : { value: string}) => {
     this.setState({
-      suggestions: this.getSuggestions(value)
+      suggestions: await this.getSuggestions(value)
     });
   };
 
@@ -87,7 +88,14 @@ class UserSearchField extends React.Component<IUserSearchProps, IUserSearchState
   };
 
   renderSuggestion = (suggestion: IProfileState) => {
-    return suggestion.name + " " + suggestion.ethereumAccountAddress;
+    return (
+      <span>
+        <span className={css.suggestionAvatar}>
+          <AccountImage accountAddress={suggestion.ethereumAccountAddress} />
+        </span>
+        <span className={css.suggestionText}>{suggestion.name + " " + suggestion.ethereumAccountAddress}</span>
+      </span>
+    );
   };
 
   // When suggestion is clicked, Autosuggest needs to populate the input
@@ -100,9 +108,12 @@ class UserSearchField extends React.Component<IUserSearchProps, IUserSearchState
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
-      placeholder: "Select a beneficiary from this DAO's members or use any ETH address",
-      value,
-      onChange: this.onChange
+      autoComplete: "nope",
+      name: this.props.name,
+      onBlur: this.handleBlur,
+      onChange: this.handleChange,
+      placeholder: "Select a beneficiary or use any ETH address",
+      value
     };
 
     // Finally, render it!
@@ -114,6 +125,7 @@ class UserSearchField extends React.Component<IUserSearchProps, IUserSearchState
         getSuggestionValue={this.getSuggestionValue}
         renderSuggestion={this.renderSuggestion}
         inputProps={inputProps}
+        theme={css}
       />
     );
   }
@@ -121,7 +133,14 @@ class UserSearchField extends React.Component<IUserSearchProps, IUserSearchState
 
 const ConnectedUserSearchField = connect(mapStateToProps)(UserSearchField);
 
-export default (props: { daoAvatarAddress: string }) => {
+interface IUserSearchProps {
+  daoAvatarAddress: string;
+  name?: string;
+  onBlur?: (touched: boolean) => any,
+  onChange?: (newValue: string) => any
+}
+
+export default (props: IUserSearchProps) => {
   const dao = new DAO(props.daoAvatarAddress, arc)
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
@@ -129,7 +148,7 @@ export default (props: { daoAvatarAddress: string }) => {
       } else if (state.error) {
         return <div>{ state.error.message }</div>
       } else {
-        return <ConnectedUserSearchField members={state.data} />
+        return <ConnectedUserSearchField members={state.data} {...props} />
       }
     }
   }</Subscribe>
