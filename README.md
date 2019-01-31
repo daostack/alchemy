@@ -1,6 +1,6 @@
-# DAOStack Alchemy 
+# DAOStack Alchemy
 
-[![Build Status](https://travis-ci.com/daostack/alchemy.svg?branch=dev)](https://travis-ci.com/daostack/alchemy)
+[![Build Status](https://travis-ci.org/daostack/alchemy.svg?branch=dev)](https://travis-ci.com/daostack/alchemy)
 
 ## Dependencies:
 * [NVM](https://github.com/creationix/nvm#installation) can be helpful to manage different versions of node
