@@ -43,11 +43,11 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
     };
   }
 
-  handleBlur = (event: any) => {
+  public handleBlur = (event: any) => {
     this.props.onBlur(true);
   };
 
-  handleChange = (event: any, { newValue } : { newValue: string }) => {
+  public handleChange = (event: any, { newValue }: { newValue: string }) => {
     this.setState({
       value: newValue
     });
@@ -59,7 +59,9 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
     const inputLength = inputValue.length;
     const suggestedProfiles = [] as IProfileState[];
 
-    if (inputLength === 0) return [];
+    if (inputLength === 0) {
+      return [];
+    }
 
     await Promise.all(this.props.members.map(async (member: Member) => {
       const memberState = await member.state.pipe(first()).toPromise();
@@ -73,21 +75,20 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
   }
 
   // Autosuggest will call this function every time you need to update suggestions.
-  // You already implemented this logic above, so just use it.
-  onSuggestionsFetchRequested = async ({ value } : { value: string}) => {
+  public onSuggestionsFetchRequested = async ({ value }: { value: string}) => {
     this.setState({
       suggestions: await this.getSuggestions(value)
     });
   };
 
   // Autosuggest will call this function every time you need to clear suggestions.
-  onSuggestionsClearRequested = () => {
+  public onSuggestionsClearRequested = () => {
     this.setState({
       suggestions: []
     });
   };
 
-  renderSuggestion = (suggestion: IProfileState) => {
+  public renderSuggestion = (suggestion: IProfileState) => {
     return (
       <span>
         <span className={css.suggestionAvatar}>
@@ -101,9 +102,9 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
   // When suggestion is clicked, Autosuggest needs to populate the input
   // based on the clicked suggestion. Teach Autosuggest how to calculate the
   // input value for every given suggestion.
-  getSuggestionValue = (suggestion : IProfileState) => suggestion.ethereumAccountAddress;
+  public getSuggestionValue = (suggestion: IProfileState) => suggestion.ethereumAccountAddress;
 
-  render() {
+  public render() {
     const { value, suggestions } = this.state;
 
     // Autosuggest will pass through all these props to the input.
@@ -116,7 +117,6 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
       value
     };
 
-    // Finally, render it!
     return (
       <Autosuggest
         suggestions={suggestions}
@@ -153,4 +153,3 @@ export default (props: IUserSearchProps) => {
     }
   }</Subscribe>
 }
-
