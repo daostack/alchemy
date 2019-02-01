@@ -516,6 +516,18 @@ body {
 
 }
 
+.breadcrumbsContainer {
+  position: absolute;
+  width: 100%;
+  background: #444;
+  padding: 0 0 3px 15px;
+  color: white;
+}
+
+.breadcrumb {
+  color: white;
+}
+
 @media only screen and (max-device-width: 1024px) {
   .modalBody {
     position: fixed;

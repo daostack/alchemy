@@ -1,6 +1,7 @@
 import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Cookies, withCookies } from 'react-cookie';
 import Joyride from 'react-joyride';
 import { connect } from "react-redux";
@@ -229,6 +230,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.outer}>
+        <BreadcrumbsItem to={'/dao/' + dao.address}>{dao.name}</BreadcrumbsItem>
+
         <div className={tourModalClass}>
           <div className={css.bg}></div>
           <div className={css.accessTour}>

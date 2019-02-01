@@ -40,3 +40,5 @@ export const backdrop: string;
 export const modalBody: string;
 export const notice: string;
 export const reportBugs: string;
+export const breadcrumbsContainer: string;
+export const breadcrumb: string;

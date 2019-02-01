@@ -2,6 +2,7 @@ import * as Arc from "@daostack/arc.js";
 import * as History from "history";
 import * as queryString from "query-string";
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Cookies, withCookies } from "react-cookie";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
@@ -114,6 +115,8 @@ class AppContainer extends React.Component<IProps, IState> {
         <NoEthAccountContainer /> :
       connectionStatus == ConnectionStatus.Connected ?
         <div className={css.outer}>
+          <BreadcrumbsItem to='/'>Alchemy</BreadcrumbsItem>
+
           <div className={css.container}>
             <Route path="/dao/:daoAvatarAddress" children={(props) => {
               if (props.match) {

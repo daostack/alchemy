@@ -1,4 +1,5 @@
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -78,6 +79,8 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.membersContainer}>
+        <BreadcrumbsItem to={'/dao/' + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
+
         {membersHTML}
       </div>
     );

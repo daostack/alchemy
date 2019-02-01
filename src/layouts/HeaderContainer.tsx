@@ -1,9 +1,10 @@
 import { IDAOState } from '@daostack/client'
 import Util from "lib/util";
 import * as React from "react";
+import { Breadcrumbs } from 'react-breadcrumbs-dynamic'
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IAccountState, newAccount } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from 'reducers/notifications'
@@ -155,6 +156,13 @@ class HeaderContainer extends React.Component<IProps, null> {
           <div className={css.logoContainer}>
             <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo-white.svg"/></Link>
             <span className={css.version}><em>Alchemy {Util.networkName(networkId)}</em> <span> v.{VERSION}</span></span>
+          </div>
+          <div className={css.breadcrumbsContainer}>
+            <Breadcrumbs
+              separator={<b> >   </b>}
+              item={ NavLink }
+              finalItem={'b'}
+            />
           </div>
           <div className={css.headerRight}>
             <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>

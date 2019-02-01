@@ -1,4 +1,5 @@
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { RouteComponentProps } from "react-router-dom";
 
 import { combineLatest } from 'rxjs'
@@ -27,6 +28,8 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 
     return(
         <div>
+          <BreadcrumbsItem to={'/dao/' + dao.address + "/history"}>History</BreadcrumbsItem>
+
           <div className={css.proposalsHeader}>
             Executed Proposals
           </div>
