@@ -30,9 +30,9 @@ const emptyProposal: IProposalState = {
   ethReward: 0,
   executedAt: 0,
   externalTokenReward: 0,
-  tokensReward: 0,
+  nativeTokenReward: 0,
   id: null,
-  ipfsHash: "",
+  descriptionHash: "",
   preBoostedVotePeriodLimit: 0,
   proposer: null,
   proposingRepReward: 0,
@@ -133,7 +133,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
   public render() {
     const { createProposal, currentAccount, daoAvatarAddress } = this.props;
-    const { beneficiary, description, ethReward, externalTokenReward, tokensReward, reputationReward, title } = this.state.proposalDetails;
+    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = this.state.proposalDetails;
 
     return <Subscribe observable={arc.dao(daoAvatarAddress).state}>{
       (state: IObservableState<IDAOState>) => {
@@ -146,7 +146,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           //   .filter((proposal) => !proposalEnded(proposal))
           //   .map((proposal) => proposal.description);
           const proposalDescriptions: string[] = []
-          const boundCreateProposal = createProposal.bind(null, dao.address, title, description, tokensReward, reputationReward, ethReward, externalTokenReward, beneficiary)
+          const boundCreateProposal = createProposal.bind(null, dao.address, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary)
           return (
             <div className={css.createProposalWrapper}>
               {this.state.preTransactionModalOpen ?
@@ -215,7 +215,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
                   nonNegative('ethReward');
                   nonNegative('externalTokenReward');
-                  nonNegative('tokensReward');
+                  nonNegative('nativeTokenReward');
 
                   require('description');
                   require('title');

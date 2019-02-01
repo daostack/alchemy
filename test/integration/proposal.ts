@@ -1,5 +1,5 @@
 import * as uuid from 'uuid'
-import { chai, getContractAddresses, userAddresses } from './utils'
+import { chai, getContractAddresses } from './utils'
 
 describe('Proposals', () => {
     let daoAddress: string
@@ -11,7 +11,7 @@ describe('Proposals', () => {
       daoAddress = addresses.Avatar.toLowerCase()
     })
 
-    it('Create a proposal', async () => {
+    it.skip('Create a proposal', async () => {
       browser.url('http://127.0.0.1:3000/ ')
       const url = `http://127.0.0.1:3000/dao/${daoAddress}/`
       browser.url(url)

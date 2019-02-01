@@ -43,7 +43,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
 export default (props: { dao: IDAOState, currentAccountAddress: Address} & RouteComponentProps<any>) => {
   const proposalId = props.match.params.proposalId
   const currentAccountAddress = props.currentAccountAddress
-  return <Subscribe observable={arc.proposal(proposalId).state}>{(state: IObservableState<IProposalState>) => {
+  return <Subscribe observable={arc.dao(props.dao.address).proposal(proposalId).state}>{(state: IObservableState<IProposalState>) => {
       if (state.data) {
         return <ViewProposalContainer {...props} proposal={state.data} currentAccountAddress={currentAccountAddress} />
       } else if (state.error) {
