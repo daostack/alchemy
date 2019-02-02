@@ -116,16 +116,17 @@ class AppContainer extends React.Component<IProps, IState> {
         <div className={css.outer}>
           <div className={css.container}>
             <Route path="/dao/:daoAvatarAddress" children={(props) => {
-              if (props.match) {
-              const queryValues = queryString.parse(props.location.search);
-              return <HeaderContainer
-                daoAddress={props.match ? props.match.params.daoAvatarAddress : queryValues.daoAvatarAddress}
-                location={props.location}
-                />;
-              } else {
-                return null
+              if (props.match || props.location) {
+                const queryValues = queryString.parse(props.location.search);
+                return <HeaderContainer
+                  daoAddress={props.match ? props.match.params.daoAvatarAddress : queryValues.daoAvatarAddress}
+                  location={props.location}
+                  />;
+                } else {
+                  return null
+                }
               }
-            }} />
+            } />
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
               <Route exact={true} path="/daos" component={DaoListContainer} />
