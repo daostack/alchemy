@@ -118,6 +118,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       cookies.set('seen_tour', "true", { path: '/' });
       this.setState({ showTourIntro: true });
     }
+
+    this.props.getProfilesForAllAccounts();
   }
 
   public handleClickStartTour = () => {
