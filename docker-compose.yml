@@ -64,7 +64,8 @@ services:
       GRAPH_LOG: "graph.log"
 
   ipfs:
-    image: ipfs/go-ipfs
+    build:
+      context: ./docker/ipfs/
     ports:
       - 5001:5001
 
