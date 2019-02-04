@@ -1,6 +1,7 @@
 import * as classNames from "classnames";
 import { DiscussionEmbed } from 'disqus-react';
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import ProposalContainer from "./ProposalContainer";
@@ -28,6 +29,8 @@ class ViewProposalContainer extends React.Component<IProps, null> {
 
     return(
       <div>
+        <BreadcrumbsItem to={'/dao/' + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
+
         <div className={css.proposalsHeader}>
           Viewing proposal: {proposal.title}
         </div>
