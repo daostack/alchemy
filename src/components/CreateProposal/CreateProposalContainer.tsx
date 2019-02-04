@@ -11,6 +11,7 @@ import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import UserSearchField from "components/Shared/UserSearchField";
 import ReputationView from "components/Account/ReputationView";
 
 import { Formik, Field } from 'formik';
@@ -237,6 +238,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   handleSubmit,
                   isSubmitting,
                   isValid,
+                  setFieldTouched,
+                  setFieldValue
                 }) =>
                   <form onSubmit={handleSubmit} noValidate>
                     <Field
@@ -268,19 +271,19 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
-                    <Field
-                      id="beneficiaryInput"
-                      maxLength={42}
-                      placeholder="Recipient's address public key"
-                      name='beneficiary'
-                      type="text"
-                      className={touched.beneficiary && errors.beneficiary ? css.error : null}
+
+                    <UserSearchField
+                      daoAvatarAddress={daoAvatarAddress}
+                      name="beneficiary"
+                      onBlur={(touched) => { setFieldTouched("beneficiary", touched)}}
+                      onChange={(newValue) => { setFieldValue("beneficiary", newValue)}}
                     />
-                    <label htmlFor="beneficiaryInput">
-                      Target Address - Please make sure that the target ETH address can work with Metamask (no hardware wallets, no exchanges)
+                    <label htmlFor="beneficiary">
+                      Please make sure that the target ETH address can work with Metamask (e.g. no exchanges)
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
                     </label>
+
                     <div className={css.addTransfer}>
                       <div style={{display: 'none'}}>
                         <Field
