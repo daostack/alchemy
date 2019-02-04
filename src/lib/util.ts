@@ -1,4 +1,5 @@
 import * as Arc from "@daostack/arc.js";
+import { arc } from 'arc'
 import { BigNumber } from "bignumber.js";
 import promisify = require("es6-promisify");
 
@@ -16,9 +17,13 @@ export default class Util {
   }
 
   // TODO: should probably return a BigNumber instead of a string.
-  public static toWei(amount: number): string {
+  public static toWeiAsString(amount: number): string {
     const web3 = new Web3();
     return web3.toWei(amount, "ether")
+  }
+
+  public static toWei(amount: number): BigNumber {
+    return new BigNumber(arc.web3.utils.toWei(amount, "ether"))
   }
 
   public static networkName(id: number) {

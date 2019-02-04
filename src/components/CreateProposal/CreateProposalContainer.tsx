@@ -1,24 +1,20 @@
 import * as Arc from "@daostack/arc.js";
+import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
+import { Field, Formik } from 'formik';
 import * as H from "history";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
+import { arc } from "arc";
+import ReputationView from "components/Account/ReputationView";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import UserSearchField from "components/Shared/UserSearchField";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
-
 import * as css from "./CreateProposal.scss";
-
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import UserSearchField from "components/Shared/UserSearchField";
-import ReputationView from "components/Account/ReputationView";
-
-import { Formik, Field } from 'formik';
-
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { arc } from "arc";
-import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
 
 const emptyProposal: IProposalState = {
   beneficiary: null,
