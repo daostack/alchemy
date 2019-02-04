@@ -68,8 +68,7 @@
   },
   "dependencies": {
     "@daostack/arc.js": "0.0.0-alpha.105",
-    "@daostack/client": "0.0.18",
-    "@daostack/migration": "0.0.1-rc.7-v2",
+    "@daostack/client": "0.0.19",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
