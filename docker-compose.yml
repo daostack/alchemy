@@ -45,7 +45,7 @@ services:
       # - 5435:5432
 
   graph-node:
-    image: graphprotocol/graph-node:latest@sha256:436846910aacbdd81250add747a4be3346e24a460b774c3514025e29f05f0a2f
+    image: graphprotocol/graph-node:latest@sha256:a11adda030fcb4ac42d0c31c58cffaacadfda333fecfb1e361d9ec5a72ba1026
     ports:
       - 8000:8000
       - 8001:8001
