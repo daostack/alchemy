@@ -11,7 +11,7 @@ describe('Proposals', () => {
       daoAddress = addresses.Avatar.toLowerCase()
     })
 
-    it.skip('Create a proposal', async () => {
+    it('Create a proposal', async () => {
       browser.url('http://127.0.0.1:3000/ ')
       const url = `http://127.0.0.1:3000/dao/${daoAddress}/`
       browser.url(url)
