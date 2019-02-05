@@ -1,4 +1,4 @@
-import * as Arc from "@daostack/arc.js";
+import * as Arc from "@daostack/arc.js"
 import { ContributionRewardWrapper, ExecutionState, GenesisProtocolFactory } from "@daostack/arc.js";
 import { DAO } from '@daostack/client'
 import BigNumber from "bignumber.js";
@@ -235,20 +235,15 @@ export function createProposal(
     };
 
     try {
-      // TODO: the client lib should (and will) provide this: https://github.com/daostack/client/issues/42
-      arc.web3.eth.defaultAccount = (await Arc.Utils.getDefaultAccount()).toLowerCase()
-      // const web3: Web3 = await Arc.Utils.getWeb3();
-      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
-      beneficiaryAddress = beneficiaryAddress.toLowerCase();
+      // TODO: the client lib should (and will) provide and set the default account: https://github.com/daostack/client/issues/42
+      const defaultAccount = await Arc.Utils.getDefaultAccount()
+      arc.web3.eth.defaultAccount = defaultAccount.toLowerCase()
 
-      // const ethAccountAddress: string = getState().web3.ethAccountAddress;
-      // const dao = getState().arc.daos[daoAvatarAddress];
+      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress }
+      beneficiaryAddress = beneficiaryAddress.toLowerCase()
 
-      // const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-      // const descriptionHash = Arc.Utils.SHA3(description);
+      // TODO: leave this commented code - we may want to re-use it later in the light of graph-node problems
       // const submittedTime = Math.round((new Date()).getTime() / 1000);
-
       // Save the proposal title, description and submitted time on the server
       // try {
       //   const response = await axios.post(process.env.API_URL + "/api/proposals", {
@@ -288,27 +283,9 @@ export function createProposal(
         title,
         url: description
       }
-      console.log(proposalOptions)
       // TODO: use the Option stages of the client lib to communicate about the progress
       await dao.createProposal(proposalOptions)
         .pipe(take(2)).toPromise()
-      // const response = await contributionRewardInstance.proposeContributionReward({
-      //   title,
-      //   avatar: daoAvatarAddress,
-      //   beneficiaryAddress,
-      //   description,
-      //   ethReward: Util.toWei(ethReward),
-      //   // TODO: disabled externalToken logic - is that ok?
-      //   externalToken: "",
-      //   externalTokenReward: 0,
-      //   // externalToken: dao.externalTokenAddress ? dao.externalTokenAddress : "",
-      //   // externalTokenReward: dao.externalTokenAddress && externalTokenReward ? Util.toWei(externalTokenReward) : 0,
-      //   nativeTokenReward: Util.toWei(nativeTokenReward),
-      //   numberOfPeriods: 1,
-      //   periodLength: 0,
-      //   reputationChange: Util.toWei(reputationReward),
-      // } as any);
-      // console.log(response)
     } catch (err) {
       console.error(err);
       dispatch({
