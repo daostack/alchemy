@@ -3,7 +3,7 @@ global.expect = chai.expect
 chai.Should()
 
 export function getContractAddresses() {
-  const path = '@daostack/subgraph/migration.json'
+  const path = '../../config/migration.json'
   const addresses = { ...require(path).private.base, ...require(path).private.dao }
   if (!addresses || addresses === {}) {
     throw Error(`No addresses found, does the file at ${path} exist?`)
