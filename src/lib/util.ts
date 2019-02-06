@@ -13,7 +13,7 @@ export default class Util {
 
   public static fromWei(amount: BigNumber): number {
     const web3 = new Web3();
-    return Number(web3.utils.fromWei(amount, "ether"))
+    return Number(web3.fromWei(amount, "ether"))
   }
 
   // TODO: should probably return a BigNumber instead of a string.

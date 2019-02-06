@@ -74,8 +74,7 @@ export function initializeWeb3() {
     }
 
     const getBalance = promisify(web3.eth.getBalance);
-    // TODO: commented this to resolve a bug
-    // payload.currentAccountEthBalance = Util.fromWei(await getBalance(payload.ethAccountAddress));
+    payload.currentAccountEthBalance = Util.fromWei(await getBalance(payload.ethAccountAddress));
 
     dispatch({
       type: ActionTypes.WEB3_CONNECT,
