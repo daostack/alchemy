@@ -48,6 +48,7 @@ export const voteBox: string;
 export const unconfirmedVote: string;
 export const proposalPassInfo: string;
 export const proposalFailInfo: string;
+export const closedTime: string;
 export const help: string;
 export const helpBox: string;
 export const hover: string;

@@ -6,6 +6,7 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import RewardsString from "components/Proposal/RewardsString";
+import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { CommentCount } from 'disqus-react';
@@ -328,11 +329,11 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     </div>
                   </strong>
                   : !proposalEnded(proposal) ?
-                    `${closingTime(proposal).isAfter(moment()) ? 'CLOSES' : 'CLOSED'} ${closingTime(proposal).fromNow().toUpperCase()}`
-                    : " "
+                      closingTime(proposal).isAfter(moment()) ? <Countdown toDate={closingTime(proposal)} /> : <span className={css.closedTime}>CLOSED {closingTime(proposal).format("MMM D, YYYY").toUpperCase()}</span>
+                      : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[no title]"}</Link>
             </h3>
             <div className={css.transferDetails}>
               <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>
