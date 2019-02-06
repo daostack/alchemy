@@ -69,12 +69,10 @@ export function initializeWeb3() {
         },
         payload
       } as ConnectAction);
-
       return;
     }
 
-    const getBalance = promisify(web3.eth.getBalance);
-    payload.currentAccountEthBalance = Util.fromWei(await getBalance(payload.ethAccountAddress));
+    payload.currentAccountEthBalance = Util.fromWei(await Util.getBalance(payload.ethAccountAddress));
 
     dispatch({
       type: ActionTypes.WEB3_CONNECT,
@@ -89,8 +87,6 @@ export function initializeWeb3() {
 
 export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
-    const web3 = await Arc.Utils.getWeb3();
-
     const payload = {
       currentAccountGenBalance: 0,
       currentAccountGenStakingAllowance: 0,
@@ -99,8 +95,7 @@ export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
       currentAccountExternalTokenBalance: 0
     }
 
-    const getBalance = promisify(web3.eth.getBalance);
-    const balance = await getBalance(accountAddress);
+    const balance = await Util.getBalance(accountAddress);
     payload.currentAccountEthBalance = Util.fromWei(balance);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
