@@ -1,15 +1,14 @@
+import { DAO, Member } from '@daostack/client'
 import * as React from "react";
 import * as Autosuggest from "react-autosuggest";
 import { connect } from "react-redux";
+import { IRootState } from "reducers";
+import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { first } from 'rxjs/operators';
 
-import { IRootState } from "reducers";
-import { IProfileState, IProfilesState } from "reducers/profilesReducer";
-
+import { arc } from "arc";
 import AccountImage from "components/Account/AccountImage"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { arc } from "arc";
-import { DAO, IDAOState, Member, IMemberState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
 
 import * as css from "./UserSearchField.scss";
 
@@ -109,11 +108,12 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
 
     // Autosuggest will pass through all these props to the input.
     const inputProps = {
-      autoComplete: "nope",
-      name: this.props.name,
-      onBlur: this.handleBlur,
-      onChange: this.handleChange,
-      placeholder: "Select a beneficiary or use any ETH address",
+      "autoComplete": "nope",
+      "data-test-id": "beneficiaryInput",
+      "name": this.props.name,
+      "onBlur": this.handleBlur,
+      "onChange": this.handleChange,
+      "placeholder": "Select a beneficiary or use any ETH address",
       value
     };
 

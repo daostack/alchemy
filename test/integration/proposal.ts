@@ -11,7 +11,7 @@ describe('Proposals', () => {
       daoAddress = addresses.Avatar.toLowerCase()
     })
 
-    it.skip('Create a proposal', async () => {
+    it('Create a proposal', async () => {
       browser.url('http://127.0.0.1:3000/ ')
       const url = `http://127.0.0.1:3000/dao/${daoAddress}/`
       browser.url(url)
@@ -30,7 +30,7 @@ describe('Proposals', () => {
       // using uuid value so that the test will pass alsko if there is already a proposal with thi description
       // (which must be unique). TODO: find a way to reset the state
       browser.setValue('*[id="descriptionInput"]', `https://this.must.be/a/valid/url${uuid()}`)
-      browser.setValue('*[id="beneficiaryInput"]', '0x5fB320886aF629122736c0e1a5c94dCE841EA37B')
+      browser.setValue('*[data-test-id="beneficiaryInput"]', '0x5fB320886aF629122736c0e1a5c94dCE841EA37B')
       // ask for 100 rep
       const repReward = Math.floor(Math.random() * 1000)
       browser.setValue('*[id="reputationRewardInput"]', `${repReward}` )
@@ -42,21 +42,13 @@ describe('Proposals', () => {
       // since we are working with unlocked accounts (are we?) and we do not haver metamask installed
       // we do not need to confirm at all..
 
-      // wait a few seconds for the informatino to propagate
-
-      // TODO: once subscriptions work, https://github.com/daostack/subgraph/issues/58
-      // we should just wait for the expected element..
-      browser.pause(2000)
-      browser.refresh()
-
       // check that the proposal with the ethReward appears in the list
       browser.waitForExist(`strong*=${ethReward}`)
 
-      // browser.debug()
       // browser.waitForExist('*[data-test-id="proposal-title"]')
       // // we are getting the closing date from the graph-node server
       // browser.getText('*[data-test-id="proposal-closes-in"]').should.be.equal('CLOSES IN 21 DAYS')
-      // TODO: the title comes from alchemy-server
+      // TODO: title etc are not yet working
       // browser.getText('*[data-test-id="proposal-title"]').should.be.equal('Free Edward Snowden')
     })
 

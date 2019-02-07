@@ -1,12 +1,19 @@
-import * as Arc from "@daostack/arc.js";
+import * as Arc from "@daostack/arc.js"
 import { ContributionRewardWrapper, ExecutionState, GenesisProtocolFactory } from "@daostack/arc.js";
-import { AsyncActionSequence, IAsyncAction } from "actions/async";
-import axios from "axios";
+import { DAO } from '@daostack/client'
 import BigNumber from "bignumber.js";
-import promisify = require("es6-promisify");
-import Util from "lib/util";
 import { denormalize, normalize } from "normalizr";
 import { push } from "react-router-redux";
+import { IRootState } from "reducers/index";
+import { Dispatch } from 'redux';
+import * as Redux from "redux";
+import { ThunkAction } from "redux-thunk";
+import { take } from 'rxjs/operators'
+import { Web3 } from "web3";
+
+import { AsyncActionSequence, IAsyncAction } from "actions/async";
+import { arc } from "arc"
+import Util from "lib/util";
 import {
   ActionTypes,
   anyRedemptions,
@@ -20,222 +27,10 @@ import {
   proposalEndedArc,
   ProposalStates,
   RewardType,
-  TransactionStates,
   VoteOptions,
 } from "reducers/arcReducer";
-import { IRootState } from "reducers/index";
-import * as Redux from "redux";
-import { Dispatch } from 'redux';
-import { ThunkAction } from "redux-thunk";
 import * as schemas from "schemas";
-import { Web3 } from "web3";
 
-// Pull together the final propsal object from ContributionReward, the GenesisProtocol voting machine, and the server
-// TODO: put in a lib/util class somewhere?
-async function getProposalDetails(
-  daoInstance: Arc.DAO,
-  votingMachineInstance: Arc.GenesisProtocolWrapper,
-  contributionRewardInstance: Arc.ContributionRewardWrapper,
-  contributionProposal: Arc.ContributionProposal,
-  serverProposal: any,
-  currentAccountAddress: string = null,
-  fromBlock = 0,
-  toBlock = "latest"): Promise<IProposalStateLegacy> {
-
-  const proposalId = contributionProposal.proposalId;
-  // const descriptionHash = contributionProposal.contributionDescriptionHash;
-  const avatarAddress = daoInstance.avatar.address;
-
-  const votingMachineParamsHash = await
-    (await contributionRewardInstance.getSchemeParameters(daoInstance.avatar.address)).voteParametersHash;
-
-  const votingMachineParams = await votingMachineInstance.getParameters(votingMachineParamsHash);
-
-  const proposalDetails = await votingMachineInstance.getProposal(proposalId);
-  const proposalStatus = await votingMachineInstance.getProposalStatus({ proposalId });
-
-  const submittedTime = Number(proposalDetails.submittedTime);
-
-  // Use title and description from the server
-  let description = "";
-  let title = "[no title]";
-  if (serverProposal) {
-    description = serverProposal.description;
-    title = serverProposal.title;
-  } else {
-    // If we didn't find the proposal by proposalId, see if there is one that matches by description hash that doesnt yet have a proposalId added to it
-    // let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"},{"descriptionHash":"' + descriptionHash + '"}]}}');
-    let response = await axios.get(process.env.API_URL + '/api/proposals?filter={"where":{"and":[{"arcId":null},{"daoAvatarAddress":"' + avatarAddress + '"}]}}');
-    if (response.data.length > 0) {
-      serverProposal = response.data[0];
-      description = serverProposal.description;
-      title = serverProposal.title;
-
-      // If we found one, then update the database with the proposalId
-      response = await axios.patch(process.env.API_URL + "/api/proposals/" + serverProposal.id, {
-        arcId: proposalId,
-        daoAvatarAddress: avatarAddress,
-        descriptionHash: '',
-        description,
-        submittedAt: submittedTime,
-        title,
-      });
-    }
-  }
-
-  const proposer = (await votingMachineInstance.NewProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock: "latest" }).get(undefined, -1))[0].args._proposer;
-
-  const proposal: IProposalStateLegacy = {
-    beneficiaryAddress: contributionProposal.beneficiaryAddress.toLowerCase(),
-    boostedTime: Number(proposalDetails.boostedPhaseTime),
-    boostedVotePeriodLimit: Number(proposalDetails.currentBoostedVotePeriodLimit),
-    contributionDescriptionHash: '', // contributionProposal.contributionDescriptionHash,
-    daoAvatarAddress: avatarAddress,
-    description,
-    ethReward: Util.fromWei(contributionProposal.ethReward),
-    externalToken: contributionProposal.externalToken,
-    externalTokenReward: Util.fromWei(contributionProposal.externalTokenReward),
-    executionTime: Number(contributionProposal.executionTime),
-    nativeTokenReward: Util.fromWei(contributionProposal.nativeTokenReward),
-    numberOfPeriods: Number(contributionProposal.numberOfPeriods),
-    redemptions: [],
-    reputationChange: Util.fromWei(contributionProposal.reputationChange),
-    periodLength: Number(contributionProposal.periodLength),
-    preBoostedVotePeriodLimit: Number(votingMachineParams.preBoostedVotePeriodLimit),
-    proposalId: contributionProposal.proposalId,
-    proposer,
-    stakes: [],
-    stakesNo: Util.fromWei(proposalStatus.stakesNo),
-    stakesYes: Util.fromWei(proposalStatus.stakesYes),
-    state: Number(proposalDetails.state), // TODO: using our own enum instead of from Arc.js because we add new states, have arc.js do this?,
-    submittedTime,
-    title,
-    transactionState: TransactionStates.Confirmed,
-    votes: [],
-    votesYes: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.Yes })),
-    votesNo: Util.fromWei(await votingMachineInstance.getVoteStatus({ proposalId, vote: VoteOptions.No })),
-    winningVote: proposalDetails.winningVote,
-  };
-
-  delete (proposal as any).votingMachine;
-
-  proposal.state = checkProposalExpired(proposal);
-
-  if (proposal.state == ProposalStates.Executed) {
-    // For executed proposals load the reputation at time of execution
-    const executeProposalEventFetcher = await votingMachineInstance.ExecuteProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock });
-    const getExecuteProposalEvents = promisify(executeProposalEventFetcher.get.bind(executeProposalEventFetcher));
-    const executeProposalEvents = await getExecuteProposalEvents();
-    if (executeProposalEvents.length > 0) {
-      proposal.reputationWhenExecuted = Util.fromWei(executeProposalEvents[0].args._totalReputation);
-    }
-  }
-
-  // Check for votes, stakes and redemptions for the current account on this proposal
-  if (currentAccountAddress !== null) {
-    const voterInfo = await getVoterInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress);
-    if (voterInfo) {
-      proposal.votes.push(voterInfo as IVoteState);
-    }
-
-    const stakerInfo = await getStakerInfo(avatarAddress, votingMachineInstance, proposalId, currentAccountAddress);
-    if (stakerInfo) {
-      proposal.stakes.push(stakerInfo as IStakeState);
-    }
-
-    if (proposalEndedArc(proposal)) {
-      const redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, currentAccountAddress);
-      if (redemptions) {
-        proposal.redemptions.push(redemptions as IRedemptionState);
-      }
-    }
-  } else {
-    // No current account so caching all data, pull all the votes and stakes and redemptions on this proposal ever
-    const stakeEventWatcher = votingMachineInstance.Stake({ _proposalId: proposalId }, { fromBlock: 0, toBlock });
-    await stakeEventWatcher.get((error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.GpStakeEventResult>>) => {
-      for (let index = 0; index < eventsArray.length; index++) {
-        const event = eventsArray[index];
-        proposal.stakes.push({
-          avatarAddress: event.args._organization,
-          proposalId: event.args._proposalId,
-          stakerAddress: event.args._staker,
-          stakeAmount: Number(Util.fromWei(event.args._amount)),
-          prediction: Number(event.args._vote),
-        });
-      }
-    });
-
-    const voteEventWatcher = votingMachineInstance.VoteProposal({ _proposalId: proposalId }, { fromBlock: 0, toBlock });
-    await voteEventWatcher.get((error: Error, eventsArray: Array<Arc.DecodedLogEntryEvent<Arc.VoteProposalEventResult>>) => {
-      for (let index = 0; index < eventsArray.length; index++) {
-        const event = eventsArray[index];
-        proposal.votes.push({
-          avatarAddress: event.args._organization,
-          proposalId: event.args._proposalId,
-          reputation: Number(Util.fromWei(event.args._reputation)),
-          voterAddress: event.args._voter,
-          voteOption: Number(event.args._vote),
-        });
-      }
-    });
-
-    if (proposalEndedArc(proposal)) {
-      // Find all current rewards waiting to be redeemed
-      let associatedAccounts = [proposal.beneficiaryAddress, proposal.proposer];
-      proposal.votes.forEach((vote: IVoteState) => {
-        associatedAccounts.push(vote.voterAddress);
-      });
-      proposal.stakes.forEach((stake: IStakeState) => {
-        associatedAccounts.push(stake.stakerAddress);
-      });
-      associatedAccounts = [...new Set(associatedAccounts)]; // Dedupe
-
-      let redemptions: IRedemptionState;
-      for (const accountAddress of associatedAccounts) {
-        redemptions = await getRedemptions(votingMachineInstance, contributionRewardInstance, proposal, accountAddress);
-        if (redemptions) {
-          proposal.redemptions.push(redemptions);
-        }
-      }
-    }
-  }
-
-  return proposal;
-}
-
-// Get info on whether an account voted on a proposal. // TODO: move to a lib/util file?
-async function getVoterInfo(avatarAddress: string, votingMachineInstance: Arc.GenesisProtocolWrapper, proposalId: string, voterAddress: string): Promise<IVoteState | boolean> {
-  const voterInfo = await votingMachineInstance.getVoterInfo({ proposalId, voter: voterAddress });
-  if (Util.fromWei(voterInfo.reputation)) {
-    return {
-      avatarAddress,
-      proposalId,
-      reputation: Util.fromWei(voterInfo.reputation),
-      voteOption: Number(voterInfo.vote),
-      voterAddress,
-    };
-  } else {
-    return false;
-  }
-}
-
-// Get info on whether an account staked on a proposal. // TODO: move to a lib/util file?
-async function getStakerInfo(avatarAddress: string, votingMachineInstance: Arc.GenesisProtocolWrapper, proposalId: string, stakerAddress: string): Promise<IStakeState | boolean> {
-  const stakerInfo = await votingMachineInstance.getStakerInfo({ proposalId, staker: stakerAddress });
-  if (Util.fromWei(stakerInfo.stake)) {
-    return {
-      avatarAddress,
-      proposalId,
-      stakeAmount: Util.fromWei(stakerInfo.stake),
-      prediction: Number(stakerInfo.vote),
-      stakerAddress,
-    };
-  } else {
-    return false;
-  }
-}
-
-// TODO: move this to a separate Util/lib class
 async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper, proposalInstance: Arc.ContributionRewardWrapper, proposal: IProposalStateLegacy, accountAddress: string): Promise<IRedemptionState> {
   if (!proposalEndedArc(proposal)) {
     return null;
@@ -428,10 +223,10 @@ export function createProposal(
   daoAvatarAddress: string,
   title: string,
   description: string,
-  nativeTokenReward: number,
-  reputationReward: number,
-  ethReward: number,
-  externalTokenReward: number,
+  nativeTokenReward: string | BigNumber,
+  reputationReward: string | BigNumber,
+  ethReward: string | BigNumber,
+  externalTokenReward: string | BigNumber,
   beneficiaryAddress: string
 ): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
@@ -440,32 +235,28 @@ export function createProposal(
     };
 
     try {
-      const web3: Web3 = await Arc.Utils.getWeb3();
+      // TODO: the client lib should (and will) provide and set the default account: https://github.com/daostack/client/issues/42
+      const defaultAccount = await Arc.Utils.getDefaultAccount()
+      arc.web3.eth.defaultAccount = defaultAccount.toLowerCase()
 
-      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
-      beneficiaryAddress = beneficiaryAddress.toLowerCase();
+      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress }
+      beneficiaryAddress = beneficiaryAddress.toLowerCase()
 
-      const ethAccountAddress: string = getState().web3.ethAccountAddress;
-      // const dao = getState().arc.daos[daoAvatarAddress];
-
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-      const descriptionHash = Arc.Utils.SHA3(description);
-      const submittedTime = Math.round((new Date()).getTime() / 1000);
-
+      // TODO: leave this commented code - we may want to re-use it later in the light of graph-node problems
+      // const submittedTime = Math.round((new Date()).getTime() / 1000);
       // Save the proposal title, description and submitted time on the server
-      try {
-        const response = await axios.post(process.env.API_URL + "/api/proposals", {
-          daoAvatarAddress,
-          descriptionHash,
-          description,
-          submittedAt: submittedTime,
-          title,
-        });
-      } catch (e) {
-        console.error(e);
-        throw e
-      }
+      // try {
+      //   const response = await axios.post(process.env.API_URL + "/api/proposals", {
+      //     daoAvatarAddress,
+      //     descriptionHash,
+      //     description,
+      //     submittedAt: submittedTime,
+      //     title,
+      //   });
+      // } catch (e) {
+      //   console.error(e);
+      //   throw e
+      // }
 
       dispatch({
         type: ActionTypes.ARC_CREATE_PROPOSAL,
@@ -475,24 +266,26 @@ export function createProposal(
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
-
-      const response = await contributionRewardInstance.proposeContributionReward({
-        title,
-        avatar: daoAvatarAddress,
-        beneficiaryAddress,
+      const dao = new DAO(daoAvatarAddress, arc)
+      const proposalOptions = {
+        beneficiary: beneficiaryAddress,
         description,
-        ethReward: Util.toWei(ethReward),
-        // TODO: disabled externalToken logic - is that ok?
-        externalToken: "",
-        externalTokenReward: 0,
-        // externalToken: dao.externalTokenAddress ? dao.externalTokenAddress : "",
-        // externalTokenReward: dao.externalTokenAddress && externalTokenReward ? Util.toWei(externalTokenReward) : 0,
-        nativeTokenReward: Util.toWei(nativeTokenReward),
-        numberOfPeriods: 1,
-        periodLength: 0,
-        reputationChange: Util.toWei(reputationReward),
-      } as any);
-      // console.log(response)
+        // TODO: to these conversion closer to the source (i.e. at form submit, not here)
+        nativeTokenReward: arc.web3.utils.toWei(String(nativeTokenReward)),
+        // TODO: it is probably more robust to have the form values in "wei"
+        // (also because it is not clear if best unit of account is e18 for rep or nativeToken)
+        reputationReward: arc.web3.utils.toWei(String(reputationReward)),
+        ethReward: arc.web3.utils.toWei(String(ethReward)),
+        externalTokenReward: arc.web3.utils.toWei(String(externalTokenReward)),
+        externalTokenAddress: '',
+        periodLength: 0, // TODO: check what the default "periodLength" should be here
+        periods: 1, // "periodLength 0 requires periods to be 1"
+        title,
+        url: description
+      }
+      // TODO: use the Option stages of the client lib to communicate about the progress
+      await dao.createProposal(proposalOptions)
+        .pipe(take(2)).toPromise()
     } catch (err) {
       console.error(err);
       dispatch({
