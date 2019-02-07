@@ -5,7 +5,7 @@ import * as css from "./Countdown.scss";
 
 interface IProps {
   toDate: Date | moment.Moment;
-  fromDate?  : Date | moment.Moment;
+  fromDate?: Date | moment.Moment;
 }
 
 interface IState {
@@ -29,7 +29,7 @@ class Countdown extends React.Component<IProps, IState> {
     }
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     // update every five seconds
     this.interval = setInterval(() => {
       const date = this.calculateCountdown(this.props.toDate);
@@ -37,17 +37,19 @@ class Countdown extends React.Component<IProps, IState> {
     }, 5000);
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.stop();
   }
 
-  calculateCountdown(endDate: Date | moment.Moment) {
+  public calculateCountdown(endDate: Date | moment.Moment) {
     let endDateMoment = moment(endDate), now = new Date();
 
     let diff = endDateMoment.diff(now);
 
     // clear countdown when date is reached
-    if (diff <= 0) return false;
+    if (diff <= 0) {
+      return false;
+    }
 
     const duration = moment.duration(diff);
     const timeLeft = {
@@ -60,11 +62,11 @@ class Countdown extends React.Component<IProps, IState> {
     return timeLeft;
   }
 
-  stop() {
+  public stop() {
     clearInterval(this.interval);
   }
 
-  addLeadingZeros(value: string | number) {
+  public addLeadingZeros(value: string | number) {
     value = String(value);
     while (value.length < 2) {
       value = '0' + value;
@@ -72,7 +74,7 @@ class Countdown extends React.Component<IProps, IState> {
     return value;
   }
 
-  render() {
+  public render() {
     const countDown = this.state;
 
     let percentageComplete = 0;
