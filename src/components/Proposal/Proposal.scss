@@ -381,21 +381,16 @@ button.disabled {
 	h3 {
 		font-size: $body;
 		margin: 0 0 8px 0;
+	}
 
-		span {
-			position: relative;
-			display: block;
-			font-weight: $normal;
-			font-size: $small;
-			color: $black-halftone;
-			margin: 0 0 6px 0;
-			top: -3px;
-
-			strong {
-				color: rgba(255, 0, 72, 1.000);
-				font-weight: normal;
-			}
-		}
+	.closedTime {
+		position: relative;
+		display: block;
+		font-weight: $normal;
+		font-size: $small;
+		color: $black-halftone;
+		margin: 0 0 6px 0;
+		top: -3px;
 	}
 
   .help {
