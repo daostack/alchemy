@@ -13,11 +13,11 @@ const path = require('path')
 export default class Util {
 
   public static fromWei(amount: BigNumber): number {
-    return Number(arc.web3.utils.fromWei(amount, "ether"))
+    return Number(arc.web3.utils.fromWei(arc.web3.utils.toBN(amount), "ether"))
   }
 
   public static toWei(amount: number): BigNumber {
-    return new BigNumber(arc.web3.utils.toWei(amount, "ether"))
+    return new BigNumber(arc.web3.utils.toWei(amount.toString(), "ether"))
   }
 
   public static getBalance(account: Address) {
