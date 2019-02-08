@@ -26,6 +26,7 @@ import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import RedeemButton from './RedeemButton'
 import RedemptionsTip from './RedemptionsTip'
+import TransferDetails from './TransferDetails';
 import VoteBox from "./VoteBox";
 
 interface IStateProps {
@@ -335,14 +336,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </span>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[no title]"}</Link>
             </h3>
-            <div className={css.transferDetails}>
-              <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>
-              <strong className={css.transferAmount}></strong>
-              <img src="/assets/images/Icon/Transfer.svg" />
-
-              <AccountPopupContainer accountAddress={proposal.beneficiary} dao={dao} />
-              <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
-            </div>
+            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} />
           </div>
           <div>
             <div className={css.proposalDetails}>
@@ -366,6 +360,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   <PreTransactionModal
                     actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
                     action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal, currentAccount.address)}
+                    beneficiaryProfile={beneficiaryProfile}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}
                     effectText={redemptionsTip}
@@ -381,6 +376,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <PredictionBox
                 isPredictingFail={isPredictingFail}
                 isPredictingPass={isPredictingPass}
+                beneficiaryProfile={beneficiaryProfile}
                 currentPrediction={currentAccountPrediction}
                 currentStake={currentAccountStakeAmount}
                 currentAccountGens={currentAccountGens}

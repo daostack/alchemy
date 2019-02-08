@@ -28,6 +28,6 @@ export default class RewardsString extends React.Component<IProps, null> {
         <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.reputationReward}/>
       );
     }
-    return <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "and"}</em> {v}</React.Fragment>, null)}</strong>;
+    return <strong>{rewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || " + "}</em> {v}</React.Fragment>, null)}</strong>;
   }
 }

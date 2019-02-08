@@ -535,27 +535,6 @@ button.disabled {
 	}
 }
 
-.transferAmount {
-	font-weight: $bold;
-	color: $accent-1;
-	margin: 0 3px;
-}
-
-.transferType {
-	display: inline-block;
-	color: $black-halftone;
-
-	strong {
-		color: $black-septone;
-
-		em {
-			color: $black-halftone;
-			font-style: normal;
-			font-weight: normal;
-		}
-	}
-}
-
 .decisionGraph .graph {
 	width: 70px;
 	display: inline-block;
@@ -568,11 +547,6 @@ button.disabled {
 	transform: translateY(-50%) scale(1);
 }
 
-
-.transferDetails {
-	position: relative;
-	font-size: $body;
-}
 
 .voteGraphs {
 	position: relative;
@@ -650,93 +624,6 @@ button.disabled {
 	background-color: rgba(248, 248, 248, 1.000);
 	height: 100%;
 	width: 140px;
-
-	.genError {
-		background-color: rgba(0, 0, 0, 0.8);
-		height: 100%;
-		position: absolute;
-		width: 300px;
-		text-align: center;
-		color: $white;
-		left: -150px;
-
-		h4 {
-			color: $accent-2;
-			font-size: 14px;
-			font-family: $body-font;
-			margin: 0;
-			padding-top: 8px;
-		}
-
-		span {
-			display: block;
-			font-size: 10px;
-			font-weight: normal;
-			color: $white-halftone;
-		}
-
-		div.exchangeList {
-			color: $white;
-			font-size: 12px;
-			color: $white;
-			border: 1px solid $white;
-			width: 150px;
-			position: relative;
-			top: 0;
-			left: 0;
-		    text-align: center;
-		    transform: translate(0,0);
-		    display: inline-block;
-		    height: 30px;
-		    margin: 11px;
-		    line-height: 30px;
-
-			ul {
-				position: absolute;
-				top: -130px;
-				left: 0;
-				background-color: rgba(0, 0, 0, 0.8);
-				list-style: none;
-				margin: 0;
-				border-left: 1px solid $white;
-				border-right:  1px solid $white;
-				border-bottom:  1px solid $white;
-				width: 150px;
-				left: -1px;
-				padding: 0;
-				opacity: 0;
-				transform: scale(0);
-				transition: all .25s ease;
-
-				a {
-					color: $white;
-					font-weight: bold;
-					width: 100%;
-					display: inline-block;
-					padding: 8px 0;
-
-					&:hover {
-						background-color: $black;
-					}
-				}
-			}
-
-			&:hover {
-				background-color: $black-thirdtone;
-				cursor: pointer;
-				border-bottom: none;
-				border-left: 1px solid $white;
-				border-right:  1px solid $white;
-				border-top:  1px solid $white;
-
-				ul {
-					opacity: 1;
-					transform: scale(1);
-					top: 30px;
-				}
-			}
-		}
-	}
 
 	div {
 		position: absolute;
@@ -957,87 +844,6 @@ a.viewProposal {
 	top: 50%;
 	transform: translateY(-50%);
 }
-
-.newPrediction {
-	display: none;
-	background-color: $white;
-	box-shadow: $shadow-3;
-	position: absolute;
-	top: -5px;
-	left: -5px;
-	width: 110%;
-	height: 100%;
-	z-index: 10000;
-	padding: 10px;
-
-
-	.newPredictionTitle {
-		font-size: $caption;
-		text-align: center;
-		color: $black;
-		position: relative;
-		top: auto;
-		left: auto;
-		transform: none;
-	}
-
-	.predictionAmount {
-		width: 55px;
-		display: inline-block;
-		border: none;
-		background-color: transparent;
-		border-bottom: 2px solid rgba(75, 75, 75, 1.000);
-		font-size: $body;
-		padding: 9px 0 3px 0;
-		margin: 0 5px;
-		float: left;
-		font-family: $body-font;
-
-		&:focus {
-			outline: none;
-			border-bottom: 2px solid $accent-4;
-		}
-	}
-
-	.formGroup {
-		line-height: 24px;
-		position: relative;
-		top: auto;
-		left: auto;
-		right: auto;
-		transform: none;
-		text-align: center;
-		padding-left: 8px;
-
-		span {
-			font-size: $body;
-			padding-top: 5px;
-		}
-	}
-
-	.genLabel {
-		float: left;
-	}
-
-	.placePrediction {
-		padding: 4px;
-		width: 120px;
-		margin-top: 8px;
-		border: 1px solid $accent-1;
-		color: $accent-1;
-	}
-
-	.clearfix {
-		margin-top: 7px;
-		position: relative;
-		top: auto;
-		left: auto;
-		width: 100%;
-		text-align: center;
-		transform: none;
-	}
-}
-
 
 button.cancelPrediction {
     display: block;
