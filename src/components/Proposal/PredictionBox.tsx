@@ -185,7 +185,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal.bind(null, proposal.dao.address, proposal.id, pendingPrediction, amount)}}
+            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount)}}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
             currentAccountGens={currentAccountGens}
