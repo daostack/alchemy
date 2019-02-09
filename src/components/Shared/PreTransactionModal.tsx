@@ -210,8 +210,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
               actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass ?
               <div className={css.stakingInfo + " " + css.clearfix}>
                 <div className={css.currentPredictions}>
-                  <div>Pass {proposal.stakesFor} + {stakeAmount} = {proposal.stakesFor + stakeAmount} GEN</div>
-                  <div>Fail {proposal.stakesAgainst}</div>
+                  <div>Pass {proposal.stakesFor}{actionType == ActionTypes.StakePass ? " + " + stakeAmount + " = " + (proposal.stakesFor + stakeAmount) : ""} GEN</div>
+                  <div>Fail {proposal.stakesAgainst}{actionType == ActionTypes.StakeFail ? " + " + stakeAmount + " = " + (proposal.stakesAgainst + stakeAmount) : ""} GEN</div>
                 </div>
                 <div className={css.stakingForm}>
                   <span>Your stake</span>
