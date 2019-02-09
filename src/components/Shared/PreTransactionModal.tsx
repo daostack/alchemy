@@ -37,6 +37,7 @@ interface IProps {
 }
 
 interface IState {
+  instructionsOpen: boolean;
   stakeAmount: number;
 }
 
@@ -48,6 +49,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
     super(props);
 
     this.state = {
+      instructionsOpen: false,
       stakeAmount: 0
     };
   }
@@ -60,6 +62,10 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
       this.props.action();
     }
     this.props.closeAction();
+  }
+
+  public toggleInstructions() {
+    this.setState({ instructionsOpen: !this.state.instructionsOpen });
   }
 
   public render() {
@@ -238,6 +244,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                       value={stakeAmount}
                     />
                     <span className={css.genLabel}>GEN</span>
+                    <span>Your balance: {currentAccountGens} GEN</span>
                   </div>
                 </div>
               </div> : ""
@@ -247,9 +254,11 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 <span className={css.outcomes}>OUTCOMES</span>
                 <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
                 <span className={css.failIncentive}><strong>FAIL</strong>{failIncentive}</span>
-                <span className={css.help}>
-                  <img src="/assets/images/Icon/Help.svg"/>
-                  <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
+
+                <img src="/assets/images/Icon/Help.svg" onClick={this.toggleInstructions.bind(this)} />
+                <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
+
+                <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
                   <div className={css.helpBox}>
                     <div className={css.pointer}></div>
                     <div className={css.bg}></div>

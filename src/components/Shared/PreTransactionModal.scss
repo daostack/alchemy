@@ -74,26 +74,12 @@
   }
 
   .help {
-    float: right;
     width: 24px;
     height: 24px;
     top: -4px;
     right: 5px;
     position: relative;
 
-    &:hover {
-      cursor: pointer;
-
-      .helpBox {
-        transform: scale(1);
-        opacity: 1;
-        top: -34px;
-      }
-
-      .hover {
-        opacity: 1;
-      }
-    }
 
     img {
       position: absolute;
@@ -105,16 +91,15 @@
       z-index: 1;
       opacity: 0;
     }
+  }
 
-    .helpBox {
+   .helpBox {
       transition: all .25s ease;
       width: 230px;
       position: absolute;
       right: 37px;
-      top: -334px;
+      top: 0px;
       z-index: 10000;
-      transform: scale(0);
-      opacity: 0;
 
       .bg {
         width: 100%;
@@ -189,7 +174,6 @@
       }
 
     }
-  }
 
   .modalWindow {
     width: 600px;
