@@ -36,8 +36,9 @@
 }
 
 .proposal {
-	position: relative;
-	border-bottom: $proposal-item-border-bottom;
+	width: 315px;
+	border-radius: 0 25px 25px 25px;
+	background-color: $white;
 }
 
 .proposal:hover {
@@ -45,7 +46,7 @@
 }
 
 .openProposal {
-	border-left: 4px solid rgba(255,255,255, 0);
+	padding: 0;
 }
 
 .failedProposal {
@@ -351,7 +352,7 @@ button.disabled {
 .voteBox {
 	position: relative;
 	float: left;
-	padding: 15px 0 14px 0;
+	width: 50%;
 }
 
 .voteBox.unconfirmedVote {
@@ -361,11 +362,7 @@ button.disabled {
 }
 
 .proposalInfo {
-	left: 50px;
-	top: 50%;
 	font-size: $body;
-	transform: translateY(-50%);
-	position: absolute;
 
 	.proposalPassInfo, .proposalFailInfo {
 		font-size: $small;
@@ -541,9 +538,15 @@ button.disabled {
 }
 
 .transferAmount {
-	font-weight: $bold;
+	font-weight: $bold;	
 	color: $accent-1;
 	margin: 0 3px;
+}
+
+.proposalBottom {
+	position: relative;
+	margin-top: 15px;
+	border-top: 1px solid rgba(215, 225, 237, 1.000);
 }
 
 .transferType {
@@ -576,7 +579,11 @@ button.disabled {
 
 .transferDetails {
 	position: relative;
-	font-size: $body;
+	border: 1px solid rgba(229, 235, 242, 1.000);
+	border-radius: 2px;
+	font-size: 12px;
+	display: inline-block;
+	padding: 5px;
 }
 
 .voteGraphs {
@@ -612,15 +619,37 @@ button.disabled {
 }
 
 .predictions.enablePredictions button {
-	width: 100px;
-	display: block;
-	margin: 0 auto;
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 3px;
+    opacity: .5;
+    margin-top: 20px;
+
 }
 
 .predictions.enablePredictions span {
 	display: block;
 	margin-top: 25px;
 	margin-bottom: 8px;
+}
+
+.proposalLabel {
+	position: absolute;
+	top: -26px;
+	font-size: 12px;
+	font-weight: normal;
+	color: rgba(115, 160, 216, 1.000);
+	background-color: $white;
+	padding: 5px;
+}
+
+.voteLabel {
+	left: 15px;
+}
+
+.predictionLabel {
+	left: 175px;
 }
 
 @keyframes pendingPassPrediction {
@@ -649,12 +678,10 @@ button.disabled {
 }
 
 .predictions {
-	position: absolute;
-	right: 0;
-	font-size: $caption;
-	background-color: rgba(248, 248, 248, 1.000);
-	height: 100%;
-	width: 140px;
+	margin-left: -1px;
+	float: right;
+	width: 50%;
+	border-left: 1px solid rgba(215, 225, 237, 1.000);
 
 	.genError {
 		background-color: rgba(0, 0, 0, 0.8);
@@ -902,23 +929,7 @@ button.disabled {
 a.viewProposal {
 	color: rgba(174, 174, 174, 1.000);
 	background-color: transparent;
-	padding: 5px 0 5px 8px;
-	position: absolute;
 	font-size: $caption;
-	width: 100px;
-	right: 0;
-    bottom: 12px;
-    text-align: right;
-
-	img {
-		margin-right: 5px;
-	}
-
-	span {
-		text-decoration: underline;
-		position: relative;
-		top: -3px;
-	}
 }
 
 .redeemRewards {

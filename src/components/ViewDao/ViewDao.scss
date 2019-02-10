@@ -9,20 +9,27 @@ button:hover {
 }
 
 .wrapper {
-  max-width: $max-width;
-  margin: 0 auto;
-  position: relative;
-  background-color: #f2f2f2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 50px;
 }
 
 .outer {
-  position: relative;
+  position: fixed;
+  display: flex;
+  height: 100%;
 }
 
-.top {
-  width: 100%;
-  background-color: $white;
+.daoContext {
+  min-width: 250px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: $sky;
 }
+
 
 .loading {
   width: 100%;
@@ -32,13 +39,104 @@ button:hover {
   transform: translate(-50%,-50%)
 }
 
+
+.navHeading {
+  font-size: 12px;
+  border-bottom: 1px solid rgba(78, 137, 209, 1.000);
+  width: 100%;
+  display: block;
+  margin-top: -30px;
+
+  b {
+    display: inline-block;
+    background-color: #3178ca;
+    margin-right: 10px;
+    position: relative;
+    left: 15px;
+    top: 17px;
+    padding: 10px;
+    font-weight: normal;
+    color: rgba(255,255,255,.5);
+  }
+
+}
+
+.daoNavigation {
+
+  .daoName {
+    padding: 15px;
+
+    a {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    a:visited {
+      color: $white;
+    }
+
+    p {
+      font-size: 14px;
+      opacity: .7;
+      padding: 0;
+    }
+  }
+  .navigation {
+
+    ul {
+      margin-top: 15px;
+      padding: 0;
+    }
+
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    li a {
+      display: block;
+      font-size: 14px;
+      color: $white;
+      padding: 8px 23px;
+      background-color: rgba(32, 104, 188, 0);
+      transition: all .25s ease;
+    }
+
+    li a:visited {
+      color: $white;
+    }
+
+    li a:hover {
+      background-color: rgba(32, 104, 188, 1.000);
+    }
+  }
+}
+
+.daoHoldings {
+  display: block;
+  
+  ul {
+    margin-top: 15px;
+    padding: 0;
+
+    li {
+      padding: 8px 23px;
+      font-size: 14px;
+      list-style: none;
+    }
+  }
+}
+
+
+
+
 .loading img {
   margin: 0 auto;
   display: block;
 }
 
 .daoHeader {
-  padding: 30px 30px 5px 30px;
+  color: $white;
 }
 
 .daoHeadings {
@@ -110,10 +208,7 @@ button:hover {
 }
 
 .proposalsContainer, .membersContainer {
-  margin: 10px 0 250px 0;
-  background-color: $white;
-  shadow: $shadow-1;
-  border-radius: 3px;
+
 }
 
 .proposalsContainer.boostedProposalsContainer {
@@ -122,7 +217,9 @@ button:hover {
 
 .member {
   padding: 15px;
-  border-bottom: $proposal-item-border-bottom;
+    margin-bottom: 2px;
+    background-color: white;
+    border-radius: 3px;
 }
 
 .openProposal {
@@ -339,14 +436,6 @@ a.navItem:hover {
     }
   }
 
-}
-
-.daoName {
-  font-family: $heading-1-font;
-  font-size: $jumbo;
-  margin-bottom: -8px;
-  padding-top: 2px;
-  padding-bottom: 2px;
 }
 
 .daoPrefs {
@@ -618,18 +707,13 @@ a.navItem:hover {
 
 @media only screen and (min-width: 768px) {
   .wrapper {
-    max-width: $max-width;
-    margin: 0 auto;
-    padding: 0 30px;
   }
 }
 
 
 @media only screen and (min-width: 850px) {
   .wrapper {
-    max-width: $max-width;
-    margin: 0 auto;
-    padding: 0 30px;
+
   }
 
   .tourModal .tourStart h1, .tourModal .tourEnd h1 {

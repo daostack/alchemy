@@ -125,7 +125,7 @@ class HeaderContainer extends React.Component<IProps, null> {
         </div>
         <nav className={css.header}>
           <div className={css.menu}>
-            <img src="/assets/images/Icon/Menu.svg"/>
+            <img src="/assets/images/alchemy-logo-white.svg"/>
             <div className={css.menuWrapper}>
               <div className={css.backgroundBlock}></div>
               <ul>
@@ -153,11 +153,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               </ul>
             </div>
           </div>
-          <div className={css.logoContainer}>
-            <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo-white.svg"/></Link>
-            <span className={css.version}><em>Alchemy {Util.networkName(networkId)}</em> <span> v.{VERSION}</span></span>
-          </div>
-          <div className={css.breadcrumbsContainer}>
+          <div className={css.topInfo}>
             <Breadcrumbs
               separator={<b> >   </b>}
               item={ NavLink }
@@ -165,7 +161,6 @@ class HeaderContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.headerRight}>
-            <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>
             <div className={css.accountInfo}>
               <div className={css.accountImage}>
                 <AccountImage accountAddress={ethAccountAddress} />
@@ -184,10 +179,10 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <AccountBalances dao={dao} address={ethAccountAddress} />
               </div>
             </div>
-            { dao && !isProfilePage
+            {/* dao && !isProfilePage
               ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
               : ""
-            }
+            */}
           </div>
         </nav>
       </div>

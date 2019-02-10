@@ -80,7 +80,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     return (
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={'/dao/' + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
-
+sooooo
         {membersHTML}
       </div>
     );

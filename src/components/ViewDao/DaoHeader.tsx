@@ -1,6 +1,7 @@
 import * as classNames from "classnames";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import { IRootState } from "reducers";
 import { IDAOState } from '@daostack/client'
@@ -26,44 +27,46 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
 
     return (
       <div className={css.daoHeader + " " + css.clearfix}>
-      <div className={css.daoInfo}>
-        <Link to={"/dao/" + dao.address}>
-          <div className={iconClass}>
-            { circlesDAO
-              ? <img src="/assets/images/circles_logo.png"/>
-              : <img src="/assets/images/daostack-logo.png"/>
-            }
-          </div>
-        </Link>
-        <div className={css.daoDescription}>
-          <div className={css.daoName}>
-            {dao.name}
-          </div>
-          <div className={css.daoReputationInfo}>
-            <img src="/assets/images/Icon/Members.svg"/>
-            <Link to={"/dao/" + dao.address + "/members/"}>{dao.memberCount} reputation holders</Link> with {Math.round(dao.reputationTotalSupply).toLocaleString()} {dao.name} reputation
-          </div>
+      <div className={css.daoNavigation}>
+        <div className={css.daoName}>
+          <Link to={"/dao/" + dao.address}>{dao.name}</Link>
+          <p>Anyone can make a proposal to the DAO! Click the button on the bottom right.</p>
         </div>
-      </div>
-      <div className={css.holdings + " " + css.clearfix}>
-        <h4>{dao.name} HOLDINGS</h4>
-        {
-        // TODO: show ETH balance
-        // { dao.externalTokenAddress ? <div>{dao.externalTokenCount} {dao.externalTokenSymbol}</div> : <div>{dao.ethCount} ETH </div> }
-        }
-        <div>{dao.ethBalance} ETH </div>
+        <div className={css.navigation}>
+          <span className={css.navHeading}><b>Menu</b></span>
+          <ul>
+            <li>
+              <Link to={"/dao/" + dao.address}>Home</Link>
+            </li>
+            <li>
+              <Link to={"/dao/" + dao.address + "/members/"}>Reputation Holders</Link>
+            </li>
+            <li>
+                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>History</NavLink>
+            </li>
+            <li>
+              <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>Redemptions</NavLink>
+            </li>
+          </ul>
 
-        <Subscribe observable={dao.token.balanceOf(dao.address)}>{
-          (state: IObservableState<number>) => {
-            if (state.isLoading) {
-              return <div>... GEN</div>
-            } else if ( state.error) {
-              return <div>{ state.error.message}</div>
-            } else {
-              return <div>{ state.data } GEN</div>
-            }
-          }
-        }</Subscribe>
+        </div>
+        <div className={css.daoHoldings}>
+          <span className={css.navHeading}><b>DAO Holdings</b></span>
+          <ul>
+            <li><strong>{dao.ethBalance}</strong> ETH </li>
+            <Subscribe observable={dao.token.balanceOf(dao.address)}>{
+              (state: IObservableState<number>) => {
+                if (state.isLoading) {
+                  return <li>... GEN</li>
+                } else if ( state.error) {
+                  return <li>{ state.error.message}</li>
+                } else {
+                  return <li><strong>{ state.data }</strong> GEN</li>
+                }
+              }
+            }</Subscribe>
+          </ul>
+        </div>
       </div>
     </div>
     )

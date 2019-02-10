@@ -136,7 +136,6 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     if (currentAccountGenStakingAllowance < 1) {
       return (
         <div className={css.predictions + " " + css.enablePredictions}>
-          <span>0 PRE-APPROVED GEN</span>
           <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
         </div>
       );

@@ -312,7 +312,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             }
           }}
         />
-        <div className={css.top}>
+        <div className={css.daoContext}>
           <DaoHeader address={dao.address} />
           {
           // TODO: temporarilby disabled DaoHeadings - needs refactor to use IDAOState

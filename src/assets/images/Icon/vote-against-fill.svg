@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="18px" viewBox="0 0 15 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>vote-against-fill</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="vote-against-fill" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M0,18 L3,18 L3,11 L0,11 L0,18 Z M15,11.3607143 C15,10.6937679 14.4304545,10.1535714 13.7272727,10.1535714 L9.70863636,10.1535714 L9.31636364,6.46667857 C9.32909091,6.40632143 9.33863636,6.34294643 9.33863636,6.27655357 C9.33863636,6.02607143 9.23045455,5.79973214 9.05863636,5.63676786 L8.38090909,5 L5.19045455,9.90308929 C4.96136364,10.1233929 4.81818182,10.4251786 4.81818182,10.7571429 L4.81818182,16.7928571 C4.81818182,17.4598036 5.38772727,18 6.09090909,18 L11.8181818,18 C12.3463636,18 12.7981818,17.6951964 12.9890909,17.2636429 L14.9077273,13.0084643 C14.965,12.8696429 15,12.7217679 15,12.5678571 L15,11.4120179 L15,11.3607143 Z" id="Shape-Copy" fill="#7D8B96" fill-rule="nonzero" transform="translate(7.500000, 11.500000) scale(1, -1) translate(-7.500000, -11.500000) "></path>
+    </g>
+</svg>

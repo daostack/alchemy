@@ -27,20 +27,6 @@ export default class DaoNav extends React.Component<IProps, null> {
             const dao = state.data;
             return (
               <div className={css.nav}>
-                <NavLink exact className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.address}>Proposals</NavLink>
-                <NavLink className={css.navItem} activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>History</NavLink>
-                {numRedemptions > 0
-                  ? <NavLink className={css.navRedemption} activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
-                      Redemptions <span className={css.redemptionNotification}>{numRedemptions}</span>
-                    </NavLink>
-                  : ""
-                }
-                <Tooltip placement="left" trigger={["hover"]} overlay="Create a New Proposal">
-                  <NavLink className={css.createProposal} activeClassName={css.selected} to={`/dao/${dao.address}/proposals/create`} data-test-id="create-proposal">
-                    <img src="/assets/images/Icon/Draft-white.svg"/>
-                  </NavLink>
-                </Tooltip>
-                <div className={css.borderBottom}></div>
               </div>
             )}
           }

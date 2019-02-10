@@ -240,6 +240,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
             </Tooltip>
           </div>
         </div>
+        <div>
+          <button></button>
+        </div>
       </div>
     );
   }

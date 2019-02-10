@@ -246,31 +246,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
-          {!proposalEnded(proposal) ?
-            <VoteBox
-              isVotingNo={isVotingNo}
-              isVotingYes={isVotingYes}
-              currentVote={currentAccountVote}
-              currentAccountAddress={currentAccount.address}
-              currentAccountReputation={currentAccount.reputation}
-              dao={dao}
-              proposal={proposal}
-              voteOnProposal={voteOnProposal}
-            />
-            : proposalPassed(proposal) ?
-              <div className={css.decidedProposal}>
-                <div className={css.result}>
-                  <div><img src="/assets/images/Icon/Passed.svg" /></div>
-                </div>
-              </div>
-              : proposalFailed(proposal) ?
-                <div className={css.decidedProposal}>
-                  <div className={css.result}>
-                    <div><img src="/assets/images/Icon/Failed.svg" /></div>
-                  </div>
-                </div>
-                : ""
-          }
+
+
+
           <div className={css.proposalInfo}>
             {proposalPassed(proposal) ?
               <div className="css.clearfix">
@@ -334,31 +312,33 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </span>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title}</Link>
             </h3>
+            <a href={proposal.description} target="_blank" className={css.viewProposal}>
+              <span>View proposal</span>
+            </a>
+            <div className={css.createdBy}>
+              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}
+              />
+              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
+              &nbsp; ON {submittedTime.format("MMM DD, YYYY")}
+            </div>
+            <div className={css.proposalDetails}>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
+                <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
+              </Link>
+            </div>
+
             <div className={css.transferDetails}>
-              <span className={css.transferType}>Transfer of <RewardsString proposal={proposal} dao={dao} /></span>
+              <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
               <strong className={css.transferAmount}></strong>
               <img src="/assets/images/Icon/Transfer.svg" />
-
               <AccountPopupContainer accountAddress={proposal.beneficiary} dao={dao} />
               <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
             </div>
           </div>
-          <div>
-            <div className={css.proposalDetails}>
-              <div className={css.createdBy}>
-                CREATED BY
-                <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}
-                />
-                <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
-                &nbsp; ON {submittedTime.format("MMM DD, YYYY")}
-              </div>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
-                <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
-              </Link>
-              <a href={proposal.description} target="_blank" className={css.viewProposal}>
-                <img src="/assets/images/Icon/View.svg" /> <span>View proposal</span>
-              </a>
-            </div>
+
+
+          <div className={css.proposalBottom + " " + css.clearfix}>
+
             {proposalEnded(proposal) ?
               <div>
                 {this.state.preRedeemModalOpen ?
@@ -391,6 +371,32 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 approveStakingGens={approveStakingGens}
               />
             }
+
+            {!proposalEnded(proposal) ?
+              <VoteBox
+                isVotingNo={isVotingNo}
+                isVotingYes={isVotingYes}
+                currentVote={currentAccountVote}
+                currentAccountAddress={currentAccount.address}
+                currentAccountReputation={currentAccount.reputation}
+                dao={dao}
+                proposal={proposal}
+                voteOnProposal={voteOnProposal}
+              />
+              : proposalPassed(proposal) ?
+                <div className={css.decidedProposal}>
+                  <div className={css.result}>
+                    <div><img src="/assets/images/Icon/Passed.svg" /></div>
+                  </div>
+                </div>
+                : proposalFailed(proposal) ?
+                  <div className={css.decidedProposal}>
+                    <div className={css.result}>
+                      <div><img src="/assets/images/Icon/Failed.svg" /></div>
+                    </div>
+                  </div>
+                  : ""
+              }
           </div>
         </div>
       );
