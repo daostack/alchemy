@@ -1,8 +1,8 @@
 import * as Arc from "@daostack/arc.js";
 import promisify = require("es6-promisify");
-import * as ethUtil from 'ethereumjs-util';
 import * as sigUtil from 'eth-sig-util';
-import { Formik, Field, FormikBag } from 'formik';
+import * as ethUtil from 'ethereumjs-util';
+import { Field, Formik, FormikBag } from 'formik';
 import * as queryString from 'query-string';
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
@@ -10,11 +10,11 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import * as io from 'socket.io-client';
 
 import * as profileActions from "actions/profilesActions";
+import Util from "lib/util";
 import { IRootState } from "reducers";
 import { IAccountState } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from 'components/Account/OAuthLogin';
@@ -90,9 +90,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     getProfile(accountAddress);
 
-    const web3 = await Arc.Utils.getWeb3();
-    const getBalance = promisify(web3.eth.getBalance);
-    const ethBalance = await getBalance(accountAddress);
+    const ethBalance = await Util.getBalance(accountAddress);
 
     let votingMachineInstance: Arc.GenesisProtocolWrapper;
     if (dao) {

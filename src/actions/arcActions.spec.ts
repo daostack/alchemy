@@ -2,10 +2,12 @@ import { Web3 } from "@daostack/arc.js";
 import * as Arc from "@daostack/arc.js";
 import axios from "axios";
 import MockAdapter from 'axios-mock-adapter';
-import { CALL_HISTORY_METHOD, LOCATION_CHANGE, push } from "react-router-redux";
+import BigNumber from "bignumber.js";
+import { CALL_HISTORY_METHOD, push } from "react-router-redux";
 import { IRootState } from "reducers";
 import { ActionTypes } from "reducers/arcReducer"
 import { IAccountState, IDaoState } from "reducers/arcReducer";
+
 import { mockStore } from "../configureStore";
 import { createDAO, CreateDAOAction, createProposal, CreateProposalAction } from "./arcActions";
 import { AsyncActionSequence } from "./async";
@@ -123,11 +125,11 @@ describe('arcActions', () => {
 
   it('createProposal', async () => {
     const title = 'Some title';
-    const description = 'Some description';
-    const nativeTokenReward = 10;
-    const reputationReward = 20;
-    const ethReward = 30;
-    const externalTokenReward = 0;
+    const description = 'Some description'
+    const nativeTokenReward = new BigNumber(10)
+    const reputationReward = new BigNumber(20)
+    const ethReward = new BigNumber(30)
+    const externalTokenReward = new BigNumber(0)
     const beneficiaryAddress = web3.eth.accounts[3];
 
     await createProposal(
