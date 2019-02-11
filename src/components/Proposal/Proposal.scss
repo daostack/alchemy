@@ -43,6 +43,7 @@
 
 .proposal:hover {
 	z-index: 1000;
+	box-shadow: 0 0 2px 0 #3278CA;
 }
 
 .openProposal {
@@ -210,6 +211,10 @@ button.disabled {
     animation: verifying 1s linear infinite;
 }
 
+
+.voteStatus {
+	display: block;
+}
 
 
 

@@ -1,6 +1,5 @@
 export const createProposalWrapper: string;
 export const editIcon: string;
-export const exitProposalCreation: string;
 export const infoTooltip: string;
 export const error: string;
 export const errorMessage: string;
@@ -13,6 +12,7 @@ export const tokenAmount: string;
 export const userAvatar: string;
 export const transferIcon: string;
 export const transferTotals: string;
+export const exitProposalCreation: string;
 export const submitProposal: string;
 export const loading: string;
 export const sendIcon: string;

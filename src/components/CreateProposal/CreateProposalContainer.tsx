@@ -165,11 +165,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               }
 
               <h2>
-                <img className={css.editIcon} src="/assets/images/Icon/Draft-white.svg"/>
-                <span>Create proposal</span>
-                <button className={css.exitProposalCreation} onClick={this.goBack.bind(this, dao.address)}>
-                  <img src="/assets/images/Icon/Close.svg"/>
-                </button>
+                <span>+ New proposal</span>
               </h2>
               <Formik
                 initialValues={{
@@ -242,6 +238,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   setFieldValue
                 }) =>
                   <form onSubmit={handleSubmit} noValidate>
+
+                    <label htmlFor="titleInput">
+                      Title
+                      {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
+                    </label>
                     <Field
                       autoFocus
                       id="titleInput"
@@ -251,18 +252,6 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       type="text"
                       className={touched.title && errors.title ? css.error : null}
                     />
-                    <label htmlFor="titleInput">
-                      Title (120 characters)
-                      <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
-                    </label>
-                    <Field
-                      id="descriptionInput"
-                      placeholder="Proposal description URL"
-                      name='description'
-                      type="text"
-                      className={touched.description && errors.description ? css.error : null}
-                    />
                     <label htmlFor="descriptionInput">
                       Description (URL)
                       <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
@@ -271,6 +260,13 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
+                    <Field
+                      id="descriptionInput"
+                      placeholder="Proposal description URL"
+                      name='description'
+                      type="text"
+                      className={touched.description && errors.description ? css.error : null}
+                    />
 
                     <UserSearchField
                       daoAvatarAddress={daoAvatarAddress}
@@ -348,9 +344,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>
                     <div className={css.alignCenter}>
+
+                      <button className={css.exitProposalCreation} onClick={this.goBack.bind(this, dao.address)}>
+                        Cancel
+                      </button>
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                        <img className={css.sendIcon} src="/assets/images/Icon/Send.svg"/>
-                        <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
                         Submit proposal
                       </button>
                     </div>

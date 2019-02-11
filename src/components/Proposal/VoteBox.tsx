@@ -126,13 +126,13 @@ export default class VoteBox extends React.Component<IProps, IState> {
             proposal={proposal}
           /> : ""
         }
-
+        
         <div className={voteControls}>
           <div className={css.voteUp}>
             <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(VoteOptions.Yes)} overlayClassName={css.voteTooltip}>
               <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
-                <img className={css.upvote} src="/assets/images/Icon/Upvote.svg"/>
-                <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/Upvoted.svg"/>
+                <img className={css.upvote} src="/assets/images/Icon/vote/for-gray.svg"/>
+                <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
                 <svg className={css.upvotePendingIcon} viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                     <defs>
                         <path d="M0,20.3763021 L20.3990885,0 L40.6751302,20.3763021 L37.7789714,23.491862 L20.3027344,6.04589844 L2.99348958,23.491862 L0,20.3763021 Z M5,25.535319 L20.4567057,10 L35.7426758,25.3149414 L32.6529948,28.3733724 L20.3713379,16.0996094 L7.94677734,28.6004232 L5,25.535319 Z" id="path-1"></path>
@@ -212,8 +212,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
           <div className={css.voteDown}>
             <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(VoteOptions.No)} overlayClassName={css.voteTooltip}>
               <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-                <img className={css.downvote} src="/assets/images/Icon/Downvote.svg"/>
-                <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/Downvoted.svg"/>
+                <img className={css.downvote} src="/assets/images/Icon/vote/against-gray.svg"/>
+                <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
                 <svg className={css.downvotePendingIcon} width="41px" height="29px" viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                     <defs>
                         <path d="M0,20.3763021 L20.3990885,0 L40.6751302,20.3763021 L37.7789714,23.491862 L20.3027344,6.04589844 L2.99348958,23.491862 L0,20.3763021 Z M5,25.535319 L20.4567057,10 L35.7426758,25.3149414 L32.6529948,28.3733724 L20.3713379,16.0996094 L7.94677734,28.6004232 L5,25.535319 Z" id="path-1"></path>

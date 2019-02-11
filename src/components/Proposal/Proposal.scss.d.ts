@@ -26,6 +26,7 @@ export const voted: string;
 export const voteDivider: string;
 export const verifyMask: string;
 export const verifying: string;
+export const voteStatus: string;
 export const reputationTurnout: string;
 export const header: string;
 export const tooltipPointer: string;
