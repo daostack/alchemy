@@ -186,7 +186,7 @@ button.disabled {
 	.voteDivider {
 		width: 24px;
 		position: absolute;
-		top: 50%;
+		top: 25%;
 	}
 }
 
@@ -570,12 +570,6 @@ button.disabled {
 	margin: 0 8px;
 }
 
-.voteGraphs:hover .reputationTurnout {
-	opacity: 1;
-	left: 40px;
-	transform: translateY(-50%) scale(1);
-}
-
 
 .transferDetails {
 	position: relative;
@@ -588,34 +582,12 @@ button.disabled {
 
 .voteGraphs {
 	position: relative;
+}
 
-	.voteGraph {
-		width: 9px;
-		background-color: rgba(239, 239, 239, 1.000);
-		position: relative;
-		display: inline-block;
-		margin-left: 3px;
-		height: 27px;
-
-		.dividing-line {
-			height: 50%;
-			border-bottom: 1px dotted $black-halftone;
-		}
-	}
-
-	.voteGraph .voteMeasurement {
-		width: 9px;
-		position: absolute;
-		bottom: 0;
-	}
-
-	.voteGraph.upvoteGraph .voteMeasurement {
-		background-color: $accent-1;
-	}
-
-	.voteGraph.downvoteGraph .voteMeasurement {
-		background-color: $accent-2;
-	}
+.voteGraphs:hover .reputationTurnout {
+	opacity: 1;
+	left: 40px;
+	transform: translateY(-50%) scale(1);
 }
 
 .predictions.enablePredictions button {

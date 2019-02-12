@@ -4,11 +4,12 @@ import Tooltip from 'rc-tooltip';
 
 import * as arcActions from "actions/arcActions";
 import { VoteOptions } from "reducers/arcReducer";
-import { IDAOState, IProposalState } from '@daostack/client'
+import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import VoteGraph from "./VoteGraph";
 
 interface IProps {
   currentAccountAddress: string;
@@ -160,14 +161,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
           </div>
           <div className={css.voteDivider}>
             <div className={css.voteGraphs}>
-              <div className={css.upvoteGraph + " " + css.voteGraph}>
-                <div className={css.dividingLine}></div>
-                <div className={css.voteMeasurement} style={styles.yesGraph}></div>
-              </div>
-              <div className={css.downvoteGraph + " " + css.voteGraph}>
-                <div className={css.dividingLine}></div>
-                <div className={css.voteMeasurement} style={styles.noGraph}></div>
-              </div>
+              <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == ProposalStage.Boosted} />
+
               <div className={css.reputationTurnout}>
                 <div className={css.header}>Reputation turnout</div>
                 <div className={css.turnoutInfo}>
