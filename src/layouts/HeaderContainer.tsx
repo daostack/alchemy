@@ -163,7 +163,9 @@ class HeaderContainer extends React.Component<IProps, null> {
           <div className={css.headerRight}>
             <div className={css.accountInfo}>
               <div className={css.accountImage}>
-                <AccountImage accountAddress={ethAccountAddress} />
+                <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                  <AccountImage accountAddress={ethAccountAddress} />
+                </Link>
               </div>
               <div className={css.holdings}>
                 <div className={css.pointer}></div>
