@@ -7,6 +7,7 @@ import { Modal } from 'react-router-modal';
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { VoteOptions } from "reducers/arcReducer";
+import { IProfileState } from "reducers/profilesReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
 import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
@@ -14,13 +15,12 @@ import * as css from "./Proposal.scss";
 
 interface IState {
   pendingPrediction: number;
-  showStakeModal: number;
   showApproveModal: boolean;
   showPreStakeModal: boolean;
-  stakeAmount: number;
 }
 
 interface IProps {
+  beneficiaryProfile?: IProfileState;
   currentPrediction: number;
   currentStake: number;
   currentAccountGens: number;
@@ -35,16 +35,14 @@ interface IProps {
 }
 
 export default class PredictionBox extends React.Component<IProps, IState> {
-  public stakeInput: any;
+
   constructor(props: IProps) {
     super(props);
 
     this.state = {
       pendingPrediction: null,
-      showStakeModal: 0,
       showApproveModal: false,
-      showPreStakeModal: false,
-      stakeAmount: 0
+      showPreStakeModal: false
     };
   }
 
@@ -56,23 +54,13 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     this.setState({ showApproveModal: false });
   }
 
-  public showModal(prediction: number, event: any) {
-    this.setState({ showStakeModal: prediction });
-    setTimeout(() => this.stakeInput.select(), 10);
-  }
-
-  public closeModal(event: any) {
-    this.setState({ showStakeModal: 0 });
-  }
-
   public closePreStakeModal(event: any) {
     this.setState({ showPreStakeModal: false });
   }
 
-  public handleClickStake(prediction: number, stake: number, event: any) {
+  public showPreStakeModal = (prediction: number) => (event: any) => {
     const { proposal, stakeProposal } = this.props;
-    const { stakeAmount } = this.state;
-    this.setState({ pendingPrediction: prediction, showStakeModal: 0, showPreStakeModal: true });
+    this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
   public handleClickPreApprove(event: any) {
@@ -83,6 +71,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
   public render() {
     const {
+      beneficiaryProfile,
       currentPrediction,
       currentStake,
       currentAccountGens,
@@ -98,9 +87,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const {
       pendingPrediction,
       showApproveModal,
-      showPreStakeModal,
-      showStakeModal,
-      stakeAmount
+      showPreStakeModal
     } = this.state;
 
     const isPredicting = isPredictingFail || isPredictingPass;
@@ -148,11 +135,6 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
     });
-    let predictionModalClass = classNames({
-      [css.newPrediction] : true,
-      [css.newPassPrediction] : showStakeModal == VoteOptions.Yes,
-      [css.newFailPrediction] : showStakeModal == VoteOptions.No,
-    });
     let stakeUpClass = classNames({
       [css.predicted]: currentPrediction == VoteOptions.Yes,
     });
@@ -183,20 +165,15 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         ''
     ;
 
-    const buyGensClass = classNames({
-      [css.genError]: true,
-      [css.hidden]: stakeAmount <= currentAccountGens
-    });
-
     const passButton = (
-      <button className={isPredictingPass ? css.pendingPrediction : undefined} onClick={disableStakePass ? "" : this.showModal.bind(this, 1)}>
+      <button className={isPredictingPass ? css.pendingPrediction : undefined} onClick={disableStakePass ? null : this.showPreStakeModal(1)}>
         PASS <strong>+</strong>
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
 
     const failButton = (
-      <button className={isPredictingFail ? css.pendingPrediction : undefined} onClick={disableStakeFail ? "" : this.showModal.bind(this, 2)}>
+      <button className={isPredictingFail ? css.pendingPrediction : undefined} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
         FAIL <strong>+</strong>
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
@@ -207,68 +184,16 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={stakeProposal.bind(null, proposal.dao.address, proposal.id, pendingPrediction, Number(stakeAmount))}
+            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount)}}
+            beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
+            currentAccountGens={currentAccountGens}
             dao={dao}
-            effectText={<span>Prediction amount: {stakeAmount} GENs<br/>You are predicting the proposal will be {pendingPrediction == VoteOptions.Yes ? "accepted" : "rejected"} by the DAO</span>}
             proposal={proposal}
+            secondaryHeader={stakingLeftToBoost + " GEN for boost!"}
           /> : ""
         }
-        <div className={predictionModalClass}>
 
-        <div className={buyGensClass}>
-          <h4>
-            You do not have enough GEN
-            <span>YOUR STAKE: {stakeAmount} - WALLET BALANCE: {currentAccountGens}</span>
-          </h4>
-          <div className={css.exchangeList}>
-            Select an exchange  &#8964;
-            <ul>
-              <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-              <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-              <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-              <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-              <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
-            </ul>
-          </div>
-          <span>Use one of our trusted exchanges to acquire more GEN</span>
-        </div>
-          <button className={css.cancelPrediction} onClick={this.closeModal.bind(this)}>
-            <img src="/assets/images/Icon/Close-black.svg"/>
-          </button>
-          <div className={css.newPredictionTitle}>
-            Predict this will <strong>{showStakeModal == VoteOptions.Yes ? "pass" : "fail"}</strong>
-          </div>
-          <div className={css.formGroup + " " + css.clearfix}>
-            <span className={css.genLabel}>Stake</span>
-            <input
-              type="number"
-              min="1"
-              ref={(input) => { this.stakeInput = input; }}
-              className={css.predictionAmount}
-              onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
-              value={stakeAmount}
-            />
-            <span className={css.genLabel}>GEN</span>
-          </div>
-
-          <div className={css.clearfix}>
-            {
-              stakeAmount <= 0 || stakeAmount > currentAccountGens ?
-                <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
-                  <button
-                    className={classNames({[css.placePrediction]: true, [css.disabled]: true})}
-                    disabled={true}
-                  >
-                    Place stake
-                  </button>
-                </Tooltip> :
-                <button className={css.placePrediction} onClick={this.handleClickStake.bind(this, showStakeModal)}>
-                  Place stake
-                </button>
-            }
-          </div>
-        </div>
         <div>
           <span className={css.boostedAmount}>
             {
