@@ -52,7 +52,8 @@ const DAOProposalsContainer = (props: {
   );
 
   return (
-    <div>
+    <div className={css.daoProposalsContainer}>
+      <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/create`} data-test-id="create-proposal">+ New proposal</Link>
       <h2 className={css.queueType}>Contribution Reward</h2>
       { proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
             ? <div className={css.noDecisions}>

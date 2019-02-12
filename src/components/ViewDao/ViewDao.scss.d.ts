@@ -24,6 +24,7 @@ export const boostedProposalsContainer: string;
 export const openProposal: string;
 export const navItem: string;
 export const navRedemption: string;
+export const daoProposalsContainer: string;
 export const createProposal: string;
 export const redeemAllRewardsButton: string;
 export const redeemAllContainer: string;

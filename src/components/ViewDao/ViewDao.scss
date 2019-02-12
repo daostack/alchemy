@@ -271,25 +271,22 @@ a.navRedemption:hover {
   margin-left: 0;
 }
 
-a.createProposal {
-  transform: rotate(-45deg);
-  background-image: linear-gradient(-206deg, #6CDBEA 0%, #3AB4D0 95%);
-  box-shadow: 0 10px 15px 0 rgba(0,0,0,0.16);
-  width: 42px;
-  height: 42px;
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 10000;
+.daoProposalsContainer {
+  position: relative;
+}
 
-  img {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%) rotate(45deg);
-    margin-left: 3px;
-    margin-top: 2px;
-  }
+.createProposal {
+  height: 30px;
+  line-height: 30px;
+  font-size: 13px;
+  color: $white;
+  background-color: rgba(3, 118, 255, 1.000);
+  border-radius: 15px;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 44px;
+  padding: 0 15px;
 }
 
 .redeemAllRewardsButton {
@@ -497,6 +494,7 @@ a.navItem:hover {
 
 .queueType {
   font-weight: bold;
+  padding: 0;
   color: rgba(104, 155, 214, 1.000);
 }
 
