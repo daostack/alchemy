@@ -21,7 +21,7 @@ class Countdown extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = {
+    this.state = this.calculateCountdown(this.props.toDate) || {
       years: 0,
       days: 0,
       hours: 0,

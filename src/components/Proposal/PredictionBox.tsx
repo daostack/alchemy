@@ -197,20 +197,16 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         <div>
           <span className={css.boostedAmount}>
             {
-              // TODO: check if commented line is presented well below
-              // proposal.state == ProposalStates.PreBoosted && stakingLeftToBoost > 0 ? <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''}
-              proposal.stage == ProposalStage.Open && stakingLeftToBoost > 0 ?
-             <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''
-           }
+              proposal.stage == ProposalStage.Queued && stakingLeftToBoost > 0 ?
+                <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''
+            }
           </span>
           <table>
             <tbody>
               <tr className={stakeUpClass}>
                 <td className={passPrediction}>
                   {
-                    // TODO: check if commented line is presented well below
-                    // proposal.state == ProposalStates.PreBoosted
-                   proposal.stage === ProposalStage.Open
+                   proposal.stage === ProposalStage.Queued
                     ? (
                       tip(VoteOptions.No) != '' ?
                         <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -226,10 +222,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <tr className={stakeDownClass} >
                 <td className={failPrediction}>
                   {
-                    // TODO: check if commented line is presented well below
-                    // tslint:disable-next-line
-                    // proposal.state == ProposalStates.PreBoosted
-                    proposal.stage === ProposalStage.Open
+                    proposal.stage === ProposalStage.Queued
                     ? (
                         tip(VoteOptions.Yes) != '' ?
                           <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>

@@ -77,7 +77,7 @@ services:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/migration:0.0.1-rc.7-v2
+    image: daostack/migration:0.0.1-rc.8-v5
     ports:
       - 8545:8545
     command: >

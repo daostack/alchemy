@@ -1,6 +1,6 @@
 import * as Arc from "@daostack/arc.js";
 import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
-import { Field, Formik } from 'formik';
+import { Field, Formik, FormikProps } from 'formik';
 import * as H from "history";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -22,6 +22,7 @@ const emptyProposal: IProposalState = {
   boostedVotePeriodLimit: 0,
   boostingThreshold: 0,
   createdAt: 0,
+  confidence: 0,
   description: "",
   dao: null,
   ethReward: 0,
@@ -38,7 +39,7 @@ const emptyProposal: IProposalState = {
   resolvedAt: 0,
   stakesFor: 0,
   stakesAgainst: 0,
-  stage: ProposalStage.Open,
+  stage: ProposalStage.Queued,
   title: "",
   votesFor: 0,
   votesAgainst: 0,
@@ -232,7 +233,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   isValid,
                   setFieldTouched,
                   setFieldValue
-                }) =>
+                }: FormikProps<FormValues>) =>
                   <form onSubmit={handleSubmit} noValidate>
 
                     <label htmlFor="titleInput">

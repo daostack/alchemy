@@ -49,7 +49,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const currentAccountAddress = props.currentAccountAddress
   const observable = combineLatest(
     // TODO: add queries here, like `proposals({boosted: true})` or whatever
-    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Resolved }), // the list of pre-boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Executed }), // the list of pre-boosted proposals
     arc.dao(daoAvatarAddress).state
   )
   return <Subscribe observable={observable}>{
