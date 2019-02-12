@@ -1,6 +1,6 @@
 export const loading: string;
 export const container: string;
-export const input: string;
+export const userSearchField: string;
 export const suggestionsContainer: string;
 export const suggestionsContainerOpen: string;
 export const suggestion: string;
