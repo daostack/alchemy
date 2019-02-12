@@ -1,14 +1,14 @@
 import * as Arc from "@daostack/arc.js"
 import { ContributionRewardWrapper, ExecutionState, GenesisProtocolFactory } from "@daostack/arc.js";
-import { DAO } from '@daostack/client'
+import { DAO } from "@daostack/client"
 import BigNumber from "bignumber.js";
 import { denormalize, normalize } from "normalizr";
 import { push } from "react-router-redux";
 import { IRootState } from "reducers/index";
-import { Dispatch } from 'redux';
+import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
-import { take } from 'rxjs/operators'
+import { take } from "rxjs/operators"
 import { Web3 } from "web3";
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
@@ -58,7 +58,7 @@ async function getRedemptions(votingMachineInstance: Arc.GenesisProtocolWrapper,
 
   // Beneficiary rewards
   if (accountAddress === proposal.beneficiaryAddress) {
-    if (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote === VoteOptions.Yes) {
+    if (proposal.state === ProposalStates.BoostedTimedOut && proposal.winningVote === VoteOptions.Yes) {
       // Boosted proposal that passed by expiring with more yes votes than no
       // have to manually calculate beneficiary rewards
       redemptions.beneficiaryEth = proposal.numberOfPeriods * proposal.ethReward;
@@ -126,97 +126,6 @@ async function getProposalRedemptions(proposal: IProposalStateLegacy, state: IRo
   return { entities, redemptions: redemptionsStrings };
 }
 
-export type CreateDAOAction = IAsyncAction<"ARC_CREATE_DAO", {}, any>;
-
-export function createDAO(daoName: string, tokenName: string, tokenSymbol: string, members: IAccountState[]): ThunkAction<any, IRootState, null> {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    try {
-      let founders: Arc.FounderConfig[] = [], member: IAccountState;
-      let totalReputation = 0, totalTokens = 0;
-
-      members.sort((a: IAccountState, b: IAccountState) => {
-        return b.reputation - a.reputation;
-      });
-
-      for (let i = 0; i < members.length; i++) {
-        member = members[i];
-        member.address = member.address.toLowerCase();
-        totalReputation += member.reputation;
-        totalTokens += member.tokens;
-        founders[i] = {
-          address: member.address,
-          tokens: Util.toWei(member.tokens),
-          reputation: Util.toWei(member.reputation),
-        };
-      }
-
-      dispatch({
-        type: ActionTypes.ARC_CREATE_DAO,
-        sequence: AsyncActionSequence.Pending,
-      } as CreateDAOAction);
-
-      const dao = await Arc.DAO.new({
-        name: daoName,
-        tokenName,
-        tokenSymbol,
-        founders,
-        schemes: [
-          // TODO: add these
-          // { name: "UpgradeScheme" },
-          // { name: "GlobalConstraintRegistrar" },
-          { name: "SchemeRegistrar" },
-          { name: "ContributionReward" },
-          { name: "GenesisProtocol" },
-        ],
-        votingMachineParams: {
-          votingMachineName: "GenesisProtocol",
-        },
-      });
-
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-
-      const daoData: any = {
-        avatarAddress: dao.avatar.address,
-        controllerAddress: dao.controller.address,
-        currentThresholdToBoost:
-          Util.fromWei(await votingMachineInstance.getThresholdForSchemeAndCreator(contributionRewardInstance, dao.avatar.address)),
-        ethCount: 0,
-        externalTokenCount: 0,
-        genCount: 0,
-        lastBlock: await Util.getLatestBlock(),
-        name: daoName,
-        members,
-        rank: 1, // TODO
-        promotedAmount: 0,
-        proposals: [],
-        proposalsLoaded: true,
-        reputationAddress: dao.reputation.address,
-        reputationCount: totalReputation,
-        tokenAddress: dao.token.address,
-        tokenCount: 0,
-        tokenSupply: totalTokens,
-        tokenName,
-        tokenSymbol,
-      };
-
-      dispatch({
-        type: ActionTypes.ARC_CREATE_DAO,
-        sequence: AsyncActionSequence.Success,
-        payload: normalize(daoData, schemas.daoSchema),
-      } as CreateDAOAction);
-
-      dispatch(push("/dao/" + dao.avatar.address));
-    } catch (err) {
-      console.error(err);
-      dispatch({
-        type: ActionTypes.ARC_CREATE_DAO,
-        sequence: AsyncActionSequence.Failure,
-      } as CreateDAOAction);
-    }
-  }; /* EO createDAO */
-}
-
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
 export function createProposal(
@@ -277,7 +186,7 @@ export function createProposal(
         reputationReward: arc.web3.utils.toWei(String(reputationReward)),
         ethReward: arc.web3.utils.toWei(String(ethReward)),
         externalTokenReward: arc.web3.utils.toWei(String(externalTokenReward)),
-        externalTokenAddress: '',
+        externalTokenAddress: "",
         periodLength: 0, // TODO: check what the default "periodLength" should be here
         periods: 1, // "periodLength 0 requires periods to be 1"
         title,

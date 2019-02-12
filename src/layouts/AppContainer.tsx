@@ -10,7 +10,6 @@ import { ModalContainer, ModalRoute } from "react-router-modal";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
-import CreateDaoContainer from "components/CreateDao/CreateDaoContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import NoEthAccountContainer from "components/Errors/NoEthAccountContainer";
@@ -131,12 +130,6 @@ class AppContainer extends React.Component<IProps, IState> {
               <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
               <Route path="/" component={HomeContainer} />
             </Switch>
-            <ModalRoute
-              exact={true}
-              path="/create-dao"
-              parentPath="/"
-              component={CreateDaoContainer}
-            />
             <ModalRoute
               path="/dao/:daoAvatarAddress/proposals/create"
               parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
