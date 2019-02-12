@@ -1,8 +1,6 @@
-import * as Arc from "@daostack/arc.js";
 import { Address } from '@daostack/client'
 import { arc } from 'arc'
 import { BigNumber } from "bignumber.js";
-import promisify = require("es6-promisify");
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
 // v1.0 may improve on this entire Web3 typings experience
@@ -54,9 +52,7 @@ export default class Util {
 
   public static async getLatestBlock() {
     try {
-      const web3 = await Arc.Utils.getWeb3();
-      const getBlock = promisify(web3.eth.getBlock);
-      return (await getBlock('latest')).number;
+      return (await arc.web3.getBlock('latest')).number;
     } catch (err) {
       throw err
     }
