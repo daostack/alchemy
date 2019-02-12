@@ -1,16 +1,17 @@
 import * as Arc from "@daostack/arc.js";
+import { IDAOState } from "@daostack/client"
 import promisify = require("es6-promisify");
 import * as Redux from "redux";
 import { Web3 } from "web3";
 
-import { IDAOState } from '@daostack/client'
 import { getProfile } from "actions/profilesActions";
+import { arc } from "arc"
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
 import { AsyncActionSequence, IAsyncAction } from "./async";
 
-export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, IWeb3State>;
+export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
 export function initializeWeb3() {
   return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
@@ -18,7 +19,7 @@ export function initializeWeb3() {
       type: ActionTypes.WEB3_CONNECT,
       sequence: AsyncActionSequence.Pending,
       operation: {
-        message: 'Connecting...',
+        message: "Connecting...",
         totalSteps: 1,
       },
     } as ConnectAction);
@@ -26,7 +27,7 @@ export function initializeWeb3() {
     let web3: Web3;
 
     try {
-      web3 = await Arc.Utils.getWeb3();
+      web3 = await Util.getWeb3();
     } catch (e) {
       console.error(e);
       dispatch({
@@ -40,7 +41,7 @@ export function initializeWeb3() {
       return;
     }
 
-    const networkId = Number(await Arc.Utils.getNetworkId());
+    const networkId = Number(await Util.getNetworkId());
     let accounts: string[]
     try {
       accounts = web3.eth.accounts
@@ -59,7 +60,7 @@ export function initializeWeb3() {
     };
 
     try {
-      payload.ethAccountAddress = (await Arc.Utils.getDefaultAccount()).toLowerCase();
+      payload.ethAccountAddress = (await Util.defaultAccount()).toLowerCase();
     } catch (e) {
       dispatch({
         type: ActionTypes.WEB3_CONNECT,
@@ -78,7 +79,7 @@ export function initializeWeb3() {
       type: ActionTypes.WEB3_CONNECT,
       sequence: AsyncActionSequence.Success,
       operation: {
-        message: 'Connected to web3!'
+        message: "Connected to web3!"
       },
       payload
     } as ConnectAction);
@@ -201,12 +202,7 @@ export function approveStakingGens(daoAvatarAddress: string) {
     } as ApproveAction);
 
     try {
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-      const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-      const stakingToken = await Arc.StandardTokenFactory.at(stakingTokenAddress);
-      await stakingToken.approve({spender: votingMachineAddress, amount: Util.toWei(100000)})
+      await arc.approveForStaking(Util.toWei(100000).toNumber())
     } catch (err) {
       console.error(err);
       dispatch({

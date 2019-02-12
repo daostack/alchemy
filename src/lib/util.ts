@@ -66,6 +66,13 @@ export default class Util {
   public static getWeb3() {
     return arc.web3
   }
+  public static getNetworkId() {
+    return arc.web3.eth.net.getId()
+  }
+
+  public static defaultAccount() {
+    return arc.web3.eth.defaultAccount
+  }
 }
 
 export function getLocalContractAddresses() {
