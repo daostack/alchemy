@@ -1,11 +1,7 @@
-import * as Arc from "@daostack/arc.js";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { connect } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { CSSTransition } from "react-transition-group";
-
 import * as web3Actions from "actions/web3Actions";
+import { arc } from "arc"
+import * as React from "react";
+import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
 
@@ -45,10 +41,12 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
   }
 
   public enableAccountAccess = async (e: any) => {
-    const web3 = await Arc.Utils.getWeb3();
+    const web3 = arc.web3
     try {
-      await (web3 as any).currentProvider.enable();
-    } catch (e) {}
+      await (web3 as any).currentProvider.enable()
+    } catch (e) {
+      throw e
+    }
   }
 
   public render() {

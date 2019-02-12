@@ -1,12 +1,12 @@
-import { Address } from '@daostack/client'
-import { arc } from 'arc'
+import { Address } from "@daostack/client"
+import { arc } from "arc"
 import { BigNumber } from "bignumber.js";
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
 // v1.0 may improve on this entire Web3 typings experience
 /* tslint:disable-next-line:no-var-requires */
 const Web3 = require("web3");
-const path = require('path')
+const path = require("path")
 
 export default class Util {
 
@@ -40,19 +40,18 @@ export default class Util {
         return "Ganache"
     }
   }
-
   public static copyToClipboard(value: any) {
-    const el = document.createElement('textarea');
+    const el = document.createElement("textarea");
     el.value = value;
     document.body.appendChild(el);
     el.select();
-    document.execCommand('copy');
+    document.execCommand("copy");
     document.body.removeChild(el);
   }
 
   public static async getLatestBlock() {
     try {
-      return (await arc.web3.getBlock('latest')).number;
+      return (await arc.web3.getBlock("latest")).number;
     } catch (err) {
       throw err
     }
@@ -60,8 +59,12 @@ export default class Util {
 
   public static trace<T>(x: T, ...args: any[]): T {
     // tslint:disable-next-line:no-console
-    console.debug('trace', ...args, x);
+    console.debug("trace", ...args, x);
     return x;
+  }
+
+  public static getWeb3() {
+    return arc.web3
   }
 }
 
@@ -74,7 +77,7 @@ export function getLocalContractAddresses() {
    }
   console.log(addresses)
   if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at ${'../../config/migration.json'} exist?`)
+      throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`)
     }
   return addresses
 }
