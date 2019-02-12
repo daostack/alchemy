@@ -65,11 +65,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
       case ActionTypes.VoteUp:
         icon = <img src="/assets/images/Tx/Upvote.svg" />;
         transactionInfo = <span><strong className={css.passVote}>Pass</strong> vote</span>;
-        // TODO: check if the commented lines are correctly refactored
-        // passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
-        // failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
-        passIncentive = proposal.stage == ProposalStage.Open ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
-        failIncentive = proposal.stage == ProposalStage.Open ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
+        passIncentive = proposal.stage == ProposalStage.Queued ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
+        failIncentive = proposal.stage == ProposalStage.Queued ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR YES VOTES";
         rules = <div>
                   <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
@@ -81,9 +78,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
       case ActionTypes.VoteDown:
         icon = <img src="/assets/images/Tx/Downvote.svg" />;
         transactionInfo = <span><strong className={css.failVote}>Fail</strong> vote</span>;
-        // TODO: check if the commented lines are correctly refactored
-        passIncentive = proposal.stage == ProposalStage.Open ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
-        failIncentive = proposal.stage == ProposalStage.Open ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
+        passIncentive = proposal.stage == ProposalStage.Queued ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
+        failIncentive = proposal.stage == ProposalStage.Queued ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR NO VOTES";
         rules = <div>
                   <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>

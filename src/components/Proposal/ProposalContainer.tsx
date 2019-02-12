@@ -175,12 +175,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
     if (proposal) {
       // TODO: check if the commented lines are represented correctly in the line below
       // const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
-      const executable = proposalEnded(proposal) && !proposal.executedAt && proposal.stage === ProposalStage.Resolved;
+      const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
         [css.proposal]: true,
-        // TODO: check if the commented lines are represented correctly in the line below
-        // [css.openProposal]: proposal.state == ProposalStates.PreBoosted || proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod,
-        [css.openProposal]: proposal.stage == ProposalStage.Open || proposal.stage === ProposalStage.Boosted || proposal.stage == ProposalStage.QuietEndingPeriod,
+        [css.openProposal]: proposal.stage == ProposalStage.Queued || proposal.stage === ProposalStage.PreBoosted || proposal.stage == ProposalStage.Boosted || proposal.stage == ProposalStage.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: redeemable
