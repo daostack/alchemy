@@ -193,7 +193,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.title = 'Title is too long (max 120 characters)';
                   }
 
-                  // ???
+                  // TODO: do we want this uniqueness check still?
                   if (proposalDescriptions.indexOf(values.description) !== -1) {
                     errors.description = 'Must be unique';
                   }
@@ -202,10 +202,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.beneficiary = 'Invalid address';
                   }
 
+                  {/* TODO: dont need to check if description is a URL anymore
                   const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
                   if (!pattern.test(values.description)) {
                     errors.description = 'Invalid URL';
-                  }
+                  }*/}
 
                   nonNegative('ethReward');
                   nonNegative('externalTokenReward');
@@ -255,12 +256,13 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
 
-                    <textarea
+                    <Field
+                      component="textarea"
                       id="descriptionInput"
                       placeholder="Proposal description URL"
                       name='description'
                       className={touched.description && errors.description ? css.error : null}
-                    ></textarea>
+                    />
                     <div className={css.addTransfer}>
                       <div className={css.rewardRow + " " + css.clearfix}>
                         <div className={css.rewardAmount}>
@@ -322,7 +324,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         className={touched.reputationReward && errors.reputationReward ? css.error : null}
                         step={0.1}
                       />
-                      
+
 
                       {dao.externalTokenAddress
                         ? <div>
