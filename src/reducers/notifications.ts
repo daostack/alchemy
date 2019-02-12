@@ -1,12 +1,12 @@
-import { Action, Dispatch, Middleware } from 'redux';
-import * as moment from 'moment';
-import { isOperationsAction, OperationStatus, OperationError, IOperationsState, IOperation, dismissOperation, IUpdateOperation } from './operations';
-import { IRootState } from 'reducers';
-import { VoteOptions } from 'reducers/arcReducer';
+import { arc } from 'arc'
 import BigNumber from 'bignumber.js';
 import Util from 'lib/util';
-import * as Arc from '@daostack/arc.js';
+import * as moment from 'moment';
+import { IRootState } from 'reducers';
+import { VoteOptions } from 'reducers/arcReducer';
+import { Action, Dispatch, Middleware } from 'redux';
 import { REHYDRATE, RehydrateAction } from 'redux-persist';
+import { dismissOperation, IOperation, IOperationsState, isOperationsAction, IUpdateOperation, OperationError, OperationStatus } from './operations';
 
 /** -- Model -- */
 
@@ -163,23 +163,23 @@ function elipsis(str: string, n: number) {
  * A map of messages to show for each type of action.
  */
 const messages: {[key: string]: (proposalTitle: string | undefined, options: any) => string} = {
-  'GenesisProtocol.vote': (proposalTitle, {vote, proposalId}: Arc.VoteOptions) =>
+  'GenesisProtocol.vote': (proposalTitle, {vote, proposalId}) =>
     `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${elipsis(proposalTitle, 22)}`,
-  'GenesisProtocol.stake': (proposalTitle, {vote, proposalId, amount}: Arc.StakeConfig) =>
+  'GenesisProtocol.stake': (proposalTitle, {vote, proposalId, amount}) =>
     `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount))} GEN`,
-  'GenesisProtocol.execute': (proposalTitle, {proposalId}: Arc.ProposalIdOption) =>
+  'GenesisProtocol.execute': (proposalTitle, {proposalId}) =>
     `Executing "${elipsis(proposalTitle, 22)}"`,
-  'Redeemer.redeem': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
+  'Redeemer.redeem': (proposalTitle, {proposalId}) =>
     `Redeeming rewards for "${elipsis(proposalTitle, 22)}"`,
-  'GenesisProtocol.redeemDaoBounty': (proposalTitle, {proposalId}: Arc.RedeemConfig) =>
+  'GenesisProtocol.redeemDaoBounty': (proposalTitle, {proposalId}) =>
     `Redeeming bounty rewards for "${elipsis(proposalTitle, 22)}"`,
-  'ContributionReward.proposeContributionReward': (proposalTitle, {}: Arc.ProposeContributionRewardParams) =>
+  'ContributionReward.proposeContributionReward': (proposalTitle, {}) =>
     `Creating proposal ${elipsis(proposalTitle, 22)}`,
-  'ContributionReward.redeemContributionReward': (proposalTitle, {proposalId}: Arc.ContributionRewardRedeemParams) =>
+  'ContributionReward.redeemContributionReward': (proposalTitle, {proposalId}) =>
     `Redeeming contribution reward for "${elipsis(proposalTitle, 22)}"`,
-  'DAO.new': (proposalTitle, {}: Arc.NewDaoConfig) =>
+  'DAO.new': (proposalTitle, {}) =>
     `Creating a new DAO`,
-  'StandardToken.approve': (proposalTitle, {amount}: Arc.StandardTokenApproveOptions) =>
+  'StandardToken.approve': (proposalTitle, {amount}) =>
     `Approving ${Util.fromWei(new BigNumber(amount))} GEN for staking`
 }
 
@@ -237,8 +237,8 @@ export const notificationUpdater: Middleware =
 
       (async () => {
 
-        const state = getState() as any as IRootState;
-        const network = (await Arc.Utils.getNetworkName()).toLowerCase();
+        const state = getState() as any as IRootState
+        const network = Util.networkName(await arc.web3.eth.net.getId()).toLowerCase()
 
         if (action.type === REHYDRATE) {
           const a = action as RehydrateAction;
