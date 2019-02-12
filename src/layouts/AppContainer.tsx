@@ -1,11 +1,11 @@
-import * as Arc from "@daostack/arc.js";
 import * as History from "history";
 import * as queryString from "query-string";
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Cookies, withCookies } from "react-cookie";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
+import { ModalContainer, ModalRoute } from "react-router-modal";
 
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
@@ -20,8 +20,6 @@ import MinimizedNotifications from "components/Notification/MinimizedNotificatio
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import HeaderContainer from "layouts/HeaderContainer";
-// @ts-ignore
-import { ModalContainer, ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
 import { ConnectionStatus } from "reducers/web3Reducer";
@@ -73,8 +71,6 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
 
-  public watchers: Array<Arc.EventFetcher<any> | Arc.EntityFetcher<any, any>> = [];
-
   constructor(props: IProps) {
     super(props);
     this.state = { notificationsMinimized: false };
@@ -113,9 +109,9 @@ class AppContainer extends React.Component<IProps, IState> {
         <NoWeb3Container /> :
       ethAccountAddress === null ?
         <NoEthAccountContainer /> :
-      connectionStatus == ConnectionStatus.Connected ?
+      connectionStatus === ConnectionStatus.Connected ?
         <div className={css.outer}>
-          <BreadcrumbsItem to='/'>Alchemy</BreadcrumbsItem>
+          <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
             <Route path="/dao/:daoAvatarAddress" children={(props) => {
