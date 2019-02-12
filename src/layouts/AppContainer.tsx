@@ -5,6 +5,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Cookies, withCookies } from "react-cookie";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
+//@ts-ignore
 import { ModalContainer, ModalRoute } from "react-router-modal";
 
 import * as arcActions from "actions/arcActions";
