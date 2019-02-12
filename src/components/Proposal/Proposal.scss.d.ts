@@ -11,6 +11,7 @@ export const disabled: string;
 export const redeemable: string;
 export const voteTooltip: string;
 export const voteControls: string;
+export const voteButtons: string;
 export const voteUp: string;
 export const voteDown: string;
 export const downvote: string;

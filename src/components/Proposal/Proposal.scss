@@ -77,54 +77,58 @@ button.disabled {
 }
 
 .voteControls {
-	float: left;
-	width: 30px;
-	margin-right: 9px;
-	margin-left: 9px;
+	width: 100%;
 	text-align: center;
 	position: relative;
 	height: 70px;
 
+	.voteButtons {
+		float: left;
+		width: 50%;
+		text-align: left;
+		height: 100%;
+		margin-top: 8px;
+	}
+
 	button {
-		position: absolute;
-		left: 0;
 		border: none;
+		position: relative;
 		width: 30px;
 		height: 24px;
 		background-color: transparent;
 		outline: none;
+		margin-left: 5px;
+
+		span { 
+			display: block;
+			margin-left: 20px;
+			font-size: 13px;
+		}
 
 		img {
 			position: absolute;
-			margin: 0;
-			padding: 0;
-			left: 3px;
-			top: 3px;
+			top: 0;
+			left: 0;
 		}
-
 	}
 
-	.voteUp button {
-		top: -3px;
+	.voteUp {
+		position: relative;
+		display: block;
 	}
 
-	.voteDown button {
-		bottom: -3px;
+	.voteDown {
+		position: relative;
+		display: block;
 	}
 
 	button:hover:not(.disabled) .downvote.downvoted {
-	    left: 0px;
-	    top: 1px;
 	    height: 18px;
 	    opacity: 1;
 	}
 
 	.voteGraphs {
-		position: absolute;
-		top: 50%;
-		left: 0;
-		z-index: 1000;
-		transform: translateY(-50%);
+		display: inline-block;
 	}
 
 	.upvote, .downvote {
@@ -143,7 +147,7 @@ button.disabled {
 	.downvotePendingIcon, .upvotePendingIcon {
 	    left: 0;
 	    opacity: 0;
-	    position: absolute;
+		display: none;
 		width: 28px;
 	    height: 15px;
 	}
@@ -184,9 +188,10 @@ button.disabled {
 	 }
 
 	.voteDivider {
-		width: 24px;
-		position: absolute;
-		top: 25%;
+		width: 50%;
+		height: 100%;
+		float: left;
+		text-align: right;
 	}
 }
 
@@ -611,6 +616,8 @@ button.disabled {
 
 .voteGraphs {
 	position: relative;
+	margin-top: 12px;
+	margin-right: 5px;
 }
 
 .voteGraphs:hover .reputationTurnout {
@@ -683,13 +690,6 @@ button.disabled {
 	float: right;
 	width: 50%;
 	border-left: 1px solid rgba(215, 225, 237, 1.000);
-
-	div {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
 
 	span {
 		font-size: $small;
