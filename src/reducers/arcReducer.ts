@@ -253,7 +253,7 @@ export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   //   // Pre boosted proposal past end time but not yet executed
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );
-  const res = proposal.stage === ProposalStage.Resolved
+  const res = proposal.stage === ProposalStage.Executed
   return res;
 }
 
@@ -277,7 +277,7 @@ export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
   //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.Yes)
   // );
   const res = (
-    (proposal.stage == ProposalStage.Resolved && proposal.winningOutcome === ProposalOutcome.Pass) ||
+    (proposal.stage == ProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Pass) ||
     (proposal.stage == ProposalStage.QuietEndingPeriod && proposal.winningOutcome === ProposalOutcome.Pass)
   )
   return res;
@@ -294,7 +294,7 @@ export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );
   const res = (
-    (proposal.stage == ProposalStage.Resolved && proposal.winningOutcome === ProposalOutcome.Fail) ||
+    (proposal.stage == ProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
     (proposal.stage == ProposalStage.QuietEndingPeriod && proposal.winningOutcome !== ProposalOutcome.Pass)
   );
 

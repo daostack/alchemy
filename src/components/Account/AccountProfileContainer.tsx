@@ -2,7 +2,7 @@ import * as Arc from "@daostack/arc.js";
 import promisify = require("es6-promisify");
 import * as sigUtil from 'eth-sig-util';
 import * as ethUtil from 'ethereumjs-util';
-import { Field, Formik, FormikBag } from 'formik';
+import { Field, Formik, FormikBag, FormikProps } from 'formik';
 import * as queryString from 'query-string';
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
@@ -195,7 +195,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
               handleSubmit,
               isSubmitting,
               isValid,
-            }) =>
+            }: FormikProps<FormValues>) =>
               <form onSubmit={handleSubmit} noValidate>
                 <div className={css.profileContent}>
                   <div className={css.userAvatarContainer}>

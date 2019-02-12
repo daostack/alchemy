@@ -114,19 +114,20 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
   const daoAvatarAddress = props.match.params.daoAvatarAddress
   const currentAccountAddress =  props.currentAccountAddress
   const observable = combineLatest(
+    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Queued }), // the list of queued proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.PreBoosted }), // the list of preboosted proposals
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Boosted }), // the list of boosted proposals
-    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Open }), // the list of pre-boosted proposals
     arc.dao(daoAvatarAddress).state
   )
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IProposalState[], IDAOState]>): any => {
+    (state: IObservableState<[IProposalState[], IProposalState[], IProposalState[], IDAOState]>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>
       } else if (state.error) {
         throw state.error
       } else {
         const data = state.data
-        return <DAOProposalsContainer proposalsBoosted={data[0]} proposalsPreBoosted={data[1]} dao={data[2]} currentAccountAddress={currentAccountAddress}/>
+        return <DAOProposalsContainer proposalsBoosted={data[2]} proposalsPreBoosted={data[0]} dao={data[3]} currentAccountAddress={currentAccountAddress}/>
       }
     }
   }</Subscribe>

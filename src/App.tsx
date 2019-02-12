@@ -9,7 +9,7 @@ import { default as store, history } from "./configureStore";
 
 import AppContainer from "layouts/AppContainer";
 
-export class App extends React.Component<undefined, undefined> {
+export class App extends React.Component<{}, null> {
 
   public render() {
     return (
