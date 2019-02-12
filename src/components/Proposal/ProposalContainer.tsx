@@ -252,7 +252,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div className={css.proposalInfo}>
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
-                <span>0:0</span>
+                {!proposalEnded(proposal) ?
+                    closingTime(proposal).isAfter(moment()) ? <Countdown toDate={closingTime(proposal)} /> : <span className={css.closedTime}>CLOSED {closingTime(proposal).format("MMM D, YYYY").toUpperCase()}</span>
+                    : " "
+                }
               </div>
               <div className={css.stateChange}>
                 <button className={css.executeProposal}>
@@ -298,6 +301,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 </div>
                 : ""
             }
+
+            <div className={css.createdBy}>
+              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}/>
+              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
+            </div>
+
             <h3>
               <span data-test-id="proposal-closes-in">
                 {proposal.stage == ProposalStage.QuietEndingPeriod ?
@@ -321,21 +330,11 @@ class ProposalContainer extends React.Component<IProps, IState> {
                       </div>
                     </div>
                   </strong>
-                  : !proposalEnded(proposal) ?
-                      closingTime(proposal).isAfter(moment()) ? <Countdown toDate={closingTime(proposal)} /> : <span className={css.closedTime}>CLOSED {closingTime(proposal).format("MMM D, YYYY").toUpperCase()}</span>
-                      : " "
+                  : " "
                 }
               </span>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[no title]"}</Link>
             </h3>
-
-            <a href={proposal.description} target="_blank" className={css.viewProposal}>
-              <span>View proposal</span>
-            </a>
-            <div className={css.createdBy}>
-              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}/>
-              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
-            </div>
             <div className={css.proposalDetails}>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
                 <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />

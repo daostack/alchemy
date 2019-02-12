@@ -377,7 +377,7 @@ button.disabled {
 
 		span {
 			display: inline-block;
-			margin: 10px;
+			margin: 15px 0 0 10px;
 			opacity: .6;
 		}
 	}
@@ -397,7 +397,7 @@ button.disabled {
 			color: $white;
 			border: none;
 			transition: all .25s ease;
-			margin: 10px;
+		    margin: 10px 10px 5px 0px;
 			display: none;
 		}
 
@@ -441,7 +441,7 @@ button.disabled {
 
 	h3 {
 		font-size: $body;
-		margin: 0 0 8px 0;
+		margin: 4px 10px 10px 11px;
 	}
 
 	.closedTime {
@@ -821,13 +821,6 @@ button.disabled {
 .createdBy {
 	font-size: $small;
 	color: $black-thirdtone;
-  position: absolute;
-  width: 250px;
-  right: 0;
-  z-index: 100;
-  text-align: right;
-  top: 22px;
-  transform: translateY(-50%);
 
 	.targetAccount {
 		top: 7px;
