@@ -53,6 +53,7 @@ const DAOProposalsContainer = (props: {
 
   return (
     <div>
+      <h2 className={css.queueType}>Contribution Reward</h2>
       { proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
             ? <div className={css.noDecisions}>
                 <img className={css.relax} src="/assets/images/meditate.svg"/>
@@ -71,14 +72,6 @@ const DAOProposalsContainer = (props: {
           <div className={css.proposalsHeader}>
             Boosted Proposals
           </div>
-          <div className={css.columnHeader + " " + css.clearfix}>
-            <div className={css.votes}>
-              VOTES
-            </div>
-            <div className={css.predictions}>
-              PREDICTIONS
-            </div>
-          </div>
           <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
             {boostedProposalsHTML}
           </div>
@@ -90,14 +83,6 @@ const DAOProposalsContainer = (props: {
         <div className={css.regularContainer}>
           <div className={css.proposalsHeader}>
             Regular Proposals
-          </div>
-          <div className={css.columnHeader + " " + css.clearfix}>
-            <div className={css.votes}>
-              VOTES
-            </div>
-            <div className={css.predictions}>
-              PREDICTIONS
-            </div>
           </div>
           <div className={css.proposalsContainer}>
             {preBoostedProposalsHTML}

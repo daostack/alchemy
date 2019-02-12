@@ -47,6 +47,7 @@ export const leftAlign: string;
 export const rightAlign: string;
 export const boostedContainer: string;
 export const regularContainer: string;
+export const queueType: string;
 export const proposalsHeader: string;
 export const noDecisions: string;
 export const relax: string;

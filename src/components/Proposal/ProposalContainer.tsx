@@ -250,6 +250,22 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
 
           <div className={css.proposalInfo}>
+            <div className={css.cardTop + " " + css.clearfix}>
+              <div className={css.timer}>
+                <span>0:0</span>
+              </div>
+              <div className={css.stateChange}>
+                <button className={css.executeProposal}>
+                  <img src="/assets/images/Icon/execute.svg"/> 
+                  <span> Execute</span>
+                </button>
+                <button className={css.boostProposal}>
+                  <img src="/assets/images/Icon/boost.svg"/>
+                  <span> Boost</span>
+                </button>
+              </div>
+            </div>
+
             {proposalPassed(proposal) ?
               <div className="css.clearfix">
                 <div className={css.proposalPassInfo}>
@@ -317,10 +333,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <span>View proposal</span>
             </a>
             <div className={css.createdBy}>
-              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}
-              />
+              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}/>
               <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
-              &nbsp; ON {submittedTime.format("MMM DD, YYYY")}
             </div>
             <div className={css.proposalDetails}>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>

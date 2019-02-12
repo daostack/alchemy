@@ -20,6 +20,7 @@ button:hover {
   position: fixed;
   display: flex;
   height: 100%;
+  width: 100%;
 }
 
 .daoContext {
@@ -494,14 +495,20 @@ a.navItem:hover {
   margin-top: 20px;
 }
 
+.queueType {
+  font-weight: bold;
+  color: rgba(104, 155, 214, 1.000);
+}
+
 .proposalsHeader {
-  font-size: $subheader;
+  font-size: 16px;
   position: relative;
+  text-align: center;
   padding-top: 20px;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(191, 203, 213, 1.000);
   color: $black-halftone;
   font-weight: $bold;
-  max-width: 380px;
 
   span {
     position: absolute;

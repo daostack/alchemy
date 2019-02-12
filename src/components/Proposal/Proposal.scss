@@ -37,7 +37,7 @@
 
 .proposal {
 	width: 315px;
-	border-radius: 0 25px 25px 25px;
+	border-radius: 0 15px 15px 15px;
 	background-color: $white;
 }
 
@@ -363,6 +363,65 @@ button.disabled {
 .voteBox.unconfirmedVote {
 	.loading {
 		display: block;
+	}
+}
+
+.cardTop {
+	height: 20px;
+
+	.timer {
+		float: left;
+		width: 50%;
+		text-align: left;
+		font-size: 12px;
+
+		span {
+			display: inline-block;
+			margin: 10px;
+			opacity: .6;
+		}
+	}
+
+	.stateChange {
+		float: left;
+		width: 50%;
+		text-align: right;
+		font-size: 12px;
+
+		button {
+			background-color: rgba(0, 118, 255, 1.000);
+			border-radius: 10px;
+			height: 20px;
+			line-height: 20px;
+			padding: 0 6px;
+			color: $white;
+			border: none;
+			transition: all .25s ease;
+			margin: 10px;
+			display: none;
+		}
+
+		.executeProposal {
+			display: inline-block;
+		}
+
+		.executeProposal, .boostProposal {
+			width: 20px;
+			overflow: hidden;
+
+			span {
+				display: inline-block;
+				padding-left: 6px;
+			}
+		}
+
+		.executeProposal:hover {
+			width: 76px;
+		}
+
+		.boostProposal:hover {
+			width: 66px;
+		}
 	}
 }
 
