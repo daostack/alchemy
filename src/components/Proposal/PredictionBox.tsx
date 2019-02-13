@@ -155,6 +155,16 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       [css.disabled]: disableStakeFail
     });
 
+    const passButtonClass = classNames({
+      [css.pendingPrediction]: isPredictingPass,
+      [css.passButton]: true
+    });
+
+    const failButtonClass = classNames({
+      [css.pendingPrediction]: isPredictingFail,
+      [css.failButton]: true
+    });
+
     const tip = (prediction: VoteOptions) =>
       !currentAccountGens ?
         'Insufficient GENs' :
@@ -166,14 +176,14 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     ;
 
     const passButton = (
-      <button className={isPredictingPass ? css.pendingPrediction : undefined} onClick={disableStakePass ? null : this.showPreStakeModal(1)}>
+      <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)}>
         PASS <strong>+</strong>
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
 
     const failButton = (
-      <button className={isPredictingFail ? css.pendingPrediction : undefined} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
+      <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
         FAIL <strong>+</strong>
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
@@ -195,48 +205,42 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         }
 
         <div>
+          <div className={css.stakes}>
+            {proposal.stakesFor} 
+            <div className={css.forBar}><span></span></div>
+            {proposal.stakesAgainst}
+            <div className={css.againstBar}><span></span></div>
+          </div>
           <span className={css.boostedAmount}>
             {
               proposal.stage == ProposalStage.Queued && stakingLeftToBoost > 0 ?
-                <span><b>{stakingLeftToBoost.toFixed(2)} MORE GEN TO BOOST</b></span> : ''
+                <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ''
             }
           </span>
-          <table>
-            <tbody>
-              <tr className={stakeUpClass}>
-                <td className={passPrediction}>
-                  {
-                   proposal.stage === ProposalStage.Queued
-                    ? (
-                      tip(VoteOptions.No) != '' ?
-                        <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                          {passButton}
-                        </Tooltip> :
-                        passButton
-                      )
-                    : "PASS"
-                  }
-                </td>
-                <td>{proposal.stakesFor} GEN</td>
-              </tr>
-              <tr className={stakeDownClass} >
-                <td className={failPrediction}>
-                  {
-                    proposal.stage === ProposalStage.Queued
-                    ? (
-                        tip(VoteOptions.Yes) != '' ?
-                          <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                            {failButton}
-                          </Tooltip> :
-                          failButton
-                      )
-                    : "FAIL"
-                  }
-                </td>
-                <td>{proposal.stakesAgainst} GEN</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className={css.centered}>
+            {
+             proposal.stage === ProposalStage.Queued
+              ? (
+                tip(VoteOptions.No) != '' ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                    {passButton}
+                  </Tooltip> :
+                  passButton
+                )
+              : "PASS"
+            }
+            {
+              proposal.stage === ProposalStage.Queued
+              ? (
+                  tip(VoteOptions.Yes) != '' ?
+                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                      {failButton}
+                    </Tooltip> :
+                    failButton
+                )
+              : "FAIL"
+            }
+          </div>
         </div>
       </div>
     );

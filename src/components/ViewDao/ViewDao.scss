@@ -285,7 +285,7 @@ a.navRedemption:hover {
   display: block;
   position: absolute;
   right: 0;
-  top: 44px;
+  top: 11px;
   padding: 0 15px;
 }
 
@@ -493,6 +493,7 @@ a.navItem:hover {
 }
 
 .queueType {
+  margin-top: 0;
   font-weight: bold;
   padding: 0;
   color: rgba(104, 155, 214, 1.000);
