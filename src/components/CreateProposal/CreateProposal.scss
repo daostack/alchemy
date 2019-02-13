@@ -1,16 +1,25 @@
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 .createProposalWrapper {
-  width: 450px;
-  border-radius: 3px;
+  width: 540px;
+  border-radius: 15px 15px 0 0;
   background-color: $white;
   position: fixed;
-  bottom: 20px;
-  right: 97px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
   box-shadow: $shadow-3;
 
   h2 {
-    background-color: rgba(75, 75, 75, 1.000);
+    background-color: $navy;
+    border-radius: 15px 15px 0 0;
     position: relative;
     margin: 0;
+    margin-bottom: 20px;
     padding: 0;
     color: $white;
     height: 40px;
@@ -20,41 +29,112 @@
 
     span {
       position: relative;
-      top: -15px;
-      font-size: $body;
-      font-weight: bold;
+      top: -13px;
+      font-size: 16px;
+      font-weight: normal;
+      left: 13px;
+
+      b {
+        font-weight: normal;
+        opacity: .5;
+        font-size: 14px;
+      }
     }
     .editIcon {
       display: inline-block;
       margin: 10px;
     }
-    .exitProposalCreation {
-      cursor: pointer;
-      background-color: black;
-      width: 42px;
-      height: 42px;
-      transform: rotate(45deg);
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      border: none;
-
-      img {
-        transform: rotate(-45deg);
-      }
-    }
   }
+
   form {
     padding: 0 30px 30px 30px;
+
+    .contributionReward {
+      width: 110px;
+      display: inline-block;
+    }
+
+    .beneficiaryLabel {
+      position: absolute;
+      top: 33px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: block;
+      width: 100px;
+      text-align: center;
+
+      span {
+        left: 0;
+      }
+    }
+
+    .addReward {
+      font-size: 18px;
+      font-weigt: bold;
+      border: 1px solid rgba(191, 203, 213, 1.000);
+      height: 30px;
+      text-align: center;
+      width: 30px;
+      color: rgba(0, 113, 255, 1.000);
+    }
+
+    .rewardRow {
+      width: 100%;
+
+      .rewardAmount {
+        width: 50%;
+        float: left;
+      }
+
+      .rewardRecipient {
+        width: 50%;
+        position: relative;
+        float: left;
+        top: 6px;
+        position: relative;
+
+        input {
+          width: 220px;
+        }
+      }
+
+      .rewardArrow {
+        position: absolute;
+        left: -26px;
+        top: 9px;
+      }
+    }
+
+
+    .contributionType {
+      border-top: 1px solid rgba(191, 203, 213, 1.000);
+      border-right: 1px solid rgba(191, 203, 213, 1.000);
+      border-bottom: 1px solid rgba(191, 203, 213, 1.000);
+      width: 75px;
+      font-size: 14px;
+      position: relative;
+      height: 28px;
+      display: inline-block;
+      top: 9px;
+    }
+
+    .contributionTypeDropdown {
+      width: 75px;
+      height: 28px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+    }
+
     label {
       color: $black-halftone;
       display: block;
       width: 372px;
-      font-size: $small;
-      text-transform: uppercase;
+      font-size: 12px;
       padding: 5px 0 0 0;
       position: relative;
-      
+
       .infoTooltip {
         position: absolute;
         right: 0;
@@ -62,24 +142,31 @@
         right: -17px;
       }
     }
-    input {
-      margin-top: 20px;
-      width: 388px;
+
+    textarea {
+      height: 50px;
+    }
+
+    input, textarea {
+      margin-top: 3px;
+      margin-bottom: 20px;
+      width: 460px;
       display: block;
       border: none;
       background-color: transparent;
-      border-bottom: 2px solid rgba(75, 75, 75, 1.000);
-      font-size: $subheader;
-      padding: 8px 0;
+      border: 1px solid rgba(191, 203, 213, 1.000);
+      font-size: 14px;
+      padding: 5px 8px;
       font-family: $body-font;
       &.error {
-        border-bottom: 2px solid red;
+        border: 1px solid rgba(255, 8, 96, 1.000);
       }
       &:focus {
         outline: none;
-        border-bottom: 2px solid rgba(46, 168, 122, 1.000);
+        border: 1px solid rgba(46, 168, 122, 1.000);
       }
     }
+
     .errorMessage {
       position: relative;
       left: 10px;
@@ -94,14 +181,10 @@
       font-size: $small;
     }
     .addTransfer {
-      background-color: rgba(247, 247, 247, 1.000);
-      width: 100%;
-      position: relative;
-      left: -30px;
-      padding: 1px 30px 30px 30px;
-      margin-top: 30px;
+      display: block;
     }
   }
+
   .recommendedTemplate {
     border: 1px solid rgba(56, 175, 244, .2);
     color: rgba(34, 167, 243, 1.000);
@@ -113,6 +196,7 @@
     margin-right: 10px;
     padding: 1px;
   }
+
   .transactionList {
     padding: 30px 0;
     .transactionListHeader {
@@ -160,19 +244,34 @@
       text-align: right;
     }
   }
-  .submitProposal {
-    border: 1px solid $accent-4;
-    height: 40px;
+  .exitProposalCreation {
+    cursor: pointer;
+    height: 30px;
     display: inline-block;
-    line-height: 30px;
-    margin: 0 auto;
-    color: $accent-4;
+    margin: 0 5px;
     font-weight: normal;
     font-size: $body;
-    padding: 0 15px;
+    padding: 0 15px 2px 15px;
     font-family: $body-font;
     transition: all .25s ease;
-    background-color: rgba(200,200,200,0);
+    border: none;
+    background-color: rgba(225, 235, 247, 1.000);
+    border-radius: 15px;
+    color: rgba(0, 113, 255, 1.000);
+  }
+  .submitProposal {
+    height: 30px;
+    border: none;
+    display: inline-block;
+    margin: 0 5px;
+    font-weight: normal;
+    font-size: $body;
+    padding: 0 15px 2px 15px;
+    font-family: $body-font;
+    transition: all .25s ease;
+    background-color: rgba(0, 113, 255, 1.000);
+    border-radius: 15px;
+    color: $white;
 
     &:hover {
       cursor: pointer;

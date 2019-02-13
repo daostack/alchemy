@@ -162,11 +162,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               }
 
               <h2>
-                <img className={css.editIcon} src="/assets/images/Icon/Draft-white.svg"/>
-                <span>Create proposal</span>
-                <button className={css.exitProposalCreation} onClick={this.goBack.bind(this, dao.address)}>
-                  <img src="/assets/images/Icon/Close.svg"/>
-                </button>
+                <span>+ New proposal <b>| Contribution Reward</b></span>
               </h2>
               <Formik
                 initialValues={{
@@ -197,7 +193,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.title = 'Title is too long (max 120 characters)';
                   }
 
-                  // ???
+                  // TODO: do we want this uniqueness check still?
                   if (proposalDescriptions.indexOf(values.description) !== -1) {
                     errors.description = 'Must be unique';
                   }
@@ -206,10 +202,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.beneficiary = 'Invalid address';
                   }
 
+                  {/* TODO: dont need to check if description is a URL anymore
                   const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
                   if (!pattern.test(values.description)) {
                     errors.description = 'Invalid URL';
-                  }
+                  }*/}
 
                   nonNegative('ethReward');
                   nonNegative('externalTokenReward');
@@ -239,6 +236,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   setFieldValue
                 }: FormikProps<FormValues>) =>
                   <form onSubmit={handleSubmit} noValidate>
+
+                    <label htmlFor="titleInput">
+                      Title
+                      {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
+                    </label>
                     <Field
                       autoFocus
                       id="titleInput"
@@ -248,40 +250,53 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       type="text"
                       className={touched.title && errors.title ? css.error : null}
                     />
-                    <label htmlFor="titleInput">
-                      Title (120 characters)
-                      <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
-                    </label>
-                    <Field
-                      id="descriptionInput"
-                      placeholder="Proposal description URL"
-                      name='description'
-                      type="text"
-                      className={touched.description && errors.description ? css.error : null}
-                    />
                     <label htmlFor="descriptionInput">
-                      Description (URL)
-                      <a className={css.recommendedTemplate} href="https://docs.google.com/document/d/1JzBUikOfEll9gaJ9N2OfaJJeelWxoHzffNcZqeqWDTM/edit#heading=h.vaikfqc64l1" target="_blank">
-                        Recommended template
-                      </a>
+                      Description
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
 
-                    <UserSearchField
-                      daoAvatarAddress={daoAvatarAddress}
-                      name="beneficiary"
-                      onBlur={(touched) => { setFieldTouched("beneficiary", touched)}}
-                      onChange={(newValue) => { setFieldValue("beneficiary", newValue)}}
+                    <Field
+                      component="textarea"
+                      id="descriptionInput"
+                      placeholder="Proposal description URL"
+                      name='description'
+                      className={touched.description && errors.description ? css.error : null}
                     />
-                    <label htmlFor="beneficiary">
-                      Please make sure that the target ETH address can work with Metamask (e.g. no exchanges)
-                      <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
-                    </label>
-
                     <div className={css.addTransfer}>
+                      <div className={css.rewardRow + " " + css.clearfix}>
+                        <div className={css.rewardAmount}>
+                          <input className={css.contributionReward} placeholder="Amount"/>
+                          <div className={css.contributionType}>
+                            <select className={css.contributionTypeDropdown}>
+                              <option value="ETH">ETH</option>
+                              <option value="ETH">GEN</option>
+                              <option value="ETH">Reputation</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className={css.rewardRecipient}>
+                          <div className={css.rewardArrow}>
+                            <img className={css.infoTooltip} src="/assets/images/Icon/Right-arrow.svg"/>
+                          </div>
+                          <UserSearchField
+                            daoAvatarAddress={daoAvatarAddress}
+                            name="beneficiary"
+                            onBlur={(touched) => { setFieldTouched("beneficiary", touched)}}
+                            onChange={(newValue) => { setFieldValue("beneficiary", newValue)}}
+                          />
+                          <label htmlFor="beneficiary" className={css.beneficiaryLabel}>
+                            {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
+                          </label>
+                        </div>
+                      </div>
+
+                      <div>
+                        <button className={css.addReward}>
+                          +
+                        </button>
+                      </div>
+
                       <div style={{display: 'none'}}>
                         <Field
                           id="nativeTokenRewardInput"
@@ -296,6 +311,11 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                           {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
                         </label>
                       </div>
+
+                      <label htmlFor="reputationRewardInput">
+                        Reputation reward:
+                        {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
+                      </label>
                       <Field
                         id="reputationRewardInput"
                         placeholder="How much reputation to reward"
@@ -304,13 +324,13 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         className={touched.reputationReward && errors.reputationReward ? css.error : null}
                         step={0.1}
                       />
-                      <label htmlFor="reputationRewardInput">
-                        Reputation reward:
-                        {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
-                      </label>
 
                       {dao.externalTokenAddress
                         ? <div>
+                            <label htmlFor="externalRewardInput">
+                              Proposal budget ({dao.externalTokenSymbol}):
+                              {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
+                            </label>
                             <Field
                               id="externalTokenRewardInput"
                               placeholder={`How much ${dao.externalTokenSymbol} to reward`}
@@ -320,12 +340,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                               min={0}
                               step={0.1}
                             />
-                            <label htmlFor="externalRewardInput">
-                              Proposal budget ({dao.externalTokenSymbol}):
-                              {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
-                            </label>
                           </div>
                         : <div>
+                            <label htmlFor="ethRewardInput">
+                              Proposal budget (ETH):
+                              {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
+                            </label>
                             <Field
                               id="ethRewardInput"
                               placeholder="How much ETH to reward"
@@ -335,19 +355,16 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                               min={0}
                               step={0.1}
                             />
-                            <label htmlFor="ethRewardInput">
-                              Proposal budget (ETH):
-                              {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
-                            </label>
                           </div>
                       }
 
                       {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>
                     <div className={css.alignCenter}>
+                      <button className={css.exitProposalCreation} onClick={this.goBack.bind(this, dao.address)}>
+                        Cancel
+                      </button>
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                        <img className={css.sendIcon} src="/assets/images/Icon/Send.svg"/>
-                        <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
                         Submit proposal
                       </button>
                     </div>
