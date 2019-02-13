@@ -1,13 +1,12 @@
-import * as Arc from "@daostack/arc.js";
 import promisify = require("es6-promisify");
 import * as sigUtil from 'eth-sig-util';
 import * as ethUtil from 'ethereumjs-util';
-import { Field, Formik, FormikBag, FormikProps } from 'formik';
+import { Field, Formik, FormikProps } from 'formik';
 import * as queryString from 'query-string';
 import * as React from "react";
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
-import { connect, Dispatch } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
 import * as io from 'socket.io-client';
 
 import * as profileActions from "actions/profilesActions";
@@ -91,18 +90,10 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     getProfile(accountAddress);
 
+    // TODO: refactor the below: we should subscribe to the Member object and get a updates of token balances as well
     const ethBalance = await Util.getBalance(accountAddress);
-
-    let votingMachineInstance: Arc.GenesisProtocolWrapper;
-    if (dao) {
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(dao.address)).votingMachineAddress;
-      votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-    } else {
-      votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-    }
-    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
+    const arc = getArc()
+    const stakingToken = arc.getContract('GEN')
     const genBalance = await stakingToken.balanceOf(accountAddress);
 
     this.setState({ ethCount: Util.fromWei(ethBalance), genCount: Util.fromWei(genBalance)});
@@ -118,7 +109,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
     const { accountAddress, showNotification, updateProfile } = this.props;
 
-    const web3 = await Arc.Utils.getWeb3();
+    const web3 = await Util.getWeb3();
     const timestamp = new Date().getTime().toString();
     const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. Timestamp:" + timestamp;
     const msg = ethUtil.bufferToHex(Buffer.from(text, 'utf8'));
