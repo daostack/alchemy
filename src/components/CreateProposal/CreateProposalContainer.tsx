@@ -325,7 +325,6 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         step={0.1}
                       />
 
-
                       {dao.externalTokenAddress
                         ? <div>
                             <label htmlFor="externalRewardInput">

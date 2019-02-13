@@ -127,7 +127,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
             proposal={proposal}
           /> : ""
         }
-        
+
         <div className={voteControls + " " + css.clearfix}>
           <div className={css.voteDivider}>
             <div className={css.voteGraphs}>
