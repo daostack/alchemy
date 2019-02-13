@@ -26,10 +26,11 @@ const Fade = ({ children, ...props }: any) => (
 const DAOProposalsContainer = (props: {
   currentAccountAddress: Address,
   dao: IDAOState,
-  proposalsBoosted: IProposalState[],
-  proposalsPreBoosted: IProposalState[]
+  proposalsQueued: IProposalState[],
+  proposalsPreBoosted: IProposalState[],
+  proposalsBoosted: IProposalState[]
 }) => {
-  const { currentAccountAddress, dao, proposalsBoosted, proposalsPreBoosted } = props
+  const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted } = props
 
   const boostedProposalsHTML = (
     <TransitionGroup className="boosted-proposals-list">
@@ -45,7 +46,17 @@ const DAOProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao}  currentAccountAddress={currentAccountAddress}/>
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>
+        </Fade>
+      ))}
+    </TransitionGroup>
+  );
+
+  const queuedProposalsHTML = (
+    <TransitionGroup className="boosted-proposals-list">
+      { proposalsQueued.map((proposal: IProposalState) => (
+        <Fade key={"proposal_" + proposal.id}>
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>
         </Fade>
       ))}
     </TransitionGroup>
@@ -55,7 +66,7 @@ const DAOProposalsContainer = (props: {
     <div className={css.daoProposalsContainer}>
       <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/create`} data-test-id="create-proposal">+ New proposal</Link>
       <h2 className={css.queueType}>Contribution Reward</h2>
-      { proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
+      { proposalsQueued.length == 0 && proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
             ? <div className={css.noDecisions}>
                 <img className={css.relax} src="/assets/images/meditate.svg"/>
                 <div className={css.proposalsHeader}>
@@ -71,7 +82,7 @@ const DAOProposalsContainer = (props: {
       { proposalsBoosted.length > 0 ?
         <div className={css.boostedContainer}>
           <div className={css.proposalsHeader}>
-            Boosted Proposals
+            Boosted
           </div>
           <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
             {boostedProposalsHTML}
@@ -83,10 +94,22 @@ const DAOProposalsContainer = (props: {
       { proposalsPreBoosted.length > 0 ?
         <div className={css.regularContainer}>
           <div className={css.proposalsHeader}>
-            Regular Proposals
+            Pending
           </div>
           <div className={css.proposalsContainer}>
             {preBoostedProposalsHTML}
+          </div>
+        </div>
+        : ""
+      }
+
+      { proposalsQueued.length > 0 ?
+        <div className={css.regularContainer}>
+          <div className={css.proposalsHeader}>
+            Regular
+          </div>
+          <div className={css.proposalsContainer}>
+            {queuedProposalsHTML}
           </div>
         </div>
         : ""
@@ -113,7 +136,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
         throw state.error
       } else {
         const data = state.data
-        return <DAOProposalsContainer proposalsBoosted={data[2]} proposalsPreBoosted={data[0]} dao={data[3]} currentAccountAddress={currentAccountAddress}/>
+        return <DAOProposalsContainer proposalsQueued={data[0]} proposalsPreBoosted={data[1]} proposalsBoosted={data[2]} dao={data[3]} currentAccountAddress={currentAccountAddress}/>
       }
     }
   }</Subscribe>
