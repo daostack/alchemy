@@ -4,5 +4,9 @@
 
 .timeSection {
   display: inline-block;
-  color: blue;
+  color: rgba(104, 155, 214, 1.000);
+
+  strong {
+  	font-weight: normal;
+  }
 }

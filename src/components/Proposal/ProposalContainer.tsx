@@ -249,7 +249,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
                 {!proposalEnded(proposal) ?
-                    closingTime(proposal).isAfter(moment()) ? <Countdown toDate={closingTime(proposal)} /> : <span className={css.closedTime}>CLOSED {closingTime(proposal).format("MMM D, YYYY").toUpperCase()}</span>
+                    closingTime(proposal).isAfter(moment()) ? <Countdown toDate={closingTime(proposal)} /> : <span className={css.closedTime}>Closed {closingTime(proposal).format("MMM D, YYYY")}</span>
                     : " "
                 }
               </div>

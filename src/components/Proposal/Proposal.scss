@@ -39,6 +39,8 @@
 	width: 315px;
 	border-radius: 0 15px 15px 15px;
 	background-color: $white;
+	margin: 10px;
+	display: inline-block;
 }
 
 .proposal:hover {
@@ -397,7 +399,7 @@ button.disabled {
 
 		span {
 			display: inline-block;
-			margin: 15px 0 0 10px;
+			margin: 6px 0 0 12px;
 			opacity: .6;
 		}
 	}
@@ -468,10 +470,9 @@ button.disabled {
 		position: relative;
 		display: block;
 		font-weight: $normal;
-		font-size: $small;
+		font-size: 11px;
 		color: $black-halftone;
-		margin: 0 0 6px 0;
-		top: -3px;
+		margin: 6px 0 0 12px;
 	}
 
   .help {
