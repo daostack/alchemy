@@ -157,9 +157,9 @@
 
 
 /***** Account Profile ******/
-.daoHeader {
-  background-color: white;
-  padding: 20px 30px 30px 30px;
+.profileWrapper {
+  display: flex;
+  height: 100%;
 }
 
 .profileContainer {
@@ -167,6 +167,8 @@
   margin: 0 auto;
   margin-top: 40px;
   padding: 0 20px;
+  display: flex;
+  flex-direction: column;
 
   form {
     padding: 30px;

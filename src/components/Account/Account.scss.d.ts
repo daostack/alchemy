@@ -9,7 +9,7 @@ export const socialButton: string;
 export const icon: string;
 export const holdings: string;
 export const viewProfile: string;
-export const daoHeader: string;
+export const profileWrapper: string;
 export const profileContainer: string;
 export const profileContent: string;
 export const userAvatarContainer: string;

@@ -5,6 +5,7 @@ import * as ethUtil from 'ethereumjs-util';
 import { Field, Formik, FormikBag, FormikProps } from 'formik';
 import * as queryString from 'query-string';
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { connect, Dispatch } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import * as io from 'socket.io-client';
@@ -19,7 +20,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from 'components/Account/OAuthLogin';
 import ReputationView from "components/Account/ReputationView";
-import DaoHeader from "components/ViewDao/DaoHeader";
+import DaoSidebar from "components/ViewDao/DaoSidebar";
 
 import * as css from "./Account.scss";
 
@@ -158,132 +159,132 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const editing = accountAddress == currentAccountAddress;
 
     return (
-      <div>
-        { dao ? <div className={css.daoHeader}><DaoHeader address={dao.address} /></div> : ""}
+      <div className={css.profileWrapper}>
+        <BreadcrumbsItem to={null}>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</BreadcrumbsItem>
 
-      <div className={css.profileContainer} data-test-id="profile-container">
-        <h3>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</h3>
-        { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
-        { typeof(accountProfile) === 'undefined' ? "Loading..." :
-          <Formik
-            enableReinitialize={true}
-            initialValues={{
-              description: accountProfile ? accountProfile.description || "" : "",
-              name: accountProfile ? accountProfile.name || "" : ""
-            } as FormValues}
-            validate={(values: FormValues) => {
-              // const { name } = values;
-              const errors: any = {};
+        { dao ? <DaoSidebar address={dao.address} /> : ""}
 
-              const require = (name: string) => {
-                if (!(values as any)[name]) {
-                  errors[name] = 'Required';
-                }
-              };
+        <div className={css.profileContainer} data-test-id="profile-container">
+          { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
+          { typeof(accountProfile) === 'undefined' ? "Loading..." :
+            <Formik
+              enableReinitialize={true}
+              initialValues={{
+                description: accountProfile ? accountProfile.description || "" : "",
+                name: accountProfile ? accountProfile.name || "" : ""
+              } as FormValues}
+              validate={(values: FormValues) => {
+                // const { name } = values;
+                const errors: any = {};
 
-              require('name');
+                const require = (name: string) => {
+                  if (!(values as any)[name]) {
+                    errors[name] = 'Required';
+                  }
+                };
 
-              return errors;
-            }}
-            onSubmit={this.handleSubmit.bind(this)}
-            render={({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isSubmitting,
-              isValid,
-            }: FormikProps<FormValues>) =>
-              <form onSubmit={handleSubmit} noValidate>
-                <div className={css.profileContent}>
-                  <div className={css.userAvatarContainer}>
-                    <AccountImage accountAddress={accountAddress} />
-                  </div>
-                  <div className={css.profileDataContainer}>
-                    <label htmlFor="nameInput">
-                      Real Name:&nbsp;
-                    </label>
-                    { editing ?
-                      <div>
-                        <Field
-                          autoFocus
-                          id="nameInput"
-                          placeholder="e.g. John Doe"
-                          name='name'
-                          type="text"
-                          maxLength="35"
-                          className={touched.name && errors.name ? css.error : null}
-                        />
-                        {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
-                      </div>
-                      : <div>{accountProfile.name}</div>
-                    }
-                    <br />
-                    <label htmlFor="descriptionInput">
-                      Personal Description:&nbsp;
-                    </label>
-                    { editing ?
-                      <div>
-                        <Field
-                          id="descriptionInput"
-                          placeholder="Tell the DAO a bit about yourself"
-                          name='description'
-                          component="textarea"
-                          maxLength="150"
-                          rows="7"
-                          className={touched.description && errors.description ? css.error : null}
-                        />
-                        <div className={css.charLimit}>Limit 150 characters</div>
-                      </div>
-                      : <div>{accountProfile.description}</div>
-                    }
-                  </div>
-                  <div className={css.otherInfoContainer}>
-                    <div className={css.tokens}>
-                      {accountInfo
-                         ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> </div>
-                         : ""}
-                      <div><strong>GEN:</strong><br/><span>{genCount ? genCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
-                      <div><strong>ETH:</strong><br/><span>{ethCount ? ethCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
+                require('name');
+
+                return errors;
+              }}
+              onSubmit={this.handleSubmit.bind(this)}
+              render={({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+                isValid,
+              }: FormikProps<FormValues>) =>
+                <form onSubmit={handleSubmit} noValidate>
+                  <div className={css.profileContent}>
+                    <div className={css.userAvatarContainer}>
+                      <AccountImage accountAddress={accountAddress} />
                     </div>
-                    <div>
-                      <strong>ETH Address:</strong><br/>
-                      <span>{accountAddress.substr(0, 20)}...</span>
-                      <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
-                    </div>
-                    {editing
-                      ? <div>
-                          <strong>Prove it's you by linking your social accounts:</strong>
-                          <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                    <div className={css.profileDataContainer}>
+                      <label htmlFor="nameInput">
+                        Real Name:&nbsp;
+                      </label>
+                      { editing ?
+                        <div>
+                          <Field
+                            autoFocus
+                            id="nameInput"
+                            placeholder="e.g. John Doe"
+                            name='name'
+                            type="text"
+                            maxLength="35"
+                            className={touched.name && errors.name ? css.error : null}
+                          />
+                          {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
                         </div>
-                      : <div><strong>Social accounts:</strong></div>
-                    }
-                    {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
-                      <div>
-                        <OAuthLogin editing={editing} provider='facebook' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                        <OAuthLogin editing={editing} provider='twitter' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                        <OAuthLogin editing={editing} provider='github' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                        : <div>{accountProfile.name}</div>
+                      }
+                      <br />
+                      <label htmlFor="descriptionInput">
+                        Personal Description:&nbsp;
+                      </label>
+                      { editing ?
+                        <div>
+                          <Field
+                            id="descriptionInput"
+                            placeholder="Tell the DAO a bit about yourself"
+                            name='description'
+                            component="textarea"
+                            maxLength="150"
+                            rows="7"
+                            className={touched.description && errors.description ? css.error : null}
+                          />
+                          <div className={css.charLimit}>Limit 150 characters</div>
+                        </div>
+                        : <div>{accountProfile.description}</div>
+                      }
+                    </div>
+                    <div className={css.otherInfoContainer}>
+                      <div className={css.tokens}>
+                        {accountInfo
+                           ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> </div>
+                           : ""}
+                        <div><strong>GEN:</strong><br/><span>{genCount ? genCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
+                        <div><strong>ETH:</strong><br/><span>{ethCount ? ethCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
                       </div>
-                    }
+                      <div>
+                        <strong>ETH Address:</strong><br/>
+                        <span>{accountAddress.substr(0, 20)}...</span>
+                        <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
+                      </div>
+                      {editing
+                        ? <div>
+                            <strong>Prove it's you by linking your social accounts:</strong>
+                            <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                          </div>
+                        : <div><strong>Social accounts:</strong></div>
+                      }
+                      {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
+                        <div>
+                          <OAuthLogin editing={editing} provider='facebook' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider='twitter' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider='github' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                        </div>
+                      }
+                    </div>
                   </div>
-                </div>
-                { editing ?
-                  <div className={css.alignCenter}>
-                    <button className={css.submitButton} type="submit" disabled={isSubmitting}>
-                      <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
-                      SUBMIT
-                    </button>
-                  </div>
-                  : ""
-                }
-              </form>
-            }
-          />
-        }
-      </div>
-
+                  { editing ?
+                    <div className={css.alignCenter}>
+                      <button className={css.submitButton} type="submit" disabled={isSubmitting}>
+                        <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
+                        SUBMIT
+                      </button>
+                    </div>
+                    : ""
+                  }
+                </form>
+              }
+            />
+          }
+        </div>
       </div>
     );
   }
