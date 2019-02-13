@@ -1,12 +1,11 @@
-import { IDAOState, IProposalState, IRewardState, RewardReason, RewardType } from '@daostack/client'
+import { IDAOState, IMemberState, IProposalState, IRewardState, RewardReason, RewardType } from '@daostack/client'
 import ReputationView from "components/Account/ReputationView";
 import * as React from "react";
-import { IAccountState } from "reducers/arcReducer";
 
 interface IProps {
   isRedeemPending: boolean
   beneficiaryHasRewards: boolean
-  currentAccount: IAccountState;
+  currentAccount: IMemberState
   dao: IDAOState
   executable: boolean
   accountHasRewards: boolean
