@@ -113,7 +113,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
       "name": this.props.name,
       "onBlur": this.handleBlur,
       "onChange": this.handleChange,
-      "placeholder": "Select a beneficiary or use any ETH address",
+      "placeholder": "name / public key",
       value
     };
 

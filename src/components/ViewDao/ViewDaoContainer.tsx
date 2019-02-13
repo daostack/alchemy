@@ -18,11 +18,9 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as schemas from "schemas";
 
 import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
-import DaoHeader from "./DaoHeader";
-import DaoHeadings from "./DaoHeadings";
+import DaoSidebar from "./DaoSidebar";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
-import DaoNav from "./DaoNav";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 
@@ -312,14 +310,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             }
           }}
         />
-        <div className={css.top}>
-          <DaoHeader address={dao.address} />
-          {
-          // TODO: temporarilby disabled DaoHeadings - needs refactor to use IDAOState
-          // <DaoHeadings dao={dao} />
-          }
-          <DaoNav currentAccountAddress={currentAccountAddress} address={dao.address} numRedemptions={numRedemptions} />
-        </div>
+        <DaoSidebar address={dao.address} />
         <div className={css.wrapper}>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/history"
@@ -330,7 +321,8 @@ For additional information check out our <a href="https://docs.google.com/docume
               render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
-            <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} currentAccountAddress={currentAccountAddress} />
+            <Route path="/dao/:daoAvatarAddress"
+              render={(props) => <DaoProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
           </Switch>
         </div>
       </div>

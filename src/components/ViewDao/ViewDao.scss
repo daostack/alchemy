@@ -4,26 +4,6 @@
   clear: both;
 }
 
-button:hover {
-  cursor: pointer;
-}
-
-.wrapper {
-  max-width: $max-width;
-  margin: 0 auto;
-  position: relative;
-  background-color: #f2f2f2;
-}
-
-.outer {
-  position: relative;
-}
-
-.top {
-  width: 100%;
-  background-color: $white;
-}
-
 .loading {
   width: 100%;
   position: fixed;
@@ -32,13 +12,127 @@ button:hover {
   transform: translate(-50%,-50%)
 }
 
+button:hover {
+  cursor: pointer;
+}
+
+.wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 50px;
+}
+
+.outer {
+  position: fixed;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.daoSidebar {
+  min-width: 250px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: $sky;
+  color: $white;
+}
+
+.navHeading {
+  font-size: 12px;
+  border-bottom: 1px solid rgba(78, 137, 209, 1.000);
+  width: 100%;
+  display: block;
+  margin-top: -30px;
+
+  b {
+    display: inline-block;
+    background-color: #3178ca;
+    margin-right: 10px;
+    position: relative;
+    left: 15px;
+    top: 17px;
+    padding: 10px;
+    font-weight: normal;
+    color: rgba(255,255,255,.5);
+  }
+
+}
+
+.daoNavigation {
+
+  .daoName {
+    padding: 15px;
+
+    a {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    a:visited {
+      color: $white;
+    }
+
+    p {
+      font-size: 14px;
+      opacity: .7;
+      padding: 0;
+    }
+  }
+  .navigation {
+
+    ul {
+      margin-top: 15px;
+      padding: 0;
+    }
+
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    li a {
+      display: block;
+      font-size: 14px;
+      color: $white;
+      padding: 8px 23px;
+      background-color: rgba(32, 104, 188, 0);
+      transition: all .25s ease;
+    }
+
+    li a:visited {
+      color: $white;
+    }
+
+    li a:hover {
+      background-color: rgba(32, 104, 188, 1.000);
+    }
+  }
+}
+
+.daoHoldings {
+  display: block;
+
+  ul {
+    margin-top: 15px;
+    padding: 0;
+
+    li {
+      padding: 8px 23px;
+      font-size: 14px;
+      list-style: none;
+    }
+  }
+}
+
+
+
+
 .loading img {
   margin: 0 auto;
   display: block;
-}
-
-.daoHeader {
-  padding: 30px 30px 5px 30px;
 }
 
 .daoHeadings {
@@ -110,10 +204,7 @@ button:hover {
 }
 
 .proposalsContainer, .membersContainer {
-  margin: 10px 0 250px 0;
-  background-color: $white;
-  shadow: $shadow-1;
-  border-radius: 3px;
+
 }
 
 .proposalsContainer.boostedProposalsContainer {
@@ -122,7 +213,9 @@ button:hover {
 
 .member {
   padding: 15px;
-  border-bottom: $proposal-item-border-bottom;
+    margin-bottom: 2px;
+    background-color: white;
+    border-radius: 3px;
 }
 
 .openProposal {
@@ -173,25 +266,22 @@ a.navRedemption:hover {
   margin-left: 0;
 }
 
-a.createProposal {
-  transform: rotate(-45deg);
-  background-image: linear-gradient(-206deg, #6CDBEA 0%, #3AB4D0 95%);
-  box-shadow: 0 10px 15px 0 rgba(0,0,0,0.16);
-  width: 42px;
-  height: 42px;
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 10000;
+.daoProposalsContainer {
+  position: relative;
+}
 
-  img {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%) rotate(45deg);
-    margin-left: 3px;
-    margin-top: 2px;
-  }
+.createProposal {
+  height: 30px;
+  line-height: 30px;
+  font-size: 13px;
+  color: $white;
+  background-color: rgba(3, 118, 255, 1.000);
+  border-radius: 15px;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 11px;
+  padding: 0 15px;
 }
 
 .redeemAllRewardsButton {
@@ -341,14 +431,6 @@ a.navItem:hover {
 
 }
 
-.daoName {
-  font-family: $heading-1-font;
-  font-size: $jumbo;
-  margin-bottom: -8px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
 .daoPrefs {
   display: inline;
   background-color: transparent;
@@ -405,14 +487,22 @@ a.navItem:hover {
   margin-top: 20px;
 }
 
+.queueType {
+  margin-top: 0;
+  font-weight: bold;
+  padding: 0;
+  color: rgba(104, 155, 214, 1.000);
+}
+
 .proposalsHeader {
-  font-size: $subheader;
+  font-size: 16px;
   position: relative;
+  text-align: center;
   padding-top: 20px;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(191, 203, 213, 1.000);
   color: $black-halftone;
   font-weight: $bold;
-  max-width: 380px;
 
   span {
     position: absolute;
@@ -618,18 +708,13 @@ a.navItem:hover {
 
 @media only screen and (min-width: 768px) {
   .wrapper {
-    max-width: $max-width;
-    margin: 0 auto;
-    padding: 0 30px;
   }
 }
 
 
 @media only screen and (min-width: 850px) {
   .wrapper {
-    max-width: $max-width;
-    margin: 0 auto;
-    padding: 0 30px;
+
   }
 
   .tourModal .tourStart h1, .tourModal .tourEnd h1 {

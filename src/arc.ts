@@ -41,6 +41,8 @@ export function getArc(): Arc {
 
     // print some warnings for developers
     if (web3Provider.isMetaMask) {
+      console.log('Connected with Metamask')
+    } else {
       // TODO: start polling for a connection to become availabe
       // TODO: fallback on Portis
       console.warn(`NOT CONNECTED TO METAMASK: using default connection at ${web3WsProvider}`)
@@ -57,6 +59,7 @@ export function getArc(): Arc {
       contractAddresses
     });
     if (!arc.web3.eth.defaultAccount) {
+      console.log(arc.web3.eth.accounts)
       console.warn(`NO ACCOUNT WAS SET - you will not be able to see your balance or do transactions`)
     }
     (<any> window).arc = arc

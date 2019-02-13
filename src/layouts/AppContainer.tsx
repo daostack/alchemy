@@ -114,17 +114,8 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/dao/:daoAvatarAddress" children={(props) => {
-              if (props.match) {
-              const queryValues = queryString.parse(props.location.search);
-              return <HeaderContainer
-                daoAddress={props.match ? props.match.params.daoAvatarAddress : queryValues.daoAvatarAddress}
-                location={props.location}
-                />;
-              } else {
-                return null
-              }
-            }} />
+            <Route path="/" render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
+
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
               <Route exact={true} path="/daos" component={DaoListContainer} />

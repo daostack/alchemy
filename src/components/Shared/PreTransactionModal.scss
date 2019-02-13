@@ -4,6 +4,10 @@
   clear: both;
 }
 
+.hidden {
+  display: none;
+}
+
 .metaMaskModal {
   width: 100%;
   height: 100%;
@@ -22,7 +26,6 @@
     background-color: rgba(0,0,0,.7);
     z-index: 0;
   }
-
 
   .decisionGraph {
     position: relative;
@@ -71,26 +74,12 @@
   }
 
   .help {
-    float: right;
     width: 24px;
     height: 24px;
     top: -4px;
     right: 5px;
     position: relative;
 
-    &:hover {
-      cursor: pointer;
-
-      .helpBox {
-        transform: scale(1);
-        opacity: 1;
-        top: -34px;
-      }
-
-      .hover {
-        opacity: 1;
-      }
-    }
 
     img {
       position: absolute;
@@ -102,16 +91,15 @@
       z-index: 1;
       opacity: 0;
     }
+  }
 
-    .helpBox {
+   .helpBox {
       transition: all .25s ease;
       width: 230px;
       position: absolute;
       right: 37px;
-      top: -334px;
+      top: 0px;
       z-index: 10000;
-      transform: scale(0);
-      opacity: 0;
 
       .bg {
         width: 100%;
@@ -186,7 +174,6 @@
       }
 
     }
-  }
 
   .modalWindow {
     width: 600px;
@@ -194,6 +181,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
+    background: white;
 
     .decisionGraph {
       width: 100%;
@@ -236,10 +224,9 @@
     }
 
     .incentives {
-      background-color: #2c2c2c;
       padding: 11px 0;
       font-size: 11px;
-      color: $white;
+      border-top: 1px solid gray;
 
       .outcomes {
         display: inline-block;
@@ -274,7 +261,7 @@
       }
     }
 
-    .transaction {
+    .transactionHeader {
       background-color: rgba(56, 56, 56, 1.000);
       padding: 12px 0;
       color: $white;
@@ -297,7 +284,7 @@
         }
       }
 
-      .transactionInfo{
+      .transactionInfo {
         min-width: 270px;
         float: left;
 
@@ -317,15 +304,9 @@
           }
         }
 
-        .transactionTitle {
-          padding: 2px 0 0 0;
+        .secondaryHeader {
+          display: inline-block;
           font-size: $subheader;
-        }
-
-        .transactionEffect {
-          font-size: $body;
-          opacity: .7;
-          width: 440px;
         }
       }
       .closeTransactionContainer {
@@ -346,6 +327,182 @@
           background: none;
         }
 
+      }
+    }
+
+    .proposalInfo {
+      background: white;
+      padding: 20px;
+
+      .proposalTitle {
+        padding: 2px 0 0 0;
+        font-size: $subheader;
+      }
+
+      .transactionEffect {
+        font-size: $body;
+        opacity: .7;
+        width: 440px;
+      }
+    }
+
+    .stakingInfo {
+      width: 100%;
+      border-top: 1px solid gray;
+    }
+
+    .currentPredictions {
+      float: left;
+      width: 50%;
+    }
+
+    .stakingForm {
+      background: white;
+      border-top: 1px solid gray;
+      float: left;
+
+      .predictionAmount {
+        width: 55px;
+        display: inline-block;
+        border: none;
+        background-color: transparent;
+        border-bottom: 2px solid rgba(75, 75, 75, 1.000);
+        font-size: $body;
+        padding: 9px 0 3px 0;
+        margin: 0 5px;
+        float: left;
+        font-family: $body-font;
+
+        &:focus {
+          outline: none;
+          border-bottom: 2px solid $accent-4;
+        }
+      }
+
+      .formGroup {
+        line-height: 24px;
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        transform: none;
+        text-align: center;
+        padding-left: 8px;
+
+        span {
+          font-size: $body;
+          padding-top: 5px;
+        }
+      }
+
+      .genLabel {
+        float: left;
+      }
+
+      .placePrediction {
+        padding: 4px;
+        width: 120px;
+        margin-top: 8px;
+        border: 1px solid $accent-1;
+        color: $accent-1;
+      }
+
+      .clearfix {
+        margin-top: 7px;
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        text-align: center;
+        transform: none;
+      }
+
+      .genError {
+        background-color: rgba(0, 0, 0, 0.8);
+        height: 100%;
+        position: absolute;
+        width: 300px;
+        text-align: center;
+        color: $white;
+        left: -150px;
+
+        h4 {
+          color: $accent-2;
+          font-size: 14px;
+          font-family: $body-font;
+          margin: 0;
+          padding-top: 8px;
+        }
+
+        span {
+          display: block;
+          font-size: 10px;
+          font-weight: normal;
+          color: $white-halftone;
+        }
+
+      }
+
+      div.exchangeList {
+        color: $white;
+        font-size: 12px;
+        color: $white;
+        border: 1px solid $white;
+        width: 150px;
+        position: relative;
+        top: 0;
+        left: 0;
+          text-align: center;
+          transform: translate(0,0);
+          display: inline-block;
+          height: 30px;
+          margin: 11px;
+          line-height: 30px;
+
+        ul {
+          position: absolute;
+          top: -130px;
+          left: 0;
+          background-color: rgba(0, 0, 0, 0.8);
+          list-style: none;
+          margin: 0;
+          border-left: 1px solid $white;
+          border-right:  1px solid $white;
+          border-bottom:  1px solid $white;
+          width: 150px;
+          left: -1px;
+          padding: 0;
+          opacity: 0;
+          transform: scale(0);
+          transition: all .25s ease;
+
+          a {
+            color: $white;
+            font-weight: bold;
+            width: 100%;
+            display: inline-block;
+            padding: 8px 0;
+
+            &:hover {
+              background-color: $black;
+            }
+          }
+        }
+
+        &:hover {
+          background-color: $black-thirdtone;
+          cursor: pointer;
+          border-bottom: none;
+          border-left: 1px solid $white;
+          border-right:  1px solid $white;
+          border-top:  1px solid $white;
+
+          ul {
+            opacity: 1;
+            transform: scale(1);
+            top: 30px;
+          }
+        }
       }
     }
 
@@ -375,6 +532,10 @@
           position: relative;
           left: -11px;
           top: 3px;
+        }
+
+        .disabled {
+          cursor: not-allowed !important;
         }
       }
     }

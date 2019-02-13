@@ -25,10 +25,12 @@ body {
 .outer {
   width: 100%;
   height: 100%;
+  position: fixed;
 }
 
 .container {
   width: 100%;
+  overflow: scroll;
   z-index: 100;
   position: relative;
   height: 100%;
@@ -60,7 +62,7 @@ body {
   width: 100%;
   position: relative;
   vertical-align: middle;
-  background-color: rgba(68, 68, 68, 1.000);
+  background-color: $navy;
   height: 50px;
   z-index: 10000;
   color: rgba(255,255,255,1);
@@ -80,8 +82,8 @@ body {
       position: absolute;
       z-index: 100;
       left: 15px;
-      top: 17px;
-      opacity: 0.7;
+      top: 10px;
+      height: 30px;
       transition: all .25s ease;
     }
 
@@ -96,7 +98,7 @@ body {
         top: 0;
         left: 0;
         width: 55px;
-        background-color: rgba(42, 42, 42, 1.000);
+        background-color: rgba(8, 28, 61, 1.000);
         height: 50px;
       }
 
@@ -120,7 +122,7 @@ body {
             padding: 15px;
             width: 170px;
             display: block;
-            background-color: rgba(42, 42, 42, 1.000);
+            background-color: rgba(8, 28, 61, 1.000);
           }
 
           a:hover {
@@ -246,7 +248,7 @@ body {
 
       img {
         width: 24px;
-        transform: rotate(45deg);
+        border-radius: 3px;
       }
     }
 
@@ -399,6 +401,7 @@ body {
   }
 
   .openTour {
+    display: none;
     position: relative;
     top: 2px;
     padding: 0 10px;
@@ -413,14 +416,7 @@ body {
   }
 
   .profileLink {
-    border: 1px solid rgba(255,255,255,.7);
-    color: rgba(255,255,255,1);
-    font-size: 14px;
     display: inline-block;
-    padding: 4px;
-    height: 20px;
-    vertical-align: top;
-    margin: 10px 10px;
   }
 }
 
@@ -463,8 +459,9 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.4);
 }
 
 .modalBody {
@@ -472,12 +469,18 @@ body {
 }
 
 .notice {
-  background-color: rgba(0,0,0,1);
+  background-color: white;
   padding: 11px 8px;
-  color: rgba(255,255,255,.6);
-  position: relative;
+  color: #4e6176;
+  position: fixed;
   font-size: 12px;
-  z-index: 20;
+  z-index: 1000;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
 
   div {
     margin-right: 120px;
@@ -526,6 +529,24 @@ body {
 
 .breadcrumb {
   color: white;
+}
+
+.topInfo {
+  position: absolute;
+  left: 70px;
+  top: 14px;
+  font-size: 14px;
+
+  span span b {
+    font-weight: normal;
+    opacity: .7;
+    display: inline-block;
+    margin: 0 15px;
+  }
+
+  a:visited {
+    color: $white;
+  }
 }
 
 @media only screen and (max-device-width: 1024px) {
