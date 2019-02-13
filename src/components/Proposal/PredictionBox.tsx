@@ -177,14 +177,14 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)}>
-        PASS <strong>+</strong>
+        <strong>+</strong> Pass
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
 
     const failButton = (
       <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
-        FAIL <strong>+</strong>
+        <strong>-</strong> Fail 
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
@@ -214,7 +214,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <span className={css.boostedAmount}>
             {
               proposal.stage == ProposalStage.Queued && stakingLeftToBoost > 0 ?
-                <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ''
+                <span><b>{stakingLeftToBoost.toFixed(2)} GEN to boost</b></span> : ''
             }
           </span>
           <div className={css.centered}>
@@ -227,7 +227,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                   </Tooltip> :
                   passButton
                 )
-              : "PASS"
+              : "Pass"
             }
             {
               proposal.stage === ProposalStage.Queued
@@ -238,7 +238,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                     </Tooltip> :
                     failButton
                 )
-              : "FAIL"
+              : "Fail"
             }
           </div>
         </div>

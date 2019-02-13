@@ -99,6 +99,13 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
+    let voteStatusClass = classNames({
+      [css.voteStatus]: true,
+      [css.hasVoted]: currentVote,
+      [css.votedFor]: !isVotingYes && currentVote == VoteOptions.Yes,
+      [css.votedAgainst]: !isVotingNo && currentVote == VoteOptions.No,
+      [css.hasNotVoted]: !currentVote,
+    });
 
     const voteControls = classNames({
       [css.voteControls]: true
@@ -239,6 +246,25 @@ export default class VoteBox extends React.Component<IProps, IState> {
             </div>
           </div>
         </div>
+          <div className={voteStatusClass} >
+            <div className={css.castVote}>
+              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
+              </button>
+              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
+              </button>
+            </div>
+            <div className={css.voteRecord}>
+              You voted 
+              <span className={css.castVoteFor}>
+                - For
+              </span>
+              <span className={css.castVoteAgainst}>
+                - Against
+              </span>
+            </div>
+          </div>
       </div>
     );
   }
