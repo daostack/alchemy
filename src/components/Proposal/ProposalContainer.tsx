@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState, IStake, IVote, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, Member, ProposalStage } from '@daostack/client'
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { arc } from "arc";
@@ -32,7 +32,7 @@ import VoteBox from "./VoteBox";
 interface IStateProps {
   beneficiaryProfile?: IProfileState
   creatorProfile?: IProfileState
-  currentAccount: IAccountState
+  currentAccount: IMemberState
   currentAccountGens: number
   currentAccountGenStakingAllowance: number
   rewardsForCurrentUser: IRewardState[]
@@ -51,9 +51,10 @@ interface IStateProps {
 
 interface IContainerProps {
   dao: IDAOState
+  currentAccount: IMemberState
   proposal: IProposalState
   rewardsForCurrentUser: IRewardState[]
-  stakesOfCurrentUser: IStake[],
+  stakesOfCurrentUser: IStake[]
   votesOfCurrentUser: IVote[]
 }
 
@@ -65,10 +66,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   // const threshold = dao.currentThresholdToBoost;
   const threshold = 12345
 
-  let currentAccount = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${dao.address}`], schemas.accountSchema, state.arc) as IAccountState;
-  if (!currentAccount) {
-    currentAccount = newAccount(dao.address, state.web3.ethAccountAddress);
-  }
+  let currentAccount = ownProps.currentAccount
 
   return {
     beneficiaryProfile: state.profiles[proposal.beneficiary],
@@ -259,7 +257,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </div>
               <div className={css.stateChange}>
                 <button className={css.executeProposal}>
-                  <img src="/assets/images/Icon/execute.svg"/> 
+                  <img src="/assets/images/Icon/execute.svg"/>
                   <span> Execute</span>
                 </button>
                 <button className={css.boostProposal}>
@@ -422,6 +420,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   //  TODO: add logic for when props.currentAccountAddress is undefined
   const observable = combineLatest(
     arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
+    arc.dao(props.dao.address).member(props.currentAccountAddress).state, // the current account as member of the DAO
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
     arc.dao(props.dao.address).proposal(props.proposalId).rewards({}),
@@ -431,17 +430,18 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     arc.dao(props.dao.address).proposal(props.proposalId).votes()
   )
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[]]>): any => {
+    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[]]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal</div>
       } else if (state.error) {
         return <div>{ state.error.message }</div>
       } else {
         const proposal = state.data[0]
-        const rewards = state.data[1]
-        const stakes = state.data[2]
-        const votes = state.data[3]
+        const rewards = state.data[2]
+        const stakes = state.data[3]
+        const votes = state.data[4]
         return <ConnectedProposalContainer
+          currentAccount={state.data[1]}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}

@@ -321,7 +321,8 @@ For additional information check out our <a href="https://docs.google.com/docume
               render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
-            <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} currentAccountAddress={currentAccountAddress} />
+            <Route path="/dao/:daoAvatarAddress"
+              render={(props) => <DaoProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
           </Switch>
         </div>
       </div>
