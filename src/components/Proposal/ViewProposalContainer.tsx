@@ -9,7 +9,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 
 import * as css from "./ViewProposal.scss";
-import { arc } from "arc";
+import { getArc } from 'arc';
 
 interface IProps extends RouteComponentProps<any> {
   proposal: IProposalState
@@ -44,6 +44,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
 }
 
 export default (props: { dao: IDAOState, currentAccountAddress: Address} & RouteComponentProps<any>) => {
+  const arc = getArc()
   const proposalId = props.match.params.proposalId
   const currentAccountAddress = props.currentAccountAddress
   return <Subscribe observable={arc.dao(props.dao.address).proposal(proposalId).state}>{(state: IObservableState<IProposalState>) => {

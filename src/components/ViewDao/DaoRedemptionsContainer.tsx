@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
 import {  DAO, IDAOState, IRewardState, Proposal, RewardType } from '@daostack/client'
-import { arc } from 'arc'
+import { getArc } from 'arc'
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { IRootState } from "reducers";
@@ -112,6 +112,7 @@ const ConnnectedDaoRedemptionsContainer = connect(mapStateToProps)(DaoRedemption
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const daoAddress = props.dao.address
+  const arc = getArc()
   const dao = new DAO(daoAddress, arc)
   return <Subscribe observable={dao.rewards()}>{(state: IObservableState<IRewardState[]>) => {
       if (state.error) {

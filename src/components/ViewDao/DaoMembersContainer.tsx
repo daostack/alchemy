@@ -12,7 +12,7 @@ import OAuthLogin from 'components/Account/OAuthLogin';
 import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./ViewDao.scss";
-import { arc } from 'arc'
+import { getArc } from 'arc'
 import { DAO, Member, IDAOState, IMemberState } from '@daostack/client'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
@@ -91,6 +91,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContainer);
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
+  const arc = getArc()
   const dao = new DAO(props.dao.address, arc)
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {

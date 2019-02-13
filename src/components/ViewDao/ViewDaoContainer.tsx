@@ -31,7 +31,7 @@ import * as proposalCss from "../Proposal/Proposal.scss";
 import * as css from "./ViewDao.scss";
 
 import { IDAOState } from '@daostack/client'
-import { arc } from 'arc'
+import { getArc } from 'arc'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { Subscription } from 'rxjs'
 
@@ -342,6 +342,7 @@ const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(w
 
 export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress
+  const arc = getArc()
   return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>

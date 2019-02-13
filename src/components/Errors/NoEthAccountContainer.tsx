@@ -1,5 +1,5 @@
 import * as web3Actions from "actions/web3Actions";
-import { arc } from "arc"
+import { getArc } from 'arc'
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -41,6 +41,7 @@ class NoEthAccountContainer extends React.Component<IProps, null> {
   }
 
   public enableAccountAccess = async (e: any) => {
+    const arc = getArc()
     const web3 = arc.web3
     try {
       await (web3 as any).currentProvider.enable()

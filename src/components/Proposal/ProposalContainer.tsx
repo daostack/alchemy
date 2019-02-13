@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalState, IRewardState, IStake, IVote, ProposalStage } from '@daostack/client'
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { arc } from "arc";
+import { getArc } from 'arc';
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -403,6 +403,7 @@ export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, I
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
   //  TODO: add logic for when props.currentAccountAddress is undefined
+  const arc = getArc()
   const observable = combineLatest(
     arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60

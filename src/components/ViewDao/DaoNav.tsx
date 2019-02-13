@@ -3,7 +3,7 @@ import * as React from "react";
 import { NavLink } from "react-router-dom";
 
 import { IDAOState } from '@daostack/client'
-import { arc } from "arc";
+import { getArc } from 'arc';
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import * as css from "./ViewDao.scss";
 
@@ -17,6 +17,7 @@ export default class DaoNav extends React.Component<IProps, null> {
 
   public render() {
     const { address, numRedemptions } = this.props;
+    const arc = getArc()
     return (
       <Subscribe observable={arc.dao(address).state}>{(state: IObservableState<IDAOState>): any => {
           if (state.isLoading) {

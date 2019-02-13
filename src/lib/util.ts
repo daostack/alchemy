@@ -1,5 +1,5 @@
 import { Address } from "@daostack/client"
-import { arc } from "arc"
+import { getArc, Arc } from 'arc'
 import { BigNumber } from "bignumber.js";
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
@@ -9,17 +9,16 @@ const Web3 = require("web3");
 const path = require("path")
 
 export default class Util {
-
   public static fromWei(amount: BigNumber): number {
-    return Number(arc.web3.utils.fromWei(arc.web3.utils.toBN(amount), "ether"))
+    return Number(getArc().web3.utils.fromWei(getArc().web3.utils.toBN(amount), "ether"))
   }
 
   public static toWei(amount: number): BigNumber {
-    return new BigNumber(arc.web3.utils.toWei(amount.toString(), "ether"))
+    return new BigNumber(getArc().web3.utils.toWei(amount.toString(), "ether"))
   }
 
   public static getBalance(account: Address) {
-    return arc.web3.eth.getBalance(account)
+    return getArc().web3.eth.getBalance(account)
   }
 
   public static networkName(id: number) {
@@ -51,7 +50,7 @@ export default class Util {
 
   public static async getLatestBlock() {
     try {
-      return (await arc.web3.getBlock("latest")).number;
+      return (await getArc().web3.getBlock("latest")).number;
     } catch (err) {
       throw err
     }
@@ -64,14 +63,14 @@ export default class Util {
   }
 
   public static getWeb3() {
-    return arc.web3
+    return getArc().web3
   }
   public static getNetworkId() {
-    return arc.web3.eth.net.getId()
+    return getArc().web3.eth.net.getId()
   }
 
   public static defaultAccount() {
-    return arc.web3.eth.defaultAccount
+    return getArc().web3.eth.defaultAccount
   }
 }
 

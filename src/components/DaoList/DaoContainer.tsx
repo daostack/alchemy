@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { arc } from "arc"
+import { getArc } from 'arc'
 
 import * as css from "./DaoList.scss";
 import { IDAOState } from '@daostack/client'
@@ -12,6 +12,7 @@ interface IProps {
 
 const DaoContainer = (props: IProps) => {
   const { address } = props
+  const arc = getArc()
 
   return <Subscribe observable={arc.dao(address).state}>{(state: IObservableState<IDAOState>) => {
       if (state.isLoading) {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { arc } from "arc"
+import { getArc } from 'arc'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 import { IDAOState } from "@daostack/client";
@@ -31,8 +31,9 @@ class DaoListContainer extends React.Component<IProps, null> {
       }
 }
 
-export default (props: { address: string}) =>
-  <Subscribe observable={arc.daos()}>{(state: IObservableState<IDAOState[]>) => {
+export default (props: { address: string}) => {
+  const arc = getArc()
+  return <Subscribe observable={arc.daos()}>{(state: IObservableState<IDAOState[]>) => {
       if (state.isLoading) {
         return (
           <div className={css.wrapper}>
@@ -48,3 +49,4 @@ export default (props: { address: string}) =>
     }
 
   }</Subscribe>
+}

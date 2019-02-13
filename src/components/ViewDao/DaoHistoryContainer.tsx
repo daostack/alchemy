@@ -7,7 +7,7 @@ import { combineLatest } from 'rxjs'
 import ProposalContainer from "../Proposal/ProposalContainer";
 
 import * as css from "./ViewDao.scss";
-import { arc } from 'arc'
+import { getArc } from 'arc'
 import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
@@ -45,6 +45,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 }
 
 export default (props: {currentAccountAddress: Address} & RouteComponentProps<any>) => {
+  const arc = getArc()
   const daoAvatarAddress = props.match.params.daoAvatarAddress
   const currentAccountAddress = props.currentAccountAddress
   const observable = combineLatest(

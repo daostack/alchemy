@@ -1,4 +1,4 @@
-import { arc } from 'arc'
+import { getArc } from 'arc'
 import BigNumber from 'bignumber.js';
 import Util from 'lib/util';
 import * as moment from 'moment';
@@ -238,7 +238,7 @@ export const notificationUpdater: Middleware =
       (async () => {
 
         const state = getState() as any as IRootState
-        const network = Util.networkName(await arc.web3.eth.net.getId()).toLowerCase()
+        const network = Util.networkName(await getArc().web3.eth.net.getId()).toLowerCase()
 
         if (action.type === REHYDRATE) {
           const a = action as RehydrateAction;

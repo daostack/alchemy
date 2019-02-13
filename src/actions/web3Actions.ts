@@ -5,7 +5,7 @@ import * as Redux from "redux";
 import { Web3 } from "web3";
 
 import { getProfile } from "actions/profilesActions";
-import { arc } from "arc"
+import { getArc } from 'arc'
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
@@ -187,6 +187,7 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
 export function approveStakingGens(daoAvatarAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const arc = getArc()
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     const meta = { accountAddress: currentAccountAddress };

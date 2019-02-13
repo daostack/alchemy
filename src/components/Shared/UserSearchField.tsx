@@ -1,4 +1,4 @@
-import { DAO, Member } from '@daostack/client'
+import { Member } from '@daostack/client'
 import * as React from "react";
 import * as Autosuggest from "react-autosuggest";
 import { connect } from "react-redux";
@@ -6,7 +6,7 @@ import { IRootState } from "reducers";
 import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { first } from 'rxjs/operators';
 
-import { arc } from "arc";
+import { getArc } from 'arc';
 import AccountImage from "components/Account/AccountImage"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
@@ -141,7 +141,8 @@ interface IUserSearchProps {
 }
 
 export default (props: IUserSearchProps) => {
-  const dao = new DAO(props.daoAvatarAddress, arc)
+  const arc = getArc()
+  const dao = arc.dao(props.daoAvatarAddress)
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);

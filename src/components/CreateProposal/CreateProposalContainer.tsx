@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
-import { arc } from "arc";
+import { getArc } from 'arc';
 import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
@@ -132,7 +132,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   public render() {
     const { createProposal, currentAccount, daoAvatarAddress } = this.props;
     const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = this.state.proposalDetails;
-
+    const arc = getArc()
     return <Subscribe observable={arc.dao(daoAvatarAddress).state}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {

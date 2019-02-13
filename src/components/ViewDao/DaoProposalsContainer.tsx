@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
-import { arc } from "arc";
+import { getArc } from 'arc';
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import * as React from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -113,6 +113,7 @@ const DAOProposalsContainer = (props: {
 export default(props: {currentAccountAddress: Address } & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress
   const currentAccountAddress =  props.currentAccountAddress
+  const arc = getArc()
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Queued }), // the list of queued proposals
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.PreBoosted }), // the list of preboosted proposals

@@ -103,13 +103,13 @@ class AppContainer extends React.Component<IProps, IState> {
     const { notificationsMinimized } = this.state;
 
     return (
-      (connectionStatus === ConnectionStatus.Pending ?
-        <div className={css.loading}>Waiting for ethereum connection...</div> :
-      connectionStatus === ConnectionStatus.Failed ?
-        <NoWeb3Container /> :
-      ethAccountAddress === null ?
-        <NoEthAccountContainer /> :
-      connectionStatus === ConnectionStatus.Connected ?
+      // (connectionStatus === ConnectionStatus.Pending ?
+      //   <div className={css.loading}>Waiting for ethereum connection...</div> :
+      // connectionStatus === ConnectionStatus.Failed ?
+      //   <NoWeb3Container /> :
+      // ethAccountAddress === null ?
+      //   <NoEthAccountContainer /> :
+      // connectionStatus === ConnectionStatus.Connected ?
         <div className={css.outer}>
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
@@ -175,9 +175,9 @@ class AppContainer extends React.Component<IProps, IState> {
           </div>
           <div className={css.background}></div>
         </div>
-      :
-        <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
-      )
+      // :
+      //   <div className={css.loading}>Something weird happened, please contact the DAOstack team...</div>
+      // )
     );
   }
 }

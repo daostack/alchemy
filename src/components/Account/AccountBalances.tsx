@@ -8,7 +8,7 @@ import ReputationView from "components/Account/ReputationView";
 import AccountBalance from "components/Account/AccountBalance";
 
 import { Address, DAO, IDAOState, IMemberState } from '@daostack/client'
-import { arc } from 'arc'
+import { getArc } from 'arc'
 
 interface Props {
   dao: IDAOState
@@ -19,6 +19,7 @@ const TokenAllowance = (props: {accountAddress: Address, daoAddress: Address}) =
   // TODO: move query logic to daostack/client
   // TODO: we are net filtering by spender (which is the votingMachine associated with the proposal)
   // but we probably should, in the future.
+  const arc = getArc()
   const query = gql`{
     tokenApprovals (where: {owner: "${props.accountAddress}"} ){
       id
@@ -116,6 +117,7 @@ export default (props: { dao: IDAOState, address: Address}) => {
         tokens: Number(item.tokens)
       }
     }
+    const arc = getArc()
 
     return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
         if (state.isLoading) {

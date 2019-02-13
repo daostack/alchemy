@@ -12,7 +12,7 @@ import { take } from "rxjs/operators"
 import { Web3 } from "web3";
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
-import { arc } from "arc"
+import { getArc } from 'arc'
 import Util from "lib/util";
 import {
   ActionTypes,
@@ -146,6 +146,7 @@ export function createProposal(
     try {
       // TODO: the client lib should (and will) provide and set the default account: https://github.com/daostack/client/issues/42
       const defaultAccount = await Arc.Utils.getDefaultAccount()
+      const arc = getArc()
       arc.web3.eth.defaultAccount = defaultAccount.toLowerCase()
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress }

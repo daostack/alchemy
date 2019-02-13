@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { IRootState } from "reducers";
 import { IDAOState } from '@daostack/client'
-import { arc } from "arc";
+import { getArc } from 'arc';
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 import * as css from "./ViewDao.scss";
@@ -71,6 +71,7 @@ class DaoHeaderComponent extends React.Component<IProps, null> {
 }
 
 export default (props: { address: string}) => {
+  const arc = getArc()
   return <Subscribe observable={arc.dao(props.address).state}>{(state: IObservableState<IDAOState>) => {
       const daoState = state.data
       if (state.error) {

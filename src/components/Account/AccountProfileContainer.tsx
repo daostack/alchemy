@@ -24,7 +24,7 @@ import DaoHeader from "components/ViewDao/DaoHeader";
 import * as css from "./Account.scss";
 
 import { IDAOState } from '@daostack/client'
-import { arc } from 'arc'
+import { getArc } from 'arc'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 const socket = io(process.env.API_URL);
 
@@ -292,10 +292,10 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToProps)(AccountProfileContainer);
 
 export default (props: RouteComponentProps<any>) => {
+  const arc = getArc()
   const queryValues = queryString.parse(props.location.search)
   const address = queryValues.daoAvatarAddress as string
   if (address) {
-
     return <Subscribe observable={arc.dao(address).state}>{
       (state: IObservableState<IDAOState>) => {
         const dao = state.data

@@ -12,7 +12,7 @@ import { IProfileState } from "reducers/profilesReducer";
 
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
-import { arc } from "arc";
+import { getArc } from 'arc';
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -198,6 +198,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
 
 export default (props: { daoAddress: string, location: any}) => {
+    const arc = getArc()
     if (props.daoAddress) {
       return <Subscribe observable={arc.dao(props.daoAddress).state}>{(state: IObservableState<IDAOState>) => {
           if (state.isLoading) {
