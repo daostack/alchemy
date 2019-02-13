@@ -73,7 +73,7 @@ class HeaderContainer extends React.Component<IProps, null> {
       setCurrentAccount
     } = this.props;
 
-    if (dao) {
+    if (dao && ethAccountAddress) {
       await setCurrentAccount(ethAccountAddress, dao);
     }
   }
@@ -86,9 +86,10 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public handleChangeAccount = (e: any) => {
+    // TODO: is this used somewhere?
     const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
     const newAddress = selectElement.value;
-    if (this.props.dao) {
+    if (this.props.dao && newAddress) {
       this.props.setCurrentAccount(newAddress, this.props.dao);
     }
   }
@@ -171,7 +172,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                   <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
                   <div className={css.holdingsLabel}>Your wallet</div>
                   <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
-                    <span>{ethAccountAddress.slice(0, 40)}</span>
+                    <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : 'No account known'}</span>
                     <img src="/assets/images/Icon/Copy-white.svg"/>
                     <div className={css.fade}></div>
                   </div>

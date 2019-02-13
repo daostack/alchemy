@@ -1,26 +1,23 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, Member, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, ProposalStage } from '@daostack/client'
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from 'arc';
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
-import RewardsString from "components/Proposal/RewardsString";
 import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { CommentCount } from 'disqus-react';
 import * as moment from "moment";
-import { denormalize } from "normalizr";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
-import { closingTime, IAccountState, newAccount, VoteOptions } from "reducers/arcReducer";
+import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from 'rxjs'
-import * as schemas from "schemas";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
@@ -38,7 +35,6 @@ interface IStateProps {
   rewardsForCurrentUser: IRewardState[]
   stakesOfCurrentUser: IStake[]
   votesOfCurrentUser: IVote[]
-  // currentVote: IVote
   dao: IDAOState
   proposal: IProposalState
   isVotingYes: boolean
