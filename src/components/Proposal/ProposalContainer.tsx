@@ -247,8 +247,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       return (
         <div className={proposalClass + " " + css.clearfix}>
 
-
-
           <div className={css.proposalInfo}>
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
@@ -259,7 +257,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </div>
               <div className={css.stateChange}>
                 <button className={css.executeProposal}>
-                  <img src="/assets/images/Icon/execute.svg"/> 
+                  <img src="/assets/images/Icon/execute.svg"/>
                   <span> Execute</span>
                 </button>
                 <button className={css.boostProposal}>
@@ -344,9 +342,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} />
           </div>
 
-
           <div className={css.proposalBottom + " " + css.clearfix}>
-
             {proposalEnded(proposal) ?
               <div>
                 {this.state.preRedeemModalOpen ?

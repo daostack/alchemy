@@ -206,7 +206,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
         <div>
           <div className={css.stakes}>
-            {proposal.stakesFor} 
+            {proposal.stakesFor}
             <div className={css.forBar}><span></span></div>
             {proposal.stakesAgainst}
             <div className={css.againstBar}><span></span></div>
