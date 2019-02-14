@@ -1,5 +1,5 @@
 import { Address } from "@daostack/client"
-import { getArc, Arc } from 'arc'
+import { getArc } from 'arc'
 import { BigNumber } from "bignumber.js";
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.

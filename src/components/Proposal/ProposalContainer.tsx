@@ -415,7 +415,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   if (props.currentAccountAddress) {
     accountState =  arc.dao(props.dao.address).member(props.currentAccountAddress).state  // the current account as member of the DAO
   } else {
-    of(undefined)
+    of(null)
 
   }
   const observable = combineLatest(
