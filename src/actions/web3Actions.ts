@@ -1,6 +1,5 @@
 import * as Arc from "@daostack/arc.js";
 import { IDAOState } from "@daostack/client"
-import promisify = require("es6-promisify");
 import * as Redux from "redux";
 import { Web3 } from "web3";
 
@@ -84,6 +83,19 @@ export function initializeWeb3() {
       payload
     } as ConnectAction);
   };
+}
+
+export function setCurrentAccountAddress(accountAddress: string) {
+  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
+    const payload = {
+      ethAccountAddress: accountAddress
+    }
+    const action = {
+      type: ActionTypes.WEB3_SET_ACCOUNT,
+      payload
+    };
+    dispatch(action);
+  }
 }
 
 export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
@@ -236,4 +248,37 @@ export function onApprovedStakingGens(numTokensApproved: number) {
       payload
     } as ApproveAction);
   }
+}
+
+// Polling is Evil!
+// cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
+function pollForAccountChange(web3: any) {
+  let account: any
+  let prevAccount: any
+  let networkId: any
+  let i = 0
+  let accountInterval = setInterval(() => {
+    i += 1;
+    web3.eth.getAccounts().then((accounts: any) => {
+      if (accounts) {
+        account = accounts[0]
+
+        if (prevAccount !== account && account) {
+          if (prevAccount) {
+            console.log(`ACCOUNT CHANGED; new account is ${account}`)
+          }
+          console.log(`call setCurrentAccount(${account})`)
+          setCurrentAccountAddress(account)
+          prevAccount = account
+        }
+      }
+    })
+
+    web3.eth.net.getId((id: string) => {
+      networkId = id
+    })
+    // console.log(`${i} window.ethereum.selectedAddress: ${(<any> window).ethereum.selectedAddress}`)
+    // console.log(`arc.web.getAccounts()[0]: ${account}`)
+  }, 2000)
+  return accountInterval
 }

@@ -1,9 +1,5 @@
-import * as Arc from "@daostack/arc.js";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { CSSTransition } from "react-transition-group";
 
 import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";

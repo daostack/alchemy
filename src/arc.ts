@@ -1,4 +1,5 @@
 import { Arc } from '@daostack/client'
+import { Observable } from 'rxjs'
 
 const Web3 = require('web3')
 
@@ -24,32 +25,62 @@ function getLocalContractAddresses() {
 }
 const contractAddresses = getLocalContractAddresses()
 
-export function getArc(): Arc {
+// Polling is Evil!
+// cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
+export function pollForAccountChanges(web3: any, interval: number = 2000) {
+  return Observable.create((observer: any) => {
+    let account: any
+    let prevAccount: any
+    let timeout = setInterval(() => {
+      web3.eth.getAccounts().then((accounts: any) => {
+        if (accounts) {
+          account = accounts[0]
+          if (prevAccount !== account && account) {
+            if (prevAccount) {
+              console.log(`ACCOUNT CHANGED; new account is ${account}`)
+            }
+            observer.next(account)
+            prevAccount = account
+          }
+        }
+      })
+    }, interval)
+    return() => clearTimeout(timeout)
+  })
+}
 
+export function getWeb3Provider() {
+  let web3Provider
+  if (typeof window !== 'undefined' &&
+    (typeof (window as any).ethereum !== 'undefined' || typeof (window as any).web3 !== 'undefined')
+  ) {
+    // Web3 browser user detected. You can now use the provider.
+    web3Provider = (window as any).ethereum || (window as any).web3.currentProvider
+  } else {
+    web3Provider = Web3.givenProvider || web3WsProvider || web3HttpProvider
+  }
+
+  // print some info for developers
+  if (web3Provider.isMetaMask) {
+    console.log('Connected with Metamask')
+  } else {
+    // TODO: fallback on Portis
+    console.warn(`NOT CONNECTED WITH METAMASK: using default connection at ${web3WsProvider}`)
+  }
+  if (web3Provider.networkVersion !== '1512051714758') {
+    console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${web3Provider.networkVersion}) - please switch conection to localhost: 8545 to enable transactions`)
+  } else {
+    console.log(`Connected to Ganache - this is great in this test phase`)
+  }
+  return web3Provider
+}
+
+export function getArc(): Arc {
+  // TODO: we store the arc object in the window object, but the react
   if ((<any> window).arc) {
     return (<any> window).arc
   } else {
-    let web3Provider
-    if (typeof window !== 'undefined' &&
-      (typeof (window as any).ethereum !== 'undefined' || typeof (window as any).web3 !== 'undefined')
-    ) {
-      // Web3 browser user detected. You can now use the provider.
-      web3Provider = (window as any).ethereum || (window as any).web3.currentProvider
-    } else {
-      web3Provider = Web3.givenProvider || web3WsProvider || web3HttpProvider
-    }
-
-    // print some warnings for developers
-    if (web3Provider.isMetaMask) {
-      console.log('Connected with Metamask')
-    } else {
-      // TODO: start polling for a connection to become availabe
-      // TODO: fallback on Portis
-      console.warn(`NOT CONNECTED TO METAMASK: using default connection at ${web3WsProvider}`)
-    }
-    if (web3Provider.networkVersion !== '1512051714758') {
-      console.warn(`YOU ARE NOT CONNECTED TO GANACHE - please switch conection to localhost:8545 for this development version`)
-    }
+    const web3Provider = getWeb3Provider()
 
     const arc: Arc = new Arc({
       graphqlHttpProvider,
@@ -58,11 +89,8 @@ export function getArc(): Arc {
       ipfsProvider,
       contractAddresses
     });
-    if (!arc.web3.eth.defaultAccount) {
-      console.log(arc.web3.eth.accounts)
-      console.warn(`NO ACCOUNT WAS SET - you will not be able to see your balance or do transactions`)
-    }
-    (<any> window).arc = arc
+    (<any> window).arc = arc;
+
     return arc
   }
 }

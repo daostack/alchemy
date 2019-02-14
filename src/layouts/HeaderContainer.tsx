@@ -73,9 +73,6 @@ class HeaderContainer extends React.Component<IProps, null> {
       setCurrentAccount
     } = this.props;
 
-    if (dao && ethAccountAddress) {
-      await setCurrentAccount(ethAccountAddress, dao);
-    }
   }
 
   public copyAddress(e: any) {
@@ -83,15 +80,6 @@ class HeaderContainer extends React.Component<IProps, null> {
     Util.copyToClipboard(ethAccountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
     e.preventDefault();
-  }
-
-  public handleChangeAccount = (e: any) => {
-    // TODO: is this used somewhere?
-    const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
-    const newAddress = selectElement.value;
-    if (this.props.dao && newAddress) {
-      this.props.setCurrentAccount(newAddress, this.props.dao);
-    }
   }
 
   public handleClickTour = (e: any) => {

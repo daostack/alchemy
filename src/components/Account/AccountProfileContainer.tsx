@@ -116,6 +116,8 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const fromAddress = this.props.accountAddress;
 
     const method = 'personal_sign';
+    // TODO: do we need promisify here? web3 1.0 supports promises natively
+    // and if we can do without, we can drop the dependency on es6-promises
     const sendAsync = promisify(web3.currentProvider.sendAsync);
     const params = [msg, fromAddress];
     const result = await sendAsync({ method, params, fromAddress });

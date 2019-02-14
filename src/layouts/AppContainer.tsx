@@ -8,6 +8,8 @@ import { Route, Switch } from "react-router-dom";
 //@ts-ignore
 import { ModalContainer, ModalRoute } from "react-router-modal";
 
+import { getArc, pollForAccountChanges } from 'arc'
+import { Address } from '@daostack/client'
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
@@ -45,7 +47,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => ({
 
 interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
-  initializeWeb3: typeof web3Actions.initializeWeb3;
+  setCurrentAccountAddress: typeof web3Actions.setCurrentAccountAddress;
   onRedeemReward: typeof arcActions.onRedeemReward;
   onProposalExecuted: typeof arcActions.onProposalExecuted;
   onStakeEvent: typeof arcActions.onStakeEvent;
@@ -55,7 +57,7 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   dismissNotification,
-  initializeWeb3: web3Actions.initializeWeb3,
+  setCurrentAccountAddress: web3Actions.setCurrentAccountAddress,
   onProposalExecuted: arcActions.onProposalExecuted,
   onRedeemReward: arcActions.onRedeemReward,
   onStakeEvent: arcActions.onStakeEvent,
@@ -87,8 +89,17 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    const { initializeWeb3 } = this.props;
-    await initializeWeb3();
+    // get the Arc object as early the lifetime of the app
+    const arc = getArc()
+
+    // if we cahnge the acount, notify the redux store that we did so
+    pollForAccountChanges(arc.web3).subscribe(
+      (next: Address) => {
+        this.props.setCurrentAccountAddress(next)
+      }
+    )
+
+    // await initializeWeb3();
   }
 
   public render() {
