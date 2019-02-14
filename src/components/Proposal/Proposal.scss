@@ -151,14 +151,14 @@ button.disabled {
 
 .voteRecord {
 	margin: 10px;
-	border: 1px solid rgba(191, 203, 213, 1.000);
-	border-radius: 3px;
-	height: 30px;
-	line-height: 30px;
-	padding: 0 15px; 
-	font-size: 11px;
-	margin-top: -6px;
-	text-align: center;
+    border: 1px solid #bfcbd5;
+    border-radius: 3px;
+    height: 23px;
+    line-height: 23px;
+    padding: 0 15px;
+    font-size: 11px;
+    margin-top: -4px;
+    text-align: center;
 
 	.castVoteFor {
 		color: rgba(0, 190, 144, 1.000);
