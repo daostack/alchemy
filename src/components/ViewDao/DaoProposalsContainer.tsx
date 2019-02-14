@@ -36,7 +36,7 @@ const DAOProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} numBoostedProposals={proposalsBoosted.length} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -46,7 +46,7 @@ const DAOProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} numBoostedProposals={proposalsBoosted.length} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -56,7 +56,7 @@ const DAOProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsQueued.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} numBoostedProposals={proposalsBoosted.length}/>
         </Fade>
       ))}
     </TransitionGroup>

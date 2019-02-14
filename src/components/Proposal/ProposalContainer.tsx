@@ -28,6 +28,7 @@ import RedeemButton from './RedeemButton'
 import RedemptionsTip from './RedemptionsTip'
 import TransferDetails from './TransferDetails';
 import VoteBox from "./VoteBox";
+import Util from "lib/util";
 
 interface IStateProps {
   beneficiaryProfile?: IProfileState
@@ -46,12 +47,14 @@ interface IStateProps {
   isPredictingPass: boolean
   isPredictingFail: boolean
   isRedeemPending: boolean
+  numBoostedProposals?: number;
   threshold: number
 }
 
 interface IContainerProps {
   dao: IDAOState
   currentAccount: IMemberState
+  numBoostedProposals?: number;
   proposal: IProposalState
   rewardsForCurrentUser: IRewardState[]
   stakesOfCurrentUser: IStake[]
@@ -61,10 +64,14 @@ interface IContainerProps {
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
   const proposal = ownProps.proposal
   const dao = ownProps.dao
+  // TODO: get the current vote by this user
   // const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
-  // TODO: get the threshold from the proposals
-  // const threshold = dao.currentThresholdToBoost;
-  const threshold = 12345
+
+  // Num GENs needed to stake to boost the proposal
+  // Based on boosting when confidence (Stakes for / stakes against) > thresholdConstant^numBoostedProposals
+  const threshold = ownProps.numBoostedProposals ? 2^ownProps.numBoostedProposals * proposal.stakesAgainst + 1 : 0
+  console.log(proposal.stakesAgainst, Number(arc.web3.utils.fromWei(arc.web3.utils.toBN(proposal.stakesAgainst), "ether")));
+
 
   let currentAccount = ownProps.currentAccount
 
@@ -81,6 +88,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     isPredictingPass: isStakePending(proposal.id, VoteOptions.Yes)(state),
     isPredictingFail: isStakePending(proposal.id, VoteOptions.No)(state),
     isRedeemPending: isRedeemPending(proposal.id, state.web3.ethAccountAddress)(state),
+    numBoostedProposals: ownProps.numBoostedProposals,
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
@@ -412,7 +420,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
-export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
+export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address, numBoostedProposals?: number}) => {
   //  TODO: add logic for when props.currentAccountAddress is undefined
   const observable = combineLatest(
     arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
@@ -437,13 +445,14 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const stakes = state.data[3]
         const votes = state.data[4]
         return <ConnectedProposalContainer
+          numBoostedProposals={props.numBoostedProposals}
           currentAccount={state.data[1]}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}
-          />
+        />
       }
     }
   }</Subscribe>

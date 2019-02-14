@@ -3,6 +3,7 @@ import { DiscussionEmbed } from 'disqus-react';
 import * as React from "react";
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { combineLatest } from 'rxjs'
 
 import ProposalContainer from "./ProposalContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
@@ -15,11 +16,12 @@ interface IProps extends RouteComponentProps<any> {
   proposal: IProposalState
   dao: IDAOState
   currentAccountAddress: Address
+  numBoostedProposals: number
 }
 
 class ViewProposalContainer extends React.Component<IProps, null> {
   public render() {
-    const { proposal, dao, currentAccountAddress } = this.props;
+    const { proposal, dao, currentAccountAddress, numBoostedProposals } = this.props;
 
     const disqusConfig = {
       url: process.env.BASE_URL + this.props.location.pathname,
@@ -35,7 +37,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
           Viewing proposal: {proposal.title}
         </div>
         <div className={css.proposal}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} numBoostedProposals={numBoostedProposals} />
         </div>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
       </div>
@@ -46,9 +48,14 @@ class ViewProposalContainer extends React.Component<IProps, null> {
 export default (props: { dao: IDAOState, currentAccountAddress: Address} & RouteComponentProps<any>) => {
   const proposalId = props.match.params.proposalId
   const currentAccountAddress = props.currentAccountAddress
-  return <Subscribe observable={arc.dao(props.dao.address).proposal(proposalId).state}>{(state: IObservableState<IProposalState>) => {
+  const observable = combineLatest(
+    arc.dao(props.dao.address).proposal(proposalId).state,
+    arc.dao(props.dao.address).proposals({ stage: ProposalStage.Boosted }), // the list of boosted proposals
+  )
+  return <Subscribe observable={observable}>
+    {(state: IObservableState<[IProposalState, IProposalState[]]>) => {
       if (state.data) {
-        return <ViewProposalContainer {...props} proposal={state.data} currentAccountAddress={currentAccountAddress} />
+        return <ViewProposalContainer {...props} proposal={state.data[0]} currentAccountAddress={currentAccountAddress} numBoostedProposals={state.data[1].length} />
       } else if (state.error) {
         return <div>{ state.error.message }</div>
       } else {
