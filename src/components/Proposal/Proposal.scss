@@ -113,6 +113,7 @@ button.disabled {
 	opacity: 0;
 	transition: all .25s ease;
 	padding: 0 5px;
+	font-size: 11px;
 
 	img {
 		margin-right: 4px;
@@ -131,6 +132,7 @@ button.disabled {
 
 .castVote button:nth-child(1) {
 	border-radius: 10px 0 0 10px;
+	width: 60px;
 
 	img {
 		position: relative;
@@ -180,6 +182,7 @@ button.disabled {
 	.castVote {
 		display: block;
 	    margin: -4px auto 15px auto;
+	    text-align: center;
 	}
 }
 
@@ -358,7 +361,7 @@ button.disabled {
 	width: 260px;
 	left: -100px;
 	border-radius: 3px;
-	top: 50%;
+	top: -70px;
 	opacity: 0;
 	transform: translateY(-50%) scale(0);
 	transition: all .25s ease;
@@ -374,10 +377,10 @@ button.disabled {
 	}
 
 	.tooltipPointer {
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%) rotate(45deg);
-		left: -15px;
+	    position: absolute;
+	    bottom: -31px;
+	    transform: translateY(-50%) rotate(45deg);
+	    left: 12px;
 	}
 
 	.turnoutInfo {
@@ -401,7 +404,7 @@ button.disabled {
 				.forLabel {
 					color: $accent-1;
 					font-weight: $bold;
-
+					float: left;
 					text-transform: uppercase;
 				}
 
@@ -749,7 +752,7 @@ button.disabled {
 
 .voteGraphs:hover .reputationTurnout {
 	opacity: 1;
-	left: 40px;
+	left: -5px;
 	transform: translateY(-50%) scale(1);
 }
 
