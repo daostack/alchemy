@@ -1,12 +1,12 @@
 import * as Arc from '@daostack/arc.js';
 import { TransactionReceiptsEventInfo } from '@daostack/arc.js';
-import { Action, Dispatch, Middleware } from 'redux';
-import * as moment from 'moment';
-import { REHYDRATE, RehydrateAction, persistReducer, createTransform } from "redux-persist";
-import Util from "../lib/util";
-import storage from "redux-persist/lib/storage";
-import { IRootState } from "../reducers";
 import BigNumber from "bignumber.js";
+import * as moment from 'moment';
+import { Action, Dispatch, Middleware } from 'redux';
+import { createTransform, persistReducer, REHYDRATE, RehydrateAction } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import Util from "../lib/util";
+import { IRootState } from "../reducers";
 import { VoteOptions } from "./arcReducer";
 
 /** -- Model -- */

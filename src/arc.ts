@@ -39,6 +39,7 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
             if (prevAccount) {
               console.log(`ACCOUNT CHANGED; new account is ${account}`)
             }
+            web3.eth.defaultAccount = account
             observer.next(account)
             prevAccount = account
           }

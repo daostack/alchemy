@@ -17,7 +17,7 @@ import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest } from 'rxjs'
+import { combineLatest, Observable, of } from 'rxjs'
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
@@ -411,9 +411,16 @@ export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, I
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
   //  TODO: add logic for when props.currentAccountAddress is undefined
   const arc = getArc()
+  let accountState: Observable<IMemberState|undefined>
+  if (props.currentAccountAddress) {
+    accountState =  arc.dao(props.dao.address).member(props.currentAccountAddress).state  // the current account as member of the DAO
+  } else {
+    of(undefined)
+
+  }
   const observable = combineLatest(
     arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
-    arc.dao(props.dao.address).member(props.currentAccountAddress).state, // the current account as member of the DAO
+    accountState,
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
     arc.dao(props.dao.address).proposal(props.proposalId).rewards({}),

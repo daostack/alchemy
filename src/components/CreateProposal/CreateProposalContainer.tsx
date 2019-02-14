@@ -90,7 +90,7 @@ interface FormValues {
 }
 
 class CreateProposalContainer extends React.Component<IProps, IState> {
-  private web3: Web3;
+  private web3: any;
 
   constructor(props: IProps) {
     super(props);
@@ -198,7 +198,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.description = "Must be unique";
                   }
 
-                  if (!this.web3.isAddress(values.beneficiary)) {
+                  if (!this.web3.utils.isAddress(values.beneficiary)) {
                     errors.beneficiary = "Invalid address";
                   }
 

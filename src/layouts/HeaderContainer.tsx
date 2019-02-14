@@ -5,7 +5,7 @@ import * as React from "react";
 import { Breadcrumbs } from 'react-breadcrumbs-dynamic'
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import { Link, NavLink, matchPath, RouteComponentProps } from "react-router-dom";
+import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IAccountState, newAccount } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from 'reducers/notifications'
@@ -40,13 +40,11 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  setCurrentAccount: typeof web3Actions.setCurrentAccount;
   showNotification: typeof showNotification;
   showTour: typeof uiActions.showTour;
 }
 
 const mapDispatchToProps = {
-  setCurrentAccount: web3Actions.setCurrentAccount,
   onApprovedStakingGens: web3Actions.onApprovedStakingGens,
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
   onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
@@ -64,15 +62,6 @@ class HeaderContainer extends React.Component<IProps, null> {
     super(props);
 
     this.copyAddress = this.copyAddress.bind(this);
-  }
-
-  public async componentDidMount() {
-    const {
-      dao,
-      ethAccountAddress,
-      setCurrentAccount
-    } = this.props;
-
   }
 
   public copyAddress(e: any) {

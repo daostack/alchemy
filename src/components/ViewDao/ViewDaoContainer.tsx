@@ -18,11 +18,11 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as schemas from "schemas";
 
 import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
-import DaoSidebar from "./DaoSidebar";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
+import DaoSidebar from "./DaoSidebar";
 
 import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
@@ -66,7 +66,6 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 interface IDispatchProps {
   getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
   hideTour: typeof uiActions.hideTour;
-  onProposalExpired: typeof arcActions.onProposalExpired;
   showTour: typeof uiActions.showTour;
   showNotification: typeof showNotification;
 }
@@ -74,7 +73,6 @@ interface IDispatchProps {
 const mapDispatchToProps = {
   getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
   hideTour: uiActions.hideTour,
-  onProposalExpired: arcActions.onProposalExpired,
   showTour: uiActions.showTour,
   showNotification,
 }

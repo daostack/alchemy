@@ -1,7 +1,6 @@
-import * as Arc from "@daostack/arc.js";
-import { IDAOState } from "@daostack/client"
+import BigNumber from "bignumber.js";
 import * as Redux from "redux";
-import { Web3 } from "web3";
+import { first } from 'rxjs/operators'
 
 import { getProfile } from "actions/profilesActions";
 import { getArc } from 'arc'
@@ -12,78 +11,79 @@ import { AsyncActionSequence, IAsyncAction } from "./async";
 
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
-export function initializeWeb3() {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
-    dispatch({
-      type: ActionTypes.WEB3_CONNECT,
-      sequence: AsyncActionSequence.Pending,
-      operation: {
-        message: "Connecting...",
-        totalSteps: 1,
-      },
-    } as ConnectAction);
-
-    let web3: Web3;
-
-    try {
-      web3 = await Util.getWeb3();
-    } catch (e) {
-      console.error(e);
-      dispatch({
-        type: ActionTypes.WEB3_CONNECT,
-        sequence: AsyncActionSequence.Failure,
-        operation: {
-          message: `Failed to connect to web3`
-        },
-      } as ConnectAction);
-
-      return;
-    }
-
-    const networkId = Number(await Util.getNetworkId());
-    let accounts: string[]
-    try {
-      accounts = web3.eth.accounts
-    } catch (err) {
-      accounts = []
-      console.log(`Error getting web3.eth.accounts: ${err.message}`)
-    }
-    const payload: IWeb3State = {
-      accounts,
-      currentAccountEthBalance: 0,
-      currentAccountExternalTokenBalance: 0,
-      currentAccountGenBalance: 0,
-      currentAccountGenStakingAllowance: 0,
-      ethAccountAddress: null as string,
-      networkId,
-    };
-
-    try {
-      payload.ethAccountAddress = (await Util.defaultAccount()).toLowerCase();
-    } catch (e) {
-      dispatch({
-        type: ActionTypes.WEB3_CONNECT,
-        sequence: AsyncActionSequence.Success,
-        operation: {
-          message: `Connected to web3, but no default account selected.`
-        },
-        payload
-      } as ConnectAction);
-      return;
-    }
-
-    payload.currentAccountEthBalance = Util.fromWei(await Util.getBalance(payload.ethAccountAddress));
-
-    dispatch({
-      type: ActionTypes.WEB3_CONNECT,
-      sequence: AsyncActionSequence.Success,
-      operation: {
-        message: "Connected to web3!"
-      },
-      payload
-    } as ConnectAction);
-  };
-}
+// TODO: remove this commented function eventually (leaving it for now for reference)
+// export function initializeWeb3() {
+//   return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
+//     dispatch({ll
+//       type: ActionTypes.WEB3_CONNECT,
+//       sequence: AsyncActionSequence.Pending,
+//       operation: {
+//         message: "Connecting...",
+//         totalSteps: 1,
+//       },
+//     } as ConnectAction);
+//
+//     let web3: Web3;
+//
+//     try {
+//       web3 = await Util.getWeb3();
+//     } catch (e) {
+//       console.error(e);
+//       dispatch({
+//         type: ActionTypes.WEB3_CONNECT,
+//         sequence: AsyncActionSequence.Failure,
+//         operation: {
+//           message: `Failed to connect to web3`
+//         },
+//       } as ConnectAction);
+//
+//       return;
+//     }
+//
+//     const networkId = Number(await Util.getNetworkId());
+//     let accounts: string[]
+//     try {
+//       accounts = web3.eth.accounts
+//     } catch (err) {
+//       accounts = []
+//       console.log(`Error getting web3.eth.accounts: ${err.message}`)
+//     }
+//     const payload: IWeb3State = {
+//       accounts,
+//       currentAccountEthBalance: 0,
+//       currentAccountExternalTokenBalance: 0,
+//       currentAccountGenBalance: 0,
+//       currentAccountGenStakingAllowance: 0,
+//       ethAccountAddress: null as string,
+//       networkId,
+//     };
+//
+//     try {
+//       payload.ethAccountAddress = (await Util.defaultAccount()).toLowerCase();
+//     } catch (e) {
+//       dispatch({
+//         type: ActionTypes.WEB3_CONNECT,
+//         sequence: AsyncActionSequence.Success,
+//         operation: {
+//           message: `Connected to web3, but no default account selected.`
+//         },
+//         payload
+//       } as ConnectAction);
+//       return;
+//     }
+//
+//     payload.currentAccountEthBalance = Util.fromWei(await Util.getBalance(payload.ethAccountAddress));
+//
+//     dispatch({
+//       type: ActionTypes.WEB3_CONNECT,
+//       sequence: AsyncActionSequence.Success,
+//       operation: {
+//         message: "Connected to web3!"
+//       },
+//       payload
+//     } as ConnectAction);
+//   };
+// }
 
 export function setCurrentAccountAddress(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
@@ -98,7 +98,7 @@ export function setCurrentAccountAddress(accountAddress: string) {
   }
 }
 
-export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
+export function setCurrentAccount(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const payload = {
       currentAccountGenBalance: 0,
@@ -108,33 +108,25 @@ export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
       currentAccountExternalTokenBalance: 0
     }
 
+    let action
+
+    action = {
+      type: ActionTypes.WEB3_SET_ACCOUNT,
+      payload
+    }
+    dispatch(action)
+
+    const arc = getArc()
     const balance = await Util.getBalance(accountAddress);
     payload.currentAccountEthBalance = Util.fromWei(balance);
 
-    let votingMachineInstance: Arc.GenesisProtocolWrapper;
-    const daoAvatarAddress = dao.address
-    if (daoAvatarAddress !== null) {
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const schemeParameters = await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)
-      const votingMachineAddress = schemeParameters.votingMachineAddress;
-      votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-      // Check for external token rewards in DAO and if exists update account's balance for that token
-      if (dao && dao.externalTokenAddress) {
-        const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
-        payload.currentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(accountAddress));
-      }
-    } else {
-      votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-    }
-    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-    payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress));
-    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address));
+    const stakingToken = arc.GENToken()
+    payload.currentAccountGenBalance = Util.fromWei(new BigNumber(await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise()));
+    payload.currentAccountGenStakingAllowance = Util.fromWei(await arc.allowance(accountAddress).pipe(first()).toPromise());
 
     dispatch(getProfile(accountAddress));
 
-    const action = {
+    action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
       payload
     };
@@ -248,37 +240,4 @@ export function onApprovedStakingGens(numTokensApproved: number) {
       payload
     } as ApproveAction);
   }
-}
-
-// Polling is Evil!
-// cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
-function pollForAccountChange(web3: any) {
-  let account: any
-  let prevAccount: any
-  let networkId: any
-  let i = 0
-  let accountInterval = setInterval(() => {
-    i += 1;
-    web3.eth.getAccounts().then((accounts: any) => {
-      if (accounts) {
-        account = accounts[0]
-
-        if (prevAccount !== account && account) {
-          if (prevAccount) {
-            console.log(`ACCOUNT CHANGED; new account is ${account}`)
-          }
-          console.log(`call setCurrentAccount(${account})`)
-          setCurrentAccountAddress(account)
-          prevAccount = account
-        }
-      }
-    })
-
-    web3.eth.net.getId((id: string) => {
-      networkId = id
-    })
-    // console.log(`${i} window.ethereum.selectedAddress: ${(<any> window).ethereum.selectedAddress}`)
-    // console.log(`arc.web.getAccounts()[0]: ${account}`)
-  }, 2000)
-  return accountInterval
 }
