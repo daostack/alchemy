@@ -177,8 +177,6 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
     `Creating proposal ${elipsis(proposalTitle, 22)}`,
   'ContributionReward.redeemContributionReward': (proposalTitle, {proposalId}) =>
     `Redeeming contribution reward for "${elipsis(proposalTitle, 22)}"`,
-  'DAO.new': (proposalTitle, {}) =>
-    `Creating a new DAO`,
   'StandardToken.approve': (proposalTitle, {amount}) =>
     `Approving ${Util.fromWei(new BigNumber(amount))} GEN for staking`
 }
