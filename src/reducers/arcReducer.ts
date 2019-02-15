@@ -287,9 +287,9 @@ export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   // TODO: check if the logic of the commented lines is correctly represented in the other lines
   // const res = (
   //   proposal.state == ProposalStates.Closed ||
-  //   (proposal.state == ProposalStates.Executed && proposal.winningVote == VoteOptions.No) ||
+  //   (proposal.state == ProposalStates.Executed && proposal.winningVote == ProposalOutcome.Fail) ||
   //   // Boosted proposal past end time with more no votes than yes, but not yet executed
-  //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.No) ||
+  //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == ProposalOutcome.Fail) ||
   //   // Pre boosted proposal past end time but not yet executed are always failed
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );

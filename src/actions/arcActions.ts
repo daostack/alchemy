@@ -1,11 +1,11 @@
-import { DAO } from "@daostack/client"
+import { DAO, ProposalOutcome } from "@daostack/client"
 import BigNumber from "bignumber.js";
 import { push } from "react-router-redux";
 import { IRootState } from "reducers/index";
 import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
-import { take } from "rxjs/operators"
+import { first, take } from "rxjs/operators"
 import { Web3 } from "web3";
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
@@ -103,6 +103,7 @@ export function createProposal(
         title,
         url: description
       }
+
       // TODO: use the Option stages of the client lib to communicate about the progress
       await dao.createProposal(proposalOptions)
         .pipe(take(2)).toPromise()
@@ -129,7 +130,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
   avatarAddress: string,
   proposalId: string,
   reputation: number,
-  voteOption: VoteOptions,
+  voteOption: ProposalOutcome,
   voterAddress: string,
 }, {
     entities: any,
@@ -137,10 +138,12 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
     voter: any,
   }>;
 
-export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStateLegacy, voteOption: number) {
+export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: ProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    // use new Proposal(...).vote(...) here
-    throw Error(`Still needs tob e ported to client library`)
+    const arc = getArc()
+    const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId)
+    await proposalObj.vote(ProposalOutcome.Pass).pipe(first()).toPromise()
+
   //
   //     dispatch({
   //       type: ActionTypes.ARC_VOTE,
@@ -167,7 +170,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposal: IProposalStat
 export type StakeAction = IAsyncAction<"ARC_STAKE", {
   avatarAddress: string,
   proposalId: string,
-  prediction: VoteOptions,
+  prediction: ProposalOutcome,
   stakeAmount: number,
   stakerAddress: string,
 }, {
