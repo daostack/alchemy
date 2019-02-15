@@ -6,11 +6,9 @@ import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
 import { take } from "rxjs/operators"
-import { Web3 } from "web3";
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { getArc } from 'arc'
-import Util from "lib/util";
 import {
   ActionTypes,
   anyRedemptions,

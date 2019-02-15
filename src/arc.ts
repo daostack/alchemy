@@ -58,17 +58,23 @@ export function getWeb3Provider() {
     // Web3 browser user detected. You can now use the provider.
     web3Provider = (window as any).ethereum || (window as any).web3.currentProvider
   } else {
-    web3Provider = Web3.givenProvider || web3WsProvider || web3HttpProvider
+    web3Provider = Web3.givenProvider
   }
 
   // print some info for developers
-  if (web3Provider.isMetaMask) {
+  if (web3Provider && web3Provider.isMetaMask) {
     console.log('Connected with Metamask')
   } else {
     // TODO: fallback on Portis
-    console.warn(`NOT CONNECTED WITH METAMASK: using default connection at ${web3WsProvider}`)
+    console.warn(`NO WEB3 PROVIDER PROVIDED BY BROWSER: using default connection at ${web3WsProvider}`)
+    if (process.env.NODE_ENV === 'dev') {
+      web3Provider = web3WsProvider
+    } else {
+      // TODO: provide read-only web3 provider (like infura) for staging and production environments
+      web3Provider = web3WsProvider
+    }
   }
-  if (web3Provider.networkVersion !== '1512051714758') {
+  if (web3Provider !== web3WsProvider && web3Provider.networkVersion !== '1512051714758') {
     console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${web3Provider.networkVersion}) - please switch conection to localhost: 8545 to enable transactions`)
   } else {
     console.log(`Connected to Ganache - this is great in this test phase`)

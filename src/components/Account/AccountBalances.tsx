@@ -1,11 +1,11 @@
-import * as React from "react";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import gql from 'graphql-tag'
+import * as React from "react";
 
 import * as css from "layouts/App.scss";
 
-import ReputationView from "components/Account/ReputationView";
 import AccountBalance from "components/Account/AccountBalance";
+import ReputationView from "components/Account/ReputationView";
 
 import { Address, DAO, IDAOState, IMemberState } from '@daostack/client'
 import { getArc } from 'arc'
@@ -95,7 +95,9 @@ export default (props: { dao: IDAOState, address: Address}) => {
     if (!props.dao) {
       return null
     }
-
+    if (!props.address) {
+      return null
+    }
     // TODO: move query logic to daostack/client
     const query = gql`{
       members (where: {address: "${props.address}", dao: "${props.dao.address}"}) {
