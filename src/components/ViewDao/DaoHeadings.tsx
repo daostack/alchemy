@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IDaoState, IProposalState } from "reducers/arcReducer";
-import { IDAOState } from "@daostack/client"
+import { IDAOState } from "@daostack/client";
 import * as css from "./ViewDao.scss";
 
 // TODO: interface needs to use IDAOState

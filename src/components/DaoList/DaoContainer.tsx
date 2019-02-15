@@ -1,26 +1,26 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { getArc } from "arc"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import { getArc } from "arc";
 
 import * as css from "./DaoList.scss";
-import { IDAOState } from "@daostack/client"
+import { IDAOState } from "@daostack/client";
 
 interface IProps {
-  address: string
+  address: string;
 }
 
 const DaoContainer = (props: IProps) => {
-  const { address } = props
-  const arc = getArc()
+  const { address } = props;
+  const arc = getArc();
 
   return <Subscribe observable={arc.dao(address).state}>{(state: IObservableState<IDAOState>) => {
       if (state.isLoading) {
-        return null
+        return null;
       } else if (state.error) {
-        throw state.error
+        throw state.error;
       } else {
-        const dao = state.data
+        const dao = state.data;
         return <Link
           className={css.daoLink}
           to={"/dao/" + dao.address}
@@ -42,10 +42,10 @@ const DaoContainer = (props: IProps) => {
               <div className={css.daoInfo}>Reputation: {Math.round(state.data.totalSupply).toLocaleString()}</div>
             )}</Subscribe>
           </div>
-        </Link>
+        </Link>;
       }
     }
-  }</Subscribe>
-}
+  }</Subscribe>;
+};
 
-export default DaoContainer
+export default DaoContainer;

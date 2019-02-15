@@ -1,6 +1,6 @@
 import classNames = require("classnames");
 import * as React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as profileActions from "actions/profilesActions";
@@ -12,7 +12,7 @@ interface IProps {
   accountAddress: string;
   className?: string;
   editing: boolean;
-  onSuccess?: (profileData: IProfileState) => any,
+  onSuccess?: (profileData: IProfileState) => any;
   profile: IProfileState;
   provider: "github" | "facebook" | "twitter";
   socket?: any;
@@ -34,7 +34,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    const { onSuccess, provider, socket } = this.props
+    const { onSuccess, provider, socket } = this.props;
 
     if (socket) {
       socket.on(provider, (account: any) => {
@@ -54,7 +54,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
         clearInterval(check);
         this.setState({ disabled: false});
       }
-    }, 1000)
+    }, 1000);
   }
 
   // Launches the popup by making a request to the server and then
@@ -114,7 +114,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
             )
         }
       </div>
-    )
+    );
   }
 
 }

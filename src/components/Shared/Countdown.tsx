@@ -26,7 +26,7 @@ class Countdown extends React.Component<IProps, IState> {
       days: 0,
       hours: 0,
       min: 0
-    }
+    };
   }
 
   public componentDidMount() {

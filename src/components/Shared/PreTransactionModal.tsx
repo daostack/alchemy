@@ -6,7 +6,7 @@ import { Modal } from "react-router-modal";
 
 import { proposalEnded } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ProposalStage } from "@daostack/client"
+import { IDAOState, IProposalState, ProposalStage } from "@daostack/client";
 
 import RewardsString from "components/Proposal/RewardsString";
 import TransferDetails from "components/Proposal/TransferDetails";

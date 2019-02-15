@@ -30,15 +30,15 @@ export function getProfilesForAllAccounts() {
         payload: e.toString()
       });
     }
-  }
+  };
 }
 
 export function getProfile(accountAddress: string) {
   return async (dispatch: any) => {
-    const url = process.env.API_URL + "/api/accounts?filter={\"where\":{\"ethereumAccountAddress\":\"" + accountAddress + "\"}}"
+    const url = process.env.API_URL + "/api/accounts?filter={\"where\":{\"ethereumAccountAddress\":\"" + accountAddress + "\"}}";
     try {
       // Get profile data for this account
-      const response = await axios.get(url)
+      const response = await axios.get(url);
       if (response.data.length > 0) {
         // Update profiles state with profile data for this account
         dispatch({
@@ -55,17 +55,17 @@ export function getProfile(accountAddress: string) {
         });
       }
     } catch (e) {
-      console.log(`Error getting ${url} (${e.message})`)
+      console.log(`Error getting ${url} (${e.message})`);
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
         payload: e.toString()
       });
     }
-  }
+  };
 }
 
-export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string, name: string, socialURLs?: any }>
+export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string, name: string, socialURLs?: any }>;
 
 export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
   return async (dispatch: any, getState: any) => {
@@ -123,5 +123,5 @@ export function verifySocialAccount(accountAddress: string, account: IProfileSta
       meta: { accountAddress },
       payload: profileDbToRedux(account)
     });
-  }
+  };
 }

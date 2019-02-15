@@ -28,10 +28,10 @@ import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
 import * as css from "./ViewDao.scss";
 
-import { IDAOState } from "@daostack/client"
-import { getArc } from "arc"
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { Subscription } from "rxjs"
+import { IDAOState } from "@daostack/client";
+import { getArc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import { Subscription } from "rxjs";
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
@@ -75,23 +75,23 @@ const mapDispatchToProps = {
   hideTour: uiActions.hideTour,
   showTour: uiActions.showTour,
   showNotification,
-}
+};
 
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  showTourIntro: boolean
-  showTourOutro: boolean
-  tourCount: number
-  isLoading: boolean
-  dao: IDAOState
-  error: Error
-  complete: boolean
+  showTourIntro: boolean;
+  showTourOutro: boolean;
+  tourCount: number;
+  isLoading: boolean;
+  dao: IDAOState;
+  error: Error;
+  complete: boolean;
 }
 
 class ViewDaoContainer extends React.Component<IProps, IState> {
   public daoSubscription: any;
-  public subscription: Subscription
+  public subscription: Subscription;
 
   constructor(props: IProps) {
     super(props);
@@ -123,15 +123,15 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const { showTour } = this.props;
     this.setState({ showTourIntro: false });
     showTour();
-  };
+  }
 
   public handleClickSkipTour = () => {
     this.setState({ showTourIntro: false });
-  };
+  }
 
   public handleClickEndTour = () => {
     this.setState({ showTourOutro: false });
-  };
+  }
 
   public handleJoyrideCallback = (data: any) => {
     const { hideTour } = this.props;
@@ -145,7 +145,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     if (data.action == "close" || data.type == "tour:end") {
       hideTour();
     }
-  };
+  }
 
   public render() {
     const { dao, currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
@@ -331,16 +331,16 @@ For additional information check out our <a href="https://docs.google.com/docume
 const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(withCookies(ViewDaoContainer));
 
 export default (props: RouteComponentProps<any>) => {
-  const daoAddress = props.match.params.daoAvatarAddress
-  const arc = getArc()
+  const daoAddress = props.match.params.daoAvatarAddress;
+  const arc = getArc();
   return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
       if (state.error) {
-        return <div>{ state.error.message }</div>
+        return <div>{ state.error.message }</div>;
       } else if (state.data) {
-        return <ConnectedViewDaoContainer dao={state.data} {...props }/>
+        return <ConnectedViewDaoContainer dao={state.data} {...props }/>;
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }
     }
-  }</Subscribe>
-}
+  }</Subscribe>;
+};

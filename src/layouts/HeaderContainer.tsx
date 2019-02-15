@@ -1,14 +1,14 @@
-import { IDAOState } from "@daostack/client"
+import { IDAOState } from "@daostack/client";
 import Util from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
-import { Breadcrumbs } from "react-breadcrumbs-dynamic"
+import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IAccountState, newAccount } from "reducers/arcReducer";
-import { NotificationStatus, showNotification } from "reducers/notifications"
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
 import * as uiActions from "actions/uiActions";
@@ -17,7 +17,7 @@ import { getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as css from "./App.scss";
 
 interface IStateProps {
@@ -31,7 +31,7 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = ownProps.dao
+  const dao = ownProps.dao;
   return {
     dao,
     ethAccountAddress: state.web3.ethAccountAddress,
@@ -171,7 +171,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
 
 export default (props: RouteComponentProps<any>) => {
-    const arc = getArc()
+    const arc = getArc();
     const match = matchPath(props.location.pathname, {
       path: "/dao/:daoAvatarAddress",
       strict: false
@@ -182,15 +182,15 @@ export default (props: RouteComponentProps<any>) => {
     if (daoAddress) {
       return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
           if (state.isLoading) {
-            return null
+            return null;
           } else if (state.error) {
-            return <div>{state.error}</div>
+            return <div>{state.error}</div>;
           } else {
-            return <ConnectedHeaderContainer {...props} dao={state.data} />
+            return <ConnectedHeaderContainer {...props} dao={state.data} />;
           }
         }
-      }</Subscribe>
+      }</Subscribe>;
   } else {
-    return <ConnectedHeaderContainer dao={undefined} {...props }/>
+    return <ConnectedHeaderContainer dao={undefined} {...props }/>;
   }
-}
+};

@@ -12,14 +12,14 @@ import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./ViewDao.scss";
-import { getArc } from "arc"
-import { DAO, Member, IDAOState, IMemberState } from "@daostack/client"
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import { getArc } from "arc";
+import { DAO, Member, IDAOState, IMemberState } from "@daostack/client";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 interface IProps extends RouteComponentProps<any> {
-  dao: IDAOState
-  members: Member[]
-  profiles: IProfilesState
+  dao: IDAOState;
+  members: Member[];
+  profiles: IProfilesState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -27,8 +27,8 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao: ownProps.dao,
     members: ownProps.members,
     profiles: state.profiles
-  }
-}
+  };
+};
 
 class DaoMembersContainer extends React.Component<IProps, null> {
 
@@ -38,9 +38,9 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     const membersHTML = members.map((member) => {
       return <Subscribe observable={member.state} key={member.address}>{(state: IObservableState<IMemberState>) => {
         if (state.error) {
-          return <div>{state.error.message}</div>
+          return <div>{state.error.message}</div>;
         } else if (state.data) {
-          const memberState = state.data
+          const memberState = state.data;
           const profile = profiles[memberState.address];
           return (
             <div className={css.member + " " + css.clearfix}
@@ -72,9 +72,9 @@ class DaoMembersContainer extends React.Component<IProps, null> {
             </div>
           );
         } else {
-          return <div>...loading..</div>
+          return <div>...loading..</div>;
         }
-      }}</Subscribe>
+      }}</Subscribe>;
     });
 
     return (
@@ -91,16 +91,16 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContainer);
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
-  const arc = getArc()
-  const dao = new DAO(props.dao.address, arc)
+  const arc = getArc();
+  const dao = new DAO(props.dao.address, arc);
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       } else if (state.error) {
-        return <div>{ state.error.message }</div>
+        return <div>{ state.error.message }</div>;
       } else {
-        return <ConnectedDaoMembersContainer members={state.data} dao={props.dao} />
+        return <ConnectedDaoMembersContainer members={state.data} dao={props.dao} />;
       }
     }
-  }</Subscribe>
-}
+  }</Subscribe>;
+};

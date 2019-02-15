@@ -18,23 +18,23 @@ import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./Account.scss";
-import { IDAOState, Address } from "@daostack/client"
+import { IDAOState, Address } from "@daostack/client";
 
 interface IStateProps {
-  accountAddress: string
-  profile: IProfileState
-  dao: IDAOState
-  reputation: number
-  tokens: number
+  accountAddress: string;
+  profile: IProfileState;
+  dao: IDAOState;
+  reputation: number;
+  tokens: number;
 }
 
 interface IOwnProps {
-  dao: IDAOState
-  accountAddress: Address
+  dao: IDAOState;
+  accountAddress: Address;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = ownProps.dao
+  const dao = ownProps.dao;
   const account = state.arc.accounts[`${ownProps.accountAddress}-${ownProps.daoAvatarAddress}`] as IAccountState;
 
   return {

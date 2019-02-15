@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import * as Redux from "redux";
-import { first } from "rxjs/operators"
+import { first } from "rxjs/operators";
 
 import { getProfile } from "actions/profilesActions";
-import { getArc } from "arc"
+import { getArc } from "arc";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
@@ -89,13 +89,13 @@ export function setCurrentAccountAddress(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const payload = {
       ethAccountAddress: accountAddress
-    }
+    };
     const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
       payload
     };
     dispatch(action);
-  }
+  };
 }
 
 export function setCurrentAccount(accountAddress: string) {
@@ -106,27 +106,27 @@ export function setCurrentAccount(accountAddress: string) {
       ethAccountAddress: accountAddress,
       currentAccountEthBalance: 0,
       currentAccountExternalTokenBalance: 0
-    }
+    };
 
-    let action
+    let action;
 
     action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
       payload
-    }
-    dispatch(action)
+    };
+    dispatch(action);
 
-    const arc = getArc()
+    const arc = getArc();
     const balance = await Util.getBalance(accountAddress);
     payload.currentAccountEthBalance = Util.fromWei(balance);
 
-    const stakingToken = arc.GENToken()
+    const stakingToken = arc.GENToken();
     payload.currentAccountGenBalance = Util.fromWei(new BigNumber(await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise()));
     const allowance = await arc.allowance(accountAddress).pipe(first()).toPromise();
     if (allowance) {
       payload.currentAccountGenStakingAllowance = Util.fromWei(new BigNumber(allowance.amount));
     } else {
-      payload.currentAccountGenStakingAllowance = 0
+      payload.currentAccountGenStakingAllowance = 0;
     }
 
     dispatch(getProfile(accountAddress));
@@ -191,12 +191,12 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
   accountAddress: string
 }, {
   numTokensApproved: number
-}>
+}>;
 
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
 export function approveStakingGens(daoAvatarAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const arc = getArc()
+    const arc = getArc();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     const meta = { accountAddress: currentAccountAddress };
@@ -212,7 +212,7 @@ export function approveStakingGens(daoAvatarAddress: string) {
     } as ApproveAction);
 
     try {
-      await arc.approveForStaking(Util.toWei(100000).toNumber())
+      await arc.approveForStaking(Util.toWei(100000).toNumber());
     } catch (err) {
       console.error(err);
       dispatch({
@@ -222,9 +222,9 @@ export function approveStakingGens(daoAvatarAddress: string) {
         operation: {
           message: `Approving tokens for staking failed`
         }
-      } as ApproveAction)
+      } as ApproveAction);
     }
-  }
+  };
 }
 
 // GEN transfer approval confirmed
@@ -233,7 +233,7 @@ export function onApprovedStakingGens(numTokensApproved: number) {
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     const meta = { accountAddress: currentAccountAddress };
-    const payload = { numTokensApproved }
+    const payload = { numTokensApproved };
 
     dispatch({
       type: ActionTypes.APPROVE_STAKING_GENS,
@@ -244,5 +244,5 @@ export function onApprovedStakingGens(numTokensApproved: number) {
       meta,
       payload
     } as ApproveAction);
-  }
+  };
 }

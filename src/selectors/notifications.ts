@@ -9,6 +9,6 @@ export const sortedNotifications =
   () => createSelector(
     [notifications],
     (notifications: INotificationsState): INotificationsState => {
-      return notifications.sort((a, b) => a.timestamp - b.timestamp)
+      return notifications.sort((a, b) => a.timestamp - b.timestamp);
     }
-  )
+  );

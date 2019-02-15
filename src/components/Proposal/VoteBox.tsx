@@ -1,4 +1,4 @@
-import * as Arc from "@daostack/arc.js"
+import * as Arc from "@daostack/arc.js";
 import * as classNames from "classnames";
 import * as React from "react";
 import Tooltip from "rc-tooltip";
@@ -6,7 +6,7 @@ import Tooltip from "rc-tooltip";
 import { getArc } from "arc";
 
 import * as arcActions from "actions/arcActions";
-import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client"
+import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client";
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";

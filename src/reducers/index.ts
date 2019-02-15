@@ -12,9 +12,9 @@ import web3Reducer, { IWeb3State } from "./web3Reducer";
 
 export interface IRootState {
   arc: IArcState;
-  notifications: INotificationsState,
-  operations: IOperationsState,
-  profiles: IProfilesState,
+  notifications: INotificationsState;
+  operations: IOperationsState;
+  profiles: IProfilesState;
   router: any;
   ui: IUIState;
   web3: IWeb3State;
@@ -47,7 +47,7 @@ const onlyPending = createTransform(
     }
   },
   (raw, key) => raw
-)
+);
 
 export default persistReducer({
   key: "state",

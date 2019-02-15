@@ -59,4 +59,4 @@ class HomeContainer extends React.Component<null, null> {
   }
 }
 
-export default HomeContainer
+export default HomeContainer;

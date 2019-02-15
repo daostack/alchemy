@@ -1,42 +1,42 @@
-import { Address } from "@daostack/client"
-import { getArc } from "arc"
+import { Address } from "@daostack/client";
+import { getArc } from "arc";
 import { BigNumber } from "bignumber.js";
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
 // v1.0 may improve on this entire Web3 typings experience
 /* tslint:disable-next-line:no-var-requires */
 const Web3 = require("web3");
-const path = require("path")
+const path = require("path");
 
 export default class Util {
   public static fromWei(amount: BigNumber): number {
-    return Number(getArc().web3.utils.fromWei(getArc().web3.utils.toBN(amount), "ether"))
+    return Number(getArc().web3.utils.fromWei(getArc().web3.utils.toBN(amount), "ether"));
   }
 
   public static toWei(amount: number): BigNumber {
-    return new BigNumber(getArc().web3.utils.toWei(amount.toString(), "ether"))
+    return new BigNumber(getArc().web3.utils.toWei(amount.toString(), "ether"));
   }
 
   public static getBalance(account: Address) {
-    return getArc().web3.eth.getBalance(account)
+    return getArc().web3.eth.getBalance(account);
   }
 
   public static networkName(id: number) {
     switch (id) {
       case 1:
-        return "Mainnet"
+        return "Mainnet";
       case 2:
-        return "Morden"
+        return "Morden";
       case 3:
-        return "Ropsten"
+        return "Ropsten";
       case 4:
-        return "Rinkeby"
+        return "Rinkeby";
       case 42:
-        return "Kovan"
+        return "Kovan";
       case 1512051714758:
-        return "Ganache"
+        return "Ganache";
       default:
-        return "Ganache"
+        return "Ganache";
     }
   }
   public static copyToClipboard(value: any) {
@@ -52,7 +52,7 @@ export default class Util {
     try {
       return (await getArc().web3.getBlock("latest")).number;
     } catch (err) {
-      throw err
+      throw err;
     }
   }
 
@@ -63,27 +63,27 @@ export default class Util {
   }
 
   public static getWeb3() {
-    return getArc().web3
+    return getArc().web3;
   }
   public static getNetworkId() {
-    return getArc().web3.eth.net.getId()
+    return getArc().web3.eth.net.getId();
   }
 
   public static defaultAccount() {
-    return getArc().web3.eth.defaultAccount
+    return getArc().web3.eth.defaultAccount;
   }
 }
 
 export function getLocalContractAddresses() {
-  const deployedContractAddresses = require(`../../config/migration.json`)
+  const deployedContractAddresses = require(`../../config/migration.json`);
 
   const addresses = {
       ...deployedContractAddresses.private.base,
       // ...require(path).private.dao
-   }
-  console.log(addresses)
+   };
+  console.log(addresses);
   if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`)
+      throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`);
     }
-  return addresses
+  return addresses;
 }

@@ -7,9 +7,9 @@ import { Route, Switch } from "react-router-dom";
 //@ts-ignore
 import { ModalContainer, ModalRoute } from "react-router-modal";
 
-import { Address } from "@daostack/client"
+import { Address } from "@daostack/client";
 import * as web3Actions from "actions/web3Actions";
-import { getArc, pollForAccountChanges } from "arc"
+import { getArc, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -71,14 +71,14 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentDidMount() {
     // get the Arc object as early the lifetime of the app
-    const arc = getArc()
+    const arc = getArc();
 
     // once we have an account, or it changes, we notifiy the redux store about it
     pollForAccountChanges(arc.web3).subscribe(
       (next: Address) => {
-        this.props.setCurrentAccount(next)
+        this.props.setCurrentAccount(next);
       }
-    )
+    );
   }
 
   public render() {

@@ -9,7 +9,7 @@ import * as web3Actions from "actions/web3Actions";
 import { VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import { IDAOState, IProposalState, ProposalStage } from "@daostack/client"
+import { IDAOState, IProposalState, ProposalStage } from "@daostack/client";
 
 import * as css from "./Proposal.scss";
 
@@ -194,7 +194,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount)}}
+            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount);}}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
             currentAccountGens={currentAccountGens}

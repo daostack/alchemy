@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client"
+import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client";
 import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
 import * as React from "react";
@@ -9,9 +9,9 @@ import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
-import Util from "lib/util"
+import Util from "lib/util";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
@@ -44,7 +44,7 @@ const emptyProposal: IProposalState = {
   votesFor: 0,
   votesAgainst: 0,
   winningOutcome: ProposalOutcome.Fail,
-}
+};
 
 interface IState {
   preTransactionModalOpen: boolean;
@@ -132,19 +132,19 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   public render() {
     const { createProposal, currentAccount, daoAvatarAddress } = this.props;
     const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = this.state.proposalDetails;
-    const arc = getArc()
+    const arc = getArc();
     return <Subscribe observable={arc.dao(daoAvatarAddress).state}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
-          const dao: IDAOState = state.data
+          const dao: IDAOState = state.data;
 
           // TODO: this is used to check uniqueness of proposalDescriptions,
           // it is disabled at this moment, but should be restored
           // const proposalDescriptions = (dao.proposals as IProposalState[])
           //   .filter((proposal) => !proposalEnded(proposal))
           //   .map((proposal) => proposal.description);
-          const proposalDescriptions: string[] = []
-          const boundCreateProposal = createProposal.bind(null, dao.address, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary)
+          const proposalDescriptions: string[] = [];
+          const boundCreateProposal = createProposal.bind(null, dao.address, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
           return (
             <div className={css.createProposalWrapper}>
               {this.state.preTransactionModalOpen ?
@@ -282,8 +282,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                           <UserSearchField
                             daoAvatarAddress={daoAvatarAddress}
                             name="beneficiary"
-                            onBlur={(touched) => { setFieldTouched("beneficiary", touched)}}
-                            onChange={(newValue) => { setFieldValue("beneficiary", newValue)}}
+                            onBlur={(touched) => { setFieldTouched("beneficiary", touched);}}
+                            onChange={(newValue) => { setFieldValue("beneficiary", newValue);}}
                           />
                           <label htmlFor="beneficiary" className={css.beneficiaryLabel}>
                             {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
@@ -373,12 +373,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
               />
 
             </div>
-          )
+          );
         } else {
-          return null
+          return null;
        }
      }
-    }</Subscribe>
+    }</Subscribe>;
   }
 }
 

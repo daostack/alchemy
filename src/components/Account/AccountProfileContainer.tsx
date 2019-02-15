@@ -23,9 +23,9 @@ import DaoSidebar from "components/ViewDao/DaoSidebar";
 
 import * as css from "./Account.scss";
 
-import { IDAOState } from "@daostack/client"
-import { getArc } from "arc"
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import { IDAOState } from "@daostack/client";
+import { getArc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 const socket = io(process.env.API_URL);
 
 interface IStateProps extends RouteComponentProps<any> {
@@ -92,8 +92,8 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     // TODO: refactor the below: we should subscribe to the Member object and get a updates of token balances as well
     const ethBalance = await Util.getBalance(accountAddress);
-    const arc = getArc()
-    const stakingToken = arc.getContract("GEN")
+    const arc = getArc();
+    const stakingToken = arc.getContract("GEN");
     const genBalance = await stakingToken.balanceOf(accountAddress);
 
     this.setState({ ethCount: Util.fromWei(ethBalance), genCount: Util.fromWei(genBalance)});
@@ -285,23 +285,23 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToProps)(AccountProfileContainer);
 
 export default (props: RouteComponentProps<any>) => {
-  const arc = getArc()
-  const queryValues = queryString.parse(props.location.search)
-  const address = queryValues.daoAvatarAddress as string
+  const arc = getArc();
+  const queryValues = queryString.parse(props.location.search);
+  const address = queryValues.daoAvatarAddress as string;
   if (address) {
     return <Subscribe observable={arc.dao(address).state}>{
       (state: IObservableState<IDAOState>) => {
-        const dao = state.data
+        const dao = state.data;
         if (state.error) {
-          return <div>{state.error.message}</div>
+          return <div>{state.error.message}</div>;
         } else if (dao) {
-          return <ConnectedAccountProfileContainer dao={dao} {...props} />
+          return <ConnectedAccountProfileContainer dao={dao} {...props} />;
         } else {
-          return <div>Loading... xx</div>
+          return <div>Loading... xx</div>;
         }
       }
-    }</Subscribe>
+    }</Subscribe>;
   } else {
-    return <ConnectedAccountProfileContainer {...props} />
+    return <ConnectedAccountProfileContainer {...props} />;
   }
-}
+};
