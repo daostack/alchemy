@@ -25,6 +25,7 @@ function getLocalContractAddresses() {
 }
 const contractAddresses = getLocalContractAddresses()
 
+// TODO: move pollforAccountChanges to client lib? (as an currentAddres(): Observable<Address>)
 // Polling is Evil!
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
 export function pollForAccountChanges(web3: any, interval: number = 2000) {
@@ -35,14 +36,16 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
       web3.eth.getAccounts().then((accounts: any) => {
         if (accounts) {
           account = accounts[0]
-          if (prevAccount !== account && account) {
-            if (prevAccount) {
-              console.log(`ACCOUNT CHANGED; new account is ${account}`)
-            }
-            web3.eth.defaultAccount = account
-            observer.next(account)
-            prevAccount = account
+        } else if (web3.eth.accounts) {
+          account = web3.eth.accounts[0].address
+        }
+        if (prevAccount !== account && account) {
+          if (prevAccount) {
+            console.log(`ACCOUNT CHANGED; new account is ${account}`)
           }
+          web3.eth.defaultAccount = account
+          observer.next(account)
+          prevAccount = account
         }
       })
     }, interval)

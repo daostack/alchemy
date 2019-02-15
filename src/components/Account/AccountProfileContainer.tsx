@@ -86,7 +86,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    const { accountAddress, dao, getProfile } = this.props;
+    const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
 
@@ -148,8 +148,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
     const { ethCount, genCount } = this.state;
 
-    const hasProfile = accountProfile && accountProfile.name;
-    const editing = accountAddress == currentAccountAddress;
+    const editing = currentAccountAddress && accountAddress.toLowerCase() === currentAccountAddress.toLowerCase();
 
     return (
       <div className={css.profileWrapper}>
