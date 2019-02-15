@@ -64,8 +64,21 @@
     }
 }
 
-.openProposal {
+.proposal.openProposal {
 	padding: 0;
+}
+
+.proposal.detailView {
+	background-color:transparent;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+}
+
+.proposal.detailView:hover {
+	border: none;
+	box-shadow: none;
+	height: auto;
 }
 
 .failedProposal {
@@ -731,10 +744,37 @@ button.disabled {
 	}
 }
 
-.proposalBottom {
+.proposalActions {
 	position: relative;
 	margin-top: 15px;
 	border-top: 1px solid rgba(215, 225, 237, 1.000);
+}
+
+.detailView .proposalTitleTop {
+	display: block;
+}
+
+.detailView .proposalTitleBottom {
+	display: none;
+}
+
+.detailView .proposalInfo {
+	float: left;
+	width: 50%;
+}
+
+.detailView .proposalActions {
+	float: left;
+	width: 50%;
+}
+
+.detailView .predictions, .detailView .voteBox {
+	float: none;
+	width: auto;
+	background-color: $white;
+	border-radius: 0 15px 15px 15px;
+	margin: 0 0 20px 20px;
+
 }
 
 .decisionGraph .graph {

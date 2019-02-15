@@ -28,14 +28,10 @@ class ViewProposalContainer extends React.Component<IProps, null> {
     };
 
     return(
-      <div>
+      <div className={css.viewProposalContainer}>
         <BreadcrumbsItem to={'/dao/' + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
-
-        <div className={css.proposalsHeader}>
-          Viewing proposal: {proposal.title}
-        </div>
         <div className={css.proposal}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} detailView={true}/>
         </div>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
       </div>

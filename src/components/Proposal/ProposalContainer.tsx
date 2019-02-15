@@ -44,7 +44,7 @@ interface IStateProps {
   isVotingYes: boolean
   isVotingNo: boolean
   isPredictingPass: boolean
-  isPredictingFail: boolean
+  isPredictingFail: boolean 
   isRedeemPending: boolean
   threshold: number
 }
@@ -52,6 +52,7 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState
   currentAccount: IMemberState
+  detailView?: boolean
   proposal: IProposalState
   rewardsForCurrentUser: IRewardState[]
   stakesOfCurrentUser: IStake[]
@@ -138,6 +139,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       // currentVote,
       dao,
+      detailView,
       proposal,
       approveStakingGens,
       redeemProposal,
@@ -176,6 +178,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       // const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
       const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
+        [css.detailView]: detailView,
+        [css.clearfix]: detailView,
         [css.proposal]: true,
         [css.openProposal]: proposal.stage == ProposalStage.Queued || proposal.stage === ProposalStage.PreBoosted || proposal.stage == ProposalStage.Boosted || proposal.stage == ProposalStage.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
@@ -244,8 +248,35 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
-
           <div className={css.proposalInfo}>
+            <h3 className={css.proposalTitleTop}>
+              <span data-test-id="proposal-closes-in">
+                {proposal.stage == ProposalStage.QuietEndingPeriod ?
+                  <strong>
+                    <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
+                    <div className={css.help}>
+                      <img src="/assets/images/Icon/Help-light.svg" />
+                      <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
+                      <div className={css.helpBox}>
+                        <div className={css.pointer}></div>
+                        <div className={css.bg}></div>
+                        <div className={css.bridge}></div>
+                        <div className={css.header}>
+                          <h2>Genesis Protocol</h2>
+                          <h3>RULES FOR OVERTIME</h3>
+                        </div>
+                        <div className={css.body}>
+                          <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
+                        </div>
+                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                      </div>
+                    </div>
+                  </strong>
+                  : " "
+                }
+              </span>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
+            </h3>
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
                 {!proposalEnded(proposal) ?
@@ -302,8 +333,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}/>
               <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
             </div>
-
-            <h3>
+            <h3 className={css.proposalTitleBottom}>
               <span data-test-id="proposal-closes-in">
                 {proposal.stage == ProposalStage.QuietEndingPeriod ?
                   <strong>
@@ -329,7 +359,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[no title]"}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
             </h3>
             <div className={css.proposalDetails}>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
@@ -340,7 +370,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} />
           </div>
 
-          <div className={css.proposalBottom + " " + css.clearfix}>
+          <div className={css.proposalActions + " " + css.clearfix}>
             {proposalEnded(proposal) ?
               <div>
                 {this.state.preRedeemModalOpen ?
@@ -412,7 +442,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
-export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
+export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address, detailView?: boolean}) => {
   //  TODO: add logic for when props.currentAccountAddress is undefined
   const observable = combineLatest(
     arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
@@ -437,6 +467,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const stakes = state.data[3]
         const votes = state.data[4]
         return <ConnectedProposalContainer
+          detailView={props.detailView}
           currentAccount={state.data[1]}
           proposal={proposal}
           dao={props.dao}
