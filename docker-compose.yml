@@ -45,7 +45,7 @@ services:
       # - 5435:5432
 
   graph-node:
-    image: graphprotocol/graph-node:latest@sha256:436846910aacbdd81250add747a4be3346e24a460b774c3514025e29f05f0a2f
+    image: graphprotocol/graph-node:latest@sha256:bc64577f8ed7d2a7badb575d85d99bf017bdddd68bf20b032c184654d27a4bef
     ports:
       - 8000:8000
       - 8001:8001
@@ -64,7 +64,8 @@ services:
       GRAPH_LOG: "graph.log"
 
   ipfs:
-    image: ipfs/go-ipfs
+    build:
+      context: ./docker/ipfs/
     ports:
       - 5001:5001
 
@@ -76,7 +77,7 @@ services:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/migration:0.0.1-rc.7-v2
+    image: daostack/migration:0.0.1-rc.8-v5
     ports:
       - 8545:8545
     command: >

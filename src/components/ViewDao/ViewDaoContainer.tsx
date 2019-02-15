@@ -1,6 +1,7 @@
 import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { Cookies, withCookies } from 'react-cookie';
 import Joyride from 'react-joyride';
 import { connect } from "react-redux";
@@ -17,11 +18,9 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as schemas from "schemas";
 
 import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
-import DaoHeader from "./DaoHeader";
-import DaoHeadings from "./DaoHeadings";
+import DaoSidebar from "./DaoSidebar";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
-import DaoNav from "./DaoNav";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 
@@ -118,6 +117,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       cookies.set('seen_tour', "true", { path: '/' });
       this.setState({ showTourIntro: true });
     }
+
+    this.props.getProfilesForAllAccounts();
   }
 
   public handleClickStartTour = () => {
@@ -229,6 +230,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.outer}>
+        <BreadcrumbsItem to={'/dao/' + dao.address}>{dao.name}</BreadcrumbsItem>
+
         <div className={tourModalClass}>
           <div className={css.bg}></div>
           <div className={css.accessTour}>
@@ -307,14 +310,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             }
           }}
         />
-        <div className={css.top}>
-          <DaoHeader address={dao.address} />
-          {
-          // TODO: temporarilby disabled DaoHeadings - needs refactor to use IDAOState
-          // <DaoHeadings dao={dao} />
-          }
-          <DaoNav currentAccountAddress={currentAccountAddress} address={dao.address} numRedemptions={numRedemptions} />
-        </div>
+        <DaoSidebar address={dao.address} />
         <div className={css.wrapper}>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/history"
@@ -325,7 +321,8 @@ For additional information check out our <a href="https://docs.google.com/docume
               render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
-            <Route path="/dao/:daoAvatarAddress" component={DaoProposalsContainer} currentAccountAddress={currentAccountAddress} />
+            <Route path="/dao/:daoAvatarAddress"
+              render={(props) => <DaoProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
           </Switch>
         </div>
       </div>

@@ -1,9 +1,11 @@
 import { IDAOState } from '@daostack/client'
 import Util from "lib/util";
+import * as queryString from "query-string";
 import * as React from "react";
+import { Breadcrumbs } from 'react-breadcrumbs-dynamic'
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, NavLink, matchPath, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IAccountState, newAccount } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from 'reducers/notifications'
@@ -106,10 +108,7 @@ class HeaderContainer extends React.Component<IProps, null> {
       pageURL,
     } = this.props;
 
-    const daoAvatarAddress = dao.address
-    if (!currentAccount) {
-      currentAccount = newAccount(daoAvatarAddress, ethAccountAddress);
-    }
+    const daoAvatarAddress = dao ? dao.address : null;
 
     const isProfilePage = pageURL.includes("profile");
 
@@ -124,7 +123,7 @@ class HeaderContainer extends React.Component<IProps, null> {
         </div>
         <nav className={css.header}>
           <div className={css.menu}>
-            <img src="/assets/images/Icon/Menu.svg"/>
+            <img src="/assets/images/alchemy-logo-white.svg"/>
             <div className={css.menuWrapper}>
               <div className={css.backgroundBlock}></div>
               <ul>
@@ -152,15 +151,19 @@ class HeaderContainer extends React.Component<IProps, null> {
               </ul>
             </div>
           </div>
-          <div className={css.logoContainer}>
-            <Link className={css.alchemyLogo} to="/"><img src="/assets/images/alchemy-logo-white.svg"/></Link>
-            <span className={css.version}><em>Alchemy {Util.networkName(networkId)}</em> <span> v.{VERSION}</span></span>
+          <div className={css.topInfo}>
+            <Breadcrumbs
+              separator={<b> >   </b>}
+              item={ NavLink }
+              finalItem={'b'}
+            />
           </div>
           <div className={css.headerRight}>
-            <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{currentAccountProfile && currentAccountProfile.name ? "EDIT PROFILE" : "CREATE PROFILE"}</Link>
             <div className={css.accountInfo}>
               <div className={css.accountImage}>
-                <AccountImage accountAddress={ethAccountAddress} />
+                <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                  <AccountImage accountAddress={ethAccountAddress} />
+                </Link>
               </div>
               <div className={css.holdings}>
                 <div className={css.pointer}></div>
@@ -176,10 +179,10 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <AccountBalances dao={dao} address={ethAccountAddress} />
               </div>
             </div>
-            { dao && !isProfilePage
+            {/* dao && !isProfilePage
               ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
               : ""
-            }
+            */}
           </div>
         </nav>
       </div>
@@ -189,13 +192,20 @@ class HeaderContainer extends React.Component<IProps, null> {
 
 const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
 
-export default (props: { daoAddress: string, location: any}) => {
-    if (props.daoAddress) {
-      return <Subscribe observable={arc.dao(props.daoAddress).state}>{(state: IObservableState<IDAOState>) => {
+export default (props: RouteComponentProps<any>) => {
+    const match = matchPath(props.location.pathname, {
+      path: "/dao/:daoAvatarAddress",
+      strict: false
+    });
+    const queryValues = queryString.parse(props.location.search);
+    const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
+
+    if (daoAddress) {
+      return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
           if (state.isLoading) {
             return null
           } else if (state.error) {
-              return <div>{state.error}</div>
+            return <div>{state.error}</div>
           } else {
             return <ConnectedHeaderContainer {...props} dao={state.data} />
           }

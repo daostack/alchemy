@@ -1,4 +1,5 @@
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { RouteComponentProps } from "react-router-dom";
 
 import { combineLatest } from 'rxjs'
@@ -27,6 +28,8 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 
     return(
         <div>
+          <BreadcrumbsItem to={'/dao/' + dao.address + "/history"}>History</BreadcrumbsItem>
+
           <div className={css.proposalsHeader}>
             Executed Proposals
           </div>
@@ -46,7 +49,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const currentAccountAddress = props.currentAccountAddress
   const observable = combineLatest(
     // TODO: add queries here, like `proposals({boosted: true})` or whatever
-    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Resolved }), // the list of pre-boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Executed }), // the list of pre-boosted proposals
     arc.dao(daoAvatarAddress).state
   )
   return <Subscribe observable={observable}>{

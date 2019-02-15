@@ -1,4 +1,5 @@
 import * as React from "react";
+import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -35,7 +36,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     const { dao, members, profiles } = this.props;
 
     const membersHTML = members.map((member) => {
-      return <Subscribe observable={member.state} key="{member.id}">{(state: IObservableState<IMemberState>) => {
+      return <Subscribe observable={member.state} key={member.address}>{(state: IObservableState<IMemberState>) => {
         if (state.error) {
           return <div>{state.error.message}</div>
         } else if (state.data) {
@@ -66,7 +67,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                 }
                 <div>{memberState.address}</div>
               </div>
-              <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={state.data.reputation}/>
+              <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>
 
             </div>
           );
@@ -78,6 +79,8 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.membersContainer}>
+        <BreadcrumbsItem to={'/dao/' + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
+
         {membersHTML}
       </div>
     );
