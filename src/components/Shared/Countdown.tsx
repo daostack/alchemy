@@ -1,9 +1,11 @@
 import * as moment from "moment";
 import * as React from 'react';
+import * as classNames from "classnames";
 
 import * as css from "./Countdown.scss";
 
 interface IProps {
+  detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
 }
@@ -85,12 +87,28 @@ class Countdown extends React.Component<IProps, IState> {
         percentageComplete = 100;
       } else {
         percentageComplete = (1 - timeLeft / endDateMoment.diff(this.props.fromDate)) * 100;
+      } 
+
+      if (percentageComplete < 1) {
+        percentageComplete = 2;
       }
     }
 
+
+    const containerClass = classNames({
+      [css.detailView]: this.props.detailView,
+      [css.container]: true,
+    });
+
     return (
-      <div className={css.container}>
-        <div style={{backgroundColor: "blue", height: "2px", width: percentageComplete + "%"}}></div>
+      <div className={containerClass}>
+        <div className={css.percentageContainer}>
+          <div style={{backgroundColor: "blue", height: "2px", width: percentageComplete + "%"}}></div>
+        </div>
+        {this.props.detailView ? 
+            <span>Proposal ends:</span>
+          : " "
+        }
         <span className={css.timeSection}>
            <strong>{this.addLeadingZeros(countDown.days)}d</strong>
         </span>

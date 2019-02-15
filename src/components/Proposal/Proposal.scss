@@ -574,6 +574,20 @@ button.disabled {
 	}
 }
 
+.detailView .cardTop {
+	height: auto;
+
+	.timer {
+		float: none;
+		width: auto;
+
+		span {
+			color: rgba(104, 155, 214, 1.000);
+			font-weight: bold;
+		}
+	}
+}
+
 .proposalInfo {
 	font-size: $body;
 
@@ -752,6 +766,13 @@ button.disabled {
 
 .detailView .proposalTitleTop {
 	display: block;
+	color: rgba(104, 155, 214, 1.000);
+	font-size: 28px;
+	margin: 0 0 15px 0;
+
+	a {
+		color: rgba(104, 155, 214, 1.000);
+	}
 }
 
 .detailView .proposalTitleBottom {
@@ -766,6 +787,7 @@ button.disabled {
 .detailView .proposalActions {
 	float: left;
 	width: 50%;
+	border-top: none;
 }
 
 .detailView .predictions, .detailView .voteBox {
