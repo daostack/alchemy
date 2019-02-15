@@ -24,7 +24,6 @@ describe('Proposals', () => {
       }
 
       browser.click('*[data-test-id="create-proposal"]')
-
       browser.waitForExist('*[id="titleInput"]')
       browser.setValue('*[id="titleInput"]', 'Free Edward Snowden')
       // using uuid value so that the test will pass alsko if there is already a proposal with thi description
