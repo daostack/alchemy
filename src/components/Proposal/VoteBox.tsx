@@ -1,10 +1,12 @@
+import * as Arc from "@daostack/arc.js"
 import * as classNames from "classnames";
 import * as React from "react";
 import Tooltip from 'rc-tooltip';
 
+import { getArc } from "arc";
+
 import * as arcActions from "actions/arcActions";
-import { VoteOptions } from "reducers/arcReducer";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
@@ -90,12 +92,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.unconfirmedVote] : isVoting,
     });
     let voteUpButtonClass = classNames({
-      [css.voted]: !isVotingYes && currentVote == VoteOptions.Yes,
+      [css.voted]: !isVotingYes && currentVote == ProposalOutcome.Pass,
       [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
-      [css.voted]: !isVotingNo && currentVote == VoteOptions.No,
+      [css.voted]: !isVotingNo && currentVote == ProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
@@ -104,14 +106,14 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.voteControls]: true
     });
 
-    const tipContent = (vote: VoteOptions) =>
+    const tipContent = (vote: ProposalOutcome) =>
       currentVote ?
         "Can't change your vote" :
       !currentAccountReputation ?
         "Voting requires reputation in " + dao.name :
       isVoting ?
         'Warning: Voting for this proposal is already in progress' :
-        `Vote ${vote === VoteOptions.Yes ? 'for' : 'against'}`
+        `Vote ${vote === ProposalOutcome.Pass ? 'for' : 'against'}`
     ;
 
     return (
@@ -119,7 +121,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
         {this.state.showPreVoteModal ?
           <PreTransactionModal
             actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-            action={voteOnProposal.bind(null, proposal.dao.address, proposal, this.state.currentVote)}
+            action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
             currentAccount={currentAccountAddress}
             dao={dao}
@@ -176,8 +178,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
           </div>
           <div className={css.voteButtons}>
             <div className={css.voteUp}>
-              <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(VoteOptions.Yes)} overlayClassName={css.voteTooltip}>
-                <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(ProposalOutcome.Pass)} overlayClassName={css.voteTooltip}>
+                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
                   <img className={css.upvote} src="/assets/images/Icon/vote/for-gray.svg"/>
                   <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
                   <svg className={css.upvotePendingIcon} viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -207,8 +209,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
               </Tooltip>
             </div>
             <div className={css.voteDown}>
-              <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(VoteOptions.No)} overlayClassName={css.voteTooltip}>
-                <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(ProposalOutcome.Fail)} overlayClassName={css.voteTooltip}>
+                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
                   <img className={css.downvote} src="/assets/images/Icon/vote/against-gray.svg"/>
                   <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
                   <svg className={css.downvotePendingIcon} width="41px" height="29px" viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
