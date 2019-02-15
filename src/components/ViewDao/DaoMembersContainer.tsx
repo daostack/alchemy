@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -8,12 +8,12 @@ import { IProfilesState } from "reducers/profilesReducer";
 
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import OAuthLogin from 'components/Account/OAuthLogin';
+import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 
 import * as css from "./ViewDao.scss";
-import { getArc } from 'arc'
-import { DAO, Member, IDAOState, IMemberState } from '@daostack/client'
+import { getArc } from "arc"
+import { DAO, Member, IDAOState, IMemberState } from "@daostack/client"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IProps extends RouteComponentProps<any> {
@@ -56,9 +56,9 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                     <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} />
                     {Object.keys(profile.socialURLs).length == 0 ? "" :
                       <span>
-                        <OAuthLogin editing={false} provider='facebook' accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
-                        <OAuthLogin editing={false} provider='twitter' accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                        <OAuthLogin editing={false} provider='github' accountAddress={memberState.address} profile={profile} className={css.socialButton} />
+                        <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
+                        <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
+                        <OAuthLogin editing={false} provider="github" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
                       </span>
                     }
                     <br/>
@@ -79,7 +79,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.membersContainer}>
-        <BreadcrumbsItem to={'/dao/' + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
 
         {membersHTML}
       </div>

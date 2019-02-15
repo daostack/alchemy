@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IDAOState, IProposalState } from '@daostack/client'
+import { IDAOState, IProposalState } from "@daostack/client"
 
 import { IProfileState } from "reducers/profilesReducer";
 
@@ -8,7 +8,7 @@ import RewardsString from "./RewardsString";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 
-import * as css from './TransferDetails.scss';
+import * as css from "./TransferDetails.scss";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;

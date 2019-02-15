@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { IRootState } from '../reducers';
+import { IRootState } from "../reducers";
 import { IOperation, IOperationsState, OperationStatus } from "../reducers/operations";
 import { VoteOptions } from "reducers/arcReducer";
 import Util from "../lib/util";
@@ -13,7 +13,7 @@ export const isVotePending = (proposalId: string, vote: VoteOptions) =>
       return Object.keys(operations)
         .filter((k) =>
           operations[k].status !== OperationStatus.Complete && !operations[k].error &&
-          (operations[k].functionName === 'GenesisProtocol.vote' || operations[k].functionName === 'IntVoteInterface.vote') &&
+          (operations[k].functionName === "GenesisProtocol.vote" || operations[k].functionName === "IntVoteInterface.vote") &&
           operations[k].options.proposalId === proposalId &&
           operations[k].options.vote === vote
         )
@@ -28,7 +28,7 @@ export const isStakePending = (proposalId: string, vote: VoteOptions) =>
       return Object.keys(operations)
         .filter((k) =>
           operations[k].status !== OperationStatus.Complete && !operations[k].error &&
-          (operations[k].functionName === 'GenesisProtocol.stake' || operations[k].functionName === 'IntVoteInterface.stake') &&
+          (operations[k].functionName === "GenesisProtocol.stake" || operations[k].functionName === "IntVoteInterface.stake") &&
           operations[k].options.proposalId === proposalId &&
           operations[k].options.vote === vote
         )
@@ -43,7 +43,7 @@ export const isRedeemPending = (proposalId: string, beneficiary: string) =>
       return Object.keys(operations)
         .filter((k) =>
           operations[k].status !== OperationStatus.Complete && !operations[k].error &&
-          operations[k].functionName === 'Redeemer.redeem' &&
+          operations[k].functionName === "Redeemer.redeem" &&
           operations[k].options.proposalId === proposalId &&
           operations[k].options.beneficiaryAddress === beneficiary
         )

@@ -1,13 +1,13 @@
 import promisify = require("es6-promisify");
-import * as sigUtil from 'eth-sig-util';
-import * as ethUtil from 'ethereumjs-util';
-import { Field, Formik, FormikProps } from 'formik';
-import * as queryString from 'query-string';
+import * as sigUtil from "eth-sig-util";
+import * as ethUtil from "ethereumjs-util";
+import { Field, Formik, FormikProps } from "formik";
+import * as queryString from "query-string";
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
-import * as io from 'socket.io-client';
+import * as io from "socket.io-client";
 
 import * as profileActions from "actions/profilesActions";
 import Util from "lib/util";
@@ -17,14 +17,14 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
 import AccountImage from "components/Account/AccountImage";
-import OAuthLogin from 'components/Account/OAuthLogin';
+import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import DaoSidebar from "components/ViewDao/DaoSidebar";
 
 import * as css from "./Account.scss";
 
-import { IDAOState } from '@daostack/client'
-import { getArc } from 'arc'
+import { IDAOState } from "@daostack/client"
+import { getArc } from "arc"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 const socket = io(process.env.API_URL);
 
@@ -93,7 +93,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     // TODO: refactor the below: we should subscribe to the Member object and get a updates of token balances as well
     const ethBalance = await Util.getBalance(accountAddress);
     const arc = getArc()
-    const stakingToken = arc.getContract('GEN')
+    const stakingToken = arc.getContract("GEN")
     const genBalance = await stakingToken.balanceOf(accountAddress);
 
     this.setState({ ethCount: Util.fromWei(ethBalance), genCount: Util.fromWei(genBalance)});
@@ -112,10 +112,10 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const web3 = await Util.getWeb3();
     const timestamp = new Date().getTime().toString();
     const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. Timestamp:" + timestamp;
-    const msg = ethUtil.bufferToHex(Buffer.from(text, 'utf8'));
+    const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
     const fromAddress = this.props.accountAddress;
 
-    const method = 'personal_sign';
+    const method = "personal_sign";
     // TODO: do we need promisify here? web3 1.0 supports promises natively
     // and if we can do without, we can drop the dependency on es6-promises
     const sendAsync = promisify(web3.currentProvider.sendAsync);
@@ -158,7 +158,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
         <div className={css.profileContainer} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
-          { typeof(accountProfile) === 'undefined' ? "Loading..." :
+          { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -171,11 +171,11 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
                 const require = (name: string) => {
                   if (!(values as any)[name]) {
-                    errors[name] = 'Required';
+                    errors[name] = "Required";
                   }
                 };
 
-                require('name');
+                require("name");
 
                 return errors;
               }}
@@ -205,7 +205,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                             autoFocus
                             id="nameInput"
                             placeholder="e.g. John Doe"
-                            name='name'
+                            name="name"
                             type="text"
                             maxLength="35"
                             className={touched.name && errors.name ? css.error : null}
@@ -223,7 +223,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                           <Field
                             id="descriptionInput"
                             placeholder="Tell the DAO a bit about yourself"
-                            name='description'
+                            name="description"
                             component="textarea"
                             maxLength="150"
                             rows="7"
@@ -256,9 +256,9 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                       }
                       {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
                         <div>
-                          <OAuthLogin editing={editing} provider='facebook' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                          <OAuthLogin editing={editing} provider='twitter' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                          <OAuthLogin editing={editing} provider='github' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider="facebook" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
                         </div>
                       }
                     </div>

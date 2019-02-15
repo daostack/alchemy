@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import * as Redux from "redux";
-import { first } from 'rxjs/operators'
+import { first } from "rxjs/operators"
 
 import { getProfile } from "actions/profilesActions";
-import { getArc } from 'arc'
+import { getArc } from "arc"
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";

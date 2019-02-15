@@ -1,12 +1,12 @@
-import { Member } from '@daostack/client'
+import { Member } from "@daostack/client"
 import * as React from "react";
 import * as Autosuggest from "react-autosuggest";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IProfilesState, IProfileState } from "reducers/profilesReducer";
-import { first } from 'rxjs/operators';
+import { first } from "rxjs/operators";
 
-import { getArc } from 'arc';
+import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
@@ -38,7 +38,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
 
     this.state = {
       suggestions: [],
-      value: ''
+      value: ""
     };
   }
 

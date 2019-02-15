@@ -1,13 +1,13 @@
 import { routerReducer } from "react-router-redux";
 import { combineReducers, Reducer } from "redux";
-import { persistReducer, createTransform } from 'redux-persist';
+import { persistReducer, createTransform } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import arcReducer, { IArcState } from "./arcReducer";
 import { INotificationsState, notificationsReducer, NotificationStatus } from "./notifications";
 import { IOperationsState, operationsReducer, OperationStatus } from "./operations";
 import profilesReducer, { IProfilesState } from "./profilesReducer";
-import uiReducer, { IUIState } from './uiReducer';
+import uiReducer, { IUIState } from "./uiReducer";
 import web3Reducer, { IWeb3State } from "./web3Reducer";
 
 export interface IRootState {
@@ -32,7 +32,7 @@ const reducers = {
 
 const onlyPending = createTransform(
   (state, key) => {
-    if (key === 'operations') {
+    if (key === "operations") {
       const out = {...state} as IOperationsState;
 
       for (let k in out) {
@@ -50,8 +50,8 @@ const onlyPending = createTransform(
 )
 
 export default persistReducer({
-  key: 'state',
+  key: "state",
   transforms: [onlyPending],
-  whitelist: ['operations'],
+  whitelist: ["operations"],
   storage,
 }, combineReducers(reducers));

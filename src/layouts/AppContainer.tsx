@@ -7,9 +7,9 @@ import { Route, Switch } from "react-router-dom";
 //@ts-ignore
 import { ModalContainer, ModalRoute } from "react-router-modal";
 
-import { Address } from '@daostack/client'
+import { Address } from "@daostack/client"
 import * as web3Actions from "actions/web3Actions";
-import { getArc, pollForAccountChanges } from 'arc'
+import { getArc, pollForAccountChanges } from "arc"
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";

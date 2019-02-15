@@ -2,8 +2,8 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
-import {  DAO, IDAOState, IRewardState, Proposal, RewardType } from '@daostack/client'
-import { getArc } from 'arc'
+import {  DAO, IDAOState, IRewardState, Proposal, RewardType } from "@daostack/client"
+import { getArc } from "arc"
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { IRootState } from "reducers";

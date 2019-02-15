@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { IRootState } from '../reducers';
+import { IRootState } from "../reducers";
 import { INotification, INotificationsState } from "reducers/notifications";
 import { IOperation, IOperationsState } from "reducers/operations";
 

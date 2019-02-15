@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getArc } from 'arc'
+import { getArc } from "arc"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 import { IDAOState } from "@daostack/client";

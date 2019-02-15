@@ -1,16 +1,16 @@
-import { Arc } from '@daostack/client'
-import { Observable } from 'rxjs'
+import { Arc } from "@daostack/client"
+import { Observable } from "rxjs"
 
-const Web3 = require('web3')
+const Web3 = require("web3")
 
 // default values for providers. This should be manageed depending on the deployment location
-const graphqlHttpProvider: string = 'http://127.0.0.1:8000/subgraphs/name/daostack'
-const graphqlWsProvider: string = 'ws://127.0.0.1:8001/subgraphs/name/daostack'
-const web3HttpProvider: string = 'http://127.0.0.1:8545'
-const web3WsProvider: string = 'ws://127.0.0.1:8545'
+const graphqlHttpProvider: string = "http://127.0.0.1:8000/subgraphs/name/daostack"
+const graphqlWsProvider: string = "ws://127.0.0.1:8001/subgraphs/name/daostack"
+const web3HttpProvider: string = "http://127.0.0.1:8545"
+const web3WsProvider: string = "ws://127.0.0.1:8545"
 // must use "localhost" here because of cors issues
 // const ipfsProvider: string = '/ip4/localhost/tcp/5001'
-const ipfsProvider: string = 'localhost'
+const ipfsProvider: string = "localhost"
 
 function getLocalContractAddresses() {
   const deployedContractAddresses = require(`../config/migration.json`)
@@ -19,7 +19,7 @@ function getLocalContractAddresses() {
       ...deployedContractAddresses.private,
    }
   if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at ${'../../config/migration.json'} exist?`)
+      throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`)
     }
   return addresses
 }
@@ -55,8 +55,8 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
 
 export function getWeb3Provider() {
   let web3Provider
-  if (typeof window !== 'undefined' &&
-    (typeof (window as any).ethereum !== 'undefined' || typeof (window as any).web3 !== 'undefined')
+  if (typeof window !== "undefined" &&
+    (typeof (window as any).ethereum !== "undefined" || typeof (window as any).web3 !== "undefined")
   ) {
     // Web3 browser user detected. You can now use the provider.
     web3Provider = (window as any).ethereum || (window as any).web3.currentProvider
@@ -66,18 +66,18 @@ export function getWeb3Provider() {
 
   // print some info for developers
   if (web3Provider && web3Provider.isMetaMask) {
-    console.log('Connected with Metamask')
+    console.log("Connected with Metamask")
   } else {
     // TODO: fallback on Portis
     console.warn(`NO WEB3 PROVIDER PROVIDED BY BROWSER: using default connection at ${web3WsProvider}`)
-    if (process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === "dev") {
       web3Provider = web3WsProvider
     } else {
       // TODO: provide read-only web3 provider (like infura) for staging and production environments
       web3Provider = web3WsProvider
     }
   }
-  if (web3Provider !== web3WsProvider && web3Provider.networkVersion !== '1512051714758') {
+  if (web3Provider !== web3WsProvider && web3Provider.networkVersion !== "1512051714758") {
     console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${web3Provider.networkVersion}) - please switch conection to localhost: 8545 to enable transactions`)
   } else {
     console.log(`Connected to Ganache - this is great in this test phase`)

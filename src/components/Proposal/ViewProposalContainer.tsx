@@ -1,15 +1,15 @@
 import * as classNames from "classnames";
-import { DiscussionEmbed } from 'disqus-react';
+import { DiscussionEmbed } from "disqus-react";
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import ProposalContainer from "./ProposalContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IProposalState, ProposalStage } from "@daostack/client"
 
 import * as css from "./ViewProposal.scss";
-import { getArc } from 'arc';
+import { getArc } from "arc";
 
 interface IProps extends RouteComponentProps<any> {
   proposal: IProposalState
@@ -29,7 +29,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
 
     return(
       <div>
-        <BreadcrumbsItem to={'/dao/' + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
 
         <div className={css.proposalsHeader}>
           Viewing proposal: {proposal.title}

@@ -13,11 +13,11 @@ export function getProfilesForAllAccounts() {
 
     for (const accountKey of Object.keys(accounts)) {
       const account = accounts[accountKey];
-      accountFilters.push('{"ethereumAccountAddress":"' + account.address + '"}');
+      accountFilters.push("{\"ethereumAccountAddress\":\"" + account.address + "\"}");
     }
 
     try {
-      const results = await axios.get(process.env.API_URL + '/api/accounts');
+      const results = await axios.get(process.env.API_URL + "/api/accounts");
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Success,
@@ -35,7 +35,7 @@ export function getProfilesForAllAccounts() {
 
 export function getProfile(accountAddress: string) {
   return async (dispatch: any) => {
-    const url = process.env.API_URL + '/api/accounts?filter={"where":{"ethereumAccountAddress":"' + accountAddress + '"}}'
+    const url = process.env.API_URL + "/api/accounts?filter={\"where\":{\"ethereumAccountAddress\":\"" + accountAddress + "\"}}"
     try {
       // Get profile data for this account
       const response = await axios.get(url)
@@ -65,7 +65,7 @@ export function getProfile(accountAddress: string) {
   }
 }
 
-export type UpdateProfileAction = IAsyncAction<'UPDATE_PROFILE', { accountAddress: string }, { description: string, name: string, socialURLs?: any }>
+export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string, name: string, socialURLs?: any }>
 
 export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
   return async (dispatch: any, getState: any) => {

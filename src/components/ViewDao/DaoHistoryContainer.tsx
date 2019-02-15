@@ -1,14 +1,14 @@
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 
-import { combineLatest } from 'rxjs'
+import { combineLatest } from "rxjs"
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 
 import * as css from "./ViewDao.scss";
-import { getArc } from 'arc'
-import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { getArc } from "arc"
+import { Address, IDAOState, IProposalState, ProposalStage } from "@daostack/client"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 
 interface IProps {
@@ -28,7 +28,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 
     return(
         <div>
-          <BreadcrumbsItem to={'/dao/' + dao.address + "/history"}>History</BreadcrumbsItem>
+          <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
 
           <div className={css.proposalsHeader}>
             Executed Proposals

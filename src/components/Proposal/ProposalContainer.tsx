@@ -1,14 +1,14 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, ProposalStage } from "@daostack/client"
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { getArc } from 'arc';
+import { getArc } from "arc";
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { CommentCount } from 'disqus-react';
+import { CommentCount } from "disqus-react";
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -17,13 +17,13 @@ import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, Observable, of } from 'rxjs'
+import { combineLatest, Observable, of } from "rxjs"
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
-import RedeemButton from './RedeemButton'
-import RedemptionsTip from './RedemptionsTip'
-import TransferDetails from './TransferDetails';
+import RedeemButton from "./RedeemButton"
+import RedemptionsTip from "./RedemptionsTip"
+import TransferDetails from "./TransferDetails";
 import VoteBox from "./VoteBox";
 
 interface IStateProps {
@@ -318,7 +318,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                         <div className={css.body}>
                           <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
                         </div>
-                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
                       </div>
                     </div>
                   </strong>

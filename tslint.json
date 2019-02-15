@@ -31,7 +31,7 @@
         "prefer-const": false,
         "comment-format": false,
         "no-unused-expression": false,
-        "quotemark": false,
+        "quotemark":"double",
         "ordered-imports": false,
         "trailing-comma": false,
         "semicolon": false,

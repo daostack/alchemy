@@ -1,9 +1,9 @@
-import { IDAOState, IMemberState, IProposalState, IRewardState } from '@daostack/client'
+import { IDAOState, IMemberState, IProposalState, IRewardState } from "@daostack/client"
 import * as classNames from "classnames";
-import Tooltip from 'rc-tooltip';
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import * as css from "./Proposal.scss";
-import RedemptionsTip from './RedemptionsTip'
+import RedemptionsTip from "./RedemptionsTip"
 
 interface IProps {
   accountHasRewards: boolean
@@ -39,19 +39,19 @@ const RedeemButton = (props: IProps) => {
   return (rewards.length > 0 || beneficiaryHasRewards || executable ?
     <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
       <button
-        style={{ whiteSpace: 'nowrap' }}
+        style={{ whiteSpace: "nowrap" }}
         disabled={false}
         className={redeemRewards}
         onClick={handleClickRedeem}
       >
         {
           isRedeemPending ?
-            'Redeem in progress' :
+            "Redeem in progress" :
             beneficiaryHasRewards && !accountHasRewards ?
-              'Redeem for beneficiary' :
+              "Redeem for beneficiary" :
               rewards.length > 0 ?
-                'Redeem' :
-                'Execute'
+                "Redeem" :
+                "Execute"
         }
         <img src="/assets/images/Icon/Loading-black.svg" />
       </button>

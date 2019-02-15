@@ -1,19 +1,19 @@
-import { IDAOState } from '@daostack/client'
+import { IDAOState } from "@daostack/client"
 import Util from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
-import { Breadcrumbs } from 'react-breadcrumbs-dynamic'
+import { Breadcrumbs } from "react-breadcrumbs-dynamic"
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IAccountState, newAccount } from "reducers/arcReducer";
-import { NotificationStatus, showNotification } from 'reducers/notifications'
+import { NotificationStatus, showNotification } from "reducers/notifications"
 import { IProfileState } from "reducers/profilesReducer";
 
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
-import { getArc } from 'arc';
+import { getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -105,15 +105,15 @@ class HeaderContainer extends React.Component<IProps, null> {
             <div className={css.menuWrapper}>
               <div className={css.backgroundBlock}></div>
               <ul>
-                <li><Link to='/'>Home</Link></li>
-                { (process.env.NODE_ENV === 'production')
-                  ? <li><a href='https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>Genesis Alpha</a></li>
-                  : <li><Link to='/daos'>View DAOs</Link></li>
+                <li><Link to="/">Home</Link></li>
+                { (process.env.NODE_ENV === "production")
+                  ? <li><a href="https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1">Genesis Alpha</a></li>
+                  : <li><Link to="/daos">View DAOs</Link></li>
                 }
-                <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target='_blank'>FAQ</a></li>
-                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target='_blank'>Alchemy 101</a></li>
-                <li><a href="https://www.daostack.io/" target='_blank'>About DAOstack</a></li>
-                <li><a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target='_blank'>Get involved</a></li>
+                <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
+                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
+                <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
+                <li><a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target="_blank">Get involved</a></li>
                 <li>
                   <a>Buy GEN</a>
                   <ul>
@@ -133,7 +133,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             <Breadcrumbs
               separator={<b> >   </b>}
               item={ NavLink }
-              finalItem={'b'}
+              finalItem={"b"}
             />
           </div>
           <div className={css.headerRight}>
@@ -148,8 +148,8 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <div className={css.walletDetails}>
                   <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
                   <div className={css.holdingsLabel}>Your wallet</div>
-                  <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
-                    <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : 'No account known'}</span>
+                  <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
+                    <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : "No account known"}</span>
                     <img src="/assets/images/Icon/Copy-white.svg"/>
                     <div className={css.fade}></div>
                   </div>

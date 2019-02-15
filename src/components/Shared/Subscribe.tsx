@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Observable, Subscription } from 'rxjs'
+import { Observable, Subscription } from "rxjs"
 
 interface IProps {
   observable: Observable<any>
@@ -60,7 +60,7 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
   public render() {
     const { children } = this.props;
 
-    if (typeof children === 'function') {
+    if (typeof children === "function") {
       return children(this.state)
     }
     throw Error(`Children of <Subscribe> must be a function`)

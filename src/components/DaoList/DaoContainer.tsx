@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { getArc } from 'arc'
+import { getArc } from "arc"
 
 import * as css from "./DaoList.scss";
-import { IDAOState } from '@daostack/client'
+import { IDAOState } from "@daostack/client"
 
 interface IProps {
   address: string

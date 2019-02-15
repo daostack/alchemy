@@ -1,9 +1,9 @@
 import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
-import { Cookies, withCookies } from 'react-cookie';
-import Joyride from 'react-joyride';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Cookies, withCookies } from "react-cookie";
+import Joyride from "react-joyride";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 
@@ -28,10 +28,10 @@ import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
 import * as css from "./ViewDao.scss";
 
-import { IDAOState } from '@daostack/client'
-import { getArc } from 'arc'
+import { IDAOState } from "@daostack/client"
+import { getArc } from "arc"
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { Subscription } from 'rxjs'
+import { Subscription } from "rxjs"
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
@@ -111,8 +111,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public async componentWillMount() {
     const { cookies } = this.props;
     // If this person has not seen the disclaimer, show them the home page
-    if (!cookies.get('seen_tour')) {
-      cookies.set('seen_tour', "true", { path: '/' });
+    if (!cookies.get("seen_tour")) {
+      cookies.set("seen_tour", "true", { path: "/" });
       this.setState({ showTourIntro: true });
     }
 
@@ -136,13 +136,13 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public handleJoyrideCallback = (data: any) => {
     const { hideTour } = this.props;
 
-    if (data.type == 'tour:end') {
+    if (data.type == "tour:end") {
       this.setState({
         showTourOutro: true,
         tourCount: this.state.tourCount + 1
       });
     }
-    if (data.action == 'close' || data.type == 'tour:end') {
+    if (data.action == "close" || data.type == "tour:end") {
       hideTour();
     }
   };
@@ -228,7 +228,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.outer}>
-        <BreadcrumbsItem to={'/dao/' + dao.address}>{dao.name}</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
         <div className={tourModalClass}>
           <div className={css.bg}></div>
@@ -255,18 +255,18 @@ For additional information check out our <a href="https://docs.google.com/docume
         <Joyride
           callback={this.handleJoyrideCallback}
           continuous
-          key={'joyride_' + this.state.tourCount /* This is a hack to get the tour to reset after it ends, so it can be shown again */}
+          key={"joyride_" + this.state.tourCount /* This is a hack to get the tour to reset after it ends, so it can be shown again */}
           run={tourVisible}
           steps={tourSteps}
           showProgress
           styles={{
             options: {
-              arrowColor: '#fff',
-              backgroundColor: '#fff',
-              primaryColor: '#000',
+              arrowColor: "#fff",
+              backgroundColor: "#fff",
+              primaryColor: "#000",
               borderRadius: 0,
-              textColor: 'rgba(20, 20, 20, 1.000)',
-              overlayColor: 'rgba(0,0,0,.7)',
+              textColor: "rgba(20, 20, 20, 1.000)",
+              overlayColor: "rgba(0,0,0,.7)",
             },
             tooltip: {
               borderRadius: 0,

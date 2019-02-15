@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
-import { getArc } from 'arc';
+import { getArc } from "arc";
 import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
@@ -260,7 +260,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       component="textarea"
                       id="descriptionInput"
                       placeholder="Proposal description URL"
-                      name='description'
+                      name="description"
                       className={touched.description && errors.description ? css.error : null}
                     />
                     <div className={css.addTransfer}>
@@ -297,7 +297,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         </button>
                       </div>
 
-                      <div style={{display: 'none'}}>
+                      <div style={{display: "none"}}>
                         <Field
                           id="nativeTokenRewardInput"
                           maxLength={10}

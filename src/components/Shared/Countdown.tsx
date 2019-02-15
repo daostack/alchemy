@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import * as React from 'react';
+import * as React from "react";
 
 import * as css from "./Countdown.scss";
 
@@ -69,7 +69,7 @@ class Countdown extends React.Component<IProps, IState> {
   public addLeadingZeros(value: string | number) {
     value = String(value);
     while (value.length < 2) {
-      value = '0' + value;
+      value = "0" + value;
     }
     return value;
   }

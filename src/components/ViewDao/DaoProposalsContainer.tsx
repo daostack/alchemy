@@ -1,10 +1,10 @@
-import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
-import { getArc } from 'arc';
+import { Address, IDAOState, IProposalState, ProposalStage } from "@daostack/client"
+import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import * as React from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { combineLatest } from 'rxjs'
+import { combineLatest } from "rxjs"
 import ProposalContainer from "../Proposal/ProposalContainer";
 import * as css from "./ViewDao.scss";
 

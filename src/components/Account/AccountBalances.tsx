@@ -1,5 +1,5 @@
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import gql from 'graphql-tag'
+import gql from "graphql-tag"
 import * as React from "react";
 
 import * as css from "layouts/App.scss";
@@ -7,8 +7,8 @@ import * as css from "layouts/App.scss";
 import AccountBalance from "components/Account/AccountBalance";
 import ReputationView from "components/Account/ReputationView";
 
-import { Address, DAO, IDAOState, IMemberState } from '@daostack/client'
-import { getArc } from 'arc'
+import { Address, DAO, IDAOState, IMemberState } from "@daostack/client"
+import { getArc } from "arc"
 import Util from "lib/util";
 
 interface Props {
@@ -133,9 +133,9 @@ export default (props: { dao: IDAOState, address: Address}) => {
           let member: any
           if (members.length === 0) {
             member = {
-              name: 'not found',
-              id: '0x',
-              address: '0x',
+              name: "not found",
+              id: "0x",
+              address: "0x",
               reputation: 0,
               tokens: 0
             }

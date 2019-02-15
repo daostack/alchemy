@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 
 import { IRootState } from "reducers";
-import { IDAOState } from '@daostack/client'
+import { IDAOState } from "@daostack/client"
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 

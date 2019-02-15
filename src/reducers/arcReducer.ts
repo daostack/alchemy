@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, ProposalStage } from '@daostack/client'
+import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, ProposalStage } from "@daostack/client"
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",

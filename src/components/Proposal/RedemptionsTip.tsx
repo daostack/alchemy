@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalState, IRewardState, RewardReason, RewardType } from '@daostack/client'
+import { IDAOState, IMemberState, IProposalState, IRewardState, RewardReason, RewardType } from "@daostack/client"
 import ReputationView from "components/Account/ReputationView";
 import * as React from "react";
 
@@ -70,7 +70,7 @@ export default (props: IProps) => {
     {(props.beneficiaryHasRewards || proposal.ethReward || proposal.externalTokenReward) ?
       <div>
         <strong>
-          {currentAccount.address === proposal.beneficiary ? 'As the' : 'The'} beneficiary of the proposal {currentAccount.address === proposal.beneficiary ? 'you ' : ''}will receive:
+          {currentAccount.address === proposal.beneficiary ? "As the" : "The"} beneficiary of the proposal {currentAccount.address === proposal.beneficiary ? "you " : ""}will receive:
         </strong>
         <ul>
           {proposal.ethReward ?
@@ -103,8 +103,8 @@ export default (props: IProps) => {
 
     {rewards.length === 0 && !beneficiaryHasRewards && executable ?
       <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
-      : ''
+      : ""
     }
-    {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ''}
+    {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ""}
   </div>
 }

@@ -9,7 +9,7 @@ import { first, take } from "rxjs/operators"
 import { Web3 } from "web3";
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
-import { getArc } from 'arc'
+import { getArc } from "arc"
 import {
   ActionTypes,
   anyRedemptions,
