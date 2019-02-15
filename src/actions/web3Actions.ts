@@ -122,7 +122,8 @@ export function setCurrentAccount(accountAddress: string) {
 
     const stakingToken = arc.GENToken()
     payload.currentAccountGenBalance = Util.fromWei(new BigNumber(await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise()));
-    payload.currentAccountGenStakingAllowance = Util.fromWei(await arc.allowance(accountAddress).pipe(first()).toPromise());
+    const allowance = await arc.allowance(accountAddress).pipe(first()).toPromise();
+    payload.currentAccountGenStakingAllowance = Util.fromWei(new BigNumber(allowance.amount));
 
     dispatch(getProfile(accountAddress));
 

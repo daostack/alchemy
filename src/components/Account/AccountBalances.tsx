@@ -9,6 +9,7 @@ import AccountBalance from "components/Account/AccountBalance";
 
 import { Address, DAO, IDAOState, IMemberState } from '@daostack/client'
 import { getArc } from 'arc'
+import Util from "lib/util";
 
 interface Props {
   dao: IDAOState
@@ -96,6 +97,10 @@ export default (props: { dao: IDAOState, address: Address}) => {
       return null
     }
 
+    if (!props.address) {
+      return null
+    }
+
     // TODO: move query logic to daostack/client
     const query = gql`{
       members (where: {address: "${props.address}", dao: "${props.dao.address}"}) {
@@ -113,8 +118,8 @@ export default (props: { dao: IDAOState, address: Address}) => {
         address: item.address,
         // dao: new DAO(item.dao.id, this.context),
         id: item.id,
-        reputation: Number(item.reputation),
-        tokens: Number(item.tokens)
+        reputation: Util.fromWei(item.reputation),
+        tokens: Util.fromWei(item.tokens)
       }
     }
     const arc = getArc()
