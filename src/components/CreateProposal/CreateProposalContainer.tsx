@@ -282,8 +282,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                           <UserSearchField
                             daoAvatarAddress={daoAvatarAddress}
                             name="beneficiary"
-                            onBlur={(touched) => { setFieldTouched("beneficiary", touched);}}
-                            onChange={(newValue) => { setFieldValue("beneficiary", newValue);}}
+                            onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                            onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
                           />
                           <label htmlFor="beneficiary" className={css.beneficiaryLabel}>
                             {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
