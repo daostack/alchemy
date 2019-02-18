@@ -1,5 +1,6 @@
 export const clearfix: string;
 export const hidden: string;
+export const closeTransactionContainer: string;
 export const metaMaskModal: string;
 export const bg: string;
 export const decisionGraph: string;
@@ -29,7 +30,6 @@ export const passVote: string;
 export const failVote: string;
 export const redeem: string;
 export const secondaryHeader: string;
-export const closeTransactionContainer: string;
 export const proposalInfo: string;
 export const proposalTitle: string;
 export const transactionEffect: string;

@@ -190,11 +190,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 &nbsp; | &nbsp;
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
               </div>
-              <div className={css.closeTransactionContainer}>
-                <button onClick={this.props.closeAction}>
-                  <img src="/assets/images/Tx/Close.svg"/>
-                </button>
-              </div>
             </div>
             <div className={css.proposalInfo}>
               <div className={css.proposalTitle}>
@@ -305,10 +300,16 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                     {transactionType} with MetaMask
                   </button>
                 </Tooltip> :
-                <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
-                  <img src="/assets/images/Tx/MetaMask.svg"/>
-                  {transactionType} with MetaMask
-                </button>
+                <div>
+                  <div className={css.closeTransactionContainer}>
+                    <button onClick={this.props.closeAction}>
+                      Cancel
+                    </button>
+                  </div>
+                  <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
+                    {transactionType} with MetaMask
+                  </button>
+                </div>
               }
             </div>
           </div>

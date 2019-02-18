@@ -15,14 +15,15 @@ interface IProps {
   proposal: IProposalState
 }
 
-const transferDetailsClass = classNames({
-  [css.detailView]: true,
-  [css.transferDetails]: true,
-});
-
 export default class TransferDetails extends React.Component<IProps, null> {
   public render() {
+
     const { beneficiaryProfile, dao, proposal, detailView } = this.props;
+
+    const transferDetailsClass = classNames({
+      [css.detailView]: this.props.detailView,
+      [css.transferDetails]: true,
+    });
 
     return (
       <div className={transferDetailsClass}>
