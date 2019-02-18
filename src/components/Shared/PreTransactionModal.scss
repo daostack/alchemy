@@ -21,7 +21,33 @@
     padding: 0 15px;
     color: rgba(0, 113, 255, 1.000);
   }
+}
 
+.launchMetaMask {
+    border-radius: 15px;
+    height: 30px;
+    background-color: rgba(0, 113, 255, 1.000);
+    color: $white;
+    border: 0;
+    outline: none;
+    line-height: 30px;
+    padding: 0 15px;
+    margin: 0 5px;
+
+  img {
+    position: relative;
+    left: -11px;
+    top: 3px;
+  }
+
+  .disabled {
+    cursor: not-allowed !important;
+  }
+}
+
+.preTransactionBottom {
+  padding: 30px;
+  text-align: right;
 }
 
 .metaMaskModal {
@@ -192,7 +218,7 @@
     }
 
   .modalWindow {
-    width: 600px;
+    width: 500px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -241,9 +267,9 @@
     }
 
     .incentives {
-      padding: 11px 0;
+      padding: 30px;
       font-size: 11px;
-      border-top: 1px solid gray;
+      border-top: 1px solid rgba(191, 203, 213, 1.000);
 
       .outcomes {
         display: inline-block;
@@ -306,6 +332,13 @@
         min-width: 270px;
         float: left;
 
+        .transactionEffect {
+          font-size: 12px;
+          display: inline;
+          color: $white;
+          opacity: .7;
+        }
+
         .transactionType {
           font-size: $body;
 
@@ -334,14 +367,8 @@
       padding: 20px;
 
       .proposalTitle {
-        padding: 2px 0 0 0;
+        padding: 0 0 20px 0;
         font-size: $subheader;
-      }
-
-      .transactionEffect {
-        font-size: $body;
-        opacity: .7;
-        width: 440px;
       }
     }
 
@@ -519,28 +546,6 @@
 
       a {
         color: $accent-1;
-      }
-
-      .launchMetaMask {
-          border-radius: 15px;
-          height: 30px;
-          background-color: rgba(0, 113, 255, 1.000);
-          color: $white;
-          border: 0;
-          outline: none;
-          line-height: 30px;
-          padding: 0 15px;
-          margin: 0 5px;
-
-        img {
-          position: relative;
-          left: -11px;
-          top: 3px;
-        }
-
-        .disabled {
-          cursor: not-allowed !important;
-        }
       }
     }
   }

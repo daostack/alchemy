@@ -189,6 +189,9 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 <span className={css.transactionType}>{transactionType}</span>
                 &nbsp; | &nbsp;
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
+                <div className={css.transactionEffect}>
+                {effectText}
+                </div>
               </div>
             </div>
             <div className={css.proposalInfo}>
@@ -196,10 +199,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 <strong>{proposal.title || "[no title]"}</strong>
               </div>
               <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} />
-            </div>
-            {/* TODO: do we need this? */}
-             <div className={css.transactionEffect}>
-              {effectText}
             </div>
             { /******* Staking form ******  **/
               actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass ?
@@ -283,35 +282,38 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
             **/ }
 
             <div className={css.transactionInstructions}>
+              {/*
               <p>
                 When you click "Launch MetaMask" we will pop up a Metamask dialogue.
                 This dialogue will ask you to approve your transaction, including a small ETH cost.
                 It will set a default gas limit and gas price. It's fine to stick with these defaults.
                 You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
               </p>
-              { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > currentAccountGens) ?
-                <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
-                  <button
-                    className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
-                    disabled={true}
-                    onClick={this.handleClickAction.bind(this)}
-                    data-test-id="launch-metamask"
-                  >
-                    {transactionType} with MetaMask
-                  </button>
-                </Tooltip> :
-                <div>
-                  <div className={css.closeTransactionContainer}>
-                    <button onClick={this.props.closeAction}>
-                      Cancel
-                    </button>
-                  </div>
-                  <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
-                    {transactionType} with MetaMask
+               */}
+
+            </div>
+            { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > currentAccountGens) ?
+              <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
+                <button
+                  className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
+                  disabled={true}
+                  onClick={this.handleClickAction.bind(this)}
+                  data-test-id="launch-metamask"
+                >
+                  {transactionType} with MetaMask
+                </button>
+              </Tooltip> :
+              <div className={css.preTransactionBottom}>
+                <div className={css.closeTransactionContainer}>
+                  <button onClick={this.props.closeAction}>
+                    Cancel
                   </button>
                 </div>
-              }
-            </div>
+                <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
+                  {transactionType} with MetaMask
+                </button>
+              </div>
+            }
           </div>
         </div>
       </Modal>
