@@ -306,31 +306,25 @@
 
     .transactionHeader {
       background-color: rgba(18, 46, 91, 1.000);
-      padding: 12px 0;
+      padding: 12px 20px;
       color: $white;
       position: relative;
       border-radius: 15px 15px 0 0;
-      padding-left: 80px;
 
       .transactionIcon {
-        width: 80px;
-        height: 60px;
-        left: 0;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+        display: inline;
 
         img {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%,-50%);
+          display: inline;
+          margin-bottom: -3px;
+          margin-right: 18px;
         }
       }
 
       .transactionInfo {
-        min-width: 270px;
-        float: left;
+        position: relative;
+        top: -2px;
+        display: inline;
 
         .transactionEffect {
           font-size: 12px;
@@ -343,15 +337,15 @@
           font-size: $body;
 
           .passVote {
-            color: $accent-1;
+            color: rgba(0, 190, 144, 1.000);
           }
 
           .failVote {
-            color: $accent-2;
+            color: rgba(246, 80, 80, 1.000);
           }
 
           .redeem {
-            color: $accent-3;
+            color: rgba(0, 190, 144, 1.000);
           }
         }
 
@@ -368,7 +362,7 @@
 
       .proposalTitle {
         padding: 0 0 20px 0;
-        font-size: $subheader;
+        font-size: 21px;
       }
     }
 

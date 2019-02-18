@@ -97,7 +97,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
     let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules;
     switch (actionType) {
       case ActionTypes.VoteUp:
-        icon = <img src="/assets/images/Tx/Upvote.svg" />;
+        icon = <img src="/assets/images/Icon/vote/for-fill-green.svg" />;
         transactionType = <span><strong className={css.passVote}>Pass</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
         // passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
@@ -113,7 +113,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.VoteDown:
-        icon = <img src="/assets/images/Tx/Downvote.svg" />;
+        icon = <img src="/assets/images/vote/against-btn.svg" />;
         transactionType = <span><strong className={css.failVote}>Fail</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
         passIncentive = proposal.stage == ProposalStage.Queued ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
