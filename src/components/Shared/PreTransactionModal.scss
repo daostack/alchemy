@@ -23,6 +23,22 @@
   }
 }
 
+.helpButton {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+
+  button.hover {
+    color: rgba(18, 46, 91, 1.000);
+    background-color: rgba(0, 113, 255, 1.000);
+    width: 20px;
+    height: 20px;
+    border: 0;
+    font-size: 16px;
+    border-radius: 15px;
+  }
+}
+
 .launchMetaMask {
     border-radius: 15px;
     height: 30px;
@@ -46,7 +62,8 @@
 }
 
 .preTransactionBottom {
-  padding: 30px;
+  padding: 20px 30px;
+  border: 1px solid rgba(191, 203, 213, 1.000);
   text-align: right;
 }
 
@@ -109,7 +126,7 @@
       height: 8px;
         width: 1px;
         border-left: 1px dotted rgba(151, 151, 151, 0.5);
-        position: absolute;
+        position: absoluet;
         left: 50%;
         top: 0;
     }

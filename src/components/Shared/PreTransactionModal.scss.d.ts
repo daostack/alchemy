@@ -1,6 +1,8 @@
 export const clearfix: string;
 export const hidden: string;
 export const closeTransactionContainer: string;
+export const helpButton: string;
+export const hover: string;
 export const launchMetaMask: string;
 export const disabled: string;
 export const preTransactionBottom: string;
@@ -14,7 +16,6 @@ export const forBar: string;
 export const againstBar: string;
 export const divider: string;
 export const help: string;
-export const hover: string;
 export const helpBox: string;
 export const pointer: string;
 export const bridge: string;

@@ -193,6 +193,24 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 {effectText}
                 </div>
               </div>
+              {actionType != ActionTypes.Redeem && actionType != ActionTypes.Execute ?
+                <div className={css.helpButton}>
+                  <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>?</button>
+                  <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
+                    <div className={css.helpBox}>
+                      <div className={css.pointer}></div>
+                      <div className={css.bg}></div>
+                      <div className={css.bridge}></div>
+                      <div className={css.header}>
+                        <h2>Genesis Protocol</h2>
+                        <h3>{rulesHeader}</h3>
+                      </div>
+                      <div className={css.body}>{rules}</div>
+                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                    </div>
+                  </span>
+                </div> : ""
+              }
             </div>
             <div className={css.proposalInfo}>
               <div className={css.proposalTitle}>
@@ -248,23 +266,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 <span className={css.outcomes}>OUTCOMES</span>
                 <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
                 <span className={css.failIncentive}><strong>FAIL</strong>{failIncentive}</span>
-
-                <img src="/assets/images/Icon/Help.svg" onClick={this.toggleInstructions.bind(this)} />
-                <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
-
-                <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
-                  <div className={css.helpBox}>
-                    <div className={css.pointer}></div>
-                    <div className={css.bg}></div>
-                    <div className={css.bridge}></div>
-                    <div className={css.header}>
-                      <h2>Genesis Protocol</h2>
-                      <h3>{rulesHeader}</h3>
-                    </div>
-                    <div className={css.body}>{rules}</div>
-                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
-                  </div>
-                </span>
               </div> : ""
             }
             { /* Commenting out the proposal vote status for now, lets see if we want to bring this back
@@ -280,18 +281,18 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
               </div>
               : ""
             **/ }
+          {/*
+        <div className={css.transactionInstructions}>
 
-            <div className={css.transactionInstructions}>
-              {/*
-              <p>
-                When you click "Launch MetaMask" we will pop up a Metamask dialogue.
-                This dialogue will ask you to approve your transaction, including a small ETH cost.
-                It will set a default gas limit and gas price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
-              </p>
-               */}
+          <p>
+            When you click "Launch MetaMask" we will pop up a Metamask dialogue.
+            This dialogue will ask you to approve your transaction, including a small ETH cost.
+            It will set a default gas limit and gas price. It's fine to stick with these defaults.
+            You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
+          </p>
 
-            </div>
+        </div>
+           */}
             { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > currentAccountGens) ?
               <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
                 <button
