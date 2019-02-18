@@ -113,7 +113,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.VoteDown:
-        icon = <img src="/assets/images/vote/against-btn.svg" />;
+        icon = <img src="/assets/images/Icon/vote/against.svg" />;
         transactionType = <span><strong className={css.failVote}>Fail</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
         passIncentive = proposal.stage == ProposalStage.Queued ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
