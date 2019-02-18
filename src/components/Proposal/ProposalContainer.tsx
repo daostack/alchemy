@@ -284,16 +284,20 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     : " "
                 }
               </div>
-              <div className={css.stateChange}>
-                <button className={css.executeProposal}>
-                  <img src="/assets/images/Icon/execute.svg"/>
-                  <span> Execute</span>
-                </button>
-                <button className={css.boostProposal}>
-                  <img src="/assets/images/Icon/boost.svg"/>
-                  <span> Boost</span>
-                </button>
-              </div>
+
+              {!this.props.detailView ? 
+                  <div className={css.stateChange}>
+                    <button className={css.executeProposal}>
+                      <img src="/assets/images/Icon/execute.svg"/>
+                      <span> Execute</span>
+                    </button>
+                    <button className={css.boostProposal}>
+                      <img src="/assets/images/Icon/boost.svg"/>
+                      <span> Boost</span>
+                    </button>
+                  </div>
+                : " "
+              }
             </div>
 
             {proposalPassed(proposal) ?
@@ -330,8 +334,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
             }
 
             <div className={css.createdBy}>
-              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}/>
-              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
+              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={detailView}/>
+              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
             </div>
             <h3 className={css.proposalTitleBottom}>
               <span data-test-id="proposal-closes-in">
@@ -366,46 +370,24 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
               </Link>
             </div>
+            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
+            {this.props.detailView ? 
+                <div className={css.stateChange}>
+                  <button className={css.executeProposal}>
+                    <img src="/assets/images/Icon/execute.svg"/>
+                    <span> Execute</span>
+                  </button>
+                  <button className={css.boostProposal}>
+                    <img src="/assets/images/Icon/boost.svg"/>
+                    <span> Boost</span>
+                  </button>
+                </div>
+              : " "
+            }
 
-            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} />
           </div>
 
           <div className={css.proposalActions + " " + css.clearfix}>
-            {proposalEnded(proposal) ?
-              <div>
-                {this.state.preRedeemModalOpen ?
-                  <PreTransactionModal
-                    actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal, currentAccount.address)}
-                    beneficiaryProfile={beneficiaryProfile}
-                    closeAction={this.closePreRedeemModal.bind(this)}
-                    dao={dao}
-                    effectText={redemptionsTip}
-                    proposal={proposal}
-                  /> : ""
-                }
-
-                <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  {redeemButton}
-                </div>
-              </div>
-              :
-              <PredictionBox
-                isPredictingFail={isPredictingFail}
-                isPredictingPass={isPredictingPass}
-                beneficiaryProfile={beneficiaryProfile}
-                currentPrediction={currentAccountPrediction}
-                currentStake={currentAccountStakeAmount}
-                currentAccountGens={currentAccountGens}
-                currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                dao={dao}
-                proposal={proposal}
-                stakeProposal={stakeProposal}
-                threshold={threshold}
-                approveStakingGens={approveStakingGens}
-              />
-            }
-
             {!proposalEnded(proposal) ?
               <VoteBox
                 isVotingNo={isVotingNo}
@@ -430,6 +412,40 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     </div>
                   </div>
                   : ""
+              }
+              {proposalEnded(proposal) ?
+                <div>
+                  {this.state.preRedeemModalOpen ?
+                    <PreTransactionModal
+                      actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
+                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal, currentAccount.address)}
+                      beneficiaryProfile={beneficiaryProfile}
+                      closeAction={this.closePreRedeemModal.bind(this)}
+                      dao={dao}
+                      effectText={redemptionsTip}
+                      proposal={proposal}
+                    /> : ""
+                  }
+
+                  <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
+                    {redeemButton}
+                  </div>
+                </div>
+                :
+                <PredictionBox
+                  isPredictingFail={isPredictingFail}
+                  isPredictingPass={isPredictingPass}
+                  beneficiaryProfile={beneficiaryProfile}
+                  currentPrediction={currentAccountPrediction}
+                  currentStake={currentAccountStakeAmount}
+                  currentAccountGens={currentAccountGens}
+                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+                  dao={dao}
+                  proposal={proposal}
+                  stakeProposal={stakeProposal}
+                  threshold={threshold}
+                  approveStakingGens={approveStakingGens}
+                />
               }
           </div>
         </div>

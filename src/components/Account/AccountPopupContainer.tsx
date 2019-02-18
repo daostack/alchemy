@@ -21,6 +21,7 @@ import * as css from "./Account.scss";
 import { IDAOState, Address } from '@daostack/client'
 
 interface IStateProps {
+  detailView?: boolean
   accountAddress: string
   profile: IProfileState
   dao: IDAOState

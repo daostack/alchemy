@@ -57,11 +57,16 @@
 	z-index: 1000;
 	box-shadow: 0 0 2px 0 #3278CA;
 	height: 225px;
+	overflow: visible;
 	margin-bottom: -40px;
 
     .predictions .boostedAmount, .predictions .centered {
     	opacity: 1;
     }
+}
+
+.detailView.proposal:hover  {
+	margin-bottom: 0;
 }
 
 .proposal.openProposal {
@@ -73,6 +78,10 @@
 	width: 100%;
 	height: auto;
 	overflow: visible;
+
+	.predictions .boostedAmount, .predictions .centered {
+		opacity: 1;
+	}
 }
 
 .proposal.detailView:hover {
@@ -138,6 +147,11 @@ button.disabled {
 		top: -2px;
 	}
 }
+
+.detailView .castVote button {
+	opacity: 1;
+}
+
 
 .proposal:hover .castVote button {
 	opacity: 1;
@@ -530,56 +544,66 @@ button.disabled {
 			opacity: .6;
 		}
 	}
+}
 
-	.stateChange {
-		float: left;
-		width: 50%;
-		text-align: right;
-		font-size: 12px;
+.stateChange {
+	float: left;
+	width: 50%;
+	text-align: right;
+	font-size: 12px;
 
-		button {
-			background-color: rgba(0, 118, 255, 1.000);
-			border-radius: 10px;
-			height: 20px;
-			line-height: 20px;
-			padding: 0 6px;
-			color: $white;
-			border: none;
-			transition: all .25s ease;
-		    margin: 10px 10px 5px 0px;
-			display: none;
-		}
+	button {
+		background-color: rgba(0, 118, 255, 1.000);
+		border-radius: 10px;
+		height: 20px;
+		line-height: 20px;
+		padding: 0 6px;
+		color: $white;
+		border: none;
+		transition: all .25s ease;
+	    margin: 10px 10px 5px 0px;
+		display: none;
+	}
 
-		.executeProposal {
+	.executeProposal {
+		display: inline-block;
+	}
+
+	.executeProposal, .boostProposal {
+		width: 20px;
+		overflow: hidden;
+
+		span {
 			display: inline-block;
+			padding-left: 6px;
 		}
+	}
 
-		.executeProposal, .boostProposal {
-			width: 20px;
-			overflow: hidden;
+	.executeProposal:hover {
+		width: 76px;
+	}
 
-			span {
-				display: inline-block;
-				padding-left: 6px;
-			}
-		}
-
-		.executeProposal:hover {
-			width: 76px;
-		}
-
-		.boostProposal:hover {
-			width: 66px;
-		}
+	.boostProposal:hover {
+		width: 66px;
 	}
 }
 
 .detailView .cardTop {
 	height: auto;
 
+	.executeProposal {
+		width: 76px;
+	}
+
+	.boostProposal {
+		width: 66px;
+	}
+
 	.timer {
 		float: none;
 		width: auto;
+		text-align: right;
+		border-top: 1px solid rgba(200, 210, 219, 1.000);
 
 		span {
 			color: rgba(104, 155, 214, 1.000);
@@ -758,10 +782,19 @@ button.disabled {
 	}
 }
 
+.proposal.detailView {
+	display: flex;
+	justify-content: center;
+}
+
 .proposalActions {
 	position: relative;
 	margin-top: 15px;
 	border-top: 1px solid rgba(215, 225, 237, 1.000);
+}
+
+.proposalTitleTop {
+	display: none;
 }
 
 .detailView .proposalTitleTop {
@@ -780,13 +813,13 @@ button.disabled {
 }
 
 .detailView .proposalInfo {
-	float: left;
-	width: 50%;
+	flex-grow: 2;
+	padding-right: 25px;
 }
 
 .detailView .proposalActions {
-	float: left;
-	width: 50%;
+	flex-grow: 1;
+	max-width: 400px;
 	border-top: none;
 }
 
@@ -1051,6 +1084,10 @@ button.disabled {
 			height: 16px;
 		}
 	}
+}
+
+.detailView .createdBy {
+	margin: 30px 0;
 }
 
 a.viewProposal {

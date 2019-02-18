@@ -33,6 +33,7 @@ class ViewProposalContainer extends React.Component<IProps, null> {
         <div className={css.proposal}>
           <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} detailView={true}/>
         </div>
+        <h3 className={css.discussionTitle}>Discussion</h3>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
       </div>
     )

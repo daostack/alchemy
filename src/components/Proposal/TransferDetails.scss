@@ -11,6 +11,15 @@
   text-align: center;
 }
 
+.detailView.transferDetails {
+    box-shadow: 0 1px 12px 0 rgba(26, 60, 88, 0.09);
+    background-color: $white;
+    font-size: 16px;
+    padding: 15px;
+    margin: 0 0 0 0;
+    max-width: 430px;
+}
+
 .transferAmount {
   font-weight: $bold;
   color: $accent-1;
