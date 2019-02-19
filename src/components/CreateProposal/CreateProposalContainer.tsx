@@ -1,5 +1,5 @@
 import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client";
-import BN = require("bn.js")
+import BN = require("bn.js");
 import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
 import * as React from "react";
@@ -115,7 +115,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
       externalTokenReward: Util.toWei(values.externalTokenReward),
       nativeTokenReward: Util.toWei(values.nativeTokenReward),
       reputationReward: Util.toWei(values.reputationReward)
-    }
+    };
 
     this.setState({
       preTransactionModalOpen: true,

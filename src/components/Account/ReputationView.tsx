@@ -1,4 +1,4 @@
-import BN = require("bn.js")
+import BN = require("bn.js");
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import Util from "lib/util";

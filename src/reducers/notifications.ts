@@ -163,7 +163,7 @@ function elipsis(str: string, n: number) {
  * A map of messages to show for each type of action.
  */
 const messages: {[key: string]: (proposalTitle: string | undefined, options: any) => string} = {
-  "GenesisProtocol.vote": (proposalTitle, {vote: number, proposalId: string}) =>
+  "GenesisProtocol.vote": (proposalTitle, {vote, proposalId}) =>
     `Voting ${vote === VoteOptions.Yes ? "Yes" : "No"} on ${elipsis(proposalTitle, 22)}`,
   "GenesisProtocol.stake": (proposalTitle, {vote, proposalId, amount}) =>
     `Predicting ${vote === VoteOptions.Yes ? "Pass" : "Fail"} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(amount)} GEN`,

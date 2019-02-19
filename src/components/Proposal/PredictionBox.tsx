@@ -1,5 +1,5 @@
-import { IDAOState, IProposalState, ProposalStage } from "@daostack/client"
-import BN = require("bn.js")
+import { IDAOState, IProposalState, ProposalStage } from "@daostack/client";
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -11,7 +11,7 @@ import * as web3Actions from "actions/web3Actions";
 import { VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import Util from "lib/util"
+import Util from "lib/util";
 
 import * as css from "./Proposal.scss";
 

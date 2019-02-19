@@ -1,4 +1,4 @@
-import BN = require("bn.js")
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import * as React from "react";
 import { Link } from "react-router-dom";

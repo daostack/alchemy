@@ -1,4 +1,4 @@
-import BN = require("bn.js")
+import BN = require("bn.js");
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";

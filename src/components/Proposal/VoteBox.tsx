@@ -1,5 +1,5 @@
 import * as Arc from "@daostack/arc.js";
-import BN = require("bn.js")
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import * as React from "react";
 import Tooltip from "rc-tooltip";
@@ -66,9 +66,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
     } = this.props;
 
     const isVoting = isVotingNo || isVotingYes;
-    const totalReputationSupply = Util.fromWei(dao.reputationTotalSupply)
-    const votesFor = Util.fromWei(proposal.votesFor)
-    const votesAgainst = Util.fromWei(proposal.votesAgainst)
+    const totalReputationSupply = Util.fromWei(dao.reputationTotalSupply);
+    const votesFor = Util.fromWei(proposal.votesFor);
+    const votesAgainst = Util.fromWei(proposal.votesAgainst);
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     let yesPercentage = totalReputationSupply && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputationSupply * 100)) : 0;

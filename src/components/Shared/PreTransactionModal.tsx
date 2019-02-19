@@ -1,4 +1,4 @@
-import BN = require("bn.js")
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -77,10 +77,10 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
     // TODO: calculate reputationWhenExecuted
     // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
     const totalReputation = Util.fromWei(dao.reputationTotalSupply);
-    const votesFor = Util.fromWei(proposal.votesFor)
-    const votesAgainst = Util.fromWei(proposal.votesAgainst)
-    const stakesFor = Util.fromWei(proposal.stakesFor)
-    const stakesAgainst = Util.fromWei(proposal.stakesAgainst)
+    const votesFor = Util.fromWei(proposal.votesFor);
+    const votesAgainst = Util.fromWei(proposal.votesAgainst);
+    const stakesFor = Util.fromWei(proposal.stakesFor);
+    const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;

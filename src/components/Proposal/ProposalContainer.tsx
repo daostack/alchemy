@@ -20,7 +20,7 @@ import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, Observable, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
-import Util from "lib/util"
+import Util from "lib/util";
 
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";

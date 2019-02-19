@@ -294,12 +294,12 @@ export default (props: RouteComponentProps<any>) => {
   const observable = combineLatest(
     arc.dao(address).state,
     arc.dao(address).member(props.match.params.accountAddress).state
-  )
+  );
 
   if (address) {
     return <Subscribe observable={observable}>{
       (state: IObservableState<[IDAOState, IMemberState]>) => {
-        const dao = state.data[0]
+        const dao = state.data[0];
         if (state.error) {
           return <div>{state.error.message}</div>;
         } else if (dao) {

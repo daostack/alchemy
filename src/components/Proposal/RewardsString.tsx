@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IDAOState, IProposalState } from "@daostack/client";
-import Util from "lib/util"
+import Util from "lib/util";
 
 import ReputationView from "components/Account/ReputationView";
 

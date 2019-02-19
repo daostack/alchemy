@@ -121,9 +121,9 @@ export default (props: { dao: IDAOState, address: Address}) => {
         id: item.id,
         reputation: new BN(item.reputation),
         tokens: new BN(item.tokens)
-      }
-    }
-    const arc = getArc()
+      };
+    };
+    const arc = getArc();
 
     return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
         if (state.isLoading) {

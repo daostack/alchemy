@@ -30,7 +30,7 @@ import * as css from "./ViewDao.scss";
 
 import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { Subscription } from "rxjs";
 import Util from "lib/util";
 

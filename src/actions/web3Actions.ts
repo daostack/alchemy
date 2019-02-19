@@ -1,4 +1,4 @@
-import BN = require("bn.js")
+import BN = require("bn.js");
 import * as Redux from "redux";
 import { first } from "rxjs/operators";
 
@@ -120,14 +120,14 @@ export function setCurrentAccount(accountAddress: string) {
     const balance = await Util.getBalance(accountAddress);
     payload.currentAccountEthBalance = balance;
 
-    const stakingToken = arc.GENToken()
+    const stakingToken = arc.GENToken();
     payload.currentAccountGenBalance = await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise();
 
     const allowance = await arc.allowance(accountAddress).pipe(first()).toPromise();
     if (allowance) {
       payload.currentAccountGenStakingAllowance = allowance.amount;
     } else {
-      payload.currentAccountGenStakingAllowance = new BN(0)
+      payload.currentAccountGenStakingAllowance = new BN(0);
     }
     console.log("got account with paylod", payload);
     dispatch(getProfile(accountAddress));
