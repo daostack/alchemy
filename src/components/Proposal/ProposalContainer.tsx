@@ -2,6 +2,7 @@ import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake,
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from "arc";
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -19,6 +20,8 @@ import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, Observable, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
+import Util from "lib/util"
+
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import RedeemButton from "./RedeemButton";
@@ -30,8 +33,8 @@ interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccount: IMemberState;
-  currentAccountGens: number;
-  currentAccountGenStakingAllowance: number;
+  currentAccountGens: BN;
+  currentAccountGenStakingAllowance: BN;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
@@ -184,14 +187,15 @@ class ProposalContainer extends React.Component<IProps, IState> {
       // Calculate reputation percentages
       // TODO: calculate "reputationWhenExecuted" as in the commented line
       // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-      const totalReputation: number = dao.reputationTotalSupply;
+      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
+      const votesFor = Util.fromWei(proposal.votesFor);
+      const votesAgainst = Util.fromWei(proposal.votesAgainst);
+      const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
+      const noPercentage = totalReputation && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputation * 100)) : 0;
+      const passedByDecision = totalReputation ? (votesFor / totalReputation) > 0.5 : false;
+      const failedByDecision = totalReputation ? (votesAgainst / totalReputation) > 0.5 : false;
 
-      const yesPercentage = totalReputation && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / totalReputation * 100)) : 0;
-      const noPercentage = totalReputation && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / totalReputation * 100)) : 0;
-      const passedByDecision = totalReputation ? (proposal.votesFor / totalReputation) > 0.5 : false;
-      const failedByDecision = totalReputation ? (proposal.votesAgainst / totalReputation) > 0.5 : false;
-
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0;
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0);
 
       const redeemProps = {
         accountHasRewards,
@@ -267,13 +271,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                 </div>
                 <div className={css.decisionGraph}>
-                  <span className={css.forLabel}>{proposal.votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
+                  <span className={css.forLabel}>{votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
                   <div className={css.graph}>
                     <div className={css.forBar} style={styles.forBar}></div>
                     <div className={css.againstBar} style={styles.againstBar}></div>
                     <div className={css.divider}></div>
                   </div>
-                  <span className={css.againstLabel}>{proposal.votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
+                  <span className={css.againstLabel}>{votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
                 </div>
               </div>
               : proposalFailed(proposal) ?
@@ -282,13 +286,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                   </div>
                   <div className={css.decisionGraph}>
-                    <span className={css.forLabel}>{proposal.votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
+                    <span className={css.forLabel}>{votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
                     <div className={css.graph}>
                       <div className={css.forBar} style={styles.forBar}></div>
                       <div className={css.againstBar} style={styles.againstBar}></div>
                       <div className={css.divider}></div>
                     </div>
-                    <span className={css.againstLabel}>{proposal.votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
+                    <span className={css.againstLabel}>{votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
                   </div>
                 </div>
                 : ""

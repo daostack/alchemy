@@ -1,3 +1,5 @@
+import { IDAOState, IProposalState, ProposalStage } from "@daostack/client"
+import BN = require("bn.js")
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -9,7 +11,7 @@ import * as web3Actions from "actions/web3Actions";
 import { VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import { IDAOState, IProposalState, ProposalStage } from "@daostack/client";
+import Util from "lib/util"
 
 import * as css from "./Proposal.scss";
 
@@ -22,9 +24,9 @@ interface IState {
 interface IProps {
   beneficiaryProfile?: IProfileState;
   currentPrediction: number;
-  currentStake: number;
-  currentAccountGens: number;
-  currentAccountGenStakingAllowance: number;
+  currentStake: BN;
+  currentAccountGens: BN;
+  currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
@@ -120,7 +122,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     }
 
     // If don't have any staking allowance, replace with button to pre-approve
-    if (currentAccountGenStakingAllowance < 1) {
+    if (currentAccountGenStakingAllowance.lt(new BN(1))) {
       return (
         <div className={css.predictions + " " + css.enablePredictions}>
           <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
@@ -129,7 +131,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     }
 
     // round second decimal up
-    const stakingLeftToBoost = Math.ceil((threshold - (proposal.stakesFor - proposal.stakesAgainst)) * 100) / 100;
+    const stakesFor = Util.fromWei(proposal.stakesFor);
+    const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
+    const stakingLeftToBoost = Math.ceil((threshold - (stakesFor - stakesAgainst)) * 100) / 100;
 
     let wrapperClass = classNames({
       [css.predictions] : true,
@@ -142,8 +146,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       [css.predicted]: currentPrediction == VoteOptions.No,
     });
 
-    const disableStakePass = !currentAccountGens || currentPrediction === VoteOptions.No;
-    const disableStakeFail = !currentAccountGens || currentPrediction === VoteOptions.Yes;
+    const hasGens = currentAccountGens.gt(new BN(0));
+    const disableStakePass = !hasGens || currentPrediction === VoteOptions.No;
+    const disableStakeFail = !hasGens || currentPrediction === VoteOptions.Yes;
 
     const passPrediction = classNames({
       [css.passPrediction]: true,
@@ -166,7 +171,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     });
 
     const tip = (prediction: VoteOptions) =>
-      !currentAccountGens ?
+      !hasGens ?
         "Insufficient GENs" :
       currentPrediction === prediction ?
         "Can't change prediction" :
@@ -206,9 +211,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
         <div>
           <div className={css.stakes}>
-            {proposal.stakesFor}
+            {Util.fromWei(proposal.stakesFor).toFixed(2)}
             <div className={css.forBar}><span></span></div>
-            {proposal.stakesAgainst}
+            {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
             <div className={css.againstBar}><span></span></div>
           </div>
           <span className={css.boostedAmount}>

@@ -1,9 +1,12 @@
+import BN = require("bn.js")
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
 import {  DAO, IDAOState, IRewardState, Proposal, RewardType } from "@daostack/client";
 import { getArc } from "arc";
+import Util from "lib/util";
+
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { IRootState } from "reducers";
@@ -50,20 +53,20 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     });
 
     // const redeemAllTip: JSX.Element | string = ""
-    let ethReward = 0, genReward = 0, reputationReward = 0, externalTokenReward = 0;
+    let ethReward = 0, genReward = 0, reputationReward = new BN(0), externalTokenReward = 0;
 
     rewards.forEach((reward) => {
       if (reward.type === RewardType.ETH) {
-        ethReward += reward.amount;
+        ethReward += Util.fromWei(reward.amount);
       }
       if (reward.type === RewardType.External) {
-        externalTokenReward += reward.amount;
+        externalTokenReward += Util.fromWei(reward.amount);
       }
       if (reward.type === RewardType.Token) {
-        genReward += reward.amount;
+        genReward += Util.fromWei(reward.amount);
       }
       if (reward.type === RewardType.Reputation) {
-        reputationReward += reward.amount;
+        reputationReward.iadd(reward.amount);
       }
     });
 

@@ -1,11 +1,13 @@
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import BN = require("bn.js");
 import gql from "graphql-tag";
+
 import * as React from "react";
 
 import * as css from "layouts/App.scss";
 
 import AccountBalance from "components/Account/AccountBalance";
 import ReputationView from "components/Account/ReputationView";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 import { Address, DAO, IDAOState, IMemberState } from "@daostack/client";
 import { getArc } from "arc";
@@ -53,12 +55,13 @@ class AccountBalances extends React.Component<Props, null>  {
   public render() {
     const { dao, member } = this.props;
     // TODO: get ETH balance
-    const currentAccountEthBalance = 0;
-    const currentAccountGenBalance =  member.tokens;
+    const currentAccountEthBalance = new BN(0);
+    const currentAccountGenBalance = member.tokens;
     // TODO: get allowance
     // const currentAccountGenStakingAllowance = 0
     // TODO: get external token balance
-    const currentAccountExternalTokenBalance = 0;
+    const currentAccountExternalTokenBalance = new BN(0);
+
     return (
       <div className={css.balances}>
         <div className={css.userBalance}>
@@ -116,11 +119,11 @@ export default (props: { dao: IDAOState, address: Address}) => {
         address: item.address,
         // dao: new DAO(item.dao.id, this.context),
         id: item.id,
-        reputation: Util.fromWei(item.reputation),
-        tokens: Util.fromWei(item.tokens)
-      };
-    };
-    const arc = getArc();
+        reputation: new BN(item.reputation),
+        tokens: new BN(item.tokens)
+      }
+    }
+    const arc = getArc()
 
     return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
         if (state.isLoading) {
@@ -136,8 +139,8 @@ export default (props: { dao: IDAOState, address: Address}) => {
               name: "not found",
               id: "0x",
               address: "0x",
-              reputation: 0,
-              tokens: 0
+              reputation: new BN(0),
+              tokens: new BN(0)
             };
           } else {
             member = itemMap(members[0]);

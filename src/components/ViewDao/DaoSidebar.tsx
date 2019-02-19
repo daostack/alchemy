@@ -1,3 +1,4 @@
+import BN = require("bn.js")
 import * as classNames from "classnames";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -7,6 +8,7 @@ import { IRootState } from "reducers";
 import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
 
 import DaoHeadings from "./DaoHeadings";
 
@@ -59,15 +61,15 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
           <div className={css.daoHoldings}>
             <span className={css.navHeading}><b>DAO Holdings</b></span>
             <ul>
-              <li><strong>{dao.ethBalance}</strong> ETH </li>
+              <li><strong>{Util.fromWei(dao.ethBalance)}</strong> ETH </li>
               <Subscribe observable={dao.token.balanceOf(dao.address)}>{
-                (state: IObservableState<number>) => {
+                (state: IObservableState<BN>) => {
                   if (state.isLoading) {
                     return <li>... GEN</li>;
                   } else if ( state.error) {
                     return <li>{ state.error.message}</li>;
                   } else {
-                    return <li><strong>{ state.data }</strong> GEN</li>;
+                    return <li><strong>{ Util.fromWei(state.data) }</strong> GEN</li>;
                   }
                 }
               }</Subscribe>

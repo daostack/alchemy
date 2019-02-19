@@ -78,6 +78,7 @@
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
     "bip39": "^2.2.0",
+    "bn.js": "^4.11.8",
     "classnames": "^2.2.5",
     "css-loader": "^0.28.7",
     "disqus-react": "^1.0.5",
@@ -123,8 +124,8 @@
     "redux-promise-middleware": "^4.4.1",
     "redux-thunk": "2.2.0",
     "reselect": "^3.0.1",
-    "rxjs": "^6.4.0",
     "run-with-ganache": "^0.1.1",
+    "rxjs": "^6.4.0",
     "socket.io-client": "^2.2.0",
     "style-loader": "^0.18.2",
     "truffle-contract": "^3.0.1",
@@ -134,7 +135,7 @@
     "ws": "^6.1.2"
   },
   "devDependencies": {
-    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#1b3f12b3ad598ff26e1a276b78247f81206d8795",
+    "@daostack/subgraph": "git+https://github.com/daostack/subgraph.git#f2d1072735d4699d436c59a82a24698ed27836d8",
     "@types/chai": "^4.1.7",
     "@types/classnames": "^2.2.6",
     "@types/es6-promisify": "^5.0.0",
