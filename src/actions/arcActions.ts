@@ -26,6 +26,7 @@ import {
   VoteOptions,
 } from "reducers/arcReducer";
 import * as schemas from "schemas";
+import Util from "lib/util";
 
 async function getRedemptions(votingMachineInstance: any, proposalInstance: any, proposal: any, accountAddress: string): Promise<IRedemptionState> {
   throw Error(`Not ported to the new client lib yet`);
@@ -141,7 +142,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.vote(ProposalOutcome.Pass).pipe(first()).toPromise();
+    await proposalObj.vote(voteOption).pipe(first()).toPromise();
 
   //
   //     dispatch({
@@ -179,7 +180,9 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    throw Error(`Still needs tob e ported to client library`);
+    const arc = getArc();
+    const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).pipe(first()).toPromise();
     // const web3: Web3 = await Arc.Utils.getWeb3();
     // const currentAccountAddress: string = getState().web3.ethAccountAddress;
     // const proposal: IProposalStateLegacy = getState().arc.proposals[proposalId];

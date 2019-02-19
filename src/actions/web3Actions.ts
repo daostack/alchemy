@@ -213,7 +213,7 @@ export function approveStakingGens(daoAvatarAddress: string) {
     } as ApproveAction);
 
     try {
-      await arc.approveForStaking(Util.toWei(100000));
+      await arc.approveForStaking(Util.toWei(100000)).send();
     } catch (err) {
       console.error(err);
       dispatch({
