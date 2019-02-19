@@ -107,16 +107,18 @@ button:hover {
         top: -2px;
         background-color: rgba(246, 80, 80, 1.000);
         display: inline-block;
-        margin-left: 8px;
       }
 
       img {
         margin-left: 8px;
+        position: relative;
+        top: 2px;
+        margin-right: 8px;
       }
 
     }
     li a {
-      display: inline-block;
+      display: block;
       font-size: 14px;
       color: $white;
       padding: 8px 23px 8px 8px;
