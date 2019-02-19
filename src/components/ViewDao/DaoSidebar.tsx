@@ -42,19 +42,26 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
             <span className={css.navHeading}><b>Menu</b></span>
             <ul>
               <li>
+                <span className={css.notification + " " + css.homeNotification}></span>
+                <img src="/assets/images/Icon/menu/home.svg"/>
                 <Link to={"/dao/" + dao.address}>Home</Link>
               </li>
               <li>
+                <span className={css.notification + " " + css.holdersNotification}></span>
+                <img src="/assets/images/Icon/menu/holders.svg"/>
                 <Link to={"/dao/" + dao.address + "/members/"}>Reputation Holders</Link>
               </li>
               <li>
+                <span className={css.notification + " " + css.historyNotification}></span>
+                <img src="/assets/images/Icon/menu/history.svg"/>
                   <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>History</NavLink>
               </li>
               <li>
+                <span className={css.notification + " " + css.redemptionNotification}></span>
+                <img src="/assets/images/Icon/menu/redemption.svg"/>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>Redemptions</NavLink>
               </li>
             </ul>
-
           </div>
           <div className={css.daoHoldings}>
             <span className={css.navHeading}><b>DAO Holdings</b></span>

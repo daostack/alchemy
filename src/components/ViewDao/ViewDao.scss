@@ -59,6 +59,14 @@ button:hover {
 
 }
 
+.homeNotification, .holdersNotification, .historyNotification, .redemptionNoticication {
+  opacity: 0;
+}
+
+.redemptionNoticication {
+  opacity: 1;
+}
+
 .daoNavigation {
 
   .daoName {
@@ -90,12 +98,28 @@ button:hover {
       list-style: none;
       margin: 0;
       padding: 0;
+      
+      .notification {
+        width: 8px;
+        height: 8px;
+        border-radius: 8px;
+        position: relative;
+        top: -2px;
+        background-color: rgba(246, 80, 80, 1.000);
+        display: inline-block;
+        margin-left: 8px;
+      }
+
+      img {
+        margin-left: 8px;
+      }
+
     }
     li a {
-      display: block;
+      display: inline-block;
       font-size: 14px;
       color: $white;
-      padding: 8px 23px;
+      padding: 8px 23px 8px 8px;
       background-color: rgba(32, 104, 188, 0);
       transition: all .25s ease;
     }
