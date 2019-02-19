@@ -364,19 +364,45 @@ button.disabled {
 
 .stakes {
 	font-size: 13px;
-	margin-top: 2px;
-	 margin-left: 25px;
+    margin: 13px 14px;
+
+	.stakesFor, .forBar, .stakesAgainst, .againstBar {
+		float: left;
+	}
+
+	.forBar, .againstBar {
+		height: 18px;
+
+		img {
+			margin-right: 5px;
+		}
+
+		b {
+			font-weight: normal;
+			font-size: 10px;
+			display: inline-block;
+			margin-left: 5px;
+		}
+
+		span {
+			display: block;
+			position: absolute;
+			width: 100%;
+			bottom: 0;
+			margin-left: 5px;
+			height: 2px;
+			background-color: rgba(208, 214, 220, 1.000);
+		}
+	}
 
 	.forBar {
-		height: 2px;
-		background-color: rgba(208, 214, 220, 1.000);
+		position: relative;
 		width: 55%;
 	}
 
 	.againstBar {
-		height: 2px;
-		background-color: rgba(208, 214, 220, 1.000);
 		width: 25%;
+		position: relative;
 	}
 }
 
@@ -958,6 +984,11 @@ button.disabled {
 			opacity: 0;
 			position: absolute;
 			width: 12px;
+		}
+
+		img.stakeIcon {
+			opacity: 1;
+			position: relative;
 		}
 	}
 

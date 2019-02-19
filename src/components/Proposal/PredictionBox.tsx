@@ -178,14 +178,14 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)}>
-        <strong>+</strong> Pass
+        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg"/> Pass
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
 
     const failButton = (
       <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
-        <strong>-</strong> Fail 
+        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg"/> Fail 
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
@@ -207,10 +207,26 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
         <div>
           <div className={css.stakes}>
-            {proposal.stakesFor}
-            <div className={css.forBar}><span></span></div>
-            {proposal.stakesAgainst}
-            <div className={css.againstBar}><span></span></div>
+            <div className={css.clearfix}>
+              <div className={css.stakesFor}>
+                <img src="/assets/images/Icon/v-small-line.svg"/>
+                {proposal.stakesFor}
+              </div>
+              <div className={css.forBar}>
+                <b>Pass</b>
+                <span></span>
+              </div>
+            </div>
+            <div className={css.clearfix}>
+              <div className={css.stakesAgainst}>
+                <img src="/assets/images/Icon/x-small-line.svg"/>
+                {proposal.stakesAgainst}
+              </div>
+              <div className={css.againstBar}>
+                <b>Fail</b>
+                <span></span>
+              </div>
+            </div>
           </div>
           <span className={css.boostedAmount}>
             {
