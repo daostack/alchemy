@@ -1,6 +1,6 @@
 // import * as Arc from '@daostack/arc.js';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faFacebook, faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faFacebook, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
 // import axios from "axios";
 // import BigNumber from "bignumber.js";
 import * as React from "react";
@@ -70,19 +70,19 @@ import "./assets/styles/global.scss";
 
 async function renderApp() {
   // Add icons we want to use from FontAwesome
-  library.add(faGithub, faTwitter, faFacebook)
+  library.add(faGithub, faTwitter, faFacebook);
 
   ReactDOM.render(
     <AppContainer>
       <App />
     </AppContainer>,
     document.querySelector("#root"),
-  )
+  );
 }
 
 if (module.hot) {
-  module.hot.accept()
-  renderApp()
+  module.hot.accept();
+  renderApp();
 } else {
-  renderApp()
+  renderApp();
 }

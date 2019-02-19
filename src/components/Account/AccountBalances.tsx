@@ -1,5 +1,5 @@
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import gql from 'graphql-tag'
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import gql from "graphql-tag";
 import * as React from "react";
 
 import * as css from "layouts/App.scss";
@@ -7,12 +7,12 @@ import * as css from "layouts/App.scss";
 import AccountBalance from "components/Account/AccountBalance";
 import ReputationView from "components/Account/ReputationView";
 
-import { Address, DAO, IDAOState, IMemberState } from '@daostack/client'
-import { getArc } from 'arc'
+import { Address, DAO, IDAOState, IMemberState } from "@daostack/client";
+import { getArc } from "arc";
 import Util from "lib/util";
 
 interface Props {
-  dao: IDAOState
+  dao: IDAOState;
   member: IMemberState;
 }
 
@@ -20,7 +20,7 @@ const TokenAllowance = (props: {accountAddress: Address, daoAddress: Address}) =
   // TODO: move query logic to daostack/client
   // TODO: we are net filtering by spender (which is the votingMachine associated with the proposal)
   // but we probably should, in the future.
-  const arc = getArc()
+  const arc = getArc();
   const query = gql`{
     tokenApprovals (where: {owner: "${props.accountAddress}"} ){
       id
@@ -29,36 +29,36 @@ const TokenAllowance = (props: {accountAddress: Address, daoAddress: Address}) =
       spender
       value
     }
-  }`
+  }`;
   return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
     if (state.isLoading) {
-      return <div>loading..</div>
+      return <div>loading..</div>;
     } else if (state.error) {
-      return <div>{state.error}</div>
+      return <div>{state.error}</div>;
     } else {
       // state.data is a list
-      const approvals = state.data.data.tokenApprovals
+      const approvals = state.data.data.tokenApprovals;
       if (approvals.length === 0) {
-        return <span>0</span>
+        return <span>0</span>;
       } else {
-        const approval = approvals[0] // TODO: if there are mnay this may be wrong
-        return <span>{approval.value}</span>
+        const approval = approvals[0]; // TODO: if there are mnay this may be wrong
+        return <span>{approval.value}</span>;
       }
     }
-  }}</Subscribe >
-}
+  }}</Subscribe >;
+};
 
 class AccountBalances extends React.Component<Props, null>  {
 
   public render() {
-    const { dao, member } = this.props
+    const { dao, member } = this.props;
     // TODO: get ETH balance
-    const currentAccountEthBalance = 0
-    const currentAccountGenBalance =  member.tokens
+    const currentAccountEthBalance = 0;
+    const currentAccountGenBalance =  member.tokens;
     // TODO: get allowance
     // const currentAccountGenStakingAllowance = 0
     // TODO: get external token balance
-    const currentAccountExternalTokenBalance = 0
+    const currentAccountExternalTokenBalance = 0;
     return (
       <div className={css.balances}>
         <div className={css.userBalance}>
@@ -87,17 +87,17 @@ class AccountBalances extends React.Component<Props, null>  {
           : ""
         }
       </div>
-    )
+    );
   }
 }
 
 export default (props: { dao: IDAOState, address: Address}) => {
     //  if no DAO is given, it is unclear which token balances to show
     if (!props.dao) {
-      return null
+      return null;
     }
     if (!props.address) {
-      return null
+      return null;
     }
     // TODO: move query logic to daostack/client
     const query = gql`{
@@ -110,7 +110,7 @@ export default (props: { dao: IDAOState, address: Address}) => {
         reputation
         tokens
       }
-    }`
+    }`;
     const itemMap = (item: any) => {
       return {
         address: item.address,
@@ -118,32 +118,32 @@ export default (props: { dao: IDAOState, address: Address}) => {
         id: item.id,
         reputation: Util.fromWei(item.reputation),
         tokens: Util.fromWei(item.tokens)
-      }
-    }
-    const arc = getArc()
+      };
+    };
+    const arc = getArc();
 
     return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
         if (state.isLoading) {
-          return <div>loading..</div>
+          return <div>loading..</div>;
         } else if (state.error) {
-          return <div>{state.error}</div>
+          return <div>{state.error}</div>;
         } else {
           // state.data is a list
-          const members = state.data.data.members
-          let member: any
+          const members = state.data.data.members;
+          let member: any;
           if (members.length === 0) {
             member = {
-              name: 'not found',
-              id: '0x',
-              address: '0x',
+              name: "not found",
+              id: "0x",
+              address: "0x",
               reputation: 0,
               tokens: 0
-            }
+            };
           } else {
-            member = itemMap(members[0])
+            member = itemMap(members[0]);
           }
-          return <AccountBalances dao={props.dao} member={member} />
+          return <AccountBalances dao={props.dao} member={member} />;
         }
       }
-    }</Subscribe>
-}
+    }</Subscribe>;
+};

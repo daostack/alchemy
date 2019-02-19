@@ -4,12 +4,12 @@ import * as css from "./Notification.scss";
 import classNames = require("classnames");
 import Util from "lib/util";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import Linkify from 'react-linkify';
+import Linkify from "react-linkify";
 
 export enum NotificationViewStatus {
-  Pending = 'Pending',
-  Failure = 'Failure',
-  Success = 'Success'
+  Pending = "Pending",
+  Failure = "Failure",
+  Success = "Success"
 }
 
 interface IProps {
@@ -32,7 +32,7 @@ export default class Notification extends React.Component<IProps, null> {
   public handleClose(e: any) {
     const { dismiss, status } = this.props;
     if (status === NotificationViewStatus.Pending) {
-      if (confirm('Often transactions get approved after 24h, closing this will prevent you from following the status of the tx, are you sure you would like to close this?')) {
+      if (confirm("Often transactions get approved after 24h, closing this will prevent you from following the status of the tx, are you sure you would like to close this?")) {
         dismiss();
       }
     } else {
@@ -80,18 +80,18 @@ export default class Notification extends React.Component<IProps, null> {
             <Linkify>{message}</Linkify>
             {
               fullErrorMessage ?
-                <span style={{cursor: 'pointer'}} onClick={() => this.copyToClipboard(fullErrorMessage)}>&nbsp;(copy full error)</span>
-                : ''
+                <span style={{cursor: "pointer"}} onClick={() => this.copyToClipboard(fullErrorMessage)}>&nbsp;(copy full error)</span>
+                : ""
             }
             {
               url ?
-              <span><br/><a href={url} target='_blank'>See in etherscan</a></span>
-              : ''
+              <span><br/><a href={url} target="_blank">See in etherscan</a></span>
+              : ""
             }
           </div>
         </div>
         <div className={css.notificationControls}>
-          <button className={css.pending} onClick={() => minimize()}><img style={{width: '18px', height: '18px'}} src="/assets/images/Icon/Minimize-notification.svg" /></button>
+          <button className={css.pending} onClick={() => minimize()}><img style={{width: "18px", height: "18px"}} src="/assets/images/Icon/Minimize-notification.svg" /></button>
           <button className={css.pending} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
           <button className={css.success} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
           <button className={css.error} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IDAOState, IProposalState } from '@daostack/client'
+import { IDAOState, IProposalState } from "@daostack/client";
 import ReputationView from "components/Account/ReputationView";
 
 interface IProps {

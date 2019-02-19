@@ -1,20 +1,20 @@
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 
-import { combineLatest } from 'rxjs'
+import { combineLatest } from "rxjs";
 
 import ProposalContainer from "../Proposal/ProposalContainer";
 
 import * as css from "./ViewDao.scss";
-import { getArc } from 'arc'
-import { Address, IDAOState, IProposalState, ProposalStage } from '@daostack/client'
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import { getArc } from "arc";
+import { Address, IDAOState, IProposalState, ProposalStage } from "@daostack/client";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 interface IProps {
-  proposals: IProposalState[]
-  dao: IDAOState
-  currentAccountAddress: Address
+  proposals: IProposalState[];
+  dao: IDAOState;
+  currentAccountAddress: Address;
 }
 
 class DaoHistoryContainer extends React.Component<IProps, null> {
@@ -28,7 +28,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 
     return(
         <div>
-          <BreadcrumbsItem to={'/dao/' + dao.address + "/history"}>History</BreadcrumbsItem>
+          <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
 
           <div className={css.proposalsHeader}>
             Executed Proposals
@@ -45,23 +45,23 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 }
 
 export default (props: {currentAccountAddress: Address} & RouteComponentProps<any>) => {
-  const arc = getArc()
-  const daoAvatarAddress = props.match.params.daoAvatarAddress
-  const currentAccountAddress = props.currentAccountAddress
+  const arc = getArc();
+  const daoAvatarAddress = props.match.params.daoAvatarAddress;
+  const currentAccountAddress = props.currentAccountAddress;
   const observable = combineLatest(
     // TODO: add queries here, like `proposals({boosted: true})` or whatever
     arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Executed }), // the list of pre-boosted proposals
     arc.dao(daoAvatarAddress).state
-  )
+  );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState[], IDAOState]>): any => {
       if (state.isLoading) {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       } else if (state.error) {
-        return <div>{ state.error.message }</div>
+        return <div>{ state.error.message }</div>;
       } else  {
-        return <DaoHistoryContainer proposals={state.data[0]} dao={state.data[1]} currentAccountAddress={currentAccountAddress}/>
+        return <DaoHistoryContainer proposals={state.data[0]} dao={state.data[1]} currentAccountAddress={currentAccountAddress}/>;
       }
     }
-  }</Subscribe>
-}
+  }</Subscribe>;
+};

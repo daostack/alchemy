@@ -1,21 +1,21 @@
-import * as Arc from '@daostack/arc.js';
-import { TransactionReceiptsEventInfo } from '@daostack/arc.js';
-import { Action, Dispatch, Middleware } from 'redux';
+import * as Arc from "@daostack/arc.js";
+import { TransactionReceiptsEventInfo } from "@daostack/arc.js";
+import { Action, Dispatch, Middleware } from "redux";
 import { REHYDRATE, RehydrateAction } from "redux-persist";
 import { IRootState } from "../reducers";
 
 /** -- Model -- */
 
 export enum OperationError {
-  Canceled = 'Canceled',
-  Reverted = 'Reverted',
-  OutOfGas = 'OutOfGas',
+  Canceled = "Canceled",
+  Reverted = "Reverted",
+  OutOfGas = "OutOfGas",
 }
 
 export enum OperationStatus {
-  Started = 'Started',
-  Sent = 'Sent',
-  Complete = 'Complete'
+  Started = "Started",
+  Sent = "Sent",
+  Complete = "Complete"
 }
 
 export interface IOperation {
@@ -34,28 +34,28 @@ export interface IOperationsState {
 /** -- Actions -- */
 
 export interface IUpdateOperation extends Action {
-  type: 'Operations/Update',
+  type: "Operations/Update";
   payload: {
     id: string;
     operation: IOperation;
-  }
+  };
 }
 
 export interface IDismissOperation extends Action {
-  type: 'Operations/Dismiss',
+  type: "Operations/Dismiss";
   payload: {
     id: string;
-  }
+  };
 }
 
-type OperationsAction = IUpdateOperation | IDismissOperation
+type OperationsAction = IUpdateOperation | IDismissOperation;
 
 export const isOperationsAction = (action: Action): action is OperationsAction =>
-  typeof action.type === 'string' && action.type.startsWith('Operations/');
+  typeof action.type === "string" && action.type.startsWith("Operations/");
 
 export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
   dispatch({
-    type: 'Operations/Dismiss',
+    type: "Operations/Dismiss",
     payload: {
       id
     }
@@ -66,7 +66,7 @@ export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
 export const operationsReducer =
   (state: IOperationsState = {}, a: Action) => {
     if (isOperationsAction(a)) {
-      if (a.type === 'Operations/Update') {
+      if (a.type === "Operations/Update") {
         const action = a as IUpdateOperation;
         return {
           ...state,
@@ -77,7 +77,7 @@ export const operationsReducer =
         };
       }
 
-      if (a.type === 'Operations/Dismiss') {
+      if (a.type === "Operations/Dismiss") {
         const action = a as IDismissOperation;
         const {[a.payload.id]: _, ...rest } = state;
         return rest;
@@ -85,27 +85,27 @@ export const operationsReducer =
     }
 
     return state;
-  }
+  };
 
 /** -- Effects -- */
 
 const errorType = (error: Error) => {
   const message = error.message.toLowerCase();
-  if (message.includes('user denied')) {
+  if (message.includes("user denied")) {
     return OperationError.Canceled;
-  } else if (message.includes('revert')) {
+  } else if (message.includes("revert")) {
     return OperationError.Reverted;
-  } else if (message.includes('gas')) {
+  } else if (message.includes("gas")) {
     return OperationError.OutOfGas;
   } else {
     return error.message;
   }
-}
+};
 
 export const operationsTracker: Middleware =
   ({ getState, dispatch }) =>
   (next) => {
-    Arc.TransactionService.subscribe('TxTracking', (topic, info: TransactionReceiptsEventInfo) => {
+    Arc.TransactionService.subscribe("TxTracking", (topic, info: TransactionReceiptsEventInfo) => {
       const {
         invocationKey,
         txStage,
@@ -130,7 +130,7 @@ export const operationsTracker: Middleware =
       }
 
       dispatch({
-        type: 'Operations/Update',
+        type: "Operations/Update",
         payload: {
           id: `${invocationKey}`,
           operation: {
@@ -147,7 +147,7 @@ export const operationsTracker: Middleware =
             proposalTitle
           }
         }
-      } as IUpdateOperation)
+      } as IUpdateOperation);
     });
 
     return (a: any) => {
@@ -159,13 +159,13 @@ export const operationsTracker: Middleware =
         const payload = action.payload;
 
         if (payload) {
-          const state = payload.operations as IOperationsState
+          const state = payload.operations as IOperationsState;
           Object.keys(state).forEach(async (id: string) => {
             if (state[id].status && state[id].status === OperationStatus.Sent && !state[id].error) {
               try {
                 const receipt = await Arc.TransactionService.watchForConfirmedTransaction(state[id].txHash);
                 dispatch({
-                  type: 'Operations/Update',
+                  type: "Operations/Update",
                   payload: {
                     id: `${id}`,
                     operation: {
@@ -174,23 +174,23 @@ export const operationsTracker: Middleware =
                   }
                 } as IUpdateOperation);
               } catch (e) {
-                console.error(e)
+                console.error(e);
                 dispatch({
-                  type: 'Operations/Update',
+                  type: "Operations/Update",
                   payload: {
                     id: `${id}`,
                     operation: {
                       error: errorType(e)
                     }
                   }
-                } as IUpdateOperation)
+                } as IUpdateOperation);
               }
             }
           });
         }
       }
 
-      next(a)
+      next(a);
     };
   }
 ;

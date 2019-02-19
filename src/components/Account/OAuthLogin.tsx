@@ -1,6 +1,6 @@
 import classNames = require("classnames");
-import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import * as React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as profileActions from "actions/profilesActions";
@@ -12,9 +12,9 @@ interface IProps {
   accountAddress: string;
   className?: string;
   editing: boolean;
-  onSuccess?: (profileData: IProfileState) => any,
+  onSuccess?: (profileData: IProfileState) => any;
   profile: IProfileState;
-  provider: 'github' | 'facebook' | 'twitter';
+  provider: "github" | "facebook" | "twitter";
   socket?: any;
 }
 
@@ -34,7 +34,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    const { onSuccess, provider, socket } = this.props
+    const { onSuccess, provider, socket } = this.props;
 
     if (socket) {
       socket.on(provider, (account: any) => {
@@ -54,7 +54,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
         clearInterval(check);
         this.setState({ disabled: false});
       }
-    }, 1000)
+    }, 1000);
   }
 
   // Launches the popup by making a request to the server and then
@@ -67,7 +67,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     const top = (window.innerHeight / 2) - (height / 2);
     const url = `${process.env.API_URL}/auth/${provider}?ethereumAccountAddress=${accountAddress}&socketId=${socket.id}`;
 
-    return window.open(url, '',
+    return window.open(url, "",
       `toolbar=no, location=no, directories=no, status=no, menubar=no,
       scrollbars=no, resizable=no, copyhistory=no, width=${width},
       height=${height}, top=${top}, left=${left}`
@@ -98,8 +98,8 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     return (
       <div className={buttonClass}>
         {profile && profile.socialURLs[provider]
-          ? <a href={profile.socialURLs[provider]} className={css.socialButtonAuthenticated} target='_blank'>
-              <FontAwesomeIcon icon={['fab', provider]} className={css.icon} />
+          ? <a href={profile.socialURLs[provider]} className={css.socialButtonAuthenticated} target="_blank">
+              <FontAwesomeIcon icon={["fab", provider]} className={css.icon} />
             </a>
           : (editing
               ? <div>
@@ -107,14 +107,14 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
                     onClick={this.startAuth.bind(this)}
                     disabled={disabled}
                   >
-                    <FontAwesomeIcon icon={['fab', provider]} className={css.icon}/>
+                    <FontAwesomeIcon icon={["fab", provider]} className={css.icon}/>
                   </button>
                 </div>
               : ""
             )
         }
       </div>
-    )
+    );
   }
 
 }

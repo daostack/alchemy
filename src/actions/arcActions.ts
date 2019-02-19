@@ -1,15 +1,15 @@
-import { DAO, ProposalOutcome } from "@daostack/client"
+import { DAO, ProposalOutcome } from "@daostack/client";
 import BigNumber from "bignumber.js";
 import { push } from "react-router-redux";
 import { IRootState } from "reducers/index";
 import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
-import { first, take } from "rxjs/operators"
+import { first, take } from "rxjs/operators";
 import { Web3 } from "web3";
 
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
-import { getArc } from 'arc'
+import { getArc } from "arc";
 import {
   ActionTypes,
   anyRedemptions,
@@ -28,11 +28,11 @@ import {
 import * as schemas from "schemas";
 
 async function getRedemptions(votingMachineInstance: any, proposalInstance: any, proposal: any, accountAddress: string): Promise<IRedemptionState> {
-  throw Error(`Not ported to the new client lib yet`)
+  throw Error(`Not ported to the new client lib yet`);
 }
 
 async function getProposalRedemptions(proposal: IProposalStateLegacy, state: IRootState): Promise<{ entities: any, redemptions: string[] }> {
-  throw Error(`Not ported to the new client lib yet`)
+  throw Error(`Not ported to the new client lib yet`);
 }
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
@@ -55,11 +55,11 @@ export function createProposal(
     try {
       // TODO: the client lib should (and will) provide and set the default account: https://github.com/daostack/client/issues/42
       // const defaultAccount = await Arc.Utils.getDefaultAccount()
-      const arc = getArc()
+      const arc = getArc();
       // arc.web3.eth.defaultAccount = defaultAccount.toLowerCase()
 
-      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress }
-      beneficiaryAddress = beneficiaryAddress.toLowerCase()
+      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
+      beneficiaryAddress = beneficiaryAddress.toLowerCase();
 
       // TODO: leave this commented code - we may want to re-use it later in the light of graph-node problems
       // const submittedTime = Math.round((new Date()).getTime() / 1000);
@@ -85,7 +85,7 @@ export function createProposal(
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
-      const dao = new DAO(daoAvatarAddress, arc)
+      const dao = new DAO(daoAvatarAddress, arc);
       const proposalOptions = {
         beneficiary: beneficiaryAddress,
         description,
@@ -101,11 +101,11 @@ export function createProposal(
         periods: 1, // "periodLength 0 requires periods to be 1"
         title,
         url: description
-      }
+      };
 
       // TODO: use the Option stages of the client lib to communicate about the progress
       await dao.createProposal(proposalOptions)
-        .pipe(take(2)).toPromise()
+        .pipe(take(2)).toPromise();
     } catch (err) {
       console.error(err);
       dispatch({
@@ -113,15 +113,15 @@ export function createProposal(
         sequence: AsyncActionSequence.Failure,
         meta,
       } as CreateProposalAction);
-      throw err
+      throw err;
     }
   };
 }
 
 export function executeProposal(avatarAddress: string, proposalId: string) {
   return (dispatch: Dispatch<any>) => {
-    const arc = getArc()
-    return  arc.dao(avatarAddress).proposal(proposalId).execute()
+    const arc = getArc();
+    return  arc.dao(avatarAddress).proposal(proposalId).execute();
   };
 }
 
@@ -139,9 +139,9 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
 
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: ProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const arc = getArc()
-    const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId)
-    await proposalObj.vote(ProposalOutcome.Pass).pipe(first()).toPromise()
+    const arc = getArc();
+    const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
+    await proposalObj.vote(ProposalOutcome.Pass).pipe(first()).toPromise();
 
   //
   //     dispatch({
@@ -163,7 +163,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
   //       meta,
   //     } as VoteAction);
   //   }
-  }
+  };
 }
 
 export type StakeAction = IAsyncAction<"ARC_STAKE", {
@@ -179,7 +179,7 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    throw Error(`Still needs tob e ported to client library`)
+    throw Error(`Still needs tob e ported to client library`);
     // const web3: Web3 = await Arc.Utils.getWeb3();
     // const currentAccountAddress: string = getState().web3.ethAccountAddress;
     // const proposal: IProposalStateLegacy = getState().arc.proposals[proposalId];
@@ -248,7 +248,7 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 
 export function redeemProposal(daoAvatarAddress: string, proposal: IProposalStateLegacy, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    throw Error(`Still needs tob e ported to client library`)
+    throw Error(`Still needs tob e ported to client library`);
     // const redemption = getState().arc.redemptions[`${proposal.proposalId}-${accountAddress}`];
     // const dao = getState().arc.daos[daoAvatarAddress];
     // const web3: Web3 = await Arc.Utils.getWeb3();

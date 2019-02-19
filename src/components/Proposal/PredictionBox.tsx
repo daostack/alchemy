@@ -2,14 +2,14 @@ import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 //@ts-ignore
-import { Modal } from 'react-router-modal';
+import { Modal } from "react-router-modal";
 
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, ProposalStage } from "@daostack/client";
 
 import * as css from "./Proposal.scss";
 
@@ -107,7 +107,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               <p>
                 Once you click the button below, we will pop-up a MetaMask dialogue.
                 It will set a default gas limit and price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a>
+                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank">this calculator</a>
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
@@ -167,12 +167,12 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     const tip = (prediction: VoteOptions) =>
       !currentAccountGens ?
-        'Insufficient GENs' :
+        "Insufficient GENs" :
       currentPrediction === prediction ?
         "Can't change prediction" :
       isPredicting ?
-        'Warning: Staking on this proposal is already in progress' :
-        ''
+        "Warning: Staking on this proposal is already in progress" :
+        ""
     ;
 
     const passButton = (
@@ -194,7 +194,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount)}}
+            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
             currentAccountGens={currentAccountGens}
@@ -214,14 +214,14 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <span className={css.boostedAmount}>
             {
               proposal.stage == ProposalStage.Queued && stakingLeftToBoost > 0 ?
-                <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ''
+                <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ""
             }
           </span>
           <div className={css.centered}>
             {
              proposal.stage === ProposalStage.Queued
               ? (
-                tip(VoteOptions.No) != '' ?
+                tip(VoteOptions.No) != "" ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
                     {passButton}
                   </Tooltip> :
@@ -232,7 +232,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             {
               proposal.stage === ProposalStage.Queued
               ? (
-                  tip(VoteOptions.Yes) != '' ?
+                  tip(VoteOptions.Yes) != "" ?
                     <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
                       {failButton}
                     </Tooltip> :

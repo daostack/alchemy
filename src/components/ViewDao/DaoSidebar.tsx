@@ -4,22 +4,22 @@ import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 
 import { IRootState } from "reducers";
-import { IDAOState } from '@daostack/client'
+import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 import DaoHeadings from "./DaoHeadings";
 
 import * as css from "./ViewDao.scss";
 
 interface IProps {
-  dao: IDAOState
+  dao: IDAOState;
 }
 
 class DaoSidebarComponent extends React.Component<IProps, null> {
 
   public render() {
-    const dao = this.props.dao
+    const dao = this.props.dao;
     const circlesDAO = dao.name.toLowerCase().includes("circles");
 
     const iconClass = classNames({
@@ -63,11 +63,11 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               <Subscribe observable={dao.token.balanceOf(dao.address)}>{
                 (state: IObservableState<number>) => {
                   if (state.isLoading) {
-                    return <li>... GEN</li>
+                    return <li>... GEN</li>;
                   } else if ( state.error) {
-                    return <li>{ state.error.message}</li>
+                    return <li>{ state.error.message}</li>;
                   } else {
-                    return <li><strong>{ state.data }</strong> GEN</li>
+                    return <li><strong>{ state.data }</strong> GEN</li>;
                   }
                 }
               }</Subscribe>
@@ -75,21 +75,21 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
 export default (props: { address: string}) => {
-  const arc = getArc()
+  const arc = getArc();
   return <Subscribe observable={arc.dao(props.address).state}>{(state: IObservableState<IDAOState>) => {
-      const daoState = state.data
+      const daoState = state.data;
       if (state.error) {
-        throw state.error
+        throw state.error;
       } else if (daoState) {
-        return <DaoSidebarComponent dao={daoState} />
+        return <DaoSidebarComponent dao={daoState} />;
       } else {
-        return null
+        return null;
       }
     }
-  }</Subscribe>
-}
+  }</Subscribe>;
+};

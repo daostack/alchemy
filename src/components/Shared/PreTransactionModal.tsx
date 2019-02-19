@@ -2,11 +2,11 @@ import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 //@ts-ignore
-import { Modal } from 'react-router-modal';
+import { Modal } from "react-router-modal";
 
 import { proposalEnded } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, ProposalStage } from "@daostack/client";
 
 import RewardsString from "components/Proposal/RewardsString";
 import TransferDetails from "components/Proposal/TransferDetails";
@@ -268,7 +268,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                       <h3>{rulesHeader}</h3>
                     </div>
                     <div className={css.body}>{rules}</div>
-                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
                   </div>
                 </span>
               </div> : ""
@@ -292,10 +292,10 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 When you click "Launch MetaMask" we will pop up a Metamask dialogue.
                 This dialogue will ask you to approve your transaction, including a small ETH cost.
                 It will set a default gas limit and gas price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
+                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank">this calculator</a> to adjust the gas price.
               </p>
               { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > currentAccountGens) ?
-                <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
+                <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
                   <button
                     className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
                     disabled={true}
