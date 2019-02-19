@@ -29,6 +29,8 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
         [css.daoAvatarCircles]: circlesDAO
       });
 
+    const arc = getArc();
+
     return (
       <div className={css.daoSidebar + " " + css.clearfix}>
         <div className={css.daoNavigation}>
@@ -61,8 +63,18 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
           <div className={css.daoHoldings}>
             <span className={css.navHeading}><b>DAO Holdings</b></span>
             <ul>
-              <li><strong>{Util.fromWei(dao.ethBalance)}</strong> ETH </li>
-              <Subscribe observable={dao.token.balanceOf(dao.address)}>{
+              <Subscribe observable={arc.dao(dao.address).ethBalance()}>{
+                (state: IObservableState<BN>) => {
+                  if (state.isLoading) {
+                    return <li>... ETH</li>;
+                  } else if ( state.error) {
+                    return <li>{ state.error.message}</li>;
+                  } else {
+                    return <li><strong>{ Util.fromWei(state.data) }</strong> ETH</li>;
+                  }
+                }
+              }</Subscribe>
+              <Subscribe observable={arc.GENToken().balanceOf(dao.address)}>{
                 (state: IObservableState<BN>) => {
                   if (state.isLoading) {
                     return <li>... GEN</li>;
