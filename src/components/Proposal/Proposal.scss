@@ -519,6 +519,7 @@ button.disabled {
 .voteBox {
 	position: relative;
 	float: left;
+	border-right: 1px solid rgba(215, 225, 237, 1.000);
 	width: 50%;
 }
 
@@ -923,7 +924,6 @@ button.disabled {
 	margin-left: -1px;
 	float: right;
 	width: 50%;
-	border-left: 1px solid rgba(215, 225, 237, 1.000);
 
 	span {
 		font-size: $small;
