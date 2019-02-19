@@ -1,6 +1,8 @@
+import BN = require("bn.js");
+import * as React from "react";
 import { IDAOState, IMemberState, IProposalState, IRewardState, RewardReason, RewardType } from "@daostack/client";
 import ReputationView from "components/Account/ReputationView";
-import * as React from "react";
+import Util from "lib/util";
 
 interface IProps {
   isRedeemPending: boolean;
@@ -66,31 +68,37 @@ export default (props: IProps) => {
 
     if (c) { rewardComponents.push(c); }
   }
+
+  const hasEthReward = proposal.ethReward.gt(new BN(0));
+  const hasExternalReward = proposal.externalTokenReward.gt(new BN(0));
+  const hasReputationReward = proposal.reputationReward.gt(new BN(0));
+  const hasProposingRepReward = proposal.proposingRepReward.gt(new BN(0));
+
   return <div>
-    {(props.beneficiaryHasRewards || proposal.ethReward || proposal.externalTokenReward) ?
+    {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
           {currentAccount.address === proposal.beneficiary ? "As the" : "The"} beneficiary of the proposal {currentAccount.address === proposal.beneficiary ? "you " : ""}will receive:
         </strong>
         <ul>
-          {proposal.ethReward ?
+          {hasEthReward ?
             <li>
-              {proposal.ethReward} ETH
-              {dao.ethBalance < proposal.ethReward ? " (Insufficient funds in DAO)" : ""}
+              {Util.fromWei(proposal.ethReward)} ETH
+              {/*TODO: subscribe to ethBalance, {dao.ethBalance < proposal.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
             </li> : ""
           }
-          {proposal.externalTokenReward ?
+          {hasExternalReward ?
             <li>
-              {proposal.externalTokenReward} {dao.externalTokenSymbol}
-              {dao.externalTokenBalance < proposal.externalTokenReward ? " (Insufficient funds in DAO)" : ""}
+              {Util.fromWei(proposal.externalTokenReward)} {dao.externalTokenSymbol}
+              {dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
             </li> : ""
           }
-          {proposal.reputationReward ? <li><ReputationView reputation={proposal.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
+          {hasReputationReward ? <li><ReputationView reputation={proposal.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
         </ul>
       </div> : ""
     }
       <React.Fragment>
-        {proposal.proposingRepReward ?
+        {hasProposingRepReward ?
           <div>
             <strong>For creating the proposal you will receive:</strong>
             <ul>
