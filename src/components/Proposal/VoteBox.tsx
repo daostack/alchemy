@@ -1,4 +1,5 @@
 import * as Arc from "@daostack/arc.js"
+import BN = require("bn.js")
 import * as classNames from "classnames";
 import * as React from "react";
 import Tooltip from 'rc-tooltip';
@@ -7,6 +8,7 @@ import { getArc } from "arc";
 
 import * as arcActions from "actions/arcActions";
 import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from '@daostack/client'
+import Util from "lib/util"
 
 import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
@@ -15,7 +17,7 @@ import VoteGraph from "./VoteGraph";
 
 interface IProps {
   currentAccountAddress: string;
-  currentAccountReputation: number;
+  currentAccountReputation: BN;
   currentVote: number;
   dao: IDAOState;
   proposal: IProposalState;
@@ -64,10 +66,13 @@ export default class VoteBox extends React.Component<IProps, IState> {
     } = this.props;
 
     const isVoting = isVotingNo || isVotingYes;
+    const totalReputationSupply = Util.fromWei(dao.reputationTotalSupply)
+    const votesFor = Util.fromWei(proposal.votesFor)
+    const votesAgainst = Util.fromWei(proposal.votesAgainst)
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    let yesPercentage = dao.reputationTotalSupply && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / dao.reputationTotalSupply * 100)) : 0;
-    let noPercentage = dao.reputationTotalSupply && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / dao.reputationTotalSupply * 100)) : 0;
+    let yesPercentage = totalReputationSupply && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputationSupply * 100)) : 0;
+    let noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputationSupply * 100)) : 0;
 
     const styles = {
       yesGraph: {
@@ -165,7 +170,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
                       <ReputationView
                         daoName={dao.name}
                         totalReputation={dao.reputationTotalSupply}
-                        reputation={dao.reputationTotalSupply / 2}
+                        reputation={dao.reputationTotalSupply.div(new BN(2))}
                       /> NEEDED FOR DECISION BY VOTE
                     </div>
                   </div>

@@ -166,7 +166,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'GenesisProtocol.vote': (proposalTitle, {vote, proposalId}) =>
     `Voting ${vote === VoteOptions.Yes ? 'Yes' : 'No'} on ${elipsis(proposalTitle, 22)}`,
   'GenesisProtocol.stake': (proposalTitle, {vote, proposalId, amount}) =>
-    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(new BigNumber(amount))} GEN`,
+    `Predicting ${vote === VoteOptions.Yes ? 'Pass' : 'Fail'} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(amount)} GEN`,
   'GenesisProtocol.execute': (proposalTitle, {proposalId}) =>
     `Executing "${elipsis(proposalTitle, 22)}"`,
   'Redeemer.redeem': (proposalTitle, {proposalId}) =>
@@ -178,7 +178,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   'ContributionReward.redeemContributionReward': (proposalTitle, {proposalId}) =>
     `Redeeming contribution reward for "${elipsis(proposalTitle, 22)}"`,
   'StandardToken.approve': (proposalTitle, {amount}) =>
-    `Approving ${Util.fromWei(new BigNumber(amount))} GEN for staking`
+    `Approving ${Util.fromWei(amount)} GEN for staking`
 }
 
 /**

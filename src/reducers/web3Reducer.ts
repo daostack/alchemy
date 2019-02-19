@@ -1,3 +1,4 @@
+import BN = require("bn.js")
 import * as Web3 from "web3";
 
 import { AsyncActionSequence } from "actions/async";
@@ -23,10 +24,10 @@ export enum ConnectionStatus {
 export interface IWeb3State {
   accounts: string[];
   connectionStatus?: ConnectionStatus;
-  currentAccountGenBalance: number;
-  currentAccountGenStakingAllowance: number;
-  currentAccountExternalTokenBalance: number;
-  currentAccountEthBalance: number;
+  currentAccountGenBalance: BN;
+  currentAccountGenStakingAllowance: BN;
+  currentAccountExternalTokenBalance: BN;
+  currentAccountEthBalance: BN;
   ethAccountAddress: string | null;
   networkId: number;
 }
@@ -34,10 +35,10 @@ export interface IWeb3State {
 export const initialState: IWeb3State = {
   accounts: [],
   connectionStatus: ConnectionStatus.Pending,
-  currentAccountGenBalance: 0,
-  currentAccountGenStakingAllowance: 0,
-  currentAccountExternalTokenBalance: 0,
-  currentAccountEthBalance: 0,
+  currentAccountGenBalance: new BN(0),
+  currentAccountGenStakingAllowance: new BN(0),
+  currentAccountExternalTokenBalance: new BN(0),
+  currentAccountEthBalance: new BN(0),
   ethAccountAddress: null,
   networkId: 0 // unknown network
 };

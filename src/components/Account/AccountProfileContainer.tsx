@@ -7,6 +7,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
+import { combineLatest } from 'rxjs'
 import * as io from 'socket.io-client';
 
 import * as profileActions from "actions/profilesActions";
@@ -23,14 +24,14 @@ import DaoSidebar from "components/ViewDao/DaoSidebar";
 
 import * as css from "./Account.scss";
 
-import { IDAOState } from '@daostack/client'
+import { IDAOState, IMemberState } from '@daostack/client'
 import { getArc } from 'arc'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 const socket = io(process.env.API_URL);
 
 interface IStateProps extends RouteComponentProps<any> {
   accountAddress: string;
-  accountInfo?: IAccountState;
+  accountInfo?: IMemberState;
   accountProfile?: IProfileState;
   currentAccountAddress: string;
   dao: IDAOState;
@@ -40,10 +41,10 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   const queryValues = queryString.parse(ownProps.location.search);
 
   return {
-    accountAddress: ownProps.match.params.accountAddress,
-    accountInfo: state.arc.accounts[ownProps.match.params.accountAddress + "-" + queryValues.daoAvatarAddress],
-    accountProfile: state.profiles[ownProps.match.params.accountAddress],
-    currentAccountAddress: state.web3.ethAccountAddress,
+    accountAddress: ownProps.accountAddress,
+    accountInfo: ownProps.accountInfo,
+    accountProfile: state.profiles[ownProps.accountAddress],
+    currentAccountAddress: ownProps.currentAccountAddress, // TODO:
     dao: ownProps.dao
   };
 };
@@ -288,14 +289,20 @@ export default (props: RouteComponentProps<any>) => {
   const arc = getArc()
   const queryValues = queryString.parse(props.location.search)
   const address = queryValues.daoAvatarAddress as string
+
+  const observable = combineLatest(
+    arc.dao(address).state,
+    arc.dao(address).member(props.match.params.accountAddress).state
+  )
+
   if (address) {
-    return <Subscribe observable={arc.dao(address).state}>{
-      (state: IObservableState<IDAOState>) => {
-        const dao = state.data
+    return <Subscribe observable={observable}>{
+      (state: IObservableState<[IDAOState, IMemberState]>) => {
+        const dao = state.data[0]
         if (state.error) {
           return <div>{state.error.message}</div>
         } else if (dao) {
-          return <ConnectedAccountProfileContainer dao={dao} {...props} />
+          return <ConnectedAccountProfileContainer dao={dao} accountInfo={state.data[1]} {...props} />
         } else {
           return <div>Loading... xx</div>
         }

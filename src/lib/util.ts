@@ -1,6 +1,6 @@
 import { Address } from "@daostack/client"
 import { getArc } from 'arc'
-import { BigNumber } from "bignumber.js";
+import BN = require("bn.js")
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
 // v1.0 may improve on this entire Web3 typings experience
@@ -9,12 +9,12 @@ const Web3 = require("web3");
 const path = require("path")
 
 export default class Util {
-  public static fromWei(amount: BigNumber): number {
-    return Number(getArc().web3.utils.fromWei(getArc().web3.utils.toBN(amount), "ether"))
+  public static fromWei(amount: BN): number {
+    return Number(getArc().web3.utils.fromWei(amount, "ether"))
   }
 
-  public static toWei(amount: number): BigNumber {
-    return new BigNumber(getArc().web3.utils.toWei(amount.toString(), "ether"))
+  public static toWei(amount: number): BN {
+    return new BN(getArc().web3.utils.toWei(amount.toString(), "ether"))
   }
 
   public static getBalance(account: Address) {

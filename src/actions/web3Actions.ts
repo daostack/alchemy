@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import BN = require("bn.js")
 import * as Redux from "redux";
 import { first } from 'rxjs/operators'
 
@@ -101,11 +101,11 @@ export function setCurrentAccountAddress(accountAddress: string) {
 export function setCurrentAccount(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const payload = {
-      currentAccountGenBalance: 0,
-      currentAccountGenStakingAllowance: 0,
+      currentAccountGenBalance: new BN(0),
+      currentAccountGenStakingAllowance: new BN(0),
       ethAccountAddress: accountAddress,
-      currentAccountEthBalance: 0,
-      currentAccountExternalTokenBalance: 0
+      currentAccountEthBalance: new BN(0),
+      currentAccountExternalTokenBalance: new BN(0)
     }
 
     let action
@@ -118,17 +118,17 @@ export function setCurrentAccount(accountAddress: string) {
 
     const arc = getArc()
     const balance = await Util.getBalance(accountAddress);
-    payload.currentAccountEthBalance = Util.fromWei(balance);
+    payload.currentAccountEthBalance = balance;
 
     const stakingToken = arc.GENToken()
-    payload.currentAccountGenBalance = Util.fromWei(new BigNumber(await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise()));
+    payload.currentAccountGenBalance = await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise();
     const allowance = await arc.allowance(accountAddress).pipe(first()).toPromise();
     if (allowance) {
-      payload.currentAccountGenStakingAllowance = Util.fromWei(new BigNumber(allowance.amount));
+      payload.currentAccountGenStakingAllowance = allowance.amount;
     } else {
-      payload.currentAccountGenStakingAllowance = 0
+      payload.currentAccountGenStakingAllowance = new BN(0)
     }
-
+    console.log("got account with paylod", payload);
     dispatch(getProfile(accountAddress));
 
     action = {
@@ -139,10 +139,10 @@ export function setCurrentAccount(accountAddress: string) {
   };
 }
 
-export function onEthBalanceChanged(balance: Number) {
+export function onEthBalanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const ethBalance = getState().web3.currentAccountEthBalance;
-    if (ethBalance !== balance) {
+    if (!ethBalance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_ETH_BALANCE_CHANGE,
         payload: balance
@@ -151,10 +151,10 @@ export function onEthBalanceChanged(balance: Number) {
   };
 }
 
-export function onGenBalanceChanged(balance: Number) {
+export function onGenBalanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const genBalance = getState().web3.currentAccountGenBalance;
-    if (genBalance !== balance) {
+    if (!genBalance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_GEN_BALANCE_CHANGE,
         payload: balance
@@ -163,10 +163,10 @@ export function onGenBalanceChanged(balance: Number) {
   };
 }
 
-export function onExternalTokenBalanceChanged(balance: Number) {
+export function onExternalTokenBalanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const currentBalance = getState().web3.currentAccountExternalTokenBalance;
-    if (currentBalance !== balance) {
+    if (!currentBalance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_EXTERNAL_TOKEN_BALANCE_CHANGE,
         payload: balance
@@ -175,10 +175,10 @@ export function onExternalTokenBalanceChanged(balance: Number) {
   };
 }
 
-export function onGenStakingAllowanceChanged(balance: Number) {
+export function onGenStakingAllowanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
   const genAllowance = getState().web3.currentAccountGenStakingAllowance;
-  if (genAllowance !== balance) {
+  if (!genAllowance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_GEN_STAKING_ALLOWANCE_CHANGE,
         payload: balance
@@ -212,7 +212,7 @@ export function approveStakingGens(daoAvatarAddress: string) {
     } as ApproveAction);
 
     try {
-      await arc.approveForStaking(Util.toWei(100000).toNumber())
+      await arc.approveForStaking(Util.toWei(100000))
     } catch (err) {
       console.error(err);
       dispatch({

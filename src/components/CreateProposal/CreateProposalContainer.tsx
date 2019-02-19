@@ -1,4 +1,5 @@
 import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client"
+import BN = require("bn.js")
 import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
 import * as React from "react";
@@ -25,24 +26,25 @@ const emptyProposal: IProposalState = {
   confidence: 0,
   description: "",
   dao: null,
-  ethReward: 0,
+  ethReward: new BN(0),
   executedAt: 0,
-  externalTokenReward: 0,
-  nativeTokenReward: 0,
+  externalTokenReward: new BN(0),
+  nativeTokenReward: new BN(0),
   id: null,
   descriptionHash: "",
   preBoostedVotePeriodLimit: 0,
   proposer: null,
-  proposingRepReward: 0,
+  proposingRepReward: new BN(0),
   quietEndingPeriodBeganAt: 0,
-  reputationReward: 0,
+  reputationReward: new BN(0),
   resolvedAt: 0,
-  stakesFor: 0,
-  stakesAgainst: 0,
+  stakesFor: new BN(0),
+  stakesAgainst: new BN(0),
   stage: ProposalStage.Queued,
+  totalRepWhenExecuted: new BN(0),
   title: "",
-  votesFor: 0,
-  votesAgainst: 0,
+  votesFor: new BN(0),
+  votesAgainst: new BN(0),
   winningOutcome: ProposalOutcome.Fail,
 }
 
@@ -108,9 +110,16 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   }
 
   public handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
+    const proposalValues = {...values,
+      ethReward: Util.toWei(values.ethReward),
+      externalTokenReward: Util.toWei(values.externalTokenReward),
+      nativeTokenReward: Util.toWei(values.nativeTokenReward),
+      reputationReward: Util.toWei(values.reputationReward)
+    }
+
     this.setState({
       preTransactionModalOpen: true,
-      proposalDetails: { ...emptyProposal, ...values}
+      proposalDetails: { ...emptyProposal, ...proposalValues}
     });
     setSubmitting(false);
   }

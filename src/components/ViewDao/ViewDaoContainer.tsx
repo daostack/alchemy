@@ -32,6 +32,7 @@ import { IDAOState } from '@daostack/client'
 import { getArc } from 'arc'
 import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 import { Subscription } from 'rxjs'
+import Util from 'lib/util'
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
@@ -155,7 +156,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       {
         target: "." + css.daoInfo,
         content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently,
-          ${dao.name} has ${dao.memberCount} members with a total of ${Math.round(dao.reputationTotalSupply).toLocaleString()} reputation`,
+          ${dao.name} has ${dao.memberCount} members with a total of ${Math.round(Util.fromWei(dao.reputationTotalSupply)).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },
