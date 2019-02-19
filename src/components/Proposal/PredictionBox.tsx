@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, ProposalStage } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalStage } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
@@ -218,13 +218,13 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           </div>
           <span className={css.boostedAmount}>
             {
-              proposal.stage == ProposalStage.Queued && stakingLeftToBoost > 0 ?
+              proposal.stage == IProposalStage.Queued && stakingLeftToBoost > 0 ?
                 <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ""
             }
           </span>
           <div className={css.centered}>
             {
-             proposal.stage === ProposalStage.Queued
+             proposal.stage === IProposalStage.Queued
               ? (
                 tip(VoteOptions.No) != "" ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -235,7 +235,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               : "PASS"
             }
             {
-              proposal.stage === ProposalStage.Queued
+              proposal.stage === IProposalStage.Queued
               ? (
                   tip(VoteOptions.Yes) != "" ?
                     <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>

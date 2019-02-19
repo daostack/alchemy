@@ -17,7 +17,6 @@ export default class Balance extends React.Component<Props, null>  {
 
   public render() {
     const { balance, tokenSymbol } = this.props;
-    console.log("balance = ", balance);
 
     return (
       <span className={css.accountBalance}>

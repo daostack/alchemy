@@ -6,7 +6,7 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
 import ProposalContainer from "./ProposalContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { Address, IDAOState, IProposalState, ProposalStage } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IProposalStage } from "@daostack/client";
 
 import * as css from "./ViewProposal.scss";
 import { getArc } from "arc";

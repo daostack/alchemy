@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, ProposalStage } from "@daostack/client";
+import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, IProposalStage } from "@daostack/client";
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",
@@ -253,7 +253,7 @@ export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   //   // Pre boosted proposal past end time but not yet executed
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );
-  const res = proposal.stage === ProposalStage.Executed;
+  const res = proposal.stage === IProposalStage.Executed;
   return res;
 }
 
@@ -277,8 +277,8 @@ export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
   //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.Yes)
   // );
   const res = (
-    (proposal.stage == ProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Pass) ||
-    (proposal.stage == ProposalStage.QuietEndingPeriod && proposal.winningOutcome === ProposalOutcome.Pass)
+    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Pass) ||
+    (proposal.stage == IProposalStage.QuietEndingPeriod && proposal.winningOutcome === ProposalOutcome.Pass)
   );
   return res;
 }
@@ -294,8 +294,8 @@ export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );
   const res = (
-    (proposal.stage == ProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
-    (proposal.stage == ProposalStage.QuietEndingPeriod && proposal.winningOutcome !== ProposalOutcome.Pass)
+    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
+    (proposal.stage == IProposalStage.QuietEndingPeriod && proposal.winningOutcome !== ProposalOutcome.Pass)
   );
 
   return res;

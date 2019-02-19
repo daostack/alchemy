@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client";
+import { IDAOState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
 import BN = require("bn.js");
 import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
@@ -18,34 +18,47 @@ import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 const emptyProposal: IProposalState = {
+  activationTime: 0,
   beneficiary: null,
   boostedAt: 0,
   boostedVotePeriodLimit: 0,
   boostingThreshold: 0,
   createdAt: 0,
-  confidence: 0,
-  description: "",
+  confidenceThreshold: 0,
   dao: null,
+  daoBountyConst: 0, // TODO
+  description: "",
+  descriptionHash: "",
   ethReward: new BN(0),
   executedAt: 0,
+  executionState: 0, // TODO: when client exports should be IExecutionState.None,
+  externalToken: null,
   externalTokenReward: new BN(0),
   nativeTokenReward: new BN(0),
   id: null,
-  descriptionHash: "",
+  organizationId: null,
+  paramsHash: "",
+  periods: 1,
+  periodLength: 0, // TODO
+  preBoostedAt: 0,
   preBoostedVotePeriodLimit: 0,
   proposer: null,
   proposingRepReward: new BN(0),
+  queuedVoteRequiredPercentage: 50, //TODO: need to rethink this whole emptyProposal thing...
+  queuedVotePeriodLimit: 0, // TODO: shouldnt have to think about this here
   quietEndingPeriodBeganAt: 0,
   reputationReward: new BN(0),
   resolvedAt: 0,
   stakesFor: new BN(0),
   stakesAgainst: new BN(0),
-  stage: ProposalStage.Queued,
+  stage: IProposalStage.Queued,
+  thresholdConst: 0, // TODO
   totalRepWhenExecuted: new BN(0),
   title: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
   winningOutcome: ProposalOutcome.Fail,
+  votingMachine: null
 };
 
 interface IState {
@@ -163,9 +176,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   closeAction={this.closePreTransactionModal.bind(this)}
                   currentAccount={currentAccount}
                   dao={dao}
-                  effectText={<span>Budget: <ReputationView reputation={reputationReward}
-                    totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> and
-                    {ethReward || externalTokenReward} {externalTokenReward ? dao.externalTokenSymbol : "ETH"}</span>}
+                  effectText=""
                   proposal={this.state.proposalDetails}
                 /> : ""
               }

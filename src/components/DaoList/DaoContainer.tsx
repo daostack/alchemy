@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { getArc } from "arc";
+import Util from "lib/util";
 
 import * as css from "./DaoList.scss";
 import { IDAOState } from "@daostack/client";
@@ -35,11 +36,11 @@ const DaoContainer = (props: IProps) => {
             <Subscribe observable={dao.token.state}>{ (state: any) =>  (state.data &&
               <div>
                 <div className={css.daoInfo}>Token: {state.data.name } ({state.data.symbol})</div>
-                <div className={css.daoInfo}>Num tokens: {Math.round(state.data.totalSupply).toLocaleString()}</div>
+                <div className={css.daoInfo}>Num tokens: {Util.fromWei(state.data.totalSupply).toLocaleString()}</div>
               </div>
             )}</Subscribe>
             <Subscribe observable={dao.reputation.state}>{ (state: any) =>  (state.data &&
-              <div className={css.daoInfo}>Reputation: {Math.round(state.data.totalSupply).toLocaleString()}</div>
+              <div className={css.daoInfo}>Reputation: {Util.fromWei(state.data.totalSupply).toLocaleString()}</div>
             )}</Subscribe>
           </div>
         </Link>;

@@ -7,7 +7,7 @@ import Tooltip from "rc-tooltip";
 import { getArc } from "arc";
 
 import * as arcActions from "actions/arcActions";
-import { IDAOState, IProposalState, ProposalOutcome, ProposalStage } from "@daostack/client";
+import { IDAOState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
 import Util from "lib/util";
 
 import * as css from "./Proposal.scss";
@@ -138,7 +138,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
         <div className={voteControls + " " + css.clearfix}>
           <div className={css.voteDivider}>
             <div className={css.voteGraphs}>
-              <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == ProposalStage.Boosted} />
+              <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
 
               <div className={css.reputationTurnout}>
                 <div className={css.header}>Reputation turnout</div>

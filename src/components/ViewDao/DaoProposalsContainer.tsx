@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, ProposalStage } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IProposalStage } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -124,9 +124,9 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
   const currentAccountAddress =  props.currentAccountAddress;
   const arc = getArc();
   const observable = combineLatest(
-    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Queued }), // the list of queued proposals
-    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.PreBoosted }), // the list of preboosted proposals
-    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Boosted }), // the list of boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued }), // the list of queued proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Boosted }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state
   );
   return <Subscribe observable={observable}>{

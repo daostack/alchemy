@@ -8,7 +8,7 @@ import ProposalContainer from "../Proposal/ProposalContainer";
 
 import * as css from "./ViewDao.scss";
 import { getArc } from "arc";
-import { Address, IDAOState, IProposalState, ProposalStage } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IProposalStage } from "@daostack/client";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 interface IProps {
@@ -50,7 +50,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const currentAccountAddress = props.currentAccountAddress;
   const observable = combineLatest(
     // TODO: add queries here, like `proposals({boosted: true})` or whatever
-    arc.dao(daoAvatarAddress).proposals({ stage: ProposalStage.Executed }), // the list of pre-boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Executed }), // the list of pre-boosted proposals
     arc.dao(daoAvatarAddress).state
   );
   return <Subscribe observable={observable}>{

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, ProposalStage } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalStage } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from "arc";
@@ -51,6 +51,7 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState;
   currentAccount: IMemberState;
+  currentAccountGens: BN;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
@@ -71,7 +72,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccount,
-    currentAccountGens: state.web3.currentAccountGenBalance,
+    currentAccountGens: ownProps.currentAccountGens,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
     // currentVote,
     dao,
@@ -155,15 +156,15 @@ class ProposalContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     // TODO: fix this: get the amount of ETH, GEN, and externalToken of the DAO
-    const ethBalance = dao.ethBalance;
+    const ethBalance = new BN(0); //TODO: subscribe to ethBalance dao.ethBalance;
     const genBalance = dao.tokenBalance;
     const externalTokenBalance = dao.externalTokenBalance;
 
     const beneficiaryHasRewards = (
-      proposal.reputationReward ||
-      proposal.nativeTokenReward ||
-      (proposal.ethReward && ethBalance >= proposal.ethReward) ||
-      (proposal.externalTokenReward && externalTokenBalance >= proposal.externalTokenReward)
+      proposal.reputationReward.gt(new BN(0)) ||
+      proposal.nativeTokenReward.gt(new BN(0)) ||
+      (proposal.ethReward.gt(new BN(0)) && ethBalance.gte(proposal.ethReward)) ||
+      (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))
     ) as boolean;
 
     const accountHasRewards = rewardsForCurrentUser.length !== 0;
@@ -176,7 +177,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
         [css.proposal]: true,
-        [css.openProposal]: proposal.stage == ProposalStage.Queued || proposal.stage === ProposalStage.PreBoosted || proposal.stage == ProposalStage.Boosted || proposal.stage == ProposalStage.QuietEndingPeriod,
+        [css.openProposal]: proposal.stage == IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted || proposal.stage == IProposalStage.Boosted || proposal.stage == IProposalStage.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: redeemable
@@ -305,7 +306,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
             <h3>
               <span data-test-id="proposal-closes-in">
-                {proposal.stage == ProposalStage.QuietEndingPeriod ?
+                {proposal.stage == IProposalStage.QuietEndingPeriod ?
                   <strong>
                     <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
                     <div className={css.help}>
@@ -415,26 +416,27 @@ export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, I
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
   //  TODO: add logic for when props.currentAccountAddress is undefined
   const arc = getArc();
+  const dao = arc.dao(props.dao.address);
   let accountState: Observable<IMemberState|undefined>;
   if (props.currentAccountAddress) {
-    accountState =  arc.dao(props.dao.address).member(props.currentAccountAddress).state;  // the current account as member of the DAO
+    accountState =  dao.member(props.currentAccountAddress).state;  // the current account as member of the DAO
   } else {
     of(null);
-
   }
   const observable = combineLatest(
-    arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
+    dao.proposal(props.proposalId).state, // the list of pre-boosted proposals
     accountState,
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    arc.dao(props.dao.address).proposal(props.proposalId).rewards({}),
-    arc.dao(props.dao.address).proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
+    dao.proposal(props.proposalId).rewards({}),
+    dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
     // TODO: filter by voter once that is implemented - see https://github.com/daostack/subgraph/issues/67
     // arc.proposal(props.proposalId).votes({ voter: props.currentAccountAddress})
-    arc.dao(props.dao.address).proposal(props.proposalId).votes()
+    dao.proposal(props.proposalId).votes(),
+    arc.GENToken().balanceOf(props.currentAccountAddress)
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[]]>): any => {
+    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal</div>;
       } else if (state.error) {
@@ -446,6 +448,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const votes = state.data[4];
         return <ConnectedProposalContainer
           currentAccount={state.data[1]}
+          currentAccountGens={state.data[5]}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
