@@ -186,8 +186,13 @@ button.disabled {
 	}
 }
 
+.detailView .failButton {
+    position: relative;
+    top: 1px;
+}
+
 .statusTitle {
-	display: block;
+	display: none;
     position: absolute;
     top: 12px;
     padding-bottom: 12px;
@@ -212,6 +217,14 @@ button.disabled {
 		margin-left: 10px;
 		border-left: 1px solid rgba(233, 238, 244, 1.000);
 	}
+}
+
+.detailView .statusTitle {
+	display: block;
+}
+
+.detailView .voteStatus {
+	z-index: 1000;
 }
 
 .detailView .voteStatus.hasVoted .voteRecord {
@@ -1089,6 +1102,7 @@ button.disabled {
 
 		img.stakeIcon {
 			opacity: 1;
+			top: 1px;
 			position: relative;
 		}
 	}
