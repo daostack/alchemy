@@ -1,3 +1,4 @@
+import BN = require("bn.js");
 import * as React from "react";
 
 import { IDAOState, IProposalState } from "@daostack/client";
@@ -16,16 +17,16 @@ export default class RewardsString extends React.Component<IProps, null> {
     const { dao, proposal, separator } = this.props;
 
     const rewards = [];
-    if (proposal.ethReward) {
+    if (proposal.ethReward.gt(new BN(0))) {
       rewards.push(Util.fromWei(proposal.ethReward).toFixed(2).toLocaleString() + " ETH");
     }
-    if (proposal.externalTokenReward) {
+    if (dao.externalTokenSymbol && proposal.externalTokenReward.gt(new BN(0))) {
       rewards.push(Util.fromWei(proposal.externalTokenReward).toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
     }
-    if (proposal.nativeTokenReward) {
+    if (proposal.nativeTokenReward.gt(new BN(0))) {
       rewards.push(Util.fromWei(proposal.nativeTokenReward).toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
     }
-    if (proposal.reputationReward) {
+    if (proposal.reputationReward.gt(new BN(0))) {
       rewards.push(
         <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.reputationReward}/>
       );
