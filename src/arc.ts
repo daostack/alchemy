@@ -87,7 +87,7 @@ export function getWeb3Provider() {
 
 export function getArc(): Arc {
   // TODO: we store the arc object in the window object, but the react
-  if ((<any> window).arc) {
+  if (typeof(window) !== "undefined" && (<any> window).arc) {
     return (<any> window).arc;
   } else {
     const web3Provider = getWeb3Provider();
@@ -99,7 +99,10 @@ export function getArc(): Arc {
       ipfsProvider,
       contractAddresses
     });
-    (<any> window).arc = arc;
+
+    if (typeof(window) !== "undefined") {
+      (<any> window).arc = arc;
+    }
 
     return arc;
   }
