@@ -1,9 +1,11 @@
+import BN = require("bn.js");
 import * as React from "react";
 import * as css from "./Account.scss";
+import Util from "lib/util";
 
 interface Props {
   accountAddress: string;
-  balance: number;
+  balance: BN;
   tokenSymbol: string;
 }
 
@@ -18,7 +20,7 @@ export default class Balance extends React.Component<Props, null>  {
 
     return (
       <span className={css.accountBalance}>
-        {balance.toFixed(2).toLocaleString()} {tokenSymbol}
+        {Util.fromWei(balance).toFixed(2).toLocaleString()} {tokenSymbol}
       </span>
     );
   }

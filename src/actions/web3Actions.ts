@@ -1,126 +1,95 @@
-import * as Arc from "@daostack/arc.js";
-import promisify = require("es6-promisify");
+import BN = require("bn.js");
 import * as Redux from "redux";
-import { Web3 } from "web3";
+import { first } from "rxjs/operators";
 
-import { IDAOState } from '@daostack/client'
 import { getProfile } from "actions/profilesActions";
+import { getArc } from "arc";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, IWeb3State } from "reducers/web3Reducer";
 import { AsyncActionSequence, IAsyncAction } from "./async";
 
-export type ConnectAction = IAsyncAction<'WEB3_CONNECT', void, IWeb3State>;
+export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
-export function initializeWeb3() {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
-    dispatch({
-      type: ActionTypes.WEB3_CONNECT,
-      sequence: AsyncActionSequence.Pending,
-      operation: {
-        message: 'Connecting...',
-        totalSteps: 1,
-      },
-    } as ConnectAction);
+// TODO: remove this commented function eventually (leaving it for now for reference)
+// export function initializeWeb3() {
+//   return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
+//     dispatch({ll
+//       type: ActionTypes.WEB3_CONNECT,
+//       sequence: AsyncActionSequence.Pending,
+//       operation: {
+//         message: "Connecting...",
+//         totalSteps: 1,
+//       },
+//     } as ConnectAction);
+//
+//     let web3: Web3;
+//
+//     try {
+//       web3 = await Util.getWeb3();
+//     } catch (e) {
+//       console.error(e);
+//       dispatch({
+//         type: ActionTypes.WEB3_CONNECT,
+//         sequence: AsyncActionSequence.Failure,
+//         operation: {
+//           message: `Failed to connect to web3`
+//         },
+//       } as ConnectAction);
+//
+//       return;
+//     }
+//
+//     const networkId = Number(await Util.getNetworkId());
+//     let accounts: string[]
+//     try {
+//       accounts = web3.eth.accounts
+//     } catch (err) {
+//       accounts = []
+//       console.log(`Error getting web3.eth.accounts: ${err.message}`)
+//     }
+//     const payload: IWeb3State = {
+//       accounts,
+//       currentAccountEthBalance: 0,
+//       currentAccountExternalTokenBalance: 0,
+//       currentAccountGenBalance: 0,
+//       currentAccountGenStakingAllowance: 0,
+//       ethAccountAddress: null as string,
+//       networkId,
+//     };
+//
+//     try {
+//       payload.ethAccountAddress = (await Util.defaultAccount()).toLowerCase();
+//     } catch (e) {
+//       dispatch({
+//         type: ActionTypes.WEB3_CONNECT,
+//         sequence: AsyncActionSequence.Success,
+//         operation: {
+//           message: `Connected to web3, but no default account selected.`
+//         },
+//         payload
+//       } as ConnectAction);
+//       return;
+//     }
+//
+//     payload.currentAccountEthBalance = Util.fromWei(await Util.getBalance(payload.ethAccountAddress));
+//
+//     dispatch({
+//       type: ActionTypes.WEB3_CONNECT,
+//       sequence: AsyncActionSequence.Success,
+//       operation: {
+//         message: "Connected to web3!"
+//       },
+//       payload
+//     } as ConnectAction);
+//   };
+// }
 
-    let web3: Web3;
-
-    try {
-      web3 = await Arc.Utils.getWeb3();
-    } catch (e) {
-      console.error(e);
-      dispatch({
-        type: ActionTypes.WEB3_CONNECT,
-        sequence: AsyncActionSequence.Failure,
-        operation: {
-          message: `Failed to connect to web3`
-        },
-      } as ConnectAction);
-
-      return;
-    }
-
-    const networkId = Number(await Arc.Utils.getNetworkId());
-    let accounts: string[]
-    try {
-      accounts = web3.eth.accounts
-    } catch (err) {
-      accounts = []
-      console.log(`Error getting web3.eth.accounts: ${err.message}`)
-    }
-    const payload: IWeb3State = {
-      accounts,
-      currentAccountEthBalance: 0,
-      currentAccountExternalTokenBalance: 0,
-      currentAccountGenBalance: 0,
-      currentAccountGenStakingAllowance: 0,
-      ethAccountAddress: null as string,
-      networkId,
-    };
-
-    try {
-      payload.ethAccountAddress = (await Arc.Utils.getDefaultAccount()).toLowerCase();
-    } catch (e) {
-      dispatch({
-        type: ActionTypes.WEB3_CONNECT,
-        sequence: AsyncActionSequence.Success,
-        operation: {
-          message: `Connected to web3, but no default account selected.`
-        },
-        payload
-      } as ConnectAction);
-      return;
-    }
-
-    payload.currentAccountEthBalance = Util.fromWei(await Util.getBalance(payload.ethAccountAddress));
-
-    dispatch({
-      type: ActionTypes.WEB3_CONNECT,
-      sequence: AsyncActionSequence.Success,
-      operation: {
-        message: 'Connected to web3!'
-      },
-      payload
-    } as ConnectAction);
-  };
-}
-
-export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
+export function setCurrentAccountAddress(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const payload = {
-      currentAccountGenBalance: 0,
-      currentAccountGenStakingAllowance: 0,
-      ethAccountAddress: accountAddress,
-      currentAccountEthBalance: 0,
-      currentAccountExternalTokenBalance: 0
-    }
-
-    const balance = await Util.getBalance(accountAddress);
-    payload.currentAccountEthBalance = Util.fromWei(balance);
-
-    let votingMachineInstance: Arc.GenesisProtocolWrapper;
-    const daoAvatarAddress = dao.address
-    if (daoAvatarAddress !== null) {
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const schemeParameters = await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)
-      const votingMachineAddress = schemeParameters.votingMachineAddress;
-      votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-
-      // Check for external token rewards in DAO and if exists update account's balance for that token
-      if (dao && dao.externalTokenAddress) {
-        const externalToken = await (await Arc.Utils.requireContract("StandardToken")).at(dao.externalTokenAddress) as any;
-        payload.currentAccountExternalTokenBalance = Util.fromWei(await externalToken.balanceOf(accountAddress));
-      }
-    } else {
-      votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-    }
-    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-    payload.currentAccountGenBalance = Util.fromWei(await stakingToken.balanceOf(accountAddress));
-    payload.currentAccountGenStakingAllowance = Util.fromWei(await stakingToken.allowance(accountAddress, votingMachineInstance.address));
-
-    dispatch(getProfile(accountAddress));
-
+      ethAccountAddress: accountAddress
+    };
     const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
       payload
@@ -129,10 +98,52 @@ export function setCurrentAccount(accountAddress: string, dao: IDAOState) {
   };
 }
 
-export function onEthBalanceChanged(balance: Number) {
+export function setCurrentAccount(accountAddress: string) {
+  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
+    const payload = {
+      currentAccountGenBalance: new BN(0),
+      currentAccountGenStakingAllowance: new BN(0),
+      ethAccountAddress: accountAddress,
+      currentAccountEthBalance: new BN(0),
+      currentAccountExternalTokenBalance: new BN(0)
+    };
+
+    let action;
+
+    action = {
+      type: ActionTypes.WEB3_SET_ACCOUNT,
+      payload
+    };
+    dispatch(action);
+
+    const arc = getArc();
+    const balance = await Util.getBalance(accountAddress);
+    payload.currentAccountEthBalance = balance;
+
+    const stakingToken = arc.GENToken();
+    payload.currentAccountGenBalance = await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise();
+
+    const allowance = await arc.allowance(accountAddress).pipe(first()).toPromise();
+    if (allowance) {
+      payload.currentAccountGenStakingAllowance = allowance.amount;
+    } else {
+      payload.currentAccountGenStakingAllowance = new BN(0);
+    }
+
+    dispatch(getProfile(accountAddress));
+
+    action = {
+      type: ActionTypes.WEB3_SET_ACCOUNT,
+      payload
+    };
+    dispatch(action);
+  };
+}
+
+export function onEthBalanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const ethBalance = getState().web3.currentAccountEthBalance;
-    if (ethBalance !== balance) {
+    if (!ethBalance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_ETH_BALANCE_CHANGE,
         payload: balance
@@ -141,10 +152,10 @@ export function onEthBalanceChanged(balance: Number) {
   };
 }
 
-export function onGenBalanceChanged(balance: Number) {
+export function onGenBalanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const genBalance = getState().web3.currentAccountGenBalance;
-    if (genBalance !== balance) {
+    if (!genBalance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_GEN_BALANCE_CHANGE,
         payload: balance
@@ -153,10 +164,10 @@ export function onGenBalanceChanged(balance: Number) {
   };
 }
 
-export function onExternalTokenBalanceChanged(balance: Number) {
+export function onExternalTokenBalanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const currentBalance = getState().web3.currentAccountExternalTokenBalance;
-    if (currentBalance !== balance) {
+    if (!currentBalance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_EXTERNAL_TOKEN_BALANCE_CHANGE,
         payload: balance
@@ -165,10 +176,10 @@ export function onExternalTokenBalanceChanged(balance: Number) {
   };
 }
 
-export function onGenStakingAllowanceChanged(balance: Number) {
+export function onGenStakingAllowanceChanged(balance: BN) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
   const genAllowance = getState().web3.currentAccountGenStakingAllowance;
-  if (genAllowance !== balance) {
+  if (!genAllowance.eq(balance)) {
       dispatch({
         type: ActionTypes.WEB3_ON_GEN_STAKING_ALLOWANCE_CHANGE,
         payload: balance
@@ -181,11 +192,12 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
   accountAddress: string
 }, {
   numTokensApproved: number
-}>
+}>;
 
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
 export function approveStakingGens(daoAvatarAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+    const arc = getArc();
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     const meta = { accountAddress: currentAccountAddress };
@@ -201,12 +213,7 @@ export function approveStakingGens(daoAvatarAddress: string) {
     } as ApproveAction);
 
     try {
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(daoAvatarAddress)).votingMachineAddress;
-      const votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-      const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-      const stakingToken = await Arc.StandardTokenFactory.at(stakingTokenAddress);
-      await stakingToken.approve({spender: votingMachineAddress, amount: Util.toWei(100000)})
+      await arc.approveForStaking(Util.toWei(100000)).send();
     } catch (err) {
       console.error(err);
       dispatch({
@@ -216,9 +223,9 @@ export function approveStakingGens(daoAvatarAddress: string) {
         operation: {
           message: `Approving tokens for staking failed`
         }
-      } as ApproveAction)
+      } as ApproveAction);
     }
-  }
+  };
 }
 
 // GEN transfer approval confirmed
@@ -227,7 +234,7 @@ export function onApprovedStakingGens(numTokensApproved: number) {
     const currentAccountAddress: string = getState().web3.ethAccountAddress;
 
     const meta = { accountAddress: currentAccountAddress };
-    const payload = { numTokensApproved }
+    const payload = { numTokensApproved };
 
     dispatch({
       type: ActionTypes.APPROVE_STAKING_GENS,
@@ -238,5 +245,5 @@ export function onApprovedStakingGens(numTokensApproved: number) {
       meta,
       payload
     } as ApproveAction);
-  }
+  };
 }

@@ -15,8 +15,8 @@ export interface IProfileState {
 }
 
 export interface IProfilesState {
-  [accountAddress: string]: IProfileState
-};
+  [accountAddress: string]: IProfileState;
+}
 
 export function newProfile(ethereumAccountAddress: string): IProfileState {
   return {
@@ -74,8 +74,8 @@ const profilesReducer = (state = initialState, action: any) => {
           return state;
         }
         case AsyncActionSequence.Failure: {
-          console.log(`ERROR: ${payload}`)
-          return state
+          console.log(`ERROR: ${payload}`);
+          return state;
         }
       }
     }

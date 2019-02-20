@@ -24,7 +24,6 @@ describe('Proposals', () => {
       }
 
       browser.click('*[data-test-id="create-proposal"]')
-
       browser.waitForExist('*[id="titleInput"]')
       browser.setValue('*[id="titleInput"]', 'Free Edward Snowden')
       // using uuid value so that the test will pass alsko if there is already a proposal with thi description
@@ -33,6 +32,7 @@ describe('Proposals', () => {
       browser.setValue('*[data-test-id="beneficiaryInput"]', '0x5fB320886aF629122736c0e1a5c94dCE841EA37B')
       // ask for 100 rep
       const repReward = Math.floor(Math.random() * 1000)
+      browser.waitForExist('*[id="reputationRewardInput"]')
       browser.setValue('*[id="reputationRewardInput"]', `${repReward}` )
       const ethReward = Math.floor(Math.random() * 1000)
       browser.setValue('*[id="ethRewardInput"]', `${ethReward}` )

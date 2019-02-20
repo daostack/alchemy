@@ -1,16 +1,16 @@
 import * as React from "react";
-import { Observable, Subscription } from 'rxjs'
+import { Observable, Subscription } from "rxjs";
 
 interface IProps {
-  observable: Observable<any>
-  children: any
+  observable: Observable<any>;
+  children: any;
 }
 
 export interface IObservableState<IData> {
-  isLoading: boolean
-  data: IData
-  error: Error
-  complete: boolean
+  isLoading: boolean;
+  data: IData;
+  error: Error;
+  complete: boolean;
 }
 
 export default class Subscribe extends React.Component<IProps, IObservableState<object>> {
@@ -29,11 +29,11 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
         this.setState({
           data: next,
           isLoading: false,
-      })
+      });
       },
-      (error: Error) => { this.setState({ error })},
-      () => { this.setState({complete: true})}
-    )
+      (error: Error) => { this.setState({ error }); },
+      () => { this.setState({complete: true}); }
+    );
   }
 
   public teardownSubscription() {
@@ -60,9 +60,9 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
   public render() {
     const { children } = this.props;
 
-    if (typeof children === 'function') {
-      return children(this.state)
+    if (typeof children === "function") {
+      return children(this.state);
     }
-    throw Error(`Children of <Subscribe> must be a function`)
+    throw Error(`Children of <Subscribe> must be a function`);
   }
 }

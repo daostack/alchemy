@@ -1,6 +1,6 @@
-import * as moment from "moment";
-import * as React from 'react';
 import * as classNames from "classnames";
+import * as moment from "moment";
+import * as React from "react";
 
 import * as css from "./Countdown.scss";
 
@@ -28,7 +28,7 @@ class Countdown extends React.Component<IProps, IState> {
       days: 0,
       hours: 0,
       min: 0
-    }
+    };
   }
 
   public componentDidMount() {
@@ -71,7 +71,7 @@ class Countdown extends React.Component<IProps, IState> {
   public addLeadingZeros(value: string | number) {
     value = String(value);
     while (value.length < 2) {
-      value = '0' + value;
+      value = "0" + value;
     }
     return value;
   }
@@ -87,7 +87,7 @@ class Countdown extends React.Component<IProps, IState> {
         percentageComplete = 100;
       } else {
         percentageComplete = (1 - timeLeft / endDateMoment.diff(this.props.fromDate)) * 100;
-      } 
+      }
 
       if (percentageComplete < 1) {
         percentageComplete = 2;
@@ -105,7 +105,7 @@ class Countdown extends React.Component<IProps, IState> {
         <div className={css.percentageContainer}>
           <div style={{backgroundColor: "blue", height: "2px", width: percentageComplete + "%"}}></div>
         </div>
-        {this.props.detailView ? 
+        {this.props.detailView ?
             <span>Proposal ends:</span>
           : " "
         }

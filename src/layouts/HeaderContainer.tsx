@@ -1,23 +1,23 @@
-import { IDAOState } from '@daostack/client'
+import { IDAOState } from "@daostack/client";
 import Util from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
-import { Breadcrumbs } from 'react-breadcrumbs-dynamic'
+import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import { Link, NavLink, matchPath, RouteComponentProps } from "react-router-dom";
+import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IAccountState, newAccount } from "reducers/arcReducer";
-import { NotificationStatus, showNotification } from 'reducers/notifications'
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
-import { arc } from "arc";
+import { getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as css from "./App.scss";
 
 interface IStateProps {
@@ -31,7 +31,7 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = ownProps.dao
+  const dao = ownProps.dao;
   return {
     dao,
     ethAccountAddress: state.web3.ethAccountAddress,
@@ -40,13 +40,11 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 interface IDispatchProps {
-  setCurrentAccount: typeof web3Actions.setCurrentAccount;
   showNotification: typeof showNotification;
   showTour: typeof uiActions.showTour;
 }
 
 const mapDispatchToProps = {
-  setCurrentAccount: web3Actions.setCurrentAccount,
   onApprovedStakingGens: web3Actions.onApprovedStakingGens,
   onEthBalanceChanged: web3Actions.onEthBalanceChanged,
   onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
@@ -66,31 +64,11 @@ class HeaderContainer extends React.Component<IProps, null> {
     this.copyAddress = this.copyAddress.bind(this);
   }
 
-  public async componentDidMount() {
-    const {
-      dao,
-      ethAccountAddress,
-      setCurrentAccount
-    } = this.props;
-
-    if (dao) {
-      await setCurrentAccount(ethAccountAddress, dao);
-    }
-  }
-
   public copyAddress(e: any) {
     const { showNotification, ethAccountAddress } = this.props;
     Util.copyToClipboard(ethAccountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
     e.preventDefault();
-  }
-
-  public handleChangeAccount = (e: any) => {
-    const selectElement = ReactDOM.findDOMNode(this.refs.accountSelectNode) as HTMLSelectElement;
-    const newAddress = selectElement.value;
-    if (this.props.dao) {
-      this.props.setCurrentAccount(newAddress, this.props.dao);
-    }
   }
 
   public handleClickTour = (e: any) => {
@@ -127,15 +105,15 @@ class HeaderContainer extends React.Component<IProps, null> {
             <div className={css.menuWrapper}>
               <div className={css.backgroundBlock}></div>
               <ul>
-                <li><Link to='/'>Home</Link></li>
-                { (process.env.NODE_ENV === 'production')
-                  ? <li><a href='https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1'>Genesis Alpha</a></li>
-                  : <li><Link to='/daos'>View DAOs</Link></li>
+                <li><Link to="/">Home</Link></li>
+                { (process.env.NODE_ENV === "production")
+                  ? <li><a href="https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1">Genesis Alpha</a></li>
+                  : <li><Link to="/daos">View DAOs</Link></li>
                 }
-                <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target='_blank'>FAQ</a></li>
-                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target='_blank'>Alchemy 101</a></li>
-                <li><a href="https://www.daostack.io/" target='_blank'>About DAOstack</a></li>
-                <li><a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target='_blank'>Get involved</a></li>
+                <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
+                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
+                <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
+                <li><a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target="_blank">Get involved</a></li>
                 <li>
                   <a>Buy GEN</a>
                   <ul>
@@ -155,7 +133,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             <Breadcrumbs
               separator={<b> >   </b>}
               item={ NavLink }
-              finalItem={'b'}
+              finalItem={"b"}
             />
           </div>
           <div className={css.headerRight}>
@@ -170,8 +148,8 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <div className={css.walletDetails}>
                   <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
                   <div className={css.holdingsLabel}>Your wallet</div>
-                  <div className={css.copyAddress} style={{cursor: 'pointer'}} onClick={this.copyAddress}>
-                    <span>{ethAccountAddress.slice(0, 40)}</span>
+                  <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
+                    <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : "No account known"}</span>
                     <img src="/assets/images/Icon/Copy-white.svg"/>
                     <div className={css.fade}></div>
                   </div>
@@ -193,6 +171,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
 
 export default (props: RouteComponentProps<any>) => {
+    const arc = getArc();
     const match = matchPath(props.location.pathname, {
       path: "/dao/:daoAvatarAddress",
       strict: false
@@ -203,15 +182,15 @@ export default (props: RouteComponentProps<any>) => {
     if (daoAddress) {
       return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
           if (state.isLoading) {
-            return null
+            return null;
           } else if (state.error) {
-            return <div>{state.error}</div>
+            return <div>{state.error}</div>;
           } else {
-            return <ConnectedHeaderContainer {...props} dao={state.data} />
+            return <ConnectedHeaderContainer {...props} dao={state.data} />;
           }
         }
-      }</Subscribe>
+      }</Subscribe>;
   } else {
-    return <ConnectedHeaderContainer dao={undefined} {...props }/>
+    return <ConnectedHeaderContainer dao={undefined} {...props }/>;
   }
-}
+};
