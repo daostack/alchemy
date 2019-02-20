@@ -190,9 +190,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const submittedTime = moment.unix(proposal.createdAt);
 
       // Calculate reputation percentages
-      // TODO: calculate "reputationWhenExecuted" as in the commented line
-      // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
+      const totalReputation = Util.fromWei(proposal.stage == IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
       const votesFor = Util.fromWei(proposal.votesFor);
       const votesAgainst = Util.fromWei(proposal.votesAgainst);
       const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
