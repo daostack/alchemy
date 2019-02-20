@@ -193,6 +193,8 @@ button.disabled {
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(191, 203, 213, 1.000);
     width: 100%;
+    height: 20px;
+    line-height: 20px;
 
 	h3 {
 		margin: 0;
@@ -212,10 +214,14 @@ button.disabled {
 	}
 }
 
-.detailView .voteRecord {
+.detailView .voteStatus.hasVoted .voteRecord {
 	display: inline-block;
     float: right;
-    margin-top: 11px;
+    border: none;
+    margin-top: 13px;
+    border: none;
+    height: 20px;
+    line-height: 20px;
 }
 
 .voteRecord {
@@ -253,6 +259,15 @@ button.disabled {
 	    margin: -4px auto 15px auto;
 	    text-align: center;
 	}
+}
+
+.detailView .voteStatus.hasNotVoted .castVote {
+	display: inline-block;
+    text-align: center;
+    position: absolute;
+    top: 11px;
+    margin: 0 0 0 0;
+    right: 12px;
 }
 
 .voteStatus.votedFor .castVoteFor, .voteStatus.votedAgainst .castVoteAgainst {
@@ -920,7 +935,7 @@ button.disabled {
 
 .detailView .proposalActions {
 	flex-grow: 1;
-	min-width: 300px;
+	min-width: 350px;
 	border-top: none;
 }
 
