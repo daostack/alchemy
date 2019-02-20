@@ -16,6 +16,7 @@ import { default as PreTransactionModal, ActionTypes } from "components/Shared/P
 import VoteGraph from "./VoteGraph";
 
 interface IProps {
+  detailView?: boolean;
   currentAccountAddress: string;
   currentAccountReputation: BN;
   currentVote: number;
@@ -62,7 +63,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
       dao,
       isVotingNo,
       isVotingYes,
-      voteOnProposal
+      voteOnProposal,
+      detailView,
     } = this.props;
 
     const isVoting = isVotingNo || isVotingYes;
@@ -92,6 +94,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
     const votingDisabled = !currentAccountReputation || !!currentVote;
 
     let wrapperClass = classNames({
+      [css.detailView] : detailView,
       [css.voteBox] : true,
       [css.clearfix] : true,
       [css.unconfirmedVote] : isVoting,
@@ -145,8 +148,10 @@ export default class VoteBox extends React.Component<IProps, IState> {
         <div className={voteControls + " " + css.clearfix}>
           <div className={css.voteDivider}>
             <div className={css.voteGraphs}>
-              <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
-
+              { !this.props.detailView ?
+                 <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+               : " "
+              }
               <div className={css.reputationTurnout}>
                 <div className={css.header}>Reputation turnout</div>
                 <div className={css.turnoutInfo}>
@@ -186,6 +191,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
                   <img src="/assets/images/tooltip-pointer.svg"/>
                 </div>
               </div>
+              { this.props.detailView ?
+                 <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+               : " "
+              }
+
             </div>
           </div>
           <div className={css.voteButtons}>

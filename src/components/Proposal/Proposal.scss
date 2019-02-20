@@ -360,6 +360,31 @@ button.disabled {
   }
 }
 
+.detailView .voteControls {
+    width: 160px;
+    text-align: center;
+    position: relative;
+    height: 140px;
+    z-index: 100;
+    margin: 0 auto;
+    padding-top: 20px;
+
+    .voteDivider {
+	    width: auto;
+	    float: right;
+	    text-align: left;
+	    display: inline-block;
+    }
+
+    .voteButtons {
+	    float: left;
+	    text-align: right;
+	    margin-top: 36px;
+	    width: auto;
+	    display: inline-block;
+    }
+}
+
 .verifyMask {
     transform: translateY(30px);
     opacity: 0;
@@ -863,8 +888,7 @@ button.disabled {
 
 .detailView .proposalActions {
 	flex-grow: 1;
-	min-width: 200px;
-	max-width: 400px;
+	min-width: 300px;
 	border-top: none;
 }
 

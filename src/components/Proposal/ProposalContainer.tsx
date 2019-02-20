@@ -402,6 +402,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 dao={dao}
                 proposal={proposal}
                 voteOnProposal={voteOnProposal}
+                detailView={detailView}
               />
               : proposalPassed(proposal) ?
                 <div className={css.decidedProposal}>
