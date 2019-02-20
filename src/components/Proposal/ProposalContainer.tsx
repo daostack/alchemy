@@ -479,9 +479,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
     dao.proposal(props.proposalId).rewards({}),
     dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
-    // TODO: filter by voter once that is implemented - see https://github.com/daostack/subgraph/issues/67
-    // arc.proposal(props.proposalId).votes({ voter: props.currentAccountAddress})
-    dao.proposal(props.proposalId).votes(),
+    dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }),
     arc.GENToken().balanceOf(props.currentAccountAddress)
   );
   return <Subscribe observable={observable}>{
