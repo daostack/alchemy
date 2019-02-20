@@ -33,9 +33,11 @@ const DAOProposalsContainer = (props: {
 
   const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted } = props;
 
-  const boostedProposalsHTML = (
-    <TransitionGroup className="boosted-proposals-list">
-      { proposalsBoosted.map((proposal: IProposalState) => (
+  console.log("proposals = ", proposalsQueued);
+
+  const queuedProposalsHTML = (
+    <TransitionGroup className="queued-proposals-list">
+      { proposalsQueued.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
           <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
@@ -53,11 +55,21 @@ const DAOProposalsContainer = (props: {
     </TransitionGroup>
   );
 
+  const boostedProposalsHTML = (
+    <TransitionGroup className="boosted-proposals-list">
+      { proposalsBoosted.map((proposal: IProposalState) => (
+        <Fade key={"proposal_" + proposal.id}>
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+        </Fade>
+      ))}
+    </TransitionGroup>
+  );
+
   return (
     <div className={css.daoProposalsContainer}>
       <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/create`} data-test-id="create-proposal">+ New proposal</Link>
       <h2 className={css.queueType}>Contribution Reward</h2>
-      { proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
+      { proposalsQueued.length == 0 && proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
             ? <div className={css.noDecisions}>
                 <img className={css.relax} src="/assets/images/meditate.svg"/>
                 <div className={css.proposalsHeader}>
@@ -85,7 +97,7 @@ const DAOProposalsContainer = (props: {
       { proposalsPreBoosted.length > 0 ?
         <div className={css.regularContainer}>
           <div className={css.proposalsHeader}>
-            Regular Proposals
+            Pending Proposals
           </div>
           <div className={css.proposalsContainer}>
             {preBoostedProposalsHTML}
@@ -94,6 +106,17 @@ const DAOProposalsContainer = (props: {
         : ""
       }
 
+      { proposalsQueued.length > 0 ?
+        <div className={css.regularContainer}>
+          <div className={css.proposalsHeader}>
+            Regular Proposals
+          </div>
+          <div className={css.proposalsContainer}>
+            {queuedProposalsHTML}
+          </div>
+        </div>
+        : ""
+      }
     </div>
   );
 };
