@@ -16,6 +16,18 @@
   margin: 3px 20px 0 15px;
 }
 
+.detailView.targetAccount {
+  width: 35px;
+  height: 35px;
+  margin-right: 0;
+  margin-left: -6px;
+
+  .avatar img {
+    width: 35px;
+    height: 35px;
+  }
+}
+
 .targetAccount {
   position: relative;
   display: inline-block;

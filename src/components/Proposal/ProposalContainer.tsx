@@ -332,10 +332,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 </div>
                 : ""
             }
-
             <div className={css.createdBy}>
               <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={detailView}/>
               <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
+            </div>
+            <div className={css.description}>
+              First proposal to test it out.
+              I’m glad to be apart and test things out. I’m interested in helping the general public and non-devs more involved in the space and creating DAO’s.
             </div>
             <h3 className={css.proposalTitleBottom}>
               <span data-test-id="proposal-closes-in">

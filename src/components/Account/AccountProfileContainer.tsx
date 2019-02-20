@@ -10,6 +10,9 @@ import { connect, Dispatch } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import * as io from 'socket.io-client';
 
+import * as classNames from "classnames";
+
+
 import * as profileActions from "actions/profilesActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
@@ -30,6 +33,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe"
 const socket = io(process.env.API_URL);
 
 interface IStateProps extends RouteComponentProps<any> {
+  detailView?: boolean;
   accountAddress: string;
   accountInfo?: IAccountState;
   accountProfile?: IProfileState;
@@ -157,7 +161,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
     const hasProfile = accountProfile && accountProfile.name;
     const editing = accountAddress == currentAccountAddress;
-
+    
     return (
       <div className={css.profileWrapper}>
         <BreadcrumbsItem to={null}>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</BreadcrumbsItem>

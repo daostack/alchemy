@@ -3,6 +3,7 @@ import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import * as classNames from "classnames";
 
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
@@ -67,10 +68,17 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, dao, profile, reputation, tokens } = this.props;
+    const { accountAddress, dao, profile, reputation, tokens, detailView } = this.props;
+
+
+    const targetAccountClass = classNames({
+      [css.detailView]: this.props.detailView,
+      [css.targetAccount]: true
+    })
+
 
     return (
-      <div className={css.targetAccount}>
+      <div className={targetAccountClass}>
         <div className={css.avatar}>
           <AccountImage accountAddress={accountAddress} />
         </div>
