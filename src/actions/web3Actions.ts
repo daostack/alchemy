@@ -129,7 +129,7 @@ export function setCurrentAccount(accountAddress: string) {
     } else {
       payload.currentAccountGenStakingAllowance = new BN(0);
     }
-    console.log("got account with paylod", payload);
+
     dispatch(getProfile(accountAddress));
 
     action = {
