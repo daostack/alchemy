@@ -1031,6 +1031,12 @@ button.disabled {
 	padding-bottom: 13px;
 }
 
+.statusTitle .stakeControls {
+	position: absolute;
+	right: 10px;
+	top: -2px;
+}
+
 .voteStatus {
 	display: block;
 	width: 100%;
@@ -1050,6 +1056,10 @@ button.disabled {
 		
 		b {
 			font-weight: normal;
+
+			img {
+				display: none;
+			}
 		}
 	}
 
@@ -1358,4 +1368,32 @@ button.cancelPrediction {
 	font-size: 12px;
 	top: 35px;
 	position: relative;
+}
+
+
+.detailView.predictions {
+	padding-top: 80px;
+
+	.boostedAmount span {
+		text-align: right;
+	    padding: 20px 12px 12px 0;
+	    color: rgba(80, 97, 118, 1.000);
+	    font-size: 12px;
+
+	    b {
+		    font-weight: bold;
+
+		    img {
+				display: inline-block;
+				position: relative;
+				top: 1px;
+				right: 7px;
+		    }
+	    }
+	}
+}
+
+.detailView .stakes {
+	position: relative;
+	width: 55%;
 }

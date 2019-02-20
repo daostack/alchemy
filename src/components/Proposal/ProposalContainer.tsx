@@ -448,6 +448,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   stakeProposal={stakeProposal}
                   threshold={threshold}
                   approveStakingGens={approveStakingGens}
+                  detailView={detailView}
                 />
               }
           </div>

@@ -87,6 +87,7 @@ export const enablePredictions: string;
 export const proposalLabel: string;
 export const voteLabel: string;
 export const predictionLabel: string;
+export const stakeControls: string;
 export const stakeIcon: string;
 export const passButton: string;
 export const failButton: string;
