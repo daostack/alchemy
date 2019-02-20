@@ -8,6 +8,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { combineLatest } from "rxjs";
+import { first } from "rxjs/operators";
 import * as io from "socket.io-client";
 
 import * as profileActions from "actions/profilesActions";
@@ -45,7 +46,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     accountAddress: ownProps.accountAddress,
     accountInfo: ownProps.accountInfo,
     accountProfile: state.profiles[ownProps.accountAddress],
-    currentAccountAddress: ownProps.currentAccountAddress, // TODO:
+    currentAccountAddress: state.web3.ethAccountAddress,
     dao: ownProps.dao
   };
 };
@@ -95,8 +96,8 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     // TODO: refactor the below: we should subscribe to the Member object and get a updates of token balances as well
     const ethBalance = await Util.getBalance(accountAddress);
     const arc = getArc();
-    const stakingToken = arc.getContract("GEN");
-    const genBalance = await stakingToken.balanceOf(accountAddress);
+    const stakingToken = arc.GENToken();
+    const genBalance = await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise();
 
     this.setState({ ethCount: Util.fromWei(ethBalance), genCount: Util.fromWei(genBalance)});
   }
@@ -289,27 +290,27 @@ const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToP
 export default (props: RouteComponentProps<any>) => {
   const arc = getArc();
   const queryValues = queryString.parse(props.location.search);
-  const address = queryValues.daoAvatarAddress as string;
+  const daoAvatarAddress = queryValues.daoAvatarAddress as string;
 
-  const observable = combineLatest(
-    arc.dao(address).state,
-    arc.dao(address).member(props.match.params.accountAddress).state
-  );
+  if (daoAvatarAddress) {
+    const observable = combineLatest(
+      arc.dao(daoAvatarAddress).state,
+      arc.dao(daoAvatarAddress).member(props.match.params.accountAddress).state
+    );
 
-  if (address) {
     return <Subscribe observable={observable}>{
       (state: IObservableState<[IDAOState, IMemberState]>) => {
         if (state.error) {
           return <div>{state.error.message}</div>;
         } else if (state.data) {
           const dao = state.data[0];
-          return <ConnectedAccountProfileContainer dao={dao} accountInfo={state.data[1]} {...props} />;
+          return <ConnectedAccountProfileContainer dao={dao} accountAddress={props.match.params.accountAddress} accountInfo={state.data[1]} {...props} />;
         } else {
           return <div>Loading... xx</div>;
         }
       }
     }</Subscribe>;
   } else {
-    return <ConnectedAccountProfileContainer {...props} />;
+    return <ConnectedAccountProfileContainer accountAddress={props.match.params.accountAddress} {...props} />;
   }
 };
