@@ -33,8 +33,6 @@ const DAOProposalsContainer = (props: {
 
   const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted } = props;
 
-  console.log("proposals = ", proposalsQueued);
-
   const queuedProposalsHTML = (
     <TransitionGroup className="queued-proposals-list">
       { proposalsQueued.map((proposal: IProposalState) => (
