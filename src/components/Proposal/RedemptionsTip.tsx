@@ -90,7 +90,7 @@ export default (props: IProps) => {
           {hasExternalReward ?
             <li>
               {Util.fromWei(proposal.externalTokenReward)} {dao.externalTokenSymbol}
-              {dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
+              {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
             </li> : ""
           }
           {hasReputationReward ? <li><ReputationView reputation={proposal.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
