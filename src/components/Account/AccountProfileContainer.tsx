@@ -299,10 +299,10 @@ export default (props: RouteComponentProps<any>) => {
   if (address) {
     return <Subscribe observable={observable}>{
       (state: IObservableState<[IDAOState, IMemberState]>) => {
-        const dao = state.data[0];
         if (state.error) {
           return <div>{state.error.message}</div>;
-        } else if (dao) {
+        } else if (state.data) {
+          const dao = state.data[0];
           return <ConnectedAccountProfileContainer dao={dao} accountInfo={state.data[1]} {...props} />;
         } else {
           return <div>Loading... xx</div>;
