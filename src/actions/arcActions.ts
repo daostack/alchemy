@@ -1,5 +1,6 @@
 import { DAO, ProposalOutcome } from "@daostack/client";
 import BigNumber from "bignumber.js";
+import BN = require("bn.js");
 import { push } from "react-router-redux";
 import { IRootState } from "reducers/index";
 import { Dispatch } from "redux";
@@ -42,10 +43,10 @@ export function createProposal(
   daoAvatarAddress: string,
   title: string,
   description: string,
-  nativeTokenReward: string | BigNumber,
-  reputationReward: string | BigNumber,
-  ethReward: string | BigNumber,
-  externalTokenReward: string | BigNumber,
+  nativeTokenReward: BN,
+  reputationReward: BN,
+  ethReward: BN,
+  externalTokenReward: BN,
   beneficiaryAddress: string
 ): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
@@ -90,13 +91,10 @@ export function createProposal(
       const proposalOptions = {
         beneficiary: beneficiaryAddress,
         description,
-        // TODO: to these conversion closer to the source (i.e. at form submit, not here)
-        nativeTokenReward: arc.web3.utils.toWei(String(nativeTokenReward)),
-        // TODO: it is probably more robust to have the form values in "wei"
-        // (also because it is not clear if best unit of account is e18 for rep or nativeToken)
-        reputationReward: arc.web3.utils.toWei(String(reputationReward)),
-        ethReward: arc.web3.utils.toWei(String(ethReward)),
-        externalTokenReward: arc.web3.utils.toWei(String(externalTokenReward)),
+        nativeTokenReward: nativeTokenReward,
+        reputationReward: reputationReward,
+        ethReward: ethReward,
+        externalTokenReward: externalTokenReward,
         externalTokenAddress: "",
         periodLength: 0, // TODO: check what the default "periodLength" should be here
         periods: 1, // "periodLength 0 requires periods to be 1"
