@@ -255,10 +255,10 @@ export default class VoteBox extends React.Component<IProps, IState> {
         </div>
           <div className={voteStatusClass} >
             <div className={css.castVote}>
-              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
                 <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
               </button>
-              <button onClick={votingDisabled ? "" : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
                 <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
               </button>
             </div>
