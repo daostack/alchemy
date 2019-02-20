@@ -252,7 +252,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div className={css.proposalInfo}>
             <h3 className={css.proposalTitleTop}>
               <span data-test-id="proposal-closes-in">
-                {proposal.stage == ProposalStage.QuietEndingPeriod ?
+                {proposal.stage == IProposalStage.QuietEndingPeriod ?
                   <strong>
                     <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
                     <div className={css.help}>

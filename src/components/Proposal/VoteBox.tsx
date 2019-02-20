@@ -109,8 +109,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
     let voteStatusClass = classNames({
       [css.voteStatus]: true,
       [css.hasVoted]: currentVote,
-      [css.votedFor]: !isVotingYes && currentVote == VoteOptions.Yes,
-      [css.votedAgainst]: !isVotingNo && currentVote == VoteOptions.No,
+      [css.votedFor]: !isVotingYes && currentVote == ProposalOutcome.Pass,
+      [css.votedAgainst]: !isVotingNo && currentVote == ProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
     });
 
@@ -263,7 +263,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
               </button>
             </div>
             <div className={css.voteRecord}>
-              You voted 
+              You voted
               <span className={css.castVoteFor}>
                 - For
               </span>

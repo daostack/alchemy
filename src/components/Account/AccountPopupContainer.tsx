@@ -37,6 +37,7 @@ interface IStateProps {
 
 interface IOwnProps {
   dao: IDAOState;
+  detailView?: boolean;
   accountAddress: Address;
 }
 
