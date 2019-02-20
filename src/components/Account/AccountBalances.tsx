@@ -44,7 +44,7 @@ const TokenAllowance = (props: {accountAddress: Address, daoAddress: Address}) =
         return <span>0</span>;
       } else {
         const approval = approvals[0]; // TODO: if there are mnay this may be wrong
-        return <span>{approval.value}</span>;
+        return <span>{Util.fromWei(approval.value)}</span>;
       }
     }
   }}</Subscribe >;
@@ -72,7 +72,7 @@ class AccountBalances extends React.Component<Props, null>  {
             <AccountBalance tokenSymbol="GEN" balance={currentAccountGenBalance} accountAddress={member.address} />
           </div>
           <div>
-             <TokenAllowance accountAddress={member.address} daoAddress={dao.address} /> GEN approved for staking
+            <TokenAllowance accountAddress={member.address} daoAddress={dao.address} /> GEN approved for staking
           </div>
           { dao && dao.externalTokenAddress
             ? <div>
