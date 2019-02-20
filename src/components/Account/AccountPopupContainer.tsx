@@ -1,9 +1,12 @@
+import BN = require("bn.js");
 import { denormalize } from "normalizr";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { combineLatest } from "rxjs";
 
+import { getArc } from "arc";
 import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
 import { IAccountState, IProposalState, ProposalStates } from "reducers/arcReducer";
@@ -14,35 +17,37 @@ import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import OAuthLogin from 'components/Account/OAuthLogin';
+import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 import * as css from "./Account.scss";
-import { IDAOState, Address } from '@daostack/client'
+
+import { Address, IDAOState, IMemberState } from "@daostack/client";
 
 interface IStateProps {
-  accountAddress: string
-  profile: IProfileState
-  dao: IDAOState
-  reputation: number
-  tokens: number
+  accountAddress: string;
+  profile: IProfileState;
+  dao: IDAOState;
+  reputation: BN;
+  tokens: BN;
 }
 
 interface IOwnProps {
-  dao: IDAOState
-  accountAddress: Address
+  dao: IDAOState;
+  accountAddress: Address;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = ownProps.dao
-  const account = state.arc.accounts[`${ownProps.accountAddress}-${ownProps.daoAvatarAddress}`] as IAccountState;
+  const dao = ownProps.dao;
+  const account = ownProps.accountInfo as IMemberState;
 
   return {
     accountAddress: ownProps.accountAddress,
     dao,
-    profile: state.profiles[ownProps.accountAddress],
-    reputation: account ? account.reputation : 0,
-    tokens: account ? account.tokens : 0,
+    profile: state.profiles[account.address],
+    reputation: account ? account.reputation : new BN(0),
+    tokens: account ? account.tokens : new BN(0),
   };
 };
 
@@ -77,9 +82,9 @@ class AccountPopupContainer extends React.Component<IProps, null> {
           <div className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} /></div>
           {!profile || Object.keys(profile.socialURLs).length == 0 ? "No social profiles" :
             <div>
-              <OAuthLogin editing={false} provider='facebook' accountAddress={accountAddress} profile={profile} />
-              <OAuthLogin editing={false} provider='twitter' accountAddress={accountAddress} profile={profile} />
-              <OAuthLogin editing={false} provider='github' accountAddress={accountAddress} profile={profile} />
+              <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
+              <OAuthLogin editing={false} provider="twitter" accountAddress={accountAddress} profile={profile} />
+              <OAuthLogin editing={false} provider="github" accountAddress={accountAddress} profile={profile} />
             </div>
           }
           <div className={css.beneficiaryAddress}>
@@ -96,4 +101,25 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountPopupContainer);
+const ConnectedAccountPopupContainer = connect(mapStateToProps, mapDispatchToProps)(AccountPopupContainer);
+
+export default (props: IOwnProps) => {
+  const arc = getArc();
+
+  const observable = combineLatest(
+    arc.dao(props.dao.address).state,
+    arc.dao(props.dao.address).member(props.accountAddress).state
+  );
+  return <Subscribe observable={observable}>{
+    (state: IObservableState<[IDAOState, IMemberState]>) => {
+      if (state.error) {
+        return <div>{state.error.message}</div>;
+      } else if (state.data) {
+        const dao = state.data[0];
+        return <ConnectedAccountPopupContainer dao={dao} accountAddress={props.accountAddress} accountInfo={state.data[1]} {...props} />;
+      } else {
+        return <div>Loading... xx</div>;
+      }
+    }
+  }</Subscribe>;
+};

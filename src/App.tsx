@@ -1,9 +1,9 @@
 import * as React from "react";
-import { CookiesProvider } from 'react-cookie';
+import { CookiesProvider } from "react-cookie";
 import { Provider } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
-import { ThroughProvider } from 'react-through';
+import { ThroughProvider } from "react-through";
 
 import { default as store, history } from "./configureStore";
 

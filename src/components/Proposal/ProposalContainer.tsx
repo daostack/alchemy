@@ -1,78 +1,78 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, Member, ProposalStage } from '@daostack/client'
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalStage } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { arc } from "arc";
+import { getArc } from "arc";
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
-import RewardsString from "components/Proposal/RewardsString";
 import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { CommentCount } from 'disqus-react';
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import { CommentCount } from "disqus-react";
 import * as moment from "moment";
-import { denormalize } from "normalizr";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
-import { closingTime, IAccountState, newAccount, VoteOptions } from "reducers/arcReducer";
+import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest } from 'rxjs'
-import * as schemas from "schemas";
+import { combineLatest, Observable, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
+import Util from "lib/util";
+
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
-import RedeemButton from './RedeemButton'
-import RedemptionsTip from './RedemptionsTip'
-import TransferDetails from './TransferDetails';
+import RedeemButton from "./RedeemButton";
+import RedemptionsTip from "./RedemptionsTip";
+import TransferDetails from "./TransferDetails";
 import VoteBox from "./VoteBox";
 
 interface IStateProps {
-  beneficiaryProfile?: IProfileState
-  creatorProfile?: IProfileState
-  currentAccount: IMemberState
-  currentAccountGens: number
-  currentAccountGenStakingAllowance: number
-  rewardsForCurrentUser: IRewardState[]
-  stakesOfCurrentUser: IStake[]
-  votesOfCurrentUser: IVote[]
-  // currentVote: IVote
-  dao: IDAOState
-  proposal: IProposalState
-  isVotingYes: boolean
-  isVotingNo: boolean
-  isPredictingPass: boolean
-  isPredictingFail: boolean
-  isRedeemPending: boolean
-  threshold: number
+  beneficiaryProfile?: IProfileState;
+  creatorProfile?: IProfileState;
+  currentAccount: IMemberState;
+  currentAccountGens: BN;
+  currentAccountGenStakingAllowance: BN;
+  rewardsForCurrentUser: IRewardState[];
+  stakesOfCurrentUser: IStake[];
+  votesOfCurrentUser: IVote[];
+  dao: IDAOState;
+  proposal: IProposalState;
+  isVotingYes: boolean;
+  isVotingNo: boolean;
+  isPredictingPass: boolean;
+  isPredictingFail: boolean;
+  isRedeemPending: boolean;
+  threshold: number;
 }
 
 interface IContainerProps {
-  dao: IDAOState
-  currentAccount: IMemberState
-  proposal: IProposalState
-  rewardsForCurrentUser: IRewardState[]
-  stakesOfCurrentUser: IStake[]
-  votesOfCurrentUser: IVote[]
+  dao: IDAOState;
+  currentAccount: IMemberState;
+  currentAccountGens: BN;
+  proposal: IProposalState;
+  rewardsForCurrentUser: IRewardState[];
+  stakesOfCurrentUser: IStake[];
+  votesOfCurrentUser: IVote[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
-  const proposal = ownProps.proposal
-  const dao = ownProps.dao
+  const proposal = ownProps.proposal;
+  const dao = ownProps.dao;
   // const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   // TODO: get the threshold from the proposals
   // const threshold = dao.currentThresholdToBoost;
-  const threshold = 12345
+  const threshold = 12345;
 
-  let currentAccount = ownProps.currentAccount
+  let currentAccount = ownProps.currentAccount;
 
   return {
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccount,
-    currentAccountGens: state.web3.currentAccountGenBalance,
+    currentAccountGens: ownProps.currentAccountGens,
     currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
     // currentVote,
     dao,
@@ -105,7 +105,7 @@ const mapDispatchToProps = {
   stakeProposal: arcActions.stakeProposal,
 };
 
-type IProps = IStateProps & IDispatchProps & IContainerProps
+type IProps = IStateProps & IDispatchProps & IContainerProps;
 
 interface IState {
   preRedeemModalOpen: boolean;
@@ -156,18 +156,18 @@ class ProposalContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     // TODO: fix this: get the amount of ETH, GEN, and externalToken of the DAO
-    const ethBalance = dao.ethBalance
-    const genBalance = dao.tokenBalance
-    const externalTokenBalance = dao.externalTokenBalance
+    const ethBalance = new BN(0); //TODO: subscribe to ethBalance dao.ethBalance;
+    const genBalance = dao.tokenBalance;
+    const externalTokenBalance = dao.externalTokenBalance;
 
     const beneficiaryHasRewards = (
-      proposal.reputationReward ||
-      proposal.nativeTokenReward ||
-      (proposal.ethReward && ethBalance >= proposal.ethReward) ||
-      (proposal.externalTokenReward && externalTokenBalance >= proposal.externalTokenReward)
+      proposal.reputationReward.gt(new BN(0)) ||
+      proposal.nativeTokenReward.gt(new BN(0)) ||
+      (proposal.ethReward.gt(new BN(0)) && ethBalance.gte(proposal.ethReward)) ||
+      (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))
     ) as boolean;
 
-    const accountHasRewards = rewardsForCurrentUser.length !== 0
+    const accountHasRewards = rewardsForCurrentUser.length !== 0;
 
     const redeemable = accountHasRewards || beneficiaryHasRewards;
 
@@ -177,7 +177,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
         [css.proposal]: true,
-        [css.openProposal]: proposal.stage == ProposalStage.Queued || proposal.stage === ProposalStage.PreBoosted || proposal.stage == ProposalStage.Boosted || proposal.stage == ProposalStage.QuietEndingPeriod,
+        [css.openProposal]: proposal.stage == IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted || proposal.stage == IProposalStage.Boosted || proposal.stage == IProposalStage.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: redeemable
@@ -188,14 +188,15 @@ class ProposalContainer extends React.Component<IProps, IState> {
       // Calculate reputation percentages
       // TODO: calculate "reputationWhenExecuted" as in the commented line
       // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-      const totalReputation: number = dao.reputationTotalSupply
+      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
+      const votesFor = Util.fromWei(proposal.votesFor);
+      const votesAgainst = Util.fromWei(proposal.votesAgainst);
+      const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
+      const noPercentage = totalReputation && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputation * 100)) : 0;
+      const passedByDecision = totalReputation ? (votesFor / totalReputation) > 0.5 : false;
+      const failedByDecision = totalReputation ? (votesAgainst / totalReputation) > 0.5 : false;
 
-      const yesPercentage = totalReputation && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / totalReputation * 100)) : 0;
-      const noPercentage = totalReputation && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / totalReputation * 100)) : 0;
-      const passedByDecision = totalReputation ? (proposal.votesFor / totalReputation) > 0.5 : false;
-      const failedByDecision = totalReputation ? (proposal.votesAgainst / totalReputation) > 0.5 : false;
-
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = 0
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0);
 
       const redeemProps = {
         accountHasRewards,
@@ -208,24 +209,24 @@ class ProposalContainer extends React.Component<IProps, IState> {
         dao,
         proposal,
         handleClickRedeem: this.handleClickRedeem.bind(this)
-      }
+      };
 
-      const redemptionsTip = RedemptionsTip(redeemProps)
-      const redeemButton = RedeemButton(redeemProps)
+      const redemptionsTip = RedemptionsTip(redeemProps);
+      const redeemButton = RedeemButton(redeemProps);
 
-      let currentVote: IVote
+      let currentVote: IVote;
       if (votesOfCurrentUser.length > 0) {
-        currentVote = votesOfCurrentUser[0]
+        currentVote = votesOfCurrentUser[0];
         currentAccountVote = currentVote.outcome;
       }
 
-      let currentStake: IStake
+      let currentStake: IStake;
       if (stakesOfCurrentUser.length > 0) {
-        currentStake = stakesOfCurrentUser[0]
+        currentStake = stakesOfCurrentUser[0];
       }
       if (currentStake) {
-        currentAccountPrediction = currentStake.outcome
-        currentAccountStakeAmount = currentStake.amount
+        currentAccountPrediction = currentStake.outcome;
+        currentAccountStakeAmount = currentStake.amount;
       }
 
       const styles = {
@@ -271,13 +272,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                 </div>
                 <div className={css.decisionGraph}>
-                  <span className={css.forLabel}>{proposal.votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
+                  <span className={css.forLabel}>{votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
                   <div className={css.graph}>
                     <div className={css.forBar} style={styles.forBar}></div>
                     <div className={css.againstBar} style={styles.againstBar}></div>
                     <div className={css.divider}></div>
                   </div>
-                  <span className={css.againstLabel}>{proposal.votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
+                  <span className={css.againstLabel}>{votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
                 </div>
               </div>
               : proposalFailed(proposal) ?
@@ -286,13 +287,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
                   </div>
                   <div className={css.decisionGraph}>
-                    <span className={css.forLabel}>{proposal.votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
+                    <span className={css.forLabel}>{votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
                     <div className={css.graph}>
                       <div className={css.forBar} style={styles.forBar}></div>
                       <div className={css.againstBar} style={styles.againstBar}></div>
                       <div className={css.divider}></div>
                     </div>
-                    <span className={css.againstLabel}>{proposal.votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
+                    <span className={css.againstLabel}>{votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
                   </div>
                 </div>
                 : ""
@@ -305,7 +306,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
             <h3>
               <span data-test-id="proposal-closes-in">
-                {proposal.stage == ProposalStage.QuietEndingPeriod ?
+                {proposal.stage == IProposalStage.QuietEndingPeriod ?
                   <strong>
                     <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
                     <div className={css.help}>
@@ -322,7 +323,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                         <div className={css.body}>
                           <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
                         </div>
-                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
                       </div>
                     </div>
                   </strong>
@@ -414,37 +415,47 @@ export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, I
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
   //  TODO: add logic for when props.currentAccountAddress is undefined
+  const arc = getArc();
+  const dao = arc.dao(props.dao.address);
+  let accountState: Observable<IMemberState|undefined>;
+  if (props.currentAccountAddress) {
+    accountState =  dao.member(props.currentAccountAddress).state;  // the current account as member of the DAO
+  } else {
+    of(null);
+  }
   const observable = combineLatest(
-    arc.dao(props.dao.address).proposal(props.proposalId).state, // the list of pre-boosted proposals
-    arc.dao(props.dao.address).member(props.currentAccountAddress).state, // the current account as member of the DAO
+    dao.proposal(props.proposalId).state, // the list of pre-boosted proposals
+    accountState,
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    arc.dao(props.dao.address).proposal(props.proposalId).rewards({}),
-    arc.dao(props.dao.address).proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
+    dao.proposal(props.proposalId).rewards({}),
+    dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
     // TODO: filter by voter once that is implemented - see https://github.com/daostack/subgraph/issues/67
     // arc.proposal(props.proposalId).votes({ voter: props.currentAccountAddress})
-    arc.dao(props.dao.address).proposal(props.proposalId).votes()
-  )
+    dao.proposal(props.proposalId).votes(),
+    arc.GENToken().balanceOf(props.currentAccountAddress)
+  );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[]]>): any => {
+    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal</div>
+        return <div>Loading proposal</div>;
       } else if (state.error) {
-        return <div>{ state.error.message }</div>
+        return <div>{ state.error.message }</div>;
       } else {
-        const proposal = state.data[0]
-        const rewards = state.data[2]
-        const stakes = state.data[3]
-        const votes = state.data[4]
+        const proposal = state.data[0];
+        const rewards = state.data[2];
+        const stakes = state.data[3];
+        const votes = state.data[4];
         return <ConnectedProposalContainer
           currentAccount={state.data[1]}
+          currentAccountGens={state.data[5]}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}
-          />
+          />;
       }
     }
-  }</Subscribe>
-}
+  }</Subscribe>;
+};
