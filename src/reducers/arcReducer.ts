@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, ProposalStage } from '@daostack/client'
+import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, IProposalStage } from "@daostack/client";
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",
@@ -83,7 +83,7 @@ export function newAccount(
     stakes: [],
     tokens,
     votes: []
-  }
+  };
 }
 
 export interface IDaoState {
@@ -194,14 +194,14 @@ export interface IVoteState {
 }
 
 export interface IArcState {
-  accounts: { [accountKey: string]: IAccountState },
+  accounts: { [accountKey: string]: IAccountState };
   daosLoaded: boolean;
-  daos: { [avatarAddress: string]: IDaoState },
+  daos: { [avatarAddress: string]: IDaoState };
   lastBlock: string | number; // The most recent block read into the state
-  proposals: { [proposalId: string]: IProposalState },
-  redemptions: { [redemptionKey: string]: IRedemptionState },
-  stakes: { [stakeKey: string]: IStakeState },
-  votes: { [voteKey: string]: IVoteState }
+  proposals: { [proposalId: string]: IProposalState };
+  redemptions: { [redemptionKey: string]: IRedemptionState };
+  stakes: { [stakeKey: string]: IStakeState };
+  votes: { [voteKey: string]: IVoteState };
 }
 
 export const initialState: IArcState = {
@@ -220,14 +220,14 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
   const start = proposal.boostedAt || proposal.createdAt;
   const duration = proposal.boostedAt ? proposal.boostedVotePeriodLimit : proposal.preBoostedVotePeriodLimit;
   return moment((proposal.executedAt || start + duration) * 1000);
-}
+};
 
 export const closingTimeLegacy = (proposal: IProposalState) => {
   const { state, boostedTime, submittedTime, preBoostedVotePeriodLimit, boostedVotePeriodLimit, executionTime } = proposal;
   const start = boostedTime ? boostedTime : submittedTime;
   const duration = boostedTime ? boostedVotePeriodLimit : preBoostedVotePeriodLimit;
   return moment((executionTime || start + duration) * 1000);
-}
+};
 
 export function checkProposalExpired(proposal: IProposalState): ProposalStates {
   if ((proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod)
@@ -253,7 +253,7 @@ export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   //   // Pre boosted proposal past end time but not yet executed
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );
-  const res = proposal.stage === ProposalStage.Executed
+  const res = proposal.stage === IProposalStage.Executed;
   return res;
 }
 
@@ -277,9 +277,9 @@ export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
   //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.Yes)
   // );
   const res = (
-    (proposal.stage == ProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Pass) ||
-    (proposal.stage == ProposalStage.QuietEndingPeriod && proposal.winningOutcome === ProposalOutcome.Pass)
-  )
+    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Pass) ||
+    (proposal.stage == IProposalStage.QuietEndingPeriod && proposal.winningOutcome === ProposalOutcome.Pass)
+  );
   return res;
 }
 
@@ -287,15 +287,15 @@ export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   // TODO: check if the logic of the commented lines is correctly represented in the other lines
   // const res = (
   //   proposal.state == ProposalStates.Closed ||
-  //   (proposal.state == ProposalStates.Executed && proposal.winningVote == VoteOptions.No) ||
+  //   (proposal.state == ProposalStates.Executed && proposal.winningVote == ProposalOutcome.Fail) ||
   //   // Boosted proposal past end time with more no votes than yes, but not yet executed
-  //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.No) ||
+  //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == ProposalOutcome.Fail) ||
   //   // Pre boosted proposal past end time but not yet executed are always failed
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );
   const res = (
-    (proposal.stage == ProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
-    (proposal.stage == ProposalStage.QuietEndingPeriod && proposal.winningOutcome !== ProposalOutcome.Pass)
+    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
+    (proposal.stage == IProposalStage.QuietEndingPeriod && proposal.winningOutcome !== ProposalOutcome.Pass)
   );
 
   return res;
@@ -598,14 +598,14 @@ const arcReducer = (state = initialState, action: any) => {
                 stakerBountyTokens: {$set: 0}
               } :
               {}
-          )
+          );
 
       // Set redeemed rewards to zero
       state = update(state, {
         redemptions: {
           [redemptionKey]: updateObj
         }
-      })
+      });
 
       // Remove if there are no more redemptions
       if (!anyRedemptions(state.redemptions[redemptionKey])) {
@@ -697,7 +697,7 @@ const arcReducer = (state = initialState, action: any) => {
             ethCount: { $set: balance || state.daos[avatarAddress].ethCount}
           }
         }
-      })
+      });
     }
 
     case ActionTypes.ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE: {
@@ -709,7 +709,7 @@ const arcReducer = (state = initialState, action: any) => {
             externalTokenCount: { $set: balance || state.daos[avatarAddress].externalTokenCount}
           }
         }
-      })
+      });
     }
 
     case ActionTypes.ARC_ON_DAO_GEN_BALANCE_CHANGE: {
@@ -721,7 +721,7 @@ const arcReducer = (state = initialState, action: any) => {
             genCount: { $set: balance || state.daos[avatarAddress].genCount}
           }
         }
-      })
+      });
     }
   }
 

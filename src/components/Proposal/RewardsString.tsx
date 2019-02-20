@@ -1,6 +1,8 @@
 import * as React from "react";
 
-import { IDAOState, IProposalState } from '@daostack/client'
+import { IDAOState, IProposalState } from "@daostack/client";
+import Util from "lib/util";
+
 import ReputationView from "components/Account/ReputationView";
 
 interface IProps {
@@ -15,13 +17,13 @@ export default class RewardsString extends React.Component<IProps, null> {
 
     const rewards = [];
     if (proposal.ethReward) {
-      rewards.push(proposal.ethReward.toFixed(2).toLocaleString() + " ETH");
+      rewards.push(Util.fromWei(proposal.ethReward).toFixed(2).toLocaleString() + " ETH");
     }
     if (proposal.externalTokenReward) {
-      rewards.push(proposal.externalTokenReward.toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
+      rewards.push(Util.fromWei(proposal.externalTokenReward).toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
     }
     if (proposal.nativeTokenReward) {
-      rewards.push(proposal.nativeTokenReward.toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
+      rewards.push(Util.fromWei(proposal.nativeTokenReward).toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
     }
     if (proposal.reputationReward) {
       rewards.push(

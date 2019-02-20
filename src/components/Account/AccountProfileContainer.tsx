@@ -1,14 +1,15 @@
-import * as Arc from "@daostack/arc.js";
 import promisify = require("es6-promisify");
-import * as sigUtil from 'eth-sig-util';
-import * as ethUtil from 'ethereumjs-util';
-import { Field, Formik, FormikBag, FormikProps } from 'formik';
-import * as queryString from 'query-string';
+import * as sigUtil from "eth-sig-util";
+import * as ethUtil from "ethereumjs-util";
+import { Field, Formik, FormikProps } from "formik";
+import * as queryString from "query-string";
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
-import { connect, Dispatch } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
-import * as io from 'socket.io-client';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import { combineLatest } from "rxjs";
+import { first } from "rxjs/operators";
+import * as io from "socket.io-client";
 
 import * as profileActions from "actions/profilesActions";
 import Util from "lib/util";
@@ -18,20 +19,21 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
 import AccountImage from "components/Account/AccountImage";
-import OAuthLogin from 'components/Account/OAuthLogin';
+import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import DaoSidebar from "components/ViewDao/DaoSidebar";
 
 import * as css from "./Account.scss";
 
-import { IDAOState } from '@daostack/client'
-import { arc } from 'arc'
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
+import { IDAOState, IMemberState } from "@daostack/client";
+import { getArc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+
 const socket = io(process.env.API_URL);
 
 interface IStateProps extends RouteComponentProps<any> {
   accountAddress: string;
-  accountInfo?: IAccountState;
+  accountInfo?: IMemberState;
   accountProfile?: IProfileState;
   currentAccountAddress: string;
   dao: IDAOState;
@@ -41,9 +43,9 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   const queryValues = queryString.parse(ownProps.location.search);
 
   return {
-    accountAddress: ownProps.match.params.accountAddress,
-    accountInfo: state.arc.accounts[ownProps.match.params.accountAddress + "-" + queryValues.daoAvatarAddress],
-    accountProfile: state.profiles[ownProps.match.params.accountAddress],
+    accountAddress: ownProps.accountAddress,
+    accountInfo: ownProps.accountInfo,
+    accountProfile: state.profiles[ownProps.accountAddress],
     currentAccountAddress: state.web3.ethAccountAddress,
     dao: ownProps.dao
   };
@@ -87,23 +89,15 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    const { accountAddress, dao, getProfile } = this.props;
+    const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
 
+    // TODO: refactor the below: we should subscribe to the Member object and get a updates of token balances as well
     const ethBalance = await Util.getBalance(accountAddress);
-
-    let votingMachineInstance: Arc.GenesisProtocolWrapper;
-    if (dao) {
-      const contributionRewardInstance = await Arc.ContributionRewardFactory.deployed();
-      const votingMachineAddress = (await contributionRewardInstance.getSchemeParameters(dao.address)).votingMachineAddress;
-      votingMachineInstance = await Arc.GenesisProtocolFactory.at(votingMachineAddress);
-    } else {
-      votingMachineInstance = await Arc.GenesisProtocolFactory.deployed();
-    }
-    const stakingTokenAddress = await votingMachineInstance.contract.stakingToken();
-    const stakingToken = await (await Arc.Utils.requireContract("StandardToken")).at(stakingTokenAddress) as any;
-    const genBalance = await stakingToken.balanceOf(accountAddress);
+    const arc = getArc();
+    const stakingToken = arc.GENToken();
+    const genBalance = await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise();
 
     this.setState({ ethCount: Util.fromWei(ethBalance), genCount: Util.fromWei(genBalance)});
   }
@@ -118,13 +112,15 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
     const { accountAddress, showNotification, updateProfile } = this.props;
 
-    const web3 = await Arc.Utils.getWeb3();
+    const web3 = await Util.getWeb3();
     const timestamp = new Date().getTime().toString();
     const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. Timestamp:" + timestamp;
-    const msg = ethUtil.bufferToHex(Buffer.from(text, 'utf8'));
+    const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
     const fromAddress = this.props.accountAddress;
 
-    const method = 'personal_sign';
+    const method = "personal_sign";
+    // TODO: do we need promisify here? web3 1.0 supports promises natively
+    // and if we can do without, we can drop the dependency on es6-promises
     const sendAsync = promisify(web3.currentProvider.sendAsync);
     const params = [msg, fromAddress];
     const result = await sendAsync({ method, params, fromAddress });
@@ -155,8 +151,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
     const { ethCount, genCount } = this.state;
 
-    const hasProfile = accountProfile && accountProfile.name;
-    const editing = accountAddress == currentAccountAddress;
+    const editing = currentAccountAddress && accountAddress.toLowerCase() === currentAccountAddress.toLowerCase();
 
     return (
       <div className={css.profileWrapper}>
@@ -166,7 +161,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
         <div className={css.profileContainer} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
-          { typeof(accountProfile) === 'undefined' ? "Loading..." :
+          { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -179,11 +174,11 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 
                 const require = (name: string) => {
                   if (!(values as any)[name]) {
-                    errors[name] = 'Required';
+                    errors[name] = "Required";
                   }
                 };
 
-                require('name');
+                require("name");
 
                 return errors;
               }}
@@ -213,7 +208,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                             autoFocus
                             id="nameInput"
                             placeholder="e.g. John Doe"
-                            name='name'
+                            name="name"
                             type="text"
                             maxLength="35"
                             className={touched.name && errors.name ? css.error : null}
@@ -231,7 +226,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                           <Field
                             id="descriptionInput"
                             placeholder="Tell the DAO a bit about yourself"
-                            name='description'
+                            name="description"
                             component="textarea"
                             maxLength="150"
                             rows="7"
@@ -264,9 +259,9 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                       }
                       {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
                         <div>
-                          <OAuthLogin editing={editing} provider='facebook' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                          <OAuthLogin editing={editing} provider='twitter' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                          <OAuthLogin editing={editing} provider='github' accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider="facebook" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                          <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
                         </div>
                       }
                     </div>
@@ -293,23 +288,29 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
 const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToProps)(AccountProfileContainer);
 
 export default (props: RouteComponentProps<any>) => {
-  const queryValues = queryString.parse(props.location.search)
-  const address = queryValues.daoAvatarAddress as string
-  if (address) {
+  const arc = getArc();
+  const queryValues = queryString.parse(props.location.search);
+  const daoAvatarAddress = queryValues.daoAvatarAddress as string;
 
-    return <Subscribe observable={arc.dao(address).state}>{
-      (state: IObservableState<IDAOState>) => {
-        const dao = state.data
+  if (daoAvatarAddress) {
+    const observable = combineLatest(
+      arc.dao(daoAvatarAddress).state,
+      arc.dao(daoAvatarAddress).member(props.match.params.accountAddress).state
+    );
+
+    return <Subscribe observable={observable}>{
+      (state: IObservableState<[IDAOState, IMemberState]>) => {
         if (state.error) {
-          return <div>{state.error.message}</div>
-        } else if (dao) {
-          return <ConnectedAccountProfileContainer dao={dao} {...props} />
+          return <div>{state.error.message}</div>;
+        } else if (state.data) {
+          const dao = state.data[0];
+          return <ConnectedAccountProfileContainer dao={dao} accountAddress={props.match.params.accountAddress} accountInfo={state.data[1]} {...props} />;
         } else {
-          return <div>Loading... xx</div>
+          return <div>Loading... xx</div>;
         }
       }
-    }</Subscribe>
+    }</Subscribe>;
   } else {
-    return <ConnectedAccountProfileContainer {...props} />
+    return <ConnectedAccountProfileContainer accountAddress={props.match.params.accountAddress} {...props} />;
   }
-}
+};

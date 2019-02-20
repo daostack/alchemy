@@ -1,9 +1,9 @@
 import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import * as React from "react";
-import { BreadcrumbsItem } from 'react-breadcrumbs-dynamic';
-import { Cookies, withCookies } from 'react-cookie';
-import Joyride from 'react-joyride';
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Cookies, withCookies } from "react-cookie";
+import Joyride from "react-joyride";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 
@@ -18,20 +18,21 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as schemas from "schemas";
 
 import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
-import DaoSidebar from "./DaoSidebar";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
+import DaoSidebar from "./DaoSidebar";
 
 import * as appCss from "layouts/App.scss";
 import * as proposalCss from "../Proposal/Proposal.scss";
 import * as css from "./ViewDao.scss";
 
-import { IDAOState } from '@daostack/client'
-import { arc } from 'arc'
-import Subscribe, { IObservableState } from "components/Shared/Subscribe"
-import { Subscription } from 'rxjs'
+import { IDAOState } from "@daostack/client";
+import { getArc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import { Subscription } from "rxjs";
+import Util from "lib/util";
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
@@ -66,7 +67,6 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 interface IDispatchProps {
   getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
   hideTour: typeof uiActions.hideTour;
-  onProposalExpired: typeof arcActions.onProposalExpired;
   showTour: typeof uiActions.showTour;
   showNotification: typeof showNotification;
 }
@@ -74,26 +74,25 @@ interface IDispatchProps {
 const mapDispatchToProps = {
   getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
   hideTour: uiActions.hideTour,
-  onProposalExpired: arcActions.onProposalExpired,
   showTour: uiActions.showTour,
   showNotification,
-}
+};
 
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  showTourIntro: boolean
-  showTourOutro: boolean
-  tourCount: number
-  isLoading: boolean
-  dao: IDAOState
-  error: Error
-  complete: boolean
+  showTourIntro: boolean;
+  showTourOutro: boolean;
+  tourCount: number;
+  isLoading: boolean;
+  dao: IDAOState;
+  error: Error;
+  complete: boolean;
 }
 
 class ViewDaoContainer extends React.Component<IProps, IState> {
   public daoSubscription: any;
-  public subscription: Subscription
+  public subscription: Subscription;
 
   constructor(props: IProps) {
     super(props);
@@ -113,8 +112,8 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public async componentWillMount() {
     const { cookies } = this.props;
     // If this person has not seen the disclaimer, show them the home page
-    if (!cookies.get('seen_tour')) {
-      cookies.set('seen_tour', "true", { path: '/' });
+    if (!cookies.get("seen_tour")) {
+      cookies.set("seen_tour", "true", { path: "/" });
       this.setState({ showTourIntro: true });
     }
 
@@ -125,29 +124,29 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     const { showTour } = this.props;
     this.setState({ showTourIntro: false });
     showTour();
-  };
+  }
 
   public handleClickSkipTour = () => {
     this.setState({ showTourIntro: false });
-  };
+  }
 
   public handleClickEndTour = () => {
     this.setState({ showTourOutro: false });
-  };
+  }
 
   public handleJoyrideCallback = (data: any) => {
     const { hideTour } = this.props;
 
-    if (data.type == 'tour:end') {
+    if (data.type == "tour:end") {
       this.setState({
         showTourOutro: true,
         tourCount: this.state.tourCount + 1
       });
     }
-    if (data.action == 'close' || data.type == 'tour:end') {
+    if (data.action == "close" || data.type == "tour:end") {
       hideTour();
     }
-  };
+  }
 
   public render() {
     const { dao, currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
@@ -157,7 +156,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       {
         target: "." + css.daoInfo,
         content: `Alchemy is a collaborative application used by ${dao.name} to fund proposals. Anyone can make proposals for funding using Alchemy, and anyone who has acquired reputation in ${dao.name} can vote on whether to fund proposals. Currently,
-          ${dao.name} has ${dao.memberCount} members with a total of ${Math.round(dao.reputationTotalSupply).toLocaleString()} reputation`,
+          ${dao.name} has ${dao.memberCount} members with a total of ${Math.round(Util.fromWei(dao.reputationTotalSupply)).toLocaleString()} reputation`,
         placement: "right",
         disableBeacon: true
       },
@@ -230,7 +229,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.outer}>
-        <BreadcrumbsItem to={'/dao/' + dao.address}>{dao.name}</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
         <div className={tourModalClass}>
           <div className={css.bg}></div>
@@ -257,18 +256,18 @@ For additional information check out our <a href="https://docs.google.com/docume
         <Joyride
           callback={this.handleJoyrideCallback}
           continuous
-          key={'joyride_' + this.state.tourCount /* This is a hack to get the tour to reset after it ends, so it can be shown again */}
+          key={"joyride_" + this.state.tourCount /* This is a hack to get the tour to reset after it ends, so it can be shown again */}
           run={tourVisible}
           steps={tourSteps}
           showProgress
           styles={{
             options: {
-              arrowColor: '#fff',
-              backgroundColor: '#fff',
-              primaryColor: '#000',
+              arrowColor: "#fff",
+              backgroundColor: "#fff",
+              primaryColor: "#000",
               borderRadius: 0,
-              textColor: 'rgba(20, 20, 20, 1.000)',
-              overlayColor: 'rgba(0,0,0,.7)',
+              textColor: "rgba(20, 20, 20, 1.000)",
+              overlayColor: "rgba(0,0,0,.7)",
             },
             tooltip: {
               borderRadius: 0,
@@ -333,15 +332,16 @@ For additional information check out our <a href="https://docs.google.com/docume
 const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(withCookies(ViewDaoContainer));
 
 export default (props: RouteComponentProps<any>) => {
-  const daoAddress = props.match.params.daoAvatarAddress
+  const daoAddress = props.match.params.daoAvatarAddress;
+  const arc = getArc();
   return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
       if (state.error) {
-        return <div>{ state.error.message }</div>
+        return <div>{ state.error.message }</div>;
       } else if (state.data) {
-        return <ConnectedViewDaoContainer dao={state.data} {...props }/>
+        return <ConnectedViewDaoContainer dao={state.data} {...props }/>;
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }
     }
-  }</Subscribe>
-}
+  }</Subscribe>;
+};

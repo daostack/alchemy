@@ -1,12 +1,14 @@
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 //@ts-ignore
-import { Modal } from 'react-router-modal';
+import { Modal } from "react-router-modal";
 
 import { proposalEnded } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, ProposalStage } from '@daostack/client'
+import { IDAOState, IProposalState, IProposalStage } from "@daostack/client";
+import Util from "lib/util";
 
 import RewardsString from "components/Proposal/RewardsString";
 import TransferDetails from "components/Proposal/TransferDetails";
@@ -29,7 +31,7 @@ interface IProps {
   beneficiaryProfile?: IProfileState;
   closeAction: any;
   currentAccount?: string;
-  currentAccountGens?: number;
+  currentAccountGens?: BN;
   dao: IDAOState;
   effectText?: string | JSX.Element;
   proposal: IProposalState;
@@ -74,11 +76,15 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
 
     // TODO: calculate reputationWhenExecuted
     // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-    const totalReputation = dao.reputationTotalSupply;
+    const totalReputation = Util.fromWei(dao.reputationTotalSupply);
+    const votesFor = Util.fromWei(proposal.votesFor);
+    const votesAgainst = Util.fromWei(proposal.votesAgainst);
+    const stakesFor = Util.fromWei(proposal.stakesFor);
+    const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    const yesPercentage = totalReputation && proposal.votesFor ? Math.max(2, Math.ceil(proposal.votesFor / totalReputation * 100)) : 0;
-    const noPercentage = totalReputation  && proposal.votesAgainst ? Math.max(2, Math.ceil(proposal.votesAgainst / totalReputation * 100)) : 0;
+    const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
+    const noPercentage = totalReputation  && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputation * 100)) : 0;
 
     const styles = {
       forBar: {
@@ -89,10 +95,15 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
       },
     };
 
-    const buyGensClass = classNames({
-      [css.genError]: true,
-      [css.hidden]: this.state.stakeAmount <= currentAccountGens
-    });
+    let accountGens, buyGensClass;
+    if (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) {
+      accountGens = Util.fromWei(currentAccountGens);
+
+      buyGensClass = classNames({
+        [css.genError]: true,
+        [css.hidden]: this.state.stakeAmount <= accountGens
+      });
+    }
 
     let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules;
     switch (actionType) {
@@ -102,8 +113,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
         // TODO: check if the commented lines are correctly refactored
         // passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
         // failIncentive = proposal.state == ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
-        passIncentive = proposal.stage == ProposalStage.Queued ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
-        failIncentive = proposal.stage == ProposalStage.Queued ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
+        passIncentive = proposal.stage == IProposalStage.Queued ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
+        failIncentive = proposal.stage == IProposalStage.Queued ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR YES VOTES";
         rules = <div>
                   <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
@@ -116,8 +127,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
         icon = <img src="/assets/images/Tx/Downvote.svg" />;
         transactionType = <span><strong className={css.failVote}>Fail</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
-        passIncentive = proposal.stage == ProposalStage.Queued ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
-        failIncentive = proposal.stage == ProposalStage.Queued ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
+        passIncentive = proposal.stage == IProposalStage.Queued ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
+        failIncentive = proposal.stage == IProposalStage.Queued ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR NO VOTES";
         rules = <div>
                   <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
@@ -210,15 +221,15 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
               actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass ?
               <div className={css.stakingInfo + " " + css.clearfix}>
                 <div className={css.currentPredictions}>
-                  <div>Pass {proposal.stakesFor}{actionType == ActionTypes.StakePass ? " + " + stakeAmount + " = " + (proposal.stakesFor + stakeAmount) : ""} GEN</div>
-                  <div>Fail {proposal.stakesAgainst}{actionType == ActionTypes.StakeFail ? " + " + stakeAmount + " = " + (proposal.stakesAgainst + stakeAmount) : ""} GEN</div>
+                  <div>Pass {stakesFor}{actionType == ActionTypes.StakePass ? " + " + stakeAmount + " = " + (stakesFor + stakeAmount) : ""} GEN</div>
+                  <div>Fail {stakesAgainst}{actionType == ActionTypes.StakeFail ? " + " + stakeAmount + " = " + (stakesAgainst + stakeAmount) : ""} GEN</div>
                 </div>
                 <div className={css.stakingForm}>
                   <span>Your stake</span>
                   <div className={buyGensClass}>
                     <h4>
                       You do not have enough GEN
-                      <span>YOUR STAKE: {stakeAmount} - WALLET BALANCE: {currentAccountGens}</span>
+                      <span>YOUR STAKE: {stakeAmount} - WALLET BALANCE: {accountGens}</span>
                     </h4>
                     <div className={css.exchangeList}>
                       Select an exchange  &#8964;
@@ -244,7 +255,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                       value={stakeAmount}
                     />
                     <span className={css.genLabel}>GEN</span>
-                    <span>Your balance: {currentAccountGens} GEN</span>
+                    <span>Your balance: {accountGens} GEN</span>
                   </div>
                 </div>
               </div> : ""
@@ -268,7 +279,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                       <h3>{rulesHeader}</h3>
                     </div>
                     <div className={css.body}>{rules}</div>
-                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
                   </div>
                 </span>
               </div> : ""
@@ -292,10 +303,10 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 When you click "Launch MetaMask" we will pop up a Metamask dialogue.
                 This dialogue will ask you to approve your transaction, including a small ETH cost.
                 It will set a default gas limit and gas price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
+                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank">this calculator</a> to adjust the gas price.
               </p>
-              { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > currentAccountGens) ?
-                <Tooltip placement="left" trigger={['hover']} overlay={this.state.stakeAmount <= 0 ? 'Please enter a positive amount' : 'Insufficient GENs'}>
+              { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
+                <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
                   <button
                     className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
                     disabled={true}

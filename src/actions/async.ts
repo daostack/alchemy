@@ -1,7 +1,7 @@
 export enum AsyncActionSequence {
-  Pending = 'pending',
-  Failure = 'failure',
-  Success = 'success'
+  Pending = "pending",
+  Failure = "failure",
+  Success = "success"
 }
 
 /**
@@ -16,4 +16,4 @@ export interface IAsyncAction<Type extends string, Meta, Payload> {
 }
 
 export const isAsyncAction = (action: any): action is IAsyncAction<any, any, any> =>
-  typeof action.type === 'string' && Object.keys(AsyncActionSequence).map((k: any) => AsyncActionSequence[k]).indexOf(action.sequence) !== -1;
+  typeof action.type === "string" && Object.keys(AsyncActionSequence).map((k: any) => AsyncActionSequence[k]).indexOf(action.sequence) !== -1;

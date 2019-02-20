@@ -1,6 +1,6 @@
 import * as React from "react";
 import { IDaoState, IProposalState } from "reducers/arcReducer";
-import { IDAOState } from '@daostack/client'
+import { IDAOState } from "@daostack/client";
 import * as css from "./ViewDao.scss";
 
 // TODO: interface needs to use IDAOState
@@ -15,8 +15,8 @@ export default class DaoHeadings extends React.Component<IProps, null> {
 
     let latestHeadingProposal = {
       executionTime: 0,
-      title: 'DAO Heading: Pass a proposal with a title that starts with \
-             "DAO Heading:" to replace this text.'
+      title: "DAO Heading: Pass a proposal with a title that starts with \
+             \"DAO Heading:\" to replace this text."
     };
 
     dao.proposals.forEach((proposal: IProposalState) => {
