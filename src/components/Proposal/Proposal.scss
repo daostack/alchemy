@@ -363,8 +363,19 @@ button.disabled {
 }
 
 .stakes {
-	font-size: 13px;
-    margin: 13px 14px;
+    position: absolute;
+    top: 13px;
+    font-size: 12px;
+    width: 83%;
+    left: 50%;
+    transform: translate(-50%,0);
+
+	
+	img {
+	    position: relative;
+	    top: 3px;
+	    margin-right: 5px;
+	}
 
 	.stakesFor, .forBar, .stakesAgainst, .againstBar {
 		float: left;
@@ -372,10 +383,6 @@ button.disabled {
 
 	.forBar, .againstBar {
 		height: 18px;
-
-		img {
-			margin-right: 5px;
-		}
 
 		b {
 			font-weight: normal;
@@ -947,6 +954,7 @@ button.disabled {
 }
 
 .predictions {
+	position: relative;
 	margin-left: -1px;
 	float: right;
 	width: 50%;
@@ -1088,7 +1096,7 @@ button.disabled {
 .boostedAmount {
 	display: block;
 	margin-top: 10px;
-	margin-bottom: 3px;
+	padding-top: 43px;
 }
 
 .predictions.unconfirmedPrediction {
