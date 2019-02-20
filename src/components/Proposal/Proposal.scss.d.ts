@@ -19,6 +19,7 @@ export const voteRecord: string;
 export const castVote: string;
 export const castVoteFor: string;
 export const castVoteAgainst: string;
+export const statusTitle: string;
 export const voteStatus: string;
 export const hasVoted: string;
 export const hasNotVoted: string;

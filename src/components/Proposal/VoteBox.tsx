@@ -144,7 +144,32 @@ export default class VoteBox extends React.Component<IProps, IState> {
             proposal={proposal}
           /> : ""
         }
-
+        { this.props.detailView ?
+          <div className={voteStatusClass} >
+            <div className={css.statusTitle}>
+              <h3>Votes</h3>
+              <span>NUM Votes ></span>
+            </div>
+            <div className={css.castVote}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
+              </button>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
+              </button>
+            </div>
+            <div className={css.voteRecord}>
+              You voted
+              <span className={css.castVoteFor}>
+                - For
+              </span>
+              <span className={css.castVoteAgainst}>
+                - Against
+              </span>
+            </div>
+          </div>
+        : " "
+        }
         <div className={voteControls + " " + css.clearfix}>
           <div className={css.voteDivider}>
             <div className={css.voteGraphs}>
@@ -263,6 +288,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
             </div>
           </div>
         </div>
+        { !this.props.detailView ?
           <div className={voteStatusClass} >
             <div className={css.castVote}>
               <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
@@ -282,6 +308,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
               </span>
             </div>
           </div>
+        : " "
+        }
       </div>
     );
   }
