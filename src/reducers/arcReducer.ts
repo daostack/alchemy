@@ -289,6 +289,7 @@ export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   // );
   const res = (
     (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
+    (proposal.stage == IProposalStage.ExpiredInQueue) ||
     (proposal.stage == IProposalStage.QuietEndingPeriod && proposal.winningOutcome !== ProposalOutcome.Pass)
   );
 
