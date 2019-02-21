@@ -14,15 +14,17 @@ interface IProps {
   detailView?: boolean
   dao: IDAOState
   proposal: IProposalState
+  transactionModal?: boolean
 }
 
 export default class TransferDetails extends React.Component<IProps, null> {
   public render() {
 
-    const { beneficiaryProfile, dao, proposal, detailView } = this.props;
+    const { beneficiaryProfile, dao, proposal, detailView, transactionModal } = this.props;
 
     const transferDetailsClass = classNames({
       [css.detailView]: this.props.detailView,
+      [css.transactionModal]: this.props.transactionModal,
       [css.transferDetails]: true,
     });
 

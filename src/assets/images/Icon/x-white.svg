@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="7px" height="7px" viewBox="0 0 7 7" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Alchemy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="vote/-x-small-fill" transform="translate(-4.000000, -4.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="Group" transform="translate(4.000000, 4.000000)">
+                <polygon id="Path-2" points="0.295697075 0.965366162 1.00524254 0.260706508 6.95735899 6.25409243 6.24781352 6.95875209"></polygon>
+                <path d="M6.24781352,0.260706508 L6.95735899,0.965366162 L1.00524254,6.95875209 L0.295697075,6.25409243 L6.24781352,0.260706508 Z M6.95735899,0.965366162 L1.00524254,6.95875209 L0.295697075,6.25409243 L6.24781352,0.260706508 L6.95735899,0.965366162 Z" id="Path-2"></path>
+            </g>
+        </g>
+    </g>
+</svg>

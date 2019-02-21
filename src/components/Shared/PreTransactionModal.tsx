@@ -105,9 +105,10 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
       });
     }
 
-    let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules;
+    let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules, actionTypeClass;
     switch (actionType) {
       case ActionTypes.VoteUp:
+        actionTypeClass = css.voteUp;
         icon = <img src="/assets/images/Icon/vote/for-fill-green.svg" />;
         transactionType = <span><strong className={css.passVote}>Pass</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
@@ -124,6 +125,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.VoteDown:
+        actionTypeClass = css.voteDown;
         icon = <img src="/assets/images/Icon/vote/against.svg" />;
         transactionType = <span><strong className={css.failVote}>Fail</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
@@ -138,7 +140,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.StakePass:
-        icon = <img src="/assets/images/Tx/StakePass.svg"/>;
+        actionTypeClass = css.stakePass;
+        icon = <img src="/assets/images/Icon/v-white.svg"/>;
         transactionType = <span><strong className={css.passVote}>Pass</strong> prediction</span>;
 
         passIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
@@ -151,7 +154,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.StakeFail:
-        icon = <img src="/assets/images/Tx/StakeFail.svg"/>;
+        actionTypeClass = css.stakeFail;
+        icon = <img src="/assets/images/Icon/x-white.svg"/>;
         transactionType = <span><strong className={css.failVote}>Fail</strong> prediction</span>;
         passIncentive = <span>LOSE YOUR STAKE</span>;
         failIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
@@ -163,6 +167,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.CreateProposal:
+        actionTypeClass = css.createProposal;
         icon = <img src="/assets/images/Tx/NewProposal.svg"/>;
         transactionType = <span>Create <strong className={css.redeem}>proposal</strong></span>;
 
@@ -194,7 +199,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
         <div className={css.metaMaskModal}>
           <div className={css.bg} onClick={this.props.closeAction}></div>
           <div className={css.modalWindow}>
-            <div className={css.transactionHeader + " " + css.clearfix}>
+            <div className={css.transactionHeader + " " + css.clearfix + " " + actionTypeClass}>
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
@@ -227,17 +232,13 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
               <div className={css.proposalTitle}>
                 <strong>{proposal.title || "[no title]"}</strong>
               </div>
-              <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} />
+              <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
             </div>
             { /******* Staking form ******  **/
               actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass ?
               <div className={css.stakingInfo + " " + css.clearfix}>
-                <div className={css.currentPredictions}>
-                  <div>Pass {stakesFor}{actionType == ActionTypes.StakePass ? " + " + stakeAmount + " = " + (stakesFor + stakeAmount) : ""} GEN</div>
-                  <div>Fail {stakesAgainst}{actionType == ActionTypes.StakeFail ? " + " + stakeAmount + " = " + (stakesAgainst + stakeAmount) : ""} GEN</div>
-                </div>
                 <div className={css.stakingForm}>
-                  <span>Your stake</span>
+                  <span className={css.yourStakeTitle}>Your stake</span>
                   <div className={buyGensClass}>
                     <h4>
                       You do not have enough GEN
@@ -256,7 +257,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                     <span>Use one of our trusted exchanges to acquire more GEN</span>
                   </div>
                  <div className={css.formGroup + " " + css.clearfix}>
-                    <span className={css.genLabel}>Stake</span>
                     <input
                       autoFocus={true}
                       type="number"
@@ -266,7 +266,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                       onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
                       value={stakeAmount}
                     />
-                    <span className={css.genLabel}>GEN</span>
+                    <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                     <span>Your balance: {accountGens} GEN</span>
                   </div>
                 </div>
