@@ -82,7 +82,7 @@ export default (props: { dao: IDAOState, address: Address}) => {
         } else if (state.error) {
           return <div>{state.error}</div>;
         } else {
-          return <AccountBalances dao={props.dao} member={state.data[0]} ethBalance={state.data[1]} genBalance={state.data[2]} genAllowance={new BN(state.data[3].amount)} />;
+          return <AccountBalances dao={props.dao} member={state.data[0]} ethBalance={state.data[1]} genBalance={state.data[2]} genAllowance={state.data[3] ? new BN(state.data[3].amount) : new BN(0)} />;
         }
       }
     }</Subscribe>;

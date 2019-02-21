@@ -52,6 +52,7 @@ interface IContainerProps {
   dao: IDAOState;
   currentAccount: IMemberState;
   currentAccountGens: BN;
+  currentAccountGenStakingAllowance: BN;
   detailView?: boolean;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
@@ -62,7 +63,6 @@ interface IContainerProps {
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
   const proposal = ownProps.proposal;
   const dao = ownProps.dao;
-  // const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   // TODO: get the threshold from the proposals
   // const threshold = dao.currentThresholdToBoost;
   const threshold = 12345;
@@ -74,8 +74,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     creatorProfile: state.profiles[proposal.proposer],
     currentAccount,
     currentAccountGens: ownProps.currentAccountGens,
-    currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
-    // currentVote,
+    currentAccountGenStakingAllowance: ownProps.currentAccountGenStakingAllowance,
     dao,
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
@@ -137,7 +136,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccount,
       currentAccountGens,
       currentAccountGenStakingAllowance,
-      // currentVote,
       dao,
       detailView,
       proposal,
@@ -463,27 +461,28 @@ class ProposalContainer extends React.Component<IProps, IState> {
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address, detailView?: boolean}) => {
-  //  TODO: add logic for when props.currentAccountAddress is undefined
+  // TODO: get things to work without an account
+  if (!props.currentAccountAddress) {
+    return null;
+  }
+
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
-  let accountState: Observable<IMemberState|undefined>;
-  if (props.currentAccountAddress) {
-    accountState =  dao.member(props.currentAccountAddress).state;  // the current account as member of the DAO
-  } else {
-    of(null);
-  }
+
   const observable = combineLatest(
     dao.proposal(props.proposalId).state, // the list of pre-boosted proposals
-    accountState,
+    props.currentAccountAddress ? dao.member(props.currentAccountAddress).state : of(null),
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    dao.proposal(props.proposalId).rewards({}),
-    dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
-    dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }),
-    arc.GENToken().balanceOf(props.currentAccountAddress)
+    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
+    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
+    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
+    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)),
+    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(null) // TODO: change how this is handled when allowance returns BN
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any]>): any => {
+      console.log("got state = ", state);
       if (state.isLoading) {
         return <div>Loading proposal</div>;
       } else if (state.error) {
@@ -497,6 +496,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
           detailView={props.detailView}
           currentAccount={state.data[1]}
           currentAccountGens={state.data[5]}
+          currentAccountGenStakingAllowance={state.data[6] ? new BN(state.data[6].amount) : new BN(0)}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
