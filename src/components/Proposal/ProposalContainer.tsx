@@ -247,6 +247,11 @@ class ProposalContainer extends React.Component<IProps, IState> {
         identifier: proposal.id
       };
 
+      const executeButtonClass = classNames({
+        [css.stateChange]: true,
+        [css.invisible]: proposalEnded(proposal) || closingTime(proposal).isAfter(moment())
+      })
+
       return (
         <div className={proposalClass + " " + css.clearfix}>
           <div className={css.proposalInfo}>
@@ -289,7 +294,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </div>
 
               {!this.props.detailView ?
-                  <div className={css.stateChange}>
+                  <div className={executeButtonClass}>
                     <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                       <img src="/assets/images/Icon/execute.svg"/>
                       <span> Execute</span>
@@ -378,8 +383,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
             </div>
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
             {this.props.detailView ?
-                <div className={css.stateChange}>
-                  <button className={css.executeProposal}>
+                <div className={executeButtonClass}>
+                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                     <img src="/assets/images/Icon/execute.svg"/>
                     <span> Execute</span>
                   </button>

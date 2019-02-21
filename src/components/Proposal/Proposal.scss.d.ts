@@ -1,5 +1,6 @@
 export const clearfix: string;
 export const hidden: string;
+export const invisible: string;
 export const loading: string;
 export const proposalContainer: string;
 export const proposal: string;

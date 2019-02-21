@@ -8,6 +8,10 @@
 	display: none;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
 .loading {
 	display: none;
 	position: absolute;
@@ -266,7 +270,7 @@ button.disabled {
 }
 
 .voteStatus.hasNotVoted {
-	
+
 	.castVote {
 		display: block;
 	    margin: -4px auto 15px auto;
@@ -310,7 +314,7 @@ button.disabled {
 		outline: none;
 		margin-left: 5px;
 
-		span { 
+		span {
 			display: block;
 			margin-left: 20px;
 			font-size: 13px;
@@ -466,7 +470,7 @@ button.disabled {
     left: 50%;
     transform: translate(-50%,0);
 
-	
+
 	img {
 	    position: relative;
 	    top: 3px;
@@ -1066,7 +1070,7 @@ button.disabled {
 		text-align: center;
 		display: block;
 		color: rgba(3, 118, 255, 1.000);
-		
+
 		b {
 			font-weight: normal;
 
