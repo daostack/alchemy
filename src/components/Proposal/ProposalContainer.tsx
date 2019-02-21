@@ -482,7 +482,6 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any]>): any => {
-      console.log("got state = ", state);
       if (state.isLoading) {
         return <div>Loading proposal</div>;
       } else if (state.error) {
