@@ -65,7 +65,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const dao = ownProps.dao;
   // TODO: get the threshold from the proposals
   // const threshold = dao.currentThresholdToBoost;
-  const threshold = 12345;
+  const threshold = ownProps.proposal.confidenceThreshold;
 
   let currentAccount = ownProps.currentAccount;
 
