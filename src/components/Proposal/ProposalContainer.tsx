@@ -287,23 +287,31 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <div className={css.timer}>
                 {!proposalEnded(proposal) ?
                     closingTime(proposal).isAfter(moment()) ?
-                      <Countdown toDate={closingTime(proposal)} detailView={detailView}/> :
-                      <span className={css.closedTime}>Closed {closingTime(proposal).format("MMM D, YYYY")}</span>
+                      <Countdown toDate={closingTime(proposal)} detailView={detailView} /> :
+                      <span className={css.closedTime}>
+                        {proposal.stage == IProposalStage.Queued ? "Expired" :
+                         proposal.stage == IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
+                         "Closed"}&nbsp;
+                         {closingTime(proposal).format("MMM D, YYYY")}
+                      </span>
                     : " "
                 }
               </div>
 
               {!this.props.detailView ?
-                  <div className={executeButtonClass}>
+                <div className={executeButtonClass}>
+                  {proposal.stage == IProposalStage.PreBoosted ?
+                    <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                      <img src="/assets/images/Icon/boost.svg"/>
+                      <span> Boost</span>
+                    </button>
+                    :
                     <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                       <img src="/assets/images/Icon/execute.svg"/>
                       <span> Execute</span>
                     </button>
-                    <button className={css.boostProposal}>
-                      <img src="/assets/images/Icon/boost.svg"/>
-                      <span> Boost</span>
-                    </button>
-                  </div>
+                  }
+                </div>
                 : " "
               }
             </div>
@@ -382,17 +390,21 @@ class ProposalContainer extends React.Component<IProps, IState> {
               </Link>
             </div>
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
+
             {this.props.detailView ?
-                <div className={executeButtonClass}>
+              <div className={executeButtonClass}>
+                {proposal.stage == IProposalStage.PreBoosted ?
+                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                    <img src="/assets/images/Icon/boost.svg"/>
+                    <span> Boost</span>
+                  </button>
+                  :
                   <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                     <img src="/assets/images/Icon/execute.svg"/>
                     <span> Execute</span>
                   </button>
-                  <button className={css.boostProposal}>
-                    <img src="/assets/images/Icon/boost.svg"/>
-                    <span> Boost</span>
-                  </button>
-                </div>
+                }
+              </div>
               : " "
             }
 
