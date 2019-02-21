@@ -13,7 +13,6 @@ import * as io from "socket.io-client";
 
 import * as classNames from "classnames";
 
-
 import * as profileActions from "actions/profilesActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";

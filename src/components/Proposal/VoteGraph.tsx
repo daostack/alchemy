@@ -15,7 +15,6 @@ export default class VoteGraph extends React.Component<IProps, null> {
   public render() {
     const { noPercentage, relative, size, yesPercentage} = this.props;
 
-
     const containerClass = classNames({
       [css.container] : true
      });

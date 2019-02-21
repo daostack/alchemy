@@ -216,7 +216,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         <div>
           <div className={css.statusTitle}>
             <h3>Predictions</h3>
-            { this.props.detailView ? 
+            { this.props.detailView ?
               <div className={css.stakeControls}>
                 {
                  proposal.stage === IProposalStage.Queued
@@ -275,10 +275,10 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                     {stakingLeftToBoost.toFixed(2)} GEN to boost
                   </b>
                 </span>
-              : ''
+              : ""
             }
           </span>
-          { !this.props.detailView ? 
+          { !this.props.detailView ?
             <div className={css.centered}>
               {
                proposal.stage === IProposalStage.Queued

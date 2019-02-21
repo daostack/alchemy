@@ -222,7 +222,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                         <h3>{rulesHeader}</h3>
                       </div>
                       <div className={css.body}>{rules}</div>
-                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
                     </div>
                   </span>
                 </div> : ""

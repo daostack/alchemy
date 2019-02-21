@@ -91,10 +91,10 @@ export function createProposal(
       const proposalOptions = {
         beneficiary: beneficiaryAddress,
         description,
-        nativeTokenReward: nativeTokenReward,
-        reputationReward: reputationReward,
-        ethReward: ethReward,
-        externalTokenReward: externalTokenReward,
+        nativeTokenReward,
+        reputationReward,
+        ethReward,
+        externalTokenReward,
         externalTokenAddress: "",
         periodLength: 0, // TODO: check what the default "periodLength" should be here
         periods: 1, // "periodLength 0 requires periods to be 1"

@@ -10,11 +10,11 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import * as css from "./TransferDetails.scss";
 
 interface IProps {
-  beneficiaryProfile?: IProfileState
-  detailView?: boolean
-  dao: IDAOState
-  proposal: IProposalState
-  transactionModal?: boolean
+  beneficiaryProfile?: IProfileState;
+  detailView?: boolean;
+  dao: IDAOState;
+  proposal: IProposalState;
+  transactionModal?: boolean;
 }
 
 export default class TransferDetails extends React.Component<IProps, null> {

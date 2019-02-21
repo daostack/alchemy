@@ -250,7 +250,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const executeButtonClass = classNames({
         [css.stateChange]: true,
         [css.invisible]: proposalEnded(proposal) || closingTime(proposal).isAfter(moment())
-      })
+      });
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
@@ -274,7 +274,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                         <div className={css.body}>
                           <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
                         </div>
-                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target='_blank'>View the Genesis Protocol</a>
+                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
                       </div>
                     </div>
                   </strong>

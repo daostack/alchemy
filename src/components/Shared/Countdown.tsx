@@ -94,7 +94,6 @@ class Countdown extends React.Component<IProps, IState> {
       }
     }
 
-
     const containerClass = classNames({
       [css.detailView]: this.props.detailView,
       [css.container]: true,

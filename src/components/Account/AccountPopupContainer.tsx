@@ -76,12 +76,10 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   public render() {
     const { accountAddress, dao, profile, reputation, tokens, detailView } = this.props;
 
-
     const targetAccountClass = classNames({
       [css.detailView]: this.props.detailView,
       [css.targetAccount]: true
-    })
-
+    });
 
     return (
       <div className={targetAccountClass}>
