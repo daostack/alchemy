@@ -124,10 +124,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
   public handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
     const proposalValues = {...values,
-      ethReward: Util.toWei(values.ethReward),
-      externalTokenReward: Util.toWei(values.externalTokenReward),
-      nativeTokenReward: Util.toWei(values.nativeTokenReward),
-      reputationReward: Util.toWei(values.reputationReward)
+      ethReward: Util.toWei(Number(values.ethReward)),
+      externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
+      nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
+      reputationReward: Util.toWei(Number(values.reputationReward))
     };
 
     this.setState({
