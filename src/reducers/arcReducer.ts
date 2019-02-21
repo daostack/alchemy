@@ -247,7 +247,7 @@ export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   //   // Pre boosted proposal past end time but not yet executed
   //   proposal.state == ProposalStates.PreBoostedTimedOut
   // );
-  const res = proposal.stage === IProposalStage.Executed;
+  const res = proposal.stage === IProposalStage.Executed || proposal.stage == IProposalStage.ExpiredInQueue;
   return res;
 }
 
