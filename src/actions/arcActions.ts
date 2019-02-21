@@ -118,9 +118,9 @@ export function createProposal(
 }
 
 export function executeProposal(avatarAddress: string, proposalId: string) {
-  return (dispatch: Dispatch<any>) => {
+  return async (dispatch: Dispatch<any>) => {
     const arc = getArc();
-    return  arc.dao(avatarAddress).proposal(proposalId).execute();
+    await arc.dao(avatarAddress).proposal(proposalId).execute().pipe(first()).toPromise();
   };
 }
 

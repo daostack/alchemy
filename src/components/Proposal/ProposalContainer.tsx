@@ -121,6 +121,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
     };
   }
 
+  public handleClickExecute(event: any) {
+    this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
+  }
+
   public handleClickRedeem(event: any) {
     this.setState({ preRedeemModalOpen: true });
   }
@@ -286,7 +290,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
               {!this.props.detailView ?
                   <div className={css.stateChange}>
-                    <button className={css.executeProposal}>
+                    <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                       <img src="/assets/images/Icon/execute.svg"/>
                       <span> Execute</span>
                     </button>
