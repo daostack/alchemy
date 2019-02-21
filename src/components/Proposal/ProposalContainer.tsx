@@ -52,6 +52,8 @@ interface IContainerProps {
   dao: IDAOState;
   currentAccount: IMemberState;
   currentAccountGens: BN;
+  currentAccountGenStakingAllowance: BN;
+  detailView?: boolean;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
@@ -61,10 +63,9 @@ interface IContainerProps {
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
   const proposal = ownProps.proposal;
   const dao = ownProps.dao;
-  // const currentVote = state.arc.votes[`${proposal.id}-${state.web3.ethAccountAddress}`];
   // TODO: get the threshold from the proposals
   // const threshold = dao.currentThresholdToBoost;
-  const threshold = 12345;
+  const threshold = ownProps.proposal.confidenceThreshold;
 
   let currentAccount = ownProps.currentAccount;
 
@@ -73,8 +74,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     creatorProfile: state.profiles[proposal.proposer],
     currentAccount,
     currentAccountGens: ownProps.currentAccountGens,
-    currentAccountGenStakingAllowance: state.web3.currentAccountGenStakingAllowance,
-    // currentVote,
+    currentAccountGenStakingAllowance: ownProps.currentAccountGenStakingAllowance,
     dao,
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
@@ -121,6 +121,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
     };
   }
 
+  public handleClickExecute(event: any) {
+    this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
+  }
+
   public handleClickRedeem(event: any) {
     this.setState({ preRedeemModalOpen: true });
   }
@@ -136,8 +140,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccount,
       currentAccountGens,
       currentAccountGenStakingAllowance,
-      // currentVote,
       dao,
+      detailView,
       proposal,
       approveStakingGens,
       redeemProposal,
@@ -176,6 +180,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       // const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
       const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
+        [css.detailView]: detailView,
+        [css.clearfix]: detailView,
         [css.proposal]: true,
         [css.openProposal]: proposal.stage == IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted || proposal.stage == IProposalStage.Boosted || proposal.stage == IProposalStage.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
@@ -186,9 +192,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const submittedTime = moment.unix(proposal.createdAt);
 
       // Calculate reputation percentages
-      // TODO: calculate "reputationWhenExecuted" as in the commented line
-      // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
+      const totalReputation = Util.fromWei(proposal.stage == IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
       const votesFor = Util.fromWei(proposal.votesFor);
       const votesAgainst = Util.fromWei(proposal.votesAgainst);
       const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
@@ -243,27 +247,65 @@ class ProposalContainer extends React.Component<IProps, IState> {
         identifier: proposal.id
       };
 
+      const executeButtonClass = classNames({
+        [css.stateChange]: true,
+        [css.invisible]: proposalEnded(proposal) || closingTime(proposal).isAfter(moment())
+      });
+
       return (
         <div className={proposalClass + " " + css.clearfix}>
-
           <div className={css.proposalInfo}>
+            <h3 className={css.proposalTitleTop}>
+              <span data-test-id="proposal-closes-in">
+                {proposal.stage == IProposalStage.QuietEndingPeriod ?
+                  <strong>
+                    <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
+                    <div className={css.help}>
+                      <img src="/assets/images/Icon/Help-light.svg" />
+                      <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
+                      <div className={css.helpBox}>
+                        <div className={css.pointer}></div>
+                        <div className={css.bg}></div>
+                        <div className={css.bridge}></div>
+                        <div className={css.header}>
+                          <h2>Genesis Protocol</h2>
+                          <h3>RULES FOR OVERTIME</h3>
+                        </div>
+                        <div className={css.body}>
+                          <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
+                        </div>
+                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
+                      </div>
+                    </div>
+                  </strong>
+                  : " "
+                }
+              </span>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
+            </h3>
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
                 {!proposalEnded(proposal) ?
-                    closingTime(proposal).isAfter(moment()) ? <Countdown toDate={closingTime(proposal)} /> : <span className={css.closedTime}>CLOSED {closingTime(proposal).format("MMM D, YYYY").toUpperCase()}</span>
+                    closingTime(proposal).isAfter(moment()) ?
+                      <Countdown toDate={closingTime(proposal)} detailView={detailView}/> :
+                      <span className={css.closedTime}>Closed {closingTime(proposal).format("MMM D, YYYY")}</span>
                     : " "
                 }
               </div>
-              <div className={css.stateChange}>
-                <button className={css.executeProposal}>
-                  <img src="/assets/images/Icon/execute.svg"/>
-                  <span> Execute</span>
-                </button>
-                <button className={css.boostProposal}>
-                  <img src="/assets/images/Icon/boost.svg"/>
-                  <span> Boost</span>
-                </button>
-              </div>
+
+              {!this.props.detailView ?
+                  <div className={executeButtonClass}>
+                    <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                      <img src="/assets/images/Icon/execute.svg"/>
+                      <span> Execute</span>
+                    </button>
+                    <button className={css.boostProposal}>
+                      <img src="/assets/images/Icon/boost.svg"/>
+                      <span> Boost</span>
+                    </button>
+                  </div>
+                : " "
+              }
             </div>
 
             {proposalPassed(proposal) ?
@@ -298,13 +340,15 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 </div>
                 : ""
             }
-
             <div className={css.createdBy}>
-              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao}/>
-              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
+              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={detailView}/>
+              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
             </div>
-
-            <h3>
+            <div className={css.description}>
+              First proposal to test it out.
+              I’m glad to be apart and test things out. I’m interested in helping the general public and non-devs more involved in the space and creating DAO’s.
+            </div>
+            <h3 className={css.proposalTitleBottom}>
               <span data-test-id="proposal-closes-in">
                 {proposal.stage == IProposalStage.QuietEndingPeriod ?
                   <strong>
@@ -330,53 +374,31 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[no title]"}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
             </h3>
             <div className={css.proposalDetails}>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
                 <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
               </Link>
             </div>
-
-            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} />
-          </div>
-
-          <div className={css.proposalBottom + " " + css.clearfix}>
-            {proposalEnded(proposal) ?
-              <div>
-                {this.state.preRedeemModalOpen ?
-                  <PreTransactionModal
-                    actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal, currentAccount.address)}
-                    beneficiaryProfile={beneficiaryProfile}
-                    closeAction={this.closePreRedeemModal.bind(this)}
-                    dao={dao}
-                    effectText={redemptionsTip}
-                    proposal={proposal}
-                  /> : ""
-                }
-
-                <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  {redeemButton}
+            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
+            {this.props.detailView ?
+                <div className={executeButtonClass}>
+                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                    <img src="/assets/images/Icon/execute.svg"/>
+                    <span> Execute</span>
+                  </button>
+                  <button className={css.boostProposal}>
+                    <img src="/assets/images/Icon/boost.svg"/>
+                    <span> Boost</span>
+                  </button>
                 </div>
-              </div>
-              :
-              <PredictionBox
-                isPredictingFail={isPredictingFail}
-                isPredictingPass={isPredictingPass}
-                beneficiaryProfile={beneficiaryProfile}
-                currentPrediction={currentAccountPrediction}
-                currentStake={currentAccountStakeAmount}
-                currentAccountGens={currentAccountGens}
-                currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                dao={dao}
-                proposal={proposal}
-                stakeProposal={stakeProposal}
-                threshold={threshold}
-                approveStakingGens={approveStakingGens}
-              />
+              : " "
             }
 
+          </div>
+
+          <div className={css.proposalActions + " " + css.clearfix}>
             {!proposalEnded(proposal) ?
               <VoteBox
                 isVotingNo={isVotingNo}
@@ -387,6 +409,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 dao={dao}
                 proposal={proposal}
                 voteOnProposal={voteOnProposal}
+                detailView={detailView}
               />
               : proposalPassed(proposal) ?
                 <div className={css.decidedProposal}>
@@ -402,6 +425,41 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   </div>
                   : ""
               }
+              {proposalEnded(proposal) ?
+                <div>
+                  {this.state.preRedeemModalOpen ?
+                    <PreTransactionModal
+                      actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
+                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal, currentAccount.address)}
+                      beneficiaryProfile={beneficiaryProfile}
+                      closeAction={this.closePreRedeemModal.bind(this)}
+                      dao={dao}
+                      effectText={redemptionsTip}
+                      proposal={proposal}
+                    /> : ""
+                  }
+
+                  <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
+                    {redeemButton}
+                  </div>
+                </div>
+                :
+                <PredictionBox
+                  isPredictingFail={isPredictingFail}
+                  isPredictingPass={isPredictingPass}
+                  beneficiaryProfile={beneficiaryProfile}
+                  currentPrediction={currentAccountPrediction}
+                  currentStake={currentAccountStakeAmount}
+                  currentAccountGens={currentAccountGens}
+                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+                  dao={dao}
+                  proposal={proposal}
+                  stakeProposal={stakeProposal}
+                  threshold={threshold}
+                  approveStakingGens={approveStakingGens}
+                  detailView={detailView}
+                />
+              }
           </div>
         </div>
       );
@@ -413,30 +471,28 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
-export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
-  //  TODO: add logic for when props.currentAccountAddress is undefined
+export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address, detailView?: boolean}) => {
+  // TODO: get things to work without an account
+  if (!props.currentAccountAddress) {
+    return null;
+  }
+
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
-  let accountState: Observable<IMemberState|undefined>;
-  if (props.currentAccountAddress) {
-    accountState =  dao.member(props.currentAccountAddress).state;  // the current account as member of the DAO
-  } else {
-    of(null);
-  }
+
   const observable = combineLatest(
     dao.proposal(props.proposalId).state, // the list of pre-boosted proposals
-    accountState,
+    props.currentAccountAddress ? dao.member(props.currentAccountAddress).state : of(null),
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    dao.proposal(props.proposalId).rewards({}),
-    dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}),
-    // TODO: filter by voter once that is implemented - see https://github.com/daostack/subgraph/issues/67
-    // arc.proposal(props.proposalId).votes({ voter: props.currentAccountAddress})
-    dao.proposal(props.proposalId).votes(),
-    arc.GENToken().balanceOf(props.currentAccountAddress)
+    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
+    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
+    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
+    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)),
+    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(null) // TODO: change how this is handled when allowance returns BN
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal</div>;
       } else if (state.error) {
@@ -447,8 +503,10 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const stakes = state.data[3];
         const votes = state.data[4];
         return <ConnectedProposalContainer
+          detailView={props.detailView}
           currentAccount={state.data[1]}
           currentAccountGens={state.data[5]}
+          currentAccountGenStakingAllowance={state.data[6] ? new BN(state.data[6].amount) : new BN(0)}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}

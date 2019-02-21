@@ -1,21 +1,13 @@
-.proposalsHeader {
-  font-size: 20px;
-  position: relative;
-  padding-top: 20px;
-  padding-bottom: 10px;
-  color: $black-halftone;
-  font-weight: $bold;
+.viewProposalContainer {
   width: 100%;
 
-  span {
-    position: absolute;
-    right: 0;
-    font-size: $body;
-
-    span {
-      font-weight: $bold;
-      position: relative;
-    }
+  .discussionTitle {
+    font-size: 28px;
+    color: rgba(104, 155, 214, 1.000);
+    width: 100%;
+    border-bottom: 1px solid rgba(191, 203, 213, 1.000);
+    padding-bottom: 5px;
+    margin-bottom: 20px;
   }
 }
 
@@ -23,5 +15,9 @@
   width: 100%;
   position: relative;
   margin-top: 15px;
-  background-color: $white;
+}
+
+.viewProposalContainer .proposal {
+  background-color: transparent;
+  width: 100%;
 }

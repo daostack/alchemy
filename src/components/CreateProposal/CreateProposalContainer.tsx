@@ -284,52 +284,17 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       className={touched.description && errors.description ? css.error : null}
                     />
                     <div className={css.addTransfer}>
-                      <div className={css.rewardRow + " " + css.clearfix}>
-                        <div className={css.rewardAmount}>
-                          <input className={css.contributionReward} placeholder="Amount"/>
-                          <div className={css.contributionType}>
-                            <select className={css.contributionTypeDropdown}>
-                              <option value="ETH">ETH</option>
-                              <option value="ETH">GEN</option>
-                              <option value="ETH">Reputation</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className={css.rewardRecipient}>
-                          <div className={css.rewardArrow}>
-                            <img className={css.infoTooltip} src="/assets/images/Icon/Right-arrow.svg"/>
-                          </div>
-                          <UserSearchField
-                            daoAvatarAddress={daoAvatarAddress}
-                            name="beneficiary"
-                            onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
-                            onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                          />
-                          <label htmlFor="beneficiary" className={css.beneficiaryLabel}>
-                            {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
-                          </label>
-                        </div>
-                      </div>
-
-                      <div>
-                        <button className={css.addReward}>
-                          +
-                        </button>
-                      </div>
-
-                      <div style={{display: "none"}}>
-                        <Field
-                          id="nativeTokenRewardInput"
-                          maxLength={10}
-                          placeholder="How many tokens to reward"
-                          name="nativeTokenReward"
-                          type="number"
-                          className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
-                        />
-                        <label htmlFor="nativeTokenRewardInput">
-                          {dao.tokenSymbol} reward:
-                          {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                      <div className={css.rewardRecipient}>
+                        <label htmlFor="beneficiary">
+                          Recipient
+                          {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
                         </label>
+                        <UserSearchField
+                          daoAvatarAddress={daoAvatarAddress}
+                          name="beneficiary"
+                          onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                          onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                        />
                       </div>
 
                       <label htmlFor="reputationRewardInput">
@@ -363,7 +328,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                           </div>
                         : <div>
                             <label htmlFor="ethRewardInput">
-                              Proposal budget (ETH):
+                              ETH Reward:
                               {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
                             </label>
                             <Field
@@ -377,6 +342,21 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                             />
                           </div>
                       }
+
+                      <div style={{display: "none"}}>
+                        <Field
+                          id="nativeTokenRewardInput"
+                          maxLength={10}
+                          placeholder="How many tokens to reward"
+                          name="nativeTokenReward"
+                          type="number"
+                          className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
+                        />
+                        <label htmlFor="nativeTokenRewardInput">
+                          {dao.tokenSymbol} reward:
+                          {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                        </label>
+                      </div>
 
                       {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>

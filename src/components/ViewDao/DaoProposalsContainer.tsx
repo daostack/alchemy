@@ -26,15 +26,16 @@ const Fade = ({ children, ...props }: any) => (
 const DAOProposalsContainer = (props: {
   currentAccountAddress: Address,
   dao: IDAOState,
-  proposalsQueued: IProposalState[],
+  proposalsBoosted: IProposalState[],
   proposalsPreBoosted: IProposalState[],
-  proposalsBoosted: IProposalState[]
+  proposalsQueued: IProposalState[]
 }) => {
+
   const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted } = props;
 
-  const boostedProposalsHTML = (
-    <TransitionGroup className="boosted-proposals-list">
-      { proposalsBoosted.map((proposal: IProposalState) => (
+  const queuedProposalsHTML = (
+    <TransitionGroup className="queued-proposals-list">
+      { proposalsQueued.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
           <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
@@ -46,17 +47,17 @@ const DAOProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>
+          <ProposalContainer proposalId={proposal.id} dao={dao}  currentAccountAddress={currentAccountAddress}/>
         </Fade>
       ))}
     </TransitionGroup>
   );
 
-  const queuedProposalsHTML = (
+  const boostedProposalsHTML = (
     <TransitionGroup className="boosted-proposals-list">
-      { proposalsQueued.map((proposal: IProposalState) => (
+      { proposalsBoosted.map((proposal: IProposalState) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -82,7 +83,7 @@ const DAOProposalsContainer = (props: {
       { proposalsBoosted.length > 0 ?
         <div className={css.boostedContainer}>
           <div className={css.proposalsHeader}>
-            Boosted
+            Boosted Proposals
           </div>
           <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
             {boostedProposalsHTML}
@@ -94,7 +95,7 @@ const DAOProposalsContainer = (props: {
       { proposalsPreBoosted.length > 0 ?
         <div className={css.regularContainer}>
           <div className={css.proposalsHeader}>
-            Pending
+            Pending Proposals
           </div>
           <div className={css.proposalsContainer}>
             {preBoostedProposalsHTML}
@@ -106,7 +107,7 @@ const DAOProposalsContainer = (props: {
       { proposalsQueued.length > 0 ?
         <div className={css.regularContainer}>
           <div className={css.proposalsHeader}>
-            Regular
+            Regular Proposals
           </div>
           <div className={css.proposalsContainer}>
             {queuedProposalsHTML}
@@ -114,7 +115,6 @@ const DAOProposalsContainer = (props: {
         </div>
         : ""
       }
-
     </div>
   );
 };

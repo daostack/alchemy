@@ -46,19 +46,34 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
             <span className={css.navHeading}><b>Menu</b></span>
             <ul>
               <li>
-                <Link to={"/dao/" + dao.address}>Home</Link>
+                <Link to={"/dao/" + dao.address}>
+                  <span className={css.notification + " " + css.homeNotification}></span>
+                  <img src="/assets/images/Icon/menu/home.svg"/>
+                  Home
+                </Link>
               </li>
               <li>
-                <Link to={"/dao/" + dao.address + "/members/"}>Reputation Holders</Link>
+                <Link to={"/dao/" + dao.address + "/members/"}>
+                <span className={css.notification + " " + css.holdersNotification}></span>
+                <img src="/assets/images/Icon/menu/holders.svg"/>
+                  Reputation Holders
+                 </Link>
               </li>
               <li>
-                  <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>History</NavLink>
+                  <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>
+                    <span className={css.notification + " " + css.historyNotification}></span>
+                    <img src="/assets/images/Icon/menu/history.svg"/>
+                    History
+                  </NavLink>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>Redemptions</NavLink>
+                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
+                  <span className={css.notification + " " + css.redemptionNotification}></span>
+                  <img src="/assets/images/Icon/menu/redemption.svg"/>
+                  Redemptions
+                 </NavLink>
               </li>
             </ul>
-
           </div>
           <div className={css.daoHoldings}>
             <span className={css.navHeading}><b>DAO Holdings</b></span>

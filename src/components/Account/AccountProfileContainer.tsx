@@ -11,6 +11,8 @@ import { combineLatest } from "rxjs";
 import { first } from "rxjs/operators";
 import * as io from "socket.io-client";
 
+import * as classNames from "classnames";
+
 import * as profileActions from "actions/profilesActions";
 import Util from "lib/util";
 import { IRootState } from "reducers";
@@ -32,6 +34,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 const socket = io(process.env.API_URL);
 
 interface IStateProps extends RouteComponentProps<any> {
+  detailView?: boolean;
   accountAddress: string;
   accountInfo?: IMemberState;
   accountProfile?: IProfileState;

@@ -1,4 +1,5 @@
 import BN = require("bn.js");
+import * as classNames from "classnames";
 import { denormalize } from "normalizr";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -27,14 +28,16 @@ import { Address, IDAOState, IMemberState } from "@daostack/client";
 
 interface IStateProps {
   accountAddress: string;
-  profile: IProfileState;
   dao: IDAOState;
+  detailView?: boolean;
+  profile: IProfileState;
   reputation: BN;
   tokens: BN;
 }
 
 interface IOwnProps {
   dao: IDAOState;
+  detailView?: boolean;
   accountAddress: Address;
 }
 
@@ -71,10 +74,15 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, dao, profile, reputation, tokens } = this.props;
+    const { accountAddress, dao, profile, reputation, tokens, detailView } = this.props;
+
+    const targetAccountClass = classNames({
+      [css.detailView]: this.props.detailView,
+      [css.targetAccount]: true
+    });
 
     return (
-      <div className={css.targetAccount}>
+      <div className={targetAccountClass}>
         <div className={css.avatar}>
           <AccountImage accountAddress={accountAddress} />
         </div>

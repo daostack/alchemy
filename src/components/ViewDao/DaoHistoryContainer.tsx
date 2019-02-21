@@ -49,18 +49,18 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
   const currentAccountAddress = props.currentAccountAddress;
   const observable = combineLatest(
-    // TODO: add queries here, like `proposals({boosted: true})` or whatever
-    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Executed }), // the list of pre-boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.ExpiredInQueue }),
+    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Executed }),
     arc.dao(daoAvatarAddress).state
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IDAOState]>): any => {
+    (state: IObservableState<[IProposalState[], IProposalState[], IDAOState]>): any => {
       if (state.isLoading) {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else  {
-        return <DaoHistoryContainer proposals={state.data[0]} dao={state.data[1]} currentAccountAddress={currentAccountAddress}/>;
+        return <DaoHistoryContainer proposals={state.data[0].concat(state.data[1])} dao={state.data[2]} currentAccountAddress={currentAccountAddress}/>;
       }
     }
   }</Subscribe>;
