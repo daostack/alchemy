@@ -320,7 +320,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 {this.state.preRedeemModalOpen ?
                   <PreTransactionModal
                     actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal, currentAccount.address)}
+                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccount.address)}
                     beneficiaryProfile={beneficiaryProfile}
                     closeAction={this.closePreRedeemModal.bind(this)}
                     dao={dao}
