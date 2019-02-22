@@ -4,7 +4,7 @@ import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Web3 } from "web3";
+import Web3 = require("web3");
 
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";

@@ -1,4 +1,3 @@
-import * as Arc from "@daostack/arc.js";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import * as React from "react";
