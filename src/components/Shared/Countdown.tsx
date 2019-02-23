@@ -8,6 +8,7 @@ interface IProps {
   detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
+  onEnd?(): any;
 }
 
 interface IState {
@@ -35,7 +36,14 @@ class Countdown extends React.Component<IProps, IState> {
     // update every five seconds
     this.interval = setInterval(() => {
       const date = this.calculateCountdown(this.props.toDate);
-      date ? this.setState(date) : this.stop();
+      if (date) {
+        this.setState(date)
+      } else {
+        this.stop();
+        if (this.props.onEnd) {
+          this.props.onEnd();
+        }
+      }
     }, 5000);
   }
 

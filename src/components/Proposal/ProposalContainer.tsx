@@ -109,6 +109,7 @@ type IProps = IStateProps & IDispatchProps & IContainerProps;
 
 interface IState {
   preRedeemModalOpen: boolean;
+  expired: boolean;
 }
 
 class ProposalContainer extends React.Component<IProps, IState> {
@@ -117,7 +118,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      preRedeemModalOpen: false
+      preRedeemModalOpen: false,
+      expired: !closingTime(props.proposal).isAfter(moment())
     };
   }
 
@@ -131,6 +133,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
   public closePreRedeemModal(event: any) {
     this.setState({ preRedeemModalOpen: false });
+  }
+
+  public countdownEnded() {
+    this.setState({ expired: true });
   }
 
   public render() {
@@ -249,7 +255,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       const executeButtonClass = classNames({
         [css.stateChange]: true,
-        [css.invisible]: proposalEnded(proposal) || closingTime(proposal).isAfter(moment())
+        [css.invisible]: proposalEnded(proposal) || this.state.expired
       });
 
       return (
@@ -286,8 +292,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
                 {!proposalEnded(proposal) ?
-                    closingTime(proposal).isAfter(moment()) ?
-                      <Countdown toDate={closingTime(proposal)} detailView={detailView} /> :
+                    !this.state.expired ?
+                      <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded.bind(this)} /> :
                       <span className={css.closedTime}>
                         {proposal.stage == IProposalStage.Queued ? "Expired" :
                          proposal.stage == IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
