@@ -37,7 +37,7 @@ class Countdown extends React.Component<IProps, IState> {
     this.interval = setInterval(() => {
       const date = this.calculateCountdown(this.props.toDate);
       if (date) {
-        this.setState(date)
+        this.setState(date);
       } else {
         this.stop();
         if (this.props.onEnd) {
