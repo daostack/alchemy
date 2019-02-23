@@ -28,6 +28,10 @@
   }
 }
 
+.socialProof {
+  display: block;
+}
+
 .targetAccount {
   position: relative;
   display: inline-block;
@@ -167,6 +171,15 @@
   }
 }
 
+.saveProfile {
+  display: block;
+  text-align: right;
+}
+
+
+.profileData {
+  flex-grow: 2;
+}
 
 /***** Account Profile ******/
 .profileWrapper {
@@ -175,7 +188,8 @@
 }
 
 .profileContainer {
-  max-width: 1080px;
+  max-width: 800px;
+  border-radius: 15px;
   margin: 0 auto;
   margin-top: 40px;
   padding: 0 20px;
@@ -183,27 +197,33 @@
   flex-direction: column;
 
   form {
-    padding: 30px;
+    padding: 40px;
     background-color: $white;
+    border-radius: 15px;
   }
 
   .profileContent {
-    display: flex;
+    display: block;
   }
 
   .userAvatarContainer {
     width: 100px;
-
     img {
-      transform: rotate(45deg);
+      width: 70px;
+      border-radius: 10px;
     }
   }
-
+  
   .profileDataContainer {
-    width: 250px;
+    width: 100%;
+    display: flex;
 
     label {
-      font-weight: bold;
+      font-weight: normal;
+      font-size: 12px;
+      opacity: .7;
+      margin-bottom: 5px;
+      display: block;
     }
 
     .charLimit {
@@ -248,11 +268,11 @@
   }
 
   input, textarea {
-    background-color: #EDEDED;
-    border: none;
-    padding: 4px;
-    width: 250px;
-    font-size: 13px;
+    display: block;
+    border: 1px solid #d0d9e1;
+    padding: 15px;
+    width: 90%;
+    font-size: 14px;
   }
 
   .socialButton {
@@ -292,27 +312,23 @@ input {
 }
 
 .submitButton {
-  border: 1px solid black;
-  height: 40px;
+  height: 30px;
   display: inline-block;
   line-height: 30px;
-  margin: 0 auto;
-  color: black;
-  font-weight: normal;
-  font-size: $body;
-  padding: 0 15px;
-  font-family: $body-font;
+  font-weight: bold;
+  color: $white;
   transition: all .25s ease;
-  background-color: rgba(200,200,200,0);
+  background-color: rgba(3, 118, 255, 1.000);
+  border-radius: 30px;
+  border: none;
+  font-size: 14px;
+  padding: 0 15px;
+  margin-right: 45px;
+  margin-top: 30px;
+
 
   &:hover {
     cursor: pointer;
-  }
-
-  img {
-    position: relative;
-    top: 4px;
-    margin-right: 8px;
   }
 
   .loading {
