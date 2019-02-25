@@ -2,7 +2,7 @@ import BN = require("bn.js");
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
-
+import Util from "lib/util";
 import {  DAO, IDAOState, IRewardState } from "@daostack/client";
 import { getArc } from "arc";
 
@@ -49,39 +49,28 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       return (<ProposalContainer key={"proposal_" + reward.proposalId} proposalId={reward.proposalId} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
-    // TODO: we should rethink how this component works in the light of the new data model
-
-    // These are the fields avvialable from the reward object:
-    // beneficiary: Address
-    // createdAt: Date
-    // proposalId: string,
-    // reputationForVoter: BN,
-    // tokensForStaker: BN,
-    // daoBountyForStaker: BN,
-    // reputationForProposer: BN,
-    // tokenAddress: Address,
-    // redeemedReputationForVoter: BN,
-    // redeemedTokensForStaker: BN,
-    // redeemedReputationForProposer: BN,
-    // redeemedDaoBountyForStaker: BN
-
-    let ethReward = 0, genReward = 0, reputationReward = new BN(0), externalTokenReward = 0;
-    // rewards.forEach((reward) => {
+    // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,
+    // the original code also considers ethREward and externalTokenRewards
+    // let ethReward = 0
+    let genReward = new BN("0");
+    let reputationReward = new BN(0);
+    // , externalTokenReward = 0;
+    rewards.forEach((reward) => {
     //   ethReward += Util.fromWei(reward.amount);
     //   externalTokenReward += Util.fromWei(reward.amount);
-    //   genReward += Util.fromWei(reward.amount);
-    //   reputationReward.iadd(reward.amount);
-    // });
+      genReward.iadd(reward.tokensForStaker).iadd(reward.daoBountyForStaker);
+      reputationReward.iadd(reward.reputationForVoter).iadd(reward.reputationForProposer);
+    });
 
     const totalRewards = [];
-    if (ethReward) {
-      totalRewards.push(ethReward.toFixed(2).toLocaleString() + " ETH");
-    }
-    if (externalTokenReward) {
-      totalRewards.push(externalTokenReward.toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
-    }
+    // if (ethReward) {
+    //   totalRewards.push(ethReward.toFixed(2).toLocaleString() + " ETH");
+    // }
+    // if (externalTokenReward) {
+    //   totalRewards.push(externalTokenReward.toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
+    // }
     if (genReward) {
-      totalRewards.push(genReward.toFixed(2).toLocaleString() + " GEN");
+      totalRewards.push(Util.fromWei(genReward).toFixed(2).toLocaleString() + " GEN");
     }
     if (reputationReward) {
       totalRewards.push(
