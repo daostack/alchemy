@@ -51,7 +51,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.ExpiredInQueue }),
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Executed }),
-    arc.dao(daoAvatarAddress).state
+    arc.dao(daoAvatarAddress).state()
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState[], IProposalState[], IDAOState]>): any => {
