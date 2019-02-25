@@ -127,7 +127,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued }), // the list of queued proposals
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Boosted }), // the list of boosted proposals
-    arc.dao(daoAvatarAddress).state
+    arc.dao(daoAvatarAddress).state()
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState[], IProposalState[], IProposalState[], IDAOState]>): any => {

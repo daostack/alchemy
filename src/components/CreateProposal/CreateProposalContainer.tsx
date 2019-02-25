@@ -4,17 +4,15 @@ import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
 import * as React from "react";
 import { connect } from "react-redux";
-import Web3 = require("web3");
 
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
-import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import Util from "lib/util";
 import { IRootState } from "reducers";
-import { IWeb3State } from "reducers/web3Reducer";
+import { IWeb3State } from "reducers/gReducer";
 import * as css from "./CreateProposal.scss";
 
 const emptyProposal: IProposalState = {
@@ -22,7 +20,6 @@ const emptyProposal: IProposalState = {
   beneficiary: null,
   boostedAt: 0,
   boostedVotePeriodLimit: 0,
-  boostingThreshold: 0,
   createdAt: 0,
   confidenceThreshold: 0,
   dao: null,
@@ -32,6 +29,7 @@ const emptyProposal: IProposalState = {
   ethReward: new BN(0),
   executedAt: 0,
   executionState: 0, // TODO: when client exports should be IExecutionState.None,
+  expiresInQueueAt: 0,
   externalToken: null,
   externalTokenReward: new BN(0),
   nativeTokenReward: new BN(0),
@@ -150,7 +148,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     const { createProposal, currentAccount, daoAvatarAddress } = this.props;
     const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = this.state.proposalDetails;
     const arc = getArc();
-    return <Subscribe observable={arc.dao(daoAvatarAddress).state}>{
+    return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
           const dao: IDAOState = state.data;
