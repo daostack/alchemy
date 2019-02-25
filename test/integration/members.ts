@@ -25,6 +25,6 @@ describe("Members page", () => {
       browser.waitForExist(`*[data-test-id="member_${address}"]`);
       // TODO: we should see the repuation of this member
       browser.getText(`*[data-test-id="member_${address}"] *[data-test-id="reputation"]`)
-        .should.have.string("16.67"); // TODO: should be 16.67 when migration adds founder rep as wei
+        .should.have.string("12.44");
     });
 });
