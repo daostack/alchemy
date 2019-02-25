@@ -119,7 +119,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     this.state = {
       preRedeemModalOpen: false,
-      expired: !closingTime(props.proposal).isAfter(moment())
+      expired: closingTime(props.proposal).isSameOrBefore(moment())
     };
   }
 
@@ -255,7 +255,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       const executeButtonClass = classNames({
         [css.stateChange]: true,
-        [css.invisible]: proposalEnded(proposal) || this.state.expired
+        [css.invisible]: !proposalEnded(proposal) && !this.state.expired
       });
 
       return (
