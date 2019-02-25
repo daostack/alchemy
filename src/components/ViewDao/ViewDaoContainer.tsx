@@ -334,7 +334,7 @@ const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(w
 export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress;
   const arc = getArc();
-  return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
+  return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>;
       } else if (state.data) {

@@ -70,8 +70,8 @@ export default (props: { dao: IDAOState, address: Address}) => {
     const dao = arc.dao(props.dao.address);
 
     const observable = combineLatest(
-      dao.member(props.address).state,
-      arc.getBalance(props.address),
+      dao.member(props.address).state(),
+      arc.ethBalance(props.address),
       arc.GENToken().balanceOf(props.address),
       arc.allowance(props.address)
     );

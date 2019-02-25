@@ -180,7 +180,7 @@ export default (props: RouteComponentProps<any>) => {
     const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
 
     if (daoAddress) {
-      return <Subscribe observable={arc.dao(daoAddress).state}>{(state: IObservableState<IDAOState>) => {
+      return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>) => {
           if (state.isLoading) {
             return null;
           } else if (state.error) {

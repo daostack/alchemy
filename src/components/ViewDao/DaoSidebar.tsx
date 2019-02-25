@@ -110,7 +110,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
 
 export default (props: { address: string}) => {
   const arc = getArc();
-  return <Subscribe observable={arc.dao(props.address).state}>{(state: IObservableState<IDAOState>) => {
+  return <Subscribe observable={arc.dao(props.address).state()}>{(state: IObservableState<IDAOState>) => {
       const daoState = state.data;
       if (state.error) {
         throw state.error;

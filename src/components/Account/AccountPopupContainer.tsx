@@ -115,8 +115,8 @@ export default (props: IOwnProps) => {
   const arc = getArc();
 
   const observable = combineLatest(
-    arc.dao(props.dao.address).state,
-    arc.dao(props.dao.address).member(props.accountAddress).state
+    arc.dao(props.dao.address).state(),
+    arc.dao(props.dao.address).member(props.accountAddress).state()
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IDAOState, IMemberState]>) => {

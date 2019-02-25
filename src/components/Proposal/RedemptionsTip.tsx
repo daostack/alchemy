@@ -22,51 +22,41 @@ export default (props: IProps) => {
   const rewardComponents = [];
   for (const reward of rewards) {
     let c = null;
-    if (reward.reason === RewardReason.Proposer && reward.type === RewardType.Reputation) {
+    if (reward.reputationForProposer.gt(new BN(0))) {
       c = <div>
           <strong>For creating the proposal you will receive:</strong>
           <ul>
-            <li><ReputationView reputation={reward.amount} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+            <li><ReputationView reputation={reward.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
           </ul>
         </div>;
-    } else if (reward.reason === RewardReason.Voter && reward.type === RewardType.Reputation) {
+      rewardComponents.push(c);
+    } else if (reward.reputationForVoter.gt(new BN(0))) {
       c = <div>
           <strong>For voting on the proposal you will receive:</strong>
           <ul>
-            <li><ReputationView reputation={reward.amount} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+            <li><ReputationView reputation={reward.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
           </ul>
         </div>;
-    } else if (reward.reason === RewardReason.Voter && reward.type === RewardType.Token) {
-      c = <div>
-          <strong>For voting on the proposal you will receive:</strong>
-          <ul>
-            <li>{reward.amount} GEN</li>
-          </ul>
-        </div>;
-    }  else if (reward.reason === RewardReason.Staker && reward.type === RewardType.Token) {
+      rewardComponents.push(c);
+    }  else if (reward.tokensForStaker.gt(new BN("0"))) {
       c = <div>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
-          <li>{reward.amount} GEN</li>
+          <li>{reward.tokensForStaker} GEN</li>
         </ul>
       </div>;
-    }  else if (reward.reason === RewardReason.Staker && reward.type === RewardType.Reputation) {
+      rewardComponents.push(c);
+
+    }  else if (reward.daoBountyForStaker.gt(new BN("0"))) {
       c = <div>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
-          <li><ReputationView reputation={reward.amount} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-        </ul>
-      </div>;
-    }  else if (reward.reason === RewardReason.Bounty && reward.type === RewardType.Token) {
-      c = <div>
-        <strong>For staking on the proposal you will receive:</strong>
-        <ul>
-          <li>{reward.amount} GEN bounty {dao.tokenBalance < reward.amount ? " (Insufficient funds in DAO)" : ""}</li>
+          <li>{reward.daoBountyForStaker} GEN bounty {dao.tokenBalance < reward.daoBountyForStaker ? " (Insufficient funds in DAO)" : ""}</li>
         </ul>
       </div >;
+      rewardComponents.push(c);
     }
 
-    if (c) { rewardComponents.push(c); }
   }
 
   const hasEthReward = proposal.ethReward.gt(new BN(0));

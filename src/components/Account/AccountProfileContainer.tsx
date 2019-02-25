@@ -297,8 +297,8 @@ export default (props: RouteComponentProps<any>) => {
 
   if (daoAvatarAddress) {
     const observable = combineLatest(
-      arc.dao(daoAvatarAddress).state,
-      arc.dao(daoAvatarAddress).member(props.match.params.accountAddress).state
+      arc.dao(daoAvatarAddress).state(),
+      arc.dao(daoAvatarAddress).member(props.match.params.accountAddress).state()
     );
 
     return <Subscribe observable={observable}>{

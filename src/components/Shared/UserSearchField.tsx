@@ -63,7 +63,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
     }
 
     await Promise.all(this.props.members.map(async (member: Member) => {
-      const memberState = await member.state.pipe(first()).toPromise();
+      const memberState = await member.state().pipe(first()).toPromise();
       const profile = this.props.profiles[memberState.address];
 
       if (profile && (profile.name.includes(inputValue) || profile.ethereumAccountAddress.includes(inputValue))) {

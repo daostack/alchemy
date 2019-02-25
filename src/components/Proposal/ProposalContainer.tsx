@@ -481,8 +481,8 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
 
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state, // the list of pre-boosted proposals
-    props.currentAccountAddress ? dao.member(props.currentAccountAddress).state : of(null),
+    dao.proposal(props.proposalId).state(), // the list of pre-boosted proposals
+    props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null),
     // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
     // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
