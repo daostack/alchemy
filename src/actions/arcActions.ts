@@ -85,8 +85,6 @@ export function createProposal(
         meta,
       } as CreateProposalAction);
 
-      // Go back to home page while action create proposal operation gets carried out
-      dispatch(push("/dao/" + daoAvatarAddress));
       const dao = new DAO(daoAvatarAddress, arc);
       const proposalOptions = {
         beneficiary: beneficiaryAddress,
@@ -105,6 +103,9 @@ export function createProposal(
       // TODO: use the Option stages of the client lib to communicate about the progress
       await dao.createProposal(proposalOptions)
         .pipe(take(2)).toPromise();
+
+      // Go back to home page while action create proposal operation gets carried out
+      dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
       console.error(err);
       dispatch({
