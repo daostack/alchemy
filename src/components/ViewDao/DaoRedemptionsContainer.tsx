@@ -3,9 +3,8 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
-import {  DAO, IDAOState, IRewardState, Proposal, RewardType } from "@daostack/client";
+import {  DAO, IDAOState, IRewardState } from "@daostack/client";
 import { getArc } from "arc";
-import Util from "lib/util";
 
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -16,7 +15,6 @@ import * as css from "./ViewDao.scss";
 interface IProps {
   currentAccountAddress: string;
   dao: IDAOState;
-  proposals: Proposal[];
   rewards: IRewardState[];
 }
 
@@ -27,18 +25,17 @@ interface IOwnProps {
 const mapStateToProps = (state: IRootState, ownProps: IOwnProps ) => {
   // const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.dao.address}`], schemas.accountSchema, state.arc) as IAccountState;
 
-  const proposals: Proposal[] = [];
+  // const proposals: Proposal[] = [];
 
-  const rewards = ownProps.rewards;
-  rewards.forEach((reward: IRewardState) => {
-    proposals.push(reward.proposal);
-  });
+  // const rewards = ownProps.rewards;
+  // rewards.forEach((reward: IRewardState) => {
+  //   proposals.push(new Proposal(reward.proposalId, reward.context));
+  // });
   // proposals.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
 
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     dao: ownProps.dao,
-    proposals,
     rewards: ownProps.rewards
   };
 };
@@ -46,29 +43,35 @@ const mapStateToProps = (state: IRootState, ownProps: IOwnProps ) => {
 class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { dao, proposals, rewards, currentAccountAddress } = this.props;
+    const { dao, rewards, currentAccountAddress } = this.props;
 
-    const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+    const proposalsHTML = rewards.map((reward: IRewardState) => {
+      return (<ProposalContainer key={"proposal_" + reward.proposalId} proposalId={reward.proposalId} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
-    // const redeemAllTip: JSX.Element | string = ""
+    // TODO: we should rethink how this component works in the light of the new data model
+
+    // These are the fields avvialable from the reward object:
+    // beneficiary: Address
+    // createdAt: Date
+    // proposalId: string,
+    // reputationForVoter: BN,
+    // tokensForStaker: BN,
+    // daoBountyForStaker: BN,
+    // reputationForProposer: BN,
+    // tokenAddress: Address,
+    // redeemedReputationForVoter: BN,
+    // redeemedTokensForStaker: BN,
+    // redeemedReputationForProposer: BN,
+    // redeemedDaoBountyForStaker: BN
+
     let ethReward = 0, genReward = 0, reputationReward = new BN(0), externalTokenReward = 0;
-
-    rewards.forEach((reward) => {
-      if (reward.type === RewardType.ETH) {
-        ethReward += Util.fromWei(reward.amount);
-      }
-      if (reward.type === RewardType.External) {
-        externalTokenReward += Util.fromWei(reward.amount);
-      }
-      if (reward.type === RewardType.Token) {
-        genReward += Util.fromWei(reward.amount);
-      }
-      if (reward.type === RewardType.Reputation) {
-        reputationReward.iadd(reward.amount);
-      }
-    });
+    // rewards.forEach((reward) => {
+    //   ethReward += Util.fromWei(reward.amount);
+    //   externalTokenReward += Util.fromWei(reward.amount);
+    //   genReward += Util.fromWei(reward.amount);
+    //   reputationReward.iadd(reward.amount);
+    // });
 
     const totalRewards = [];
     if (ethReward) {

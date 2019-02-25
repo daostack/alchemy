@@ -15,7 +15,7 @@ const DaoContainer = (props: IProps) => {
   const { address } = props;
   const arc = getArc();
 
-  return <Subscribe observable={arc.dao(address).state}>{(state: IObservableState<IDAOState>) => {
+  return <Subscribe observable={arc.dao(address).state()}>{(state: IObservableState<IDAOState>) => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
@@ -35,7 +35,7 @@ const DaoContainer = (props: IProps) => {
               <div className={css.daoInfoTitle}>
                 Monthly Activity
               </div>
-              <Subscribe observable={dao.token.state}>{ (state: any) =>  (state.data &&
+              <Subscribe observable={dao.token.state()}>{ (state: any) =>  (state.data &&
                   <div>
                     <div className={css.daoInfo}>
                       <b>{state.data.symbol}</b>
@@ -47,7 +47,7 @@ const DaoContainer = (props: IProps) => {
                      </div>
                   </div>
               )}</Subscribe>
-              <Subscribe observable={dao.reputation.state}>{ (state: any) =>  (state.data &&
+              <Subscribe observable={dao.reputation.state()}>{ (state: any) =>  (state.data &&
                 <div className={css.daoInfo}>
                   <b>{Util.fromWei(state.data.totalSupply).toLocaleString()}</b>
                   <span>Reputation</span>
