@@ -1,29 +1,54 @@
 import { Arc } from "@daostack/client";
+import Util from "lib/util";
 import { Observable } from "rxjs";
 
 const Web3 = require("web3");
 
+const INFURA_KEY = "16bDz7U53RbXysQiYOyc";
+
+const providers = {
+  dev: {
+    graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
+    graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
+    web3Provider: "ws://127.0.0.1:8545",
+    ipfsProvider: "localhost",
+    contractAddresses: getContractAddresses("private")
+  },
+  staging: {
+    graphqlHttpProvider: "",
+    graphqlWsProvider: "",
+    web3Provider: `https://kovan.infura.io/${INFURA_KEY}`,
+    ipfsProvider: "ipfs.infura.io",
+    contractAddresses: getContractAddresses("kovan")
+  },
+  production: {
+    graphqlHttpProvider: "",
+    graphqlWsProvider: "",
+    web3WsProvide: "",
+    ipfsProvider: "",
+    contractAddresses: getContractAddresses("main")
+  }
+};
 // default values for providers. This should be manageed depending on the deployment location
-const graphqlHttpProvider: string = "http://127.0.0.1:8000/subgraphs/name/daostack";
-const graphqlWsProvider: string = "ws://127.0.0.1:8001/subgraphs/name/daostack";
-const web3HttpProvider: string = "http://127.0.0.1:8545";
+// const graphqlHttpProvider: string = "http://127.0.0.1:8000/subgraphs/name/daostack";
+// const graphqlWsProvider: string = "ws://127.0.0.1:8001/subgraphs/name/daostack";
 const web3WsProvider: string = "ws://127.0.0.1:8545";
 // must use "localhost" here because of cors issues
 // const ipfsProvider: string = '/ip4/localhost/tcp/5001'
-const ipfsProvider: string = "localhost";
+// const ipfsProvider: string = "localhost";
 
-function getLocalContractAddresses() {
+function getContractAddresses(key: "private"|"kovan"|"main") {
+
   const deployedContractAddresses = require(`../config/migration.json`);
 
   const addresses = {
-      ...deployedContractAddresses.private,
+      ...deployedContractAddresses[key],
    };
   if (!addresses || addresses === {}) {
       throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`);
     }
   return addresses;
 }
-const contractAddresses = getLocalContractAddresses();
 
 // TODO: move pollforAccountChanges to client lib? (as an currentAddres(): Observable<Address>)
 // Polling is Evil!
@@ -55,6 +80,8 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
 
 export function getWeb3Provider() {
   let web3Provider;
+
+  // get the web3 provider from the browser, fall back to any explicitly provided Web3 connection
   if (typeof window !== "undefined" &&
     (typeof (window as any).ethereum !== "undefined" || typeof (window as any).web3 !== "undefined")
   ) {
@@ -65,6 +92,7 @@ export function getWeb3Provider() {
   }
 
   // print some info for developers
+
   if (web3Provider && web3Provider.isMetaMask) {
     console.log("Connected with Metamask");
   } else {
@@ -77,28 +105,54 @@ export function getWeb3Provider() {
       web3Provider = web3WsProvider;
     }
   }
-  if (web3Provider !== web3WsProvider && web3Provider.networkVersion !== "1512051714758") {
-    console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${web3Provider.networkVersion}) - please switch conection to localhost: 8545 to enable transactions`);
-  } else {
-    console.log(`Connected to Ganache - this is great in this test phase`);
+
+  // if we are connect to metamask, we check if our Arc instance uses the same connection
+  // if not, we ????
+  if (web3Provider && web3Provider.isMetaMask) {
+    console.log(web3Provider);
+    const networkName = Util.networkName(web3Provider.networkVersion);
+    if (networkName === "ganache") {
+      console.log(`Connected to ${networkName} - this is great`);
+    } else if (networkName === "kovan") {
+      console.log(`Connected to ${networkName} - this is not working yet but will soon`);
+    } else {
+      console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${networkName}) - please switch your metamask connection to Kovan or Private network`);
+    }
   }
   return web3Provider;
 }
 
 export function getArc(): Arc {
-  // TODO: we store the arc object in the window object, but the react
+  // store the Arc instance in the global namespace on the 'window' object
+  // (this is not best practice)
   if (typeof(window) !== "undefined" && (<any> window).arc) {
     return (<any> window).arc;
   } else {
     const web3Provider = getWeb3Provider();
 
-    const arc: Arc = new Arc({
-      graphqlHttpProvider,
-      graphqlWsProvider,
-      web3Provider,
-      ipfsProvider,
-      contractAddresses
-    });
+    // if we are connected with metamask, we find the right settings
+    let arcSettings: any;
+    if (web3Provider && web3Provider.isMetaMask) {
+      const networkName = Util.networkName(web3Provider.networkVersion);
+      if (networkName === "ganache") {
+        console.log(`Connected to ${networkName} - this is great`);
+        arcSettings = providers.dev;
+        console.log(arcSettings);
+      } else if (networkName === "kovan") {
+        console.log(`Connected to ${networkName} - this is great`);
+        arcSettings = providers.staging;
+        console.log(arcSettings);
+      } else {
+        const msg = `YOU ARE NOT CONNECTED TO GANACHE (but to ${networkName}) - please switch your metamask connection to Kovan or Private network`;
+        console.warn(msg);
+        throw Error(msg);
+      }
+    } else {
+      const msg = `No metamask connection found - you may not be able to do transactions`;
+      arcSettings = providers.dev;
+    }
+
+    const arc: Arc = new Arc(arcSettings);
 
     if (typeof(window) !== "undefined") {
       (<any> window).arc = arc;
