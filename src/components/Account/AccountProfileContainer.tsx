@@ -43,13 +43,13 @@ interface IStateProps extends RouteComponentProps<any> {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const queryValues = queryString.parse(ownProps.location.search);
+  const accountAddress = ownProps.accountAddress ? ownProps.accountAddress.toLowerCase() : null;
 
   return {
-    accountAddress: ownProps.accountAddress,
+    accountAddress,
     accountInfo: ownProps.accountInfo,
-    accountProfile: state.profiles[ownProps.accountAddress],
-    currentAccountAddress: state.web3.ethAccountAddress,
+    accountProfile: state.profiles[accountAddress],
+    currentAccountAddress: state.web3.ethAccountAddress ? state.web3.ethAccountAddress.toLowerCase() : null,
     dao: ownProps.dao
   };
 };
@@ -119,14 +119,13 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const timestamp = new Date().getTime().toString();
     const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. Timestamp:" + timestamp;
     const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
-    const fromAddress = this.props.accountAddress;
 
     const method = "personal_sign";
     // TODO: do we need promisify here? web3 1.0 supports promises natively
     // and if we can do without, we can drop the dependency on es6-promises
     const sendAsync = promisify(web3.currentProvider.sendAsync);
-    const params = [msg, fromAddress];
-    const result = await sendAsync({ method, params, fromAddress });
+    const params = [msg, accountAddress];
+    const result = await sendAsync({ method, params, accountAddress });
     if (result.error) {
       console.error("Signing canceled, data was not saved");
       showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
@@ -135,9 +134,8 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     }
     const signature = result.result;
 
-    const recoveredAddress = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
-
-    if (recoveredAddress == this.props.accountAddress) {
+    const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
+    if (recoveredAddress.toLowerCase() === accountAddress) {
       await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
     } else {
       console.error("Signing failed");
@@ -154,7 +152,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
     const { ethCount, genCount } = this.state;
 
-    const editing = currentAccountAddress && accountAddress.toLowerCase() === currentAccountAddress.toLowerCase();
+    const editing = currentAccountAddress && accountAddress === currentAccountAddress;
 
     return (
       <div className={css.profileWrapper}>
