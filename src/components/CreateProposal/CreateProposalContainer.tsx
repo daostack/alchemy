@@ -12,7 +12,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import Util from "lib/util";
 import { IRootState } from "reducers";
-import { IWeb3State } from "reducers/gReducer";
+import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 const emptyProposal: IProposalState = {
