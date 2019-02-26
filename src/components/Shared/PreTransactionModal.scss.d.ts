@@ -1,6 +1,5 @@
 export const clearfix: string;
 export const hidden: string;
-export const createProposal: string;
 export const stakeFail: string;
 export const stakePass: string;
 export const voteDown: string;

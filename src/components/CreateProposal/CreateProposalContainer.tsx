@@ -60,7 +60,6 @@ const emptyProposal: IProposalState = {
 };
 
 interface IState {
-  preTransactionModalOpen: boolean;
   proposalDetails: IProposalState;
 }
 
@@ -109,7 +108,6 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      preTransactionModalOpen: false,
       proposalDetails: emptyProposal
     };
 
@@ -120,23 +118,20 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.web3 = Util.getWeb3();
   }
 
-  public handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
+  public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
     const proposalValues = {...values,
-      ethReward: Util.toWei(values.ethReward),
-      externalTokenReward: Util.toWei(values.externalTokenReward),
-      nativeTokenReward: Util.toWei(values.nativeTokenReward),
-      reputationReward: Util.toWei(values.reputationReward)
+      ethReward: Util.toWei(Number(values.ethReward)),
+      externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
+      nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
+      reputationReward: Util.toWei(Number(values.reputationReward))
     };
 
     this.setState({
-      preTransactionModalOpen: true,
       proposalDetails: { ...emptyProposal, ...proposalValues}
     });
+    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = proposalValues;
     setSubmitting(false);
-  }
-
-  public closePreTransactionModal() {
-    this.setState({ preTransactionModalOpen: false });
+    await this.props.createProposal(this.props.daoAvatarAddress, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
   }
 
   public goBack(address: string) {
@@ -164,21 +159,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           //   .filter((proposal) => !proposalEnded(proposal))
           //   .map((proposal) => proposal.description);
           const proposalDescriptions: string[] = [];
-          const boundCreateProposal = createProposal.bind(null, dao.address, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
           return (
             <div className={css.createProposalWrapper}>
-              {this.state.preTransactionModalOpen ?
-                <PreTransactionModal
-                  actionType={ActionTypes.CreateProposal}
-                  action={boundCreateProposal}
-                  closeAction={this.closePreTransactionModal.bind(this)}
-                  currentAccount={currentAccount}
-                  dao={dao}
-                  effectText=""
-                  proposal={this.state.proposalDetails}
-                /> : ""
-              }
-
               <h2>
                 <span>+ New proposal <b>| Contribution Reward</b></span>
               </h2>

@@ -37,10 +37,6 @@ describe('Proposals', () => {
       const ethReward = Math.floor(Math.random() * 1000)
       browser.setValue('*[id="ethRewardInput"]', `${ethReward}` )
       browser.click('*[type="submit"]')
-      // we shoudl now see a dialog asking us to "launch metamask"
-      browser.click('*[data-test-id="launch-metamask"]')
-      // since we are working with unlocked accounts (are we?) and we do not haver metamask installed
-      // we do not need to confirm at all..
 
       // check that the proposal with the ethReward appears in the list
       browser.waitForExist(`strong*=${ethReward}`)

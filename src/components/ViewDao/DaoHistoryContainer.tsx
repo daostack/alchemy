@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 
 import { combineLatest } from "rxjs";
 
-import ProposalContainer from "../Proposal/ProposalContainer";
+import ClosedProposalContainer from "../Proposal/ClosedProposalContainer";
 
 import * as css from "./ViewDao.scss";
 import { getArc } from "arc";
@@ -23,7 +23,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
     const { proposals, dao, currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ClosedProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     return(

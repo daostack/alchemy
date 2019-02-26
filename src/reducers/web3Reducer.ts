@@ -1,5 +1,5 @@
 import BN = require("bn.js");
-import * as Web3 from "web3";
+import Web3 = require("web3");
 
 import { AsyncActionSequence } from "actions/async";
 import { ApproveAction, ConnectAction } from "actions/web3Actions";

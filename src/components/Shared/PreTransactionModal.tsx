@@ -16,7 +16,6 @@ import TransferDetails from "components/Proposal/TransferDetails";
 import * as css from "./PreTransactionModal.scss";
 
 export enum ActionTypes {
-  CreateProposal,
   Execute,
   Redeem,
   StakeFail,
@@ -164,24 +163,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                   <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
                   <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
                   <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
-                </div>;
-        break;
-      case ActionTypes.CreateProposal:
-        actionTypeClass = css.createProposal;
-        icon = <img src="/assets/images/Tx/NewProposal.svg"/>;
-        transactionType = <span>Create <strong className={css.redeem}>proposal</strong></span>;
-
-        if (currentAccount == proposal.beneficiary) {
-          const rewards = [];
-          passIncentive = <span>GAIN REPUTATION &amp; <RewardsString proposal={proposal} dao={dao} /></span>;
-        } else {
-          passIncentive = <span>GAIN REPUTATION</span>;
-        }
-
-        failIncentive = <span>NOTHING TO LOSE</span>;
-        rulesHeader = "RULES FOR CREATING PROPOSALS";
-        rules = <div>
-                  <p>If a proposal you submit passes, you will be awarded reputation. If you are the receiver of the budget, you will gain ETH and/or reputation.</p>
                 </div>;
         break;
       case ActionTypes.Redeem:

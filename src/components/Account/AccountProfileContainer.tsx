@@ -43,13 +43,13 @@ interface IStateProps extends RouteComponentProps<any> {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const queryValues = queryString.parse(ownProps.location.search);
+  const accountAddress = ownProps.accountAddress ? ownProps.accountAddress.toLowerCase() : null;
 
   return {
-    accountAddress: ownProps.accountAddress,
+    accountAddress,
     accountInfo: ownProps.accountInfo,
-    accountProfile: state.profiles[ownProps.accountAddress],
-    currentAccountAddress: state.web3.ethAccountAddress,
+    accountProfile: state.profiles[accountAddress],
+    currentAccountAddress: state.web3.ethAccountAddress ? state.web3.ethAccountAddress.toLowerCase() : null,
     dao: ownProps.dao
   };
 };
@@ -119,14 +119,13 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const timestamp = new Date().getTime().toString();
     const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. Timestamp:" + timestamp;
     const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
-    const fromAddress = this.props.accountAddress;
 
     const method = "personal_sign";
     // TODO: do we need promisify here? web3 1.0 supports promises natively
     // and if we can do without, we can drop the dependency on es6-promises
     const sendAsync = promisify(web3.currentProvider.sendAsync);
-    const params = [msg, fromAddress];
-    const result = await sendAsync({ method, params, fromAddress });
+    const params = [msg, accountAddress];
+    const result = await sendAsync({ method, params, accountAddress });
     if (result.error) {
       console.error("Signing canceled, data was not saved");
       showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
@@ -135,9 +134,8 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     }
     const signature = result.result;
 
-    const recoveredAddress = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
-
-    if (recoveredAddress == this.props.accountAddress) {
+    const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
+    if (recoveredAddress.toLowerCase() === accountAddress) {
       await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
     } else {
       console.error("Signing failed");
@@ -154,7 +152,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
     const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
     const { ethCount, genCount } = this.state;
 
-    const editing = currentAccountAddress && accountAddress.toLowerCase() === currentAccountAddress.toLowerCase();
+    const editing = currentAccountAddress && accountAddress === currentAccountAddress;
 
     return (
       <div className={css.profileWrapper}>
@@ -198,86 +196,87 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
               }: FormikProps<FormValues>) =>
                 <form onSubmit={handleSubmit} noValidate>
                   <div className={css.profileContent}>
-                    <div className={css.userAvatarContainer}>
-                      <AccountImage accountAddress={accountAddress} />
-                    </div>
                     <div className={css.profileDataContainer}>
-                      <label htmlFor="nameInput">
-                        Real Name:&nbsp;
-                      </label>
-                      { editing ?
-                        <div>
-                          <Field
-                            autoFocus
-                            id="nameInput"
-                            placeholder="e.g. John Doe"
-                            name="name"
-                            type="text"
-                            maxLength="35"
-                            className={touched.name && errors.name ? css.error : null}
-                          />
-                          {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
-                        </div>
-                        : <div>{accountProfile.name}</div>
-                      }
-                      <br />
-                      <label htmlFor="descriptionInput">
-                        Personal Description:&nbsp;
-                      </label>
-                      { editing ?
-                        <div>
-                          <Field
-                            id="descriptionInput"
-                            placeholder="Tell the DAO a bit about yourself"
-                            name="description"
-                            component="textarea"
-                            maxLength="150"
-                            rows="7"
-                            className={touched.description && errors.description ? css.error : null}
-                          />
-                          <div className={css.charLimit}>Limit 150 characters</div>
-                        </div>
-                        : <div>{accountProfile.description}</div>
-                      }
+                      <div className={css.userAvatarContainer}>
+                        <AccountImage accountAddress={accountAddress} />
+                      </div>
+                      <div className={css.profileData}>
+                        <label htmlFor="nameInput">
+                          Name:&nbsp;
+                        </label>
+                        { editing ?
+                          <div>
+                            <Field
+                              autoFocus
+                              id="nameInput"
+                              placeholder="e.g. John Doe"
+                              name="name"
+                              type="text"
+                              maxLength="35"
+                              className={touched.name && errors.name ? css.error : null}
+                            />
+                            {touched.name && errors.name && <span className={css.errorMessage}>{errors.name}</span>}
+                          </div>
+                          : <div>{accountProfile.name}</div>
+                        }
+                        <br />
+                        <label htmlFor="descriptionInput">
+                          Description:&nbsp;
+                        </label>
+                        { editing ?
+                          <div>
+                            <div>
+                              <Field
+                                id="descriptionInput"
+                                placeholder="Tell the DAO a bit about yourself"
+                                name="description"
+                                component="textarea"
+                                maxLength="150"
+                                rows="7"
+                                className={touched.description && errors.description ? css.error : null}
+                              />
+                              <div className={css.charLimit}>Limit 150 characters</div>
+                            </div>
+                            <div className={css.saveProfile}>
+                              <button className={css.submitButton} type="submit" disabled={isSubmitting}>
+                                <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
+                                SUBMIT
+                              </button>
+                            </div>
+                          </div>
+
+                          : <div>{accountProfile.description}</div>
+                        }
+                      </div>
                     </div>
+
+                    {editing
+                      ? <div className={css.socialProof}>
+                          <strong>Prove it's you by linking your social accounts:</strong>
+                          <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                        </div>
+                      : <div><strong>Social accounts:</strong></div>
+                    }
+                    {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
+                      <div className={css.socialProof}>
+                        <OAuthLogin editing={editing} provider="facebook" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                      </div>
+                    }
                     <div className={css.otherInfoContainer}>
                       <div className={css.tokens}>
                         {accountInfo
                            ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> </div>
                            : ""}
-                        <div><strong>GEN:</strong><br/><span>{genCount ? genCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
-                        <div><strong>ETH:</strong><br/><span>{ethCount ? ethCount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "-"}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br/>
                         <span>{accountAddress.substr(0, 20)}...</span>
                         <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
                       </div>
-                      {editing
-                        ? <div>
-                            <strong>Prove it's you by linking your social accounts:</strong>
-                            <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
-                          </div>
-                        : <div><strong>Social accounts:</strong></div>
-                      }
-                      {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
-                        <div>
-                          <OAuthLogin editing={editing} provider="facebook" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                          <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                          <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                        </div>
-                      }
                     </div>
                   </div>
-                  { editing ?
-                    <div className={css.alignCenter}>
-                      <button className={css.submitButton} type="submit" disabled={isSubmitting}>
-                        <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
-                        SUBMIT
-                      </button>
-                    </div>
-                    : ""
-                  }
                 </form>
               }
             />
