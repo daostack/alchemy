@@ -17,9 +17,9 @@ const providers = {
   staging: {
     graphqlHttpProvider: "",
     graphqlWsProvider: "",
-    web3Provider: `https://kovan.infura.io/${INFURA_KEY}`,
+    web3Provider: `https://rinkeby.infura.io/${INFURA_KEY}`,
     ipfsProvider: "ipfs.infura.io",
-    contractAddresses: getContractAddresses("kovan")
+    contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
     graphqlHttpProvider: "",
@@ -37,7 +37,7 @@ const web3WsProvider: string = "ws://127.0.0.1:8545";
 // const ipfsProvider: string = '/ip4/localhost/tcp/5001'
 // const ipfsProvider: string = "localhost";
 
-function getContractAddresses(key: "private"|"kovan"|"main") {
+function getContractAddresses(key: "private"|"rinkeby"|"main") {
 
   const deployedContractAddresses = require(`../config/migration.json`);
 
@@ -113,7 +113,7 @@ export function getWeb3Provider() {
     const networkName = Util.networkName(web3Provider.networkVersion);
     if (networkName === "ganache") {
       console.log(`Connected to ${networkName} - this is great`);
-    } else if (networkName === "kovan") {
+    } else if (networkName === "rinkeby") {
       console.log(`Connected to ${networkName} - this is not working yet but will soon`);
     } else {
       console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${networkName}) - please switch your metamask connection to Kovan or Private network`);
@@ -138,7 +138,7 @@ export function getArc(): Arc {
         console.log(`Connected to ${networkName} - this is great`);
         arcSettings = providers.dev;
         console.log(arcSettings);
-      } else if (networkName === "kovan") {
+      } else if (networkName === "rinkeby") {
         console.log(`Connected to ${networkName} - this is great`);
         arcSettings = providers.staging;
         console.log(arcSettings);
