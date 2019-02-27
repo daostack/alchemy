@@ -1,6 +1,6 @@
 import BN = require("bn.js");
 import * as React from "react";
-import { IDAOState, IMemberState, IProposalState, IRewardState, RewardReason, RewardType } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalState, IRewardState } from "@daostack/client";
 import ReputationView from "components/Account/ReputationView";
 import Util from "lib/util";
 
