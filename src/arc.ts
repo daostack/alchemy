@@ -162,10 +162,10 @@ function getArcSettings(): any {
       arcSettings = providers.staging;
       break;
     }
-    case "production" : {
-      arcSettings = providers.production;
-      break;
-    }
+    // case "production" : {
+    //   arcSettings = providers.production;
+    //   break;
+    // }
     default: {
       console.log(process.env.NODE_ENV === "development");
       throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
