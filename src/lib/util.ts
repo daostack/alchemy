@@ -10,7 +10,11 @@ const path = require("path");
 
 export default class Util {
   public static fromWei(amount: BN): number {
-    return Number(getArc().web3.utils.fromWei(amount, "ether"));
+    try {
+      return Number(getArc().web3.utils.fromWei(amount, "ether"));
+    } catch (err) {
+      return 0;
+    }
   }
 
   public static toWei(amount: number): BN {
