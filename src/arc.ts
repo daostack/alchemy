@@ -13,10 +13,10 @@ const providers = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "http://ec2-18-188-141-103.us-east-2.compute.amazonaws.com:8000/subgraphs/name/daostack",
-    graphqlWsProvider: "http://ec2-18-188-141-103.us-east-2.compute.amazonaws.com:8001/subgraphs/name/daostack",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/daostack",
     web3Provider: `https://rinkeby.infura.io/16bDz7U53RbXysQiYOyc`,
-    ipfsProvider: "ipfs.infura.io",
+    ipfsProvider: "https://ipfs.infura.io",
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
@@ -80,20 +80,27 @@ export function checkNetwork(web3: any) {
     switch (process.env.NODE_ENV) {
       case "development": {
         expectedNetworkName = "ganache";
+        break;
       }
       case "staging": {
         expectedNetworkName = "rinkeby";
+        break;
       }
       case  "production": {
         expectedNetworkName = "main";
+        break;
       }
+      default: {
+        throw new Error(`Uknown NODE_ENV: ${process.env.NODE_ENV}`);
+      }
+
     }
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
       return true;
     } else {
       // TODO: error message is for developers, need to write something more user friendly here
-      const msg = `YOU ARE NOT CONNECTED to a suitable network (you are connected to ${networkName}) in ${process.env.NODE_ENV} environment, while we expected ${expectedNetworkName}): please switch your metamask connection to Rinkeby or Private network`;
+      const msg = `YOU ARE NOT CONNECTED to "${expectedNetworkName})" (you are connected to "${networkName}" instead; in "${process.env.NODE_ENV}" environment). PLEASE SWITCH`;
       throw new Error(msg);
     }
   } else {
@@ -167,6 +174,8 @@ export function getArc(): Arc {
   } else {
 
     const arcSettings = getArcSettings();
+    console.log(`Using the following settings for Arc`);
+    console.log(arcSettings);
     const arc: Arc = new Arc(arcSettings);
     if (typeof(window) !== "undefined") {
       (<any> window).arc = arc;
