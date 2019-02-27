@@ -16,14 +16,22 @@ const providers = {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack",
     graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/daostack",
     web3Provider: `https://rinkeby.infura.io/16bDz7U53RbXysQiYOyc`,
-    ipfsProvider: "https://ipfs.infura.io",
+    ipfsProvider: {
+       host: "ipfs.infura.io",
+       port: "5001",
+       protocol: "https"
+    },
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
     graphqlHttpProvider: "",
     graphqlWsProvider: "",
     web3WsProvide: "",
-    ipfsProvider: "",
+    ipfsProvider: {
+       host: "ipfs.infura.io",
+       port: "5001",
+       protocol: "https"
+    },
     contractAddresses: getContractAddresses("main")
   }
 };
