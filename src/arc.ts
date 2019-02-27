@@ -182,7 +182,7 @@ export function getArc(): Arc {
   } else {
 
     const arcSettings = getArcSettings();
-    console.log(`Using the following settings for Arc`);
+    console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
     console.log(arcSettings);
     const arc: Arc = new Arc(arcSettings);
     if (typeof(window) !== "undefined") {
