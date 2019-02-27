@@ -51,6 +51,7 @@
     "build-travis": "cross-env NODE_ENV=production node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
     "lint": "tslint --project .",
     "populate-dao": "ts-node scripts/populateDAO.ts",
+    "postinstall": "npm run build",
     "setup-env": "npm run subgraph:deploy && node scripts/getmigrationfile.js",
     "service-status": "node scripts/serviceStatus.js",
     "subgraph:deploy": "npm explore @daostack/subgraph -- npm install && npm explore @daostack/subgraph -- npm run deploy",
