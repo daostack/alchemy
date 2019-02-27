@@ -4,8 +4,6 @@ import { Observable } from "rxjs";
 
 const Web3 = require("web3");
 
-const INFURA_KEY = "16bDz7U53RbXysQiYOyc";
-
 const providers = {
   dev: {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
@@ -15,9 +13,9 @@ const providers = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "",
-    graphqlWsProvider: "",
-    web3Provider: `https://rinkeby.infura.io/${INFURA_KEY}`,
+    graphqlHttpProvider: "http://ec2-18-188-141-103.us-east-2.compute.amazonaws.com:8000/subgraphs/name/daostack",
+    graphqlWsProvider: "http://ec2-18-188-141-103.us-east-2.compute.amazonaws.com:8001/subgraphs/name/daostack",
+    web3Provider: `https://rinkeby.infura.io/16bDz7U53RbXysQiYOyc`,
     ipfsProvider: "ipfs.infura.io",
     contractAddresses: getContractAddresses("rinkeby")
   },
@@ -29,13 +27,6 @@ const providers = {
     contractAddresses: getContractAddresses("main")
   }
 };
-// default values for providers. This should be manageed depending on the deployment location
-// const graphqlHttpProvider: string = "http://127.0.0.1:8000/subgraphs/name/daostack";
-// const graphqlWsProvider: string = "ws://127.0.0.1:8001/subgraphs/name/daostack";
-const web3WsProvider: string = "ws://127.0.0.1:8545";
-// must use "localhost" here because of cors issues
-// const ipfsProvider: string = '/ip4/localhost/tcp/5001'
-// const ipfsProvider: string = "localhost";
 
 function getContractAddresses(key: "private"|"rinkeby"|"main") {
 
@@ -65,9 +56,7 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
           account = web3.eth.accounts[0].address;
         }
         if (prevAccount !== account && account) {
-          if (prevAccount) {
-            console.log(`ACCOUNT CHANGED; new account is ${account}`);
-          }
+          console.log(`ACCOUNT CHANGED; new account is ${account}`);
           web3.eth.defaultAccount = account;
           observer.next(account);
           prevAccount = account;
@@ -78,10 +67,51 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
   });
 }
 
+/**
+ * Checks if the web3 provider is as expected; throw an Error if it is not
+ * @return
+ */
+export function checkNetwork(web3: any) {
+  // if we are connected with metamask, we find the right settings
+  const web3Provider = web3.currentProvider;
+  if (web3Provider && web3Provider.isMetaMask) {
+    const networkName = Util.networkName(web3Provider.networkVersion);
+    let expectedNetworkName;
+    switch (process.env.NODE_ENV) {
+      case "development": {
+        expectedNetworkName = "ganache";
+      }
+      case "staging": {
+        expectedNetworkName = "rinkeby";
+      }
+      case  "production": {
+        expectedNetworkName = "main";
+      }
+    }
+    if (networkName === expectedNetworkName) {
+      console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
+      return true;
+    } else {
+      // TODO: error message is for developers, need to write something more user friendly here
+      const msg = `YOU ARE NOT CONNECTED to a suitable network (you are connected to ${networkName}) in ${process.env.NODE_ENV} environment, while we expected ${expectedNetworkName}): please switch your metamask connection to Rinkeby or Private network`;
+      throw new Error(msg);
+    }
+  } else {
+    // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
+    if (process.env.NODE_ENV === "development") {
+      const msg = `No metamask connection found - you may not be able to do transactions`;
+      console.warn(msg);
+    }
+  }
+}
+/**
+ * try to get the web3 provider from the browser; if we cannnot return a sane default value
+ * @return A Web3 provider
+ */
 export function getWeb3Provider() {
   let web3Provider;
 
-  // get the web3 provider from the browser, fall back to any explicitly provided Web3 connection
+  // get the web3 provider from the browser or from the Web3 object
   if (typeof window !== "undefined" &&
     (typeof (window as any).ethereum !== "undefined" || typeof (window as any).web3 !== "undefined")
   ) {
@@ -91,35 +121,42 @@ export function getWeb3Provider() {
     web3Provider = Web3.givenProvider;
   }
 
-  // print some info for developers
-
-  if (web3Provider && web3Provider.isMetaMask) {
-    console.log("Connected with Metamask");
-  } else {
+  if (!web3Provider) {
     // TODO: fallback on Portis
-    console.warn(`NO WEB3 PROVIDER PROVIDED BY BROWSER: using default connection at ${web3WsProvider}`);
-    if (process.env.NODE_ENV === "dev") {
-      web3Provider = web3WsProvider;
+    let fallbackWeb3Provider: string;
+    if (process.env.NODE_ENV === "development") {
+      fallbackWeb3Provider = providers.dev.web3Provider;
     } else {
       // TODO: provide read-only web3 provider (like infura) for staging and production environments
-      web3Provider = web3WsProvider;
+      fallbackWeb3Provider = providers.staging.web3Provider;
     }
-  }
-
-  // if we are connect to metamask, we check if our Arc instance uses the same connection
-  // if not, we ????
-  if (web3Provider && web3Provider.isMetaMask) {
-    console.log(web3Provider);
-    const networkName = Util.networkName(web3Provider.networkVersion);
-    if (networkName === "ganache") {
-      console.log(`Connected to ${networkName} - this is great`);
-    } else if (networkName === "rinkeby") {
-      console.log(`Connected to ${networkName} - this is not working yet but will soon`);
-    } else {
-      console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${networkName}) - please switch your metamask connection to Kovan or Private network`);
-    }
+    console.warn(`NO WEB3 PROVIDER PROVIDED BY BROWSER: using ${fallbackWeb3Provider}`);
   }
   return web3Provider;
+}
+
+// get appropriate Arc configuration for the given environment
+function getArcSettings(): any {
+  let arcSettings: any;
+  switch (process.env.NODE_ENV) {
+    case "development": {
+      arcSettings = providers.dev;
+      break;
+    }
+    case "staging" : {
+      arcSettings = providers.staging;
+      break;
+    }
+    case "production" : {
+      arcSettings = providers.production;
+      break;
+    }
+    default: {
+      console.log(process.env.NODE_ENV === "development");
+      throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
+    }
+  }
+  return arcSettings;
 }
 
 export function getArc(): Arc {
@@ -128,36 +165,12 @@ export function getArc(): Arc {
   if (typeof(window) !== "undefined" && (<any> window).arc) {
     return (<any> window).arc;
   } else {
-    const web3Provider = getWeb3Provider();
 
-    // if we are connected with metamask, we find the right settings
-    let arcSettings: any;
-    if (web3Provider && web3Provider.isMetaMask) {
-      const networkName = Util.networkName(web3Provider.networkVersion);
-      if (networkName === "ganache") {
-        console.log(`Connected to ${networkName} - this is great`);
-        arcSettings = providers.dev;
-        console.log(arcSettings);
-      } else if (networkName === "rinkeby") {
-        console.log(`Connected to ${networkName} - this is great`);
-        arcSettings = providers.staging;
-        console.log(arcSettings);
-      } else {
-        const msg = `YOU ARE NOT CONNECTED TO GANACHE (but to ${networkName}) - please switch your metamask connection to Kovan or Private network`;
-        console.warn(msg);
-        throw Error(msg);
-      }
-    } else {
-      const msg = `No metamask connection found - you may not be able to do transactions`;
-      arcSettings = providers.dev;
-    }
-
+    const arcSettings = getArcSettings();
     const arc: Arc = new Arc(arcSettings);
-
     if (typeof(window) !== "undefined") {
       (<any> window).arc = arc;
     }
-
     return arc;
   }
 }
