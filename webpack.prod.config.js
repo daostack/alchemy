@@ -64,7 +64,7 @@ const config = merge(baseConfig, {
         'API_URL': JSON.stringify(process.env.API_URL || "https://daostack-alchemy.herokuapp.com"),
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io"),
         'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
-        'NODE_ENV': JSON.stringify("production"),
+        'NODE_ENV': JSON.stringify(process.env.NODE_ENV) || JSON.stringify("production"),
       },
     }),
     new CopyWebpackPlugin([
