@@ -137,9 +137,16 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const stakesFor = Util.fromWei(proposal.stakesFor);
     const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
     const stakingLeftToBoost = Math.ceil((threshold - (stakesFor - stakesAgainst)) * 100) / 100;
+    const isPassing = stakesFor >= stakesAgainst;
+    const isFailing = stakesAgainst >= stakesFor;
+    const maxWidth = Math.max(stakesFor,stakesAgainst);
+    const passWidth = stakesFor <= 0.0001 ? 0 : Math.max(stakesFor/maxWidth * 100, 3);
+    const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst/maxWidth * 100, 3);
 
     let wrapperClass = classNames({
       [css.detailView] : detailView,
+      [css.isPassing] : isPassing,
+      [css.isFailing] : isFailing,
       [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
     });
@@ -252,7 +259,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               </div>
               <div className={css.forBar}>
                 <b>Pass</b>
-                <span></span>
+                <span style={{width: passWidth + "%"}}></span>
               </div>
             </div>
             <div className={css.clearfix}>
@@ -262,7 +269,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               </div>
               <div className={css.againstBar}>
                 <b>Fail</b>
-                <span></span>
+                <span style={{width: failWidth + "%"}}></span>
               </div>
             </div>
           </div>

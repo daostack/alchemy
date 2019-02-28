@@ -49,6 +49,8 @@ export const stakesFor: string;
 export const forBar: string;
 export const stakesAgainst: string;
 export const againstBar: string;
+export const isPassing: string;
+export const isFailing: string;
 export const reputationTurnout: string;
 export const header: string;
 export const tooltipPointer: string;

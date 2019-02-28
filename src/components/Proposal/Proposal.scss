@@ -483,6 +483,8 @@ button.disabled {
 
 	.forBar, .againstBar {
 		height: 18px;
+		width: 76px;
+		position: relative;
 
 		b {
 			font-weight: normal;
@@ -501,15 +503,17 @@ button.disabled {
 			background-color: rgba(208, 214, 220, 1.000);
 		}
 	}
+}
 
-	.forBar {
-		position: relative;
-		width: 55%;
+.isPassing .stakes .forBar {
+	span {
+		background-color: rgba(0, 190, 144, 1.000);
 	}
+}
 
-	.againstBar {
-		width: 25%;
-		position: relative;
+.isFailing .stakes .againstBar {
+	span {
+		background-color: rgba(0, 190, 144, 1.000);
 	}
 }
 
