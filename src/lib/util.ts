@@ -14,7 +14,6 @@ export default class Util {
       return Number(getArc().web3.utils.fromWei(amount, "ether"));
     } catch (err) {
       console.warn(`Invalid number value passed to fromWei: "${amount}"`);
-      console.trace();
       return 0;
     }
   }
