@@ -1,3 +1,4 @@
+import BN = require("bn.js");
 import promisify = require("es6-promisify");
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
@@ -40,6 +41,8 @@ interface IStateProps extends RouteComponentProps<any> {
   accountProfile?: IProfileState;
   currentAccountAddress: string;
   dao: IDAOState;
+  ethBalance: BN;
+  genBalance: BN;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -50,7 +53,9 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     accountInfo: ownProps.accountInfo,
     accountProfile: state.profiles[accountAddress],
     currentAccountAddress: state.web3.ethAccountAddress ? state.web3.ethAccountAddress.toLowerCase() : null,
-    dao: ownProps.dao
+    dao: ownProps.dao,
+    ethBalance: ownProps.ethBalance,
+    genBalance: ownProps.genBalance
   };
 };
 
@@ -70,39 +75,21 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-interface IState {
-  genCount: number;
-  ethCount: number;
-}
-
 interface FormValues {
   description: string;
   name: string;
 }
 
-class AccountProfileContainer extends React.Component<IProps, IState> {
+class AccountProfileContainer extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
-
-    this.state = {
-      ethCount: null,
-      genCount: null
-    };
   }
 
   public async componentWillMount() {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
-
-    // TODO: refactor the below: we should subscribe to the Member object and get a updates of token balances as well
-    const ethBalance = await Util.getBalance(accountAddress);
-    const arc = getArc();
-    const stakingToken = arc.GENToken();
-    const genBalance = await stakingToken.balanceOf(accountAddress).pipe(first()).toPromise();
-
-    this.setState({ ethCount: Util.fromWei(ethBalance), genCount: Util.fromWei(genBalance)});
   }
 
   public copyAddress = (e: any) => {
@@ -149,8 +136,7 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao } = this.props;
-    const { ethCount, genCount } = this.state;
+    const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao, ethBalance, genBalance } = this.props;
 
     const editing = currentAccountAddress && accountAddress === currentAccountAddress;
 
@@ -269,6 +255,8 @@ class AccountProfileContainer extends React.Component<IProps, IState> {
                         {accountInfo
                            ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> </div>
                            : ""}
+                         <div><strong>GEN:</strong><br/><span>{Util.fromWei(genBalance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></div>
+-                        <div><strong>ETH:</strong><br/><span>{Util.fromWei(ethBalance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br/>
@@ -293,26 +281,29 @@ export default (props: RouteComponentProps<any>) => {
   const arc = getArc();
   const queryValues = queryString.parse(props.location.search);
   const daoAvatarAddress = queryValues.daoAvatarAddress as string;
+  const accountAddress = props.match.params.accountAddress;
 
   if (daoAvatarAddress) {
     const observable = combineLatest(
       arc.dao(daoAvatarAddress).state(),
-      arc.dao(daoAvatarAddress).member(props.match.params.accountAddress).state()
+      arc.dao(daoAvatarAddress).member(accountAddress).state(),
+      arc.ethBalance(accountAddress),
+      arc.GENToken().balanceOf(accountAddress)
     );
 
     return <Subscribe observable={observable}>{
-      (state: IObservableState<[IDAOState, IMemberState]>) => {
+      (state: IObservableState<[IDAOState, IMemberState, BN, BN]>) => {
         if (state.error) {
           return <div>{state.error.message}</div>;
         } else if (state.data) {
           const dao = state.data[0];
-          return <ConnectedAccountProfileContainer dao={dao} accountAddress={props.match.params.accountAddress} accountInfo={state.data[1]} {...props} />;
+          return <ConnectedAccountProfileContainer dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
         } else {
           return <div>Loading... xx</div>;
         }
       }
     }</Subscribe>;
   } else {
-    return <ConnectedAccountProfileContainer accountAddress={props.match.params.accountAddress} {...props} />;
+    return <ConnectedAccountProfileContainer accountAddress={accountAddress} {...props} />;
   }
 };
