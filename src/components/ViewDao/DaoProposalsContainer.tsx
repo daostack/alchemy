@@ -124,7 +124,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
   const currentAccountAddress =  props.currentAccountAddress;
   const arc = getArc();
   const observable = combineLatest(
-    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued }), // the list of queued proposals
+    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Boosted }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state()
