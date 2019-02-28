@@ -13,8 +13,8 @@ const providers = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/daostack",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
     web3Provider: `https://rinkeby.infura.io/16bDz7U53RbXysQiYOyc`,
     ipfsProvider: {
        host: "ipfs.infura.io",
