@@ -17,11 +17,9 @@ button:hover {
 }
 
 .wrapper {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 50px;
+  flex-grow: 2;
+  padding: 50px 50px 100px;
+  overflow: scroll;
 }
 
 .outer {
@@ -33,11 +31,11 @@ button:hover {
 
 .daoSidebar {
   min-width: 250px;
+  max-width: 250px;
   height: 100%;
-  display: flex;
-  flex-direction: column;
   background-color: $sky;
   color: $white;
+  flex-grow: 1;
 }
 
 .navHeading {
@@ -59,6 +57,14 @@ button:hover {
     color: rgba(255,255,255,.5);
   }
 
+}
+
+.homeNotification, .holdersNotification, .historyNotification, .redemptionNoticication {
+  opacity: 0;
+}
+
+.redemptionNoticication {
+  opacity: 1;
 }
 
 .daoNavigation {
@@ -92,12 +98,30 @@ button:hover {
       list-style: none;
       margin: 0;
       padding: 0;
+
+      .notification {
+        width: 8px;
+        height: 8px;
+        border-radius: 8px;
+        position: relative;
+        top: -2px;
+        background-color: rgba(246, 80, 80, 1.000);
+        display: inline-block;
+      }
+
+      img {
+        margin-left: 8px;
+        position: relative;
+        top: 2px;
+        margin-right: 8px;
+      }
+
     }
     li a {
       display: block;
       font-size: 14px;
       color: $white;
-      padding: 8px 23px;
+      padding: 8px 23px 8px 8px;
       background-color: rgba(32, 104, 188, 0);
       transition: all .25s ease;
     }
@@ -517,8 +541,13 @@ a.navItem:hover {
 }
 
 .noDecisions {
-  padding: 50px 0;
-  text-align: center;
+
+    padding: 50px;
+    text-align: center;
+    background-color: white;
+    border-radius: 15px 15px 15px 0;
+    margin-top: 80px;
+    box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
 
   .relax {
     width: 100px;
@@ -528,10 +557,11 @@ a.navItem:hover {
   }
 
   .proposalsHeader {
-    font-family: $heading-1-font;
     font-size: $jumbo;
     padding-top: 30px;
+    border-top: none;
     max-width: 100%;
+    color: rgba(27, 53, 96, 1.000);
   }
 
   .subheader {
@@ -543,18 +573,14 @@ a.navItem:hover {
     padding-top: 50px;
 
     a {
-      border: 1px solid $accent-4;
-      height: 40px;
-      background-color: $accent-4-transparent;
-      transition: all .25s ease;
+      height: 60px;
+      line-height: 60px;
+      font-size: 22px;
+      color: white;
+      background-color: #0376ff;
+      border-radius: 15px;
       display: inline-block;
-      line-height: 30px;
-      margin: 0 auto;
-      color: $accent-4;
-      font-weight: bold;
-      font-size: $body;
-      padding: 7px 15px 0 15px;
-      text-decoration: none;
+      padding: 0 30px;
 
       &:hover {
         background-color: $accent-4;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>menu/ holders</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="menu/-holders" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="holders" transform="translate(1.000000, 1.000000)" stroke="#FFFFFF" stroke-width="1.1">
+            <path d="M7,0.815530054 C5.3425,0.815530054 4,2.10433005 4,3.69553005 C4,5.28313005 5.3425,6.57553005 7,6.57553005 C8.6575,6.57553005 10,5.28313005 10,3.69553005 C10,2.10433005 8.6575,0.815530054 7,0.815530054 Z M7,9.01553005 C5.00125,9.01553005 1,9.93095862 1,11.7583872 L1,13.8155301 M13,13.8155301 L13,11.7583872 C13,9.93095862 8.99875,9.01553005 7,9.01553005" id="Shape" fill-rule="nonzero"></path>
+            <path d="M0.977496821,13.5 L13.0846699,13.3155301" id="Path"></path>
+        </g>
+    </g>
+</svg>

@@ -1,4 +1,3 @@
-import * as Arc from "@daostack/arc.js";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import * as React from "react";
@@ -16,6 +15,7 @@ import { default as PreTransactionModal, ActionTypes } from "components/Shared/P
 import VoteGraph from "./VoteGraph";
 
 interface IProps {
+  detailView?: boolean;
   currentAccountAddress: string;
   currentAccountReputation: BN;
   currentVote: number;
@@ -62,7 +62,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
       dao,
       isVotingNo,
       isVotingYes,
-      voteOnProposal
+      voteOnProposal,
+      detailView,
     } = this.props;
 
     const isVoting = isVotingNo || isVotingYes;
@@ -92,6 +93,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
     const votingDisabled = !currentAccountReputation || !!currentVote;
 
     let wrapperClass = classNames({
+      [css.detailView] : detailView,
       [css.voteBox] : true,
       [css.clearfix] : true,
       [css.unconfirmedVote] : isVoting,
@@ -105,6 +107,13 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.voted]: !isVotingNo && currentVote == ProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
+    });
+    let voteStatusClass = classNames({
+      [css.voteStatus]: true,
+      [css.hasVoted]: currentVote,
+      [css.votedFor]: !isVotingYes && currentVote == ProposalOutcome.Pass,
+      [css.votedAgainst]: !isVotingNo && currentVote == ProposalOutcome.Fail,
+      [css.hasNotVoted]: !currentVote,
     });
 
     const voteControls = classNames({
@@ -134,12 +143,39 @@ export default class VoteBox extends React.Component<IProps, IState> {
             proposal={proposal}
           /> : ""
         }
-
+        { this.props.detailView ?
+          <div className={voteStatusClass} >
+            <div className={css.statusTitle}>
+              <h3>Votes</h3>
+              <span>NUM Votes ></span>
+            </div>
+            <div className={css.castVote}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
+              </button>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
+              </button>
+            </div>
+            <div className={css.voteRecord}>
+              You voted
+              <span className={css.castVoteFor}>
+                - For
+              </span>
+              <span className={css.castVoteAgainst}>
+                - Against
+              </span>
+            </div>
+          </div>
+        : " "
+        }
         <div className={voteControls + " " + css.clearfix}>
           <div className={css.voteDivider}>
             <div className={css.voteGraphs}>
-              <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
-
+              { !this.props.detailView ?
+                 <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+               : " "
+              }
               <div className={css.reputationTurnout}>
                 <div className={css.header}>Reputation turnout</div>
                 <div className={css.turnoutInfo}>
@@ -179,6 +215,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
                   <img src="/assets/images/tooltip-pointer.svg"/>
                 </div>
               </div>
+              { this.props.detailView ?
+                 <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+               : " "
+              }
+
             </div>
           </div>
           <div className={css.voteButtons}>
@@ -246,6 +287,28 @@ export default class VoteBox extends React.Component<IProps, IState> {
             </div>
           </div>
         </div>
+        { !this.props.detailView ?
+          <div className={voteStatusClass} >
+            <div className={css.castVote}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
+              </button>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
+              </button>
+            </div>
+            <div className={css.voteRecord}>
+              You voted
+              <span className={css.castVoteFor}>
+                - For
+              </span>
+              <span className={css.castVoteAgainst}>
+                - Against
+              </span>
+            </div>
+          </div>
+        : " "
+        }
       </div>
     );
   }

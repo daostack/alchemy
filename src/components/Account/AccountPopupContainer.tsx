@@ -1,18 +1,13 @@
 import BN = require("bn.js");
-import { denormalize } from "normalizr";
-import Tooltip from "rc-tooltip";
+import * as classNames from "classnames";
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import { combineLatest } from "rxjs";
 
 import { getArc } from "arc";
-import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IAccountState, IProposalState, ProposalStates } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import * as schemas from "schemas";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
@@ -27,14 +22,16 @@ import { Address, IDAOState, IMemberState } from "@daostack/client";
 
 interface IStateProps {
   accountAddress: string;
-  profile: IProfileState;
   dao: IDAOState;
+  detailView?: boolean;
+  profile: IProfileState;
   reputation: BN;
   tokens: BN;
 }
 
 interface IOwnProps {
   dao: IDAOState;
+  detailView?: boolean;
   accountAddress: Address;
 }
 
@@ -71,10 +68,15 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, dao, profile, reputation, tokens } = this.props;
+    const { accountAddress, dao, profile, reputation } = this.props;
+
+    const targetAccountClass = classNames({
+      [css.detailView]: this.props.detailView,
+      [css.targetAccount]: true
+    });
 
     return (
-      <div className={css.targetAccount}>
+      <div className={targetAccountClass}>
         <div className={css.avatar}>
           <AccountImage accountAddress={accountAddress} />
         </div>
@@ -107,8 +109,8 @@ export default (props: IOwnProps) => {
   const arc = getArc();
 
   const observable = combineLatest(
-    arc.dao(props.dao.address).state,
-    arc.dao(props.dao.address).member(props.accountAddress).state
+    arc.dao(props.dao.address).state(),
+    arc.dao(props.dao.address).member(props.accountAddress).state()
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IDAOState, IMemberState]>) => {

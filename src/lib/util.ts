@@ -10,7 +10,12 @@ const path = require("path");
 
 export default class Util {
   public static fromWei(amount: BN): number {
-    return Number(getArc().web3.utils.fromWei(amount, "ether"));
+    try {
+      return Number(getArc().web3.utils.fromWei(amount.toString(), "ether"));
+    } catch (err) {
+      console.warn(`Invalid number value passed to fromWei: "${amount}"`);
+      return 0;
+    }
   }
 
   public static toWei(amount: number): BN {
@@ -21,24 +26,25 @@ export default class Util {
     return getArc().web3.eth.getBalance(account);
   }
 
-  public static networkName(id: number) {
+  public static networkName(id: string) {
     switch (id) {
-      case 1:
-        return "Mainnet";
-      case 2:
-        return "Morden";
-      case 3:
-        return "Ropsten";
-      case 4:
-        return "Rinkeby";
-      case 42:
-        return "Kovan";
-      case 1512051714758:
-        return "Ganache";
+      case "1":
+        return "mainnet";
+      case "2":
+        return "morden";
+      case "3":
+        return "ropsten";
+      case "4":
+        return "rinkeby";
+      case "42":
+        return "kovan";
+      case "1512051714758":
+        return "ganache";
       default:
-        return "Ganache";
+        return `unknown (${id})`;
     }
   }
+
   public static copyToClipboard(value: any) {
     const el = document.createElement("textarea");
     el.value = value;

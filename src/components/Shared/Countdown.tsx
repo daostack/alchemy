@@ -1,11 +1,14 @@
+import * as classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";
 
 import * as css from "./Countdown.scss";
 
 interface IProps {
+  detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
+  onEnd?(): any;
 }
 
 interface IState {
@@ -33,7 +36,14 @@ class Countdown extends React.Component<IProps, IState> {
     // update every five seconds
     this.interval = setInterval(() => {
       const date = this.calculateCountdown(this.props.toDate);
-      date ? this.setState(date) : this.stop();
+      if (date) {
+        this.setState(date);
+      } else {
+        this.stop();
+        if (this.props.onEnd) {
+          this.props.onEnd();
+        }
+      }
     }, 5000);
   }
 
@@ -86,11 +96,26 @@ class Countdown extends React.Component<IProps, IState> {
       } else {
         percentageComplete = (1 - timeLeft / endDateMoment.diff(this.props.fromDate)) * 100;
       }
+
+      if (percentageComplete < 1) {
+        percentageComplete = 2;
+      }
     }
 
+    const containerClass = classNames({
+      [css.detailView]: this.props.detailView,
+      [css.container]: true,
+    });
+
     return (
-      <div className={css.container}>
-        <div style={{backgroundColor: "blue", height: "2px", width: percentageComplete + "%"}}></div>
+      <div className={containerClass}>
+        <div className={css.percentageContainer}>
+          <div style={{backgroundColor: "blue", height: "2px", width: percentageComplete + "%"}}></div>
+        </div>
+        {this.props.detailView ?
+            <span>Proposal ends:</span>
+          : " "
+        }
         <span className={css.timeSection}>
            <strong>{this.addLeadingZeros(countDown.days)}d</strong>
         </span>

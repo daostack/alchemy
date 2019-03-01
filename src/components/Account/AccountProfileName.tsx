@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { IProfileState } from "reducers/profilesReducer";
 
 interface IProps {
+  detailView?: boolean;
   accountProfile?: IProfileState;
   daoAvatarAddress?: string;
 }

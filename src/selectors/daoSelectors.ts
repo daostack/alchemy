@@ -3,7 +3,7 @@ import { denormalize } from "normalizr";
 import { createSelector } from "reselect";
 
 import { IRootState } from "reducers";
-import { IProposalState, ProposalStates, closingTimeLegacy } from "reducers/arcReducer";
+import { IProposalState, ProposalStates } from "reducers/arcReducer";
 import * as schemas from "schemas";
 
 const getArcEntities = (state: IRootState) => state.arc;

@@ -28,6 +28,7 @@ interface IProps {
   currentAccountGens: BN;
   currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
+  detailView?: boolean;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   threshold: number;
@@ -79,6 +80,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
+      detailView,
       proposal,
       isPredictingFail,
       isPredictingPass,
@@ -100,6 +102,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <div className={css.preApproval}>
             <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal.bind(this)}></div>
             <div className={css.preapproveWrapper}>
+            <h3>Activate predictions</h3>
               <p>
                 In order to activate predictions, you must authorize our smart
                 contract to receive GENs from you. Upon activation, the smart contract
@@ -136,6 +139,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const stakingLeftToBoost = Math.ceil((threshold - (stakesFor - stakesAgainst)) * 100) / 100;
 
     let wrapperClass = classNames({
+      [css.detailView] : detailView,
       [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
     });
@@ -182,14 +186,14 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)}>
-        PASS <strong>+</strong>
+        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg"/> Pass
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
 
     const failButton = (
       <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
-        FAIL <strong>+</strong>
+        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg"/> Fail
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
@@ -210,42 +214,97 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         }
 
         <div>
+          <div className={css.statusTitle}>
+            <h3>Predictions</h3>
+            { this.props.detailView ?
+              <div className={css.stakeControls}>
+                {
+                 proposal.stage === IProposalStage.Queued
+                  ? (
+                    tip(VoteOptions.No) != "" ?
+                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                        {passButton}
+                      </Tooltip> :
+                      passButton
+                    )
+                  : "Pass"
+                }
+                {
+                  proposal.stage === IProposalStage.Queued
+                  ? (
+                      tip(VoteOptions.Yes) != "" ?
+                        <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                          {failButton}
+                        </Tooltip> :
+                        failButton
+                    )
+                  : "Fail"
+                }
+              </div>
+              : " "
+            }
+          </div>
           <div className={css.stakes}>
-            {Util.fromWei(proposal.stakesFor).toFixed(2)}
-            <div className={css.forBar}><span></span></div>
-            {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
-            <div className={css.againstBar}><span></span></div>
+            <div className={css.clearfix}>
+              <div className={css.stakesFor}>
+                <img src="/assets/images/Icon/v-small-line.svg"/>
+                {Util.fromWei(proposal.stakesFor).toFixed(2)}
+              </div>
+              <div className={css.forBar}>
+                <b>Pass</b>
+                <span></span>
+              </div>
+            </div>
+            <div className={css.clearfix}>
+              <div className={css.stakesAgainst}>
+                <img src="/assets/images/Icon/x-small-line.svg"/>
+                {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
+              </div>
+              <div className={css.againstBar}>
+                <b>Fail</b>
+                <span></span>
+              </div>
+            </div>
           </div>
           <span className={css.boostedAmount}>
             {
               proposal.stage == IProposalStage.Queued && stakingLeftToBoost > 0 ?
-                <span><b>{stakingLeftToBoost.toFixed(2)} GEN TO BOOST</b></span> : ""
+                <span>
+                  <b>
+                    <img src="/assets/images/Icon/Boost-slate.svg" />
+                    {stakingLeftToBoost.toFixed(2)} GEN to boost
+                  </b>
+                </span>
+              : ""
             }
           </span>
-          <div className={css.centered}>
-            {
-             proposal.stage === IProposalStage.Queued
-              ? (
-                tip(VoteOptions.No) != "" ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                    {passButton}
-                  </Tooltip> :
-                  passButton
-                )
-              : "PASS"
-            }
-            {
-              proposal.stage === IProposalStage.Queued
-              ? (
-                  tip(VoteOptions.Yes) != "" ?
-                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                      {failButton}
+          { !this.props.detailView ?
+            <div className={css.centered}>
+              {
+               proposal.stage === IProposalStage.Queued
+                ? (
+                  tip(VoteOptions.No) != "" ?
+                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                      {passButton}
                     </Tooltip> :
-                    failButton
-                )
-              : "FAIL"
-            }
-          </div>
+                    passButton
+                  )
+                : "Pass"
+              }
+              {
+                proposal.stage === IProposalStage.Queued
+                ? (
+                    tip(VoteOptions.Yes) != "" ?
+                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                        {failButton}
+                      </Tooltip> :
+                      failButton
+                  )
+                : "Fail"
+              }
+            </div>
+            : " "
+          }
         </div>
       </div>
     );

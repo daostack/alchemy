@@ -4,11 +4,9 @@ import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Web3 } from "web3";
 
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
-import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
@@ -22,7 +20,6 @@ const emptyProposal: IProposalState = {
   beneficiary: null,
   boostedAt: 0,
   boostedVotePeriodLimit: 0,
-  boostingThreshold: 0,
   createdAt: 0,
   confidenceThreshold: 0,
   dao: null,
@@ -32,6 +29,7 @@ const emptyProposal: IProposalState = {
   ethReward: new BN(0),
   executedAt: 0,
   executionState: 0, // TODO: when client exports should be IExecutionState.None,
+  expiresInQueueAt: 0,
   externalToken: null,
   externalTokenReward: new BN(0),
   nativeTokenReward: new BN(0),
@@ -62,7 +60,6 @@ const emptyProposal: IProposalState = {
 };
 
 interface IState {
-  preTransactionModalOpen: boolean;
   proposalDetails: IProposalState;
 }
 
@@ -111,7 +108,6 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      preTransactionModalOpen: false,
       proposalDetails: emptyProposal
     };
 
@@ -122,23 +118,20 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.web3 = Util.getWeb3();
   }
 
-  public handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
+  public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
     const proposalValues = {...values,
-      ethReward: Util.toWei(values.ethReward),
-      externalTokenReward: Util.toWei(values.externalTokenReward),
-      nativeTokenReward: Util.toWei(values.nativeTokenReward),
-      reputationReward: Util.toWei(values.reputationReward)
+      ethReward: Util.toWei(Number(values.ethReward)),
+      externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
+      nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
+      reputationReward: Util.toWei(Number(values.reputationReward))
     };
 
     this.setState({
-      preTransactionModalOpen: true,
       proposalDetails: { ...emptyProposal, ...proposalValues}
     });
+    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = proposalValues;
     setSubmitting(false);
-  }
-
-  public closePreTransactionModal() {
-    this.setState({ preTransactionModalOpen: false });
+    await this.props.createProposal(this.props.daoAvatarAddress, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
   }
 
   public goBack(address: string) {
@@ -155,7 +148,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     const { createProposal, currentAccount, daoAvatarAddress } = this.props;
     const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = this.state.proposalDetails;
     const arc = getArc();
-    return <Subscribe observable={arc.dao(daoAvatarAddress).state}>{
+    return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
           const dao: IDAOState = state.data;
@@ -166,21 +159,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
           //   .filter((proposal) => !proposalEnded(proposal))
           //   .map((proposal) => proposal.description);
           const proposalDescriptions: string[] = [];
-          const boundCreateProposal = createProposal.bind(null, dao.address, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
           return (
             <div className={css.createProposalWrapper}>
-              {this.state.preTransactionModalOpen ?
-                <PreTransactionModal
-                  actionType={ActionTypes.CreateProposal}
-                  action={boundCreateProposal}
-                  closeAction={this.closePreTransactionModal.bind(this)}
-                  currentAccount={currentAccount}
-                  dao={dao}
-                  effectText=""
-                  proposal={this.state.proposalDetails}
-                /> : ""
-              }
-
               <h2>
                 <span>+ New proposal <b>| Contribution Reward</b></span>
               </h2>
@@ -284,52 +264,17 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       className={touched.description && errors.description ? css.error : null}
                     />
                     <div className={css.addTransfer}>
-                      <div className={css.rewardRow + " " + css.clearfix}>
-                        <div className={css.rewardAmount}>
-                          <input className={css.contributionReward} placeholder="Amount"/>
-                          <div className={css.contributionType}>
-                            <select className={css.contributionTypeDropdown}>
-                              <option value="ETH">ETH</option>
-                              <option value="ETH">GEN</option>
-                              <option value="ETH">Reputation</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className={css.rewardRecipient}>
-                          <div className={css.rewardArrow}>
-                            <img className={css.infoTooltip} src="/assets/images/Icon/Right-arrow.svg"/>
-                          </div>
-                          <UserSearchField
-                            daoAvatarAddress={daoAvatarAddress}
-                            name="beneficiary"
-                            onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
-                            onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                          />
-                          <label htmlFor="beneficiary" className={css.beneficiaryLabel}>
-                            {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
-                          </label>
-                        </div>
-                      </div>
-
-                      <div>
-                        <button className={css.addReward}>
-                          +
-                        </button>
-                      </div>
-
-                      <div style={{display: "none"}}>
-                        <Field
-                          id="nativeTokenRewardInput"
-                          maxLength={10}
-                          placeholder="How many tokens to reward"
-                          name="nativeTokenReward"
-                          type="number"
-                          className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
-                        />
-                        <label htmlFor="nativeTokenRewardInput">
-                          {dao.tokenSymbol} reward:
-                          {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                      <div className={css.rewardRecipient}>
+                        <label htmlFor="beneficiary">
+                          Recipient
+                          {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
                         </label>
+                        <UserSearchField
+                          daoAvatarAddress={daoAvatarAddress}
+                          name="beneficiary"
+                          onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                          onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                        />
                       </div>
 
                       <label htmlFor="reputationRewardInput">
@@ -363,7 +308,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                           </div>
                         : <div>
                             <label htmlFor="ethRewardInput">
-                              Proposal budget (ETH):
+                              ETH Reward:
                               {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
                             </label>
                             <Field
@@ -377,6 +322,21 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                             />
                           </div>
                       }
+
+                      <div style={{display: "none"}}>
+                        <Field
+                          id="nativeTokenRewardInput"
+                          maxLength={10}
+                          placeholder="How many tokens to reward"
+                          name="nativeTokenReward"
+                          type="number"
+                          className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
+                        />
+                        <label htmlFor="nativeTokenRewardInput">
+                          {dao.tokenSymbol} reward:
+                          {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                        </label>
+                      </div>
 
                       {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>

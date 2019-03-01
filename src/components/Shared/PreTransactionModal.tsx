@@ -16,7 +16,6 @@ import TransferDetails from "components/Proposal/TransferDetails";
 import * as css from "./PreTransactionModal.scss";
 
 export enum ActionTypes {
-  CreateProposal,
   Execute,
   Redeem,
   StakeFail,
@@ -105,10 +104,11 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
       });
     }
 
-    let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules;
+    let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules, actionTypeClass;
     switch (actionType) {
       case ActionTypes.VoteUp:
-        icon = <img src="/assets/images/Tx/Upvote.svg" />;
+        actionTypeClass = css.voteUp;
+        icon = <img src="/assets/images/Icon/vote/for-fill-green.svg" />;
         transactionType = <span><strong className={css.passVote}>Pass</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
         // passIncentive = proposal.state == ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
@@ -124,7 +124,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.VoteDown:
-        icon = <img src="/assets/images/Tx/Downvote.svg" />;
+        actionTypeClass = css.voteDown;
+        icon = <img src="/assets/images/Icon/vote/against.svg" />;
         transactionType = <span><strong className={css.failVote}>Fail</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
         passIncentive = proposal.stage == IProposalStage.Queued ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
@@ -138,7 +139,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.StakePass:
-        icon = <img src="/assets/images/Tx/StakePass.svg"/>;
+        actionTypeClass = css.stakePass;
+        icon = <img src="/assets/images/Icon/v-white.svg"/>;
         transactionType = <span><strong className={css.passVote}>Pass</strong> prediction</span>;
 
         passIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
@@ -151,7 +153,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>;
         break;
       case ActionTypes.StakeFail:
-        icon = <img src="/assets/images/Tx/StakeFail.svg"/>;
+        actionTypeClass = css.stakeFail;
+        icon = <img src="/assets/images/Icon/x-white.svg"/>;
         transactionType = <span><strong className={css.failVote}>Fail</strong> prediction</span>;
         passIncentive = <span>LOSE YOUR STAKE</span>;
         failIncentive = <span>YOU GAIN GEN AND REPUTATION</span>;
@@ -160,23 +163,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                   <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
                   <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
                   <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
-                </div>;
-        break;
-      case ActionTypes.CreateProposal:
-        icon = <img src="/assets/images/Tx/NewProposal.svg"/>;
-        transactionType = <span>Create <strong className={css.redeem}>proposal</strong></span>;
-
-        if (currentAccount == proposal.beneficiary) {
-          const rewards = [];
-          passIncentive = <span>GAIN REPUTATION &amp; <RewardsString proposal={proposal} dao={dao} /></span>;
-        } else {
-          passIncentive = <span>GAIN REPUTATION</span>;
-        }
-
-        failIncentive = <span>NOTHING TO LOSE</span>;
-        rulesHeader = "RULES FOR CREATING PROPOSALS";
-        rules = <div>
-                  <p>If a proposal you submit passes, you will be awarded reputation. If you are the receiver of the budget, you will gain ETH and/or reputation.</p>
                 </div>;
         break;
       case ActionTypes.Redeem:
@@ -194,38 +180,46 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
         <div className={css.metaMaskModal}>
           <div className={css.bg} onClick={this.props.closeAction}></div>
           <div className={css.modalWindow}>
-            <div className={css.transactionHeader + " " + css.clearfix}>
+            <div className={css.transactionHeader + " " + css.clearfix + " " + actionTypeClass}>
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
                 &nbsp; | &nbsp;
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
+                <div className={css.transactionEffect}>
+                {effectText}
+                </div>
               </div>
-              <div className={css.closeTransactionContainer}>
-                <button onClick={this.props.closeAction}>
-                  <img src="/assets/images/Tx/Close.svg"/>
-                </button>
-              </div>
+              {actionType != ActionTypes.Redeem && actionType != ActionTypes.Execute ?
+                <div className={css.helpButton}>
+                  <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>?</button>
+                  <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
+                    <div className={css.helpBox}>
+                      <div className={css.pointer}></div>
+                      <div className={css.bg}></div>
+                      <div className={css.bridge}></div>
+                      <div className={css.header}>
+                        <h2>Genesis Protocol</h2>
+                        <h3>{rulesHeader}</h3>
+                      </div>
+                      <div className={css.body}>{rules}</div>
+                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
+                    </div>
+                  </span>
+                </div> : ""
+              }
             </div>
             <div className={css.proposalInfo}>
               <div className={css.proposalTitle}>
                 <strong>{proposal.title || "[no title]"}</strong>
               </div>
-              <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} />
-            </div>
-            {/* TODO: do we need this? */}
-             <div className={css.transactionEffect}>
-              {effectText}
+              <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
             </div>
             { /******* Staking form ******  **/
               actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass ?
               <div className={css.stakingInfo + " " + css.clearfix}>
-                <div className={css.currentPredictions}>
-                  <div>Pass {stakesFor}{actionType == ActionTypes.StakePass ? " + " + stakeAmount + " = " + (stakesFor + stakeAmount) : ""} GEN</div>
-                  <div>Fail {stakesAgainst}{actionType == ActionTypes.StakeFail ? " + " + stakeAmount + " = " + (stakesAgainst + stakeAmount) : ""} GEN</div>
-                </div>
                 <div className={css.stakingForm}>
-                  <span>Your stake</span>
+                  <span className={css.yourStakeTitle}>Your stake</span>
                   <div className={buyGensClass}>
                     <h4>
                       You do not have enough GEN
@@ -244,7 +238,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                     <span>Use one of our trusted exchanges to acquire more GEN</span>
                   </div>
                  <div className={css.formGroup + " " + css.clearfix}>
-                    <span className={css.genLabel}>Stake</span>
                     <input
                       autoFocus={true}
                       type="number"
@@ -254,7 +247,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                       onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
                       value={stakeAmount}
                     />
-                    <span className={css.genLabel}>GEN</span>
+                    <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                     <span>Your balance: {accountGens} GEN</span>
                   </div>
                 </div>
@@ -265,23 +258,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 <span className={css.outcomes}>OUTCOMES</span>
                 <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
                 <span className={css.failIncentive}><strong>FAIL</strong>{failIncentive}</span>
-
-                <img src="/assets/images/Icon/Help.svg" onClick={this.toggleInstructions.bind(this)} />
-                <img className={css.hover} src="/assets/images/Icon/Help-hover.svg"/>
-
-                <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
-                  <div className={css.helpBox}>
-                    <div className={css.pointer}></div>
-                    <div className={css.bg}></div>
-                    <div className={css.bridge}></div>
-                    <div className={css.header}>
-                      <h2>Genesis Protocol</h2>
-                      <h3>{rulesHeader}</h3>
-                    </div>
-                    <div className={css.body}>{rules}</div>
-                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                  </div>
-                </span>
               </div> : ""
             }
             { /* Commenting out the proposal vote status for now, lets see if we want to bring this back
@@ -297,31 +273,40 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
               </div>
               : ""
             **/ }
+          {/*
+        <div className={css.transactionInstructions}>
 
-            <div className={css.transactionInstructions}>
-              <p>
-                When you click "Launch MetaMask" we will pop up a Metamask dialogue.
-                This dialogue will ask you to approve your transaction, including a small ETH cost.
-                It will set a default gas limit and gas price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank">this calculator</a> to adjust the gas price.
-              </p>
-              { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
-                <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
-                  <button
-                    className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
-                    disabled={true}
-                    onClick={this.handleClickAction.bind(this)}
-                    data-test-id="launch-metamask"
-                  >
-                    {transactionType} with MetaMask
-                  </button>
-                </Tooltip> :
-                <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
-                  <img src="/assets/images/Tx/MetaMask.svg"/>
+          <p>
+            When you click "Launch MetaMask" we will pop up a Metamask dialogue.
+            This dialogue will ask you to approve your transaction, including a small ETH cost.
+            It will set a default gas limit and gas price. It's fine to stick with these defaults.
+            You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
+          </p>
+
+        </div>
+           */}
+            { (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
+              <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
+                <button
+                  className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
+                  disabled={true}
+                  onClick={this.handleClickAction.bind(this)}
+                  data-test-id="launch-metamask"
+                >
                   {transactionType} with MetaMask
                 </button>
-              }
-            </div>
+              </Tooltip> :
+              <div className={css.preTransactionBottom}>
+                <div className={css.closeTransactionContainer}>
+                  <button onClick={this.props.closeAction}>
+                    Cancel
+                  </button>
+                </div>
+                <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
+                  {transactionType} with MetaMask
+                </button>
+              </div>
+            }
           </div>
         </div>
       </Modal>

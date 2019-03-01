@@ -34,6 +34,10 @@ See [docker](./docker.md) for details about the docker containers.
 
 *Due to a bug in ganache, the state is not persistent, so you must re-run `npm run setup-env` after you (re-)start docker (TBD: link to issue)*
 
+# Helpful scripts
+
+You can give all the Ganache test accounts a bunch of GEN to play with by running `ts-node ./scripts/mintGen.ts`.
+This requires first installing ts-node: `npm install -g ts-node`
 
 # Developing @daostack/client in tandem with alchemy with npm link
 

@@ -28,15 +28,13 @@ class ViewProposalContainer extends React.Component<IProps, null> {
     };
 
     return(
-      <div>
+      <div className={css.viewProposalContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
 
-        <div className={css.proposalsHeader}>
-          Viewing proposal: {proposal.title}
-        </div>
         <div className={css.proposal}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} detailView={true}/>
         </div>
+        <h3 className={css.discussionTitle}>Discussion</h3>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
       </div>
     );
@@ -47,7 +45,7 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address} & Route
   const arc = getArc();
   const proposalId = props.match.params.proposalId;
   const currentAccountAddress = props.currentAccountAddress;
-  return <Subscribe observable={arc.dao(props.dao.address).proposal(proposalId).state}>{(state: IObservableState<IProposalState>) => {
+  return <Subscribe observable={arc.dao(props.dao.address).proposal(proposalId).state()}>{(state: IObservableState<IProposalState>) => {
       if (state.data) {
         return <ViewProposalContainer {...props} proposal={state.data} currentAccountAddress={currentAccountAddress} />;
       } else if (state.error) {

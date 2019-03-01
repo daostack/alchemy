@@ -1,5 +1,3 @@
-import * as Arc from "@daostack/arc.js";
-import { TransactionReceiptsEventInfo } from "@daostack/arc.js";
 import { Action, Dispatch, Middleware } from "redux";
 import { REHYDRATE, RehydrateAction } from "redux-persist";
 import { IRootState } from "../reducers";
@@ -105,50 +103,50 @@ const errorType = (error: Error) => {
 export const operationsTracker: Middleware =
   ({ getState, dispatch }) =>
   (next) => {
-    Arc.TransactionService.subscribe("TxTracking", (topic, info: TransactionReceiptsEventInfo) => {
-      const {
-        invocationKey,
-        txStage,
-        tx,
-        error,
-        functionName
-      } = info;
+    // Arc.TransactionService.subscribe("TxTracking", (topic, info: TransactionReceiptsEventInfo) => {
+    //   const {
+    //     invocationKey,
+    //     txStage,
+    //     tx,
+    //     error,
+    //     functionName
+    //   } = info;
 
-      if (txStage == Arc.TransactionStage.mined && !error) {
-        return;
-      }
+    //   if (txStage == Arc.TransactionStage.mined && !error) {
+    //     return;
+    //   }
 
-      // discard the `txEventContext` property since it's not serializable and irelevent.
-      const {txEventContext: _,  ...options} = info.options;
+    //   // discard the `txEventContext` property since it's not serializable and irelevent.
+    //   const {txEventContext: _,  ...options} = info.options;
 
-      let proposalTitle = options.title;
-      if (options.proposalId) {
-        const proposal = (getState() as any as IRootState).arc.proposals[options.proposalId];
-        if (proposal) {
-          proposalTitle = proposal.title;
-        }
-      }
+    //   let proposalTitle = options.title;
+    //   if (options.proposalId) {
+    //     const proposal = (getState() as any as IRootState).arc.proposals[options.proposalId];
+    //     if (proposal) {
+    //       proposalTitle = proposal.title;
+    //     }
+    //   }
 
-      dispatch({
-        type: "Operations/Update",
-        payload: {
-          id: `${invocationKey}`,
-          operation: {
-            txHash: tx,
-            error: error ? errorType(error) : undefined,
-            status:
-              txStage === Arc.TransactionStage.kickoff ?
-                OperationStatus.Started :
-              txStage === Arc.TransactionStage.sent ?
-                OperationStatus.Sent :
-                OperationStatus.Complete,
-            functionName,
-            options,
-            proposalTitle
-          }
-        }
-      } as IUpdateOperation);
-    });
+    //   dispatch({
+    //     type: "Operations/Update",
+    //     payload: {
+    //       id: `${invocationKey}`,
+    //       operation: {
+    //         txHash: tx,
+    //         error: error ? errorType(error) : undefined,
+    //         status:
+    //           txStage === Arc.TransactionStage.kickoff ?
+    //             OperationStatus.Started :
+    //           txStage === Arc.TransactionStage.sent ?
+    //             OperationStatus.Sent :
+    //             OperationStatus.Complete,
+    //         functionName,
+    //         options,
+    //         proposalTitle
+    //       }
+    //     }
+    //   } as IUpdateOperation);
+    // });
 
     return (a: any) => {
       if (a.type === REHYDRATE) {
@@ -163,7 +161,7 @@ export const operationsTracker: Middleware =
           Object.keys(state).forEach(async (id: string) => {
             if (state[id].status && state[id].status === OperationStatus.Sent && !state[id].error) {
               try {
-                const receipt = await Arc.TransactionService.watchForConfirmedTransaction(state[id].txHash);
+                //const receipt = await Arc.TransactionService.watchForConfirmedTransaction(state[id].txHash);
                 dispatch({
                   type: "Operations/Update",
                   payload: {

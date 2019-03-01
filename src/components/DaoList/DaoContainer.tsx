@@ -15,7 +15,7 @@ const DaoContainer = (props: IProps) => {
   const { address } = props;
   const arc = getArc();
 
-  return <Subscribe observable={arc.dao(address).state}>{(state: IObservableState<IDAOState>) => {
+  return <Subscribe observable={arc.dao(address).state()}>{(state: IObservableState<IDAOState>) => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
@@ -29,19 +29,31 @@ const DaoContainer = (props: IProps) => {
           data-test-id="dao-link"
         >
           <div className={css.dao}>
-            <div className={css.daoAvatar}>
-              <img src="/assets/images/daostack-logo.png"/>
-            </div>
             <h3 className={css.daoName}>{dao.name}</h3>
-            <Subscribe observable={dao.token.state}>{ (state: any) =>  (state.data &&
-              <div>
-                <div className={css.daoInfo}>Token: {state.data.name } ({state.data.symbol})</div>
-                <div className={css.daoInfo}>Num tokens: {Util.fromWei(state.data.totalSupply).toLocaleString()}</div>
+
+            <div className={css.clearfix + " " + css.daoInfoContainer}>
+              <div className={css.daoInfoTitle}>
+                Monthly Activity
               </div>
-            )}</Subscribe>
-            <Subscribe observable={dao.reputation.state}>{ (state: any) =>  (state.data &&
-              <div className={css.daoInfo}>Reputation: {Util.fromWei(state.data.totalSupply).toLocaleString()}</div>
-            )}</Subscribe>
+              <Subscribe observable={dao.token.state()}>{ (state: any) =>  (state.data &&
+                  <div>
+                    <div className={css.daoInfo}>
+                      <b>{state.data.symbol}</b>
+                      <span>Token</span>
+                     </div>
+                    <div className={css.daoInfo}>
+                      <b>{Util.fromWei(state.data.totalSupply).toLocaleString()}</b>
+                      <span>Num tokens</span>
+                     </div>
+                  </div>
+              )}</Subscribe>
+              <Subscribe observable={dao.reputation.state()}>{ (state: any) =>  (state.data &&
+                <div className={css.daoInfo}>
+                  <b>{Util.fromWei(state.data.totalSupply).toLocaleString()}</b>
+                  <span>Reputation</span>
+                </div>
+              )}</Subscribe>
+            </div>
           </div>
         </Link>;
       }

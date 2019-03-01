@@ -54,20 +54,6 @@
       display: inline-block;
     }
 
-    .beneficiaryLabel {
-      position: absolute;
-      top: 33px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: block;
-      width: 100px;
-      text-align: center;
-
-      span {
-        left: 0;
-      }
-    }
-
     .addReward {
       font-size: 18px;
       font-weigt: bold;
@@ -283,7 +269,7 @@
       margin-right: 8px;
     }
 
-    .loading {  
+    .loading {
       width: 18px;
       display: none;
     }

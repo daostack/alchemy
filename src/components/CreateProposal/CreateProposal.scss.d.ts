@@ -2,7 +2,6 @@ export const clearfix: string;
 export const createProposalWrapper: string;
 export const editIcon: string;
 export const contributionReward: string;
-export const beneficiaryLabel: string;
 export const addReward: string;
 export const rewardRow: string;
 export const rewardAmount: string;

@@ -1,8 +1,5 @@
-// import * as Arc from '@daostack/arc.js';
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFacebook, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
-// import axios from "axios";
-// import BigNumber from "bignumber.js";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
