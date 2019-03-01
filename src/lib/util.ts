@@ -11,7 +11,7 @@ const path = require("path");
 export default class Util {
   public static fromWei(amount: BN): number {
     try {
-      return Number(getArc().web3.utils.fromWei(amount, "ether"));
+      return Number(getArc().web3.utils.fromWei(amount.toString(), "ether"));
     } catch (err) {
       console.warn(`Invalid number value passed to fromWei: "${amount}"`);
       return 0;
