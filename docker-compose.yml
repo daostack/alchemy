@@ -64,13 +64,12 @@ services:
       GRAPH_LOG: "graph.log"
 
   ipfs:
-    build:
-      context: ./docker/ipfs/
+    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.11-v2-0.0.1-rc.10
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: postgres
+    image: daostack/subgraph-postgres:ganache-0.0.1-rc.11-v2-0.0.1-rc.10
     ports:
       - 9432:5432
     environment:

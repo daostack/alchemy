@@ -29,10 +29,9 @@ script:
   - npm run service-status
 
   # setup the environment
-  - echo 'npm run setup-env' && echo -en 'travis_fold:start:script.4\\r'
-  - npm run setup-env
   # move the migration.json file froms etup-env into the docker container
-  - cp node_modules/@daostack/subgraph/migration.json config/
+  # TODO: we really need this?
+  - docker-compose exec ganache cat migration.json > config/migration.json
   - docker-compose exec alchemy /bin/bash -c "cp config/migration.json node_modules/@daostack/subgraph/"
 
   - echo -en 'travis_fold:end:script.4\\r'
