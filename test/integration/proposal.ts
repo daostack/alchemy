@@ -37,7 +37,6 @@ describe("Proposals", () => {
       const ethReward = Math.floor(Math.random() * 1000);
       browser.setValue("*[id=\"ethRewardInput\"]", `${ethReward}` );
       browser.click("*[type=\"submit\"]");
-      browser.debug();
 
       // check that the proposal with the ethReward appears in the list
       browser.waitForExist(`strong*=${ethReward}`);
