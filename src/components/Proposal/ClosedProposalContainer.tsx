@@ -31,6 +31,7 @@ interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccount: IMemberState;
+  daoEthBalance: BN;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
@@ -41,6 +42,7 @@ interface IStateProps {
 
 interface IContainerProps {
   dao: IDAOState;
+  daoEthBalance: BN;
   currentAccount: IMemberState;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
@@ -59,7 +61,8 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     creatorProfile: state.profiles[proposal.proposer],
     currentAccount,
     dao,
-    isRedeemPending: isRedeemPending(proposal.id, state.web3.ethAccountAddress)(state),
+    daoEthBalance: ownProps.daoEthBalance,
+    isRedeemPending: isRedeemPending(proposal.id, currentAccount.address)(state),
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
@@ -111,6 +114,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       creatorProfile,
       currentAccount,
       dao,
+      daoEthBalance,
       proposal,
       redeemProposal,
       executeProposal,
@@ -120,14 +124,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
       votesOfCurrentUser,
     } = this.props;
 
-    // TODO: fix this: get the amount of ETH, GEN, and externalToken of the DAO
-    const ethBalance = new BN(0); //TODO: subscribe to ethBalance dao.ethBalance;
     const externalTokenBalance = dao.externalTokenBalance;
 
     const beneficiaryHasRewards = (
       proposal.reputationReward.gt(new BN(0)) ||
       proposal.nativeTokenReward.gt(new BN(0)) ||
-      (proposal.ethReward.gt(new BN(0)) && ethBalance.gte(proposal.ethReward)) ||
+      (proposal.ethReward.gt(new BN(0)) && daoEthBalance.gte(proposal.ethReward)) ||
       (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))
     ) as boolean;
 
@@ -376,9 +378,10 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
+    dao.ethBalance()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any]>): any => {
+    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal</div>;
       } else if (state.error) {
@@ -392,6 +395,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
           currentAccount={state.data[1]}
           proposal={proposal}
           dao={props.dao}
+          daoEthBalance={state.data[5]}
           rewardsForCurrentUser={rewards}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}

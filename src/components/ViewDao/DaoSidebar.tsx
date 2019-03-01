@@ -85,7 +85,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                   } else if ( state.error) {
                     return <li>{ state.error.message}</li>;
                   } else {
-                    return <li><strong>{ Util.fromWei(state.data) }</strong> ETH</li>;
+                    return <li><strong>{ Util.fromWei(new BN(state.data)) }</strong> ETH</li>;
                   }
                 }
               }</Subscribe>
