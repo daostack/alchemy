@@ -1,19 +1,13 @@
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import { denormalize } from "normalizr";
-import Tooltip from "rc-tooltip";
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import { combineLatest } from "rxjs";
 
 import { getArc } from "arc";
-import * as arcActions from "actions/arcActions";
 import { IRootState } from "reducers";
-import { IAccountState, IProposalState, ProposalStates } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import * as schemas from "schemas";
 import Util from "lib/util";
 
 import AccountImage from "components/Account/AccountImage";
@@ -74,7 +68,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, dao, profile, reputation, tokens, detailView } = this.props;
+    const { accountAddress, dao, profile, reputation } = this.props;
 
     const targetAccountClass = classNames({
       [css.detailView]: this.props.detailView,

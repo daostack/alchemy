@@ -6,10 +6,9 @@ import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 //@ts-ignore
 import { ModalContainer, ModalRoute } from "react-router-modal";
-
 import { Address } from "@daostack/client";
 import * as web3Actions from "actions/web3Actions";
-import { getArc, pollForAccountChanges } from "arc";
+import { getArc, pollForAccountChanges, checkNetwork } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -76,7 +75,15 @@ class AppContainer extends React.Component<IProps, IState> {
     // once we have an account, or it changes, we notifiy the redux store about it
     pollForAccountChanges(arc.web3).subscribe(
       (next: Address) => {
-        this.props.setCurrentAccount(next);
+        try {
+          checkNetwork(arc.web3);
+          // only set the account if the network is correct
+          this.props.setCurrentAccount(next);
+        } catch (err) {
+          console.warn(err.message);
+          // TODO: this notification is NOT working: why?
+          showNotification(NotificationStatus.Failure, err.message);
+        }
       }
     );
   }
