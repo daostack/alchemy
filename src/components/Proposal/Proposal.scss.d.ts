@@ -42,6 +42,7 @@ export const upvotePendingIcon: string;
 export const upvoted: string;
 export const voted: string;
 export const voteDivider: string;
+export const closedProposal: string;
 export const verifyMask: string;
 export const verifying: string;
 export const stakes: string;

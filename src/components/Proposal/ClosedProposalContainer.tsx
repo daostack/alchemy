@@ -143,6 +143,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
         [css.proposal]: true,
+        [css.closedProposal]: true,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: redeemable

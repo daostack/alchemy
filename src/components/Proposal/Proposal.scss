@@ -424,6 +424,19 @@ button.disabled {
   }
 }
 
+.proposal.closedProposal {
+	display: block;
+	width: 100%;
+	border-radius: 3px;
+	margin-top: 3px;
+	margin-right: 0;
+	height: 100px;
+
+	.proposalInfo {
+		display: flex;
+	}
+}
+
 .detailView .voteControls {
     width: 160px;
     text-align: center;
