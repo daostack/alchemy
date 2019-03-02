@@ -1,29 +1,53 @@
 import { Arc } from "@daostack/client";
+import Util from "lib/util";
 import { Observable } from "rxjs";
 
 const Web3 = require("web3");
 
-// default values for providers. This should be manageed depending on the deployment location
-const graphqlHttpProvider: string = "http://127.0.0.1:8000/subgraphs/name/daostack";
-const graphqlWsProvider: string = "ws://127.0.0.1:8001/subgraphs/name/daostack";
-const web3HttpProvider: string = "http://127.0.0.1:8545";
-const web3WsProvider: string = "ws://127.0.0.1:8545";
-// must use "localhost" here because of cors issues
-// const ipfsProvider: string = '/ip4/localhost/tcp/5001'
-const ipfsProvider: string = "localhost";
+const providers = {
+  dev: {
+    graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
+    graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
+    web3Provider: "ws://127.0.0.1:8545",
+    ipfsProvider: "localhost",
+    contractAddresses: getContractAddresses("private")
+  },
+  staging: {
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
+    web3Provider: `https://rinkeby.infura.io/16bDz7U53RbXysQiYOyc`,
+    ipfsProvider: {
+       host: "ipfs.infura.io",
+       port: "5001",
+       protocol: "https"
+    },
+    contractAddresses: getContractAddresses("rinkeby")
+  },
+  production: {
+    graphqlHttpProvider: "",
+    graphqlWsProvider: "",
+    web3WsProvide: "",
+    ipfsProvider: {
+       host: "ipfs.infura.io",
+       port: "5001",
+       protocol: "https"
+    },
+    contractAddresses: getContractAddresses("main")
+  }
+};
 
-function getLocalContractAddresses() {
+function getContractAddresses(key: "private"|"rinkeby"|"main") {
+
   const deployedContractAddresses = require(`../config/migration.json`);
 
   const addresses = {
-      ...deployedContractAddresses.private,
+      ...deployedContractAddresses[key],
    };
   if (!addresses || addresses === {}) {
       throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`);
     }
   return addresses;
 }
-const contractAddresses = getLocalContractAddresses();
 
 // TODO: move pollforAccountChanges to client lib? (as an currentAddres(): Observable<Address>)
 // Polling is Evil!
@@ -40,9 +64,7 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
           account = web3.eth.accounts[0].address;
         }
         if (prevAccount !== account && account) {
-          if (prevAccount) {
-            console.log(`ACCOUNT CHANGED; new account is ${account}`);
-          }
+          console.log(`ACCOUNT CHANGED; new account is ${account}`);
           web3.eth.defaultAccount = account;
           observer.next(account);
           prevAccount = account;
@@ -53,8 +75,58 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
   });
 }
 
+/**
+ * Checks if the web3 provider is as expected; throw an Error if it is not
+ * @return
+ */
+export function checkNetwork(web3: any) {
+  // if we are connected with metamask, we find the right settings
+  const web3Provider = web3.currentProvider;
+  if (web3Provider && web3Provider.isMetaMask) {
+    const networkName = Util.networkName(web3Provider.networkVersion);
+    let expectedNetworkName;
+    switch (process.env.NODE_ENV) {
+      case "development": {
+        expectedNetworkName = "ganache";
+        break;
+      }
+      case "staging": {
+        expectedNetworkName = "rinkeby";
+        break;
+      }
+      case  "production": {
+        expectedNetworkName = "main";
+        break;
+      }
+      default: {
+        throw new Error(`Uknown NODE_ENV: ${process.env.NODE_ENV}`);
+      }
+
+    }
+    if (networkName === expectedNetworkName) {
+      console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
+      return true;
+    } else {
+      // TODO: error message is for developers, need to write something more user friendly here
+      const msg = `YOU ARE NOT CONNECTED to "${expectedNetworkName})" (you are connected to "${networkName}" instead; in "${process.env.NODE_ENV}" environment). PLEASE SWITCH`;
+      throw new Error(msg);
+    }
+  } else {
+    // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
+    if (process.env.NODE_ENV === "development") {
+      const msg = `No metamask connection found - you may not be able to do transactions`;
+      console.warn(msg);
+    }
+  }
+}
+/**
+ * try to get the web3 provider from the browser; if we cannnot return a sane default value
+ * @return A Web3 provider
+ */
 export function getWeb3Provider() {
   let web3Provider;
+
+  // get the web3 provider from the browser or from the Web3 object
   if (typeof window !== "undefined" &&
     (typeof (window as any).ethereum !== "undefined" || typeof (window as any).web3 !== "undefined")
   ) {
@@ -64,46 +136,58 @@ export function getWeb3Provider() {
     web3Provider = Web3.givenProvider;
   }
 
-  // print some info for developers
-  if (web3Provider && web3Provider.isMetaMask) {
-    console.log("Connected with Metamask");
-  } else {
+  if (!web3Provider) {
     // TODO: fallback on Portis
-    console.warn(`NO WEB3 PROVIDER PROVIDED BY BROWSER: using default connection at ${web3WsProvider}`);
-    if (process.env.NODE_ENV === "dev") {
-      web3Provider = web3WsProvider;
+    let fallbackWeb3Provider: string;
+    if (process.env.NODE_ENV === "development") {
+      fallbackWeb3Provider = providers.dev.web3Provider;
     } else {
       // TODO: provide read-only web3 provider (like infura) for staging and production environments
-      web3Provider = web3WsProvider;
+      fallbackWeb3Provider = providers.staging.web3Provider;
     }
-  }
-  if (web3Provider !== web3WsProvider && web3Provider.networkVersion !== "1512051714758") {
-    console.warn(`YOU ARE NOT CONNECTED TO GANACHE (but to ${web3Provider.networkVersion}) - please switch conection to localhost: 8545 to enable transactions`);
-  } else {
-    console.log(`Connected to Ganache - this is great in this test phase`);
+    console.warn(`NO WEB3 PROVIDER PROVIDED BY BROWSER: using ${fallbackWeb3Provider}`);
   }
   return web3Provider;
 }
 
+// get appropriate Arc configuration for the given environment
+function getArcSettings(): any {
+  let arcSettings: any;
+  switch (process.env.NODE_ENV) {
+    case "development": {
+      arcSettings = providers.dev;
+      break;
+    }
+    case "staging" : {
+      arcSettings = providers.staging;
+      break;
+    }
+    // case "production" : {
+    //   arcSettings = providers.production;
+    //   break;
+    // }
+    default: {
+      console.log(process.env.NODE_ENV === "development");
+      throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
+    }
+  }
+  return arcSettings;
+}
+
 export function getArc(): Arc {
-  // TODO: we store the arc object in the window object, but the react
+  // store the Arc instance in the global namespace on the 'window' object
+  // (this is not best practice)
   if (typeof(window) !== "undefined" && (<any> window).arc) {
     return (<any> window).arc;
   } else {
-    const web3Provider = getWeb3Provider();
 
-    const arc: Arc = new Arc({
-      graphqlHttpProvider,
-      graphqlWsProvider,
-      web3Provider,
-      ipfsProvider,
-      contractAddresses
-    });
-
+    const arcSettings = getArcSettings();
+    console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
+    console.log(arcSettings);
+    const arc: Arc = new Arc(arcSettings);
     if (typeof(window) !== "undefined") {
       (<any> window).arc = arc;
     }
-
     return arc;
   }
 }

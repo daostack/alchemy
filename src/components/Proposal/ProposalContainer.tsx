@@ -35,6 +35,7 @@ interface IStateProps {
   currentAccount: IMemberState;
   currentAccountGens: BN;
   currentAccountGenStakingAllowance: BN;
+  daoEthBalance: BN;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
@@ -53,6 +54,7 @@ interface IContainerProps {
   currentAccount: IMemberState;
   currentAccountGens: BN;
   currentAccountGenStakingAllowance: BN;
+  daoEthBalance: BN;
   detailView?: boolean;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
@@ -76,11 +78,12 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     currentAccountGens: ownProps.currentAccountGens,
     currentAccountGenStakingAllowance: ownProps.currentAccountGenStakingAllowance,
     dao,
+    daoEthBalance: ownProps.daoEthBalance,
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
     isPredictingPass: isStakePending(proposal.id, VoteOptions.Yes)(state),
     isPredictingFail: isStakePending(proposal.id, VoteOptions.No)(state),
-    isRedeemPending: isRedeemPending(proposal.id, state.web3.ethAccountAddress)(state),
+    isRedeemPending: isRedeemPending(proposal.id, currentAccount.address)(state),
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
@@ -147,6 +150,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
+      daoEthBalance,
       detailView,
       proposal,
       approveStakingGens,
@@ -165,15 +169,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
       threshold
     } = this.props;
 
-    // TODO: fix this: get the amount of ETH, GEN, and externalToken of the DAO
-    const ethBalance = new BN(0); //TODO: subscribe to ethBalance dao.ethBalance;
-    const genBalance = dao.tokenBalance;
     const externalTokenBalance = dao.externalTokenBalance;
 
     const beneficiaryHasRewards = (
       proposal.reputationReward.gt(new BN(0)) ||
       proposal.nativeTokenReward.gt(new BN(0)) ||
-      (proposal.ethReward.gt(new BN(0)) && ethBalance.gte(proposal.ethReward)) ||
+      (proposal.ethReward.gt(new BN(0)) && daoEthBalance.gte(proposal.ethReward)) ||
       (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))
     ) as boolean;
 
@@ -507,10 +508,11 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
     props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)),
-    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(null) // TODO: change how this is handled when allowance returns BN
+    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(null), // TODO: change how this is handled when allowance returns BN
+    dao.ethBalance()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any]>): any => {
+    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal</div>;
       } else if (state.error) {
@@ -525,6 +527,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
           currentAccount={state.data[1]}
           currentAccountGens={state.data[5]}
           currentAccountGenStakingAllowance={state.data[6] ? new BN(state.data[6].amount) : new BN(0)}
+          daoEthBalance={state.data[7]}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
