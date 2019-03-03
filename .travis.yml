@@ -38,9 +38,7 @@ script:
   # get some diagnostic info fo debugging travis
   - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
   - npm run service-status
-  - wget -S -O - http://127.0.0.1:3000/
   - docker-compose logs alchemy
-  - docker-compose logs ganache
   - docker-compose logs graph-node
   - echo -en 'travis_fold:end:script.3\\r'
 
