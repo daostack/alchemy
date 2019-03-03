@@ -79,17 +79,3 @@ export default class Util {
     return getArc().web3.eth.defaultAccount;
   }
 }
-
-export function getLocalContractAddresses() {
-  const deployedContractAddresses = require(`../../config/migration.json`);
-
-  const addresses = {
-      ...deployedContractAddresses.private.base,
-      // ...require(path).private.dao
-   };
-  console.log(addresses);
-  if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`);
-    }
-  return addresses;
-}

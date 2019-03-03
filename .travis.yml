@@ -28,12 +28,6 @@ script:
   # prin the status of the services
   - npm run service-status
 
-  # setup the environment
-  # move the migration.json file froms etup-env into the docker container
-  # TODO: we really need this?
-  - docker-compose exec ganache cat migration.json > config/migration.json
-  - docker-compose exec alchemy /bin/bash -c "cp config/migration.json node_modules/@daostack/subgraph/"
-
   - echo -en 'travis_fold:end:script.4\\r'
 
   # get some diagnostic info fo debugging travis
