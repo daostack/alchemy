@@ -51,11 +51,7 @@
     "build-travis": "cross-env NODE_ENV=production node --max_old_space_size=4096 ./node_modules/webpack/bin/webpack.js --config webpack.prod.config.js",
     "heroku-postbuild": "npm run build",
     "lint": "tslint --project .",
-    "populate-dao": "ts-node scripts/populateDAO.ts",
-    "setup-env": "npm run subgraph:deploy && node scripts/getmigrationfile.js",
     "service-status": "node scripts/serviceStatus.js",
-    "subgraph:deploy": "npm explore @daostack/subgraph -- npm install && npm explore @daostack/subgraph -- npm run deploy",
-    "subgraph:deploy:yarn": "npm explore @daostack/subgraph -- yarn install && npm explore @daostack/subgraph -- yarn deploy",
     "start": "webpack-dev-server --config webpack.dev.config.js",
     "start-dev-profiling": "cross-env NODE_ENV=dev-profiling API_URL=https://daostack-alchemy.herokuapp.com S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-docker": "webpack-dev-server --config webpack.docker.config.js",
@@ -66,7 +62,8 @@
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js"
   },
   "dependencies": {
-    "@daostack/client": "0.0.30",
+    "@daostack/client": "0.0.32",
+    "@daostack/migration": "0.0.1-rc.11-v2",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",

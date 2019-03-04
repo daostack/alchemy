@@ -38,13 +38,13 @@ const providers = {
 
 function getContractAddresses(key: "private"|"rinkeby"|"main") {
 
-  const deployedContractAddresses = require(`../config/migration.json`);
+  const deployedContractAddresses = require("@daostack/migration/migration.json");
 
   const addresses = {
       ...deployedContractAddresses[key],
    };
   if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`);
+      throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
     }
   return addresses;
 }

@@ -113,7 +113,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
                 <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
                 <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
-                <li><a href="https://t.me/joinchat/BMgbsAxOJrZhu79TKB7Y8g" target="_blank">Get involved</a></li>
+                <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
                 <li>
                   <a>Buy GEN</a>
                   <ul>

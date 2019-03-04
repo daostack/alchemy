@@ -46,6 +46,6 @@ describe("Proposals", () => {
       // browser.getText('*[data-test-id="proposal-closes-in"]').should.be.equal('CLOSES IN 21 DAYS')
       // TODO: title etc are not yet working
       // browser.getText('*[data-test-id="proposal-title"]').should.be.equal('Free Edward Snowden')
-    });
+    }, 10000);
 
 });
