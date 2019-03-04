@@ -142,7 +142,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.profileWrapper}>
-        <BreadcrumbsItem to={null}>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/profile/${accountAddress}`}>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</BreadcrumbsItem>
 
         { dao ? <DaoSidebar address={dao.address} /> : ""}
 
