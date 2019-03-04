@@ -18,7 +18,7 @@ import { IRootState } from "reducers";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, Observable, of } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
 import Util from "lib/util";
 
@@ -83,7 +83,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
     isPredictingPass: isStakePending(proposal.id, VoteOptions.Yes)(state),
     isPredictingFail: isStakePending(proposal.id, VoteOptions.No)(state),
-    isRedeemPending: isRedeemPending(proposal.id, currentAccount.address)(state),
+    isRedeemPending: currentAccount && isRedeemPending(proposal.id, currentAccount.address)(state),
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
@@ -423,8 +423,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 isVotingNo={isVotingNo}
                 isVotingYes={isVotingYes}
                 currentVote={currentAccountVote}
-                currentAccountAddress={currentAccount.address}
-                currentAccountReputation={currentAccount.reputation}
+                currentAccount={currentAccount}
                 dao={dao}
                 proposal={proposal}
                 voteOnProposal={voteOnProposal}
@@ -491,10 +490,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address, detailView?: boolean}) => {
-  // TODO: get things to work without an account
-  if (!props.currentAccountAddress) {
-    return null;
-  }
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
@@ -508,13 +503,13 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
     props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)),
-    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(null), // TODO: change how this is handled when allowance returns BN
+    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN(0)),
     dao.ethBalance()
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal</div>;
+        return <div>Loading proposal...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {

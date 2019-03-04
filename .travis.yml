@@ -28,28 +28,21 @@ script:
   # prin the status of the services
   - npm run service-status
 
-  # setup the environment
-  - echo 'npm run setup-env' && echo -en 'travis_fold:start:script.4\\r'
-  - npm run setup-env
-  # move the migration.json file froms etup-env into the docker container
-  - cp node_modules/@daostack/subgraph/migration.json config/
-  - docker-compose exec alchemy /bin/bash -c "cp config/migration.json node_modules/@daostack/subgraph/"
-
   - echo -en 'travis_fold:end:script.4\\r'
-
-  # get some diagnostic info fo debugging travis
-  - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
-  - npm run service-status
-  - wget -S -O - http://127.0.0.1:3000/
-  - docker-compose logs alchemy
-  - docker-compose logs ganache
-  - docker-compose logs graph-node
-  - echo -en 'travis_fold:end:script.3\\r'
 
   # check lint
   - npm run lint
   # run integration tests
   - npm run test:integration:headless
+
+  # get some diagnostic info fo debugging travis
+  - echo 'Debug info:' && echo -en 'travis_fold:start:script.3\\r'
+  - npm run service-status
+  - docker-compose logs alchemy
+  - docker-compose logs graph-node
+  - echo -en 'travis_fold:end:script.3\\r'
+
+
   # see if the app builds correctly
   - npm run build-travis
 

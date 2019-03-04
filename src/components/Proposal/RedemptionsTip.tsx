@@ -7,7 +7,7 @@ import Util from "lib/util";
 interface IProps {
   isRedeemPending: boolean;
   beneficiaryHasRewards: boolean;
-  currentAccount: IMemberState;
+  currentAccount: IMemberState|undefined;
   dao: IDAOState;
   executable: boolean;
   accountHasRewards: boolean;
@@ -68,7 +68,8 @@ export default (props: IProps) => {
     {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
-          {currentAccount.address === proposal.beneficiary ? "As the" : "The"} beneficiary of the proposal {currentAccount.address === proposal.beneficiary ? "you " : ""}will receive:
+          {(currentAccount && currentAccount.address === proposal.beneficiary) ?
+              "As the" : "The"} beneficiary of the proposal {currentAccount && currentAccount.address === proposal.beneficiary ? "you " : ""}will receive:
         </strong>
         <ul>
           {hasEthReward ?

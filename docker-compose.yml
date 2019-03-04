@@ -45,7 +45,7 @@ services:
       # - 5435:5432
 
   graph-node:
-    image: graphprotocol/graph-node:latest@sha256:bc64577f8ed7d2a7badb575d85d99bf017bdddd68bf20b032c184654d27a4bef
+    image: graphprotocol/graph-node:latest@sha256:b8974ea34ce95aac48d618fa4989bb60474a33c2dfb047fc87111a3283108ba3
     ports:
       - 8000:8000
       - 8001:8001
@@ -64,20 +64,19 @@ services:
       GRAPH_LOG: "graph.log"
 
   ipfs:
-    build:
-      context: ./docker/ipfs/
+    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.11-v3-0.0.2
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: postgres
+    image: daostack/subgraph-postgres:ganache-0.0.1-rc.11-v3-0.0.2
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/migration:0.0.1-rc.11-v2
+    image: daostack/migration:0.0.1-rc.11-v3
     ports:
       - 8545:8545
     command: >
