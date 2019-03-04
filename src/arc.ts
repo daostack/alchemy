@@ -15,7 +15,7 @@ const providers = {
   staging: {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
     graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
-    web3Provider: `https://rinkeby.infura.io/16bDz7U53RbXysQiYOyc`,
+    web3Provider: `wss://rinkeby.infura.io/ws`, // this is the default fallback if we do not have MM installed
     ipfsProvider: {
        host: "ipfs.infura.io",
        port: "5001",
@@ -26,7 +26,7 @@ const providers = {
   production: {
     graphqlHttpProvider: "",
     graphqlWsProvider: "",
-    web3WsProvide: "",
+    web3Provider: `wss://mainnet.infura.io/ws`, // this is the default fallback if we do not have MM installed
     ipfsProvider: {
        host: "ipfs.infura.io",
        port: "5001",
@@ -119,37 +119,6 @@ export function checkNetwork(web3: any) {
     }
   }
 }
-/**
- * try to get the web3 provider from the browser; if we cannnot return a sane default value
- * @return A Web3 provider
- */
-export function getWeb3Provider() {
-  let web3Provider;
-
-  // get the web3 provider from the browser or from the Web3 object
-  if (typeof window !== "undefined" &&
-    (typeof (window as any).ethereum !== "undefined" || typeof (window as any).web3 !== "undefined")
-  ) {
-    // Web3 browser user detected. You can now use the provider.
-    web3Provider = (window as any).ethereum || (window as any).web3.currentProvider;
-  } else {
-    web3Provider = Web3.givenProvider;
-  }
-
-  if (!web3Provider) {
-    // TODO: fallback on Portis
-    let fallbackWeb3Provider: string;
-    if (process.env.NODE_ENV === "development") {
-      fallbackWeb3Provider = providers.dev.web3Provider;
-    } else {
-      // TODO: provide read-only web3 provider (like infura) for staging and production environments
-      fallbackWeb3Provider = providers.staging.web3Provider;
-    }
-    console.warn(`NO WEB3 PROVIDER PROVIDED BY BROWSER: using ${fallbackWeb3Provider}`);
-  }
-  return web3Provider;
-}
-
 // get appropriate Arc configuration for the given environment
 function getArcSettings(): any {
   let arcSettings: any;
@@ -162,10 +131,11 @@ function getArcSettings(): any {
       arcSettings = providers.staging;
       break;
     }
-    // case "production" : {
+    case "production" : {
+      throw Error("No settings for production NODE_ENV==\"production\" avaiable (yet)");
     //   arcSettings = providers.production;
-    //   break;
-    // }
+      // break;
+    }
     default: {
       console.log(process.env.NODE_ENV === "development");
       throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);

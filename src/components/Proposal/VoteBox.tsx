@@ -2,11 +2,8 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import * as React from "react";
 import Tooltip from "rc-tooltip";
-
-import { getArc } from "arc";
-
 import * as arcActions from "actions/arcActions";
-import { IDAOState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
 import Util from "lib/util";
 
 import * as css from "./Proposal.scss";
@@ -16,8 +13,7 @@ import VoteGraph from "./VoteGraph";
 
 interface IProps {
   detailView?: boolean;
-  currentAccountAddress: string;
-  currentAccountReputation: BN;
+  currentAccount: IMemberState|undefined;
   currentVote: number;
   dao: IDAOState;
   proposal: IProposalState;
@@ -43,8 +39,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public handleClickVote(vote: number, event: any) {
-    const { currentAccountReputation } = this.props;
-    if (currentAccountReputation) {
+    const { currentAccount } = this.props;
+    if (currentAccount.reputation) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
@@ -56,8 +52,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
   public render() {
     const {
       currentVote,
-      currentAccountReputation,
-      currentAccountAddress,
+      currentAccount,
       proposal,
       dao,
       isVotingNo,
@@ -90,7 +85,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
       },
     };
 
-    const votingDisabled = !currentAccountReputation || !!currentVote;
+    const votingDisabled = !currentAccount || !currentAccount.reputation || !!currentVote;
 
     let wrapperClass = classNames({
       [css.detailView] : detailView,
@@ -121,9 +116,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
 
     const tipContent = (vote: ProposalOutcome) =>
+      !currentAccount ?
+        "Cannot vote - please log in" :
       currentVote ?
         "Can't change your vote" :
-      !currentAccountReputation ?
+      !currentAccount.reputation ?
         "Voting requires reputation in " + dao.name :
       isVoting ?
         "Warning: Voting for this proposal is already in progress" :
@@ -137,9 +134,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
             actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
             action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
-            currentAccount={currentAccountAddress}
+            currentAccount={currentAccount.address}
             dao={dao}
-            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountReputation} /></strong></span>}
+            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccount.reputation} /></strong></span>}
             proposal={proposal}
           /> : ""
         }
