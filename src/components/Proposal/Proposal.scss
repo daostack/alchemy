@@ -430,10 +430,27 @@ button.disabled {
 	border-radius: 3px;
 	margin-top: 3px;
 	margin-right: 0;
-	height: 100px;
+	height: 90px;
+	display: flex;
 
-	.proposalInfo {
-		display: flex;
+	.proposalCreator {
+		width: 100px;
+	}
+
+	.endDate {
+		width: 50px;
+	}
+
+	.title {
+		width: 224px;
+	}
+
+	.closeReason {
+		width: 160px;
+	}
+
+	.predictions, .votes, .myActions {
+		width: 100px;
 	}
 }
 
