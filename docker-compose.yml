@@ -12,7 +12,6 @@ services:
       - graph-node
     working_dir: /alchemy/
     volumes:
-      # - .:/alchemy
       - ./src:/alchemy/src
       - ./scripts:/alchemy/scripts
       - ./test:/alchemy/test
@@ -41,11 +40,9 @@ services:
   postgres:
     build:
       context: ./docker/postgres/
-    # ports:
-      # - 5435:5432
 
   graph-node:
-    image: graphprotocol/graph-node:latest@sha256:b8974ea34ce95aac48d618fa4989bb60474a33c2dfb047fc87111a3283108ba3
+    image: graphprotocol/graph-node:latest@sha256:c3a539c724a997154037fa80f00fdb9e5e7ab294f2de7494cd95a61d829626d1
     ports:
       - 8000:8000
       - 8001:8001
@@ -64,19 +61,19 @@ services:
       GRAPH_LOG: "graph.log"
 
   ipfs:
-    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.11-v3-0.0.2
+    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.12-v1-0.0.3
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: daostack/subgraph-postgres:ganache-0.0.1-rc.11-v3-0.0.2
+    image: daostack/subgraph-postgres:ganache-0.0.1-rc.12-v1-0.0.3
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/migration:0.0.1-rc.11-v3
+    image: daostack/migration:0.0.1-rc.12-v1
     ports:
       - 8545:8545
     command: >
