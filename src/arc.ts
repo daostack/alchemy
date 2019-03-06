@@ -1,5 +1,5 @@
 import { Arc } from "@daostack/client";
-import Util from "lib/util";
+import Util from "./lib/util";
 import { Observable } from "rxjs";
 
 const Web3 = require("web3");
@@ -122,7 +122,7 @@ export function checkNetwork(web3: any) {
 // get appropriate Arc configuration for the given environment
 function getArcSettings(): any {
   let arcSettings: any;
-  switch (process.env.NODE_ENV) {
+  switch (process.env.NODE_ENV || "development") {
     case "development": {
       arcSettings = providers.dev;
       break;
