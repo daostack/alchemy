@@ -143,6 +143,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
         [css.proposal]: true,
+        [css.closedProposal]: true,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: redeemable
@@ -213,86 +214,20 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
-          <div className={css.proposalInfo}>
-            <h3 className={css.proposalTitleTop}>
-              <span data-test-id="proposal-closes-in">
-                {proposal.stage == IProposalStage.QuietEndingPeriod ?
-                  <strong>
-                    <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                    <div className={css.help}>
-                      <img src="/assets/images/Icon/Help-light.svg" />
-                      <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
-                      <div className={css.helpBox}>
-                        <div className={css.pointer}></div>
-                        <div className={css.bg}></div>
-                        <div className={css.bridge}></div>
-                        <div className={css.header}>
-                          <h2>Genesis Protocol</h2>
-                          <h3>RULES FOR OVERTIME</h3>
-                        </div>
-                        <div className={css.body}>
-                          <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                        </div>
-                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                      </div>
-                    </div>
-                  </strong>
-                  : " "
-                }
-              </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
-            </h3>
-
-            <span>Closed {closingTime(proposal).format("MMM D, YYYY")} </span>
-
-            {proposalPassed(proposal) ?
-              <div className="css.clearfix">
-                <div className={css.proposalPassInfo}>
-                  <strong className={css.passedBy}>PASSED</strong> {passedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
-                </div>
-                <div className={css.decisionGraph}>
-                  <span className={css.forLabel}>{votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
-                  <div className={css.graph}>
-                    <div className={css.forBar} style={styles.forBar}></div>
-                    <div className={css.againstBar} style={styles.againstBar}></div>
-                    <div className={css.divider}></div>
-                  </div>
-                  <span className={css.againstLabel}>{votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
-                </div>
-              </div>
-              : proposalFailed(proposal) ?
-                <div className="css.clearfix">
-                  <div className={css.proposalFailInfo}>
-                    <strong className={css.failedBy}>FAILED</strong> {failedByDecision ? "BY DECISION" : "BY TIMEOUT"} ON {closingTime(proposal).format("MMM DD, YYYY")}
-                  </div>
-                  <div className={css.decisionGraph}>
-                    <span className={css.forLabel}>{votesFor.toFixed(2).toLocaleString()} ({yesPercentage}%)</span>
-                    <div className={css.graph}>
-                      <div className={css.forBar} style={styles.forBar}></div>
-                      <div className={css.againstBar} style={styles.againstBar}></div>
-                      <div className={css.divider}></div>
-                    </div>
-                    <span className={css.againstLabel}>{votesAgainst.toFixed(2).toLocaleString()} ({noPercentage}%)</span>
-                  </div>
-                </div>
-                : ""
-            }
-            <div className={css.createdBy}>
-              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} />
-              <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
-            </div>
-            <div className={css.description}>
-              First proposal to test it out.
-              I’m glad to be apart and test things out. I’m interested in helping the general public and non-devs more involved in the space and creating DAO’s.
-            </div>
-
-            <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
-
-            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} />
-
+          <div className={css.proposalCreator}>
+            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} />
+            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
           </div>
-
-          <div className={css.proposalActions + " " + css.clearfix}>
+          <div className={css.endDate}>
+            {closingTime(proposal).format("MMM D, YYYY")}
+          </div>
+          <div className={css.title}>
+            {proposal.title || "[No title]"}
+          </div>
+          <div className={css.closeReason}>
+            Reason for close
+          </div>
+          <div className={css.votes}>
               <VoteBox
                 isVotingNo={false}
                 isVotingYes={false}
@@ -302,39 +237,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 proposal={proposal}
                 voteOnProposal={null}
               />
-              {proposalPassed(proposal) ?
-                <div className={css.decidedProposal}>
-                  <div className={css.result}>
-                    <div><img src="/assets/images/Icon/Passed.svg" /></div>
-                  </div>
-                </div>
-                : proposalFailed(proposal) ?
-                  <div className={css.decidedProposal}>
-                    <div className={css.result}>
-                      <div><img src="/assets/images/Icon/Failed.svg" /></div>
-                    </div>
-                  </div>
-                  : ""
-              }
-
-              <div>
-                {this.state.preRedeemModalOpen ?
-                  <PreTransactionModal
-                    actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccount.address)}
-                    beneficiaryProfile={beneficiaryProfile}
-                    closeAction={this.closePreRedeemModal.bind(this)}
-                    dao={dao}
-                    effectText={redemptionsTip}
-                    proposal={proposal}
-                  /> : ""
-                }
-
-                <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                  {redeemButton}
-                </div>
-              </div>
-
+          </div>
+          <div className={css.predictions}>
               <PredictionBox
                 isPredictingFail={false}
                 isPredictingPass={false}
@@ -349,6 +253,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 threshold={0}
                 approveStakingGens={null}
               />
+          </div>
+          <div className={css.myActions}>
+            My Actions
           </div>
         </div>
       );

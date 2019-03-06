@@ -22,12 +22,27 @@ button:hover {
   overflow: scroll;
 }
 
+.proposalHistory {
+  display: block;
+}
+
 .outer {
   position: fixed;
   display: flex;
   height: 100%;
   width: 100%;
 }
+
+.daoIcon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    border: 5px solid rgba(255,255,255,.5);
+    border-radius: 40px;
+    background-image: url(http://localhost:3000/assets/images/DaoList/pattern.png);
+    background-repeat: repeat;
+}
+
 
 .daoSidebar {
   min-width: 250px;
@@ -73,8 +88,19 @@ button:hover {
     padding: 15px;
 
     a {
+      display: block;
+      position: relative;
       font-size: 24px;
       font-weight: bold;
+
+      span {
+        position: absolute;
+        padding-left: 60px;
+        top: 50%;
+        left: 0;
+        margin-top: -3px;
+        transform: translateY(-50%);
+      }
     }
 
     a:visited {

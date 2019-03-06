@@ -424,6 +424,36 @@ button.disabled {
   }
 }
 
+.proposal.closedProposal {
+	display: block;
+	width: 100%;
+	border-radius: 3px;
+	margin-top: 3px;
+	margin-right: 0;
+	height: 90px;
+	display: flex;
+
+	.proposalCreator {
+		width: 100px;
+	}
+
+	.endDate {
+		width: 50px;
+	}
+
+	.title {
+		width: 224px;
+	}
+
+	.closeReason {
+		width: 160px;
+	}
+
+	.predictions, .votes, .myActions {
+		width: 100px;
+	}
+}
+
 .detailView .voteControls {
     width: 160px;
     text-align: center;
@@ -483,6 +513,8 @@ button.disabled {
 
 	.forBar, .againstBar {
 		height: 18px;
+		width: 76px;
+		position: relative;
 
 		b {
 			font-weight: normal;
@@ -501,15 +533,17 @@ button.disabled {
 			background-color: rgba(208, 214, 220, 1.000);
 		}
 	}
+}
 
-	.forBar {
-		position: relative;
-		width: 55%;
+.isPassing .stakes .forBar {
+	span {
+		background-color: rgba(0, 190, 144, 1.000);
 	}
+}
 
-	.againstBar {
-		width: 25%;
-		position: relative;
+.isFailing .stakes .againstBar {
+	span {
+		background-color: rgba(0, 190, 144, 1.000);
 	}
 }
 
@@ -983,20 +1017,27 @@ button.disabled {
 	transform: translateY(-50%) scale(1);
 }
 
-.predictions.enablePredictions button {
-    width: 120px;
-    display: block;
-    margin: 0 auto;
-    border-radius: 3px;
-    opacity: .5;
-    margin-top: 20px;
-
-}
-
-.predictions.enablePredictions span {
+.proposal .enablePredictions {
 	display: block;
-	margin-top: 25px;
-	margin-bottom: 8px;
+	width: 100%;
+    position: absolute;
+    top: 66px;
+    text-align: center;
+
+	button {
+	    width: 120px;
+	    display: block;
+	    margin: 0 auto;
+	    border-radius: 3px;
+	    opacity: .5;
+
+	}
+
+		span {
+		display: block;
+		margin-top: 25px;
+		margin-bottom: 8px;
+	}
 }
 
 .proposalLabel {

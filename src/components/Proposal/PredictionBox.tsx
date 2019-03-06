@@ -124,22 +124,20 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       );
     }
 
-    // If don't have any staking allowance, replace with button to pre-approve
-    if (currentAccountGenStakingAllowance.lt(new BN(1))) {
-      return (
-        <div className={css.predictions + " " + css.enablePredictions}>
-          <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
-        </div>
-      );
-    }
-
     // round second decimal up
     const stakesFor = Util.fromWei(proposal.stakesFor);
     const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
     const stakingLeftToBoost = Math.ceil((threshold - (stakesFor - stakesAgainst)) * 100) / 100;
+    const isPassing = stakesFor >= stakesAgainst;
+    const isFailing = stakesAgainst >= stakesFor;
+    const maxWidth = Math.max(stakesFor, stakesAgainst);
+    const passWidth = stakesFor <= 0.0001 ? 0 : Math.max(stakesFor / maxWidth * 100, 3);
+    const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst / maxWidth * 100, 3);
 
     let wrapperClass = classNames({
       [css.detailView] : detailView,
+      [css.isPassing] : isPassing,
+      [css.isFailing] : isFailing,
       [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
     });
@@ -198,6 +196,40 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       </button>
     );
 
+    // If don't have any staking allowance, replace with button to pre-approve
+    if (currentAccountGenStakingAllowance.lt(new BN(1))) {
+      return (
+        <div className={wrapperClass}>
+          <div className={css.stakes}>
+            <div className={css.clearfix}>
+              <div className={css.stakesFor}>
+                <img src="/assets/images/Icon/v-small-line.svg"/>
+                {Util.fromWei(proposal.stakesFor).toFixed(2)}
+              </div>
+              <div className={css.forBar}>
+                <b>Pass</b>
+                <span style={{width: passWidth + "%"}}></span>
+              </div>
+            </div>
+            <div className={css.clearfix}>
+              <div className={css.stakesAgainst}>
+                <img src="/assets/images/Icon/x-small-line.svg"/>
+                {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
+              </div>
+              <div className={css.againstBar}>
+                <b>Fail</b>
+                <span style={{width: failWidth + "%"}}></span>
+              </div>
+            </div>
+          </div>
+
+          <div className={css.enablePredictions}>
+            <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={wrapperClass}>
         {showPreStakeModal ?
@@ -252,7 +284,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               </div>
               <div className={css.forBar}>
                 <b>Pass</b>
-                <span></span>
+                <span style={{width: passWidth + "%"}}></span>
               </div>
             </div>
             <div className={css.clearfix}>
@@ -262,7 +294,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
               </div>
               <div className={css.againstBar}>
                 <b>Fail</b>
-                <span></span>
+                <span style={{width: failWidth + "%"}}></span>
               </div>
             </div>
           </div>

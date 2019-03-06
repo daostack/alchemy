@@ -35,7 +35,10 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
       <div className={css.daoSidebar + " " + css.clearfix}>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
-            <Link to={"/dao/" + dao.address}>{dao.name}</Link>
+            <Link to={"/dao/" + dao.address}>
+              <b className={css.daoIcon}></b>
+              <span>{dao.name}</span>
+            </Link>
             <p>Anyone can make a proposal to the DAO! Click the button on the bottom right.</p>
           </div>
           {
