@@ -124,14 +124,6 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       );
     }
 
-    // If don't have any staking allowance, replace with button to pre-approve
-    if (currentAccountGenStakingAllowance.lt(new BN(1))) {
-      return (
-        <div className={css.predictions + " " + css.enablePredictions}>
-          <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
-        </div>
-      );
-    }
 
     // round second decimal up
     const stakesFor = Util.fromWei(proposal.stakesFor);
@@ -204,6 +196,40 @@ export default class PredictionBox extends React.Component<IProps, IState> {
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
     );
+
+    // If don't have any staking allowance, replace with button to pre-approve
+    if (currentAccountGenStakingAllowance.lt(new BN(1))) {
+      return (
+        <div className={wrapperClass}>
+          <div className={css.stakes}>
+            <div className={css.clearfix}>
+              <div className={css.stakesFor}>
+                <img src="/assets/images/Icon/v-small-line.svg"/>
+                {Util.fromWei(proposal.stakesFor).toFixed(2)}
+              </div>
+              <div className={css.forBar}>
+                <b>Pass</b>
+                <span style={{width: passWidth + "%"}}></span>
+              </div>
+            </div>
+            <div className={css.clearfix}>
+              <div className={css.stakesAgainst}>
+                <img src="/assets/images/Icon/x-small-line.svg"/>
+                {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
+              </div>
+              <div className={css.againstBar}>
+                <b>Fail</b>
+                <span style={{width: failWidth + "%"}}></span>
+              </div>
+            </div>
+          </div>
+
+          <div className={css.enablePredictions}>
+            <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className={wrapperClass}>

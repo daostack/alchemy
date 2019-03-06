@@ -1000,20 +1000,27 @@ button.disabled {
 	transform: translateY(-50%) scale(1);
 }
 
-.predictions.enablePredictions button {
-    width: 120px;
-    display: block;
-    margin: 0 auto;
-    border-radius: 3px;
-    opacity: .5;
-    margin-top: 20px;
-
-}
-
-.predictions.enablePredictions span {
+.proposal .enablePredictions {
 	display: block;
-	margin-top: 25px;
-	margin-bottom: 8px;
+	width: 100%;
+    position: absolute;
+    top: 66px;
+    text-align: center;
+
+	button {
+	    width: 120px;
+	    display: block;
+	    margin: 0 auto;
+	    border-radius: 3px;
+	    opacity: .5;
+
+	}
+
+		span {
+		display: block;
+		margin-top: 25px;
+		margin-bottom: 8px;
+	}
 }
 
 .proposalLabel {
