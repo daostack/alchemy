@@ -124,16 +124,15 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       );
     }
 
-
     // round second decimal up
     const stakesFor = Util.fromWei(proposal.stakesFor);
     const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
     const stakingLeftToBoost = Math.ceil((threshold - (stakesFor - stakesAgainst)) * 100) / 100;
     const isPassing = stakesFor >= stakesAgainst;
     const isFailing = stakesAgainst >= stakesFor;
-    const maxWidth = Math.max(stakesFor,stakesAgainst);
-    const passWidth = stakesFor <= 0.0001 ? 0 : Math.max(stakesFor/maxWidth * 100, 3);
-    const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst/maxWidth * 100, 3);
+    const maxWidth = Math.max(stakesFor, stakesAgainst);
+    const passWidth = stakesFor <= 0.0001 ? 0 : Math.max(stakesFor / maxWidth * 100, 3);
+    const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst / maxWidth * 100, 3);
 
     let wrapperClass = classNames({
       [css.detailView] : detailView,
