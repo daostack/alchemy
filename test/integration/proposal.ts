@@ -40,7 +40,7 @@ describe("Proposals", () => {
 
       // check that the proposal with the ethReward appears in the list
       // TODO: this tests is failing unpredictably
-      // browser.waitForExist(`strong*=${ethReward}`);
+      browser.waitForExist(`strong*=${ethReward}`);
 
       // browser.waitForExist('*[data-test-id="proposal-title"]')
       // // we are getting the closing date from the graph-node server
