@@ -137,26 +137,32 @@ class HeaderContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.headerRight}>
-            <div className={css.accountInfo}>
-              <div className={css.accountImage}>
-                <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
-                  <AccountImage accountAddress={ethAccountAddress} />
-                </Link>
-              </div>
-              <div className={css.holdings}>
-                <div className={css.pointer}></div>
-                <div className={css.walletDetails}>
-                  <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
-                  <div className={css.holdingsLabel}>Your wallet</div>
-                  <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
-                    <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : "No account known"}</span>
-                    <img src="/assets/images/Icon/Copy-white.svg"/>
-                    <div className={css.fade}></div>
-                  </div>
+            { ethAccountAddress &&
+              <div className={css.accountInfo}>
+                <div className={css.accountImage}>
+                  <Link className={css.profileLink} to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                    <AccountImage accountAddress={ethAccountAddress} />
+                  </Link>
                 </div>
-                <AccountBalances dao={dao} address={ethAccountAddress} />
+                <div className={css.holdings}>
+                  <div className={css.pointer}></div>
+                  <div className={css.walletDetails}>
+                    <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
+                    <div className={css.holdingsLabel}>Your wallet</div>
+                    <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
+                      <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : "No account known"}</span>
+                      <img src="/assets/images/Icon/Copy-white.svg"/>
+                      <div className={css.fade}></div>
+                    </div>
+                  </div>
+                  <AccountBalances dao={dao} address={ethAccountAddress} />
+                </div>
               </div>
-            </div>
+            ||
+              <div className={css.accountInfo}>
+                Please log in!
+              </div>
+            }
             {/* dao && !isProfilePage
               ? <button className={css.openTour} onClick={this.handleClickTour}><img src="/assets/images/Tour/TourButton.svg"/></button>
               : ""

@@ -65,7 +65,6 @@ export default class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public showPreStakeModal = (prediction: number) => (event: any) => {
-    const { proposal, stakeProposal } = this.props;
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 

@@ -10,7 +10,7 @@ import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { CommentCount } from "disqus-react";
-import Util from "lib/util";
+import Util, { checkNetworkAndWarn } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -21,7 +21,6 @@ import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReduc
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
-
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import RedeemButton from "./RedeemButton";
@@ -124,9 +123,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
       preRedeemModalOpen: false,
       expired: closingTime(props.proposal).isSameOrBefore(moment())
     };
+    this.handleClickExecute.bind(this);
+    this.handleClickRedeem.bind(this);
+    this.countdownEnded.bind(this);
+    this.closePreRedeemModal.bind(this);
   }
 
   public handleClickExecute(event: any) {
+    if (!checkNetworkAndWarn()) { return; }
     this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
   }
 
@@ -219,7 +223,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         currentAccount,
         dao,
         proposal,
-        handleClickRedeem: this.handleClickRedeem.bind(this)
+        handleClickRedeem: this.handleClickRedeem
       };
 
       const redemptionsTip = RedemptionsTip(redeemProps);
@@ -294,7 +298,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <div className={css.timer}>
                 {!proposalEnded(proposal) ?
                     !this.state.expired ?
-                      <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded.bind(this)} /> :
+                      <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded} /> :
                       <span className={css.closedTime}>
                         {proposal.stage == IProposalStage.Queued ? "Expired" :
                          proposal.stage == IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
@@ -308,12 +312,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
               {!this.props.detailView ?
                 <div className={executeButtonClass}>
                   {proposal.stage == IProposalStage.PreBoosted ?
-                    <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                    <button className={css.boostProposal} onClick={this.handleClickExecute}>
                       <img src="/assets/images/Icon/boost.svg"/>
                       <span> Boost</span>
                     </button>
                     :
-                    <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                    <button className={css.executeProposal} onClick={this.handleClickExecute}>
                       <img src="/assets/images/Icon/execute.svg"/>
                       <span> Execute</span>
                     </button>
@@ -401,12 +405,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {this.props.detailView ?
               <div className={executeButtonClass}>
                 {proposal.stage == IProposalStage.PreBoosted ?
-                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                  <button className={css.boostProposal} onClick={this.handleClickExecute}>
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span> Boost</span>
                   </button>
                   :
-                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                  <button className={css.executeProposal} onClick={this.handleClickExecute}>
                     <img src="/assets/images/Icon/execute.svg"/>
                     <span> Execute</span>
                   </button>
@@ -450,7 +454,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                       actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
                       action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccount && currentAccount.address)}
                       beneficiaryProfile={beneficiaryProfile}
-                      closeAction={this.closePreRedeemModal.bind(this)}
+                      closeAction={this.closePreRedeemModal}
                       dao={dao}
                       effectText={redemptionsTip}
                       proposal={proposal}
