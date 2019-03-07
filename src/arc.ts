@@ -113,7 +113,7 @@ export function checkNetwork(web3?: any) {
       }
     } else {
       // TODO: error message is for developers, need to write something more user friendly here
-      const msg = `YOU ARE NOT CONNECTED to "${expectedNetworkName})" (you are connected to "${networkName}" instead; in "${process.env.NODE_ENV}" environment). PLEASE SWITCH`;
+      const msg = `Please connect to "${expectedNetworkName}" (you are connected to "${networkName}" now)`;
       throw new Error(msg);
     }
   } else {
@@ -125,7 +125,6 @@ export function checkNetwork(web3?: any) {
       throw new Error(`No metamask instance found - you may want to install that.`);
     }
   }
-  console.log(web3.eth.defaultAccount);
 }
 // get appropriate Arc configuration for the given environment
 function getArcSettings(): any {

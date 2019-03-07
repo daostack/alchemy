@@ -95,7 +95,6 @@ interface IDispatchProps {
   approveStakingGens: typeof web3Actions.approveStakingGens;
   redeemProposal: typeof arcActions.redeemProposal;
   executeProposal: typeof arcActions.executeProposal;
-  voteOnProposal: typeof arcActions.voteOnProposal;
   stakeProposal: typeof arcActions.stakeProposal;
 }
 
@@ -103,7 +102,6 @@ const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
   executeProposal: arcActions.executeProposal,
-  voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal,
 };
 
@@ -161,7 +159,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       redeemProposal,
       executeProposal,
       stakeProposal,
-      voteOnProposal,
       isPredictingFail,
       isPredictingPass,
       isVotingNo,
@@ -200,7 +197,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.redeemable]: redeemable
       });
 
-      const submittedTime = moment.unix(proposal.createdAt);
+      // const submittedTime = moment.unix(proposal.createdAt);
 
       // Calculate reputation percentages
       const totalReputation = Util.fromWei(proposal.stage == IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
@@ -430,7 +427,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 currentAccount={currentAccount}
                 dao={dao}
                 proposal={proposal}
-                voteOnProposal={voteOnProposal}
                 detailView={detailView}
               />
               : proposalPassed(proposal) ?

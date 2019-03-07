@@ -1,4 +1,5 @@
 import { IDAOState, IMemberState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
+import { connect } from "react-redux";
 import * as arcActions from "actions/arcActions";
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -26,7 +27,11 @@ interface IState {
   showPreVoteModal: boolean;
 }
 
-export default class VoteBox extends React.Component<IProps, IState> {
+const mapDispatchToProps = {
+  voteOnProposal: arcActions.voteOnProposal,
+};
+
+class VoteBox extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -310,3 +315,4 @@ export default class VoteBox extends React.Component<IProps, IState> {
     );
   }
 }
+export default connect(null, mapDispatchToProps)(VoteBox);

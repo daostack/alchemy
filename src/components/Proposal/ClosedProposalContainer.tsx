@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalStage, ProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IRewardState, IStake, IVote, ProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from "arc";
@@ -8,6 +8,7 @@ import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -18,7 +19,6 @@ import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, Observable, of } from "rxjs";
 import { isRedeemPending } from "selectors/operations";
-import Util from "lib/util";
 
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
@@ -235,7 +235,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 currentAccount={currentAccount}
                 dao={dao}
                 proposal={proposal}
-                voteOnProposal={null}
               />
           </div>
           <div className={css.predictions}>
