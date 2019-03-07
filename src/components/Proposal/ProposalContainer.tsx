@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalStage } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from "arc";
@@ -10,17 +10,17 @@ import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { CommentCount } from "disqus-react";
+import Util from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
-import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
+import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
-import Util from "lib/util";
 
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
@@ -448,7 +448,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   {this.state.preRedeemModalOpen ?
                     <PreTransactionModal
                       actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccount.address)}
+                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccount && currentAccount.address)}
                       beneficiaryProfile={beneficiaryProfile}
                       closeAction={this.closePreRedeemModal.bind(this)}
                       dao={dao}

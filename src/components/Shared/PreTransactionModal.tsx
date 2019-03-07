@@ -1,18 +1,14 @@
+import { IDAOState, IProposalStage, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import TransferDetails from "components/Proposal/TransferDetails";
+import Util from "lib/util";
+import { checkNetworkAndWarn } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 //@ts-ignore
 import { Modal } from "react-router-modal";
-
-import { proposalEnded } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { IDAOState, IProposalState, IProposalStage } from "@daostack/client";
-import Util from "lib/util";
-
-import RewardsString from "components/Proposal/RewardsString";
-import TransferDetails from "components/Proposal/TransferDetails";
-
 import * as css from "./PreTransactionModal.scss";
 
 export enum ActionTypes {
@@ -57,6 +53,8 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
 
   public handleClickAction() {
     const { actionType } = this.props;
+    if (!checkNetworkAndWarn()) { return; }
+
     if (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) {
       this.props.action(this.state.stakeAmount);
     } else {
@@ -78,21 +76,10 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
     const totalReputation = Util.fromWei(dao.reputationTotalSupply);
     const votesFor = Util.fromWei(proposal.votesFor);
     const votesAgainst = Util.fromWei(proposal.votesAgainst);
-    const stakesFor = Util.fromWei(proposal.stakesFor);
-    const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
     const noPercentage = totalReputation  && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputation * 100)) : 0;
-
-    const styles = {
-      forBar: {
-        width: yesPercentage + "%",
-      },
-      againstBar: {
-        width: noPercentage + "%",
-      },
-    };
 
     let accountGens, buyGensClass;
     if (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) {
@@ -293,7 +280,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                   onClick={this.handleClickAction.bind(this)}
                   data-test-id="launch-metamask"
                 >
-                  {transactionType} with MetaMask
+                  {transactionType}
                 </button>
               </Tooltip> :
               <div className={css.preTransactionBottom}>
@@ -303,7 +290,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                   </button>
                 </div>
                 <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
-                  {transactionType} with MetaMask
+                  {transactionType}
                 </button>
               </div>
             }

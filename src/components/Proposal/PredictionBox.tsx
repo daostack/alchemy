@@ -1,17 +1,16 @@
-import { IDAOState, IProposalState, IProposalStage } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import * as arcActions from "actions/arcActions";
+import * as web3Actions from "actions/web3Actions";
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Util, { checkNetworkAndWarn } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 //@ts-ignore
 import { Modal } from "react-router-modal";
-
-import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
 import { VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import Util from "lib/util";
 
 import * as css from "./Proposal.scss";
 
@@ -47,6 +46,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       showApproveModal: false,
       showPreStakeModal: false
     };
+    this.handleClickPreApprove.bind(this);
   }
 
   public showApprovalModal(event: any) {
@@ -67,6 +67,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public handleClickPreApprove(event: any) {
+    if (!checkNetworkAndWarn()) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
     this.setState({ showApproveModal: false });
@@ -76,7 +77,6 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const {
       beneficiaryProfile,
       currentPrediction,
-      currentStake,
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
@@ -116,7 +116,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
-                <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+                <button onClick={this.handleClickPreApprove}>Preapprove</button>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { Arc } from "@daostack/client";
-import Util from "./lib/util";
 import { Observable } from "rxjs";
+import Util from "./lib/util";
 
 const Web3 = require("web3");
 
@@ -79,8 +79,11 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
  * Checks if the web3 provider is as expected; throw an Error if it is not
  * @return
  */
-export function checkNetwork(web3: any) {
+export function checkNetwork(web3?: any) {
   // if we are connected with metamask, we find the right settings
+  if (!web3) {
+    web3 = getArc().web3;
+  }
   const web3Provider = web3.currentProvider;
   if (web3Provider && web3Provider.isMetaMask) {
     const networkName = Util.networkName(web3Provider.networkVersion);
@@ -105,7 +108,9 @@ export function checkNetwork(web3: any) {
     }
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
-      return true;
+      if (!web3.eth.defaultAccount) {
+          throw Error(`No account was set - are you connected with MetaMask?`);
+      }
     } else {
       // TODO: error message is for developers, need to write something more user friendly here
       const msg = `YOU ARE NOT CONNECTED to "${expectedNetworkName})" (you are connected to "${networkName}" instead; in "${process.env.NODE_ENV}" environment). PLEASE SWITCH`;
@@ -116,8 +121,11 @@ export function checkNetwork(web3: any) {
     if (process.env.NODE_ENV === "development") {
       const msg = `No metamask connection found - you may not be able to do transactions`;
       console.warn(msg);
+    } else {
+      throw new Error(`No metamask instance found - you may want to install that.`);
     }
   }
+  console.log(web3.eth.defaultAccount);
 }
 // get appropriate Arc configuration for the given environment
 function getArcSettings(): any {

@@ -1,14 +1,13 @@
+import { IDAOState, IMemberState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
+import * as arcActions from "actions/arcActions";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import * as React from "react";
-import Tooltip from "rc-tooltip";
-import * as arcActions from "actions/arcActions";
-import { IDAOState, IMemberState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
-import Util from "lib/util";
-
-import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Util, { checkNetworkAndWarn} from "lib/util";
+import Tooltip from "rc-tooltip";
+import * as React from "react";
+import * as css from "./Proposal.scss";
 import VoteGraph from "./VoteGraph";
 
 interface IProps {
@@ -39,6 +38,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public handleClickVote(vote: number, event: any) {
+    if (!checkNetworkAndWarn()) { return; }
     const { currentAccount } = this.props;
     if (currentAccount.reputation) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
