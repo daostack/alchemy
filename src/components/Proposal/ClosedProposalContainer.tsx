@@ -222,7 +222,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {closingTime(proposal).format("MMM D, YYYY")}
           </div>
           <div className={css.title}>
-            {proposal.title || "[No title]"}
+            {proposal.title || proposal.id}
           </div>
           <div className={css.closeReason}>
             Reason for close

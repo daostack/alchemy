@@ -289,7 +289,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || proposal.id}</Link>
             </h3>
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
@@ -390,7 +390,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || proposal.id}</Link>
             </h3>
             <div className={css.proposalDetails}>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>

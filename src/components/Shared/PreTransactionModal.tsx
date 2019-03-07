@@ -198,7 +198,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
             </div>
             <div className={css.proposalInfo}>
               <div className={css.proposalTitle}>
-                <strong>{proposal.title || "[no title]"}</strong>
+                <strong>{proposal.title || proposal.id}</strong>
               </div>
               <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
             </div>
