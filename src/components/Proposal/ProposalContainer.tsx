@@ -158,7 +158,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       approveStakingGens,
       redeemProposal,
       executeProposal,
-      stakeProposal,
       isPredictingFail,
       isPredictingPass,
       isVotingNo,
@@ -261,7 +260,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       });
 
       return (
-        <div className={proposalClass + " " + css.clearfix}>
+        <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <h3 className={css.proposalTitleTop}>
               <span data-test-id="proposal-closes-in">
@@ -478,7 +477,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 />
               }
           </div>
-        </div>
+        </div >
       );
     } else {
       return (<div>Loading proposal... </div>);

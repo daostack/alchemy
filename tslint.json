@@ -32,7 +32,6 @@
         "comment-format": false,
         "no-unused-expression": false,
         "quotemark":"double",
-        "ordered-imports": false,
         "trailing-comma": false,
         "semicolon": "never",
         "no-console": false,

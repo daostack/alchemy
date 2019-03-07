@@ -1,5 +1,4 @@
 import { IDAOState, IMemberState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
-import { connect } from "react-redux";
 import * as arcActions from "actions/arcActions";
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -8,6 +7,7 @@ import { ActionTypes, default as PreTransactionModal } from "components/Shared/P
 import Util, { checkNetworkAndWarn} from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
+import { connect } from "react-redux";
 import * as css from "./Proposal.scss";
 import VoteGraph from "./VoteGraph";
 
@@ -152,10 +152,12 @@ class VoteBox extends React.Component<IProps, IState> {
               <span>NUM Votes ></span>
             </div>
             <div className={css.castVote}>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}
+                data-test-id="voteFor">
                 <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
               </button>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}
+                data-test-id="voteAgainst">
                 <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
               </button>
             </div>
@@ -292,10 +294,12 @@ class VoteBox extends React.Component<IProps, IState> {
         { !this.props.detailView ?
           <div className={voteStatusClass} >
             <div className={css.castVote}>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}
+                data-test-id="voteFor">
                 <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
               </button>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}
+                data-test-id="voteAgainst">
                 <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
               </button>
             </div>
