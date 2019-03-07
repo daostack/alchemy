@@ -7,6 +7,7 @@ import { ActionTypes, default as PreTransactionModal } from "components/Shared/P
 import Util, { checkNetworkAndWarn } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
+import { connect } from "react-redux";
 //@ts-ignore
 import { Modal } from "react-router-modal";
 import { VoteOptions } from "reducers/arcReducer";
@@ -35,8 +36,11 @@ interface IProps {
   isPredictingFail: boolean;
   isPredictingPass: boolean;
 }
+const mapDispatchToProps = {
+  stakeProposal: arcActions.stakeProposal,
+};
 
-export default class PredictionBox extends React.Component<IProps, IState> {
+class PredictionBox extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -86,8 +90,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       proposal,
       isPredictingFail,
       isPredictingPass,
-      stakeProposal,
-      threshold
+      threshold,
+      stakeProposal
     } = this.props;
 
     const {
@@ -344,3 +348,4 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     );
   }
 }
+export default connect(null, mapDispatchToProps)(PredictionBox);

@@ -248,7 +248,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 currentAccountGenStakingAllowance={new BN(1000000)}
                 dao={dao}
                 proposal={proposal}
-                stakeProposal={null}
                 threshold={0}
                 approveStakingGens={null}
               />
