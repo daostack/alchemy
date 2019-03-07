@@ -243,7 +243,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
             action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreStakeModal}
+            closeAction={this.closePreStakeModal.bind(this)}
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}
