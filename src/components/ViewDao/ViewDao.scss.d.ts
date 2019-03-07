@@ -3,6 +3,7 @@ export const loading: string;
 export const wrapper: string;
 export const proposalHistory: string;
 export const outer: string;
+export const menuWrapper: string;
 export const daoIcon: string;
 export const daoSidebar: string;
 export const navHeading: string;

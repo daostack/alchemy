@@ -102,32 +102,6 @@ class HeaderContainer extends React.Component<IProps, null> {
         <nav className={css.header}>
           <div className={css.menu}>
             <img src="/assets/images/alchemy-logo-white.svg"/>
-            <div className={css.menuWrapper}>
-              <div className={css.backgroundBlock}></div>
-              <ul>
-                <li><Link to="/">Home</Link></li>
-                { (process.env.NODE_ENV === "production")
-                  ? <li><a href="https://alchemy.daostack.io/dao/0xa3f5411cfc9eee0dd108bf0d07433b6dd99037f1">Genesis Alpha</a></li>
-                  : <li><Link to="/daos">View DAOs</Link></li>
-                }
-                <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
-                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
-                <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
-                <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
-                <li>
-                  <a>Buy GEN</a>
-                  <ul>
-                    <li><h2>EXCHANGES</h2></li>
-                    <li><a href="https://slow.trade" target="_blank"><img src="https://slow.trade/favicon-32x32.png"/> Slow Trade</a></li>
-                    <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-                    <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-                    <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-                    <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-                    <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
           </div>
           <div className={css.topInfo}>
             <Breadcrumbs

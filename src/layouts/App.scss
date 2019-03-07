@@ -86,106 +86,6 @@ body {
       height: 30px;
       transition: all .25s ease;
     }
-
-    .menuWrapper {
-      top: 0;
-      left: 0;
-      transition: all .25s ease;
-      opacity: 0;
-      overflow: hidden;
-
-      .backgroundBlock {
-        top: 0;
-        left: 0;
-        width: 55px;
-        background-color: rgba(8, 28, 61, 1.000);
-        height: 50px;
-      }
-
-      ul {
-        position: absolute;
-        top: 50px;
-        width: 200px;
-        margin: 0;
-        transition: all .25s ease;
-        left: -200px;
-        padding: 0;
-
-        li {
-          list-style: none;
-          margin: 0;
-          position: relative;
-
-          a {
-            color: rgba(255,255,255,1);
-            text-decoration: none;
-            padding: 15px;
-            width: 170px;
-            display: block;
-            background-color: rgba(8, 28, 61, 1.000);
-          }
-
-          a:hover {
-            background-color: black;
-            cursor: pointer;
-          }
-
-          ul {
-            left: 50px;
-            top: -150px;
-            opacity: 0;
-            transform: scale(0);
-            transition: all .25s ease;
-
-            li {
-              text-align: center;
-
-              img {
-                position: relative;
-                top: 0;
-                left: 0;
-              }
-
-              h2 {
-                background-color: rgba(42, 42, 42, 1.000);
-                font-size: 12px;
-                font-family: $body-font;
-                margin: 0;
-                padding: 18px 0 17px 0;
-                color: $white-halftone;
-                border-bottom: 2px solid rgba(100, 100, 100, 1.000);
-              }
-            }
-          }
-          &:hover ul {
-            left: 200px;
-            opacity: 1;
-            top: 0;
-            transform: scale(1);
-          }
-        }
-      }
-    }
-  }
-
-  .menu:hover {
-    cursor: pointer;
-
-    img {
-      opacity: 1;
-    }
-
-    .menuWrapper {
-      opacity: 1;
-      height: 355px;
-      overflow: visible;
-      box-shadow: 0 24px 32px 0 rgba(12,0,51,0.10);
-    }
-
-    ul {
-      left: 0;
-      box-shadow: 0 24px 32px 0 rgba(12,0,51,0.10);
-    }
   }
 
   .alchemyLogo {
@@ -271,13 +171,13 @@ body {
       font-size: 12px;
       z-index: 100;
       color: rgba(255, 255, 255, 1);
-      background-color: rgba(42, 42, 42, 1.000);
+      background-color: rgba(10, 28, 61, 1.000);
 
       .pointer {
         width: 12px;
         height: 12px;
         transform: rotate(45deg);
-        background-color: rgba(42, 42, 42, 1.000);
+        background-color: rgba(10, 28, 61, 1.000);
         position: absolute;
         top: -4px;
         right: 27px;
@@ -286,7 +186,7 @@ body {
       .walletDetails {
         position: relative;
         padding-bottom: 5px;
-        border-bottom: 2px solid rgba(59, 59, 59, 1.000);
+        border-bottom: 2px solid rgba(0, 0, 0, .25);
 
         .holdingsLabel {
           font-weight: bold;
@@ -306,11 +206,10 @@ body {
 
         .daoBalance {
           padding: 12px;
-          background-color: rgba(59, 59, 59, 1.000);
+          background-color: rgba(48, 120, 202, 1.000);
           font-size: 12px;
 
           h3 {
-            font-family: "GaramondProDisplay";
             font-size: 18px;
             margin: 3px 0 10px 0;
             padding: 0;
@@ -347,7 +246,7 @@ body {
           top: 0;
           height: 100%;
           width: 40%;
-          background-image: linear-gradient(90deg, rgba(42,42,42,0.00)  3%, rgba(42,42,42,0.88) 67%, #2A2A2A 100%);
+          background-image: linear-gradient(90deg, rgba(10, 28, 61, 0)  3%, rgba(10, 28, 61, .88) 67%, rgba(10, 28, 61, 1.000) 100%);
         }
       }
 
@@ -387,7 +286,7 @@ body {
   }
 
   .accountInfo:hover{
-    background-color: rgba(42, 42, 42, 1.000);
+    background-color: rgba(10, 28, 61, 1.000);
 
     .holdings {
       width: 200px;
