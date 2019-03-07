@@ -43,7 +43,6 @@ describe("Proposals", () => {
       browser.waitForExist(`strong*=${ethReward}`);
 
       // test for the title
-      console.log(title);
       browser.$(`[data-test-id=\"proposal-title\"]=${title}`).isExisting();
       // check if this container really exists
 
