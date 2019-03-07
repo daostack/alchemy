@@ -47,6 +47,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       showPreStakeModal: false
     };
     this.handleClickPreApprove.bind(this);
+    this.showApprovalModal.bind(this);
+    this.closeApprovalModal.bind(this);
+    this.closePreStakeModal.bind(this);
   }
 
   public showApprovalModal(event: any) {
@@ -98,9 +101,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     if (showApproveModal) {
       return (
-        <Modal onBackdropClick={this.closeApprovalModal.bind(this)}>
+        <Modal onBackdropClick={this.closeApprovalModal}>
           <div className={css.preApproval}>
-            <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal.bind(this)}></div>
+            <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal}></div>
             <div className={css.preapproveWrapper}>
             <h3>Activate predictions</h3>
               <p>
@@ -224,7 +227,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
+            <button onClick={this.showApprovalModal }>Enable Predicting</button>
           </div>
         </div>
       );
@@ -237,7 +240,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
             action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreStakeModal.bind(this)}
+            closeAction={this.closePreStakeModal}
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}

@@ -1,6 +1,6 @@
 import { IDAOState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkNetwork, getArc } from "arc";
+import { getArc } from "arc";
 import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
