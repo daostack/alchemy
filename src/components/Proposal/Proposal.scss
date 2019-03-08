@@ -311,6 +311,10 @@ button.disabled {
 		width: 50%;
 		text-align: left;
 		margin-top: 9px;
+
+		.label {
+			display: none;
+		}
 	}
 
 	button {
@@ -507,13 +511,18 @@ button.disabled {
 }
 
 .detailView .voteControls {
-    width: 160px;
+    width: 240px;
     text-align: center;
     position: relative;
     height: 140px;
     z-index: 100000;
     margin: 0 auto;
     padding-top: 70px;
+
+
+	.voteUp {
+		height: auto;
+	}
 
     .voteDivider {
 	    width: auto;
@@ -522,12 +531,43 @@ button.disabled {
 	    display: inline-block;
     }
 
+    button {
+    	width: auto;
+    	left: -42px;
+
+    	span {
+    		margin-left: 30px;
+    	}
+    	
+    	img {
+		    top: -16px;
+		    left: 0;
+		    height: 30px;
+    	}
+    }
+
     .voteButtons {
 	    float: left;
 	    text-align: right;
-	    margin-top: 36px;
+	    margin-top: 13px;
+	    margin-left: 42px;
 	    width: auto;
 	    display: inline-block;
+
+	    .label {
+	    	display: inline-block;
+	    	text-align: left;
+	    }
+
+	    div.label {
+	    	font-size: 13px;
+	    	color: rgba(154, 169, 181, 1.000);
+	    	display: block;
+	    }
+
+	    b.label {
+	    	margin-left: 5px;
+	    }
     }
 }
 

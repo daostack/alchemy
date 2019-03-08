@@ -30,6 +30,7 @@ export const votedFor: string;
 export const votedAgainst: string;
 export const voteControls: string;
 export const voteButtons: string;
+export const label: string;
 export const voteUp: string;
 export const voteDown: string;
 export const downvote: string;
