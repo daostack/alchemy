@@ -3,7 +3,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import TransferDetails from "components/Proposal/TransferDetails";
 import Util from "lib/util";
-import { checkNetworkAndWarn } from "lib/util";
+import { checkNetworkAndWarn, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 //@ts-ignore
@@ -198,12 +198,12 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
             </div>
             <div className={css.proposalInfo}>
               <div className={css.proposalTitle}>
-                <strong>{proposal.title || proposal.id}</strong>
+                <strong>{humanProposalTitle(proposal)}</strong>
               </div>
               <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
             </div>
             { /******* Staking form ******  **/
-              actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass ?
+              actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?
               <div className={css.stakingInfo + " " + css.clearfix}>
                 <div className={css.stakingForm}>
                   <span className={css.yourStakeTitle}>Your stake</span>

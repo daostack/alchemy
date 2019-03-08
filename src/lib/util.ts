@@ -1,4 +1,4 @@
-import { Address } from "@daostack/client";
+import { Address, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import { checkNetwork, getArc } from "../arc";
 
@@ -94,4 +94,8 @@ export function checkNetworkAndWarn(): boolean {
     alert(`Cannot send transction: ${err.message}`);
     return false;
   }
+}
+
+export function humanProposalTitle(proposal: IProposalState) {
+  return proposal.title || "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }

@@ -230,7 +230,7 @@ class PredictionBox extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal }>Enable Predicting</button>
+            <button onClick={this.showApprovalModal}>Enable Predicting</button>
           </div>
         </div>
       );
@@ -240,7 +240,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {showPreStakeModal ?
           <PreTransactionModal
-            actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
+            actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
             action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
