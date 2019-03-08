@@ -1,17 +1,20 @@
 import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
+import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util, { checkNetworkAndWarn} from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
+import { combineLatest, of } from "rxjs";
 import * as css from "./Proposal.scss";
 import VoteGraph from "./VoteGraph";
 
-interface IProps {
+interface IContainerProps {
   detailView?: boolean;
   currentAccountAddress: Address;
   currentAccountState: IMemberState|undefined;
@@ -32,9 +35,9 @@ const mapDispatchToProps = {
   voteOnProposal: arcActions.voteOnProposal,
 };
 
-class VoteBox extends React.Component<IProps, IState> {
+class VoteBox extends React.Component<IContainerProps, IState> {
 
-  constructor(props: IProps) {
+  constructor(props: IContainerProps) {
     super(props);
 
     this.state = {
@@ -320,4 +323,32 @@ class VoteBox extends React.Component<IProps, IState> {
     );
   }
 }
-export default connect(null, mapDispatchToProps)(VoteBox);
+const ConnectedVoteBox = connect(null, mapDispatchToProps)(VoteBox);
+
+interface IProps {
+  detailView?: boolean;
+  currentAccountAddress: Address;
+  currentVote: number;
+  dao: IDAOState;
+  proposal: IProposalState;
+  isVotingNo: boolean;
+  isVotingYes: boolean;
+}
+
+export default (props: IProps) => {
+
+  const arc = getArc();
+  const dao = arc.dao(props.dao.address);
+  const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
+  return <Subscribe observable={observable}>{
+    (state: IObservableState<IMemberState>): any => {
+      if (state.isLoading) {
+        return <div>Loading proposal...</div>;
+      } else if (state.error) {
+        return <div>{ state.error.message }</div>;
+      } else {
+        return <ConnectedVoteBox currentAccountState={state.data} { ...props } />;
+      }
+    }
+  }</Subscribe>;
+};

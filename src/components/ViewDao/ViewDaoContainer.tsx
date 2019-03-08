@@ -35,24 +35,17 @@ interface IStateProps extends RouteComponentProps<any> {
   dao: IDAOState;
   daoAvatarAddress: string;
   lastBlock: number;
-  numRedemptions: number;
   tourVisible: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.match.params.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
-  let numRedemptions = 0;
-
-  if (account) {
-    numRedemptions = Object.keys(account.redemptions).length;
-  }
 
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao: ownProps.dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
-    numRedemptions,
     // openProposals: dao ? selectors.createOpenProposalsSelector()(state, ownProps) : [],
     tourVisible: state.ui.tourVisible
   };
@@ -137,13 +130,13 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
         tourCount: this.state.tourCount + 1
       });
     }
-    if (data.action == "close" || data.type == "tour:end") {
+    if (data.action === "close" || data.type === "tour:end") {
       hideTour();
     }
   }
 
   public render() {
-    const { dao, currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
+    const { dao, currentAccountAddress, currentAccountProfile, tourVisible } = this.props;
 
     // TODO: move the tour in its own file for clarity
     const tourSteps = [
