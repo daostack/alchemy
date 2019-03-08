@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import Util from "lib/util";

@@ -18,46 +18,48 @@ interface IProps {
   rewards: IRewardState[];
 }
 
-const RedeemButton = (props: IProps) => {
-  const {
-    isRedeemPending,
-    redeemable,
-    executable,
-    beneficiaryHasRewards,
-    accountHasRewards,
-    handleClickRedeem,
-    rewards
-  } = props;
+class RedeemButton extends React.Component<IProps> {
+  public render() {
+    const {
+      isRedeemPending,
+      redeemable,
+      executable,
+      beneficiaryHasRewards,
+      accountHasRewards,
+      handleClickRedeem,
+      rewards
+    } = this.props;
 
-  const redemptionsTip = RedemptionsTip(props);
+    const redemptionsTip = RedemptionsTip(this.props);
 
-  const redeemRewards = classNames({
-    [css.redeemRewards]: true,
-    [css.pending]: isRedeemPending,
-    [css.disabled]: !redeemable && !executable
-  });
+    const redeemRewards = classNames({
+      [css.redeemRewards]: true,
+      [css.pending]: isRedeemPending,
+      [css.disabled]: !redeemable && !executable
+    });
 
-  return (rewards.length > 0 || beneficiaryHasRewards || executable ?
-    <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-      <button
-        style={{ whiteSpace: "nowrap" }}
-        disabled={false}
-        className={redeemRewards}
-        onClick={handleClickRedeem}
-      >
-        {
-          isRedeemPending ?
-            "Redeem in progress" :
-            beneficiaryHasRewards && !accountHasRewards ?
-              "Redeem for beneficiary" :
-              rewards.length > 0 ?
-                "Redeem" :
-                "Execute"
-        }
-        <img src="/assets/images/Icon/Loading-black.svg" />
-      </button>
-    </Tooltip>
-    : "");
-};
+    return (rewards.length > 0 || beneficiaryHasRewards || executable ?
+      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+        <button
+          style={{ whiteSpace: "nowrap" }}
+          disabled={false}
+          className={redeemRewards}
+          onClick={handleClickRedeem}
+        >
+          {
+            isRedeemPending ?
+              "Redeem in progress" :
+              beneficiaryHasRewards && !accountHasRewards ?
+                "Redeem for beneficiary" :
+                rewards.length > 0 ?
+                  "Redeem" :
+                  "Execute"
+          }
+          <img src="/assets/images/Icon/Loading-black.svg" />
+        </button>
+      </Tooltip>
+      : "");
+  }
+}
 
 export default RedeemButton;
