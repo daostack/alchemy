@@ -287,6 +287,14 @@ button.disabled {
     right: 12px;
 }
 
+
+.detailView .voteStatus.hasNotVoted.buttonsOnly .castVote {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+}
+
 .voteStatus.votedFor .castVoteFor, .voteStatus.votedAgainst .castVoteAgainst {
 	display: inline;
 }
@@ -411,6 +419,45 @@ button.disabled {
 		width: 50%;
 		float: left;
 		text-align: right;
+	}
+}
+
+.stateChange .buttonsOnly {
+	margin-top: 30px;
+
+	.voteControls {
+		display: block;
+	}
+
+	button {
+		height: 30px;
+		line-height: 30px;
+		width: auto;
+		margin-right: 1px;
+	}
+
+	button:nth-child(2) {
+		border-radius: 15px 0 0 15px;
+		padding-left: 15px;
+		padding-right: 12px;
+	}
+
+	button:nth-child(3) {
+		border-radius: 0 15px 15px 0;
+		padding-right: 15px;
+	}
+
+
+	.castVote span {
+		top: 0;
+	}
+
+	.castVote .buttonsOnlyVoteLabel {
+		font-weight: bold;
+		font-size: 16px;
+		display: inline-block;
+		margin-right: 30px;
+		color: rgba(0, 29, 52, 1.000);
 	}
 }
 
@@ -741,7 +788,7 @@ button.disabled {
 		color: $white;
 		border: none;
 		transition: all .25s ease;
-    margin: 10px 10px 5px 0px;
+	    margin: 10px 10px 5px 0px;
 	}
 
 	.executeProposal {
@@ -789,6 +836,12 @@ button.disabled {
 			font-weight: bold;
 		}
 	}
+}
+
+.detailView .stateChange {
+	float: none;
+	width: auto;
+	text-align: left;
 }
 
 .proposalInfo {
@@ -994,6 +1047,7 @@ button.disabled {
 .detailView .proposalInfo {
 	flex-grow: 2;
 	padding-right: 25px;
+	position: relative;
 }
 
 .detailView .proposalActions {
