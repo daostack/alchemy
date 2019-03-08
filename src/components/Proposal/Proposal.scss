@@ -511,7 +511,7 @@ button.disabled {
     text-align: center;
     position: relative;
     height: 140px;
-    z-index: 100;
+    z-index: 100000;
     margin: 0 auto;
     padding-top: 70px;
 
@@ -683,6 +683,10 @@ button.disabled {
 	}
 }
 
+.detailView .reputationTurnout .tooltipPointer {
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+    left: 50%;
+}
 
 
 .graph {
@@ -1082,6 +1086,10 @@ button.disabled {
 	opacity: 1;
 	left: -5px;
 	transform: translateY(-50%) scale(1);
+}
+
+.detailView .voteGraphs:hover .reputationTurnout {
+	left: -87px;
 }
 
 .proposal .enablePredictions {
