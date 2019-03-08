@@ -255,8 +255,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       };
 
       const executeButtonClass = classNames({
-        [css.stateChange]: true,
-        [css.invisible]: !proposalEnded(proposal) && !this.state.expired
+        [css.stateChange]: true
       });
 
       return (
