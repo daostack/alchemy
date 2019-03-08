@@ -15,7 +15,6 @@ export interface IObservableState<IData> {
 
 export default class Subscribe extends React.Component<IProps, IObservableState<object>> {
   public subscription: Subscription;
-
   public state: IObservableState<object> = {
     isLoading: true,
     data: null,
@@ -23,6 +22,11 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     complete: null,
   };
 
+  public id: string;
+  constructor(props: IProps) {
+    super(props);
+    this.id =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
   public setupSubscription() {
     this.subscription = this.props.observable.subscribe(
       (next: object) => {
@@ -44,13 +48,6 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
 
   public componentWillMount() {
     this.setupSubscription();
-  }
-
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.children !== this.props.children) {
-      this.teardownSubscription();
-      this.setupSubscription();
-    }
   }
 
   public componentWillUnmount() {

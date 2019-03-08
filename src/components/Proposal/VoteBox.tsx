@@ -1,14 +1,14 @@
+import { IDAOState, IMemberState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
+import * as arcActions from "actions/arcActions";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import * as React from "react";
-import Tooltip from "rc-tooltip";
-import * as arcActions from "actions/arcActions";
-import { IDAOState, IMemberState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
-import Util from "lib/util";
-
-import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Util, { checkNetworkAndWarn} from "lib/util";
+import Tooltip from "rc-tooltip";
+import * as React from "react";
+import { connect } from "react-redux";
+import * as css from "./Proposal.scss";
 import VoteGraph from "./VoteGraph";
 
 interface IProps {
@@ -27,7 +27,11 @@ interface IState {
   showPreVoteModal: boolean;
 }
 
-export default class VoteBox extends React.Component<IProps, IState> {
+const mapDispatchToProps = {
+  voteOnProposal: arcActions.voteOnProposal,
+};
+
+class VoteBox extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -39,6 +43,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public handleClickVote(vote: number, event: any) {
+    if (!checkNetworkAndWarn()) { return; }
     const { currentAccount } = this.props;
     if (currentAccount.reputation) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
@@ -147,10 +152,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
               <span>NUM Votes ></span>
             </div>
             <div className={css.castVote}>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}
+                data-test-id="voteFor">
                 <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
               </button>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}
+                data-test-id="voteAgainst">
                 <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
               </button>
             </div>
@@ -287,10 +294,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
         { !this.props.detailView ?
           <div className={voteStatusClass} >
             <div className={css.castVote}>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}
+                data-test-id="voteFor">
                 <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
               </button>
-              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+              <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}
+                data-test-id="voteAgainst">
                 <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
               </button>
             </div>
@@ -310,3 +319,4 @@ export default class VoteBox extends React.Component<IProps, IState> {
     );
   }
 }
+export default connect(null, mapDispatchToProps)(VoteBox);

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalStage } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from "arc";
@@ -10,18 +10,17 @@ import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { CommentCount } from "disqus-react";
+import Util, { checkNetworkAndWarn, humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
-import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
+import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
-import Util from "lib/util";
-
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import RedeemButton from "./RedeemButton";
@@ -96,7 +95,6 @@ interface IDispatchProps {
   approveStakingGens: typeof web3Actions.approveStakingGens;
   redeemProposal: typeof arcActions.redeemProposal;
   executeProposal: typeof arcActions.executeProposal;
-  voteOnProposal: typeof arcActions.voteOnProposal;
   stakeProposal: typeof arcActions.stakeProposal;
 }
 
@@ -104,7 +102,6 @@ const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
   executeProposal: arcActions.executeProposal,
-  voteOnProposal: arcActions.voteOnProposal,
   stakeProposal: arcActions.stakeProposal,
 };
 
@@ -124,9 +121,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
       preRedeemModalOpen: false,
       expired: closingTime(props.proposal).isSameOrBefore(moment())
     };
+    this.handleClickExecute.bind(this);
+    this.handleClickRedeem.bind(this);
+    this.countdownEnded.bind(this);
+    this.closePreRedeemModal.bind(this);
   }
 
   public handleClickExecute(event: any) {
+    if (!checkNetworkAndWarn()) { return; }
     this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
   }
 
@@ -156,8 +158,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       approveStakingGens,
       redeemProposal,
       executeProposal,
-      stakeProposal,
-      voteOnProposal,
       isPredictingFail,
       isPredictingPass,
       isVotingNo,
@@ -196,7 +196,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.redeemable]: redeemable
       });
 
-      const submittedTime = moment.unix(proposal.createdAt);
+      // const submittedTime = moment.unix(proposal.createdAt);
 
       // Calculate reputation percentages
       const totalReputation = Util.fromWei(proposal.stage == IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
@@ -219,7 +219,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         currentAccount,
         dao,
         proposal,
-        handleClickRedeem: this.handleClickRedeem.bind(this)
+        handleClickRedeem: this.handleClickRedeem
       };
 
       const redemptionsTip = RedemptionsTip(redeemProps);
@@ -260,7 +260,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       });
 
       return (
-        <div className={proposalClass + " " + css.clearfix}>
+        <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <h3 className={css.proposalTitleTop}>
               <span data-test-id="proposal-closes-in">
@@ -288,13 +288,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
             </h3>
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
                 {!proposalEnded(proposal) ?
                     !this.state.expired ?
-                      <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded.bind(this)} /> :
+                      <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded} /> :
                       <span className={css.closedTime}>
                         {proposal.stage == IProposalStage.Queued ? "Expired" :
                          proposal.stage == IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
@@ -308,12 +308,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
               {!this.props.detailView ?
                 <div className={executeButtonClass}>
                   {proposal.stage == IProposalStage.PreBoosted ?
-                    <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                    <button className={css.boostProposal} onClick={this.handleClickExecute}>
                       <img src="/assets/images/Icon/boost.svg"/>
                       <span> Boost</span>
                     </button>
                     :
-                    <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                    <button className={css.executeProposal} onClick={this.handleClickExecute}>
                       <img src="/assets/images/Icon/execute.svg"/>
                       <span> Execute</span>
                     </button>
@@ -389,7 +389,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{proposal.title || "[No title]"}</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
             </h3>
             <div className={css.proposalDetails}>
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
@@ -401,12 +401,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {this.props.detailView ?
               <div className={executeButtonClass}>
                 {proposal.stage == IProposalStage.PreBoosted ?
-                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                  <button className={css.boostProposal} onClick={this.handleClickExecute}>
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span> Boost</span>
                   </button>
                   :
-                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                  <button className={css.executeProposal} onClick={this.handleClickExecute}>
                     <img src="/assets/images/Icon/execute.svg"/>
                     <span> Execute</span>
                   </button>
@@ -426,7 +426,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 currentAccount={currentAccount}
                 dao={dao}
                 proposal={proposal}
-                voteOnProposal={voteOnProposal}
                 detailView={detailView}
               />
               : proposalPassed(proposal) ?
@@ -448,9 +447,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   {this.state.preRedeemModalOpen ?
                     <PreTransactionModal
                       actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccount.address)}
+                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccount && currentAccount.address)}
                       beneficiaryProfile={beneficiaryProfile}
-                      closeAction={this.closePreRedeemModal.bind(this)}
+                      closeAction={this.closePreRedeemModal}
                       dao={dao}
                       effectText={redemptionsTip}
                       proposal={proposal}
@@ -472,7 +471,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
                   dao={dao}
                   proposal={proposal}
-                  stakeProposal={stakeProposal}
                   threshold={threshold}
                   approveStakingGens={approveStakingGens}
                   detailView={detailView}
