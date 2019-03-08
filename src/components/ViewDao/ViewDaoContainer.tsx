@@ -1,4 +1,12 @@
+import { IDAOState } from "@daostack/client";
+import * as profilesActions from "actions/profilesActions";
+import * as uiActions from "actions/uiActions";
+import { getArc } from "arc";
 import * as classNames from "classnames";
+import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import * as appCss from "layouts/App.scss";
+import Util from "lib/util";
 import { denormalize } from "normalizr";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -6,33 +14,19 @@ import { Cookies, withCookies } from "react-cookie";
 import Joyride from "react-joyride";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
-
-import * as arcActions from "actions/arcActions";
-import * as profilesActions from "actions/profilesActions";
-import * as uiActions from "actions/uiActions";
-import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
 import { IAccountState } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import { Subscription } from "rxjs";
 import * as schemas from "schemas";
-
-import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
+import * as proposalCss from "../Proposal/Proposal.scss";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 import DaoSidebar from "./DaoSidebar";
-
-import * as appCss from "layouts/App.scss";
-import * as proposalCss from "../Proposal/Proposal.scss";
 import * as css from "./ViewDao.scss";
-
-import { IDAOState } from "@daostack/client";
-import { getArc } from "arc";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { Subscription } from "rxjs";
-import Util from "lib/util";
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;

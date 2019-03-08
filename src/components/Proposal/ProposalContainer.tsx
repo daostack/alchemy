@@ -190,7 +190,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.detailView]: detailView,
         [css.clearfix]: detailView,
         [css.proposal]: true,
-        [css.openProposal]: proposal.stage == IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted || proposal.stage == IProposalStage.Boosted || proposal.stage == IProposalStage.QuietEndingPeriod,
+        [css.openProposal]: proposal.stage === IProposalStage.Queued ||
+          proposal.stage === IProposalStage.PreBoosted ||
+          proposal.stage === IProposalStage.Boosted ||
+          proposal.stage === IProposalStage.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
         [css.passedProposal]: proposalPassed(proposal),
         [css.redeemable]: redeemable
@@ -199,7 +202,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       // const submittedTime = moment.unix(proposal.createdAt);
 
       // Calculate reputation percentages
-      const totalReputation = Util.fromWei(proposal.stage == IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
+      const totalReputation = Util.fromWei(proposal.stage === IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
       const votesFor = Util.fromWei(proposal.votesFor);
       const votesAgainst = Util.fromWei(proposal.votesAgainst);
       const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
@@ -400,7 +403,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
             {this.props.detailView ?
               <div className={executeButtonClass}>
-                {proposal.stage == IProposalStage.PreBoosted ?
+                {proposal.stage === IProposalStage.PreBoosted ?
                   <button className={css.boostProposal} onClick={this.handleClickExecute}>
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span> Boost</span>
@@ -495,9 +498,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const observable = combineLatest(
     dao.proposal(props.proposalId).state(), // the list of pre-boosted proposals
     props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null),
-    // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
-    // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
+    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
     props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)),

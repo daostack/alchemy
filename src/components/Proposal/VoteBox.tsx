@@ -99,20 +99,20 @@ class VoteBox extends React.Component<IProps, IState> {
       [css.unconfirmedVote] : isVoting,
     });
     let voteUpButtonClass = classNames({
-      [css.voted]: !isVotingYes && currentVote == ProposalOutcome.Pass,
+      [css.voted]: !isVotingYes && currentVote === ProposalOutcome.Pass,
       [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
-      [css.voted]: !isVotingNo && currentVote == ProposalOutcome.Fail,
+      [css.voted]: !isVotingNo && currentVote === ProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
     let voteStatusClass = classNames({
       [css.voteStatus]: true,
       [css.hasVoted]: currentVote,
-      [css.votedFor]: !isVotingYes && currentVote == ProposalOutcome.Pass,
-      [css.votedAgainst]: !isVotingNo && currentVote == ProposalOutcome.Fail,
+      [css.votedFor]: !isVotingYes && currentVote === ProposalOutcome.Pass,
+      [css.votedAgainst]: !isVotingNo && currentVote === ProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
     });
 
@@ -136,7 +136,7 @@ class VoteBox extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {this.state.showPreVoteModal ?
           <PreTransactionModal
-            actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+            actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
             action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
             currentAccount={currentAccount.address}

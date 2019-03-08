@@ -3,11 +3,10 @@ import Util from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
-import * as ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
-import { IAccountState, newAccount } from "reducers/arcReducer";
+import { IAccountState } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
