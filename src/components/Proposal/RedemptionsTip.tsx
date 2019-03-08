@@ -1,13 +1,13 @@
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
-import * as React from "react";
-import { IDAOState, IMemberState, IProposalState, IRewardState } from "@daostack/client";
 import ReputationView from "components/Account/ReputationView";
 import Util from "lib/util";
+import * as React from "react";
 
 interface IProps {
   isRedeemPending: boolean;
   beneficiaryHasRewards: boolean;
-  currentAccount: IMemberState|undefined;
+  currentAccountAddress: Address;
   dao: IDAOState;
   executable: boolean;
   accountHasRewards: boolean;
@@ -17,7 +17,7 @@ interface IProps {
 }
 
 export default (props: IProps) => {
-  const { proposal, currentAccount, dao, executable, beneficiaryHasRewards, isRedeemPending, rewards } = props;
+  const { proposal, currentAccountAddress, dao, executable, beneficiaryHasRewards, isRedeemPending, rewards } = props;
 
   const rewardComponents = [];
   for (const reward of rewards) {
@@ -68,8 +68,8 @@ export default (props: IProps) => {
     {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
-          {(currentAccount && currentAccount.address === proposal.beneficiary) ?
-              "As the" : "The"} beneficiary of the proposal {currentAccount && currentAccount.address === proposal.beneficiary ? "you " : ""}will receive:
+          {(currentAccountAddress === proposal.beneficiary) ?
+              "As the" : "The"} beneficiary of the proposal {currentAccountAddress === proposal.beneficiary ? "you " : ""}will receive:
         </strong>
         <ul>
           {hasEthReward ?

@@ -15,11 +15,9 @@ import Joyride from "react-joyride";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import { IRootState } from "reducers";
-import { IAccountState } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
-import * as schemas from "schemas";
 import * as proposalCss from "../Proposal/Proposal.scss";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
@@ -39,14 +37,11 @@ interface IStateProps extends RouteComponentProps<any> {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.match.params.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
-
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao: ownProps.dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
-    // openProposals: dao ? selectors.createOpenProposalsSelector()(state, ownProps) : [],
     tourVisible: state.ui.tourVisible
   };
 };
@@ -124,7 +119,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public handleJoyrideCallback = (data: any) => {
     const { hideTour } = this.props;
 
-    if (data.type == "tour:end") {
+    if (data.type === "tour:end") {
       this.setState({
         showTourOutro: true,
         tourCount: this.state.tourCount + 1

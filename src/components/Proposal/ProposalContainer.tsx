@@ -32,7 +32,6 @@ interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState;
   currentAccountGens: BN;
   currentAccountGenStakingAllowance: BN;
   daoEthBalance: BN;
@@ -52,7 +51,6 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState;
   currentAccountGens: BN;
   currentAccountGenStakingAllowance: BN;
   daoEthBalance: BN;
@@ -74,7 +72,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccountAddress: ownProps.currentAccountAddress,
-    currentAccountState: ownProps.currentAccountState,
     currentAccountGens: ownProps.currentAccountGens,
     currentAccountGenStakingAllowance: ownProps.currentAccountGenStakingAllowance,
     dao,
@@ -150,7 +147,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      currentAccountState,
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
@@ -221,7 +217,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         executable,
         beneficiaryHasRewards,
         rewards: rewardsForCurrentUser,
-        currentAccount: currentAccountState,
+        currentAccountAddress,
         dao,
         proposal,
         handleClickRedeem: this.handleClickRedeem
@@ -498,33 +494,34 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
 
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state(), // the list of pre-boosted proposals
-    props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null),
-    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]),
-    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
-    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
-    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)),
+    dao.proposal(props.proposalId).state(), // the list of pre-boosted proposals /0
+    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
+    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]), //2
+    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]), //3
+    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)), //4
     props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN(0)),
     dao.ethBalance()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {
+    (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
         const proposal = state.data[0];
-        const rewards = state.data[2];
-        const stakes = state.data[3];
-        const votes = state.data[4];
+        const rewards = state.data[1];
+        const stakes = state.data[2];
+        const votes = state.data[3];
+        const currentAccountGens = state.data[4];
+        const currentAccountGenStakingAllowance = state.data[5] ? new BN(state.data[5].amount) : new BN(0);
+        const daoEthBalance = state.data[6];
         return <ConnectedProposalContainer
           detailView={props.detailView}
           currentAccountAddress={props.currentAccountAddress}
-          currentAccountState={state.data[1]}
-          currentAccountGens={state.data[5]}
-          currentAccountGenStakingAllowance={state.data[6] ? new BN(state.data[6].amount) : new BN(0)}
-          daoEthBalance={state.data[7]}
+          currentAccountGens={currentAccountGens}
+          currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+          daoEthBalance={daoEthBalance}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}

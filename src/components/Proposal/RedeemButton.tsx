@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalState, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -11,7 +11,7 @@ interface IProps {
   redeemable: boolean;
   executable: boolean;
   beneficiaryHasRewards: boolean;
-  currentAccount: IMemberState;
+  currentAccountAddress: Address;
   dao: IDAOState;
   proposal: IProposalState;
   handleClickRedeem: any;
@@ -28,6 +28,7 @@ const RedeemButton = (props: IProps) => {
     handleClickRedeem,
     rewards
   } = props;
+
   const redemptionsTip = RedemptionsTip(props);
 
   const redeemRewards = classNames({
