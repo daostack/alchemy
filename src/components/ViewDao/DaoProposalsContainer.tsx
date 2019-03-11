@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IProposalStage } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -67,7 +67,7 @@ const DAOProposalsContainer = (props: {
     <div className={css.daoProposalsContainer}>
       <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/create`} data-test-id="create-proposal">+ New proposal</Link>
       <h2 className={css.queueType}>Contribution Reward</h2>
-      { proposalsQueued.length == 0 && proposalsPreBoosted.length == 0 && proposalsBoosted.length == 0
+      { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
             ? <div className={css.noDecisions}>
                 <img className={css.relax} src="/assets/images/meditate.svg"/>
                 <div className={css.proposalsHeader}>

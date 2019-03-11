@@ -15,6 +15,7 @@ export interface IObservableState<IData> {
 
 export default class Subscribe extends React.Component<IProps, IObservableState<object>> {
   public subscription: Subscription;
+
   public state: IObservableState<object> = {
     isLoading: true,
     data: null,

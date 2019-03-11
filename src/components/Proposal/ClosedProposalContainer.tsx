@@ -6,8 +6,7 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util, { humanProposalTitle} from "lib/util";
-import * as moment from "moment";
+import { humanProposalTitle} from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -15,30 +14,28 @@ import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReduc
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
-import { isRedeemPending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
-import RedeemButton from "./RedeemButton";
-import RedemptionsTip from "./RedemptionsTip";
 import VoteBox from "./VoteBox";
 
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
-  currentAccount: IMemberState;
+  currentAccountAddress: Address;
+  currentAccountState: IMemberState;
   daoEthBalance: BN;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
   dao: IDAOState;
   proposal: IProposalState;
-  isRedeemPending: boolean;
 }
 
 interface IContainerProps {
   dao: IDAOState;
   daoEthBalance: BN;
-  currentAccount: IMemberState;
+  currentAccountAddress: Address;
+  currentAccountState: IMemberState;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
@@ -49,15 +46,15 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const proposal = ownProps.proposal;
   const dao = ownProps.dao;
 
-  let currentAccount = ownProps.currentAccount;
+  let currentAccountState = ownProps.currentAccountState;
 
   return {
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
-    currentAccount,
+    currentAccountAddress: ownProps.currentAccountAddress,
+    currentAccountState,
     dao,
     daoEthBalance: ownProps.daoEthBalance,
-    isRedeemPending: isRedeemPending(proposal.id, currentAccount.address)(state),
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
@@ -107,13 +104,11 @@ class ProposalContainer extends React.Component<IProps, IState> {
     const {
       beneficiaryProfile,
       creatorProfile,
-      currentAccount,
+      currentAccountAddress,
+      currentAccountState,
       dao,
       daoEthBalance,
       proposal,
-      redeemProposal,
-      executeProposal,
-      isRedeemPending,
       rewardsForCurrentUser,
       stakesOfCurrentUser,
       votesOfCurrentUser,
@@ -135,7 +130,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
     if (proposal) {
       // TODO: check if the commented lines are represented correctly in the line below
       // const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
-      const executable = proposalEnded(proposal) && !proposal.executedAt;
       const proposalClass = classNames({
         [css.proposal]: true,
         [css.closedProposal]: true,
@@ -144,34 +138,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.redeemable]: redeemable
       });
 
-      const submittedTime = moment.unix(proposal.createdAt);
-
-      // Calculate reputation percentages
-      const totalReputation = Util.fromWei(proposal.stage == IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
-      const votesFor = Util.fromWei(proposal.votesFor);
-      const votesAgainst = Util.fromWei(proposal.votesAgainst);
-      const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
-      const noPercentage = totalReputation && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputation * 100)) : 0;
-      const passedByDecision = totalReputation ? (votesFor / totalReputation) > 0.5 : false;
-      const failedByDecision = totalReputation ? (votesAgainst / totalReputation) > 0.5 : false;
-
       let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0);
-
-      const redeemProps = {
-        accountHasRewards,
-        isRedeemPending,
-        redeemable,
-        executable,
-        beneficiaryHasRewards,
-        rewards: rewardsForCurrentUser,
-        currentAccount,
-        dao,
-        proposal,
-        handleClickRedeem: this.handleClickRedeem.bind(this)
-      };
-
-      const redemptionsTip = RedemptionsTip(redeemProps);
-      const redeemButton = RedeemButton(redeemProps);
 
       let currentVote: IVote;
       if (votesOfCurrentUser.length > 0) {
@@ -187,25 +154,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
         currentAccountPrediction = currentStake.outcome;
         currentAccountStakeAmount = currentStake.amount;
       }
-
-      const styles = {
-        forBar: {
-          width: yesPercentage + "%",
-        },
-        againstBar: {
-          width: noPercentage + "%",
-        },
-      };
-
-      const disqusConfig = {
-        url: process.env.BASE_URL + "/dao/" + dao.address + "/proposal/" + proposal.id,
-        identifier: proposal.id
-      };
-
-      const executeButtonClass = classNames({
-        [css.stateChange]: true,
-        [css.invisible]: proposalEnded(proposal) || closingTime(proposal).isAfter(moment())
-      });
 
       return (
         <div className={proposalClass + " " + css.clearfix}>
@@ -227,7 +175,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 isVotingNo={false}
                 isVotingYes={false}
                 currentVote={currentAccountVote}
-                currentAccount={currentAccount}
+                currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 proposal={proposal}
               />
@@ -291,7 +239,8 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const stakes = state.data[3];
         const votes = state.data[4];
         return <ConnectedProposalContainer
-          currentAccount={state.data[1]}
+          currentAccountAddress={props.currentAccountAddress}
+          currentAccountState={state.data[1]}
           proposal={proposal}
           dao={props.dao}
           daoEthBalance={state.data[5]}
