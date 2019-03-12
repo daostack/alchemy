@@ -227,7 +227,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                       </Tooltip> :
                       passButton
                     )
-                  : "Pass"
+                  : " "
                 }
                 {
                   proposal.stage === IProposalStage.Queued
@@ -238,7 +238,10 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                         </Tooltip> :
                         failButton
                     )
-                  : "Fail"
+                  : 
+                  <span className={css.disabledPredections}>
+                     Predictions are disabled
+                  </span>
                 }
               </div>
               : " "
@@ -247,8 +250,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           <div className={css.stakes}>
             <div className={css.clearfix}>
               <div className={css.stakesFor}>
-                <img src="/assets/images/Icon/v-small-line.svg"/>
-                {Util.fromWei(proposal.stakesFor).toFixed(2)}
+                <img className={css.defaultIcon} src="/assets/images/Icon/v-small-line.svg"/>
+                <img className={css.detailIcon} src="/assets/images/Icon/v-small.svg"/>
+                <span>{Util.fromWei(proposal.stakesFor).toFixed(2)}</span>
               </div>
               <div className={css.forBar}>
                 <b>Pass</b>
@@ -257,8 +261,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
             </div>
             <div className={css.clearfix}>
               <div className={css.stakesAgainst}>
-                <img src="/assets/images/Icon/x-small-line.svg"/>
-                {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
+                <img className={css.defaultIcon} src="/assets/images/Icon/x-small-line.svg"/>
+                <img className={css.detailIcon} src="/assets/images/Icon/x-small.svg"/>
+                <span>{Util.fromWei(proposal.stakesAgainst).toFixed(2)}</span>
               </div>
               <div className={css.againstBar}>
                 <b>Fail</b>
