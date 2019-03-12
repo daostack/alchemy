@@ -253,7 +253,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             { this.props.detailView ?
               <div className={css.stakeControls}>
                 {
-                 proposal.stage === IProposalStage.Queued
+                 proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                   ? (
                     tip(VoteOptions.No) != "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -264,7 +264,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                   : "Pass"
                 }
                 {
-                  proposal.stage === IProposalStage.Queued
+                  proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                   ? (
                       tip(VoteOptions.Yes) != "" ?
                         <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
@@ -311,11 +311,12 @@ class PredictionBox extends React.Component<IProps, IState> {
                 </span>
               : ""
             }
+
           </span>
           { !this.props.detailView ?
             <div className={css.centered}>
               {
-               proposal.stage === IProposalStage.Queued
+               proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                 ? (
                   tip(VoteOptions.No) != "" ?
                     <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -326,7 +327,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 : "Pass"
               }
               {
-                proposal.stage === IProposalStage.Queued
+                proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                 ? (
                     tip(VoteOptions.Yes) != "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
