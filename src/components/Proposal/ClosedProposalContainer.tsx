@@ -105,7 +105,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      currentAccountState,
       dao,
       daoEthBalance,
       proposal,
@@ -209,11 +208,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
-  // TODO: get things to work without an account
-  if (!props.currentAccountAddress) {
-    return null;
-  }
-
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
 
