@@ -497,12 +497,12 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
 
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state(), // satate of the current proposal
+    dao.proposal(props.proposalId).state(), // state of the current proposal
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary:   props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker:   props.currentAccountAddress}) : of([]), //2
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter:   props.currentAccountAddress }) : of([]), //3
     props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)), //4
-    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN(0)),
+    arc.allowance(props.currentAccountAddress),
     dao.ethBalance()
   );
   return <Subscribe observable={observable}>{

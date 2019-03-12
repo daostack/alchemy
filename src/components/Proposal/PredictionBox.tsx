@@ -50,21 +50,17 @@ class PredictionBox extends React.Component<IProps, IState> {
       showApproveModal: false,
       showPreStakeModal: false
     };
-    this.handleClickPreApprove.bind(this);
-    this.showApprovalModal.bind(this);
-    this.closeApprovalModal.bind(this);
-    this.closePreStakeModal.bind(this);
   }
 
-  public showApprovalModal(event: any) {
+  public showApprovalModal = (event: any) => {
     this.setState({ showApproveModal: true });
   }
 
-  public closeApprovalModal(event: any) {
+  public closeApprovalModal = (event: any) => {
     this.setState({ showApproveModal: false });
   }
 
-  public closePreStakeModal(event: any) {
+  public closePreStakeModal = (event: any) => {
     this.setState({ showPreStakeModal: false });
   }
 
@@ -72,7 +68,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
-  public handleClickPreApprove(event: any) {
+  public handleClickPreApprove = (event: any) => {
     if (!checkNetworkAndWarn()) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
@@ -203,7 +199,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     );
 
     // If don't have any staking allowance, replace with button to pre-approve
-    if (currentAccountGenStakingAllowance.lt(new BN(1))) {
+    if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
           <div className={css.stakes}>
