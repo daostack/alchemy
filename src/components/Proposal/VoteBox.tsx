@@ -362,6 +362,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
 const ConnectedVoteBox = connect(null, mapDispatchToProps)(VoteBox);
 
 interface IProps {
+  buttonsOnly?: boolean;
   detailView?: boolean;
   currentAccountAddress: Address;
   currentVote: number;
