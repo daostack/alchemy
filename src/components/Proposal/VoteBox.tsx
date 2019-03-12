@@ -1,20 +1,24 @@
+import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
+import * as arcActions from "actions/arcActions";
+import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import * as React from "react";
-import Tooltip from "rc-tooltip";
-import * as arcActions from "actions/arcActions";
-import { IDAOState, IMemberState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
-import Util from "lib/util";
-
-import * as css from "./Proposal.scss";
 import ReputationView from "components/Account/ReputationView";
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util, { checkNetworkAndWarn} from "lib/util";
+import Tooltip from "rc-tooltip";
+import * as React from "react";
+import { connect } from "react-redux";
+import { combineLatest, of } from "rxjs";
+import * as css from "./Proposal.scss";
 import VoteGraph from "./VoteGraph";
 
-interface IProps {
+interface IContainerProps {
   buttonsOnly?: boolean;
   detailView?: boolean;
-  currentAccount: IMemberState|undefined;
+  currentAccountAddress: Address;
+  currentAccountState: IMemberState|undefined;
   currentVote: number;
   dao: IDAOState;
   proposal: IProposalState;
@@ -28,9 +32,13 @@ interface IState {
   showPreVoteModal: boolean;
 }
 
-export default class VoteBox extends React.Component<IProps, IState> {
+const mapDispatchToProps = {
+  voteOnProposal: arcActions.voteOnProposal,
+};
 
-  constructor(props: IProps) {
+class VoteBox extends React.Component<IContainerProps, IState> {
+
+  constructor(props: IContainerProps) {
     super(props);
 
     this.state = {
@@ -40,8 +48,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
   }
 
   public handleClickVote(vote: number, event: any) {
-    const { currentAccount } = this.props;
-    if (currentAccount.reputation) {
+    if (!checkNetworkAndWarn()) { return; }
+    const { currentAccountState } = this.props;
+    if (currentAccountState.reputation) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
@@ -54,7 +63,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
     const {
       buttonsOnly,
       currentVote,
-      currentAccount,
+      currentAccountState,
       proposal,
       dao,
       isVotingNo,
@@ -87,7 +96,7 @@ export default class VoteBox extends React.Component<IProps, IState> {
       },
     };
 
-    const votingDisabled = !currentAccount || !currentAccount.reputation || !!currentVote;
+    const votingDisabled = !currentAccountState || !currentAccountState.reputation || !!currentVote;
 
     let wrapperClass = classNames({
       [css.detailView] : detailView,
@@ -96,12 +105,12 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.unconfirmedVote] : isVoting,
     });
     let voteUpButtonClass = classNames({
-      [css.voted]: !isVotingYes && currentVote == ProposalOutcome.Pass,
+      [css.voted]: !isVotingYes && currentVote === ProposalOutcome.Pass,
       [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
-      [css.voted]: !isVotingNo && currentVote == ProposalOutcome.Fail,
+      [css.voted]: !isVotingNo && currentVote === ProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
@@ -109,8 +118,8 @@ export default class VoteBox extends React.Component<IProps, IState> {
       [css.buttonsOnly] : buttonsOnly,
       [css.voteStatus]: true,
       [css.hasVoted]: currentVote,
-      [css.votedFor]: !isVotingYes && currentVote == ProposalOutcome.Pass,
-      [css.votedAgainst]: !isVotingNo && currentVote == ProposalOutcome.Fail,
+      [css.votedFor]: !isVotingYes && currentVote === ProposalOutcome.Pass,
+      [css.votedAgainst]: !isVotingNo && currentVote === ProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
     });
 
@@ -119,11 +128,11 @@ export default class VoteBox extends React.Component<IProps, IState> {
     });
 
     const tipContent = (vote: ProposalOutcome) =>
-      !currentAccount ?
+      !currentAccountState ?
         "Cannot vote - please log in" :
       currentVote ?
         "Can't change your vote" :
-      !currentAccount.reputation ?
+      !currentAccountState.reputation ?
         "Voting requires reputation in " + dao.name :
       isVoting ?
         "Warning: Voting for this proposal is already in progress" :
@@ -138,9 +147,9 @@ export default class VoteBox extends React.Component<IProps, IState> {
               actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
               action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
               closeAction={this.closePreVoteModal.bind(this)}
-              currentAccount={currentAccount.address}
+              currentAccount={currentAccountState.address}
               dao={dao}
-              effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccount.reputation} /></strong></span>}
+              effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
               proposal={proposal}
             /> : ""
           }
@@ -350,3 +359,34 @@ export default class VoteBox extends React.Component<IProps, IState> {
     }
   }
 }
+const ConnectedVoteBox = connect(null, mapDispatchToProps)(VoteBox);
+
+interface IProps {
+  detailView?: boolean;
+  currentAccountAddress: Address;
+  currentVote: number;
+  dao: IDAOState;
+  proposal: IProposalState;
+  isVotingNo: boolean;
+  isVotingYes: boolean;
+}
+
+export default (props: IProps) => {
+
+  const arc = getArc();
+  const dao = arc.dao(props.dao.address);
+  const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress.toLowerCase()).state() : of(null);
+  console.log("voteox", props.currentAccountAddress);
+  return <Subscribe observable={observable}>{
+    (state: IObservableState<IMemberState>): any => {
+      if (state.isLoading) {
+        return <div>Loading proposal...</div>;
+      } else if (state.error) {
+        return <div>{ state.error.message }</div>;
+      } else {
+        console.log("votebox", state.data);
+        return <ConnectedVoteBox currentAccountState={state.data} { ...props } />;
+      }
+    }
+  }</Subscribe>;
+};

@@ -1,16 +1,15 @@
-import { IDAOState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
-import BN = require("bn.js");
-import { Field, Formik, FormikProps } from "formik";
-import * as H from "history";
-import * as React from "react";
-import { connect } from "react-redux";
-
+import { IDAOState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
-import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
+import { Field, Formik, FormikProps } from "formik";
+import * as H from "history";
+import { checkNetworkAndWarn } from "lib/util";
 import Util from "lib/util";
+import * as React from "react";
+import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
@@ -119,6 +118,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   }
 
   public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
+    if (!checkNetworkAndWarn()) { return; }
     const proposalValues = {...values,
       ethReward: Util.toWei(Number(values.ethReward)),
       externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
@@ -145,8 +145,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { createProposal, currentAccount, daoAvatarAddress } = this.props;
-    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = this.state.proposalDetails;
+    const {  daoAvatarAddress } = this.props;
     const arc = getArc();
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
@@ -224,14 +223,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                 }}
                 onSubmit={this.handleSubmit}
                 render={({
-                  values,
                   errors,
                   touched,
-                  handleChange,
-                  handleBlur,
                   handleSubmit,
                   isSubmitting,
-                  isValid,
                   setFieldTouched,
                   setFieldValue
                 }: FormikProps<FormValues>) =>

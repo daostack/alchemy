@@ -1,17 +1,17 @@
-import { IDAOState, IProposalState, IProposalStage } from "@daostack/client";
-import BN = require("bn.js");
-import * as classNames from "classnames";
-import Tooltip from "rc-tooltip";
-import * as React from "react";
-//@ts-ignore
-import { Modal } from "react-router-modal";
-
+import { IDAOState, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
+import BN = require("bn.js");
+import * as classNames from "classnames";
+import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Util, { checkNetworkAndWarn } from "lib/util";
+import Tooltip from "rc-tooltip";
+import * as React from "react";
+import { connect } from "react-redux";
+//@ts-ignore
+import { Modal } from "react-router-modal";
 import { VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { default as PreTransactionModal, ActionTypes } from "components/Shared/PreTransactionModal";
-import Util from "lib/util";
 
 import * as css from "./Proposal.scss";
 
@@ -36,8 +36,11 @@ interface IProps {
   isPredictingFail: boolean;
   isPredictingPass: boolean;
 }
+const mapDispatchToProps = {
+  stakeProposal: arcActions.stakeProposal,
+};
 
-export default class PredictionBox extends React.Component<IProps, IState> {
+class PredictionBox extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -47,6 +50,10 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       showApproveModal: false,
       showPreStakeModal: false
     };
+    this.handleClickPreApprove.bind(this);
+    this.showApprovalModal.bind(this);
+    this.closeApprovalModal.bind(this);
+    this.closePreStakeModal.bind(this);
   }
 
   public showApprovalModal(event: any) {
@@ -62,11 +69,11 @@ export default class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public showPreStakeModal = (prediction: number) => (event: any) => {
-    const { proposal, stakeProposal } = this.props;
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
   public handleClickPreApprove(event: any) {
+    if (!checkNetworkAndWarn()) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
     this.setState({ showApproveModal: false });
@@ -76,7 +83,6 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     const {
       beneficiaryProfile,
       currentPrediction,
-      currentStake,
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
@@ -84,8 +90,8 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       proposal,
       isPredictingFail,
       isPredictingPass,
-      stakeProposal,
-      threshold
+      threshold,
+      stakeProposal
     } = this.props;
 
     const {
@@ -98,9 +104,9 @@ export default class PredictionBox extends React.Component<IProps, IState> {
 
     if (showApproveModal) {
       return (
-        <Modal onBackdropClick={this.closeApprovalModal.bind(this)}>
+        <Modal onBackdropClick={this.closeApprovalModal}>
           <div className={css.preApproval}>
-            <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal.bind(this)}></div>
+            <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal}></div>
             <div className={css.preapproveWrapper}>
             <h3>Activate predictions</h3>
               <p>
@@ -116,7 +122,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
-                <button onClick={this.handleClickPreApprove.bind(this)}>Preapprove</button>
+                <button onClick={this.handleClickPreApprove}>Preapprove</button>
               </div>
             </div>
           </div>
@@ -224,7 +230,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal.bind(this)}>Enable Predicting</button>
+            <button onClick={this.showApprovalModal}>Enable Predicting</button>
           </div>
         </div>
       );
@@ -234,7 +240,7 @@ export default class PredictionBox extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {showPreStakeModal ?
           <PreTransactionModal
-            actionType={pendingPrediction == VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
+            actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
             action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
@@ -342,3 +348,4 @@ export default class PredictionBox extends React.Component<IProps, IState> {
     );
   }
 }
+export default connect(null, mapDispatchToProps)(PredictionBox);
