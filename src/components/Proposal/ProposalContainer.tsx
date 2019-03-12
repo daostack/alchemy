@@ -248,8 +248,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       };
 
       const executeButtonClass = classNames({
-        [css.stateChange]: true,
-        [css.invisible]: !proposalEnded(proposal) && !this.state.expired
+        [css.invisible]: !proposalEnded(proposal) && !this.state.expired,
+        [css.stateChange]: true
       });
 
       return (
@@ -392,22 +392,34 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
 
             {this.props.detailView ?
-              <div className={executeButtonClass}>
-                {proposal.stage === IProposalStage.PreBoosted ?
-                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
-                    <img src="/assets/images/Icon/boost.svg"/>
-                    <span> Boost</span>
-                  </button>
-                  :
-                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
-                    <img src="/assets/images/Icon/execute.svg"/>
-                    <span> Execute</span>
-                  </button>
-                }
-              </div>
+                <div className={css.stateChange}>
+                  {proposal.stage == IProposalStage.PreBoosted ?
+                    <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                      <img src="/assets/images/Icon/boost.svg"/>
+                      <span> Boost</span>
+                    </button>
+                    : executable ?
+                    <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                      <img src="/assets/images/Icon/execute.svg"/>
+                      <span> Execute</span>
+                    </button>
+                    :
+                    <div>
+                      <VoteBox
+                        buttonsOnly={true}
+                        isVotingNo={isVotingNo}
+                        isVotingYes={isVotingYes}
+                        currentVote={currentAccountVote}
+                        currentAccountAddress={currentAccountAddress}
+                        dao={dao}
+                        proposal={proposal}
+                        detailView={detailView}
+                      />
+                    </div>
+                  }
+                </div>
               : " "
             }
-
           </div>
 
           <div className={css.proposalActions + " " + css.clearfix}>
