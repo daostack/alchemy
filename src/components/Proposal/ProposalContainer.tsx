@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from "arc";
@@ -19,7 +19,7 @@ import { IRootState } from "reducers";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
+import { combineLatest, concat, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
@@ -492,7 +492,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter:   props.currentAccountAddress }) : of([]), //3
     props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)), //4
     props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN(0)),
-    dao.ethBalance()
+    concat(of(new BN(0)), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {

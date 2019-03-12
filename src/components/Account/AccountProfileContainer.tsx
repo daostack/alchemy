@@ -1,36 +1,28 @@
+import { IDAOState, IMemberState } from "@daostack/client";
+import * as profileActions from "actions/profilesActions";
+import { getArc } from "arc";
 import BN = require("bn.js");
+import AccountImage from "components/Account/AccountImage";
+import OAuthLogin from "components/Account/OAuthLogin";
+import ReputationView from "components/Account/ReputationView";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import DaoSidebar from "components/ViewDao/DaoSidebar";
 import promisify = require("es6-promisify");
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
+import Util from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
-import { combineLatest } from "rxjs";
-import { first } from "rxjs/operators";
-import * as io from "socket.io-client";
-
-import * as classNames from "classnames";
-
-import * as profileActions from "actions/profilesActions";
-import Util from "lib/util";
 import { IRootState } from "reducers";
-import { IAccountState } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-
-import AccountImage from "components/Account/AccountImage";
-import OAuthLogin from "components/Account/OAuthLogin";
-import ReputationView from "components/Account/ReputationView";
-import DaoSidebar from "components/ViewDao/DaoSidebar";
-
+import { combineLatest, of } from "rxjs";
+import * as io from "socket.io-client";
 import * as css from "./Account.scss";
-
-import { IDAOState, IMemberState } from "@daostack/client";
-import { getArc } from "arc";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 const socket = io(process.env.API_URL);
 
@@ -286,7 +278,8 @@ export default (props: RouteComponentProps<any>) => {
     const observable = combineLatest(
       arc.dao(daoAvatarAddress).state(),
       arc.dao(daoAvatarAddress).member(accountAddress).state(),
-      arc.ethBalance(accountAddress),
+      // arc.ethBalance(accountAddress),
+      of(new BN(0)),
       arc.GENToken().balanceOf(accountAddress)
     );
 

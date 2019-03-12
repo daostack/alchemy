@@ -340,7 +340,6 @@ export default (props: IProps) => {
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
   const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress.toLowerCase()).state() : of(null);
-  console.log("voteox", props.currentAccountAddress);
   return <Subscribe observable={observable}>{
     (state: IObservableState<IMemberState>): any => {
       if (state.isLoading) {
@@ -348,8 +347,7 @@ export default (props: IProps) => {
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        console.log("votebox", state.data);
-        return <ConnectedVoteBox currentAccountState={state.data} { ...props } />;
+  return <ConnectedVoteBox currentAccountState={state.data} { ...props } />;
       }
     }
   }</Subscribe>;
