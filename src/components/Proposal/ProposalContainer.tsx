@@ -248,6 +248,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       };
 
       const executeButtonClass = classNames({
+        [css.invisible]: !proposalEnded(proposal) && !this.state.expired,
         [css.stateChange]: true
       });
 
@@ -391,7 +392,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
 
             {this.props.detailView ?
-                <div className={executeButtonClass}>
+                <div className={css.stateChange}>
                   {proposal.stage == IProposalStage.PreBoosted ?
                     <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
                       <img src="/assets/images/Icon/boost.svg"/>
