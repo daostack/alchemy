@@ -505,11 +505,19 @@ button.disabled {
 	.forBar {
 		position: relative;
 		width: 55%;
+
+		span {
+			background-color: rgba(0, 190, 144, 1.000);
+		}
 	}
 
 	.againstBar {
 		width: 25%;
 		position: relative;
+
+		span {
+			background-color: rgba(246, 80, 80, 1.000);
+		}
 	}
 }
 
