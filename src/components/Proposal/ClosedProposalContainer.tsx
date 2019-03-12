@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -10,7 +10,7 @@ import { humanProposalTitle} from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
+import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
