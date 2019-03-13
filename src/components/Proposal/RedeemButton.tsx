@@ -38,8 +38,9 @@ class RedeemButton extends React.Component<IProps> {
       [css.disabled]: !redeemable && !executable
     });
 
-    return (rewards.length > 0 || beneficiaryHasRewards || executable ?
-      <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+    if (rewards.length > 0 || beneficiaryHasRewards || executable) {
+
+      return <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
         <button
           style={{ whiteSpace: "nowrap" }}
           disabled={false}
@@ -56,9 +57,11 @@ class RedeemButton extends React.Component<IProps> {
                   "Execute"
           }
           <img src="/assets/images/Icon/Loading-black.svg" />
-        </button>
-      </Tooltip>
-      : "");
+        </button>;
+      </Tooltip>;
+    } else {
+      return null;
+    }
   }
 }
 

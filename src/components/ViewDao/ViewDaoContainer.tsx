@@ -300,7 +300,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions"
-              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
+              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress}  />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
             <Route path="/dao/:daoAvatarAddress"
