@@ -9,6 +9,7 @@ import { IRootState } from "reducers";
 import { IAccountState } from "reducers/arcReducer";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import { enableMetaMask } from "lib/util";
 
 import * as uiActions from "actions/uiActions";
 import * as web3Actions from "actions/web3Actions";
@@ -75,6 +76,10 @@ class HeaderContainer extends React.Component<IProps, null> {
     showTour();
   }
 
+  public handleClickLogin = (e: any) => {
+    enableMetaMask();
+  }
+
   public render() {
     let {
       currentAccount,
@@ -133,7 +138,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               </div>
             ||
               <div className={css.accountInfo}>
-                Please log in!
+                <button onClick={this.handleClickLogin}>Please log in!</button>
               </div>
             }
             {/* dao && !isProfilePage

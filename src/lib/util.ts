@@ -81,6 +81,13 @@ export default class Util {
   }
 }
 
+export async function enableMetaMask() {
+  const arc = getArc();
+  try {
+    await arc.web3.currentProvider.enable();
+  } catch (e) {}
+}
+
 /**
  * check if the web3 connection is ready to send transactions, and warn the user if it is not
  * @return true if things are fine, false if not
