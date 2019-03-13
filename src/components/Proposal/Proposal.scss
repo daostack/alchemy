@@ -580,7 +580,7 @@ button.disabled {
 
 	.myActions.iVoted .myVote, .myActions.iStaked .myStake {
 		display: block;
-		padding: 5px;
+		padding-bottom: 5px;
 	}
 
 	.myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
@@ -1653,6 +1653,14 @@ button.cancelPrediction {
 	position: relative;
 }
 
+
+.historyView.predictions {
+	span {
+		font-size: 13px;
+		color: rgba(154, 169, 181, 1.000);
+		display: inline-block;
+	}
+}
 
 .detailView.predictions {
 	padding-top: 80px;
