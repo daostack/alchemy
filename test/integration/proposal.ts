@@ -11,7 +11,7 @@ describe("Proposals", () => {
       daoAddress = addresses.Avatar.toLowerCase();
     });
 
-    it("Create a proposal", async () => {
+    it("Create a proposal, vote for it, stake on it", async () => {
       browser.url("http://127.0.0.1:3000/ ");
       const url = `http://127.0.0.1:3000/dao/${daoAddress}/`;
       browser.url(url);
@@ -25,7 +25,8 @@ describe("Proposals", () => {
 
       browser.click("*[data-test-id=\"create-proposal\"]");
       browser.waitForExist("*[id=\"titleInput\"]");
-      browser.setValue("*[id=\"titleInput\"]", "Free Edward Snowden");
+      const title = uuid();
+      browser.setValue("*[id=\"titleInput\"]", title);
       // using uuid value so that the test will pass alsko if there is already a proposal with thi description
       // (which must be unique). TODO: find a way to reset the state
       browser.setValue("*[id=\"descriptionInput\"]", `https://this.must.be/a/valid/url${uuid()}`);
@@ -39,14 +40,22 @@ describe("Proposals", () => {
       browser.click("*[type=\"submit\"]");
 
       // check that the proposal with the ethReward appears in the list
-      // TODO: this tests is failing unpredictably
-      // browser.waitForExist(`strong*=${ethReward}`);
+      browser.waitForExist(`strong*=${ethReward}`);
 
-      // browser.waitForExist('*[data-test-id="proposal-title"]')
-      // // we are getting the closing date from the graph-node server
-      // browser.getText('*[data-test-id="proposal-closes-in"]').should.be.equal('CLOSES IN 21 DAYS')
-      // TODO: title etc are not yet working
-      // browser.getText('*[data-test-id="proposal-title"]').should.be.equal('Free Edward Snowden')
+      // test for the title
+      browser.$(`[data-test-id=\"proposal-title\"]=${title}`).isExisting();
+      // check if this container really exists
+
+      // next line is there to locate the proposal component, so we can click on the various buttons
+      const proposalDataTestId = browser.$(`[data-test-id=\"proposal-title\"]=${title}`).$("..").$("..").$("..").getAttribute("data-test-id");
+      browser.$(`*[data-test-id="${proposalDataTestId}"]`).isExisting();
+
+      // TODO: next line errors with a scrollIntoView is not a function error. Why?
+      // browser.$(`*[data-test-id="${proposalDataTestId}"]`).scrollIntoView();
+      // // vote for the proposal
+      // browser.$(`*[data-test-id="${proposalDataTestId}"]`).$(`[data-test-id="voteFor"]`).isExisting();
+      // browser.$(`*[data-test-id="${proposalDataTestId}"]`).$(`[data-test-id="voteFor"]`).click();
+
     }, 10000);
 
 });

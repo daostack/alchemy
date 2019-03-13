@@ -17,10 +17,16 @@ async function main() {
 
   await Promise.all([daoAddress, ...accounts].map(async (account) => {
     const currentGenBalance = await genToken.balanceOf(account).pipe(first()).toPromise();
+    // const currentBalance = await genToken.contract().methods.balanceOf(account).call();
     const diff = new BN(arc.web3.utils.toWei("200000", "ether")).sub(currentGenBalance);
+    console.log(`Account ${account} has balance ${arc.web3.utils.fromWei(currentGenBalance)} GEN`);
     if (diff.gt(new BN(0))) {
       console.log(`Minting ${Number(arc.web3.utils.fromWei(diff))} GEN for ${account}`);
       await genToken.mint(account, diff).send();
+      const newBalance = await genToken.contract().methods.balanceOf(account).call();
+      console.log(`New balance is ${Number(arc.web3.utils.fromWei(newBalance))} GEN for ${account}`);
+    } else {
+      console.log(`Not minting new GEN for ${account}`);
     }
   }));
 

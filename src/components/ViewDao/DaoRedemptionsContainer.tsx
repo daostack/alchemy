@@ -1,10 +1,10 @@
+import {  DAO, IDAOState, IRewardState } from "@daostack/client";
+import { getArc } from "arc";
 import BN = require("bn.js");
+import Util from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
-import Util from "lib/util";
-import {  DAO, IDAOState, IRewardState } from "@daostack/client";
-import { getArc } from "arc";
 
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
