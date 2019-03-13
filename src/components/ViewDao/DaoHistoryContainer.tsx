@@ -1,15 +1,12 @@
+import { Address, IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import { getArc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
-
 import { combineLatest } from "rxjs";
-
 import ClosedProposalContainer from "../Proposal/ClosedProposalContainer";
-
 import * as css from "./ViewDao.scss";
-import { getArc } from "arc";
-import { Address, IDAOState, IProposalState, IProposalStage } from "@daostack/client";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 interface IProps {
   proposals: IProposalState[];
