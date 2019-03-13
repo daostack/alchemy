@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -10,7 +10,7 @@ import { humanProposalTitle} from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
+import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
@@ -34,6 +34,7 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState;
   daoEthBalance: BN;
+  detailView?: boolean;
   currentAccountAddress: Address;
   currentAccountState: IMemberState;
   proposal: IProposalState;
@@ -105,9 +106,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      currentAccountState,
       dao,
       daoEthBalance,
+      detailView,
       proposal,
       rewardsForCurrentUser,
       stakesOfCurrentUser,
@@ -233,11 +234,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
 export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
-  // TODO: get things to work without an account
-  if (!props.currentAccountAddress) {
-    return null;
-  }
-
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
 

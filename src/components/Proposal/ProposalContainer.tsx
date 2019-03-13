@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { getArc } from "arc";
@@ -19,7 +19,7 @@ import { IRootState } from "reducers";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
+import { combineLatest, concat, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
@@ -502,7 +502,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary:   props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker:   props.currentAccountAddress}) : of([]), //2
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter:   props.currentAccountAddress }) : of([]), //3
-    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)), //4
+    arc.GENToken().balanceOf(props.currentAccountAddress || ""), //4
     arc.allowance(props.currentAccountAddress),
     dao.ethBalance()
   );
@@ -517,7 +517,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const rewards = state.data[1];
         const stakes = state.data[2];
         const votes = state.data[3];
-        const currentAccountGens = state.data[4];
+        const currentAccountGens = state.data[4] || new BN(0);
         const currentAccountGenStakingAllowance = state.data[5] ? new BN(state.data[5].amount) : new BN(0);
         const daoEthBalance = state.data[6];
         return <ConnectedProposalContainer

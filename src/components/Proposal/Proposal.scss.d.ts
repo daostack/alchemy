@@ -138,3 +138,7 @@ export const newFailPrediction: string;
 export const preApproval: string;
 export const preapproveBackdrop: string;
 export const preapproveWrapper: string;
+export const disabledPredections: string;
+export const defaultIcon: string;
+export const detailIcon: string;
+export const disabledPredictions: string;

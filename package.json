@@ -62,7 +62,7 @@
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js"
   },
   "dependencies": {
-    "@daostack/client": "0.0.35",
+    "@daostack/client": "0.0.36",
     "@daostack/migration": "0.0.1-rc.12-v3",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -169,7 +169,7 @@
     "ganache-cli": "^6.2.3",
     "html-webpack-plugin": "^3.0.6",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^23.6.0",
+    "jest": "^24.5.0",
     "node-fetch": "^2.3.0",
     "node-sass": "^4.11.0",
     "react-hot-loader": "^4.6.3",

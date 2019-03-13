@@ -1,17 +1,11 @@
+import { IDAOState } from "@daostack/client";
+import { getArc } from "arc";
 import BN = require("bn.js");
-import * as classNames from "classnames";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-
-import { IRootState } from "reducers";
-import { IDAOState } from "@daostack/client";
-import { getArc } from "arc";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
-
-import DaoHeadings from "./DaoHeadings";
-
 import * as css from "./ViewDao.scss";
 
 interface IProps {
@@ -22,12 +16,6 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
 
   public render() {
     const dao = this.props.dao;
-    const circlesDAO = dao.name.toLowerCase().includes("circles");
-
-    const iconClass = classNames({
-        [css.daoAvatar]: true,
-        [css.daoAvatarCircles]: circlesDAO
-      });
 
     const arc = getArc();
 

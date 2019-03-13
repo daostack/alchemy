@@ -93,11 +93,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount() {
     const { cookies } = this.props;
-    // If this person has not seen the disclaimer, show them the home page
-    if (!cookies.get("seen_tour")) {
-      cookies.set("seen_tour", "true", { path: "/" });
-      this.setState({ showTourIntro: true });
-    }
+
+    // TODO: disable tour for now until we update it
+    // if (!cookies.get("seen_tour")) {
+    //   cookies.set("seen_tour", "true", { path: "/" });
+    //   this.setState({ showTourIntro: true });
+    // }
 
     this.props.getProfilesForAllAccounts();
   }
@@ -299,7 +300,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions"
-              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
+              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress}  />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
             <Route path="/dao/:daoAvatarAddress"

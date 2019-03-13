@@ -27,7 +27,7 @@ While anyone can propose and predict, only people who hold reputation (voting po
 sudo apt-get install -y libsecret-1-dev
 git clone https://github.com/daostack/alchemy.git
 cd alchemy
-npm install
+npm ci
 ```
 
 # Run app locally
@@ -43,15 +43,12 @@ Here is a quick setup; there are more detailed instructions in [here](./document
 
 After you have installed docker, run the following command:
 ```sh
+docker-compose build
 docker-compose up alchemy
 ```
-And in other terminal you will need to deploy the contracts:
-```
-npm run setup-env
-```
-This will start a server on http://127.0.0.1:3000.
+Now point your browser to http://127.0.0.1:3000.
 
-See [working with docker](./docs/docker.md) for details.
+See [working with docker](./docs/docker.md) for details and troubleshooting.
 
 ## Interacting with your test instance using MetaMask
 

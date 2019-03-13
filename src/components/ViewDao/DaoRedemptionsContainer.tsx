@@ -1,13 +1,13 @@
-import {  DAO, IDAOState, IRewardState } from "@daostack/client";
+import {  Address, DAO, IDAOState, IRewardState } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
-import Util from "lib/util";
-import * as React from "react";
-import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
+import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import ProposalContainer from "../Proposal/ProposalContainer";
 import * as css from "./ViewDao.scss";
@@ -23,16 +23,6 @@ interface IOwnProps {
   rewards: IRewardState[];
 }
 const mapStateToProps = (state: IRootState, ownProps: IOwnProps ) => {
-  // const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.dao.address}`], schemas.accountSchema, state.arc) as IAccountState;
-
-  // const proposals: Proposal[] = [];
-
-  // const rewards = ownProps.rewards;
-  // rewards.forEach((reward: IRewardState) => {
-  //   proposals.push(new Proposal(reward.proposalId, reward.context));
-  // });
-  // proposals.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
-
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     dao: ownProps.dao,
@@ -46,7 +36,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const { dao, rewards, currentAccountAddress } = this.props;
 
     const proposalsHTML = rewards.map((reward: IRewardState) => {
-      return (<ProposalContainer key={"proposal_" + reward.proposalId} proposalId={reward.proposalId} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalContainer key={"reward_" + reward.id} proposalId={reward.proposalId} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,
@@ -81,6 +71,8 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     return(
       <div>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
+
         {rewards.length > 0 ?
             <div className={css.clearfix + " " + css.redeemAllContainer}>
               <div className={css.pendingRewards}>
@@ -105,11 +97,14 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
 const ConnnectedDaoRedemptionsContainer = connect(mapStateToProps)(DaoRedemptionsContainer);
 
-export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
+export default (props: { dao: IDAOState, currentAccountAddress: Address } & RouteComponentProps<any>) => {
   const daoAddress = props.dao.address;
   const arc = getArc();
-  const dao = new DAO(daoAddress, arc);
-  return <Subscribe observable={dao.rewards()}>{(state: IObservableState<IRewardState[]>) => {
+  const dao = new DAO(daoAddress, arc)  ;
+  if (!props.currentAccountAddress) {
+    return <div>Please log in to see your rewards</div>;
+  }
+  return <Subscribe observable={dao.rewards({beneficiary: props.currentAccountAddress})}>{(state: IObservableState<IRewardState[]>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>;
       } else if (state.data) {
