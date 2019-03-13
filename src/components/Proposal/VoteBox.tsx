@@ -82,12 +82,6 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     let noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputationSupply * 100)) : 0;
 
     const styles = {
-      yesGraph: {
-        height: yesPercentage + "%",
-      },
-      noGraph: {
-        height: noPercentage + "%",
-      },
       forBar: {
         width: yesPercentage + "%",
       },
@@ -147,7 +141,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
               action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
               closeAction={this.closePreVoteModal.bind(this)}
-              currentAccount={currentAccountState.address}
+              currentAccount={currentAccountState}
               dao={dao}
               effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
               proposal={proposal}
@@ -229,7 +223,6 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                    <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
                  : " "
                 }
-
               </div>
             </div>
             <div className={css.voteButtons}>
