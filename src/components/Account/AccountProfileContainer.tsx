@@ -278,8 +278,7 @@ export default (props: RouteComponentProps<any>) => {
     const observable = combineLatest(
       arc.dao(daoAvatarAddress).state(),
       arc.dao(daoAvatarAddress).member(accountAddress).state(),
-      // arc.ethBalance(accountAddress),
-      of(new BN(0)),
+      arc.ethBalance(accountAddress),
       arc.GENToken().balanceOf(accountAddress)
     );
 
