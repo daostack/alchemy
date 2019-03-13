@@ -50,21 +50,17 @@ class PredictionBox extends React.Component<IProps, IState> {
       showApproveModal: false,
       showPreStakeModal: false
     };
-    this.handleClickPreApprove.bind(this);
-    this.showApprovalModal.bind(this);
-    this.closeApprovalModal.bind(this);
-    this.closePreStakeModal.bind(this);
   }
 
-  public showApprovalModal(event: any) {
+  public showApprovalModal = (event: any) => {
     this.setState({ showApproveModal: true });
   }
 
-  public closeApprovalModal(event: any) {
+  public closeApprovalModal = (event: any) => {
     this.setState({ showApproveModal: false });
   }
 
-  public closePreStakeModal(event: any) {
+  public closePreStakeModal = (event: any) => {
     this.setState({ showPreStakeModal: false });
   }
 
@@ -72,7 +68,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
-  public handleClickPreApprove(event: any) {
+  public handleClickPreApprove = (event: any) => {
     if (!checkNetworkAndWarn()) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
@@ -203,7 +199,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     );
 
     // If don't have any staking allowance, replace with button to pre-approve
-    if (currentAccountGenStakingAllowance.lt(new BN(1))) {
+    if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
           <div className={css.stakes}>
@@ -257,7 +253,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             { this.props.detailView ?
               <div className={css.stakeControls}>
                 {
-                 proposal.stage === IProposalStage.Queued
+                 proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                   ? (
                     tip(VoteOptions.No) != "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -265,10 +261,10 @@ class PredictionBox extends React.Component<IProps, IState> {
                       </Tooltip> :
                       passButton
                     )
-                  : "Pass"
+                  : " "
                 }
                 {
-                  proposal.stage === IProposalStage.Queued
+                  proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                   ? (
                       tip(VoteOptions.Yes) != "" ?
                         <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
@@ -276,7 +272,10 @@ class PredictionBox extends React.Component<IProps, IState> {
                         </Tooltip> :
                         failButton
                     )
-                  : "Fail"
+                  :
+                  <span className={css.disabledPredections}>
+                     Predictions are disabled
+                  </span>
                 }
               </div>
               : " "
@@ -285,8 +284,9 @@ class PredictionBox extends React.Component<IProps, IState> {
           <div className={css.stakes}>
             <div className={css.clearfix}>
               <div className={css.stakesFor}>
-                <img src="/assets/images/Icon/v-small-line.svg"/>
-                {Util.fromWei(proposal.stakesFor).toFixed(2)}
+                <img className={css.defaultIcon} src="/assets/images/Icon/v-small-line.svg"/>
+                <img className={css.detailIcon} src="/assets/images/Icon/v-small.svg"/>
+                <span>{Util.fromWei(proposal.stakesFor).toFixed(2)}</span>
               </div>
               <div className={css.forBar}>
                 <b>Pass</b>
@@ -295,8 +295,9 @@ class PredictionBox extends React.Component<IProps, IState> {
             </div>
             <div className={css.clearfix}>
               <div className={css.stakesAgainst}>
-                <img src="/assets/images/Icon/x-small-line.svg"/>
-                {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
+                <img className={css.defaultIcon} src="/assets/images/Icon/x-small-line.svg"/>
+                <img className={css.detailIcon} src="/assets/images/Icon/x-small.svg"/>
+                <span>{Util.fromWei(proposal.stakesAgainst).toFixed(2)}</span>
               </div>
               <div className={css.againstBar}>
                 <b>Fail</b>
@@ -315,11 +316,12 @@ class PredictionBox extends React.Component<IProps, IState> {
                 </span>
               : ""
             }
+
           </span>
           { !this.props.detailView ?
             <div className={css.centered}>
               {
-               proposal.stage === IProposalStage.Queued
+               proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                 ? (
                   tip(VoteOptions.No) != "" ?
                     <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -330,7 +332,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 : "Pass"
               }
               {
-                proposal.stage === IProposalStage.Queued
+                proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                 ? (
                     tip(VoteOptions.Yes) != "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>

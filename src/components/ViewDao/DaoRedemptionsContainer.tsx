@@ -5,6 +5,7 @@ import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util from "lib/util";
 import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -70,6 +71,8 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     return(
       <div>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
+
         {rewards.length > 0 ?
             <div className={css.clearfix + " " + css.redeemAllContainer}>
               <div className={css.pendingRewards}>

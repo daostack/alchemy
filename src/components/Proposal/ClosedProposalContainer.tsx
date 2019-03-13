@@ -34,6 +34,7 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState;
   daoEthBalance: BN;
+  detailView?: boolean;
   currentAccountAddress: Address;
   currentAccountState: IMemberState;
   proposal: IProposalState;
@@ -107,6 +108,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccountAddress,
       dao,
       daoEthBalance,
+      detailView,
       proposal,
       rewardsForCurrentUser,
       stakesOfCurrentUser,
@@ -192,6 +194,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 proposal={proposal}
                 threshold={0}
                 approveStakingGens={null}
+                detailView={detailView}
               />
           </div>
           <div className={css.myActions}>

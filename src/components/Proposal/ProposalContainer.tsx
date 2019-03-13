@@ -248,8 +248,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       };
 
       const executeButtonClass = classNames({
-        [css.stateChange]: true,
-        [css.invisible]: !proposalEnded(proposal) && !this.state.expired
+        [css.invisible]: !proposalEnded(proposal) && !this.state.expired,
+        [css.stateChange]: true
       });
 
       return (
@@ -392,22 +392,34 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
 
             {this.props.detailView ?
-              <div className={executeButtonClass}>
-                {proposal.stage === IProposalStage.PreBoosted ?
-                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
-                    <img src="/assets/images/Icon/boost.svg"/>
-                    <span> Boost</span>
-                  </button>
-                  :
-                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
-                    <img src="/assets/images/Icon/execute.svg"/>
-                    <span> Execute</span>
-                  </button>
-                }
-              </div>
+                <div className={css.stateChange}>
+                  {proposal.stage == IProposalStage.PreBoosted ?
+                    <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                      <img src="/assets/images/Icon/boost.svg"/>
+                      <span> Boost</span>
+                    </button>
+                    : executable ?
+                    <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                      <img src="/assets/images/Icon/execute.svg"/>
+                      <span> Execute</span>
+                    </button>
+                    :
+                    <div>
+                      <VoteBox
+                        buttonsOnly={true}
+                        isVotingNo={isVotingNo}
+                        isVotingYes={isVotingYes}
+                        currentVote={currentAccountVote}
+                        currentAccountAddress={currentAccountAddress}
+                        dao={dao}
+                        proposal={proposal}
+                        detailView={detailView}
+                      />
+                    </div>
+                  }
+                </div>
               : " "
             }
-
           </div>
 
           <div className={css.proposalActions + " " + css.clearfix}>
@@ -486,13 +498,13 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
 
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state(), // satate of the current proposal
+    dao.proposal(props.proposalId).state(), // state of the current proposal
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary:   props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker:   props.currentAccountAddress}) : of([]), //2
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter:   props.currentAccountAddress }) : of([]), //3
-    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN(0)), //4
-    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN(0)),
-    concat(of(new BN(0)), dao.ethBalance())
+    arc.GENToken().balanceOf(props.currentAccountAddress || ""), //4
+    arc.allowance(props.currentAccountAddress),
+    dao.ethBalance()
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {
@@ -505,7 +517,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const rewards = state.data[1];
         const stakes = state.data[2];
         const votes = state.data[3];
-        const currentAccountGens = state.data[4];
+        const currentAccountGens = state.data[4] || new BN(0);
         const currentAccountGenStakingAllowance = state.data[5] ? new BN(state.data[5].amount) : new BN(0);
         const daoEthBalance = state.data[6];
         return <ConnectedProposalContainer

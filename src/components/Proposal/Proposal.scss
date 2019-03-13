@@ -287,6 +287,14 @@ button.disabled {
     right: 12px;
 }
 
+
+.detailView .voteStatus.hasNotVoted.buttonsOnly .castVote {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: left;
+}
+
 .voteStatus.votedFor .castVoteFor, .voteStatus.votedAgainst .castVoteAgainst {
 	display: inline;
 }
@@ -302,14 +310,19 @@ button.disabled {
 		float: left;
 		width: 50%;
 		text-align: left;
-		margin-top: 8px;
+		margin-top: 9px;
+
+		.label {
+			display: none;
+		}
 	}
 
 	button {
 		border: none;
 		position: relative;
 		width: 30px;
-		height: 24px;
+		height: 18px;
+		font-family: $body-font;
 		background-color: transparent;
 		outline: none;
 		margin-left: 5px;
@@ -317,7 +330,9 @@ button.disabled {
 		span {
 			display: block;
 			margin-left: 20px;
-			font-size: 13px;
+			font-size: 12px;
+			font-weight: bold;
+			color: rgba(80, 97, 118, 1.000);
 		}
 
 		img {
@@ -330,11 +345,13 @@ button.disabled {
 	.voteUp {
 		position: relative;
 		display: block;
+		height: 20px;
 	}
 
 	.voteDown {
 		position: relative;
 		display: block;
+		height: 20px;
 	}
 
 	button:hover:not(.disabled) .downvote.downvoted {
@@ -409,6 +426,45 @@ button.disabled {
 	}
 }
 
+.stateChange .buttonsOnly {
+	margin-top: 30px;
+
+	.voteControls {
+		display: block;
+	}
+
+	button {
+		height: 30px;
+		line-height: 30px;
+		width: auto;
+		margin-right: 1px;
+	}
+
+	button:nth-child(2) {
+		border-radius: 15px 0 0 15px;
+		padding-left: 15px;
+		padding-right: 12px;
+	}
+
+	button:nth-child(3) {
+		border-radius: 0 15px 15px 0;
+		padding-right: 15px;
+	}
+
+
+	.castVote span {
+		top: 0;
+	}
+
+	.castVote .buttonsOnlyVoteLabel {
+		font-weight: bold;
+		font-size: 16px;
+		display: inline-block;
+		margin-right: 30px;
+		color: rgba(0, 29, 52, 1.000);
+	}
+}
+
 @keyframes verifying {
   0% {
     opacity: 0;
@@ -455,13 +511,18 @@ button.disabled {
 }
 
 .detailView .voteControls {
-    width: 160px;
+    width: 240px;
     text-align: center;
     position: relative;
     height: 140px;
-    z-index: 100;
+    z-index: 100000;
     margin: 0 auto;
     padding-top: 70px;
+
+
+	.voteUp {
+		height: auto;
+	}
 
     .voteDivider {
 	    width: auto;
@@ -470,12 +531,43 @@ button.disabled {
 	    display: inline-block;
     }
 
+    button {
+    	width: auto;
+    	left: -42px;
+
+    	span {
+    		margin-left: 30px;
+    	}
+
+    	img {
+		    top: -16px;
+		    left: 0;
+		    height: 30px;
+    	}
+    }
+
     .voteButtons {
 	    float: left;
 	    text-align: right;
-	    margin-top: 36px;
+	    margin-top: 13px;
+	    margin-left: 42px;
 	    width: auto;
 	    display: inline-block;
+
+	    .label {
+	    	display: inline-block;
+	    	text-align: left;
+	    }
+
+	    div.label {
+	    	font-size: 13px;
+	    	color: rgba(154, 169, 181, 1.000);
+	    	display: block;
+	    }
+
+	    b.label {
+	    	margin-left: 5px;
+	    }
     }
 }
 
@@ -497,6 +589,7 @@ button.disabled {
     top: 13px;
     font-size: 12px;
     width: 83%;
+    margin-top: -3px;
     left: 50%;
     transform: translate(-50%,0);
 
@@ -507,8 +600,14 @@ button.disabled {
 	    margin-right: 5px;
 	}
 
+	.stakesFor {
+		margin-bottom: 3px;
+	}
+
 	.stakesFor, .forBar, .stakesAgainst, .againstBar {
 		float: left;
+		font-weight: bold;
+		color: rgba(104, 154, 214, 1.000);
 	}
 
 	.forBar, .againstBar {
@@ -520,6 +619,7 @@ button.disabled {
 			font-weight: normal;
 			font-size: 10px;
 			display: inline-block;
+			color: rgba(154, 169, 181, 1.000);
 			margin-left: 5px;
 		}
 
@@ -543,7 +643,7 @@ button.disabled {
 
 .isFailing .stakes .againstBar {
 	span {
-		background-color: rgba(0, 190, 144, 1.000);
+		background-color: rgba(246, 80, 80, 1.000);
 	}
 }
 
@@ -623,6 +723,10 @@ button.disabled {
 	}
 }
 
+.detailView .reputationTurnout .tooltipPointer {
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+    left: 50%;
+}
 
 
 .graph {
@@ -728,7 +832,7 @@ button.disabled {
 		color: $white;
 		border: none;
 		transition: all .25s ease;
-    margin: 10px 10px 5px 0px;
+	    margin: 10px 10px 5px 0px;
 	}
 
 	.executeProposal {
@@ -776,6 +880,12 @@ button.disabled {
 			font-weight: bold;
 		}
 	}
+}
+
+.detailView .stateChange {
+	float: none;
+	width: auto;
+	text-align: left;
 }
 
 .proposalInfo {
@@ -981,6 +1091,7 @@ button.disabled {
 .detailView .proposalInfo {
 	flex-grow: 2;
 	padding-right: 25px;
+	position: relative;
 }
 
 .detailView .proposalActions {
@@ -1015,6 +1126,10 @@ button.disabled {
 	opacity: 1;
 	left: -5px;
 	transform: translateY(-50%) scale(1);
+}
+
+.detailView .voteGraphs:hover .reputationTurnout {
+	left: -87px;
 }
 
 .proposal .enablePredictions {
@@ -1243,7 +1358,6 @@ button.disabled {
 	}
 }
 
-
 .boostedAmount {
 	display: block;
 	margin-top: 10px;
@@ -1432,7 +1546,15 @@ button.cancelPrediction {
 .detailView.predictions {
 	padding-top: 80px;
 
-	.boostedAmount span {
+	.stakes span {
+		color: rgba(0, 28, 53, 1.000);
+		font-weight: bold;
+		font-size: 16px;
+		display: block;
+		margin-left: 3px;
+	}
+
+	span.boostedAmount span {
 		text-align: right;
 	    padding: 20px 12px 12px 0;
 	    color: rgba(80, 97, 118, 1.000);
@@ -1449,9 +1571,74 @@ button.cancelPrediction {
 		    }
 	    }
 	}
+
+	span.disabledPredections {
+		color: rgba(154, 169, 181, 1.000);
+		border-left: none;
+	}
+}
+
+.stakes .defaultIcon {
+	display: inline-block;
+}
+
+.stakes .detailIcon {
+	display: none;
+}
+
+.disabledPredections {
+	display: none;
 }
 
 .detailView .stakes {
 	position: relative;
-	width: 55%;
+	width: 85%;
+	margin-left: 28px;
+
+	.disabledPredictions {
+		display: block;
+		color: rgba(154, 169, 181, 1.000);
+	}
+
+	.detailIcon {
+		display: inline-block;
+	}
+
+	.defaultIcon {
+		display: none;
+	}
+
+	.clearfix {
+		width: 100%;
+		height: 40px;
+		position: relative;
+		margin-bottom: 10px;
+	}
+
+	.stakesFor, .stakesAgainst {
+		position: absolute;
+		bottom: 0;
+	}
+
+	.forBar, .againstBar {
+		position: absolute;
+		top: 0;
+
+		b {
+			color: rgba(154, 169, 181, 1.000);
+			font-size: 13px;
+		    position: relative;
+		    top: -4px;
+		    margin-left: 3px;
+		}
+	}
+
+
+	img {
+		position: absolute;
+		left: -28px;
+		top: -11px;
+		height: 20px;
+		width: 20px;
+	}
 }
