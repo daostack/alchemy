@@ -281,7 +281,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : " "
                 }
               </span>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)} { proposal.id }</Link>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
             </h3>
             <div className={css.cardTop + " " + css.clearfix}>
               <div className={css.timer}>
@@ -353,8 +353,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
             </div>
             <div className={css.description}>
-              First proposal to test it out.
-              I’m glad to be apart and test things out. I’m interested in helping the general public and non-devs more involved in the space and creating DAO’s.
+              {proposal.description}
+            </div>
+            <div className={css.url}>
+              <a href={proposal.url} target="_blank">Attached link</a>
             </div>
             <h3 className={css.proposalTitleBottom}>
               <span data-test-id="proposal-closes-in">
