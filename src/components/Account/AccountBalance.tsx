@@ -1,7 +1,7 @@
 import BN = require("bn.js");
+import Util from "lib/util";
 import * as React from "react";
 import * as css from "./Account.scss";
-import Util from "lib/util";
 
 interface Props {
   accountAddress: string;

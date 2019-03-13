@@ -8,8 +8,6 @@ export const fadeExitActive: string;
 export const header: string;
 export const logoContainer: string;
 export const menu: string;
-export const menuWrapper: string;
-export const backgroundBlock: string;
 export const alchemyLogo: string;
 export const version: string;
 export const alert: string;

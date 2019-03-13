@@ -1,20 +1,18 @@
+import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import * as React from "react";
-import { connect } from "react-redux";
-import { combineLatest } from "rxjs";
-
-import { getArc } from "arc";
-import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
-import Util from "lib/util";
-
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
+import * as React from "react";
+import { connect } from "react-redux";
+import { IRootState } from "reducers";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
+import { combineLatest } from "rxjs";
 
 import * as css from "./Account.scss";
 

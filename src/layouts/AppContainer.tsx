@@ -1,14 +1,6 @@
-import * as History from "history";
-import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Cookies, withCookies } from "react-cookie";
-import { connect } from "react-redux";
-import { Route, Switch } from "react-router-dom";
-//@ts-ignore
-import { ModalContainer, ModalRoute } from "react-router-modal";
 import { Address } from "@daostack/client";
 import * as web3Actions from "actions/web3Actions";
-import { getArc, pollForAccountChanges, checkNetwork } from "arc";
+import { checkNetwork, getArc, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -16,7 +8,15 @@ import HomeContainer from "components/Home/HomeContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
+import * as History from "history";
 import HeaderContainer from "layouts/HeaderContainer";
+import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Cookies, withCookies } from "react-cookie";
+import { connect } from "react-redux";
+import { Route, Switch } from "react-router-dom";
+//@ts-ignore
+import { ModalContainer, ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
 import { sortedNotifications } from "../selectors/notifications";
