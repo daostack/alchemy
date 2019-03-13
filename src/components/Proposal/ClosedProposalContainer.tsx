@@ -158,8 +158,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
       return (
         <div className={proposalClass + " " + css.clearfix}>
           <div className={css.proposalCreator}>
-            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} />
-            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
+            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
+            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
           </div>
           <div className={css.endDate}>
             {closingTime(proposal).format("MMM D, YYYY")}
@@ -178,6 +178,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 proposal={proposal}
+                historyView={true}
               />
           </div>
           <div className={css.predictions}>
@@ -193,6 +194,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 proposal={proposal}
                 threshold={0}
                 approveStakingGens={null}
+                historyView={true}
               />
           </div>
           <div className={css.myActions}>

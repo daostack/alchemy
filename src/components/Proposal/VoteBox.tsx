@@ -16,11 +16,12 @@ import VoteGraph from "./VoteGraph";
 
 interface IContainerProps {
   buttonsOnly?: boolean;
-  detailView?: boolean;
   currentAccountAddress: Address;
   currentAccountState: IMemberState|undefined;
   currentVote: number;
   dao: IDAOState;
+  detailView?: boolean;
+  historyView?: boolean;
   proposal: IProposalState;
   voteOnProposal: typeof arcActions.voteOnProposal;
   isVotingNo: boolean;
@@ -66,10 +67,11 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       currentAccountState,
       proposal,
       dao,
+      detailView,
+      historyView,
       isVotingNo,
       isVotingYes,
       voteOnProposal,
-      detailView,
     } = this.props;
 
     const isVoting = isVotingNo || isVotingYes;
@@ -100,6 +102,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
 
     let wrapperClass = classNames({
       [css.detailView] : detailView,
+      [css.historyView] : historyView,
       [css.voteBox] : true,
       [css.clearfix] : true,
       [css.unconfirmedVote] : isVoting,
@@ -364,6 +367,7 @@ const ConnectedVoteBox = connect(null, mapDispatchToProps)(VoteBox);
 interface IProps {
   buttonsOnly?: boolean;
   detailView?: boolean;
+  historyView?: boolean;
   currentAccountAddress: Address;
   currentVote: number;
   dao: IDAOState;

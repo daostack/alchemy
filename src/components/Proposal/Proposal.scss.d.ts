@@ -46,6 +46,7 @@ export const voted: string;
 export const voteDivider: string;
 export const stateChange: string;
 export const buttonsOnlyVoteLabel: string;
+export const historyView: string;
 export const closedProposal: string;
 export const proposalCreator: string;
 export const endDate: string;
