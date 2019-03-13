@@ -3,6 +3,7 @@ import { getArc } from "arc";
 import BN = require("bn.js");
 import Util from "lib/util";
 import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -81,6 +82,8 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     return(
       <div>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
+
         {rewards.length > 0 ?
             <div className={css.clearfix + " " + css.redeemAllContainer}>
               <div className={css.pendingRewards}>
