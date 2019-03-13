@@ -355,9 +355,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <div className={css.description}>
               {proposal.description}
             </div>
-            <div className={css.url}>
-              <a href={proposal.url} target="_blank">Attached link</a>
-            </div>
+            {proposal.url ?
+              <div className={css.url}>
+                <a href={proposal.url} target="_blank">Attached link</a>
+              </div>
+              : ""
+            }
             <h3 className={css.proposalTitleBottom}>
               <span data-test-id="proposal-closes-in">
                 {proposal.stage === IProposalStage.QuietEndingPeriod ?
