@@ -93,11 +93,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount() {
     const { cookies } = this.props;
-    // If this person has not seen the disclaimer, show them the home page
-    if (!cookies.get("seen_tour")) {
-      cookies.set("seen_tour", "true", { path: "/" });
-      this.setState({ showTourIntro: true });
-    }
+
+    // TODO: disable tour for now until we update it
+    // if (!cookies.get("seen_tour")) {
+    //   cookies.set("seen_tour", "true", { path: "/" });
+    //   this.setState({ showTourIntro: true });
+    // }
 
     this.props.getProfilesForAllAccounts();
   }
