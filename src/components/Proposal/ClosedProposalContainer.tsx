@@ -165,10 +165,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {closingTime(proposal).format("MMM D, YYYY")}
           </div>
           <div className={css.title}>
-            {humanProposalTitle(proposal)}
-          </div>
-          <div className={css.closeReason}>
-            Reason for close
+            <div>{humanProposalTitle(proposal)}</div>
           </div>
           <div className={css.votes}>
               <VoteBox
@@ -197,8 +194,33 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 historyView={true}
               />
           </div>
-          <div className={css.myActions}>
-            My Actions
+          <div className={css.closeReason + " " + css.decisionPassed}>
+            <div className={css.decisionPassed}>
+              <img src="/assets/images/Icon/vote/for.svg"/>
+              <span>Passed</span>
+              <div className={css.decisionReason}>
+                <span>Relative Majority</span>
+              </div>
+            </div>
+            <div className={css.decisionFailed}>
+              <img src="/assets/images/Icon/vote/against.svg"/>
+              <span>Failed</span>
+              <div className={css.decisionReason}>
+                <span>Relative Majority</span>
+              </div>
+            </div>
+          </div>
+          <div className={css.myActions + " " + css.iVoted + " " + css.iStaked + " " + css.forStake + " " + css.failVote}>
+            <div className={css.myVote}>
+              <span>1.1 Rep</span>
+              <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
+              <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
+            </div>
+            <div className={css.myStake}>
+              <span>5 GEN</span>
+              <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
+              <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+            </div>
           </div>
         </div>
       );

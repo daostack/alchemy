@@ -77,6 +77,16 @@
 	margin-bottom: 0;
 }
 
+.closedProposal.proposal:hover {
+	margin-bottom: 0;
+	overflow: visible;
+
+    .predictions .boostedAmount, .predictions .centered {
+    	opacity: 0;
+    	display: none;
+    }
+}
+
 .proposal.openProposal {
 	padding: 0;
 }
@@ -171,6 +181,11 @@ button.disabled {
 	opacity: 1;
 }
 
+.historyView.proposal:hover .castVote button {
+	opacity: 0;
+	display: none;
+}
+
 .castVote button:nth-child(1) {
 	border-radius: 10px 0 0 10px;
 	width: 60px;
@@ -229,6 +244,10 @@ button.disabled {
 
 .detailView .voteStatus {
 	z-index: 1000;
+}
+
+.historyView .voteStatus {
+	display: none;
 }
 
 .detailView .voteStatus.hasVoted .voteRecord {
@@ -490,7 +509,7 @@ button.disabled {
 	border-radius: 3px;
 	margin-top: 3px;
 	margin-right: 0;
-	height: 90px;
+	height: 65px;
 	display: flex;
 
 	.proposalCreator {
@@ -499,18 +518,83 @@ button.disabled {
 
 	.endDate {
 		width: 50px;
+	    font-size: 13px;
+	    color: rgba(154, 169, 181, 1.000);
+	    padding-top: 15px;
+	    text-align: center;
 	}
 
 	.title {
-		width: 224px;
+		width: 250px;
+		padding: 15px;
+		font-size: 13px;
+		position: relative;
+		color: rgba(80, 97, 118, 1.000);
+
+		div {
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 100%;
+		}
 	}
 
 	.closeReason {
 		width: 160px;
+		position: relative;
+
+		.decisionPassed, .decisionFailed {
+			display: none;
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 13px;
+			margin-top: -3px;
+
+			img {			
+			    width: 15px;
+			    position: relative;
+			    top: 4px;
+			    margin-right: 5px;
+			}
+		}
+
+		.decisionReason {
+			font-size: 13px;
+			color: rgba(154, 169, 181, 1.000);
+		}
+	}
+
+	.closeReason.decisionPassed .decisionPassed, .closedReason.decisionFailed .decisionFailed {
+		display: block;
 	}
 
 	.predictions, .votes, .myActions {
 		width: 100px;
+		.myVote, .myStake, .passVote, .failVote, .forStake, .againstStake {
+			display: none;
+		}
+	}
+
+	.myActions.iVoted .myVote, .myActions.iStaked .myStake {
+		display: block;
+		padding: 5px;
+	}
+
+	.myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
+		display: inline-block;
+		margin-left: 7px;
+		position: relative;
+		top: 3px;
+	}
+
+	.myActions {
+		font-size: 13px;
+		color: rgba(80, 97, 118, 1.000);
+		padding-top: 10px;
+		text-align: center;
 	}
 }
 
@@ -636,6 +720,29 @@ button.disabled {
 			height: 2px;
 			background-color: rgba(208, 214, 220, 1.000);
 		}
+	}
+}
+
+.historyView.voteBox {
+	width: auto;
+	border-left: none;
+	float: none;
+	border-right: none;
+}
+
+.historyView .voteControls {
+	
+	.voteDivider {
+		display: none;
+	}
+
+	.voteButtons {
+		margin-top: 11px;
+	}
+
+	button span {
+		font-weight: normal;
+		color: rgba(154, 169, 181, 1.000);
 	}
 }
 
@@ -1573,4 +1680,16 @@ button.cancelPrediction {
 .detailView .stakes {
 	position: relative;
 	width: 55%;
+}
+
+.historyView .stakes {
+
+	.stakesAgainst, .stakesFor {
+		color: rgba(154, 169, 181, 1.000);
+		font-weight: normal;
+	}
+
+	.forBar, .againstBar {
+		display: none;
+	}
 }
