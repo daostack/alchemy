@@ -155,6 +155,43 @@
       font-size: $small;
       color: $accent-2;
     }
+
+    .graphContainer {
+      width: 44%;
+      float: left;
+      padding: 30px 0;
+
+      div {
+        float: right;
+        margin-right: 20px;
+      }
+    }
+
+    .graphInfo{
+      float: left;
+      width: 50%;
+      padding: 32px 0 10px 0;
+
+      div {
+          padding-bottom: 15px;
+          font-size: 16px;
+          display: block;
+          width: 100%;
+          color: rgba(154, 169, 181, 1.000);
+
+          img {
+            width: 20px;
+            margin-right: 7px;
+            position: relative;
+            top: 5px;
+          }
+          
+          span {
+            font-weight: bold;
+            color: rgba(0, 28, 53, 1.000);
+          }
+      }
+    }
   }
 
   .graph {
@@ -298,10 +335,23 @@
     border-radius: 15px 15px 0 0;
 
     .decisionGraph {
+      border-top: 1px solid rgba(191, 203, 213, 1.000);
       width: 100%;
       float: none;
       left: auto;
       top: auto;
+      position: relative;
+
+      h3 {
+        position: absolute;
+        top: -27px;
+        background-color: $white;
+        padding: 5px;
+        left: 15px;
+        font-size: 12px;
+        color: rgba(80, 97, 118, 1.000);
+        font-weight: normal;
+      }
 
       .forLabel {
         position: absolute;
@@ -342,13 +392,7 @@
       font-size: 11px;
       border-top: 1px solid rgba(191, 203, 213, 1.000);
       border-bottom: 1px solid rgba(191, 203, 213, 1.000);
-      margin-bottom: 20px;;
-
-      .outcomes {
-        display: inline-block;
-        padding: 0 12px;
-        opacity: .35;
-      }
+      margin-bottom: 20px;
 
       .passIncentive {
         display: inline-block;

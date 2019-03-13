@@ -244,19 +244,24 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>
               </div> : ""
             }
-            {actionType != ActionTypes.Redeem && actionType != ActionTypes.Execute ?
-              <div className={css.incentives + " " + css.clearfix}>
-                <span className={css.outcomes}>OUTCOMES</span>
-                <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
-                <span className={css.failIncentive}><strong>FAIL</strong>{failIncentive}</span>
-              </div> : ""
-            }
             {actionType == ActionTypes.VoteDown || actionType == ActionTypes.VoteUp ?
               <div className={css.decisionGraph}>
-                 <div>State after your vote</div>
-                 <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
-                 For <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationFor} /><br />
-                 Against <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationAgainst} />
+                 <h3>Your vote</h3>
+                 <div className={css.clearfix}>
+                   <div className={css.graphContainer}>
+                     <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+                   </div>
+                   <div className={css.graphInfo}>
+                     <div>
+                       <img src="/assets/images/Icon/vote/for.svg"/>
+                       For <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationFor} />
+                     </div>
+                     <div>
+                       <img src="/assets/images/Icon/vote/against.svg"/>
+                       Against <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationAgainst} />
+                     </div>
+                 </div>
+                 </div>
               </div>
               : ""
             }
