@@ -341,9 +341,9 @@ button.disabled {
 		}
 	}
 
-	button {
+	span {
 		border: none;
-		position: relative;
+		position: absolute;
 		width: 30px;
 		height: 18px;
 		font-family: $body-font;
@@ -352,6 +352,7 @@ button.disabled {
 		margin-left: 5px;
 
 		span {
+			position: relative;
 			display: block;
 			margin-left: 20px;
 			font-size: 12px;
@@ -370,6 +371,7 @@ button.disabled {
 		position: relative;
 		display: block;
 		height: 20px;
+		margin-top: 4px;
 	}
 
 	.voteDown {

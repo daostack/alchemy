@@ -154,15 +154,15 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             <div className={voteStatusClass} >
               <div className={css.statusTitle}>
                 <h3>Votes</h3>
-                <span>NUM Votes ></span>
+                <span>NUM Votes</span>
               </div>
               <div className={css.castVote}>
-                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <span className={voteUpButtonClass}>
                   <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
-                </button>
-                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                </span>
+                <span className={voteDownButtonClass}>
                   <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
-                </button>
+                </span>
               </div>
               <div className={css.voteRecord}>
                 You voted
@@ -230,78 +230,74 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             </div>
             <div className={css.voteButtons}>
               <div className={css.voteUp}>
-                <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(IProposalOutcome.Pass)} overlayClassName={css.voteTooltip}>
-                  <div>
-                  <div className={css.label}>For</div>
-                    <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
-                      <img className={css.upvote} src="/assets/images/Icon/vote/for-gray.svg"/>
-                      <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
-                      <svg className={css.upvotePendingIcon} viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-                          <defs>
-                              <path d="M0,20.3763021 L20.3990885,0 L40.6751302,20.3763021 L37.7789714,23.491862 L20.3027344,6.04589844 L2.99348958,23.491862 L0,20.3763021 Z M5,25.535319 L20.4567057,10 L35.7426758,25.3149414 L32.6529948,28.3733724 L20.3713379,16.0996094 L7.94677734,28.6004232 L5,25.535319 Z" id="path-1"></path>
-                          </defs>
-                          <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                              <g id="Artboard-2" transform="translate(-297.000000, -659.000000)">
-                                  <g id="Rectangle-2-Copy-3" transform="translate(317.500000, 673.500000) rotate(-360.000000) translate(-317.500000, -673.500000) translate(297.000000, 659.000000)">
-                                      <mask id="mask-2" fill="white">
-                                          <use xlinkHref="#path-1"></use>
-                                      </mask>
-                                      <use id="Mask" fill="#D8D8D8" opacity="0.400000006" xlinkHref="#path-1"></use>
-                                      <g id="Group-4" mask="url(#mask-2)" fill="#3AB4D0">
-                                          <g className={css.verifyMask} transform="translate(-1.000000, 6.000000)">
-                                              <rect id="Rectangle-2" opacity="0.5" x="0" y="10" width="42" height="3.94661642"></rect>
-                                              <rect id="Rectangle-2-Copy-2" opacity="0.300000012" x="1" y="16" width="42" height="1.94661642"></rect>
-                                              <rect id="Rectangle-2-Copy" x="0" y="0" width="42" height="7.94661642"></rect>
-                                          </g>
-                                      </g>
-                                  </g>
-                              </g>
-                          </g>
-                      </svg>
-                      <span>
-                        {yesPercentage}%
-                        <b className={css.label}> Rep</b>
-                      </span>
-                    </button>
-                  </div>
-                </Tooltip>
+                <div>
+                <div className={css.label}>For</div>
+                  <span onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                    <img className={css.upvote} src="/assets/images/Icon/vote/for-gray.svg"/>
+                    <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
+                    <svg className={css.upvotePendingIcon} viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                        <defs>
+                            <path d="M0,20.3763021 L20.3990885,0 L40.6751302,20.3763021 L37.7789714,23.491862 L20.3027344,6.04589844 L2.99348958,23.491862 L0,20.3763021 Z M5,25.535319 L20.4567057,10 L35.7426758,25.3149414 L32.6529948,28.3733724 L20.3713379,16.0996094 L7.94677734,28.6004232 L5,25.535319 Z" id="path-1"></path>
+                        </defs>
+                        <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                            <g id="Artboard-2" transform="translate(-297.000000, -659.000000)">
+                                <g id="Rectangle-2-Copy-3" transform="translate(317.500000, 673.500000) rotate(-360.000000) translate(-317.500000, -673.500000) translate(297.000000, 659.000000)">
+                                    <mask id="mask-2" fill="white">
+                                        <use xlinkHref="#path-1"></use>
+                                    </mask>
+                                    <use id="Mask" fill="#D8D8D8" opacity="0.400000006" xlinkHref="#path-1"></use>
+                                    <g id="Group-4" mask="url(#mask-2)" fill="#3AB4D0">
+                                        <g className={css.verifyMask} transform="translate(-1.000000, 6.000000)">
+                                            <rect id="Rectangle-2" opacity="0.5" x="0" y="10" width="42" height="3.94661642"></rect>
+                                            <rect id="Rectangle-2-Copy-2" opacity="0.300000012" x="1" y="16" width="42" height="1.94661642"></rect>
+                                            <rect id="Rectangle-2-Copy" x="0" y="0" width="42" height="7.94661642"></rect>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <span>
+                      {yesPercentage}%
+                      <b className={css.label}> Rep</b>
+                    </span>
+                  </span>
+                </div>
               </div>
               <div className={css.voteDown}>
-                <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(IProposalOutcome.Fail)} overlayClassName={css.voteTooltip}>
-                  <div>
-                    <div className={css.label}>Against</div>
-                    <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-                      <img className={css.downvote} src="/assets/images/Icon/vote/against-gray.svg"/>
-                      <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
-                      <svg className={css.downvotePendingIcon} width="41px" height="29px" viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-                          <defs>
-                              <path d="M0,20.3763021 L20.3990885,0 L40.6751302,20.3763021 L37.7789714,23.491862 L20.3027344,6.04589844 L2.99348958,23.491862 L0,20.3763021 Z M5,25.535319 L20.4567057,10 L35.7426758,25.3149414 L32.6529948,28.3733724 L20.3713379,16.0996094 L7.94677734,28.6004232 L5,25.535319 Z" id="path-1"></path>
-                          </defs>
-                          <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                              <g id="Artboard-2" transform="translate(-235.000000, -659.000000)">
-                                  <g id="Rectangle-2" transform="translate(255.500000, 673.500000) rotate(-180.000000) translate(-255.500000, -673.500000) translate(235.000000, 659.000000)">
-                                      <mask id="mask-2" fill="white">
-                                          <use xlinkHref="#path-1"></use>
-                                      </mask>
-                                      <use id="Mask" fill="#D8D8D8" opacity="0.400000006" xlinkHref="#path-1"></use>
-                                      <g id="Group-4" mask="url(#mask-2)" fill="#F5A623">
-                                          <g className={css.verifyMask} transform="translate(-1.000000, 6.000000)">
-                                              <rect id="Rectangle-2" opacity="0.5" x="0" y="10" width="42" height="3.94661642"></rect>
-                                              <rect id="Rectangle-2-Copy-2" opacity="0.300000012" x="1" y="16" width="42" height="1.94661642"></rect>
-                                              <rect id="Rectangle-2-Copy" x="0" y="0" width="42" height="7.94661642"></rect>
-                                          </g>
-                                      </g>
-                                  </g>
-                              </g>
-                          </g>
-                      </svg>
-                      <span>
-                        {noPercentage}%
-                        <b className={css.label}> Rep</b>
-                      </span>
-                    </button>
-                  </div>
-                </Tooltip>
+                <div>
+                  <div className={css.label}>Against</div>
+                  <span onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                    <img className={css.downvote} src="/assets/images/Icon/vote/against-gray.svg"/>
+                    <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
+                    <svg className={css.downvotePendingIcon} width="41px" height="29px" viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+                        <defs>
+                            <path d="M0,20.3763021 L20.3990885,0 L40.6751302,20.3763021 L37.7789714,23.491862 L20.3027344,6.04589844 L2.99348958,23.491862 L0,20.3763021 Z M5,25.535319 L20.4567057,10 L35.7426758,25.3149414 L32.6529948,28.3733724 L20.3713379,16.0996094 L7.94677734,28.6004232 L5,25.535319 Z" id="path-1"></path>
+                        </defs>
+                        <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+                            <g id="Artboard-2" transform="translate(-235.000000, -659.000000)">
+                                <g id="Rectangle-2" transform="translate(255.500000, 673.500000) rotate(-180.000000) translate(-255.500000, -673.500000) translate(235.000000, 659.000000)">
+                                    <mask id="mask-2" fill="white">
+                                        <use xlinkHref="#path-1"></use>
+                                    </mask>
+                                    <use id="Mask" fill="#D8D8D8" opacity="0.400000006" xlinkHref="#path-1"></use>
+                                    <g id="Group-4" mask="url(#mask-2)" fill="#F5A623">
+                                        <g className={css.verifyMask} transform="translate(-1.000000, 6.000000)">
+                                            <rect id="Rectangle-2" opacity="0.5" x="0" y="10" width="42" height="3.94661642"></rect>
+                                            <rect id="Rectangle-2-Copy-2" opacity="0.300000012" x="1" y="16" width="42" height="1.94661642"></rect>
+                                            <rect id="Rectangle-2-Copy" x="0" y="0" width="42" height="7.94661642"></rect>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <span>
+                      {noPercentage}%
+                      <b className={css.label}> Rep</b>
+                    </span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
