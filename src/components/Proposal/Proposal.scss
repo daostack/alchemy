@@ -195,9 +195,14 @@ button.disabled {
 	}
 }
 
-.detailView .failButton {
+.detailView .failButton, .detailView .passButton {
     position: relative;
     top: 1px;
+}
+
+.detailView .passButton {
+    position: relative;
+    top: 0px;
 }
 
 .statusTitle {
@@ -617,7 +622,7 @@ button.disabled {
 
 	.forBar, .againstBar {
 		height: 18px;
-		width: 76px;
+		width: 55px;
 		position: relative;
 
 		b {
@@ -1226,10 +1231,11 @@ button.disabled {
 	width: 50%;
 
 	span {
-		font-size: $small;
-		text-align: center;
-		display: block;
-		color: rgba(3, 118, 255, 1.000);
+	    text-align: left;
+	    display: inline-block;
+	    color: rgba(104, 154, 214, 1.000);
+	    min-width: 45px;
+	    font-size: 13px;
 
 		b {
 			font-weight: normal;
@@ -1252,6 +1258,7 @@ button.disabled {
 		margin: 0 1px;
 		display: inline-block;
 		width: 60px;
+		top: 8px;
 
 		strong {
 			opacity: 1;
