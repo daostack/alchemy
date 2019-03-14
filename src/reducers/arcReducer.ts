@@ -228,7 +228,7 @@ export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   const res = (
     (proposal.stage === IProposalStage.Executed) ||
     (proposal.stage == IProposalStage.ExpiredInQueue) ||
-    (closingTime(proposal) <= moment())
+    (proposal.stage == IProposalStage.Queued && closingTime(proposal) <= moment())
   );
   return res;
 }
