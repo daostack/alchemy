@@ -75,10 +75,12 @@
 
 .detailView.proposal:hover  {
 	margin-bottom: 0;
+	border: none;
+	box-shadow: none;
 }
 
 .closedProposal.proposal:hover {
-	margin-bottom: 0;
+	margin-bottom: 3px;
 	overflow: visible;
 
     .predictions .boostedAmount, .predictions .centered {
@@ -513,9 +515,9 @@ button.disabled {
 .proposal.closedProposal {
 	display: block;
 	width: 100%;
+	max-width: 960px;
+	margin: 0 auto 3px auto;
 	border-radius: 3px;
-	margin-top: 3px;
-	margin-right: 0;
 	height: 65px;
 	display: flex;
 
@@ -571,6 +573,7 @@ button.disabled {
 		.decisionReason {
 			font-size: 13px;
 			color: rgba(154, 169, 181, 1.000);
+			padding-top: 3px;
 		}
 	}
 
@@ -748,6 +751,11 @@ button.disabled {
 	}
 
 	button span {
+		font-weight: normal;
+		color: rgba(154, 169, 181, 1.000);
+	}
+
+	span {
 		font-weight: normal;
 		color: rgba(154, 169, 181, 1.000);
 	}
@@ -1770,6 +1778,7 @@ button.cancelPrediction {
 }
 
 .historyView .stakes {
+	top: 15px;
 
 	.stakesAgainst, .stakesFor {
 		color: rgba(154, 169, 181, 1.000);

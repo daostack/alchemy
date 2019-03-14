@@ -157,12 +157,12 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                 <span>NUM Votes</span>
               </div>
               <div className={css.castVote}>
-                <span className={voteUpButtonClass}>
+                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
                   <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
-                </span>
-                <span className={voteDownButtonClass}>
+                </button>
+                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
                   <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
-                </span>
+                </button>
               </div>
               <div className={css.voteRecord}>
                 You voted
