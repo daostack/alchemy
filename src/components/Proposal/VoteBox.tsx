@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -84,12 +84,6 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     let noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputationSupply * 100)) : 0;
 
     const styles = {
-      yesGraph: {
-        height: yesPercentage + "%",
-      },
-      noGraph: {
-        height: noPercentage + "%",
-      },
       forBar: {
         width: yesPercentage + "%",
       },
@@ -108,12 +102,12 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       [css.unconfirmedVote] : isVoting,
     });
     let voteUpButtonClass = classNames({
-      [css.voted]: !isVotingYes && currentVote === ProposalOutcome.Pass,
+      [css.voted]: !isVotingYes && currentVote === IProposalOutcome.Pass,
       [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     let voteDownButtonClass = classNames({
-      [css.voted]: !isVotingNo && currentVote === ProposalOutcome.Fail,
+      [css.voted]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
@@ -121,8 +115,8 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       [css.buttonsOnly] : buttonsOnly,
       [css.voteStatus]: true,
       [css.hasVoted]: currentVote,
-      [css.votedFor]: !isVotingYes && currentVote === ProposalOutcome.Pass,
-      [css.votedAgainst]: !isVotingNo && currentVote === ProposalOutcome.Fail,
+      [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
+      [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
     });
 
@@ -130,7 +124,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       [css.voteControls]: true
     });
 
-    const tipContent = (vote: ProposalOutcome) =>
+    const tipContent = (vote: IProposalOutcome) =>
       !currentAccountState ?
         "Cannot vote - please log in" :
       currentVote ?
@@ -139,7 +133,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
         "Voting requires reputation in " + dao.name :
       isVoting ?
         "Warning: Voting for this proposal is already in progress" :
-        `Vote ${vote === ProposalOutcome.Pass ? "for" : "against"}`
+        `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
     ;
 
     if (!buttonsOnly) {
@@ -150,7 +144,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
               action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
               closeAction={this.closePreVoteModal.bind(this)}
-              currentAccount={currentAccountState.address}
+              currentAccount={currentAccountState}
               dao={dao}
               effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
               proposal={proposal}
@@ -232,12 +226,11 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                    <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
                  : " "
                 }
-
               </div>
             </div>
             <div className={css.voteButtons}>
               <div className={css.voteUp}>
-                <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(ProposalOutcome.Pass)} overlayClassName={css.voteTooltip}>
+                <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(IProposalOutcome.Pass)} overlayClassName={css.voteTooltip}>
                   <div>
                   <div className={css.label}>For</div>
                     <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
@@ -274,7 +267,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                 </Tooltip>
               </div>
               <div className={css.voteDown}>
-                <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(ProposalOutcome.Fail)} overlayClassName={css.voteTooltip}>
+                <Tooltip placement="right" trigger={["hover"]} overlay={tipContent(IProposalOutcome.Fail)} overlayClassName={css.voteTooltip}>
                   <div>
                     <div className={css.label}>Against</div>
                     <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>

@@ -57,7 +57,7 @@
     	transition: all .25s ease;
     }
 
-    .description {
+    .description, .url {
     	display: none;
     }
 }
@@ -105,7 +105,12 @@
 	.description {
 		display: block;
 		margin-bottom: 30px;
+    white-space: pre;
 	}
+
+  .url {
+    display: block;
+  }
 }
 
 .proposal.detailView:hover {
