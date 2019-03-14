@@ -18,13 +18,14 @@ export default class AccountProfileName extends React.Component<IProps, null> {
 
   public render() {
     const { accountProfile, daoAvatarAddress, historyView } = this.props;
-	
-	const accountNameClass = classNames({
+
+    const accountNameClass = classNames({
       [css.historyView]: this.props.historyView
     });
 
     return (accountProfile && accountProfile.name ?
       <Link className={accountNameClass} to={"/profile/" + accountProfile.ethereumAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{accountProfile.name}</Link>
-      : "");
+      : ""
+    );
   }
 }
