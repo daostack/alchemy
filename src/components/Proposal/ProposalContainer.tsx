@@ -452,42 +452,41 @@ class ProposalContainer extends React.Component<IProps, IState> {
               : ""
             }
 
-              {proposalEnded(proposal) ?
-                <div>
-                  {this.state.preRedeemModalOpen ?
-                    <PreTransactionModal
-                      actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccountAddress)}
-                      beneficiaryProfile={beneficiaryProfile}
-                      closeAction={this.closePreRedeemModal.bind(this)}
-                      dao={dao}
-                      effectText={redemptionsTip}
-                      proposal={proposal}
-                    /> : ""
-                  }
+            {proposalEnded(proposal) ?
+              <div>
+                {this.state.preRedeemModalOpen ?
+                  <PreTransactionModal
+                    actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
+                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccountAddress)}
+                    beneficiaryProfile={beneficiaryProfile}
+                    closeAction={this.closePreRedeemModal.bind(this)}
+                    dao={dao}
+                    effectText={redemptionsTip}
+                    proposal={proposal}
+                  /> : ""
+                }
 
-                  <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-{/*                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
-*/}                  </div>
+                <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
+                  <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
                 </div>
-                : ""
-              }
+              </div>
+              : ""
+            }
 
-              <PredictionBox
-                isPredictingFail={isPredictingFail}
-                isPredictingPass={isPredictingPass}
-                beneficiaryProfile={beneficiaryProfile}
-                currentPrediction={currentAccountPrediction}
-                currentStake={currentAccountStakeAmount}
-                currentAccountGens={currentAccountGens}
-                currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                dao={dao}
-                proposal={proposal}
-                threshold={threshold}
-                approveStakingGens={approveStakingGens}
-                detailView={detailView}
-              />
-
+            <PredictionBox
+              isPredictingFail={isPredictingFail}
+              isPredictingPass={isPredictingPass}
+              beneficiaryProfile={beneficiaryProfile}
+              currentPrediction={currentAccountPrediction}
+              currentStake={currentAccountStakeAmount}
+              currentAccountGens={currentAccountGens}
+              currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+              dao={dao}
+              proposal={proposal}
+              threshold={threshold}
+              approveStakingGens={approveStakingGens}
+              detailView={detailView}
+            />
           </div>
         </div>
       );
