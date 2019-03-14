@@ -13,8 +13,8 @@ const providers = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
     web3Provider: `wss://rinkeby.infura.io/ws`, // this is the default fallback if we do not have MM installed
     ipfsProvider: {
        host: "ipfs.infura.io",
@@ -24,8 +24,8 @@ const providers = {
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "",
-    graphqlWsProvider: "",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
+    graphqlWsProvider: "wss://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
     web3Provider: `wss://mainnet.infura.io/ws`, // this is the default fallback if we do not have MM installed
     ipfsProvider: {
        host: "ipfs.infura.io",
