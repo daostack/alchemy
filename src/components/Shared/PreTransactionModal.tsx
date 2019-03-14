@@ -1,7 +1,9 @@
-import { IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalStage, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import ReputationView from "components/Account/ReputationView";
 import TransferDetails from "components/Proposal/TransferDetails";
+import VoteGraph from "components/Proposal/VoteGraph";
 import Util from "lib/util";
 import { checkNetworkAndWarn, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
@@ -25,7 +27,7 @@ interface IProps {
   actionType: ActionTypes;
   beneficiaryProfile?: IProfileState;
   closeAction: any;
-  currentAccount?: string;
+  currentAccount?: IMemberState;
   currentAccountGens?: BN;
   dao: IDAOState;
   effectText?: string | JSX.Element;
@@ -71,17 +73,20 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
     const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, proposal, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 
-    // TODO: calculate reputationWhenExecuted
-    // const totalReputation = proposal.state == ProposalStates.Executed ? proposal.reputationWhenExecuted : dao.reputationCount;
-    const totalReputation = Util.fromWei(dao.reputationTotalSupply);
-    const votesFor = Util.fromWei(proposal.votesFor);
-    const votesAgainst = Util.fromWei(proposal.votesAgainst);
+    let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules, actionTypeClass;
+    let accountGens, buyGensClass, reputationFor, reputationAgainst, yesPercentage, noPercentage;
 
-    // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
-    const noPercentage = totalReputation  && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputation * 100)) : 0;
+    if (actionType == ActionTypes.VoteDown || actionType == ActionTypes.VoteUp) {
+      reputationFor = proposal.votesFor.add(actionType == ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
+      reputationAgainst = proposal.votesAgainst.add(actionType == ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
 
-    let accountGens, buyGensClass;
+      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
+
+      // If percentages are less than 2 then set them to 2 so they can be visibly noticed
+      yesPercentage = totalReputation && reputationFor.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationFor) / totalReputation * 100)) : 0;
+      noPercentage = totalReputation && reputationAgainst.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationAgainst) / totalReputation * 100)) : 0;
+    }
+
     if (actionType == ActionTypes.StakeFail || actionType == ActionTypes.StakePass) {
       accountGens = Util.fromWei(currentAccountGens);
 
@@ -91,7 +96,6 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
       });
     }
 
-    let icon, transactionType, passIncentive, failIncentive, rulesHeader, rules, actionTypeClass;
     switch (actionType) {
       case ActionTypes.VoteUp:
         actionTypeClass = css.voteUp;
@@ -240,26 +244,27 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
                 </div>
               </div> : ""
             }
-            {actionType != ActionTypes.Redeem && actionType != ActionTypes.Execute ?
-              <div className={css.incentives + " " + css.clearfix}>
-                <span className={css.outcomes}>OUTCOMES</span>
-                <span className={css.passIncentive}><strong>PASS</strong>{passIncentive}</span>
-                <span className={css.failIncentive}><strong>FAIL</strong>{failIncentive}</span>
-              </div> : ""
-            }
-            { /* Commenting out the proposal vote status for now, lets see if we want to bring this back
-              !proposalEnded(proposal) ?
+            {actionType == ActionTypes.VoteDown || actionType == ActionTypes.VoteUp ?
               <div className={css.decisionGraph}>
-                  <span className={css.forLabel}>{proposal.votesFor} ({yesPercentage}%) PASS</span>
-                  <div className={css.graph}>
-                    <div className={css.forBar} style={styles.forBar}></div>
-                    <div className={css.againstBar} style={styles.againstBar}></div>
-                    <div className={css.divider}></div>
-                  </div>
-                  <span className={css.againstLabel}>{proposal.votesAgainst} ({noPercentage}%) FAIL</span>
+                 <h3>Your vote</h3>
+                 <div className={css.clearfix}>
+                   <div className={css.graphContainer}>
+                     <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+                   </div>
+                   <div className={css.graphInfo}>
+                     <div>
+                       <img src="/assets/images/Icon/vote/for.svg"/>
+                       For <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationFor} />
+                     </div>
+                     <div>
+                       <img src="/assets/images/Icon/vote/against.svg"/>
+                       Against <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationAgainst} />
+                     </div>
+                 </div>
+                 </div>
               </div>
               : ""
-            **/ }
+            }
           {/*
         <div className={css.transactionInstructions}>
 
