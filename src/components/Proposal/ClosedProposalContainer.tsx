@@ -9,6 +9,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { humanProposalTitle, default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
@@ -195,7 +196,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {closingTime(proposal).format("MMM D, YYYY")}
           </div>
           <div className={css.title}>
-            <div>{humanProposalTitle(proposal)}</div>
+            <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
           </div>
           <div className={css.votes}>
               <VoteBox
