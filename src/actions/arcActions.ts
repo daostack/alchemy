@@ -1,4 +1,4 @@
-import { DAO, ProposalOutcome } from "@daostack/client";
+import { DAO, IProposalOutcome } from "@daostack/client";
 import BigNumber from "bignumber.js";
 import BN = require("bn.js");
 import { push } from "react-router-redux";
@@ -128,7 +128,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
   avatarAddress: string,
   proposalId: string,
   reputation: number,
-  voteOption: ProposalOutcome,
+  voteOption: IProposalOutcome,
   voterAddress: string,
 }, {
     entities: any,
@@ -136,7 +136,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
     voter: any,
   }>;
 
-export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: ProposalOutcome) {
+export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
@@ -147,7 +147,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
 export type StakeAction = IAsyncAction<"ARC_STAKE", {
   avatarAddress: string,
   proposalId: string,
-  prediction: ProposalOutcome,
+  prediction: IProposalOutcome,
   stakeAmount: number,
   stakerAddress: string,
 }, {

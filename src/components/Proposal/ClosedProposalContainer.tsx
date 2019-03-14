@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalState, IRewardState, IStake, IVote, ProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -160,11 +160,11 @@ class ProposalContainer extends React.Component<IProps, IState> {
       const myActionsClass = classNames({
         [css.myActions]: true,
         [css.iVoted]: currentAccountVote !== 0,
-        [css.failVote]: currentAccountVote === ProposalOutcome.Fail,
-        [css.passVote]: currentAccountVote === ProposalOutcome.Pass,
+        [css.failVote]: currentAccountVote === IProposalOutcome.Fail,
+        [css.passVote]: currentAccountVote === IProposalOutcome.Pass,
         [css.iStaked]: currentAccountPrediction !== 0,
-        [css.forStake]: currentAccountPrediction === ProposalOutcome.Pass,
-        [css.againstStake]: currentAccountPrediction === ProposalOutcome.Fail
+        [css.forStake]: currentAccountPrediction === IProposalOutcome.Pass,
+        [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
       });
 
       const closeReasonClass = classNames({

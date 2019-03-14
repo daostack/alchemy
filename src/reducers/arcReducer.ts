@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { IProposalState as IProposalStateFromDaoStackClient, ProposalOutcome, IProposalStage } from "@daostack/client";
+import { IProposalState as IProposalStateFromDaoStackClient, IProposalOutcome, IProposalStage } from "@daostack/client";
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",
@@ -235,14 +235,14 @@ export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
 
 export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Pass)
+    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Pass)
   );
   return res;
 }
 
 export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
+    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
     (proposal.stage == IProposalStage.ExpiredInQueue) ||
     (proposal.stage == IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
   );

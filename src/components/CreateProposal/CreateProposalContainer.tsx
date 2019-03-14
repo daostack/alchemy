@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, ProposalOutcome } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, IProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -55,7 +55,7 @@ const emptyProposal: IProposalState = {
   url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
-  winningOutcome: ProposalOutcome.Fail,
+  winningOutcome: IProposalOutcome.Fail,
   votingMachine: null
 };
 
