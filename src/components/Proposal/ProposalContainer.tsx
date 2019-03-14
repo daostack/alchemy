@@ -428,30 +428,30 @@ class ProposalContainer extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.proposalActions + " " + css.clearfix}>
-            {!proposalEnded(proposal) ?
-              <VoteBox
-                isVotingNo={isVotingNo}
-                isVotingYes={isVotingYes}
-                currentVote={currentAccountVote}
-                currentAccountAddress={currentAccountAddress}
-                dao={dao}
-                proposal={proposal}
-                detailView={detailView}
-              />
-              : proposalPassed(proposal) ?
+             <VoteBox
+              isVotingNo={isVotingNo}
+              isVotingYes={isVotingYes}
+              currentVote={currentAccountVote}
+              currentAccountAddress={currentAccountAddress}
+              dao={dao}
+              proposal={proposal}
+              detailView={detailView}
+            />
+            { proposalPassed(proposal) ?
+              <div className={css.decidedProposal}>
+                <div className={css.result}>
+                  <div><img src="/assets/images/Icon/Passed.svg" /></div>
+                </div>
+              </div>
+              : proposalFailed(proposal) ?
                 <div className={css.decidedProposal}>
                   <div className={css.result}>
-                    <div><img src="/assets/images/Icon/Passed.svg" /></div>
+                    <div><img src="/assets/images/Icon/Failed.svg" /></div>
                   </div>
                 </div>
-                : proposalFailed(proposal) ?
-                  <div className={css.decidedProposal}>
-                    <div className={css.result}>
-                      <div><img src="/assets/images/Icon/Failed.svg" /></div>
-                    </div>
-                  </div>
-                  : ""
-              }
+              : ""
+            }
+
               {proposalEnded(proposal) ?
                 <div>
                   {this.state.preRedeemModalOpen ?
@@ -467,25 +467,27 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   }
 
                   <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
-                  </div>
+{/*                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+*/}                  </div>
                 </div>
-                :
-                <PredictionBox
-                  isPredictingFail={isPredictingFail}
-                  isPredictingPass={isPredictingPass}
-                  beneficiaryProfile={beneficiaryProfile}
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStakeAmount}
-                  currentAccountGens={currentAccountGens}
-                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  dao={dao}
-                  proposal={proposal}
-                  threshold={threshold}
-                  approveStakingGens={approveStakingGens}
-                  detailView={detailView}
-                />
+                : ""
               }
+
+              <PredictionBox
+                isPredictingFail={isPredictingFail}
+                isPredictingPass={isPredictingPass}
+                beneficiaryProfile={beneficiaryProfile}
+                currentPrediction={currentAccountPrediction}
+                currentStake={currentAccountStakeAmount}
+                currentAccountGens={currentAccountGens}
+                currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+                dao={dao}
+                proposal={proposal}
+                threshold={threshold}
+                approveStakingGens={approveStakingGens}
+                detailView={detailView}
+              />
+
           </div>
         </div>
       );
