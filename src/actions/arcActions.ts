@@ -43,6 +43,7 @@ export function createProposal(
   daoAvatarAddress: string,
   title: string,
   description: string,
+  url: string,
   nativeTokenReward: BN,
   reputationReward: BN,
   ethReward: BN,
@@ -97,7 +98,7 @@ export function createProposal(
         periodLength: 0, // TODO: check what the default "periodLength" should be here
         periods: 1, // "periodLength 0 requires periods to be 1"
         title,
-        url: description
+        url
       };
 
       // TODO: use the Option stages of the client lib to communicate about the progress

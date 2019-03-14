@@ -52,6 +52,7 @@ const emptyProposal: IProposalState = {
   thresholdConst: 0, // TODO
   totalRepWhenExecuted: new BN(0),
   title: "",
+  url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
   winningOutcome: ProposalOutcome.Fail,
@@ -96,6 +97,7 @@ interface FormValues {
   nativeTokenReward: number;
   reputationReward: number;
   title: string;
+  url: string;
 
   [key: string]: any;
 }
@@ -129,9 +131,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.setState({
       proposalDetails: { ...emptyProposal, ...proposalValues}
     });
-    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = proposalValues;
+    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title, url } = proposalValues;
     setSubmitting(false);
-    await this.props.createProposal(this.props.daoAvatarAddress, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
+    await this.props.createProposal(this.props.daoAvatarAddress, title, description, url, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
   }
 
   public goBack(address: string) {
@@ -171,7 +173,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   externalTokenReward: 0,
                   nativeTokenReward: 0,
                   reputationReward: 0,
-                  title: ""
+                  title: "",
+                  url: ""
                 } as FormValues}
                 validate={(values: FormValues) => {
                   const errors: any = {};
@@ -201,11 +204,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.beneficiary = "Invalid address";
                   }
 
-                  {/* TODO: dont need to check if description is a URL anymore
-                  const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
-                  if (!pattern.test(values.description)) {
-                    errors.description = 'Invalid URL';
-                  }*/}
+                  const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+                  if (values.url && !pattern.test(values.url)) {
+                    errors.url = "Invalid URL";
+                  }
 
                   nonNegative("ethReward");
                   nonNegative("externalTokenReward");
@@ -245,19 +247,33 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       type="text"
                       className={touched.title && errors.title ? css.error : null}
                     />
+
                     <label htmlFor="descriptionInput">
                       Description
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
-
                     <Field
                       component="textarea"
                       id="descriptionInput"
-                      placeholder="Proposal description URL"
+                      placeholder="Describe your proposal in greater detail"
                       name="description"
                       className={touched.description && errors.description ? css.error : null}
                     />
+
+                    <label htmlFor="urlInput">
+                      URL
+                      {touched.url && errors.url && <span className={css.errorMessage}>{errors.url}</span>}
+                    </label>
+                    <Field
+                      id="urlInput"
+                      maxLength={120}
+                      placeholder="Description URL"
+                      name="url"
+                      type="text"
+                      className={touched.url && errors.url ? css.error : null}
+                    />
+
                     <div className={css.addTransfer}>
                       <div className={css.rewardRecipient}>
                         <label htmlFor="beneficiary">
