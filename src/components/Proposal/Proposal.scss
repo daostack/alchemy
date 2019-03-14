@@ -540,6 +540,14 @@ button.disabled {
 		position: relative;
 		color: rgba(80, 97, 118, 1.000);
 
+		a {
+			color: rgba(80, 97, 118, 1.000);
+		}
+
+		a:visited {
+			color: rgba(80, 97, 118, 1.000);
+		}
+
 		div {
 			position: absolute;
 			left: 15px;
