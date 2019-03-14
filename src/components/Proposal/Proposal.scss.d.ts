@@ -55,7 +55,6 @@ export const closeReason: string;
 export const decisionPassed: string;
 export const decisionFailed: string;
 export const decisionReason: string;
-export const closedReason: string;
 export const votes: string;
 export const myActions: string;
 export const myVote: string;

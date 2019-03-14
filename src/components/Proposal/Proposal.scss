@@ -553,7 +553,7 @@ button.disabled {
 			font-size: 13px;
 			margin-top: -3px;
 
-			img {			
+			img {
 			    width: 15px;
 			    position: relative;
 			    top: 4px;
@@ -567,7 +567,7 @@ button.disabled {
 		}
 	}
 
-	.closeReason.decisionPassed .decisionPassed, .closedReason.decisionFailed .decisionFailed {
+	.closeReason.decisionPassed .decisionPassed, .closeReason.decisionFailed .decisionFailed {
 		display: block;
 	}
 
@@ -731,7 +731,7 @@ button.disabled {
 }
 
 .historyView .voteControls {
-	
+
 	.voteDivider {
 		display: none;
 	}

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalState, IRewardState, IStake, IVote, ProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -6,7 +6,7 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle} from "lib/util";
+import { humanProposalTitle, default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -139,12 +139,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.redeemable]: redeemable
       });
 
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0);
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
 
       let currentVote: IVote;
       if (votesOfCurrentUser.length > 0) {
         currentVote = votesOfCurrentUser[0];
         currentAccountVote = currentVote.outcome;
+        currentAccountVoteAmount = currentVote.amount;
       }
 
       let currentStake: IStake;
@@ -154,6 +155,34 @@ class ProposalContainer extends React.Component<IProps, IState> {
       if (currentStake) {
         currentAccountPrediction = currentStake.outcome;
         currentAccountStakeAmount = currentStake.amount;
+      }
+
+      const myActionsClass = classNames({
+        [css.myActions]: true,
+        [css.iVoted]: currentAccountVote !== 0,
+        [css.failVote]: currentAccountVote === ProposalOutcome.Fail,
+        [css.passVote]: currentAccountVote === ProposalOutcome.Pass,
+        [css.iStaked]: currentAccountPrediction !== 0,
+        [css.forStake]: currentAccountPrediction === ProposalOutcome.Pass,
+        [css.againstStake]: currentAccountPrediction === ProposalOutcome.Fail
+      });
+
+      const closeReasonClass = classNames({
+        [css.closeReason]: true,
+        [css.decisionPassed]: proposalPassed(proposal),
+        [css.decisionFailed]: proposalFailed(proposal)
+      });
+
+      let closeReason = "Time out";
+      switch (proposal.executionState) {
+        case IExecutionState.BoostedBarCrossed:
+        case IExecutionState.QueueBarCrossed:
+        case IExecutionState.PreBoostedBarCrossed:
+          closeReason = "Absolute Majority";
+          break;
+        case IExecutionState.BoostedTimeOut:
+          closeReason = "Relative Majority";
+          break;
       }
 
       return (
@@ -195,30 +224,30 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 historyView={true}
               />
           </div>
-          <div className={css.closeReason + " " + css.decisionPassed}>
+          <div className={closeReasonClass}>
             <div className={css.decisionPassed}>
               <img src="/assets/images/Icon/vote/for.svg"/>
               <span>Passed</span>
               <div className={css.decisionReason}>
-                <span>Relative Majority</span>
+                <span>{closeReason}</span>
               </div>
             </div>
             <div className={css.decisionFailed}>
               <img src="/assets/images/Icon/vote/against.svg"/>
               <span>Failed</span>
               <div className={css.decisionReason}>
-                <span>Relative Majority</span>
+                <span>{closeReason}</span>
               </div>
             </div>
           </div>
-          <div className={css.myActions + " " + css.iVoted + " " + css.iStaked + " " + css.forStake + " " + css.failVote}>
+          <div className={myActionsClass}>
             <div className={css.myVote}>
-              <span>1.1 Rep</span>
+              <span>{Util.fromWei(currentAccountVoteAmount).toFixed(2)} Rep</span>
               <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
               <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
             </div>
             <div className={css.myStake}>
-              <span>5 GEN</span>
+              <span>{Util.fromWei(currentAccountStakeAmount).toFixed(2)} GEN</span>
               <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
               <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
             </div>

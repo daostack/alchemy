@@ -216,6 +216,7 @@ export const initialState: IArcState = {
 };
 
 export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
+  // TODO: how does quiet ending period play into this?
   const start = proposal.boostedAt || proposal.preBoostedAt || proposal.createdAt;
   const duration = proposal.boostedAt ? proposal.boostedVotePeriodLimit :
                      proposal.preBoostedAt ? proposal.preBoostedVotePeriodLimit :
@@ -223,76 +224,28 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
   return moment((proposal.executedAt || start + duration) * 1000);
 };
 
-export function checkProposalExpired(proposal: IProposalState): ProposalStates {
-  if ((proposal.state == ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod)
-      && proposal.boostedTime + proposal.boostedVotePeriodLimit <= +moment() / 1000) {
-    // Boosted proposal past end time but not yet executed
-    return ProposalStates.BoostedTimedOut;
-  } else if (proposal.state == ProposalStates.PreBoosted
-              && proposal.submittedTime + proposal.preBoostedVotePeriodLimit <= +moment() / 1000) {
-    // Pre boosted proposal past end time but not yet executed
-    return ProposalStates.PreBoostedTimedOut;
-  } else {
-    return proposal.state;
-  }
-}
-
 export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
-  // TODO: check if the comment lines are reprsented well in the new code
-  // const res = (
-  //   proposal.state == ProposalStates.Executed ||
-  //   proposal.state == ProposalStates.Closed ||
-  //   // Boosted proposal past end time but not yet executed
-  //   proposal.state == ProposalStates.BoostedTimedOut ||
-  //   // Pre boosted proposal past end time but not yet executed
-  //   proposal.state == ProposalStates.PreBoostedTimedOut
-  // );
-  const res = proposal.stage === IProposalStage.Executed || proposal.stage == IProposalStage.ExpiredInQueue;
-  return res;
-}
-
-export function proposalEndedArc(proposal: IProposalState) {
   const res = (
-    proposal.state == ProposalStates.Executed ||
-    proposal.state == ProposalStates.Closed ||
-    // Boosted proposal past end time but not yet executed
-    proposal.state == ProposalStates.BoostedTimedOut ||
-    // Pre boosted proposal past end time but not yet executed
-    proposal.state == ProposalStates.PreBoostedTimedOut
+    (proposal.stage === IProposalStage.Executed) ||
+    (proposal.stage == IProposalStage.ExpiredInQueue) ||
+    (closingTime(proposal) <= moment())
   );
   return res;
 }
 
 export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
-  // TODO: check if the logic of the commented lines is correctly represented in the following lines
-  // const res = (
-  //   (proposal.state == ProposalStates.Executed && proposal.winningVote == VoteOptions.Yes) ||
-  //   // Boosted proposal past end time with more yes votes than no, but not yet executed
-  //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == VoteOptions.Yes)
-  // );
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Pass) ||
-    (proposal.stage == IProposalStage.QuietEndingPeriod && proposal.winningOutcome === ProposalOutcome.Pass)
+    (proposal.stage == IProposalStage.Executed && (proposal.winningOutcome as any) === "Pass")
   );
   return res;
 }
 
 export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
-  // TODO: check if the logic of the commented lines is correctly represented in the other lines
-  // const res = (
-  //   proposal.state == ProposalStates.Closed ||
-  //   (proposal.state == ProposalStates.Executed && proposal.winningVote == ProposalOutcome.Fail) ||
-  //   // Boosted proposal past end time with more no votes than yes, but not yet executed
-  //   (proposal.state == ProposalStates.BoostedTimedOut && proposal.winningVote == ProposalOutcome.Fail) ||
-  //   // Pre boosted proposal past end time but not yet executed are always failed
-  //   proposal.state == ProposalStates.PreBoostedTimedOut
-  // );
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === ProposalOutcome.Fail) ||
+    (proposal.stage == IProposalStage.Executed && (proposal.winningOutcome as any) === "Fail") ||
     (proposal.stage == IProposalStage.ExpiredInQueue) ||
-    (proposal.stage == IProposalStage.QuietEndingPeriod && proposal.winningOutcome !== ProposalOutcome.Pass)
+    (proposal.stage == IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
   );
-
   return res;
 }
 
