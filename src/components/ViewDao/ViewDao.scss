@@ -34,6 +34,46 @@ button:hover {
 }
 
 
+.closedProposalsHeader {
+  display: block;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto 10px auto;
+  display: flex;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+
+  .votes, .predictions {
+    width: 100px;
+  }
+
+  .proposalCreator {
+    width: 100px;
+  }
+
+  .endDate {
+    width: 50px;
+  }
+
+  .title {
+    width: 250px;
+    padding: 0 15px;
+  }
+
+  .closeReason {
+    width: 160px;
+    position: relative;
+
+  }
+
+  .myActions {
+    text-align: center;
+  }
+}
+
+
+
 .menuWrapper {
   bottom: 0;
   position: absolute;
