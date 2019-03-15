@@ -246,7 +246,7 @@ export default class PreTransactionModal extends React.Component<IProps, IState>
             }
             {actionType == ActionTypes.VoteDown || actionType == ActionTypes.VoteUp ?
               <div className={css.decisionGraph}>
-                 <h3>Your vote</h3>
+                 <h3>State after your vote</h3>
                  <div className={css.clearfix}>
                    <div className={css.graphContainer}>
                      <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
