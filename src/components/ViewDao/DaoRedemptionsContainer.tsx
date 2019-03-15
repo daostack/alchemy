@@ -3,6 +3,7 @@ import { getArc } from "arc";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import gql from "graphql-tag";
 import Util from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -13,7 +14,7 @@ import * as css from "./ViewDao.scss";
 interface IProps {
   currentAccountAddress: string;
   dao: IDAOState;
-  proposals: Proposal[];
+  proposals: any[];
 }
 
 class DaoRedemptionsContainer extends React.Component<IProps, null> {
@@ -32,11 +33,22 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     let reputationReward = new BN(0);
     // , externalTokenReward = 0;
     proposals.forEach((proposal) => {
-    //   ethReward += Util.fromWei(reward.amount);
+      // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
+      const reward = proposal.gpRewards[0];
+      // ethReward += Util.fromWei(reward.amount);
     //   externalTokenReward += Util.fromWei(reward.amount);
-      // TODO: count the totals!!
-      // genReward.iadd(reward.tokensForStaker).iadd(reward.daoBountyForStaker);
-      // reputationReward.iadd(reward.reputationForVoter).iadd(reward.reputationForProposer);
+      if (reward.tokensForStaker) {
+        genReward.iadd(reward.tokensForStaker);
+      }
+      if (reward.daoBountyForStaker) {
+        genReward.iadd(reward.daoBountyForStaker);
+      }
+      if (reward.reputationForVoter) {
+        reputationReward.iadd(reward.reputationForVoter);
+        }
+      if (reward.reputationForProposer) {
+        reputationReward.iadd(reward.reputationForProposer);
+      }
     });
 
     const totalRewards = [];
@@ -83,17 +95,35 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 }
 
 export default (props: { dao: IDAOState, currentAccountAddress: Address } & RouteComponentProps<any>) => {
-  const daoAddress = props.dao.address;
-  const arc = getArc();
-  const dao = new DAO(daoAddress, arc)  ;
   if (!props.currentAccountAddress) {
     return <div>Please log in to see your rewards</div>;
   }
-  return <Subscribe observable={dao.proposals({accountsWithUnclaimedRewards_contains: [props.currentAccountAddress]})}>{(state: IObservableState<Proposal[]>) => {
+  const arc = getArc();
+  const query = gql`       {
+    proposals(where: {
+      accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
+      dao: "${props.dao.address}"
+      contributionReward_not: null
+    }) {
+      id
+      dao {
+        id
+      }
+      gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
+        tokensForStaker
+        daoBountyForStaker
+        reputationForVoter
+        reputationForProposer
+        beneficiary
+      }
+    }
+  }
+  `;
+  return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>;
       } else if (state.data) {
-        return <DaoRedemptionsContainer {...props} dao={props.dao} proposals={state.data}/>;
+        return <DaoRedemptionsContainer {...props} dao={props.dao} proposals={state.data.data.proposals}/>;
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }

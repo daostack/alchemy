@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -6,7 +6,7 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, default as Util } from "lib/util";
+import { default as Util, humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -15,6 +15,7 @@ import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
+import { concat} from "rxjs/operators";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import VoteBox from "./VoteBox";
@@ -129,36 +130,33 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const redeemable = accountHasRewards || beneficiaryHasRewards;
 
-    if (proposal) {
-      // TODO: check if the commented lines are represented correctly in the line below
-      // const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
-      const proposalClass = classNames({
-        [css.proposal]: true,
-        [css.closedProposal]: true,
-        [css.failedProposal]: proposalFailed(proposal),
-        [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: redeemable
-      });
+    const proposalClass = classNames({
+      [css.proposal]: true,
+      [css.closedProposal]: true,
+      [css.failedProposal]: proposalFailed(proposal),
+      [css.passedProposal]: proposalPassed(proposal),
+      [css.redeemable]: redeemable
+    });
 
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
+    let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
 
-      let currentVote: IVote;
-      if (votesOfCurrentUser.length > 0) {
+    let currentVote: IVote;
+    if (votesOfCurrentUser.length > 0) {
         currentVote = votesOfCurrentUser[0];
         currentAccountVote = currentVote.outcome;
         currentAccountVoteAmount = currentVote.amount;
       }
 
-      let currentStake: IStake;
-      if (stakesOfCurrentUser.length > 0) {
+    let currentStake: IStake;
+    if (stakesOfCurrentUser.length > 0) {
         currentStake = stakesOfCurrentUser[0];
       }
-      if (currentStake) {
+    if (currentStake) {
         currentAccountPrediction = currentStake.outcome;
         currentAccountStakeAmount = currentStake.amount;
       }
 
-      const myActionsClass = classNames({
+    const myActionsClass = classNames({
         [css.myActions]: true,
         [css.iVoted]: currentAccountVote !== 0,
         [css.failVote]: currentAccountVote === IProposalOutcome.Fail,
@@ -168,14 +166,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
       });
 
-      const closeReasonClass = classNames({
+    const closeReasonClass = classNames({
         [css.closeReason]: true,
         [css.decisionPassed]: proposalPassed(proposal),
         [css.decisionFailed]: proposalFailed(proposal)
       });
 
-      let closeReason = "Time out";
-      switch (proposal.executionState) {
+    let closeReason = "Time out";
+    switch (proposal.executionState) {
         case IExecutionState.BoostedBarCrossed:
         case IExecutionState.QueueBarCrossed:
         case IExecutionState.PreBoostedBarCrossed:
@@ -186,7 +184,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
           break;
       }
 
-      return (
+    return (
         <div className={proposalClass + " " + css.clearfix}>
           <div className={css.proposalCreator}>
             <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
@@ -255,9 +253,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
           </div>
         </div>
       );
-    } else {
-      return (<div>Loading proposal... </div>);
-    }
   }
 }
 
@@ -268,19 +263,17 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
 
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state(), // the list of pre-boosted proposals
+    dao.proposal(props.proposalId).state(),
     props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null),
-    // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
-    // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
-    dao.ethBalance()
+    concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal</div>;
+        return <div>Loading proposal {props.proposalId}...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
