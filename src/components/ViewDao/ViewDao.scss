@@ -656,6 +656,15 @@ a.navItem:hover {
   color: rgba(104, 155, 214, 1.000);
 }
 
+.daoHistoryHeader {
+    font-size: 28px;
+    color: rgba(104, 155, 214, 1.000);
+    border-bottom: 1px solid rgba(45, 109, 181, .2);
+    padding-bottom: 5px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
 .proposalsHeader {
   font-size: 16px;
   position: relative;
