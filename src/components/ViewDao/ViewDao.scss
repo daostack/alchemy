@@ -42,7 +42,7 @@ button:hover {
   display: flex;
   font-size: 12px;
   font-weight: bold;
-  text-align: center;
+  text-align: left;
 
   .votes, .predictions {
     width: 100px;
@@ -58,17 +58,15 @@ button:hover {
 
   .title {
     width: 250px;
-    padding: 0 15px;
   }
 
   .closeReason {
     width: 160px;
     position: relative;
-
   }
 
   .myActions {
-    text-align: center;
+    text-align: left;
   }
 }
 

@@ -38,7 +38,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
                 <div className={css.votes}>Votes</div>
                 <div className={css.predictions}>Predictions</div>
                 <div className={css.closeReason}>Status</div>
-                <div className={css.myActions}>My actions></div>
+                <div className={css.myActions}>My actions</div>
             </div>
             <div className={css.proposalsContainer + " " + css.proposalHistory}>
               {proposalsHTML}
