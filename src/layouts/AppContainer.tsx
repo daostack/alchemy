@@ -81,7 +81,7 @@ class AppContainer extends React.Component<IProps, IState> {
           this.props.setCurrentAccount(next);
         } catch (err) {
           console.warn(err.message);
-          // this.props.setCurrentAccount(undefined);
+          this.props.setCurrentAccount(undefined);
           // TODO: this notification is NOT working: why?
           showNotification(NotificationStatus.Failure, err.message);
         }
