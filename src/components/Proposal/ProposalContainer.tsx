@@ -501,9 +501,9 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
 
   const observable = combineLatest(
     dao.proposal(props.proposalId).state(), // state of the current proposal
-    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary:   props.currentAccountAddress}) : of([]), //1
-    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker:   props.currentAccountAddress}) : of([]), //2
-    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter:   props.currentAccountAddress }) : of([]), //3
+    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
+    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]), //2
+    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]), //3
     props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN("0")), //4
     props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN("0")),
     concat(of(new BN("0")), dao.ethBalance())
@@ -511,7 +511,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal {props.proposalId} ...</div>;
+        return <div>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {

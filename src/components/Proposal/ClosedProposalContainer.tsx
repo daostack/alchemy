@@ -24,7 +24,6 @@ interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState;
   daoEthBalance: BN;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
@@ -36,9 +35,7 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState;
   daoEthBalance: BN;
-  detailView?: boolean;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
@@ -49,13 +46,10 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const proposal = ownProps.proposal;
   const dao = ownProps.dao;
 
-  let currentAccountState = ownProps.currentAccountState;
-
   return {
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccountAddress: ownProps.currentAccountAddress,
-    currentAccountState,
     dao,
     daoEthBalance: ownProps.daoEthBalance,
     proposal,
@@ -110,7 +104,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccountAddress,
       dao,
       daoEthBalance,
-      detailView,
       proposal,
       rewardsForCurrentUser,
       stakesOfCurrentUser,
@@ -264,29 +257,27 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
 
   const observable = combineLatest(
     dao.proposal(props.proposalId).state(),
-    props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null),
-    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
+    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
     concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal {props.proposalId}...</div>;
+        return <div>Loading proposal {props.proposalId.substr(0, 6)}...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
         const proposal = state.data[0];
-        const rewards = state.data[2];
-        const stakes = state.data[3];
-        const votes = state.data[4];
+        const rewards = state.data[1];
+        const stakes = state.data[2];
+        const votes = state.data[3];
         return <ConnectedProposalContainer
           currentAccountAddress={props.currentAccountAddress}
-          currentAccountState={state.data[1]}
           proposal={proposal}
           dao={props.dao}
-          daoEthBalance={state.data[5]}
+          daoEthBalance={state.data[4]}
           rewardsForCurrentUser={rewards}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}
