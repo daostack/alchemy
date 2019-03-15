@@ -134,117 +134,117 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     let currentVote: IVote;
     if (votesOfCurrentUser.length > 0) {
-        currentVote = votesOfCurrentUser[0];
-        currentAccountVote = currentVote.outcome;
-        currentAccountVoteAmount = currentVote.amount;
-      }
+      currentVote = votesOfCurrentUser[0];
+      currentAccountVote = currentVote.outcome;
+      currentAccountVoteAmount = currentVote.amount;
+    }
 
     let currentStake: IStake;
     if (stakesOfCurrentUser.length > 0) {
-        currentStake = stakesOfCurrentUser[0];
-      }
+      currentStake = stakesOfCurrentUser[0];
+    }
     if (currentStake) {
-        currentAccountPrediction = currentStake.outcome;
-        currentAccountStakeAmount = currentStake.amount;
-      }
+      currentAccountPrediction = currentStake.outcome;
+      currentAccountStakeAmount = currentStake.amount;
+    }
 
     const myActionsClass = classNames({
-        [css.myActions]: true,
-        [css.iVoted]: currentAccountVote !== 0,
-        [css.failVote]: currentAccountVote === IProposalOutcome.Fail,
-        [css.passVote]: currentAccountVote === IProposalOutcome.Pass,
-        [css.iStaked]: currentAccountPrediction !== 0,
-        [css.forStake]: currentAccountPrediction === IProposalOutcome.Pass,
-        [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
-      });
+      [css.myActions]: true,
+      [css.iVoted]: currentAccountVote !== 0,
+      [css.failVote]: currentAccountVote === IProposalOutcome.Fail,
+      [css.passVote]: currentAccountVote === IProposalOutcome.Pass,
+      [css.iStaked]: currentAccountPrediction !== 0,
+      [css.forStake]: currentAccountPrediction === IProposalOutcome.Pass,
+      [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
+    });
 
     const closeReasonClass = classNames({
-        [css.closeReason]: true,
-        [css.decisionPassed]: proposalPassed(proposal),
-        [css.decisionFailed]: proposalFailed(proposal)
-      });
+      [css.closeReason]: true,
+      [css.decisionPassed]: proposalPassed(proposal),
+      [css.decisionFailed]: proposalFailed(proposal)
+    });
 
     let closeReason = "Time out";
     switch (proposal.executionState) {
-        case IExecutionState.BoostedBarCrossed:
-        case IExecutionState.QueueBarCrossed:
-        case IExecutionState.PreBoostedBarCrossed:
-          closeReason = "Absolute Majority";
-          break;
-        case IExecutionState.BoostedTimeOut:
-          closeReason = "Relative Majority";
-          break;
-      }
+      case IExecutionState.BoostedBarCrossed:
+      case IExecutionState.QueueBarCrossed:
+      case IExecutionState.PreBoostedBarCrossed:
+        closeReason = "Absolute Majority";
+        break;
+      case IExecutionState.BoostedTimeOut:
+        closeReason = "Relative Majority";
+        break;
+    }
 
     return (
-        <div className={proposalClass + " " + css.clearfix}>
-          <div className={css.proposalCreator}>
-            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
-            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
-          </div>
-          <div className={css.endDate}>
-            {closingTime(proposal).format("MMM D, YYYY")}
-          </div>
-          <div className={css.title}>
-            <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
-          </div>
-          <div className={css.votes}>
-              <VoteBox
-                isVotingNo={false}
-                isVotingYes={false}
-                currentVote={currentAccountVote}
-                currentAccountAddress={currentAccountAddress}
-                dao={dao}
-                proposal={proposal}
-                historyView={true}
-              />
-          </div>
-          <div className={css.predictions}>
-              <PredictionBox
-                isPredictingFail={false}
-                isPredictingPass={false}
-                beneficiaryProfile={beneficiaryProfile}
-                currentPrediction={currentAccountPrediction}
-                currentStake={currentAccountStakeAmount}
-                currentAccountGens={new BN(0)}
-                currentAccountGenStakingAllowance={new BN(1000000)}
-                dao={dao}
-                proposal={proposal}
-                threshold={0}
-                approveStakingGens={null}
-                historyView={true}
-              />
-          </div>
-          <div className={closeReasonClass}>
-            <div className={css.decisionPassed}>
-              <img src="/assets/images/Icon/vote/for.svg"/>
-              <span>Passed</span>
-              <div className={css.decisionReason}>
-                <span>{closeReason}</span>
-              </div>
-            </div>
-            <div className={css.decisionFailed}>
-              <img src="/assets/images/Icon/vote/against.svg"/>
-              <span>Failed</span>
-              <div className={css.decisionReason}>
-                <span>{closeReason}</span>
-              </div>
+      <div className={proposalClass + " " + css.clearfix}>
+        <div className={css.proposalCreator}>
+          <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
+          <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
+        </div>
+        <div className={css.endDate}>
+          {closingTime(proposal).format("MMM D, YYYY")}
+        </div>
+        <div className={css.title}>
+          <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
+        </div>
+        <div className={css.votes}>
+            <VoteBox
+              isVotingNo={false}
+              isVotingYes={false}
+              currentVote={currentAccountVote}
+              currentAccountAddress={currentAccountAddress}
+              dao={dao}
+              proposal={proposal}
+              historyView={true}
+            />
+        </div>
+        <div className={css.predictions}>
+            <PredictionBox
+              isPredictingFail={false}
+              isPredictingPass={false}
+              beneficiaryProfile={beneficiaryProfile}
+              currentPrediction={currentAccountPrediction}
+              currentStake={currentAccountStakeAmount}
+              currentAccountGens={new BN(0)}
+              currentAccountGenStakingAllowance={new BN(1000000)}
+              dao={dao}
+              proposal={proposal}
+              threshold={0}
+              approveStakingGens={null}
+              historyView={true}
+            />
+        </div>
+        <div className={closeReasonClass}>
+          <div className={css.decisionPassed}>
+            <img src="/assets/images/Icon/vote/for.svg"/>
+            <span>Passed</span>
+            <div className={css.decisionReason}>
+              <span>{closeReason}</span>
             </div>
           </div>
-          <div className={myActionsClass}>
-            <div className={css.myVote}>
-              <span>{Util.fromWei(currentAccountVoteAmount).toFixed(2)} Rep</span>
-              <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
-              <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
-            </div>
-            <div className={css.myStake}>
-              <span>{Util.fromWei(currentAccountStakeAmount).toFixed(2)} GEN</span>
-              <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
-              <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+          <div className={css.decisionFailed}>
+            <img src="/assets/images/Icon/vote/against.svg"/>
+            <span>Failed</span>
+            <div className={css.decisionReason}>
+              <span>{closeReason}</span>
             </div>
           </div>
         </div>
-      );
+        <div className={myActionsClass}>
+          <div className={css.myVote}>
+            <span>{Util.fromWei(currentAccountVoteAmount).toFixed(2)} Rep</span>
+            <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
+            <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
+          </div>
+          <div className={css.myStake}>
+            <span>{Util.fromWei(currentAccountStakeAmount).toFixed(2)} GEN</span>
+            <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
+            <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 
