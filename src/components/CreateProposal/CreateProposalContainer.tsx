@@ -15,6 +15,7 @@ import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 const emptyProposal: IProposalState = {
+  accountsWithUnclaimedRewards: [],
   activationTime: 0,
   beneficiary: null,
   boostedAt: 0,
