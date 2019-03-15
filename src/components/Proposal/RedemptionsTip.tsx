@@ -23,7 +23,7 @@ export default (props: IProps) => {
   for (const reward of rewards) {
     let c = null;
     if (reward.reputationForProposer.gt(new BN(0))) {
-      c = <div>
+      c = <div key={reward.id}>
           <strong>For creating the proposal you will receive:</strong>
           <ul>
             <li><ReputationView reputation={reward.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
@@ -31,7 +31,7 @@ export default (props: IProps) => {
         </div>;
       rewardComponents.push(c);
     } else if (reward.reputationForVoter.gt(new BN(0))) {
-      c = <div>
+      c = <div key={reward.id}>
           <strong>For voting on the proposal you will receive:</strong>
           <ul>
             <li><ReputationView reputation={reward.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
@@ -39,7 +39,7 @@ export default (props: IProps) => {
         </div>;
       rewardComponents.push(c);
     }  else if (reward.tokensForStaker.gt(new BN("0"))) {
-      c = <div>
+      c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
           <li>{reward.tokensForStaker} GEN</li>
@@ -48,7 +48,7 @@ export default (props: IProps) => {
       rewardComponents.push(c);
 
     }  else if (reward.daoBountyForStaker.gt(new BN("0"))) {
-      c = <div>
+      c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
           <li>{reward.daoBountyForStaker} GEN bounty {dao.tokenBalance < reward.daoBountyForStaker ? " (Insufficient funds in DAO)" : ""}</li>

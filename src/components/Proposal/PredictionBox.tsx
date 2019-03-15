@@ -29,6 +29,7 @@ interface IProps {
   currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
   detailView?: boolean;
+  historyView?: boolean;
   proposal: IProposalState;
   stakeProposal: typeof arcActions.stakeProposal;
   threshold: number;
@@ -83,6 +84,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       detailView,
+      historyView,
       proposal,
       isPredictingFail,
       isPredictingPass,
@@ -138,6 +140,7 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     let wrapperClass = classNames({
       [css.detailView] : detailView,
+      [css.historyView] : historyView,
       [css.isPassing] : isPassing,
       [css.isFailing] : isFailing,
       [css.predictions] : true,

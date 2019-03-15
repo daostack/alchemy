@@ -22,15 +22,17 @@ interface IStateProps {
   accountAddress: string;
   dao: IDAOState;
   detailView?: boolean;
+  historyView?: boolean;
   profile: IProfileState;
   reputation: BN;
   tokens: BN;
 }
 
 interface IOwnProps {
+  accountAddress: Address;
   dao: IDAOState;
   detailView?: boolean;
-  accountAddress: Address;
+  historyView?: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -70,6 +72,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
 
     const targetAccountClass = classNames({
       [css.detailView]: this.props.detailView,
+      [css.historyView]: this.props.historyView,
       [css.targetAccount]: true
     });
 

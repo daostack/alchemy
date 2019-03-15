@@ -8,6 +8,10 @@
   text-align: right;
 }
 
+.historyView {
+  font-weight: bold;
+}
+
 :global .membersPage {
   border-radius: 3px;
   height: 40px;
@@ -25,6 +29,18 @@
   .avatar img {
     width: 35px;
     height: 35px;
+  }
+}
+
+.historyView.targetAccount {
+  width: 40px;
+  height: 40px;
+  margin-top: 7px;
+  margin-left: 7px;
+
+  .avatar img {
+    width: 40px;
+    height: 40px;
   }
 }
 

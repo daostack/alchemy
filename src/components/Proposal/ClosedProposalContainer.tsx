@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalOutcome } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -6,9 +6,10 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle} from "lib/util";
+import { humanProposalTitle, default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
@@ -139,12 +140,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.redeemable]: redeemable
       });
 
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0);
+      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
 
       let currentVote: IVote;
       if (votesOfCurrentUser.length > 0) {
         currentVote = votesOfCurrentUser[0];
         currentAccountVote = currentVote.outcome;
+        currentAccountVoteAmount = currentVote.amount;
       }
 
       let currentStake: IStake;
@@ -156,20 +158,45 @@ class ProposalContainer extends React.Component<IProps, IState> {
         currentAccountStakeAmount = currentStake.amount;
       }
 
+      const myActionsClass = classNames({
+        [css.myActions]: true,
+        [css.iVoted]: currentAccountVote !== 0,
+        [css.failVote]: currentAccountVote === IProposalOutcome.Fail,
+        [css.passVote]: currentAccountVote === IProposalOutcome.Pass,
+        [css.iStaked]: currentAccountPrediction !== 0,
+        [css.forStake]: currentAccountPrediction === IProposalOutcome.Pass,
+        [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
+      });
+
+      const closeReasonClass = classNames({
+        [css.closeReason]: true,
+        [css.decisionPassed]: proposalPassed(proposal),
+        [css.decisionFailed]: proposalFailed(proposal)
+      });
+
+      let closeReason = "Time out";
+      switch (proposal.executionState) {
+        case IExecutionState.BoostedBarCrossed:
+        case IExecutionState.QueueBarCrossed:
+        case IExecutionState.PreBoostedBarCrossed:
+          closeReason = "Absolute Majority";
+          break;
+        case IExecutionState.BoostedTimeOut:
+          closeReason = "Relative Majority";
+          break;
+      }
+
       return (
         <div className={proposalClass + " " + css.clearfix}>
           <div className={css.proposalCreator}>
-            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} />
-            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} />
+            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
+            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
           </div>
           <div className={css.endDate}>
             {closingTime(proposal).format("MMM D, YYYY")}
           </div>
           <div className={css.title}>
-            {humanProposalTitle(proposal)}
-          </div>
-          <div className={css.closeReason}>
-            Reason for close
+            <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
           </div>
           <div className={css.votes}>
               <VoteBox
@@ -179,6 +206,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 proposal={proposal}
+                historyView={true}
               />
           </div>
           <div className={css.predictions}>
@@ -194,11 +222,36 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 proposal={proposal}
                 threshold={0}
                 approveStakingGens={null}
-                detailView={detailView}
+                historyView={true}
               />
           </div>
-          <div className={css.myActions}>
-            My Actions
+          <div className={closeReasonClass}>
+            <div className={css.decisionPassed}>
+              <img src="/assets/images/Icon/vote/for.svg"/>
+              <span>Passed</span>
+              <div className={css.decisionReason}>
+                <span>{closeReason}</span>
+              </div>
+            </div>
+            <div className={css.decisionFailed}>
+              <img src="/assets/images/Icon/vote/against.svg"/>
+              <span>Failed</span>
+              <div className={css.decisionReason}>
+                <span>{closeReason}</span>
+              </div>
+            </div>
+          </div>
+          <div className={myActionsClass}>
+            <div className={css.myVote}>
+              <span>{Util.fromWei(currentAccountVoteAmount).toFixed(2)} Rep</span>
+              <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
+              <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
+            </div>
+            <div className={css.myStake}>
+              <span>{Util.fromWei(currentAccountStakeAmount).toFixed(2)} GEN</span>
+              <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
+              <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+            </div>
           </div>
         </div>
       );

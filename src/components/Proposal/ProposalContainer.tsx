@@ -428,64 +428,65 @@ class ProposalContainer extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.proposalActions + " " + css.clearfix}>
-            {!proposalEnded(proposal) ?
-              <VoteBox
-                isVotingNo={isVotingNo}
-                isVotingYes={isVotingYes}
-                currentVote={currentAccountVote}
-                currentAccountAddress={currentAccountAddress}
-                dao={dao}
-                proposal={proposal}
-                detailView={detailView}
-              />
-              : proposalPassed(proposal) ?
+             <VoteBox
+              isVotingNo={isVotingNo}
+              isVotingYes={isVotingYes}
+              currentVote={currentAccountVote}
+              currentAccountAddress={currentAccountAddress}
+              dao={dao}
+              proposal={proposal}
+              detailView={detailView}
+            />
+            { proposalPassed(proposal) ?
+              <div className={css.decidedProposal}>
+                <div className={css.result}>
+                  <div><img src="/assets/images/Icon/Passed.svg" /></div>
+                </div>
+              </div>
+              : proposalFailed(proposal) ?
                 <div className={css.decidedProposal}>
                   <div className={css.result}>
-                    <div><img src="/assets/images/Icon/Passed.svg" /></div>
+                    <div><img src="/assets/images/Icon/Failed.svg" /></div>
                   </div>
                 </div>
-                : proposalFailed(proposal) ?
-                  <div className={css.decidedProposal}>
-                    <div className={css.result}>
-                      <div><img src="/assets/images/Icon/Failed.svg" /></div>
-                    </div>
-                  </div>
-                  : ""
-              }
-              {proposalEnded(proposal) ?
-                <div>
-                  {this.state.preRedeemModalOpen ?
-                    <PreTransactionModal
-                      actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-                      action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccountAddress)}
-                      beneficiaryProfile={beneficiaryProfile}
-                      closeAction={this.closePreRedeemModal.bind(this)}
-                      dao={dao}
-                      effectText={redemptionsTip}
-                      proposal={proposal}
-                    /> : ""
-                  }
+              : ""
+            }
 
-                  <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
-                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
-                  </div>
+            {proposalEnded(proposal) ?
+              <div>
+                {this.state.preRedeemModalOpen ?
+                  <PreTransactionModal
+                    actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
+                    action={executable && !redeemable ? executeProposal.bind(null, dao.address, proposal.id) : redeemProposal.bind(null, dao.address, proposal.id, currentAccountAddress)}
+                    beneficiaryProfile={beneficiaryProfile}
+                    closeAction={this.closePreRedeemModal.bind(this)}
+                    dao={dao}
+                    effectText={redemptionsTip}
+                    proposal={proposal}
+                  /> : ""
+                }
+
+                <div className={css.proposalDetails + " " + css.concludedDecisionDetails}>
+                  <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
                 </div>
-                :
-                <PredictionBox
-                  isPredictingFail={isPredictingFail}
-                  isPredictingPass={isPredictingPass}
-                  beneficiaryProfile={beneficiaryProfile}
-                  currentPrediction={currentAccountPrediction}
-                  currentStake={currentAccountStakeAmount}
-                  currentAccountGens={currentAccountGens}
-                  currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-                  dao={dao}
-                  proposal={proposal}
-                  threshold={threshold}
-                  approveStakingGens={approveStakingGens}
-                  detailView={detailView}
-                />
-              }
+              </div>
+              : ""
+            }
+
+            <PredictionBox
+              isPredictingFail={isPredictingFail}
+              isPredictingPass={isPredictingPass}
+              beneficiaryProfile={beneficiaryProfile}
+              currentPrediction={currentAccountPrediction}
+              currentStake={currentAccountStakeAmount}
+              currentAccountGens={currentAccountGens}
+              currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+              dao={dao}
+              proposal={proposal}
+              threshold={threshold}
+              approveStakingGens={approveStakingGens}
+              detailView={detailView}
+            />
           </div>
         </div>
       );
