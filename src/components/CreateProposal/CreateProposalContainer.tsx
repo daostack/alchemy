@@ -55,6 +55,7 @@ const emptyProposal: IProposalState = {
   url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
+  votesCount: 0,
   winningOutcome: IProposalOutcome.Fail,
   votingMachine: null
 };

@@ -109,7 +109,7 @@ export function checkNetwork(web3?: any) {
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
       if (!web3.eth.defaultAccount) {
-          throw Error(`No account was set - are you connected with MetaMask?`);
+        throw Error(`No account was set - are you connected with MetaMask?`);
       }
     } else {
       // TODO: error message is for developers, need to write something more user friendly here
