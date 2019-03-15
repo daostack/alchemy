@@ -260,7 +260,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
-    concat(of(new BN("0")), dao.ethBalance())
+    of(new BN(0)).pipe(concat(dao.ethBalance()))
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN]>): any => {
