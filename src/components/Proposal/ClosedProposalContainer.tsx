@@ -14,8 +14,7 @@ import { IRootState } from "reducers";
 import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
-import { concat} from "rxjs/operators";
+import { combineLatest, of, concat } from "rxjs";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import VoteBox from "./VoteBox";
@@ -260,7 +259,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
-    of(new BN(0)).pipe(concat(dao.ethBalance()))
+    concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN]>): any => {
