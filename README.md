@@ -41,12 +41,17 @@ you can recreate the docker environment by installing an starting all [services 
 The easiest way to start developing is to work with docker.
 Here is a quick setup; there are more detailed instructions in [here](./documentation/development.md).
 
-After you have installed docker, run the following command:
+After you have installed docker, run the following command to spin up ganache (with the migrated contracts), the caching server and the alchemy server:
 ```sh
-docker-compose build
-docker-compose up alchemy
+docker-compose up graph-node alchemy-server
 ```
-Now point your browser to http://127.0.0.1:3000.
+
+Now, in a separate terminal run the following command to run alchemy:
+```sh
+npm run start
+```
+
+At this point you should be able to access alchemy on http://127.0.0.1:3000.
 
 See [working with docker](./docs/docker.md) for details and troubleshooting.
 
