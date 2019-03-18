@@ -143,7 +143,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
         <div className={wrapperClass}>
           {this.state.showPreVoteModal ?
             <PreTransactionModal
-              actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+              actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
               action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
               closeAction={this.closePreVoteModal.bind(this)}
               currentAccount={currentAccountState}
@@ -182,7 +182,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             <div className={css.voteDivider}>
               <div className={css.voteGraphs}>
                 { !this.props.detailView ?
-                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "
                 }
                 <div className={css.reputationTurnout}>
@@ -225,7 +225,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                   </div>
                 </div>
                 { this.props.detailView ?
-                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "
                 }
               </div>

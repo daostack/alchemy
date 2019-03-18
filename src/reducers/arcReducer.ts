@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { IProposalState as IProposalStateFromDaoStackClient, IProposalOutcome, IProposalStage } from "@daostack/client";
+import { IProposalOutcome, IProposalStage, IProposalState as IProposalStateFromDaoStackClient } from "@daostack/client";
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",
@@ -227,24 +227,24 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
 export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   const res = (
     (proposal.stage === IProposalStage.Executed) ||
-    (proposal.stage == IProposalStage.ExpiredInQueue) ||
-    (proposal.stage == IProposalStage.Queued && closingTime(proposal) <= moment())
+    (proposal.stage === IProposalStage.ExpiredInQueue) ||
+    (proposal.stage === IProposalStage.Queued && closingTime(proposal) <= moment())
   );
   return res;
 }
 
 export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Pass)
+    (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Pass)
   );
   return res;
 }
 
 export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
-    (proposal.stage == IProposalStage.ExpiredInQueue) ||
-    (proposal.stage == IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
+    (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
+    (proposal.stage === IProposalStage.ExpiredInQueue) ||
+    (proposal.stage === IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
   );
   return res;
 }
@@ -266,12 +266,12 @@ const arcReducer = (state = initialState, action: any) => {
 
   switch (action.type) {
     case ActionTypes.ARC_LOAD_CACHED_STATE: {
-      if (action.sequence == AsyncActionSequence.Success) { return payload; }
+      if (action.sequence === AsyncActionSequence.Success) { return payload; }
       return state;
     }
 
     case ActionTypes.ARC_GET_DAOS: {
-      if (action.sequence == AsyncActionSequence.Success) {
+      if (action.sequence === AsyncActionSequence.Success) {
         return update(state, { daosLoaded : { $set : true }, lastBlock: { $set: payload.lastBlock } });
       } else {
         return state;
@@ -443,12 +443,12 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, {
               accounts: {
                 [accountKey]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey)
+                  redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionsKey)
                 }
               },
               proposals: {
                 [proposalId]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey),
+                  redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionsKey),
                 }
               },
               redemptions: { $unset: [redemptionsKey] }
@@ -481,12 +481,12 @@ const arcReducer = (state = initialState, action: any) => {
               state = update(state, {
                 accounts: {
                   [currentAccountKey]: {
-                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey)
+                    redemptions: (arr: string[]) => arr.filter((item) => item !== currentAccountRedemptionsKey)
                   }
                 },
                 proposals: {
                   [proposalId]: {
-                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey),
+                    redemptions: (arr: string[]) => arr.filter((item) => item !== currentAccountRedemptionsKey),
                   }
                 },
                 redemptions: { $unset: [currentAccountRedemptionsKey] }
@@ -560,12 +560,12 @@ const arcReducer = (state = initialState, action: any) => {
         state = update(state, {
           accounts: {
             [accountKey]: {
-              redemptions: (arr: string[]) => arr.filter((item) => item != redemptionKey)
+              redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionKey)
             }
           },
           proposals: {
             [proposalId]: {
-              redemptions: (arr: string[]) => arr.filter((item) => item != redemptionKey),
+              redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionKey),
             }
           },
           redemptions: { $unset: [redemptionKey] }

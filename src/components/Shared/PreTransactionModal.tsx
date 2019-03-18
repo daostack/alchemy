@@ -188,7 +188,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                 {effectText}
                 </div>
               </div>
-              {actionType != ActionTypes.Redeem && actionType != ActionTypes.Execute ?
+              {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
                 <div className={css.helpButton}>
                   <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>?</button>
                   <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
