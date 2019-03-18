@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
@@ -91,8 +92,9 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
 
 interface IDispatchProps {
   approveStakingGens: typeof web3Actions.approveStakingGens;
-  redeemProposal: typeof arcActions.redeemProposal;
   executeProposal: typeof arcActions.executeProposal;
+  redeemProposal: typeof arcActions.redeemProposal;
+  showNotification: typeof showNotification;
   stakeProposal: typeof arcActions.stakeProposal;
 }
 
@@ -100,6 +102,7 @@ const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
   executeProposal: arcActions.executeProposal,
+  showNotification,
   stakeProposal: arcActions.stakeProposal,
 };
 
@@ -122,7 +125,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
   }
 
   public handleClickExecute(event: any) {
-    if (!checkNetworkAndWarn()) { return; }
+    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
     this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
   }
 

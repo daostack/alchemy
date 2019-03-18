@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 //@ts-ignore
 import { Modal } from "react-router-modal";
 import { VoteOptions } from "reducers/arcReducer";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
 import * as css from "./Proposal.scss";
@@ -22,6 +23,7 @@ interface IState {
 }
 
 interface IProps {
+  approveStakingGens: typeof web3Actions.approveStakingGens;
   beneficiaryProfile?: IProfileState;
   currentPrediction: number;
   currentStake: BN;
@@ -31,14 +33,16 @@ interface IProps {
   detailView?: boolean;
   historyView?: boolean;
   proposal: IProposalState;
+  showNotification: typeof showNotification;
   stakeProposal: typeof arcActions.stakeProposal;
   threshold: number;
-  approveStakingGens: typeof web3Actions.approveStakingGens;
   isPredictingFail: boolean;
   isPredictingPass: boolean;
 }
+
 const mapDispatchToProps = {
   stakeProposal: arcActions.stakeProposal,
+  showNotification
 };
 
 class PredictionBox extends React.Component<IProps, IState> {
@@ -70,7 +74,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public handleClickPreApprove = (event: any) => {
-    if (!checkNetworkAndWarn()) { return; }
+    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
     this.setState({ showApproveModal: false });
