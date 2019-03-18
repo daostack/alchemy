@@ -170,7 +170,7 @@ export interface IProposalState {
   state: ProposalStates;
   submittedTime: number;
   title: string;
-  transactionState: TransactionStates;
+  ITransactionState: TransactionStates;
   votes: Array<IVoteState | string>; // Either normalized (string) or denormalized (object)
   votesYes: number;
   votesNo: number;

@@ -126,17 +126,18 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       [css.voteControls]: true
     });
 
-    const tipContent = (vote: IProposalOutcome) =>
-      !currentAccountState ?
-        "Cannot vote - please log in" :
-      currentVote ?
-        "Can't change your vote" :
-      !currentAccountState.reputation ?
-        "Voting requires reputation in " + dao.name :
-      isVoting ?
-        "Warning: Voting for this proposal is already in progress" :
-        `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
-    ;
+    // TODO: not using this? If so, we can remove these commented lines
+    // const tipContent = (vote: IProposalOutcome) =>
+    //   !currentAccountState ?
+    //     "Cannot vote - please log in" :
+    //   currentVote ?
+    //     "Can't change your vote" :
+    //   !currentAccountState.reputation ?
+    //     "Voting requires reputation in " + dao.name :
+    //   isVoting ?
+    //     "Warning: Voting for this proposal is already in progress" :
+    //     `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
+    // ;
 
     if (!buttonsOnly) {
       return (

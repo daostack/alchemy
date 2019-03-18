@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalStage, IProposalState } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalStage, IProposalState, ITransactionUpdate } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
@@ -11,7 +11,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 //@ts-ignore
 import { Modal } from "react-router-modal";
-import { showNotification } from "reducers/notifications";
+import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./PreTransactionModal.scss";
 

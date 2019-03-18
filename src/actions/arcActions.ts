@@ -1,16 +1,9 @@
-import { DAO, IProposalOutcome } from "@daostack/client";
-import BigNumber from "bignumber.js";
-import BN = require("bn.js");
-import { push } from "react-router-redux";
-import { IRootState } from "reducers/index";
-import { Dispatch } from "redux";
-import * as Redux from "redux";
-import { ThunkAction } from "redux-thunk";
-import { first, take } from "rxjs/operators";
-import Web3 = require("web3");
-
+import { DAO, IProposalOutcome, ITransactionState, ITransactionUpdate } from "@daostack/client";
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { getArc } from "arc";
+import BN = require("bn.js");
+import Util from "lib/util";
+import { push } from "react-router-redux";
 import {
   ActionTypes,
   anyRedemptions,
@@ -24,8 +17,14 @@ import {
   RewardType,
   VoteOptions,
 } from "reducers/arcReducer";
+import { IRootState } from "reducers/index";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { Dispatch } from "redux";
+import * as Redux from "redux";
+import { ThunkAction } from "redux-thunk";
+import { first, take } from "rxjs/operators";
 import * as schemas from "schemas";
-import Util from "lib/util";
+import Web3 = require("web3");
 
 async function getRedemptions(votingMachineInstance: any, proposalInstance: any, proposal: any, accountAddress: string): Promise<IRedemptionState> {
   throw Error(`Not ported to the new client lib yet`);
@@ -120,7 +119,17 @@ export function createProposal(
 export function executeProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: Dispatch<any>) => {
     const arc = getArc();
-    await arc.dao(avatarAddress).proposal(proposalId).execute().pipe(first()).toPromise();
+    // TODO: the subscription should defined in a separate contant so it can be reuse
+    await arc.dao(avatarAddress).proposal(proposalId).execute()
+      .subscribe((update: ITransactionUpdate<any>) => {
+        let msg: string;
+        if (update.state === ITransactionState.Sent) {
+          msg = `Transaction sent!`;
+        } else {
+          msg = `Transaction processed succesfully (with ${update.confirmations} confirmation)`;
+        }
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      });
   };
 }
 
