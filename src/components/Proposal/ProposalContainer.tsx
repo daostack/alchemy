@@ -300,9 +300,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {!this.props.detailView ?
               <div className={executeButtonClass}>
                 {proposal.stage === IProposalStage.PreBoosted ?
-                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
                     <img src="/assets/images/Icon/boost.svg"/>
-                    <span> Boost</span>
+                    <span>Boost</span>
                   </button>
                   :
                   <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
@@ -397,10 +397,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
           {this.props.detailView ?
               <div className={css.stateChange}>
-                {proposal.stage == IProposalStage.PreBoosted ?
-                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)}>
+                {proposal.stage === IProposalStage.PreBoosted ?
+                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
                     <img src="/assets/images/Icon/boost.svg"/>
-                    <span> Boost</span>
+                    <span>Boost</span>
                   </button>
                   : executable ?
                   <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
