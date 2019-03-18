@@ -235,7 +235,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                         </div>
                       : <div><strong>Social accounts:</strong></div>
                     }
-                    {!editing && Object.keys(accountProfile.socialURLs).length == 0 ? "None connected" :
+                    {!editing && Object.keys(accountProfile.socialURLs).length === 0 ? "None connected" :
                       <div>
                         <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
                         <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />

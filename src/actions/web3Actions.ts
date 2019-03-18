@@ -11,80 +11,6 @@ import { AsyncActionSequence, IAsyncAction } from "./async";
 
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
-// TODO: remove this commented function eventually (leaving it for now for reference)
-// export function initializeWeb3() {
-//   return async (dispatch: Redux.Dispatch<any>, getState: Function): Promise<any> => {
-//     dispatch({ll
-//       type: ActionTypes.WEB3_CONNECT,
-//       sequence: AsyncActionSequence.Pending,
-//       operation: {
-//         message: "Connecting...",
-//         totalSteps: 1,
-//       },
-//     } as ConnectAction);
-//
-//     let web3: Web3;
-//
-//     try {
-//       web3 = await Util.getWeb3();
-//     } catch (e) {
-//       console.error(e);
-//       dispatch({
-//         type: ActionTypes.WEB3_CONNECT,
-//         sequence: AsyncActionSequence.Failure,
-//         operation: {
-//           message: `Failed to connect to web3`
-//         },
-//       } as ConnectAction);
-//
-//       return;
-//     }
-//
-//     const networkId = Number(await Util.getNetworkId());
-//     let accounts: string[]
-//     try {
-//       accounts = web3.eth.accounts
-//     } catch (err) {
-//       accounts = []
-//       console.log(`Error getting web3.eth.accounts: ${err.message}`)
-//     }
-//     const payload: IWeb3State = {
-//       accounts,
-//       currentAccountEthBalance: 0,
-//       currentAccountExternalTokenBalance: 0,
-//       currentAccountGenBalance: 0,
-//       currentAccountGenStakingAllowance: 0,
-//       ethAccountAddress: null as string,
-//       networkId,
-//     };
-//
-//     try {
-//       payload.ethAccountAddress = (await Util.defaultAccount()).toLowerCase();
-//     } catch (e) {
-//       dispatch({
-//         type: ActionTypes.WEB3_CONNECT,
-//         sequence: AsyncActionSequence.Success,
-//         operation: {
-//           message: `Connected to web3, but no default account selected.`
-//         },
-//         payload
-//       } as ConnectAction);
-//       return;
-//     }
-//
-//     payload.currentAccountEthBalance = Util.fromWei(await Util.getBalance(payload.ethAccountAddress));
-//
-//     dispatch({
-//       type: ActionTypes.WEB3_CONNECT,
-//       sequence: AsyncActionSequence.Success,
-//       operation: {
-//         message: "Connected to web3!"
-//       },
-//       payload
-//     } as ConnectAction);
-//   };
-// }
-
 export function setCurrentAccountAddress(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const payload = {
@@ -110,11 +36,17 @@ export function setCurrentAccount(accountAddress: string) {
 
     let action;
 
+    // reset the current account to default values
     action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
       payload
     };
     dispatch(action);
+
+    // if the accountAddress is undefined, we are done
+    if (accountAddress === undefined) {
+      return;
+    }
 
     const arc = getArc();
     const balance = await Util.getBalance(accountAddress);

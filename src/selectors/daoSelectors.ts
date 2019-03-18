@@ -1,13 +1,10 @@
-import * as moment from "moment";
 import { denormalize } from "normalizr";
-import { createSelector } from "reselect";
-
 import { IRootState } from "reducers";
 import { IProposalState, ProposalStates } from "reducers/arcReducer";
+import { createSelector } from "reselect";
 import * as schemas from "schemas";
 
 const getArcEntities = (state: IRootState) => state.arc;
-const getDaos = (state: IRootState) => state.arc.daos;
 const getDao = (state: IRootState, props: any) => state.arc.daos[props.match.params.daoAvatarAddress];
 
 const getDaoProposals = createSelector(
@@ -23,7 +20,7 @@ const getDaoProposals = createSelector(
 export const createBoostedProposalsSelector = () => createSelector(
   [ getDaoProposals ],
   (proposals) => proposals.filter((proposal: IProposalState) =>
-    proposal.state === ProposalStates.Boosted || proposal.state == ProposalStates.QuietEndingPeriod
+    proposal.state === ProposalStates.Boosted || proposal.state === ProposalStates.QuietEndingPeriod
   )
 );
 
