@@ -374,7 +374,7 @@ export default (props: IProps) => {
   return <Subscribe observable={observable}>{
     (state: IObservableState<IMemberState>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal...</div>;
+        return <div>Loading votebox...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {

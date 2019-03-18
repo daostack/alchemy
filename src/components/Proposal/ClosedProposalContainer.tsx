@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalState, IRewardState, IStake, IVote, IProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -6,7 +6,7 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, default as Util } from "lib/util";
+import { default as Util, humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -14,7 +14,7 @@ import { IRootState } from "reducers";
 import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
+import { combineLatest, of, concat } from "rxjs";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import VoteBox from "./VoteBox";
@@ -23,7 +23,6 @@ interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState;
   daoEthBalance: BN;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
@@ -35,9 +34,7 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState;
   daoEthBalance: BN;
-  detailView?: boolean;
   currentAccountAddress: Address;
-  currentAccountState: IMemberState;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
@@ -48,13 +45,10 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const proposal = ownProps.proposal;
   const dao = ownProps.dao;
 
-  let currentAccountState = ownProps.currentAccountState;
-
   return {
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccountAddress: ownProps.currentAccountAddress,
-    currentAccountState,
     dao,
     daoEthBalance: ownProps.daoEthBalance,
     proposal,
@@ -109,7 +103,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentAccountAddress,
       dao,
       daoEthBalance,
-      detailView,
       proposal,
       rewardsForCurrentUser,
       stakesOfCurrentUser,
@@ -129,135 +122,129 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const redeemable = accountHasRewards || beneficiaryHasRewards;
 
-    if (proposal) {
-      // TODO: check if the commented lines are represented correctly in the line below
-      // const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
-      const proposalClass = classNames({
-        [css.proposal]: true,
-        [css.closedProposal]: true,
-        [css.failedProposal]: proposalFailed(proposal),
-        [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: redeemable
-      });
+    const proposalClass = classNames({
+      [css.proposal]: true,
+      [css.closedProposal]: true,
+      [css.failedProposal]: proposalFailed(proposal),
+      [css.passedProposal]: proposalPassed(proposal),
+      [css.redeemable]: redeemable
+    });
 
-      let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
+    let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
 
-      let currentVote: IVote;
-      if (votesOfCurrentUser.length > 0) {
-        currentVote = votesOfCurrentUser[0];
-        currentAccountVote = currentVote.outcome;
-        currentAccountVoteAmount = currentVote.amount;
-      }
+    let currentVote: IVote;
+    if (votesOfCurrentUser.length > 0) {
+      currentVote = votesOfCurrentUser[0];
+      currentAccountVote = currentVote.outcome;
+      currentAccountVoteAmount = currentVote.amount;
+    }
 
-      let currentStake: IStake;
-      if (stakesOfCurrentUser.length > 0) {
-        currentStake = stakesOfCurrentUser[0];
-      }
-      if (currentStake) {
-        currentAccountPrediction = currentStake.outcome;
-        currentAccountStakeAmount = currentStake.amount;
-      }
+    let currentStake: IStake;
+    if (stakesOfCurrentUser.length > 0) {
+      currentStake = stakesOfCurrentUser[0];
+    }
+    if (currentStake) {
+      currentAccountPrediction = currentStake.outcome;
+      currentAccountStakeAmount = currentStake.amount;
+    }
 
-      const myActionsClass = classNames({
-        [css.myActions]: true,
-        [css.iVoted]: currentAccountVote !== 0,
-        [css.failVote]: currentAccountVote === IProposalOutcome.Fail,
-        [css.passVote]: currentAccountVote === IProposalOutcome.Pass,
-        [css.iStaked]: currentAccountPrediction !== 0,
-        [css.forStake]: currentAccountPrediction === IProposalOutcome.Pass,
-        [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
-      });
+    const myActionsClass = classNames({
+      [css.myActions]: true,
+      [css.iVoted]: currentAccountVote !== 0,
+      [css.failVote]: currentAccountVote === IProposalOutcome.Fail,
+      [css.passVote]: currentAccountVote === IProposalOutcome.Pass,
+      [css.iStaked]: currentAccountPrediction !== 0,
+      [css.forStake]: currentAccountPrediction === IProposalOutcome.Pass,
+      [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
+    });
 
-      const closeReasonClass = classNames({
-        [css.closeReason]: true,
-        [css.decisionPassed]: proposalPassed(proposal),
-        [css.decisionFailed]: proposalFailed(proposal)
-      });
+    const closeReasonClass = classNames({
+      [css.closeReason]: true,
+      [css.decisionPassed]: proposalPassed(proposal),
+      [css.decisionFailed]: proposalFailed(proposal)
+    });
 
-      let closeReason = "Time out";
-      switch (proposal.executionState) {
-        case IExecutionState.BoostedBarCrossed:
-        case IExecutionState.QueueBarCrossed:
-        case IExecutionState.PreBoostedBarCrossed:
-          closeReason = "Absolute Majority";
-          break;
-        case IExecutionState.BoostedTimeOut:
-          closeReason = "Relative Majority";
-          break;
-      }
+    let closeReason = "Time out";
+    switch (proposal.executionState) {
+      case IExecutionState.BoostedBarCrossed:
+      case IExecutionState.QueueBarCrossed:
+      case IExecutionState.PreBoostedBarCrossed:
+        closeReason = "Absolute Majority";
+        break;
+      case IExecutionState.BoostedTimeOut:
+        closeReason = "Relative Majority";
+        break;
+    }
 
-      return (
-        <div className={proposalClass + " " + css.clearfix}>
-          <div className={css.proposalCreator}>
-            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
-            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
-          </div>
-          <div className={css.endDate}>
-            {closingTime(proposal).format("MMM D, YYYY")}
-          </div>
-          <div className={css.title}>
-            <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
-          </div>
-          <div className={css.votes}>
-              <VoteBox
-                isVotingNo={false}
-                isVotingYes={false}
-                currentVote={currentAccountVote}
-                currentAccountAddress={currentAccountAddress}
-                dao={dao}
-                proposal={proposal}
-                historyView={true}
-              />
-          </div>
-          <div className={css.predictions}>
-              <PredictionBox
-                isPredictingFail={false}
-                isPredictingPass={false}
-                beneficiaryProfile={beneficiaryProfile}
-                currentPrediction={currentAccountPrediction}
-                currentStake={currentAccountStakeAmount}
-                currentAccountGens={new BN(0)}
-                currentAccountGenStakingAllowance={new BN(1000000)}
-                dao={dao}
-                proposal={proposal}
-                threshold={0}
-                approveStakingGens={null}
-                historyView={true}
-              />
-          </div>
-          <div className={closeReasonClass}>
-            <div className={css.decisionPassed}>
-              <img src="/assets/images/Icon/vote/for.svg"/>
-              <span>Passed</span>
-              <div className={css.decisionReason}>
-                <span>{closeReason}</span>
-              </div>
-            </div>
-            <div className={css.decisionFailed}>
-              <img src="/assets/images/Icon/vote/against.svg"/>
-              <span>Failed</span>
-              <div className={css.decisionReason}>
-                <span>{closeReason}</span>
-              </div>
+    return (
+      <div className={proposalClass + " " + css.clearfix}>
+        <div className={css.proposalCreator}>
+          <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
+          <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
+        </div>
+        <div className={css.endDate}>
+          {closingTime(proposal).format("MMM D, YYYY")}
+        </div>
+        <div className={css.title}>
+          <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
+        </div>
+        <div className={css.votes}>
+            <VoteBox
+              isVotingNo={false}
+              isVotingYes={false}
+              currentVote={currentAccountVote}
+              currentAccountAddress={currentAccountAddress}
+              dao={dao}
+              proposal={proposal}
+              historyView={true}
+            />
+        </div>
+        <div className={css.predictions}>
+            <PredictionBox
+              isPredictingFail={false}
+              isPredictingPass={false}
+              beneficiaryProfile={beneficiaryProfile}
+              currentPrediction={currentAccountPrediction}
+              currentStake={currentAccountStakeAmount}
+              currentAccountGens={new BN(0)}
+              currentAccountGenStakingAllowance={new BN(1000000)}
+              dao={dao}
+              proposal={proposal}
+              threshold={0}
+              approveStakingGens={null}
+              historyView={true}
+            />
+        </div>
+        <div className={closeReasonClass}>
+          <div className={css.decisionPassed}>
+            <img src="/assets/images/Icon/vote/for.svg"/>
+            <span>Passed</span>
+            <div className={css.decisionReason}>
+              <span>{closeReason}</span>
             </div>
           </div>
-          <div className={myActionsClass}>
-            <div className={css.myVote}>
-              <span>{Util.fromWei(currentAccountVoteAmount).toFixed(2)} Rep</span>
-              <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
-              <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
-            </div>
-            <div className={css.myStake}>
-              <span>{Util.fromWei(currentAccountStakeAmount).toFixed(2)} GEN</span>
-              <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
-              <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+          <div className={css.decisionFailed}>
+            <img src="/assets/images/Icon/vote/against.svg"/>
+            <span>Failed</span>
+            <div className={css.decisionReason}>
+              <span>{closeReason}</span>
             </div>
           </div>
         </div>
-      );
-    } else {
-      return (<div>Loading proposal... </div>);
-    }
+        <div className={myActionsClass}>
+          <div className={css.myVote}>
+            <span>{Util.fromWei(currentAccountVoteAmount).toFixed(2)} Rep</span>
+            <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
+            <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
+          </div>
+          <div className={css.myStake}>
+            <span>{Util.fromWei(currentAccountStakeAmount).toFixed(2)} GEN</span>
+            <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
+            <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 
@@ -268,32 +255,28 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
 
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state(), // the list of pre-boosted proposals
-    props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null),
-    // TODO: filter by beneficiary - see https://github.com/daostack/subgraph/issues/60
-    // arc.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress})
-    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({}) : of([]),
+    dao.proposal(props.proposalId).state(),
+    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
-    dao.ethBalance()
+    concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IMemberState, IRewardState[], IStake[], IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal</div>;
+        return <div>Loading proposal {props.proposalId.substr(0, 6)}...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
         const proposal = state.data[0];
-        const rewards = state.data[2];
-        const stakes = state.data[3];
-        const votes = state.data[4];
+        const rewards = state.data[1];
+        const stakes = state.data[2];
+        const votes = state.data[3];
         return <ConnectedProposalContainer
           currentAccountAddress={props.currentAccountAddress}
-          currentAccountState={state.data[1]}
           proposal={proposal}
           dao={props.dao}
-          daoEthBalance={state.data[5]}
+          daoEthBalance={state.data[4]}
           rewardsForCurrentUser={rewards}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}

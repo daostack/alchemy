@@ -15,6 +15,7 @@ import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 const emptyProposal: IProposalState = {
+  accountsWithUnclaimedRewards: [],
   activationTime: 0,
   beneficiary: null,
   boostedAt: 0,
@@ -55,6 +56,7 @@ const emptyProposal: IProposalState = {
   url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
+  votesCount: 0,
   winningOutcome: IProposalOutcome.Fail,
   votingMachine: null
 };
