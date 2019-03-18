@@ -27,8 +27,8 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
         <div>
           <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
 
-          <div className={css.proposalsHeader}>
-            Executed Proposals
+          <div className={css.daoHistoryHeader}>
+            History
           </div>
           <div className={css.proposalsContainer}>
             <div className={css.closedProposalsHeader}>
