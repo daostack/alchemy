@@ -20,6 +20,7 @@ import { Address, IDAOState, IMemberState } from "@daostack/client";
 
 interface IStateProps {
   accountAddress: string;
+  avatarSize: number;
   dao: IDAOState;
   detailView?: boolean;
   historyView?: boolean;
@@ -68,7 +69,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, dao, profile, reputation } = this.props;
+    const { accountAddress, avatarSize, dao, profile, reputation } = this.props;
 
     const targetAccountClass = classNames({
       [css.detailView]: this.props.detailView,
@@ -79,7 +80,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
     return (
       <div className={targetAccountClass}>
         <div className={css.avatar}>
-          <AccountImage accountAddress={accountAddress} />
+          <AccountImage accountAddress={accountAddress} avatarSize={avatarSize}/>
         </div>
         <div className={css.accountInfo}>
           <div className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} /></div>
