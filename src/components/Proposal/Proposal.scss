@@ -622,7 +622,7 @@ button.disabled {
 }
 
 .detailView .voteControls {
-    width: 240px;
+    width: 300px;
     text-align: center;
     position: relative;
     height: 140px;
@@ -630,9 +630,24 @@ button.disabled {
     margin: 0 auto;
     padding-top: 70px;
 
+	span {
+		position: relative;
+		width: 70px;
+		text-align: left;
+		margin-left: 0;
+		display: block;
+
+		img {
+			top: -10px;
+			left: -32px;
+			width: 18px;
+
+		}
+	}
 
 	.voteUp {
 		height: auto;
+	    margin-bottom: 10px;
 	}
 
     .voteDivider {
