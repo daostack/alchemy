@@ -122,12 +122,12 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
   }>;
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
-  return async (dispatch: Redux.Dispatch<any>) => {
+  return async (dispatch: Redux.Dispatch<any>, ) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    const observer = operationNotifierObserver(dispatch, "Statke");
+    const observer = operationNotifierObserver(dispatch, "Stake");
     // @ts-ignore
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subsribe(...observer);
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subscribe(...observer);
   };
 }
 
