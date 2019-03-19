@@ -62,7 +62,7 @@ export function createProposal(
       // TODO: use the Option stages of the client lib to communicate about the progress
       const observer = operationNotifierObserver(dispatch, "Create proposal");
       // @ts-ignore
-      await dao.createProposal(proposalOptions.subscribe(...observer));
+      await dao.createProposal(proposalOptions).subscribe(...observer);
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
