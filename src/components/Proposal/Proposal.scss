@@ -222,6 +222,24 @@ button.disabled {
     top: 0px;
 }
 
+.predictions h3 {
+	display: none;
+}
+
+.detailView .predictions h3 {
+	display: block;
+	border-bottom: 1px solid rgba(191, 203, 213, 1.000);
+	color: rgba(104, 155, 214, 1.000);
+	width: 100%;
+	position: absolute;
+	top: -20px;
+
+	span {
+		padding: 10px;
+		font-size: 21px;
+	}
+}
+
 .statusTitle {
 	display: none;
     position: absolute;
@@ -622,7 +640,7 @@ button.disabled {
 }
 
 .detailView .voteControls {
-    width: 240px;
+    width: 300px;
     text-align: center;
     position: relative;
     height: 140px;
@@ -630,9 +648,24 @@ button.disabled {
     margin: 0 auto;
     padding-top: 70px;
 
+	span {
+		position: relative;
+		width: 70px;
+		text-align: left;
+		margin-left: 0;
+		display: block;
+
+		img {
+			top: -10px;
+			left: -32px;
+			width: 18px;
+
+		}
+	}
 
 	.voteUp {
 		height: auto;
+	    margin-bottom: 10px;
 	}
 
     .voteDivider {
@@ -1294,6 +1327,19 @@ button.disabled {
 	}
 }
 
+.detailView .enablePredictions {
+	display: block;
+    width: 100%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-align: right;
+
+    button {
+    	display: inline-block;
+    }
+}
+
 .proposalLabel {
 	position: absolute;
 	top: -26px;
@@ -1387,7 +1433,7 @@ button.disabled {
 		margin: 0 1px;
 		display: inline-block;
 		width: 60px;
-		top: 8px;
+		top: 0;
 
 		strong {
 			opacity: 1;
@@ -1693,7 +1739,8 @@ button.cancelPrediction {
 }
 
 .detailView.predictions {
-	padding-top: 80px;
+	padding-top: 50px;
+	padding-bottom: 40px;
 
 	.stakes span {
 		color: rgba(0, 28, 53, 1.000);
@@ -1742,6 +1789,7 @@ button.cancelPrediction {
 .detailView .stakes {
 	position: relative;
 	width: 85%;
+	margin-top: 20px;
 	margin-left: 28px;
 
 	.disabledPredictions {
@@ -1766,7 +1814,8 @@ button.cancelPrediction {
 
 	.stakesFor, .stakesAgainst {
 		position: absolute;
-		bottom: 0;
+		top: 21px;
+		left: 3px;
 	}
 
 	.forBar, .againstBar {
@@ -1785,8 +1834,8 @@ button.cancelPrediction {
 
 	img {
 		position: absolute;
-		left: -28px;
-		top: -11px;
+		left: -32px;
+		top: -14px;
 		height: 20px;
 		width: 20px;
 	}
