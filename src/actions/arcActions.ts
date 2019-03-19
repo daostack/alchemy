@@ -6,33 +6,13 @@ import Util from "lib/util";
 import { push } from "react-router-redux";
 import {
   ActionTypes,
-  anyRedemptions,
-  IAccountState,
-  IProposalState as IProposalStateLegacy,
   IRedemptionState,
-  IStakeState,
-  IVoteState,
-  newAccount,
-  ProposalStates,
-  RewardType,
-  VoteOptions,
 } from "reducers/arcReducer";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
-import { first, take } from "rxjs/operators";
-import * as schemas from "schemas";
-import Web3 = require("web3");
-
-async function getRedemptions(votingMachineInstance: any, proposalInstance: any, proposal: any, accountAddress: string): Promise<IRedemptionState> {
-  throw Error(`Not ported to the new client lib yet`);
-}
-
-async function getProposalRedemptions(proposal: IProposalStateLegacy, state: IRootState): Promise<{ entities: any, redemptions: string[] }> {
-  throw Error(`Not ported to the new client lib yet`);
-}
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
@@ -58,22 +38,6 @@ export function createProposal(
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
 
-      // TODO: leave this commented code - we may want to re-use it later in the light of graph-node problems
-      // const submittedTime = Math.round((new Date()).getTime() / 1000);
-      // Save the proposal title, description and submitted time on the server
-      // try {
-      //   const response = await axios.post(process.env.API_URL + "/api/proposals", {
-      //     daoAvatarAddress,
-      //     descriptionHash,
-      //     description,
-      //     submittedAt: submittedTime,
-      //     title,
-      //   });
-      // } catch (e) {
-      //   console.error(e);
-      //   throw e
-      // }
-
       dispatch({
         type: ActionTypes.ARC_CREATE_PROPOSAL,
         sequence: AsyncActionSequence.Pending,
@@ -96,15 +60,8 @@ export function createProposal(
       };
 
       // TODO: use the Option stages of the client lib to communicate about the progress
-      await dao.createProposal(proposalOptions).subscribe((update: ITransactionUpdate<any>) => {
-        let msg: string;
-        if (update.state === ITransactionState.Sent) {
-          msg = `Create proposal transaction sent!`;
-        } else {
-          msg = `Create proposal transaction processed succesfully (with ${update.confirmations} confirmation)`;
-        }
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      });
+      await dao.createProposal(proposalOptions)
+        .subscribe(operationNotifierSubscription(dispatch));
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
@@ -125,15 +82,7 @@ export function executeProposal(avatarAddress: string, proposalId: string) {
     const arc = getArc();
     // TODO: the subscription should defined in a separate contant so it can be reuse
     await arc.dao(avatarAddress).proposal(proposalId).execute()
-      .subscribe((update: ITransactionUpdate<any>) => {
-        let msg: string;
-        if (update.state === ITransactionState.Sent) {
-          msg = `Execute transaction sent!`;
-        } else {
-          msg = `Execute transaction processed succesfully (with ${update.confirmations} confirmation)`;
-        }
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      });
+      .subscribe(operationNotifierSubscription(dispatch));
   };
 }
 
@@ -154,15 +103,8 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
     //await proposalObj.vote(voteOption).pipe(first()).toPromise();
-    await proposalObj.vote(voteOption).subscribe((update: ITransactionUpdate<any>) => {
-        let msg: string;
-        if (update.state === ITransactionState.Sent) {
-          msg = `Vote transaction sent!`;
-        } else {
-          msg = `Vote transaction processed succesfully (with ${update.confirmations} confirmation)`;
-        }
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      });
+    await proposalObj.vote(voteOption)
+      .subscribe(operationNotifierSubscription(dispatch));
   };
 }
 
@@ -181,15 +123,8 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subscribe((update: ITransactionUpdate<any>) => {
-        let msg: string;
-        if (update.state === ITransactionState.Sent) {
-          msg = `Stake transaction sent!`;
-        } else {
-          msg = `Stake transaction processed succesfully (with ${update.confirmations} confirmation)`;
-        }
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      });
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount))
+      .subscribe(operationNotifierSubscription(dispatch));
   };
 }
 
@@ -210,14 +145,16 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.claimRewards(accountAddress).subscribe((update: ITransactionUpdate<any>) => {
-        let msg: string;
-        if (update.state === ITransactionState.Sent) {
-          msg = `Redeem transaction sent!`;
-        } else {
-          msg = `Redeem transaction processed succesfully (with ${update.confirmations} confirmation)`;
-        }
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      });
+    await proposalObj.claimRewards(accountAddress).subscribe(operationNotifierSubscription(dispatch));
   };
 }
+
+const operationNotifierSubscription = (dispatch: any) => (update: ITransactionUpdate<any>) => {
+  let msg: string;
+  if (update.state === ITransactionState.Sent) {
+    msg = `Redeem transaction sent!`;
+  } else {
+    msg = `Redeem transaction processed succesfully (with ${update.confirmations} confirmation)`;
+  }
+  dispatch(showNotification(NotificationStatus.Success, msg));
+};
