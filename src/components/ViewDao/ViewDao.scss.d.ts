@@ -24,7 +24,6 @@ export const daoName: string;
 export const navigation: string;
 export const notification: string;
 export const daoHoldings: string;
-export const daoHeadings: string;
 export const nav: string;
 export const borderBottom: string;
 export const columnHeader: string;
