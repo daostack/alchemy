@@ -53,10 +53,7 @@ export function createProposal(
     };
 
     try {
-      // TODO: the client lib should (and will) provide and set the default account: https://github.com/daostack/client/issues/42
-      // const defaultAccount = await Arc.Utils.getDefaultAccount()
       const arc = getArc();
-      // arc.web3.eth.defaultAccount = defaultAccount.toLowerCase()
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
@@ -99,8 +96,15 @@ export function createProposal(
       };
 
       // TODO: use the Option stages of the client lib to communicate about the progress
-      await dao.createProposal(proposalOptions)
-        .pipe(take(2)).toPromise();
+      await dao.createProposal(proposalOptions).subscribe((update: ITransactionUpdate<any>) => {
+        let msg: string;
+        if (update.state === ITransactionState.Sent) {
+          msg = `Create proposal transaction sent!`;
+        } else {
+          msg = `Create proposal transaction processed succesfully (with ${update.confirmations} confirmation)`;
+        }
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      });
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
@@ -124,9 +128,9 @@ export function executeProposal(avatarAddress: string, proposalId: string) {
       .subscribe((update: ITransactionUpdate<any>) => {
         let msg: string;
         if (update.state === ITransactionState.Sent) {
-          msg = `Transaction sent!`;
+          msg = `Execute transaction sent!`;
         } else {
-          msg = `Transaction processed succesfully (with ${update.confirmations} confirmation)`;
+          msg = `Execute transaction processed succesfully (with ${update.confirmations} confirmation)`;
         }
         dispatch(showNotification(NotificationStatus.Success, msg));
       });
@@ -149,7 +153,16 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.vote(voteOption).pipe(first()).toPromise();
+    //await proposalObj.vote(voteOption).pipe(first()).toPromise();
+    await proposalObj.vote(voteOption).subscribe((update: ITransactionUpdate<any>) => {
+        let msg: string;
+        if (update.state === ITransactionState.Sent) {
+          msg = `Vote transaction sent!`;
+        } else {
+          msg = `Vote transaction processed succesfully (with ${update.confirmations} confirmation)`;
+        }
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      });
   };
 }
 
@@ -168,7 +181,15 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).pipe(first()).toPromise();
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subscribe((update: ITransactionUpdate<any>) => {
+        let msg: string;
+        if (update.state === ITransactionState.Sent) {
+          msg = `Stake transaction sent!`;
+        } else {
+          msg = `Stake transaction processed succesfully (with ${update.confirmations} confirmation)`;
+        }
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      });
   };
 }
 
@@ -189,6 +210,14 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.claimRewards(accountAddress).pipe(first()).toPromise();
+    await proposalObj.claimRewards(accountAddress).subscribe((update: ITransactionUpdate<any>) => {
+        let msg: string;
+        if (update.state === ITransactionState.Sent) {
+          msg = `Redeem transaction sent!`;
+        } else {
+          msg = `Redeem transaction processed succesfully (with ${update.confirmations} confirmation)`;
+        }
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      });
   };
 }
