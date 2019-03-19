@@ -1,18 +1,23 @@
-import { IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
+import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util, { checkNetworkAndWarn } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 //@ts-ignore
 import { Modal } from "react-router-modal";
+import { IRootState } from "reducers";
 import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import { combineLatest, concat, of } from "rxjs";
+import { isStakePending } from "selectors/operations";
 
 import * as css from "./Proposal.scss";
 
@@ -22,20 +27,23 @@ interface IState {
   showPreStakeModal: boolean;
 }
 
-interface IProps {
+interface IContainerProps {
+  proposal: IProposalState;
   approveStakingGens: typeof web3Actions.approveStakingGens;
   beneficiaryProfile?: IProfileState;
-  currentPrediction: number;
-  currentStake: BN;
-  currentAccountGens: BN;
-  currentAccountGenStakingAllowance: BN;
+  currentAccountAddress: Address;
   dao: IDAOState;
   detailView?: boolean;
   historyView?: boolean;
-  proposal: IProposalState;
-  showNotification: typeof showNotification;
-  stakeProposal: typeof arcActions.stakeProposal;
   threshold: number;
+}
+
+interface IDispatchProps {
+  stakeProposal: typeof arcActions.stakeProposal;
+  showNotification: typeof showNotification;
+}
+
+interface IStateProps {
   isPredictingFail: boolean;
   isPredictingPass: boolean;
 }
@@ -43,6 +51,21 @@ interface IProps {
 const mapDispatchToProps = {
   stakeProposal: arcActions.stakeProposal,
   showNotification
+};
+
+type IProps = IStateProps & IDispatchProps & IContainerProps & {
+  currentAccountGens: BN;
+  currentAccountGenStakingAllowance: BN;
+  stakesOfCurrentUser: IStake[];
+};
+
+const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
+
+  return {
+    ...ownProps,
+    isPredictingPass: isStakePending(ownProps.proposal.id, VoteOptions.Yes)(state),
+    isPredictingFail: isStakePending(ownProps.proposal.id, VoteOptions.No)(state),
+  };
 };
 
 class PredictionBox extends React.Component<IProps, IState> {
@@ -83,7 +106,6 @@ class PredictionBox extends React.Component<IProps, IState> {
   public render() {
     const {
       beneficiaryProfile,
-      currentPrediction,
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
@@ -93,7 +115,8 @@ class PredictionBox extends React.Component<IProps, IState> {
       isPredictingFail,
       isPredictingPass,
       threshold,
-      stakeProposal
+      stakeProposal,
+      stakesOfCurrentUser
     } = this.props;
 
     const {
@@ -101,6 +124,15 @@ class PredictionBox extends React.Component<IProps, IState> {
       showApproveModal,
       showPreStakeModal
     } = this.state;
+
+    let currentStake: IStake;
+    let currentAccountPrediction = 0;
+    if (stakesOfCurrentUser.length > 0) {
+      currentStake = stakesOfCurrentUser[0];
+    }
+    if (currentStake) {
+      currentAccountPrediction = currentStake.outcome;
+    }
 
     const isPredicting = isPredictingFail || isPredictingPass;
 
@@ -142,7 +174,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     const passWidth = stakesFor <= 0.0001 ? 0 : Math.max(stakesFor / maxWidth * 100, 3);
     const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst / maxWidth * 100, 3);
 
-    let wrapperClass = classNames({
+    const wrapperClass = classNames({
       [css.detailView] : detailView,
       [css.historyView] : historyView,
       [css.isPassing] : isPassing,
@@ -150,16 +182,16 @@ class PredictionBox extends React.Component<IProps, IState> {
       [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
     });
-    let stakeUpClass = classNames({
-      [css.predicted]: currentPrediction === VoteOptions.Yes,
+    const stakeUpClass = classNames({
+      [css.predicted]: currentAccountPrediction === VoteOptions.Yes,
     });
-    let stakeDownClass = classNames({
-      [css.predicted]: currentPrediction === VoteOptions.No,
+    const stakeDownClass = classNames({
+      [css.predicted]: currentAccountPrediction === VoteOptions.No,
     });
 
     const hasGens = currentAccountGens.gt(new BN(0));
-    const disableStakePass = !hasGens || currentPrediction === VoteOptions.No;
-    const disableStakeFail = !hasGens || currentPrediction === VoteOptions.Yes;
+    const disableStakePass = !hasGens || currentAccountPrediction === VoteOptions.No;
+    const disableStakeFail = !hasGens || currentAccountPrediction === VoteOptions.Yes;
 
     const passPrediction = classNames({
       [css.passPrediction]: true,
@@ -184,7 +216,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     const tip = (prediction: VoteOptions) =>
       !hasGens ?
         "Insufficient GENs" :
-      currentPrediction === prediction ?
+      currentAccountPrediction === prediction ?
         "Can't change prediction" :
       isPredicting ?
         "Warning: Staking on this proposal is already in progress" :
@@ -357,4 +389,34 @@ class PredictionBox extends React.Component<IProps, IState> {
     );
   }
 }
-export default connect(null, mapDispatchToProps)(PredictionBox);
+
+const ConnectedPredictionBox = connect(mapStateToProps, mapDispatchToProps)(PredictionBox);
+
+export default (props: IContainerProps) => {
+
+  const arc = getArc();
+  const dao = arc.dao(props.dao.address);
+  const observable = combineLatest(
+    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN("0")),
+    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN("0")),
+    props.currentAccountAddress ? dao.proposal(props.proposal.id).stakes({ staker: props.currentAccountAddress}) : of([]),
+  );
+  return <Subscribe observable={observable}>{
+    (state: IObservableState<[BN, any, IStake[]]>): any => {
+      if (state.isLoading) {
+        return <div>Loading PredictionBox</div>;
+      } else if (state.error) {
+        return <div>{ state.error.message }</div>;
+      } else {
+        const currentAccountGens = state.data[0] || new BN(0);
+        const currentAccountGenStakingAllowance = state.data[1] ? new BN(state.data[1].amount) : new BN(0);
+        const stakes = state.data[2];
+        return <ConnectedPredictionBox {...props }
+          currentAccountGens={currentAccountGens}
+          currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+          stakesOfCurrentUser={stakes}
+          />;
+      }
+    }
+  }</Subscribe>;
+};
