@@ -29,7 +29,6 @@ interface IState {
 
 interface IContainerProps {
   proposal: IProposalState;
-  approveStakingGens: typeof web3Actions.approveStakingGens;
   beneficiaryProfile?: IProfileState;
   currentAccountAddress: Address;
   dao: IDAOState;
@@ -41,6 +40,7 @@ interface IContainerProps {
 interface IDispatchProps {
   stakeProposal: typeof arcActions.stakeProposal;
   showNotification: typeof showNotification;
+  approveStakingGens: typeof web3Actions.approveStakingGens;
 }
 
 interface IStateProps {
@@ -49,6 +49,7 @@ interface IStateProps {
 }
 
 const mapDispatchToProps = {
+  approveStakingGens: web3Actions.approveStakingGens,
   stakeProposal: arcActions.stakeProposal,
   showNotification
 };
@@ -238,6 +239,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     );
 
     // If don't have any staking allowance, replace with button to pre-approve
+
     if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
@@ -397,11 +399,20 @@ export default (props: IContainerProps) => {
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
-  const observable = combineLatest(
-    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN("0")),
-    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN("0")),
-    props.currentAccountAddress ? dao.proposal(props.proposal.id).stakes({ staker: props.currentAccountAddress}) : of([]),
-  );
+  let observable;
+  if (props.currentAccountAddress) {
+    observable = combineLatest(
+      arc.GENToken().balanceOf(props.currentAccountAddress),
+      arc.allowance(props.currentAccountAddress),
+      dao.proposal(props.proposal.id).stakes({ staker: props.currentAccountAddress})
+    );
+  } else {
+    observable = combineLatest(
+      of(new BN("0")),
+      of(undefined),
+      of([]),
+    );
+  }
   return <Subscribe observable={observable}>{
     (state: IObservableState<[BN, any, IStake[]]>): any => {
       if (state.isLoading) {

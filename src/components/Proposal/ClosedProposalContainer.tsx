@@ -206,7 +206,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
             dao={dao}
             proposal={proposal}
             threshold={0}
-            approveStakingGens={null}
             historyView={true}
           />
         </div>

@@ -78,7 +78,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
 };
 
 interface IDispatchProps {
-  approveStakingGens: typeof web3Actions.approveStakingGens;
   executeProposal: typeof arcActions.executeProposal;
   redeemProposal: typeof arcActions.redeemProposal;
   showNotification: typeof showNotification;
@@ -86,7 +85,6 @@ interface IDispatchProps {
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
   executeProposal: arcActions.executeProposal,
   showNotification,
@@ -137,7 +135,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       proposal,
-      approveStakingGens,
       redeemProposal,
       executeProposal,
       isVotingNo,
@@ -454,7 +451,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
             dao={dao}
             proposal={proposal}
             threshold={threshold}
-            approveStakingGens={approveStakingGens}
             detailView={detailView}
           />
         </div>
