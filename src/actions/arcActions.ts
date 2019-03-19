@@ -60,8 +60,9 @@ export function createProposal(
       };
 
       // TODO: use the Option stages of the client lib to communicate about the progress
-      await dao.createProposal(proposalOptions)
-        .subscribe(operationNotifierSubscription(dispatch));
+      const observer = operationNotifierObserver(dispatch, "Create proposal");
+      // @ts-ignore
+      await dao.createProposal(proposalOptions.subscribe(...observer));
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
@@ -81,8 +82,9 @@ export function executeProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: Dispatch<any>) => {
     const arc = getArc();
     // TODO: the subscription should defined in a separate contant so it can be reuse
-    await arc.dao(avatarAddress).proposal(proposalId).execute()
-      .subscribe(operationNotifierSubscription(dispatch));
+    const observer = operationNotifierObserver(dispatch, "Execute proposal");
+    // @ts-ignore
+    await arc.dao(avatarAddress).proposal(proposalId).execute().subscribe(...observer);
   };
 }
 
@@ -102,9 +104,9 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    //await proposalObj.vote(voteOption).pipe(first()).toPromise();
-    await proposalObj.vote(voteOption)
-      .subscribe(operationNotifierSubscription(dispatch));
+    const observer = operationNotifierObserver(dispatch, "Vote");
+    // @ts-ignore
+    await proposalObj.vote(voteOption).subscribe(...observer);
   };
 }
 
@@ -123,8 +125,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount))
-      .subscribe(operationNotifierSubscription(dispatch));
+    const observer = operationNotifierObserver(dispatch, "Statke");
+    // @ts-ignore
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subsribe(...obsever);
   };
 }
 
@@ -142,19 +145,39 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   }>;
 
 export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  return async (dispatch: Redux.Dispatch<any>) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.claimRewards(accountAddress).subscribe(operationNotifierSubscription(dispatch));
+    const observer = operationNotifierObserver(dispatch, "Reward");
+    // @ts-ignore
+    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
   };
 }
 
-const operationNotifierSubscription = (dispatch: any) => (update: ITransactionUpdate<any>) => {
-  let msg: string;
-  if (update.state === ITransactionState.Sent) {
-    msg = `Redeem transaction sent!`;
-  } else {
-    msg = `Redeem transaction processed succesfully (with ${update.confirmations} confirmation)`;
-  }
-  dispatch(showNotification(NotificationStatus.Success, msg));
+/** use like this (unfortunatly you need the @ts-ignore)
+ * // @ts-ignore
+ * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
+ */
+const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription: string = "") => {
+
+  return [
+    (update: ITransactionUpdate<any>) => {
+      let msg: string;
+      if (update.state === ITransactionState.Sent) {
+        msg = `${txDescription} transaction sent!`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      } else if (update.confirmations === 0) {
+        msg = `${txDescription} transaction processed succesfully`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      } else if (update.confirmations === 3) {
+        msg = `${txDescription} transaction confirmed)`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      }
+    },
+    (err: Error) => {
+      let msg: string;
+      msg = `${txDescription}: transaction failed :-(`;
+      dispatch(showNotification(NotificationStatus.Failure, msg));
+    }
+  ];
 };
