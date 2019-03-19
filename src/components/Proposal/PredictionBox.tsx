@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 //@ts-ignore
 import { Modal } from "react-router-modal";
 import { VoteOptions } from "reducers/arcReducer";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 
 import * as css from "./Proposal.scss";
@@ -22,6 +23,7 @@ interface IState {
 }
 
 interface IProps {
+  approveStakingGens: typeof web3Actions.approveStakingGens;
   beneficiaryProfile?: IProfileState;
   currentPrediction: number;
   currentStake: BN;
@@ -31,14 +33,16 @@ interface IProps {
   detailView?: boolean;
   historyView?: boolean;
   proposal: IProposalState;
+  showNotification: typeof showNotification;
   stakeProposal: typeof arcActions.stakeProposal;
   threshold: number;
-  approveStakingGens: typeof web3Actions.approveStakingGens;
   isPredictingFail: boolean;
   isPredictingPass: boolean;
 }
+
 const mapDispatchToProps = {
   stakeProposal: arcActions.stakeProposal,
+  showNotification
 };
 
 class PredictionBox extends React.Component<IProps, IState> {
@@ -70,7 +74,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public handleClickPreApprove = (event: any) => {
-    if (!checkNetworkAndWarn()) { return; }
+    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
     this.setState({ showApproveModal: false });
@@ -147,10 +151,10 @@ class PredictionBox extends React.Component<IProps, IState> {
       [css.unconfirmedPrediction] : isPredicting,
     });
     let stakeUpClass = classNames({
-      [css.predicted]: currentPrediction == VoteOptions.Yes,
+      [css.predicted]: currentPrediction === VoteOptions.Yes,
     });
     let stakeDownClass = classNames({
-      [css.predicted]: currentPrediction == VoteOptions.No,
+      [css.predicted]: currentPrediction === VoteOptions.No,
     });
 
     const hasGens = currentAccountGens.gt(new BN(0));
@@ -205,6 +209,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
+          <h3><span>Predictions</span></h3>
           <div className={css.stakes}>
             <div className={css.clearfix}>
               <div className={css.stakesFor}>
@@ -258,7 +263,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 {
                  proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                   ? (
-                    tip(VoteOptions.No) != "" ?
+                    tip(VoteOptions.No) !== "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
                         {passButton}
                       </Tooltip> :
@@ -269,7 +274,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 {
                   proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                   ? (
-                      tip(VoteOptions.Yes) != "" ?
+                      tip(VoteOptions.Yes) !== "" ?
                         <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
                           {failButton}
                         </Tooltip> :
@@ -310,7 +315,7 @@ class PredictionBox extends React.Component<IProps, IState> {
           </div>
           <span className={css.boostedAmount}>
             {
-              proposal.stage == IProposalStage.Queued && stakingLeftToBoost > 0 ?
+              proposal.stage === IProposalStage.Queued && stakingLeftToBoost > 0 ?
                 <span>
                   <b>
                     <img src="/assets/images/Icon/Boost-slate.svg" />
@@ -326,7 +331,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               {
                proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                 ? (
-                  tip(VoteOptions.No) != "" ?
+                  tip(VoteOptions.No) !== "" ?
                     <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
                       {passButton}
                     </Tooltip> :
@@ -337,7 +342,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               {
                 proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
                 ? (
-                    tip(VoteOptions.Yes) != "" ?
+                    tip(VoteOptions.Yes) !== "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
                         {failButton}
                       </Tooltip> :

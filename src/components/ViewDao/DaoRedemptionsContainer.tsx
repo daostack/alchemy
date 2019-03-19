@@ -1,4 +1,4 @@
-import { Address, DAO, IDAOState, IRewardState, Proposal } from "@daostack/client";
+import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
@@ -38,16 +38,16 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       // ethReward += Util.fromWei(reward.amount);
     //   externalTokenReward += Util.fromWei(reward.amount);
       if (reward.tokensForStaker) {
-        genReward.iadd(reward.tokensForStaker);
+        genReward.iadd(new BN(reward.tokensForStaker));
       }
       if (reward.daoBountyForStaker) {
-        genReward.iadd(reward.daoBountyForStaker);
+        genReward.iadd(new BN(reward.daoBountyForStaker));
       }
       if (reward.reputationForVoter) {
-        reputationReward.iadd(reward.reputationForVoter);
+        reputationReward.iadd(new BN(reward.reputationForVoter));
         }
       if (reward.reputationForProposer) {
-        reputationReward.iadd(reward.reputationForProposer);
+        reputationReward.iadd(new BN(reward.reputationForProposer));
       }
     });
 

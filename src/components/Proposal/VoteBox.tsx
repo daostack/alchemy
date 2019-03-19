@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalStage, IProposalState, IProposalOutcome } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -7,10 +7,10 @@ import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util, { checkNetworkAndWarn} from "lib/util";
-import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-import { combineLatest, of } from "rxjs";
+import { showNotification } from "reducers/notifications";
+import { of } from "rxjs";
 import * as css from "./Proposal.scss";
 import VoteGraph from "./VoteGraph";
 
@@ -24,6 +24,7 @@ interface IContainerProps {
   historyView?: boolean;
   proposal: IProposalState;
   voteOnProposal: typeof arcActions.voteOnProposal;
+  showNotification: typeof showNotification;
   isVotingNo: boolean;
   isVotingYes: boolean;
 }
@@ -34,6 +35,7 @@ interface IState {
 }
 
 const mapDispatchToProps = {
+  showNotification,
   voteOnProposal: arcActions.voteOnProposal,
 };
 
@@ -49,7 +51,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
   }
 
   public handleClickVote(vote: number, event: any) {
-    if (!checkNetworkAndWarn()) { return; }
+    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
     const { currentAccountState } = this.props;
     if (currentAccountState.reputation) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
@@ -124,24 +126,25 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       [css.voteControls]: true
     });
 
-    const tipContent = (vote: IProposalOutcome) =>
-      !currentAccountState ?
-        "Cannot vote - please log in" :
-      currentVote ?
-        "Can't change your vote" :
-      !currentAccountState.reputation ?
-        "Voting requires reputation in " + dao.name :
-      isVoting ?
-        "Warning: Voting for this proposal is already in progress" :
-        `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
-    ;
+    // TODO: not using this? If so, we can remove these commented lines
+    // const tipContent = (vote: IProposalOutcome) =>
+    //   !currentAccountState ?
+    //     "Cannot vote - please log in" :
+    //   currentVote ?
+    //     "Can't change your vote" :
+    //   !currentAccountState.reputation ?
+    //     "Voting requires reputation in " + dao.name :
+    //   isVoting ?
+    //     "Warning: Voting for this proposal is already in progress" :
+    //     `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
+    // ;
 
     if (!buttonsOnly) {
       return (
         <div className={wrapperClass}>
           {this.state.showPreVoteModal ?
             <PreTransactionModal
-              actionType={this.state.currentVote == 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+              actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
               action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
               closeAction={this.closePreVoteModal.bind(this)}
               currentAccount={currentAccountState}
@@ -180,7 +183,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             <div className={css.voteDivider}>
               <div className={css.voteGraphs}>
                 { !this.props.detailView ?
-                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "
                 }
                 <div className={css.reputationTurnout}>
@@ -223,7 +226,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                   </div>
                 </div>
                 { this.props.detailView ?
-                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage == IProposalStage.Boosted} />
+                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "
                 }
               </div>

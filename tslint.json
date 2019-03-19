@@ -12,7 +12,6 @@
         "no-console": [true, "log", "debug"],
         "one-variable-per-declaration": false,
         "object-literal-sort-keys": false,
-        "triple-equals": false,
         "jsx-boolean-value": false,
         "jsx-no-multiline-js": false,
         "jsx-self-close": false,
