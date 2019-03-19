@@ -20,6 +20,8 @@
   margin: 3px 20px 0 15px;
 }
 
+
+
 .detailView.targetAccount {
   width: 35px;
   height: 35px;
@@ -30,6 +32,19 @@
     width: 35px;
     height: 35px;
   }
+
+  .avatar img.detailTransferDetailView {
+    height: 16px;
+    width: 16px;
+    top: 4px;
+  }
+}
+
+.detailTransferDetailView.targetAccount {
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  top: 4px;
 }
 
 .historyView.targetAccount {

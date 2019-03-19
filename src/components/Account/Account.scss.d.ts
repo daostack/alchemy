@@ -4,6 +4,7 @@ export const historyView: string;
 export const detailView: string;
 export const targetAccount: string;
 export const avatar: string;
+export const detailTransferDetailView: string;
 export const socialProof: string;
 export const accountInfo: string;
 export const name: string;

@@ -3,7 +3,7 @@ import * as React from "react";
 
 interface IProps {
   accountAddress: string;
-  avatarSize: number;
+  avatarSize?: number;
   className?: string;
 }
 
@@ -15,7 +15,7 @@ export default class AccountImage extends React.Component<IProps, null> {
     const dataURL = blockies.createDataURL({
       seed: accountAddress,
     });
-
+    
     return (<img src={dataURL} className={className} width={avatarSize} height={avatarSize}/>);
   }
 }

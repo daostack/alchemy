@@ -20,10 +20,11 @@ import { Address, IDAOState, IMemberState } from "@daostack/client";
 
 interface IStateProps {
   accountAddress: string;
-  avatarSize: number;
+  avatarSize?: number;
   dao: IDAOState;
   detailView?: boolean;
   historyView?: boolean;
+  detailTransferDetailView?: boolean;
   profile: IProfileState;
   reputation: BN;
   tokens: BN;
@@ -31,7 +32,9 @@ interface IStateProps {
 
 interface IOwnProps {
   accountAddress: Address;
+  avatarSize?: number;
   dao: IDAOState;
+  detailTransferDetailView?: boolean;
   detailView?: boolean;
   historyView?: boolean;
 }
@@ -69,9 +72,16 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, avatarSize, dao, profile, reputation } = this.props;
+    const { accountAddress, avatarSize, dao, detailTransferDetailView, profile, reputation } = this.props;
+
+    let className = " ";
+
+    if (detailTransferDetailView) {
+      className = css.detailTransferDetailView
+    }
 
     const targetAccountClass = classNames({
+      [css.detailTransferDetailView]: detailTransferDetailView,
       [css.detailView]: this.props.detailView,
       [css.historyView]: this.props.historyView,
       [css.targetAccount]: true
@@ -80,7 +90,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
     return (
       <div className={targetAccountClass}>
         <div className={css.avatar}>
-          <AccountImage accountAddress={accountAddress} avatarSize={avatarSize}/>
+          <AccountImage accountAddress={accountAddress} avatarSize={avatarSize} className={className}/>
         </div>
         <div className={css.accountInfo}>
           <div className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} /></div>
