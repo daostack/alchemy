@@ -62,7 +62,7 @@ export function createProposal(
       // TODO: use the Option stages of the client lib to communicate about the progress
       const observer = operationNotifierObserver(dispatch, "Create proposal");
       // @ts-ignore
-      await dao.createProposal(proposalOptions.subscribe(...observer));
+      await dao.createProposal(proposalOptions).subscribe(...observer);
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
@@ -122,12 +122,12 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
   }>;
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  return async (dispatch: Redux.Dispatch<any>) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Statke");
     // @ts-ignore
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subsribe(...obsever);
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subsribe(...observer);
   };
 }
 

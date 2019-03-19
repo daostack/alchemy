@@ -241,6 +241,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
+          <h3><span>Predictions</span></h3>
           <div className={css.stakes}>
             <div className={css.clearfix}>
               <div className={css.stakesFor}>
