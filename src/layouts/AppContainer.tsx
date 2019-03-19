@@ -8,6 +8,7 @@ import HomeContainer from "components/Home/HomeContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
+const promisify = require("es6-promisify");
 import * as History from "history";
 import HeaderContainer from "layouts/HeaderContainer";
 import * as React from "react";
@@ -19,16 +20,21 @@ import { Route, Switch } from "react-router-dom";
 import { ModalContainer, ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
+import { ConnectionStatus } from "reducers/web3Reducer";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
 interface IStateProps {
+  connectionStatus: ConnectionStatus;
   cookies: Cookies;
+  currentAccountAddress: string;
   history: History.History;
   sortedNotifications: INotificationsState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
+  connectionState: state.web3.connectionStatus,
+  currentAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
   sortedNotifications: sortedNotifications()(state),
 });
@@ -71,26 +77,34 @@ class AppContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
     // get the Arc object as early the lifetime of the app
     const arc = getArc();
+    let currentAccountAddress;
+    try {
+      // only set the account if the network is correct
+      // TODO: display big error if not on correct network
+      checkNetwork(arc.web3);
 
-    // once we have an account, or it changes, we notifiy the redux store about it
-    pollForAccountChanges(arc.web3).subscribe(
+      const accounts = await promisify(arc.web3.eth.getAccounts)();
+      currentAccountAddress = accounts[0];
+      if (currentAccountAddress && this.props.currentAccountAddress !== currentAccountAddress) {
+        this.props.setCurrentAccount(currentAccountAddress);
+      }
+    } catch (err) {
+      console.warn(err.message);
+      // TODO: this notification is NOT working: why?
+      showNotification(NotificationStatus.Failure, err.message);
+    }
+
+    // once we have an account, or it changes, we just refresh the page to make sure everything gets set correctly with the new account
+    pollForAccountChanges(arc.web3, currentAccountAddress).subscribe(
       (next: Address) => {
-        try {
-          checkNetwork(arc.web3);
-          // only set the account if the network is correct
-          this.props.setCurrentAccount(next);
-        } catch (err) {
-          console.warn(err.message);
-          this.props.setCurrentAccount(undefined);
-          // TODO: this notification is NOT working: why?
-          showNotification(NotificationStatus.Failure, err.message);
-        }
+        window.location.reload();
       }
     );
   }
 
   public render() {
     const {
+      connectionStatus,
       dismissNotification,
       showNotification,
       sortedNotifications,
@@ -102,27 +116,29 @@ class AppContainer extends React.Component<IProps, IState> {
       <div className={css.outer}>
         <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
-        <div className={css.container}>
-          <Route path="/" render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
+        { connectionStatus === ConnectionStatus.Pending ? <div>Checking connection status...</div> :
+          <div className={css.container}>
+            <Route path="/" render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
 
-          <Switch>
-            <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-            <Route exact={true} path="/daos" component={DaoListContainer} />
-            <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
-            <Route path="/" component={HomeContainer} />
-          </Switch>
-          <ModalRoute
-            path="/dao/:daoAvatarAddress/proposals/create"
-            parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
-            component={CreateProposalContainer}
-          />
-          <ModalContainer
-            modalClassName={css.modal}
-            backdropClassName={css.backdrop}
-            containerClassName={css.modalContainer}
-            bodyModalClassName={css.modalBody}
-          />
-        </div>
+            <Switch>
+              <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
+              <Route exact={true} path="/daos" component={DaoListContainer} />
+              <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
+              <Route path="/" component={HomeContainer} />
+            </Switch>
+            <ModalRoute
+              path="/dao/:daoAvatarAddress/proposals/create"
+              parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
+              component={CreateProposalContainer}
+            />
+            <ModalContainer
+              modalClassName={css.modal}
+              backdropClassName={css.backdrop}
+              containerClassName={css.modalContainer}
+              bodyModalClassName={css.modalBody}
+            />
+          </div>
+        }
         <div className={css.pendingTransactions}>
           {notificationsMinimized ?
             <MinimizedNotifications

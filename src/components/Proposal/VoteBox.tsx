@@ -157,7 +157,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             <div className={voteStatusClass} >
               <div className={css.statusTitle}>
                 <h3>Votes</h3>
-                <span>{proposal.votesCount} Vote{proposal.votesCount == 1 ? "" : "s"}</span>
+                <span>{proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"}</span>
               </div>
               <div className={css.castVote}>
                 <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>

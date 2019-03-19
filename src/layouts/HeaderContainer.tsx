@@ -44,11 +44,6 @@ interface IDispatchProps {
 }
 
 const mapDispatchToProps = {
-  onApprovedStakingGens: web3Actions.onApprovedStakingGens,
-  onEthBalanceChanged: web3Actions.onEthBalanceChanged,
-  onExternalTokenBalanceChanged: web3Actions.onExternalTokenBalanceChanged,
-  onGenBalanceChanged: web3Actions.onGenBalanceChanged,
-  onGenStakingAllowanceChanged: web3Actions.onGenStakingAllowanceChanged,
   showNotification,
   showTour: uiActions.showTour
 };

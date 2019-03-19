@@ -52,10 +52,10 @@ function getContractAddresses(key: "private"|"rinkeby"|"main") {
 // TODO: move pollforAccountChanges to client lib? (as an currentAddres(): Observable<Address>)
 // Polling is Evil!
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
-export function pollForAccountChanges(web3: any, interval: number = 2000) {
+export function pollForAccountChanges(web3: any, currentAccountAddtess: string, interval: number = 2000) {
   return Observable.create((observer: any) => {
     let account: any;
-    let prevAccount: any;
+    let prevAccount = currentAccountAddtess;
     let timeout = setInterval(() => {
       web3.eth.getAccounts().then((accounts: any) => {
         if (accounts) {
@@ -65,7 +65,6 @@ export function pollForAccountChanges(web3: any, interval: number = 2000) {
         }
         if (prevAccount !== account && account) {
           console.log(`ACCOUNT CHANGED; new account is ${account}`);
-          web3.eth.defaultAccount = account;
           observer.next(account);
           prevAccount = account;
         }
@@ -108,9 +107,6 @@ export function checkNetwork(web3?: any) {
     }
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
-      if (!web3.eth.defaultAccount) {
-        throw Error(`No account was set - are you connected with MetaMask?`);
-      }
     } else {
       // TODO: error message is for developers, need to write something more user friendly here
       const msg = `Please connect to "${expectedNetworkName}" (you are connected to "${networkName}" now)`;
