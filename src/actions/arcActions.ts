@@ -6,33 +6,13 @@ import Util from "lib/util";
 import { push } from "react-router-redux";
 import {
   ActionTypes,
-  anyRedemptions,
-  IAccountState,
-  IProposalState as IProposalStateLegacy,
   IRedemptionState,
-  IStakeState,
-  IVoteState,
-  newAccount,
-  ProposalStates,
-  RewardType,
-  VoteOptions,
 } from "reducers/arcReducer";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { Dispatch } from "redux";
 import * as Redux from "redux";
 import { ThunkAction } from "redux-thunk";
-import { first, take } from "rxjs/operators";
-import * as schemas from "schemas";
-import Web3 = require("web3");
-
-async function getRedemptions(votingMachineInstance: any, proposalInstance: any, proposal: any, accountAddress: string): Promise<IRedemptionState> {
-  throw Error(`Not ported to the new client lib yet`);
-}
-
-async function getProposalRedemptions(proposal: IProposalStateLegacy, state: IRootState): Promise<{ entities: any, redemptions: string[] }> {
-  throw Error(`Not ported to the new client lib yet`);
-}
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
@@ -53,29 +33,10 @@ export function createProposal(
     };
 
     try {
-      // TODO: the client lib should (and will) provide and set the default account: https://github.com/daostack/client/issues/42
-      // const defaultAccount = await Arc.Utils.getDefaultAccount()
       const arc = getArc();
-      // arc.web3.eth.defaultAccount = defaultAccount.toLowerCase()
 
       if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
       beneficiaryAddress = beneficiaryAddress.toLowerCase();
-
-      // TODO: leave this commented code - we may want to re-use it later in the light of graph-node problems
-      // const submittedTime = Math.round((new Date()).getTime() / 1000);
-      // Save the proposal title, description and submitted time on the server
-      // try {
-      //   const response = await axios.post(process.env.API_URL + "/api/proposals", {
-      //     daoAvatarAddress,
-      //     descriptionHash,
-      //     description,
-      //     submittedAt: submittedTime,
-      //     title,
-      //   });
-      // } catch (e) {
-      //   console.error(e);
-      //   throw e
-      // }
 
       dispatch({
         type: ActionTypes.ARC_CREATE_PROPOSAL,
@@ -99,8 +60,9 @@ export function createProposal(
       };
 
       // TODO: use the Option stages of the client lib to communicate about the progress
-      await dao.createProposal(proposalOptions)
-        .pipe(take(2)).toPromise();
+      const observer = operationNotifierObserver(dispatch, "Create proposal");
+      // @ts-ignore
+      await dao.createProposal(proposalOptions).subscribe(...observer);
 
       // Go back to home page while action create proposal operation gets carried out
       dispatch(push("/dao/" + daoAvatarAddress));
@@ -120,16 +82,9 @@ export function executeProposal(avatarAddress: string, proposalId: string) {
   return async (dispatch: Dispatch<any>) => {
     const arc = getArc();
     // TODO: the subscription should defined in a separate contant so it can be reuse
-    await arc.dao(avatarAddress).proposal(proposalId).execute()
-      .subscribe((update: ITransactionUpdate<any>) => {
-        let msg: string;
-        if (update.state === ITransactionState.Sent) {
-          msg = `Transaction sent!`;
-        } else {
-          msg = `Transaction processed succesfully (with ${update.confirmations} confirmation)`;
-        }
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      });
+    const observer = operationNotifierObserver(dispatch, "Execute proposal");
+    // @ts-ignore
+    await arc.dao(avatarAddress).proposal(proposalId).execute().subscribe(...observer);
   };
 }
 
@@ -149,7 +104,9 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.vote(voteOption).pipe(first()).toPromise();
+    const observer = operationNotifierObserver(dispatch, "Vote");
+    // @ts-ignore
+    await proposalObj.vote(voteOption).subscribe(...observer);
   };
 }
 
@@ -168,7 +125,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).pipe(first()).toPromise();
+    const observer = operationNotifierObserver(dispatch, "Statke");
+    // @ts-ignore
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subsribe(...obsever);
   };
 }
 
@@ -186,9 +145,39 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   }>;
 
 export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  return async (dispatch: Redux.Dispatch<any>) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    await proposalObj.claimRewards(accountAddress).pipe(first()).toPromise();
+    const observer = operationNotifierObserver(dispatch, "Reward");
+    // @ts-ignore
+    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
   };
 }
+
+/** use like this (unfortunatly you need the @ts-ignore)
+ * // @ts-ignore
+ * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
+ */
+const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription: string = "") => {
+
+  return [
+    (update: ITransactionUpdate<any>) => {
+      let msg: string;
+      if (update.state === ITransactionState.Sent) {
+        msg = `${txDescription} transaction sent!`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      } else if (update.confirmations === 0) {
+        msg = `${txDescription} transaction processed succesfully`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      } else if (update.confirmations === 3) {
+        msg = `${txDescription} transaction confirmed)`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      }
+    },
+    (err: Error) => {
+      let msg: string;
+      msg = `${txDescription}: transaction failed :-(`;
+      dispatch(showNotification(NotificationStatus.Failure, msg));
+    }
+  ];
+};
