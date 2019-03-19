@@ -125,9 +125,9 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
-    const observer = operationNotifierObserver(dispatch, "Statke");
+    const observer = operationNotifierObserver(dispatch, "Stake");
     // @ts-ignore
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subsribe(...obsever);
+    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subscribe(...observer);
   };
 }
 
@@ -170,7 +170,7 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription:
         msg = `${txDescription} transaction processed succesfully`;
         dispatch(showNotification(NotificationStatus.Success, msg));
       } else if (update.confirmations === 3) {
-        msg = `${txDescription} transaction confirmed)`;
+        msg = `${txDescription} transaction confirmed`;
         dispatch(showNotification(NotificationStatus.Success, msg));
       }
     },
