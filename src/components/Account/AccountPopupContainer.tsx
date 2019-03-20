@@ -74,12 +74,10 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   public render() {
     const { accountAddress, avatarSize, dao, detailTransferDetailView, profile, reputation } = this.props;
 
-    let className = " ";
-
-    if (detailTransferDetailView) {
-      className = css.detailTransferDetailView
-    }
-
+    const accountImageClass = classNames({
+      [css.detailTransferDetailView] : detailTransferDetailView
+    });
+    
     const targetAccountClass = classNames({
       [css.detailTransferDetailView]: detailTransferDetailView,
       [css.detailView]: this.props.detailView,
@@ -90,7 +88,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
     return (
       <div className={targetAccountClass}>
         <div className={css.avatar}>
-          <AccountImage accountAddress={accountAddress} avatarSize={avatarSize} className={className}/>
+          <AccountImage accountAddress={accountAddress} avatarSize={avatarSize} className={accountImageClass}/>
         </div>
         <div className={css.accountInfo}>
           <div className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} /></div>
