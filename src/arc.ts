@@ -52,10 +52,10 @@ function getContractAddresses(key: "private"|"rinkeby"|"main") {
 // TODO: move pollforAccountChanges to client lib? (as an currentAddres(): Observable<Address>)
 // Polling is Evil!
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
-export function pollForAccountChanges(web3: any, currentAccountAddtess: string, interval: number = 2000) {
+export function pollForAccountChanges(web3: any, currentAccountAddress?: string, interval: number = 2000) {
   return Observable.create((observer: any) => {
     let account: any;
-    let prevAccount = currentAccountAddtess;
+    let prevAccount = currentAccountAddress;
     let timeout = setInterval(() => {
       web3.eth.getAccounts().then((accounts: any) => {
         if (accounts) {

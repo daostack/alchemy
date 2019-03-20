@@ -77,29 +77,35 @@ class AppContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
     // get the Arc object as early the lifetime of the app
     const arc = getArc();
-    let currentAccountAddress;
+    let currentAddress: Address;
     try {
       // only set the account if the network is correct
       // TODO: display big error if not on correct network
       checkNetwork(arc.web3);
 
       const accounts = await promisify(arc.web3.eth.getAccounts)();
-      currentAccountAddress = accounts[0];
-      if (currentAccountAddress && this.props.currentAccountAddress !== currentAccountAddress) {
-        this.props.setCurrentAccount(currentAccountAddress);
+      currentAddress = accounts[0];
+      if (currentAddress && this.props.currentAccountAddress !== currentAddress) {
+        this.props.setCurrentAccount(currentAddress);
       }
     } catch (err) {
       console.warn(err.message);
-      // TODO: this notification is NOT working: why?
-      showNotification(NotificationStatus.Failure, err.message);
+      this.props.showNotification(NotificationStatus.Failure, err.message);
     }
 
-    // once we have an account, or it changes, we just refresh the page to make sure everything gets set correctly with the new account
-    pollForAccountChanges(arc.web3, currentAccountAddress).subscribe(
-      (next: Address) => {
-        window.location.reload();
+    pollForAccountChanges(arc.web3).subscribe(
+      (newAddress: Address) => {
+        if (currentAddress) {
+          this.props.setCurrentAccount(undefined);
+          window.location.reload();
+
+        } else {
+          this.props.setCurrentAccount(newAddress);
+          currentAddress = newAddress;
+        }
       }
     );
+
   }
 
   public render() {
