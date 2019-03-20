@@ -170,7 +170,7 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription:
         msg = `${txDescription} transaction processed succesfully`;
         dispatch(showNotification(NotificationStatus.Success, msg));
       } else if (update.confirmations === 3) {
-        msg = `${txDescription} transaction confirmed)`;
+        msg = `${txDescription} transaction confirmed`;
         dispatch(showNotification(NotificationStatus.Success, msg));
       }
     },

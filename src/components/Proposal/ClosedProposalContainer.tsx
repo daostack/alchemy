@@ -14,7 +14,7 @@ import { IRootState } from "reducers";
 import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of, concat } from "rxjs";
+import { combineLatest, concat, of } from "rxjs";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import VoteBox from "./VoteBox";
@@ -189,31 +189,25 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
         </div>
         <div className={css.votes}>
-            <VoteBox
-              isVotingNo={false}
-              isVotingYes={false}
-              currentVote={currentAccountVote}
-              currentAccountAddress={currentAccountAddress}
-              dao={dao}
-              proposal={proposal}
-              historyView={true}
-            />
+          <VoteBox
+            isVotingNo={false}
+            isVotingYes={false}
+            currentVote={currentAccountVote}
+            currentAccountAddress={currentAccountAddress}
+            dao={dao}
+            proposal={proposal}
+            historyView={true}
+          />
         </div>
         <div className={css.predictions}>
-            <PredictionBox
-              isPredictingFail={false}
-              isPredictingPass={false}
-              beneficiaryProfile={beneficiaryProfile}
-              currentPrediction={currentAccountPrediction}
-              currentStake={currentAccountStakeAmount}
-              currentAccountGens={new BN(0)}
-              currentAccountGenStakingAllowance={new BN(1000000)}
-              dao={dao}
-              proposal={proposal}
-              threshold={0}
-              approveStakingGens={null}
-              historyView={true}
-            />
+          <PredictionBox
+            beneficiaryProfile={beneficiaryProfile}
+            currentAccountAddress={this.props.currentAccountAddress}
+            dao={dao}
+            proposal={proposal}
+            threshold={0}
+            historyView={true}
+          />
         </div>
         <div className={closeReasonClass}>
           <div className={css.decisionPassed}>

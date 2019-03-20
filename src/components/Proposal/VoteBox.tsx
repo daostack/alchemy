@@ -82,8 +82,8 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     const votesAgainst = Util.fromWei(proposal.votesAgainst);
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    let yesPercentage = totalReputationSupply && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputationSupply * 100)) : 0;
-    let noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputationSupply * 100)) : 0;
+    const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputationSupply * 100)) : 0;
+    const noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputationSupply * 100)) : 0;
 
     const styles = {
       forBar: {
@@ -96,24 +96,24 @@ class VoteBox extends React.Component<IContainerProps, IState> {
 
     const votingDisabled = !currentAccountState || !currentAccountState.reputation || !!currentVote;
 
-    let wrapperClass = classNames({
+    const wrapperClass = classNames({
       [css.detailView] : detailView,
       [css.historyView] : historyView,
       [css.voteBox] : true,
       [css.clearfix] : true,
       [css.unconfirmedVote] : isVoting,
     });
-    let voteUpButtonClass = classNames({
+    const voteUpButtonClass = classNames({
       [css.voted]: !isVotingYes && currentVote === IProposalOutcome.Pass,
       [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
-    let voteDownButtonClass = classNames({
+    const voteDownButtonClass = classNames({
       [css.voted]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
-    let voteStatusClass = classNames({
+    const voteStatusClass = classNames({
       [css.buttonsOnly] : buttonsOnly,
       [css.voteStatus]: true,
       [css.hasVoted]: currentVote,
@@ -157,7 +157,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             <div className={voteStatusClass} >
               <div className={css.statusTitle}>
                 <h3>Votes</h3>
-                <span>NUM Votes</span>
+                <span>{proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"}</span>
               </div>
               <div className={css.castVote}>
                 <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
