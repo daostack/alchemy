@@ -33,18 +33,13 @@ interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountAddress: Address;
-  currentAccountGens: BN;
-  currentAccountGenStakingAllowance: BN;
   daoEthBalance: BN;
   rewardsForCurrentUser: IRewardState[];
-  stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
   dao: IDAOState;
   proposal: IProposalState;
   isVotingYes: boolean;
   isVotingNo: boolean;
-  isPredictingPass: boolean;
-  isPredictingFail: boolean;
   isRedeemPending: boolean;
   threshold: number;
 }
@@ -52,13 +47,10 @@ interface IStateProps {
 interface IContainerProps {
   dao: IDAOState;
   currentAccountAddress: Address;
-  currentAccountGens: BN;
-  currentAccountGenStakingAllowance: BN;
   daoEthBalance: BN;
   detailView?: boolean;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
-  stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
 }
 
@@ -73,25 +65,19 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccountAddress: ownProps.currentAccountAddress,
-    currentAccountGens: ownProps.currentAccountGens,
-    currentAccountGenStakingAllowance: ownProps.currentAccountGenStakingAllowance,
     dao,
     daoEthBalance: ownProps.daoEthBalance,
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
-    isPredictingPass: isStakePending(proposal.id, VoteOptions.Yes)(state),
-    isPredictingFail: isStakePending(proposal.id, VoteOptions.No)(state),
     isRedeemPending: ownProps.currentAccountAddress && isRedeemPending(proposal.id, ownProps.currentAccountAddress)(state),
     proposal,
     rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
-    stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
     votesOfCurrentUser: ownProps.votesOfCurrentUser,
     threshold
   };
 };
 
 interface IDispatchProps {
-  approveStakingGens: typeof web3Actions.approveStakingGens;
   executeProposal: typeof arcActions.executeProposal;
   redeemProposal: typeof arcActions.redeemProposal;
   showNotification: typeof showNotification;
@@ -99,7 +85,6 @@ interface IDispatchProps {
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: web3Actions.approveStakingGens,
   redeemProposal: arcActions.redeemProposal,
   executeProposal: arcActions.executeProposal,
   showNotification,
@@ -146,22 +131,16 @@ class ProposalContainer extends React.Component<IProps, IState> {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      currentAccountGens,
-      currentAccountGenStakingAllowance,
       dao,
       daoEthBalance,
       detailView,
       proposal,
-      approveStakingGens,
       redeemProposal,
       executeProposal,
-      isPredictingFail,
-      isPredictingPass,
       isVotingNo,
       isVotingYes,
       isRedeemPending,
       rewardsForCurrentUser,
-      stakesOfCurrentUser,
       votesOfCurrentUser,
       threshold
     } = this.props;
@@ -204,7 +183,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
     const passedByDecision = totalReputation ? (votesFor / totalReputation) > 0.5 : false;
     const failedByDecision = totalReputation ? (votesAgainst / totalReputation) > 0.5 : false;
 
-    let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0);
+    let currentAccountVote = 0;
 
     const redeemProps = {
         accountHasRewards,
@@ -222,18 +201,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     let currentVote: IVote;
     if (votesOfCurrentUser.length > 0) {
-        currentVote = votesOfCurrentUser[0];
-        currentAccountVote = currentVote.outcome;
-      }
-
-    let currentStake: IStake;
-    if (stakesOfCurrentUser.length > 0) {
-        currentStake = stakesOfCurrentUser[0];
-      }
-    if (currentStake) {
-        currentAccountPrediction = currentStake.outcome;
-        currentAccountStakeAmount = currentStake.amount;
-      }
+      currentVote = votesOfCurrentUser[0];
+      currentAccountVote = currentVote.outcome;
+    }
 
     const styles = {
         forBar: {
@@ -375,7 +345,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   : executable ?
                   <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                     <img src="/assets/images/Icon/execute.svg"/>
-                    <span> Execute</span>
+                    <span>Execute</span>
                   </button>
                   : redeemable ?
                     <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
@@ -426,17 +396,11 @@ class ProposalContainer extends React.Component<IProps, IState> {
           }
 
           <PredictionBox
-            isPredictingFail={isPredictingFail}
-            isPredictingPass={isPredictingPass}
             beneficiaryProfile={beneficiaryProfile}
-            currentPrediction={currentAccountPrediction}
-            currentStake={currentAccountStakeAmount}
-            currentAccountGens={currentAccountGens}
-            currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
+            currentAccountAddress={currentAccountAddress}
             dao={dao}
             proposal={proposal}
             threshold={threshold}
-            approveStakingGens={approveStakingGens}
             detailView={detailView}
           />
         </div>
@@ -455,14 +419,11 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const observable = combineLatest(
     dao.proposal(props.proposalId).state(), // state of the current proposal
     props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
-    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]), //2
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]), //3
-    props.currentAccountAddress ? arc.GENToken().balanceOf(props.currentAccountAddress) : of(new BN("0")), //4
-    props.currentAccountAddress ? arc.allowance(props.currentAccountAddress) : of(new BN("0")),
     concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN, any, BN]>): any => {
+    (state: IObservableState<[IProposalState, IRewardState[], IVote[], BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {
@@ -470,21 +431,15 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
       } else {
         const proposal = state.data[0];
         const rewards = state.data[1];
-        const stakes = state.data[2];
-        const votes = state.data[3];
-        const currentAccountGens = state.data[4] || new BN(0);
-        const currentAccountGenStakingAllowance = state.data[5] ? new BN(state.data[5].amount) : new BN(0);
-        const daoEthBalance = state.data[6];
+        const votes = state.data[2];
+        const daoEthBalance = state.data[3];
         return <ConnectedProposalContainer
           detailView={props.detailView}
           currentAccountAddress={props.currentAccountAddress}
-          currentAccountGens={currentAccountGens}
-          currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
           daoEthBalance={daoEthBalance}
           proposal={proposal}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
-          stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}
           />;
       }
