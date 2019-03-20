@@ -1,52 +1,29 @@
-import BN = require("bn.js");
-import * as React from "react";
-import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-import Util from "lib/util";
-import {  DAO, IDAOState, IRewardState } from "@daostack/client";
+import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
-
+import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { IRootState } from "reducers";
+import gql from "graphql-tag";
+import Util from "lib/util";
+import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { RouteComponentProps } from "react-router-dom";
 import ProposalContainer from "../Proposal/ProposalContainer";
 import * as css from "./ViewDao.scss";
 
 interface IProps {
   currentAccountAddress: string;
   dao: IDAOState;
-  rewards: IRewardState[];
+  proposals: any[];
 }
-
-interface IOwnProps {
-  dao: IDAOState;
-  rewards: IRewardState[];
-}
-const mapStateToProps = (state: IRootState, ownProps: IOwnProps ) => {
-  // const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.dao.address}`], schemas.accountSchema, state.arc) as IAccountState;
-
-  // const proposals: Proposal[] = [];
-
-  // const rewards = ownProps.rewards;
-  // rewards.forEach((reward: IRewardState) => {
-  //   proposals.push(new Proposal(reward.proposalId, reward.context));
-  // });
-  // proposals.sort((a, b) => closingTimeLegacy(b).unix() - closingTimeLegacy(a).unix())
-
-  return {
-    currentAccountAddress: state.web3.ethAccountAddress,
-    dao: ownProps.dao,
-    rewards: ownProps.rewards
-  };
-};
 
 class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
   public render() {
-    const { dao, rewards, currentAccountAddress } = this.props;
+    const { dao, proposals, currentAccountAddress } = this.props;
 
-    const proposalsHTML = rewards.map((reward: IRewardState) => {
-      return (<ProposalContainer key={"proposal_" + reward.proposalId} proposalId={reward.proposalId} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+    const proposalsHTML = proposals.map((proposal: Proposal) => {
+      return (<ProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,
@@ -55,11 +32,23 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     let genReward = new BN("0");
     let reputationReward = new BN(0);
     // , externalTokenReward = 0;
-    rewards.forEach((reward) => {
-    //   ethReward += Util.fromWei(reward.amount);
+    proposals.forEach((proposal) => {
+      // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
+      const reward = proposal.gpRewards[0];
+      // ethReward += Util.fromWei(reward.amount);
     //   externalTokenReward += Util.fromWei(reward.amount);
-      genReward.iadd(reward.tokensForStaker).iadd(reward.daoBountyForStaker);
-      reputationReward.iadd(reward.reputationForVoter).iadd(reward.reputationForProposer);
+      if (reward.tokensForStaker) {
+        genReward.iadd(new BN(reward.tokensForStaker));
+      }
+      if (reward.daoBountyForStaker) {
+        genReward.iadd(new BN(reward.daoBountyForStaker));
+      }
+      if (reward.reputationForVoter) {
+        reputationReward.iadd(new BN(reward.reputationForVoter));
+        }
+      if (reward.reputationForProposer) {
+        reputationReward.iadd(new BN(reward.reputationForProposer));
+      }
     });
 
     const totalRewards = [];
@@ -81,16 +70,13 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     return(
       <div>
-        {rewards.length > 0 ?
-            <div className={css.clearfix + " " + css.redeemAllContainer}>
-              <div className={css.pendingRewards}>
-                Pending Rewards:&nbsp;{totalRewardsString}
-              </div>
-            </div>
-          : ""
-        }
-        <div className={css.proposalsHeader}>
-          Proposals with rewards for you to redeem
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
+        <div className={css.redemptionsHeader}>
+          Redemptions
+          {proposals.length > 0 ?
+              <span>Pending Rewards:&nbsp;{totalRewardsString}</span>
+            : ""
+          }
         </div>
         <div className={css.proposalsContainer}>
           <div className={css.proposalsContainer}>
@@ -103,17 +89,36 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
 }
 
-const ConnnectedDaoRedemptionsContainer = connect(mapStateToProps)(DaoRedemptionsContainer);
-
-export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
-  const daoAddress = props.dao.address;
+export default (props: { dao: IDAOState, currentAccountAddress: Address } & RouteComponentProps<any>) => {
+  if (!props.currentAccountAddress) {
+    return <div>Please log in to see your rewards</div>;
+  }
   const arc = getArc();
-  const dao = new DAO(daoAddress, arc);
-  return <Subscribe observable={dao.rewards()}>{(state: IObservableState<IRewardState[]>) => {
+  const query = gql`       {
+    proposals(where: {
+      accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
+      dao: "${props.dao.address}"
+      contributionReward_not: null
+    }) {
+      id
+      dao {
+        id
+      }
+      gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
+        tokensForStaker
+        daoBountyForStaker
+        reputationForVoter
+        reputationForProposer
+        beneficiary
+      }
+    }
+  }
+  `;
+  return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>;
       } else if (state.data) {
-        return <ConnnectedDaoRedemptionsContainer {...props} dao={props.dao} rewards={state.data}/>;
+        return <DaoRedemptionsContainer {...props} dao={props.dao} proposals={state.data.data.proposals}/>;
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }

@@ -1,21 +1,22 @@
-import { IDAOState, IProposalState, ProposalOutcome, IProposalStage } from "@daostack/client";
-import BN = require("bn.js");
-import { Field, Formik, FormikProps } from "formik";
-import * as H from "history";
-import * as React from "react";
-import { connect } from "react-redux";
-
+import { IDAOState, IExecutionState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
-import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
+import { Field, Formik, FormikProps } from "formik";
+import * as H from "history";
+import { checkNetworkAndWarn } from "lib/util";
 import Util from "lib/util";
+import * as React from "react";
+import { connect } from "react-redux";
 import { IRootState } from "reducers";
+import { showNotification } from "reducers/notifications";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 const emptyProposal: IProposalState = {
+  accountsWithUnclaimedRewards: [],
   activationTime: 0,
   beneficiary: null,
   boostedAt: 0,
@@ -28,7 +29,7 @@ const emptyProposal: IProposalState = {
   descriptionHash: "",
   ethReward: new BN(0),
   executedAt: 0,
-  executionState: 0, // TODO: when client exports should be IExecutionState.None,
+  executionState: IExecutionState.None,
   expiresInQueueAt: 0,
   externalToken: null,
   externalTokenReward: new BN(0),
@@ -53,9 +54,11 @@ const emptyProposal: IProposalState = {
   thresholdConst: 0, // TODO
   totalRepWhenExecuted: new BN(0),
   title: "",
+  url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
-  winningOutcome: ProposalOutcome.Fail,
+  votesCount: 0,
+  winningOutcome: IProposalOutcome.Fail,
   votingMachine: null
 };
 
@@ -81,10 +84,12 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
+  showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
+  showNotification
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -97,6 +102,7 @@ interface FormValues {
   nativeTokenReward: number;
   reputationReward: number;
   title: string;
+  url: string;
 
   [key: string]: any;
 }
@@ -118,7 +124,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.web3 = Util.getWeb3();
   }
 
-  public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
+  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+
     const proposalValues = {...values,
       ethReward: Util.toWei(Number(values.ethReward)),
       externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
@@ -129,9 +137,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.setState({
       proposalDetails: { ...emptyProposal, ...proposalValues}
     });
-    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = proposalValues;
+    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title, url } = proposalValues;
     setSubmitting(false);
-    await this.props.createProposal(this.props.daoAvatarAddress, title, description, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
+    await this.props.createProposal(this.props.daoAvatarAddress, title, description, url, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
   }
 
   public goBack(address: string) {
@@ -145,8 +153,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { createProposal, currentAccount, daoAvatarAddress } = this.props;
-    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title } = this.state.proposalDetails;
+    const {  daoAvatarAddress } = this.props;
     const arc = getArc();
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
@@ -172,7 +179,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   externalTokenReward: 0,
                   nativeTokenReward: 0,
                   reputationReward: 0,
-                  title: ""
+                  title: "",
+                  url: ""
                 } as FormValues}
                 validate={(values: FormValues) => {
                   const errors: any = {};
@@ -202,11 +210,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     errors.beneficiary = "Invalid address";
                   }
 
-                  {/* TODO: dont need to check if description is a URL anymore
-                  const pattern = new RegExp('(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})');
-                  if (!pattern.test(values.description)) {
-                    errors.description = 'Invalid URL';
-                  }*/}
+                  const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+                  if (values.url && !pattern.test(values.url)) {
+                    errors.url = "Invalid URL";
+                  }
 
                   nonNegative("ethReward");
                   nonNegative("externalTokenReward");
@@ -224,14 +231,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                 }}
                 onSubmit={this.handleSubmit}
                 render={({
-                  values,
                   errors,
                   touched,
-                  handleChange,
-                  handleBlur,
                   handleSubmit,
                   isSubmitting,
-                  isValid,
                   setFieldTouched,
                   setFieldValue
                 }: FormikProps<FormValues>) =>
@@ -250,19 +253,33 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       type="text"
                       className={touched.title && errors.title ? css.error : null}
                     />
+
                     <label htmlFor="descriptionInput">
                       Description
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
-
                     <Field
                       component="textarea"
                       id="descriptionInput"
-                      placeholder="Proposal description URL"
+                      placeholder="Describe your proposal in greater detail"
                       name="description"
                       className={touched.description && errors.description ? css.error : null}
                     />
+
+                    <label htmlFor="urlInput">
+                      URL
+                      {touched.url && errors.url && <span className={css.errorMessage}>{errors.url}</span>}
+                    </label>
+                    <Field
+                      id="urlInput"
+                      maxLength={120}
+                      placeholder="Description URL"
+                      name="url"
+                      type="text"
+                      className={touched.url && errors.url ? css.error : null}
+                    />
+
                     <div className={css.addTransfer}>
                       <div className={css.rewardRecipient}>
                         <label htmlFor="beneficiary">

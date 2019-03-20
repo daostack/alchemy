@@ -1,20 +1,18 @@
+import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import * as React from "react";
-import { connect } from "react-redux";
-import { combineLatest } from "rxjs";
-
-import { getArc } from "arc";
-import { IRootState } from "reducers";
-import { NotificationStatus, showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
-import Util from "lib/util";
-
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
+import * as React from "react";
+import { connect } from "react-redux";
+import { IRootState } from "reducers";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
+import { combineLatest } from "rxjs";
 
 import * as css from "./Account.scss";
 
@@ -24,15 +22,17 @@ interface IStateProps {
   accountAddress: string;
   dao: IDAOState;
   detailView?: boolean;
+  historyView?: boolean;
   profile: IProfileState;
   reputation: BN;
   tokens: BN;
 }
 
 interface IOwnProps {
+  accountAddress: Address;
   dao: IDAOState;
   detailView?: boolean;
-  accountAddress: Address;
+  historyView?: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -72,6 +72,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
 
     const targetAccountClass = classNames({
       [css.detailView]: this.props.detailView,
+      [css.historyView]: this.props.historyView,
       [css.targetAccount]: true
     });
 
@@ -82,7 +83,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
         </div>
         <div className={css.accountInfo}>
           <div className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} /></div>
-          {!profile || Object.keys(profile.socialURLs).length == 0 ? "No social profiles" :
+          {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
             <div>
               <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
               <OAuthLogin editing={false} provider="twitter" accountAddress={accountAddress} profile={profile} />

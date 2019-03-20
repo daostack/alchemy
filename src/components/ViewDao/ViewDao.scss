@@ -22,6 +22,10 @@ button:hover {
   overflow: scroll;
 }
 
+.proposalHistory {
+  display: block;
+}
+
 .outer {
   position: fixed;
   display: flex;
@@ -29,8 +33,128 @@ button:hover {
   width: 100%;
 }
 
+
+.closedProposalsHeader {
+  display: block;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto 10px auto;
+  display: flex;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: left;
+
+  .votes, .predictions {
+    width: 100px;
+  }
+
+  .proposalCreator {
+    width: 100px;
+  }
+
+  .endDate {
+    width: 50px;
+  }
+
+  .title {
+    width: 250px;
+  }
+
+  .closeReason {
+    width: 160px;
+    position: relative;
+  }
+
+  .myActions {
+    text-align: left;
+  }
+}
+
+
+
+.menuWrapper {
+  bottom: 0;
+  position: absolute;
+  height: 270px;
+  left: 0;
+  width: 100%;
+  border-top: 2px solid rgba(78, 137, 208, 1.000);
+  transition: all .25s ease;
+
+  ul {
+    width: 100%;
+    margin: 0;
+    transition: all .25s ease;
+    padding: 0;
+    position: relative;
+
+    li {
+      position: initial;
+      list-style: none;
+      margin: 0;
+      width: 100%;
+
+      a {
+        color: rgba(196, 215, 236, 1.000);
+        text-decoration: none;
+        padding: 5px 0 5px 30px;
+        width: auto;
+        display: block;
+        font-size: 12px;
+      }
+
+      a:hover {
+        background-color: rgba(19, 46, 91, 1.000);
+        cursor: pointer;
+      }
+
+      ul {
+        left: 50px;
+        top: -150px;
+        opacity: 0;
+        transform: scale(0);
+        transition: all .25s ease;
+
+        li {
+          text-align: center;
+
+          a {
+            padding: 5px 5px 5px 5px;
+          }
+
+          img {
+            position: relative;
+            top: 0;
+            left: 0;
+          }
+        }
+      }
+      &:hover ul {
+        left: 0;
+        opacity: 1;
+        transform: scale(1);
+        top: -180px;
+        transform: translateX(100%);
+        background-color: rgba(19, 46, 91, 1.000);
+      }
+    }
+  }
+}
+
+.daoIcon {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    border: 5px solid rgba(255,255,255,.5);
+    border-radius: 40px;
+    background-image: url(http://localhost:3000/assets/images/DaoList/pattern.png);
+    background-repeat: repeat;
+}
+
+
 .daoSidebar {
   min-width: 250px;
+  position: relative;
   max-width: 250px;
   height: 100%;
   background-color: $sky;
@@ -68,13 +192,26 @@ button:hover {
 }
 
 .daoNavigation {
+  position: relative;
+  height: 100%;
 
   .daoName {
     padding: 15px;
 
     a {
+      display: block;
+      position: relative;
       font-size: 24px;
       font-weight: bold;
+
+      span {
+        position: absolute;
+        padding-left: 60px;
+        top: 50%;
+        left: 0;
+        margin-top: -3px;
+        transform: translateY(-50%);
+      }
     }
 
     a:visited {
@@ -157,10 +294,6 @@ button:hover {
 .loading img {
   margin: 0 auto;
   display: block;
-}
-
-.daoHeadings {
-  padding: 30px 30px 5px 30px;
 }
 
 .nav {
@@ -291,6 +424,7 @@ a.navRedemption:hover {
 }
 
 .daoProposalsContainer {
+  padding-bottom: 150px;
   position: relative;
 }
 
@@ -516,6 +650,40 @@ a.navItem:hover {
   font-weight: bold;
   padding: 0;
   color: rgba(104, 155, 214, 1.000);
+}
+
+.daoHistoryHeader {
+    font-size: 28px;
+    color: rgba(104, 155, 214, 1.000);
+    border-bottom: 1px solid rgba(45, 109, 181, .2);
+    padding-bottom: 5px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.redemptionsHeader {
+  font-size: 28px;
+  font-weight: bold;
+  color: rgba(104, 155, 214, 1);
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(191, 203, 213, 1);
+
+  span {
+    font-size: 13px;
+    font-weight: bold;
+    color: rgba(104, 155, 214, 1.000);
+    border-left: 1px solid rgba( 191, 203, 213, 1);
+    display: inline-block;
+    margin-left: 15px;
+    padding-left: 15px;
+    
+
+    span {
+      border-left: none;
+      margin-left: none;
+    }
+  }
+
 }
 
 .proposalsHeader {

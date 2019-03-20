@@ -1,13 +1,13 @@
+import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
-import * as React from "react";
-import { IDAOState, IMemberState, IProposalState, IRewardState } from "@daostack/client";
 import ReputationView from "components/Account/ReputationView";
 import Util from "lib/util";
+import * as React from "react";
 
 interface IProps {
   isRedeemPending: boolean;
   beneficiaryHasRewards: boolean;
-  currentAccount: IMemberState;
+  currentAccountAddress: Address;
   dao: IDAOState;
   executable: boolean;
   accountHasRewards: boolean;
@@ -17,13 +17,13 @@ interface IProps {
 }
 
 export default (props: IProps) => {
-  const { proposal, currentAccount, dao, executable, beneficiaryHasRewards, isRedeemPending, rewards } = props;
+  const { proposal, currentAccountAddress, dao, executable, beneficiaryHasRewards, isRedeemPending, rewards } = props;
 
   const rewardComponents = [];
   for (const reward of rewards) {
     let c = null;
     if (reward.reputationForProposer.gt(new BN(0))) {
-      c = <div>
+      c = <div key={reward.id}>
           <strong>For creating the proposal you will receive:</strong>
           <ul>
             <li><ReputationView reputation={reward.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
@@ -31,7 +31,7 @@ export default (props: IProps) => {
         </div>;
       rewardComponents.push(c);
     } else if (reward.reputationForVoter.gt(new BN(0))) {
-      c = <div>
+      c = <div key={reward.id}>
           <strong>For voting on the proposal you will receive:</strong>
           <ul>
             <li><ReputationView reputation={reward.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
@@ -39,7 +39,7 @@ export default (props: IProps) => {
         </div>;
       rewardComponents.push(c);
     }  else if (reward.tokensForStaker.gt(new BN("0"))) {
-      c = <div>
+      c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
           <li>{reward.tokensForStaker} GEN</li>
@@ -48,7 +48,7 @@ export default (props: IProps) => {
       rewardComponents.push(c);
 
     }  else if (reward.daoBountyForStaker.gt(new BN("0"))) {
-      c = <div>
+      c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
           <li>{reward.daoBountyForStaker} GEN bounty {dao.tokenBalance < reward.daoBountyForStaker ? " (Insufficient funds in DAO)" : ""}</li>
@@ -68,7 +68,8 @@ export default (props: IProps) => {
     {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
-          {currentAccount.address === proposal.beneficiary ? "As the" : "The"} beneficiary of the proposal {currentAccount.address === proposal.beneficiary ? "you " : ""}will receive:
+          {(currentAccountAddress === proposal.beneficiary) ?
+              "As the" : "The"} beneficiary of the proposal {currentAccountAddress === proposal.beneficiary ? "you " : ""}will receive:
         </strong>
         <ul>
           {hasEthReward ?

@@ -1,6 +1,7 @@
-import { Address } from "@daostack/client";
-import { getArc } from "arc";
+import { Address, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
+import { NotificationStatus } from "reducers/notifications";
+import { checkNetwork, getArc } from "../arc";
 
 // haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
 // v1.0 may improve on this entire Web3 typings experience
@@ -8,6 +9,7 @@ import BN = require("bn.js");
 const Web3 = require("web3");
 const path = require("path");
 
+// TODO: not sure why these helper functions are wrapped in a class
 export default class Util {
   public static fromWei(amount: BN): number {
     try {
@@ -80,16 +82,26 @@ export default class Util {
   }
 }
 
-export function getLocalContractAddresses() {
-  const deployedContractAddresses = require(`../../config/migration.json`);
-
-  const addresses = {
-      ...deployedContractAddresses.private.base,
-      // ...require(path).private.dao
-   };
-  console.log(addresses);
-  if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at ${"../../config/migration.json"} exist?`);
+/**
+ * check if the web3 connection is ready to send transactions, and warn the user if it is not
+ * @return true if things are fine, false if not
+ */
+export function checkNetworkAndWarn(showNotification?: any): boolean {
+  try {
+    checkNetwork();
+    return true;
+  } catch (err) {
+    // TODO: this should of course not be an alert, but a Modal
+    const msg =  `Cannot send transction: ${err.message}`;
+    if (showNotification) {
+      showNotification(NotificationStatus.Failure, msg);
+    } else {
+      alert(msg);
     }
-  return addresses;
+    return false;
+  }
+}
+
+export function humanProposalTitle(proposal: IProposalState) {
+  return proposal.title || "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }

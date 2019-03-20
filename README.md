@@ -27,7 +27,7 @@ While anyone can propose and predict, only people who hold reputation (voting po
 sudo apt-get install -y libsecret-1-dev
 git clone https://github.com/daostack/alchemy.git
 cd alchemy
-npm install
+npm ci
 ```
 
 # Run app locally
@@ -41,17 +41,19 @@ you can recreate the docker environment by installing an starting all [services 
 The easiest way to start developing is to work with docker.
 Here is a quick setup; there are more detailed instructions in [here](./documentation/development.md).
 
-After you have installed docker, run the following command:
+After you have installed docker, run the following command to spin up ganache (with the migrated contracts), the caching server and the alchemy server:
 ```sh
-docker-compose up alchemy
+docker-compose up graph-node alchemy-server
 ```
-And in other terminal you will need to deploy the contracts:
-```
-npm run setup-env
-```
-This will start a server on http://127.0.0.1:3000.
 
-See [working with docker](./docs/docker.md) for details.
+Now, in a separate terminal run the following command to run alchemy:
+```sh
+npm run start
+```
+
+At this point you should be able to access alchemy on http://127.0.0.1:3000.
+
+See [working with docker](./docs/docker.md) for details and troubleshooting.
 
 ## Interacting with your test instance using MetaMask
 

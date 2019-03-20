@@ -1,4 +1,12 @@
+import { IDAOState } from "@daostack/client";
+import * as profilesActions from "actions/profilesActions";
+import * as uiActions from "actions/uiActions";
+import { getArc } from "arc";
 import * as classNames from "classnames";
+import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import * as appCss from "layouts/App.scss";
+import Util from "lib/util";
 import { denormalize } from "normalizr";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -6,33 +14,17 @@ import { Cookies, withCookies } from "react-cookie";
 import Joyride from "react-joyride";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
-
-import * as arcActions from "actions/arcActions";
-import * as profilesActions from "actions/profilesActions";
-import * as uiActions from "actions/uiActions";
-import * as web3Actions from "actions/web3Actions";
 import { IRootState } from "reducers";
-import { IAccountState } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import * as schemas from "schemas";
-
-import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
+import { Subscription } from "rxjs";
+import * as proposalCss from "../Proposal/Proposal.scss";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 import DaoSidebar from "./DaoSidebar";
-
-import * as appCss from "layouts/App.scss";
-import * as proposalCss from "../Proposal/Proposal.scss";
 import * as css from "./ViewDao.scss";
-
-import { IDAOState } from "@daostack/client";
-import { getArc } from "arc";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { Subscription } from "rxjs";
-import Util from "lib/util";
 
 interface IStateProps extends RouteComponentProps<any> {
   cookies: Cookies;
@@ -41,25 +33,15 @@ interface IStateProps extends RouteComponentProps<any> {
   dao: IDAOState;
   daoAvatarAddress: string;
   lastBlock: number;
-  numRedemptions: number;
   tourVisible: boolean;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const account = denormalize(state.arc.accounts[`${state.web3.ethAccountAddress}-${ownProps.match.params.daoAvatarAddress}`], schemas.accountSchema, state.arc) as IAccountState;
-  let numRedemptions = 0;
-
-  if (account) {
-    numRedemptions = Object.keys(account.redemptions).length;
-  }
-
   return {
     currentAccountAddress: state.web3.ethAccountAddress,
     currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao: ownProps.dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
-    numRedemptions,
-    // openProposals: dao ? selectors.createOpenProposalsSelector()(state, ownProps) : [],
     tourVisible: state.ui.tourVisible
   };
 };
@@ -111,11 +93,12 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount() {
     const { cookies } = this.props;
-    // If this person has not seen the disclaimer, show them the home page
-    if (!cookies.get("seen_tour")) {
-      cookies.set("seen_tour", "true", { path: "/" });
-      this.setState({ showTourIntro: true });
-    }
+
+    // TODO: disable tour for now until we update it
+    // if (!cookies.get("seen_tour")) {
+    //   cookies.set("seen_tour", "true", { path: "/" });
+    //   this.setState({ showTourIntro: true });
+    // }
 
     this.props.getProfilesForAllAccounts();
   }
@@ -137,19 +120,19 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   public handleJoyrideCallback = (data: any) => {
     const { hideTour } = this.props;
 
-    if (data.type == "tour:end") {
+    if (data.type === "tour:end") {
       this.setState({
         showTourOutro: true,
         tourCount: this.state.tourCount + 1
       });
     }
-    if (data.action == "close" || data.type == "tour:end") {
+    if (data.action === "close" || data.type === "tour:end") {
       hideTour();
     }
   }
 
   public render() {
-    const { dao, currentAccountAddress, currentAccountProfile, numRedemptions, tourVisible } = this.props;
+    const { dao, currentAccountAddress, currentAccountProfile, tourVisible } = this.props;
 
     // TODO: move the tour in its own file for clarity
     const tourSteps = [
@@ -317,7 +300,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions"
-              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} />} />
+              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress}  />} />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
             <Route path="/dao/:daoAvatarAddress"
