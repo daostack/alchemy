@@ -1,20 +1,17 @@
-import * as React from "react";
-import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-
-import { IRootState } from "reducers";
-import { IProfilesState } from "reducers/profilesReducer";
-
+import { DAO, IDAOState, IMemberState, Member } from "@daostack/client";
+import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
-
-import * as css from "./ViewDao.scss";
-import { getArc } from "arc";
-import { DAO, Member, IDAOState, IMemberState } from "@daostack/client";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import { IRootState } from "reducers";
+import { IProfilesState } from "reducers/profilesReducer";
+import * as css from "./ViewDao.scss";
 
 interface IProps extends RouteComponentProps<any> {
   dao: IDAOState;
@@ -54,7 +51,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                 { profile ?
                   <div>
                     <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} />
-                    {Object.keys(profile.socialURLs).length == 0 ? "" :
+                    {Object.keys(profile.socialURLs).length === 0 ? "" :
                       <span>
                         <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
                         <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />

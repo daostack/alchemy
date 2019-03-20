@@ -4,7 +4,7 @@ import * as moment from "moment";
 import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
-import { IProposalState as IProposalStateFromDaoStackClient, IProposalOutcome, IProposalStage } from "@daostack/client";
+import { IProposalOutcome, IProposalStage, IProposalState as IProposalStateFromDaoStackClient } from "@daostack/client";
 
 export enum ActionTypes {
   ARC_CREATE_DAO = "ARC_CREATE_DAO",
@@ -86,32 +86,6 @@ export function newAccount(
   };
 }
 
-export interface IDaoState {
-  avatarAddress: string;
-  controllerAddress: string;
-  currentThresholdToBoost: number;
-  ethCount: number;
-  externalTokenAddress?: string; // The address of an external token (e.g. DAI) to use instead of ETH for rewards
-  externalTokenSymbol?: string;
-  externalTokenCount?: number;
-  fromBlock?: number;
-  genCount: number;
-  lastBlock: string | number; // The last block on the chain processed for this DAO
-  members: Array<IAccountState | string>; // Either normalized (string) or denormalized (object)
-  name: string;
-  rank: number;
-  promotedAmount: number;
-  proposals: Array<IProposalState | string>; // Either normalized (string) or denormalized (IProposalState)
-  proposalsLoaded: boolean;
-  reputationAddress: string;
-  reputationCount: number;
-  tokenAddress: string;
-  tokenCount: number; // How much is actually "owned" by the DAO
-  tokenName: string;
-  tokenSupply: number; // total amount in circulation
-  tokenSymbol: string;
-}
-
 export interface IRedemptionState {
   accountAddress: string;
   beneficiaryEth: number;
@@ -170,7 +144,7 @@ export interface IProposalState {
   state: ProposalStates;
   submittedTime: number;
   title: string;
-  transactionState: TransactionStates;
+  ITransactionState: TransactionStates;
   votes: Array<IVoteState | string>; // Either normalized (string) or denormalized (object)
   votesYes: number;
   votesNo: number;
@@ -195,8 +169,6 @@ export interface IVoteState {
 
 export interface IArcState {
   accounts: { [accountKey: string]: IAccountState };
-  daosLoaded: boolean;
-  daos: { [avatarAddress: string]: IDaoState };
   lastBlock: string | number; // The most recent block read into the state
   proposals: { [proposalId: string]: IProposalState };
   redemptions: { [redemptionKey: string]: IRedemptionState };
@@ -206,8 +178,6 @@ export interface IArcState {
 
 export const initialState: IArcState = {
   accounts: {},
-  daosLoaded: false,
-  daos: {},
   lastBlock: 0,
   proposals: {},
   redemptions: {},
@@ -227,24 +197,24 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
 export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   const res = (
     (proposal.stage === IProposalStage.Executed) ||
-    (proposal.stage == IProposalStage.ExpiredInQueue) ||
-    (proposal.stage == IProposalStage.Queued && closingTime(proposal) <= moment())
+    (proposal.stage === IProposalStage.ExpiredInQueue) ||
+    (proposal.stage === IProposalStage.Queued && closingTime(proposal) <= moment())
   );
   return res;
 }
 
 export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Pass)
+    (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Pass)
   );
   return res;
 }
 
 export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage == IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
-    (proposal.stage == IProposalStage.ExpiredInQueue) ||
-    (proposal.stage == IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
+    (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
+    (proposal.stage === IProposalStage.ExpiredInQueue) ||
+    (proposal.stage === IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
   );
   return res;
 }
@@ -256,7 +226,6 @@ const arcReducer = (state = initialState, action: any) => {
   if (payload && payload.entities) {
     state = update(state, {
       accounts: { $merge: payload.entities.accounts || {} },
-      daos: { $merge: payload.entities.daos || {} },
       proposals: { $merge : payload.entities.proposals || {} },
       redemptions: { $merge : payload.entities.redemptions || {} },
       stakes: { $merge : payload.entities.stakes || {} },
@@ -266,62 +235,8 @@ const arcReducer = (state = initialState, action: any) => {
 
   switch (action.type) {
     case ActionTypes.ARC_LOAD_CACHED_STATE: {
-      if (action.sequence == AsyncActionSequence.Success) { return payload; }
+      if (action.sequence === AsyncActionSequence.Success) { return payload; }
       return state;
-    }
-
-    case ActionTypes.ARC_GET_DAOS: {
-      if (action.sequence == AsyncActionSequence.Success) {
-        return update(state, { daosLoaded : { $set : true }, lastBlock: { $set: payload.lastBlock } });
-      } else {
-        return state;
-      }
-    }
-
-    case ActionTypes.ARC_UPDATE_DAO_LAST_BLOCK: {
-      return update(state, { daos : { [payload.avatarAddress]: { lastBlock: { $set: payload.blockNumber } } } });
-    }
-
-    case ActionTypes.ARC_CREATE_PROPOSAL: {
-      const { meta, sequence, payload } = action as CreateProposalAction;
-      const { avatarAddress } = meta;
-
-      switch (sequence) {
-        case AsyncActionSequence.Success:
-          const { result } = payload;
-
-          // Add the new proposal to the DAO's state if not already there
-          // XXX: first check if this DAO exists in our state. this is kind of a hack but right now we cant support "old" DAOs
-          if (state.daos[avatarAddress] && state.daos[avatarAddress].proposals.indexOf(result) === -1) {
-            return update(state , {
-              daos : { [avatarAddress] : {
-                proposals: { $push : [result] }
-              }}
-            });
-          }
-        default:
-          return state;
-      }
-    }
-
-    case ActionTypes.ARC_ON_PROPOSAL_EXECUTED: {
-      const { dao, proposal } = payload;
-
-      return update(state, {
-        daos: {
-          [dao.avatarAddress]: { $merge: dao }
-        },
-      });
-    }
-
-    case ActionTypes.ARC_ON_PROPOSAL_EXPIRED: {
-      const { dao, proposal } = payload;
-
-      return update(state, {
-        daos: {
-          [dao.avatarAddress]: { $merge: dao }
-        },
-      });
     }
 
     case ActionTypes.ARC_VOTE: {
@@ -383,9 +298,6 @@ const arcReducer = (state = initialState, action: any) => {
           }
 
           state = update(state, {
-            daos: {
-              [avatarAddress]: { $merge: payload.dao }
-            },
             proposals: {
               [proposalId]: { $merge : payload.proposal }
             },
@@ -443,12 +355,12 @@ const arcReducer = (state = initialState, action: any) => {
             state = update(state, {
               accounts: {
                 [accountKey]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey)
+                  redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionsKey)
                 }
               },
               proposals: {
                 [proposalId]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item != redemptionsKey),
+                  redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionsKey),
                 }
               },
               redemptions: { $unset: [redemptionsKey] }
@@ -481,12 +393,12 @@ const arcReducer = (state = initialState, action: any) => {
               state = update(state, {
                 accounts: {
                   [currentAccountKey]: {
-                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey)
+                    redemptions: (arr: string[]) => arr.filter((item) => item !== currentAccountRedemptionsKey)
                   }
                 },
                 proposals: {
                   [proposalId]: {
-                    redemptions: (arr: string[]) => arr.filter((item) => item != currentAccountRedemptionsKey),
+                    redemptions: (arr: string[]) => arr.filter((item) => item !== currentAccountRedemptionsKey),
                   }
                 },
                 redemptions: { $unset: [currentAccountRedemptionsKey] }
@@ -496,7 +408,6 @@ const arcReducer = (state = initialState, action: any) => {
 
           // Also update the dao and proposal
           return update(state, {
-            daos: { [avatarAddress]: { $merge: dao } },
             proposals: { [proposalId]: { $merge: proposal }}
           });
         }
@@ -560,12 +471,12 @@ const arcReducer = (state = initialState, action: any) => {
         state = update(state, {
           accounts: {
             [accountKey]: {
-              redemptions: (arr: string[]) => arr.filter((item) => item != redemptionKey)
+              redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionKey)
             }
           },
           proposals: {
             [proposalId]: {
-              redemptions: (arr: string[]) => arr.filter((item) => item != redemptionKey),
+              redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionKey),
             }
           },
           redemptions: { $unset: [redemptionKey] }
@@ -575,102 +486,6 @@ const arcReducer = (state = initialState, action: any) => {
       return state;
     }
 
-    case ActionTypes.ARC_ON_TRANSFER: {
-      const { avatarAddress, fromAccount, fromBalance, toAccount, toBalance, totalTokens } = payload;
-      const fromKey = `${fromAccount}-${avatarAddress}`;
-      const toKey = `${toAccount}-${avatarAddress}`;
-
-      // We see this from address when a DAO is created
-      if (fromAccount !== "0x0000000000000000000000000000000000000000") {
-        state = update(state, {
-          accounts: {
-            [fromKey]: {
-              tokens: { $set: fromBalance }
-            }
-          }
-        });
-      }
-
-      return update(state, {
-        daos: {
-          [avatarAddress]: {
-            tokenCount: { $set: totalTokens },
-          }
-        },
-        accounts: {
-          [toKey]: (member: any) => {
-            // If tokens are being given to a non member, add them as a member to this DAO
-            return update(member || newAccount(avatarAddress, toAccount), {
-              tokens: { $set: toBalance }
-            });
-          }
-        }
-      });
-    }
-
-    case ActionTypes.ARC_ON_REPUTATION_CHANGE: {
-      const { avatarAddress, address, reputation, totalReputation } = payload;
-      const accountKey = `${address}-${avatarAddress}`;
-
-      const members = state.daos[avatarAddress].members;
-      // If reputation is being given to a non member, add them as a member to this DAO
-      if (members.indexOf(accountKey) === -1) {
-        members.push(accountKey);
-      }
-
-      return update(state, {
-        daos: {
-          [avatarAddress]: {
-            members: { $set: members },
-            reputationCount: { $set: totalReputation }
-          }
-        },
-        accounts: {
-          [accountKey]: (member: any) => {
-            // Make sure account exists before updating
-            return update(member || newAccount(avatarAddress, address), {
-              reputation: { $set: reputation }
-            });
-          }
-        }
-      });
-    }
-
-    case ActionTypes.ARC_ON_DAO_ETH_BALANCE_CHANGE: {
-      const { avatarAddress, balance } = payload;
-
-      return update(state, {
-        daos: {
-          [avatarAddress]: {
-            ethCount: { $set: balance || state.daos[avatarAddress].ethCount}
-          }
-        }
-      });
-    }
-
-    case ActionTypes.ARC_ON_DAO_EXTERNAL_TOKEN_BALANCE_CHANGE: {
-      const { avatarAddress, balance } = payload;
-
-      return update(state, {
-        daos: {
-          [avatarAddress]: {
-            externalTokenCount: { $set: balance || state.daos[avatarAddress].externalTokenCount}
-          }
-        }
-      });
-    }
-
-    case ActionTypes.ARC_ON_DAO_GEN_BALANCE_CHANGE: {
-      const { avatarAddress, balance } = payload;
-
-      return update(state, {
-        daos: {
-          [avatarAddress]: {
-            genCount: { $set: balance || state.daos[avatarAddress].genCount}
-          }
-        }
-      });
-    }
   }
 
   return state;

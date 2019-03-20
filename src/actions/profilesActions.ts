@@ -1,6 +1,5 @@
+import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import axios from "axios";
-
-import { IAsyncAction, AsyncActionSequence } from "actions/async";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, IProfileState, newProfile, profileDbToRedux } from "reducers/profilesReducer";
