@@ -46,6 +46,7 @@ class RedeemButton extends React.Component<IProps> {
           className={redeemRewards}
           onClick={handleClickRedeem}
         >
+          <img src="/assets/images/Icon/redeem.svg" />
           {
             isRedeemPending ?
               "Redeem in progress" :
@@ -55,7 +56,6 @@ class RedeemButton extends React.Component<IProps> {
                   "Redeem" :
                   "Execute"
           }
-          <img src="/assets/images/Icon/Loading-black.svg" />
         </button>
       </Tooltip>
       : "");

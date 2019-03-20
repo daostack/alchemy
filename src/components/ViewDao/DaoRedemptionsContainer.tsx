@@ -71,17 +71,12 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     return(
       <div>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
-
-        {proposals.length > 0 ?
-            <div className={css.clearfix + " " + css.redeemAllContainer}>
-              <div className={css.pendingRewards}>
-                Pending Rewards:&nbsp;{totalRewardsString}
-              </div>
-            </div>
-          : ""
-        }
-        <div className={css.proposalsHeader}>
-          Proposals with rewards for you to redeem
+        <div className={css.redemptionsHeader}>
+          Redemptions
+          {proposals.length > 0 ?
+              <span>Pending Rewards:&nbsp;{totalRewardsString}</span>
+            : ""
+          }
         </div>
         <div className={css.proposalsContainer}>
           <div className={css.proposalsContainer}>

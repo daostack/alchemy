@@ -62,6 +62,7 @@ export const boostedContainer: string;
 export const regularContainer: string;
 export const queueType: string;
 export const daoHistoryHeader: string;
+export const redemptionsHeader: string;
 export const proposalsHeader: string;
 export const noDecisions: string;
 export const relax: string;
