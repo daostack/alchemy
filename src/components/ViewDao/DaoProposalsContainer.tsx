@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -26,16 +26,16 @@ const Fade = ({ children, ...props }: any) => (
 const DAOProposalsContainer = (props: {
   currentAccountAddress: Address,
   dao: IDAOState,
-  proposalsBoosted: IProposalState[],
-  proposalsPreBoosted: IProposalState[],
-  proposalsQueued: IProposalState[]
+  proposalsBoosted: Proposal[],
+  proposalsPreBoosted: Proposal[],
+  proposalsQueued: Proposal[]
 }) => {
 
   const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted } = props;
 
   const queuedProposalsHTML = (
     <TransitionGroup className="queued-proposals-list">
-      { proposalsQueued.map((proposal: IProposalState) => (
+      { proposalsQueued.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
           <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
@@ -45,7 +45,7 @@ const DAOProposalsContainer = (props: {
 
   const preBoostedProposalsHTML = (
     <TransitionGroup className="boosted-proposals-list">
-      { proposalsPreBoosted.map((proposal: IProposalState) => (
+      { proposalsPreBoosted.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
           <ProposalContainer proposalId={proposal.id} dao={dao}  currentAccountAddress={currentAccountAddress}/>
         </Fade>
@@ -55,7 +55,7 @@ const DAOProposalsContainer = (props: {
 
   const boostedProposalsHTML = (
     <TransitionGroup className="boosted-proposals-list">
-      { proposalsBoosted.map((proposal: IProposalState) => (
+      { proposalsBoosted.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
           <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
@@ -127,10 +127,10 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Boosted }), // the list of boosted proposals
-    arc.dao(daoAvatarAddress).state()
+    arc.dao(daoAvatarAddress).state() // DAO state
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IProposalState[], IProposalState[], IDAOState]>): any => {
+    (state: IObservableState<[Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
       } else if (state.error) {

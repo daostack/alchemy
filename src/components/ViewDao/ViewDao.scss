@@ -296,10 +296,6 @@ button:hover {
   display: block;
 }
 
-.daoHeadings {
-  padding: 30px 30px 5px 30px;
-}
-
 .nav {
   padding: 0 30px;
   position: relative;
@@ -654,6 +650,40 @@ a.navItem:hover {
   font-weight: bold;
   padding: 0;
   color: rgba(104, 155, 214, 1.000);
+}
+
+.daoHistoryHeader {
+    font-size: 28px;
+    color: rgba(104, 155, 214, 1.000);
+    border-bottom: 1px solid rgba(45, 109, 181, .2);
+    padding-bottom: 5px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.redemptionsHeader {
+  font-size: 28px;
+  font-weight: bold;
+  color: rgba(104, 155, 214, 1);
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(191, 203, 213, 1);
+
+  span {
+    font-size: 13px;
+    font-weight: bold;
+    color: rgba(104, 155, 214, 1.000);
+    border-left: 1px solid rgba( 191, 203, 213, 1);
+    display: inline-block;
+    margin-left: 15px;
+    padding-left: 15px;
+    
+
+    span {
+      border-left: none;
+      margin-left: none;
+    }
+  }
+
 }
 
 .proposalsHeader {

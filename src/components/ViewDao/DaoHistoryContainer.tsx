@@ -27,8 +27,8 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
         <div>
           <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
 
-          <div className={css.proposalsHeader}>
-            Executed Proposals
+          <div className={css.daoHistoryHeader}>
+            History
           </div>
           <div className={css.proposalsContainer}>
             <div className={css.closedProposalsHeader}>
@@ -53,11 +53,12 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 export default (props: {currentAccountAddress: Address} & RouteComponentProps<any>) => {
   const arc = getArc();
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
+  const dao = arc.dao(daoAvatarAddress);
   const currentAccountAddress = props.currentAccountAddress;
   const observable = combineLatest(
-    arc.dao(daoAvatarAddress).proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed] }),
-    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000) }),
-    arc.dao(daoAvatarAddress).state()
+    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed] }),
+    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000) }),
+    dao.state()
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState[], IProposalState[], IDAOState]>): any => {

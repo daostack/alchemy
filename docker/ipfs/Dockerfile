@@ -2,6 +2,8 @@
 
 FROM ipfs/go-ipfs:latest
 
+USER root
 COPY start_ipfs.sh /start_ipfs
 RUN chmod a+x /start_ipfs
+USER ipfs
 ENTRYPOINT ["/start_ipfs"]

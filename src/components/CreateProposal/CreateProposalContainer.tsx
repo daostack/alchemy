@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, IProposalOutcome } from "@daostack/client";
+import { IDAOState, IExecutionState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -11,10 +11,12 @@ import Util from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
+import { showNotification } from "reducers/notifications";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
 
 const emptyProposal: IProposalState = {
+  accountsWithUnclaimedRewards: [],
   activationTime: 0,
   beneficiary: null,
   boostedAt: 0,
@@ -27,7 +29,7 @@ const emptyProposal: IProposalState = {
   descriptionHash: "",
   ethReward: new BN(0),
   executedAt: 0,
-  executionState: 0, // TODO: when client exports should be IExecutionState.None,
+  executionState: IExecutionState.None,
   expiresInQueueAt: 0,
   externalToken: null,
   externalTokenReward: new BN(0),
@@ -55,6 +57,7 @@ const emptyProposal: IProposalState = {
   url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
+  votesCount: 0,
   winningOutcome: IProposalOutcome.Fail,
   votingMachine: null
 };
@@ -81,10 +84,12 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
+  showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
+  showNotification
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -119,8 +124,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.web3 = Util.getWeb3();
   }
 
-  public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
-    if (!checkNetworkAndWarn()) { return; }
+  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+
     const proposalValues = {...values,
       ethReward: Util.toWei(Number(values.ethReward)),
       externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
