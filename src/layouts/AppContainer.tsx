@@ -1,4 +1,4 @@
-import { Address } from "@daostack/client";
+import {Address } from "@daostack/client";
 import * as web3Actions from "actions/web3Actions";
 import { checkNetwork, getArc, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
@@ -95,10 +95,9 @@ class AppContainer extends React.Component<IProps, IState> {
 
     pollForAccountChanges(arc.web3).subscribe(
       (newAddress: Address) => {
-        if (currentAddress) {
+        if (currentAddress && currentAddress !== newAddress) {
           this.props.setCurrentAccount(undefined);
           window.location.reload();
-
         } else {
           this.props.setCurrentAccount(newAddress);
           currentAddress = newAddress;
