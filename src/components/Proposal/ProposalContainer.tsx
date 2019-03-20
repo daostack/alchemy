@@ -408,21 +408,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
             proposal={proposal}
             detailView={detailView}
           />
-          { proposalPassed(proposal) ?
-            <div className={css.decidedProposal}>
-              <div className={css.result}>
-                <div><img src="/assets/images/Icon/Passed.svg" /></div>
-              </div>
-            </div>
-            : proposalFailed(proposal) ?
-              <div className={css.decidedProposal}>
-                <div className={css.result}>
-                  <div><img src="/assets/images/Icon/Failed.svg" /></div>
-                </div>
-              </div>
-            : ""
-          }
-
           {proposalEnded(proposal) ?
             <div>
               {this.state.preRedeemModalOpen ?

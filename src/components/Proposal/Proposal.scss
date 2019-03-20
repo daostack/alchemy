@@ -79,14 +79,11 @@
 	box-shadow: none;
 }
 
-.closedProposal.proposal:hover {
-	margin-bottom: 3px;
-	overflow: visible;
-
-    .predictions .boostedAmount, .predictions .centered {
-    	opacity: 0;
-    	display: none;
-    }
+.closedProposal.proposal:hover, .passedProposal.proposal:hover {
+	height: 185px;
+	margin-bottom: 0;
+	border: none;
+	box-shadow: none;
 }
 
 .proposal.openProposal {
@@ -1004,11 +1001,14 @@ button.disabled {
 		color: $white;
 		border: none;
 		transition: all .25s ease;
-	    margin: 10px 10px 5px 0px;
+	    margin: 0;
 	}
 
-	.executeProposal {
+	.executeProposal, .boostProposal {
 		display: inline-block;
+		position: absolute;
+		top: 15px;
+		right: 15px;
 	}
 
 	.executeProposal, .boostProposal {
@@ -1207,11 +1207,6 @@ button.disabled {
     }
   }
 }
-
-.passedProposal .proposalInfo h3, .failedProposal .proposalInfo h3 {
-	margin: 24px 0px 10px 0px;
-}
-
 
 .decisionGraph {
 	position: relative;
@@ -1564,6 +1559,7 @@ button.disabled {
 .createdBy {
 	font-size: $small;
 	color: $black-thirdtone;
+	margin-top: 16px;
 
 	.targetAccount {
 		top: 7px;
@@ -1592,16 +1588,10 @@ a.viewProposal {
 	background-color: transparent;
 	padding: 5px 5px;
 	position: absolute;
-	right: -4px;
-	top: 26px;
-	transform: translateY(-50%);
+	right: 15px;
+	top: 15px;
 	cursor: pointer;
-	margin-top: -2px;
 	font-weight: bold;
-
-	img {
-		display: none;
-	}
 
 	&.pending {
 		border: 1px solid $black-tenthtone;
