@@ -29,10 +29,6 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
             </Link>
             <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
           </div>
-          {
-            // TODO: temporarilby disabled DaoHeadings - needs refactor to use IDAOState
-            // <DaoHeadings dao={dao} />
-            }
           <div className={css.navigation}>
             <span className={css.navHeading}><b>Menu</b></span>
             <ul>
