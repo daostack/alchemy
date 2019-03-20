@@ -8,6 +8,8 @@ const baseConfig = require('./webpack.base.config.js');
 require('dotenv').config();
 
 module.exports = merge(baseConfig, {
+  mode: 'development',
+
   devtool: 'eval-source-map',
 
   devServer: {
