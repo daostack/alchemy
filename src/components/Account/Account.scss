@@ -203,6 +203,20 @@
   height: 100%;
 }
 
+.socialProof {
+  width: 50%;
+  left: 30%;
+  position: absolute;
+  font-size: 14px;
+  left: 200px;
+  top: 30px;
+
+  p {
+    font-size: 12px;
+    padding: 0;
+  }
+}
+
 .profileContainer {
   max-width: 800px;
   border-radius: 15px;
@@ -220,6 +234,7 @@
 
   .profileContent {
     display: block;
+    position: relative;
   }
 
   .userAvatarContainer {
@@ -249,20 +264,16 @@
   }
 
   .otherInfoContainer {
-    padding-left: 50px;
     width: 100%;
 
     span {
-      //color: #6abed4;
       color: #76c9de;
       font-weight: bold;
     }
 
     .tokens {
-      // display: flex;
-      // width: 100%;
       > div {
-        display: inline-block;
+        display: block;
         width: 33%;
       }
     }
@@ -293,7 +304,7 @@
 
   .socialButton {
     width: 33%;
-    display: inline-block;
+    display: block;
 
     button {
       border: none;
@@ -304,10 +315,16 @@
     }
 
     .icon {
-      width: 40px;
-      height: 40px;
+      width: 24px;
+      height: 24px;
     }
   }
+}
+
+.socialLogins {
+  position: relative;
+  height: 180px;
+  width: 100%;
 }
 
 .socialButtonAuthenticated {
