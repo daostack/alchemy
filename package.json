@@ -156,7 +156,7 @@
     "@types/web3": "1.0.12",
     "@types/webpack-env": "^1.13.0",
     "@types/yargs": "^11.1.1",
-    "awesome-typescript-loader": "^3.2.3",
+    "awesome-typescript-loader": "^5.2.1",
     "axios-mock-adapter": "^1.15.0",
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
