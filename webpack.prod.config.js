@@ -36,7 +36,14 @@ const config = merge(baseConfig, {
         test: /\.scss$/,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader',
+          {
+            loader: "css-loader",
+            options: {
+              modules: true,
+              importLoaders: 2,
+              localIdentName: "[name]--[local]--[hash:base64:5]"
+            }
+          },
           'sass-loader',
           {
             loader: 'sass-resources-loader',
@@ -54,7 +61,8 @@ const config = merge(baseConfig, {
       // Options similar to the same options in webpackOptions.output
       // both options are optional
       filename: "[name].[hash].css",
-      chunkFilename: "[id].[hash].css"
+      chunkFilename: "[id].[hash].css",
+      modules: true
     }),
     new webpack.DefinePlugin({
       'process.env': {
