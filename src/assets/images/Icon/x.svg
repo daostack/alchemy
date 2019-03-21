@@ -1,17 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="10px" height="10px" viewBox="0 0 10 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
-    <title>vote/ x small copy</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Alchemy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="btn/-predict-small" transform="translate(-76.000000, -7.000000)" fill="#0076FF" fill-rule="nonzero">
-            <g id="Group-2">
-                <g id="vote/-x-small-copy-2" transform="translate(73.489942, 4.571499)">
-                    <polygon id="Path-2" points="3.06670292 3.98966164 4.0380531 3.02500002 12.1863531 11.229797 11.215003 12.1944586"></polygon>
-                    <path d="M11.215003,3.02500002 L12.1863531,3.98966164 L4.0380531,12.1944586 L3.06670292,11.229797 L11.215003,3.02500002 Z M12.1863531,3.98966164 L4.0380531,12.1944586 L3.06670292,11.229797 L11.215003,3.02500002 L12.1863531,3.98966164 Z" id="Path-2"></path>
-                </g>
-            </g>
-        </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13">
+    <g fill="none" fill-rule="evenodd" stroke="#9AA9B5" stroke-linecap="square" stroke-width="1.8">
+        <path d="M1.841 1.841l9.031 9.031M11.159 1.841L2.132 11.16"/>
     </g>
 </svg>

@@ -11,6 +11,8 @@ export const endDate: string;
 export const title: string;
 export const closeReason: string;
 export const myActions: string;
+export const notice: string;
+export const closeNotice: string;
 export const menuWrapper: string;
 export const daoIcon: string;
 export const daoSidebar: string;
