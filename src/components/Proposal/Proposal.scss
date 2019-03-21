@@ -417,6 +417,14 @@ button.disabled {
 		z-index: 0;
 	}
 
+	.votedFor .upvote, .votedAgainst .downvote  {
+		opacity: 0;
+	}
+
+	.votedFor .upvote.upvoted, .votedAgainst .downvote.downvoted {
+		opacity: 1;
+	}
+
 	.downvotePending .downvotePendingIcon {
 		opacity: 1;
 	}
