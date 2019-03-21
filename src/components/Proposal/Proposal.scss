@@ -47,19 +47,19 @@
 	margin-top: 20px;
 	margin-bottom: 0px;
 	display: inline-block;
-    height: 185px;
+  height: 185px;
 	box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
-    overflow: hidden;
-    transition: all .25s ease;
+  overflow: hidden;
+  transition: all .25s ease;
 
-    .predictions .boostedAmount, .predictions .centered {
-    	opacity: 0;
-    	transition: all .25s ease;
-    }
+  .predictions .boostedAmount, .predictions .centered {
+  	opacity: 0;
+  	transition: all .25s ease;
+  }
 
-    .description, .url {
-    	display: none;
-    }
+  .description, .url {
+  	display: none;
+  }
 }
 
 .proposal:hover {
@@ -67,10 +67,11 @@
 	box-shadow: 0 0 2px 0 #3278CA;
 	height: 225px;
 	margin-bottom: -40px;
+	overflow: visible;
 
-    .predictions .boostedAmount, .predictions .centered {
-    	opacity: 1;
-    }
+  .predictions .boostedAmount, .predictions .centered {
+  	opacity: 1;
+  }
 }
 
 .detailView.proposal:hover  {
