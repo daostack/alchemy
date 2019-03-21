@@ -186,45 +186,6 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                    <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "
                 }
-                <div className={css.reputationTurnout}>
-                  <div className={css.header}>Reputation turnout</div>
-                  <div className={css.turnoutInfo}>
-                    {/* TODO: <span className={css.description}>{proposal.votes.length} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
-                    <div className={css.turnoutGraph}>
-                      <div className={css.turnoutStats}>
-                        <span className={css.forLabel}>
-                          <ReputationView
-                            daoName={dao.name}
-                            totalReputation={dao.reputationTotalSupply}
-                            reputation={proposal.votesFor}
-                          /> for
-                        </span>
-                        <span className={css.againstLabel}>
-                          <ReputationView
-                            daoName={dao.name}
-                            totalReputation={dao.reputationTotalSupply}
-                            reputation={proposal.votesAgainst}
-                          /> against
-                        </span>
-                      </div>
-                      <div className={css.graph}>
-                        <div className={css.forBar} style={styles.forBar}></div>
-                        <div className={css.divider}></div>
-                        <div className={css.againstBar} style={styles.againstBar}></div>
-                      </div>
-                      <div className={css.reputationThreshold}>
-                        <ReputationView
-                          daoName={dao.name}
-                          totalReputation={dao.reputationTotalSupply}
-                          reputation={dao.reputationTotalSupply.div(new BN(2))}
-                        /> NEEDED FOR DECISION BY VOTE
-                      </div>
-                    </div>
-                  </div>
-                  <div className={css.tooltipPointer}>
-                    <img src="/assets/images/tooltip-pointer.svg"/>
-                  </div>
-                </div>
                 { this.props.detailView ?
                    <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "

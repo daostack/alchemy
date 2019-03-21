@@ -1290,16 +1290,6 @@ button.disabled {
 	margin-right: 5px;
 }
 
-.voteGraphs:hover .reputationTurnout {
-	opacity: 1;
-	left: -5px;
-	transform: translateY(-50%) scale(1);
-}
-
-.detailView .voteGraphs:hover .reputationTurnout {
-	left: -87px;
-}
-
 .proposal .enablePredictions {
 	display: block;
 	width: 100%;
