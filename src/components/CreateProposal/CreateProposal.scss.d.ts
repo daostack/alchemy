@@ -9,6 +9,7 @@ export const rewardRecipient: string;
 export const rewardArrow: string;
 export const contributionType: string;
 export const contributionTypeDropdown: string;
+export const requiredMarker: string;
 export const infoTooltip: string;
 export const error: string;
 export const errorMessage: string;
