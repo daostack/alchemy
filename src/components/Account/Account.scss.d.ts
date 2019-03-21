@@ -23,6 +23,7 @@ export const charLimit: string;
 export const otherInfoContainer: string;
 export const tokens: string;
 export const copyButton: string;
+export const socialLogins: string;
 export const socialButtonAuthenticated: string;
 export const error: string;
 export const errorMessage: string;

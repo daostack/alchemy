@@ -227,16 +227,17 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                         }
                       </div>
                     </div>
-
-                    {editing
-                      ? <div className={css.socialProof}>
-                          <strong>Prove it's you by linking your social accounts:</strong>
-                          <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
-                        </div>
-                      : <div><strong>Social accounts:</strong></div>
-                    }
                     {!editing && Object.keys(accountProfile.socialURLs).length === 0 ? "None connected" :
-                      <div>
+                      <div className={css.socialLogins}>
+                        {editing
+                          ? <div className={css.socialProof}>
+                              <strong><img src="/assets/images/Icon/Alert-yellow.svg"/> Prove it's you by linking your social accounts</strong>
+                              <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                            </div>
+                          : <div><strong>Social accounts:</strong></div>
+                        }
+
+                        <h3>Social Verification</h3>
                         <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
                         <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
                       </div>
