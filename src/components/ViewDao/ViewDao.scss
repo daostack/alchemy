@@ -20,6 +20,7 @@ button:hover {
   flex-grow: 2;
   padding: 50px 50px 100px;
   overflow: scroll;
+  position: relative;
 }
 
 .proposalHistory {
@@ -71,6 +72,45 @@ button:hover {
 }
 
 
+.notice {
+  background-color: white;
+  padding: 11px 8px;
+  color: rgba(80, 97, 118, 1.000);
+  position: absolute;
+  font-size: 11px;
+  z-index: 1000;
+  bottom: 51px;
+  right: 0;
+  text-align: left;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+
+  div {
+    padding-left: 15px;
+
+    img {
+      margin-right: 8px;
+    }
+
+    b {
+      color: $accent-3;
+    }
+  }
+
+  .notice::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  .closeNotice {
+    position: absolute;
+    border: none;
+    outline: none;
+    right: 6px;
+    top: 13px;
+  }
+}
 
 .menuWrapper {
   bottom: 0;
