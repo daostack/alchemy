@@ -6,56 +6,75 @@ describe("Proposals", () => {
     let addresses;
 
     before(() => {
-      chai.Should();
       addresses = getContractAddresses();
       daoAddress = addresses.Avatar.toLowerCase();
     });
 
     it("Create a proposal, vote for it, stake on it", async () => {
-      browser.url("http://127.0.0.1:3000/ ");
-      const url = `http://127.0.0.1:3000/dao/${daoAddress}/`;
-      browser.url(url);
 
-      browser.waitForExist("*[data-test-id=\"create-proposal\"]");
+      // This sets the seen_disclaimer cookie to true so we can move on
+      await browser.url("/");
 
-      /// skip the tour
-      if (browser.isVisible("*[data-test-id=\"skip-tour\"]")) {
-        browser.click("*[data-test-id=\"skip-tour\"]");
-      }
+      const url = `/dao/${daoAddress}/`;
+      await browser.url(url);
 
-      browser.click("*[data-test-id=\"create-proposal\"]");
-      browser.waitForExist("*[id=\"titleInput\"]");
+      const createProposalButton = await $('a[data-test-id="createProposal"]');
+      await createProposalButton.waitForExist();
+
+      await createProposalButton.click()
+
+      const titleInput = await $("*[id=\"titleInput\"]");
+      await titleInput.waitForExist();
+
       const title = uuid();
-      browser.setValue("*[id=\"titleInput\"]", title);
-      // using uuid value so that the test will pass alsko if there is already a proposal with thi description
+      await titleInput.setValue(title);
+
+      // using uuid value so that the test will pass also if there is already a proposal with this description
       // (which must be unique). TODO: find a way to reset the state
-      browser.setValue("*[id=\"descriptionInput\"]", `https://this.must.be/a/valid/url${uuid()}`);
-      browser.setValue("*[data-test-id=\"beneficiaryInput\"]", "0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+      const descriptionInput = await $("#descriptionInput");
+      await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+
+      const beneficiaryInput = await $("*[data-test-id=\"beneficiaryInput\"]");
+      await beneficiaryInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+
       // ask for 100 rep
       const repReward = Math.floor(Math.random() * 1000);
-      browser.waitForExist("*[id=\"reputationRewardInput\"]");
-      browser.setValue("*[id=\"reputationRewardInput\"]", `${repReward}` );
+      const reputationRewardInput = await $("*[id=\"reputationRewardInput\"]");
+      await reputationRewardInput.setValue(repReward);
       const ethReward = Math.floor(Math.random() * 1000);
-      browser.setValue("*[id=\"ethRewardInput\"]", `${ethReward}` );
-      browser.click("*[type=\"submit\"]");
+      const ethRewardInput = await $("#ethRewardInput");
+      await ethRewardInput.setValue(ethReward);
+      const createProposalSubmitButton = await $("*[type=\"submit\"]")
+      await createProposalSubmitButton.click();
 
-      // check that the proposal with the ethReward appears in the list
-      browser.waitForExist(`strong*=${ethReward}`);
-
+      // check that the proposal appears in the list
       // test for the title
-      browser.$(`[data-test-id=\"proposal-title\"]=${title}`).isExisting();
+      const titleElement = await $(`[data-test-id=\"proposal-title\"]=${title}`);
+      await titleElement.waitForExist();
+
       // check if this container really exists
-
       // next line is there to locate the proposal component, so we can click on the various buttons
-      const proposalDataTestId = browser.$(`[data-test-id=\"proposal-title\"]=${title}`).$("..").$("..").$("..").getAttribute("data-test-id");
-      browser.$(`*[data-test-id="${proposalDataTestId}"]`).isExisting();
+      const proposal = await titleElement.$("./../../..");
+      //assert(await proposal.isExisting());
 
-      // TODO: next line errors with a scrollIntoView is not a function error. Why?
-      // browser.$(`*[data-test-id="${proposalDataTestId}"]`).scrollIntoView();
-      // // vote for the proposal
-      // browser.$(`*[data-test-id="${proposalDataTestId}"]`).$(`[data-test-id="voteFor"]`).isExisting();
-      // browser.$(`*[data-test-id="${proposalDataTestId}"]`).$(`[data-test-id="voteFor"]`).click();
+      await proposal.scrollIntoView();
 
-    }, 10000);
+      // vote for the proposal
+      // Click on proposal so voting controls appear
+      await proposal.click();
+      const voteButton = await proposal.$(`[data-test-id="voteFor"]`);
+      await voteButton.click();
+      const launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
+      await launchMetaMaskButton.click();
+
+      await proposal.click();
+      const youVotedFor = await proposal.$(`span[data-test-id="youVotedFor"`);
+      await youVotedFor.waitForDisplayed();
+
+      const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);
+      await stakeButton.click();
+      await launchMetaMaskButton.click();
+      // TODO: what to look for? check that staking amount for increased by amount staked...
+    });
 
 });

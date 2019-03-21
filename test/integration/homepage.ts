@@ -7,14 +7,15 @@ describe('Home page', () => {
   })
 
   it('Works', async () => {
-    browser.url('http://127.0.0.1:3000/')
-    browser.getTitle().should.be.equal('Alchemy | DAOstack')
-    browser.waitForExist('*[data-test-id="link-to-alchemy"]')
-    browser.click('*[data-test-id="link-to-alchemy"]')
-    browser.waitForExist('*[data-test-id="header-all-daos"]')
-    browser.click('*[data-test-id="dao-link"]')
-    if (browser.isVisible('*[data-test-id="skip-tour"]')) {
-      browser.click('*[data-test-id="skip-tour"]')
-    }
+    await browser.url('http://127.0.0.1:3000/')
+    const title = await browser.getTitle();
+    title.should.be.equal('Alchemy | DAOstack');
+    const linkToAlchemy = await $('*[data-test-id="link-to-alchemy"]');
+    await linkToAlchemy.waitForExist();
+    await linkToAlchemy.click();
+    const daosHeader = await $('*[data-test-id="header-all-daos"]');
+    await daosHeader.waitForExist()
+    const daoLink = await $('*[data-test-id="dao-link"]');
+    await daoLink.click();
   })
 })

@@ -32,7 +32,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 4,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -44,10 +44,7 @@ exports.config = {
         // 5 instances get started at a time.
         maxInstances: 1,
         //
-        browserName: 'chrome',
-        chromeOptions: {
-            args: ['disable-web-security']
-        }
+        browserName: 'chrome'
     }],
     //
     // ===================
@@ -60,8 +57,8 @@ exports.config = {
     // e.g. using promises you can set the sync option to false.
     sync: true,
     //
-    // Level of logging verbosity: silent | verbose | command | data | result | error
-    logLevel: 'error',
+    // Level of logging verbosity: trace | debug | info | warn | error | silent
+    logLevel: 'warn',
     //
     // Enables colors for log output.
     coloredLogs: true,
@@ -114,7 +111,38 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['selenium-standalone'],
+    services: [
+        'selenium-standalone'
+    ],
+    seleniumArgs: {
+        version: '3.141.5',
+        baseURL: 'https://selenium-release.storage.googleapis.com',
+        drivers: {
+            chrome: {
+                // check for more recent versions of chrome driver here:
+                // https://chromedriver.storage.googleapis.com/index.html
+                version: '73.0.3683.68',
+                arch: process.arch,
+                baseURL: 'https://chromedriver.storage.googleapis.com'
+            }
+        }
+    },
+    seleniumInstallArgs: {
+        // check for more recent versions of selenium here:
+        // https://selenium-release.storage.googleapis.com/index.html
+        version: '3.141.5',
+        baseURL: 'https://selenium-release.storage.googleapis.com',
+        drivers: {
+            chrome: {
+                // check for more recent versions of chrome driver here:
+                // https://chromedriver.storage.googleapis.com/index.html
+                version: '73.0.3683.68',
+                arch: process.arch,
+                baseURL: 'https://chromedriver.storage.googleapis.com'
+            }
+        }
+    },
+
     //
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -127,7 +155,7 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: http://webdriver.io/guide/reporters/dot.html
-    reporters: ['dot'],
+    reporters: ['dot', 'spec'],
 
     //
     // Options to be passed to Mocha.
