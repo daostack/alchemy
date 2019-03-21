@@ -26,4 +26,4 @@ export const exitProposalCreation: string;
 export const submitProposal: string;
 export const loading: string;
 export const sendIcon: string;
-export const alignCenter: string;
+export const createProposalActions: string;

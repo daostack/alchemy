@@ -25,7 +25,7 @@ export default class AccountProfileName extends React.Component<IProps, null> {
 
     return (accountProfile && accountProfile.name ?
       <Link className={accountNameClass} to={"/profile/" + accountProfile.ethereumAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{accountProfile.name}</Link>
-      : ""
+      : " "
     );
   }
 }

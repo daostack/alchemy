@@ -360,7 +360,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
                       {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>
-                    <div className={css.alignCenter}>
+                    <div className={css.createProposalActions}>
                       <button className={css.exitProposalCreation} onClick={this.goBack.bind(this, dao.address)}>
                         Cancel
                       </button>

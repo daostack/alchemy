@@ -127,7 +127,7 @@
         top: 26px;
         color: rgba(104, 154, 214, 1.000);
         font-weight: bold;
-        left: 6px;
+        left: 5px;
       }
 
 
@@ -145,14 +145,14 @@
 
     input, textarea {
       margin-top: 3px;
-      margin-bottom: 20px;
-      width: 460px;
+      margin-bottom: 5px;
+      width: 445px;
       display: block;
       border: none;
       background-color: transparent;
       border: 1px solid rgba(191, 203, 213, 1.000);
       font-size: 13px;
-      padding: 15px 15px;
+      padding: 12px 12px;
       font-family: $body-font;
       &.error {
         border: 1px solid rgba(255, 8, 96, 1.000);
@@ -303,8 +303,8 @@
   .submitProposal:disabled .sendIcon {
     display: none;
   }
-  .alignCenter {
-    text-align: center;
+  .createProposalActions {
+    text-align: right;
     margin-top: 30px;
   }
 }
