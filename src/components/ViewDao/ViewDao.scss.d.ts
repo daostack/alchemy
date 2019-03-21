@@ -14,6 +14,7 @@ export const myActions: string;
 export const notice: string;
 export const closeNotice: string;
 export const menuWrapper: string;
+export const daoStack: string;
 export const daoIcon: string;
 export const daoSidebar: string;
 export const navHeading: string;
