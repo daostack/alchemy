@@ -155,12 +155,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
     ) as boolean;
 
     const accountHasRewards = rewardsForCurrentUser.length !== 0;
-
     const redeemable = accountHasRewards || beneficiaryHasRewards;
-
-      // TODO: check if the commented lines are represented correctly in the line below
-      // const executable = proposalEnded(proposal) && proposal.state !== ProposalStates.Closed && proposal.state !== ProposalStates.Executed;
     const executable = proposalEnded(proposal) && !proposal.executedAt;
+
     const proposalClass = classNames({
         [css.detailView]: detailView,
         [css.clearfix]: detailView,
@@ -174,7 +171,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.redeemable]: redeemable
       });
 
-      // Calculate reputation percentages
+    const actionButtonClass = classNames({
+        [css.invisible]: !proposalEnded(proposal) && !(this.state.expired || executable || redeemable),
+        [css.stateChange]: true
+      });
+
+    // Calculate reputation percentages
     const totalReputation = Util.fromWei(proposal.stage === IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
     const votesFor = Util.fromWei(proposal.votesFor);
     const votesAgainst = Util.fromWei(proposal.votesAgainst);
@@ -218,11 +220,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
         url: process.env.BASE_URL + "/dao/" + dao.address + "/proposal/" + proposal.id,
         identifier: proposal.id
       };
-
-    const executeButtonClass = classNames({
-        [css.invisible]: !proposalEnded(proposal) && !this.state.expired,
-        [css.stateChange]: true
-      });
 
     return (
       <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
@@ -271,17 +268,21 @@ class ProposalContainer extends React.Component<IProps, IState> {
             </div>
 
             {!this.props.detailView ?
-              <div className={executeButtonClass}>
+              <div className={actionButtonClass}>
                 {proposal.stage === IProposalStage.PreBoosted ?
                   <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span>Boost</span>
                   </button>
-                  :
-                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
-                    <img src="/assets/images/Icon/execute.svg"/>
-                    <span> Execute</span>
-                  </button>
+                  : proposal.stage === IProposalStage.Boosted ?
+                    <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                      {/* If proposal is boosted, even if it has rewards, make them execute it first */}
+                      <img src="/assets/images/Icon/execute.svg"/>
+                      <span> Execute</span>
+                    </button>
+                  : redeemable ?
+                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                  : ""
                 }
               </div>
               : " "
@@ -337,12 +338,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
           {this.props.detailView ?
               <div className={css.stateChange}>
-                {proposal.stage === IProposalStage.PreBoosted ?
+                {this.state.expired && proposal.stage === IProposalStage.PreBoosted ?
                   <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span>Boost</span>
                   </button>
-                  : executable ?
+                  : this.state.expired && proposal.stage === IProposalStage.Boosted ?
                   <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                     <img src="/assets/images/Icon/execute.svg"/>
                     <span>Execute</span>
