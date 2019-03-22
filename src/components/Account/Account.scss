@@ -8,8 +8,13 @@
   text-align: right;
 }
 
-.historyView {
-  font-weight: bold;
+a.historyView {
+  position: absolute;
+  top: 25px;
+  left: 66px;
+  display: block;
+  color: rgba(80, 97, 118, 1.000);
+  font-size: 13px;
 }
 
 :global .membersPage {
