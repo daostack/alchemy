@@ -343,7 +343,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span>Boost</span>
                   </button>
-                  : this.state.expired && proposal.stage == IProposalStage.Boosted ?
+                  : this.state.expired && proposal.stage === IProposalStage.Boosted ?
                   <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                     <img src="/assets/images/Icon/execute.svg"/>
                     <span>Execute</span>
