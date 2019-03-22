@@ -81,12 +81,21 @@
 	border: none;
 	box-shadow: none;
 	top: initial;
+	
+	.predictions .boostedAmount, .predictions .centered {
+	  	opacity: 1;
+	}
 }
 
 .closedProposal.proposal:hover {
 	height: 65px;
 	overflow: hidden;
 	top: initial;
+	box-shadow: none;
+
+	.predictions .boostedAmount, .predictions .centered {
+		opacity: 0;
+	}
 }
 
 .proposal.openProposal {
