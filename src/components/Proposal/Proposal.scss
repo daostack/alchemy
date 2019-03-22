@@ -83,12 +83,9 @@
 }
 
 .closedProposal.proposal:hover, .passedProposal.proposal:hover {
-	height: 185px;
-	margin-bottom: 0;
-	border: none;
+	height: 65px;
 	overflow: hidden;
 	top: initial;
-	box-shadow: none;
 }
 
 .proposal.openProposal {
