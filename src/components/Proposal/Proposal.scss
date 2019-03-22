@@ -79,12 +79,15 @@
 	margin-bottom: 0;
 	border: none;
 	box-shadow: none;
+	top: initial;
 }
 
 .closedProposal.proposal:hover, .passedProposal.proposal:hover {
 	height: 185px;
 	margin-bottom: 0;
 	border: none;
+	overflow: hidden;
+	top: initial;
 	box-shadow: none;
 }
 
