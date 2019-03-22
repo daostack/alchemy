@@ -108,7 +108,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                 <div className={css.holdings}>
                   <div className={css.pointer}></div>
                   <div className={css.walletDetails}>
-                    <div className={css.profileName}><AccountProfileName accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
+                    <div className={css.profileName}><AccountProfileName accountAddress={ethAccountAddress} accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} /></div>
                     <div className={css.holdingsLabel}>Your wallet</div>
                     <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
                       <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : "No account known"}</span>
