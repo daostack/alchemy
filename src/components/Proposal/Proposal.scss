@@ -1401,6 +1401,11 @@ button.disabled {
 	float: right;
 	width: 50%;
 
+
+	.stakesFor span, .stakesAgainst span {
+		width: 50px;
+	}
+
 	span {
 	    text-align: left;
 	    display: inline-block;
