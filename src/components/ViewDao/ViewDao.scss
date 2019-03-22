@@ -72,18 +72,30 @@ button:hover {
 }
 
 
+.noticeWrapper {
+  width: 100%;
+  position: fixed;
+  display: flex;
+  height: 40px;
+  bottom: 0;
+  left: 0;
+  z-index: 100000;
+}
+
+.noticeBuffer {
+  min-width: 250px;
+  max-width: 250px;
+  flex-grow: 1;
+  height: 100%;
+}
+
 .notice {
+  flex-grow: 2;
   background-color: white;
   padding: 11px 8px;
   color: rgba(80, 97, 118, 1.000);
-  position: absolute;
   font-size: 11px;
-  z-index: 1000;
-  bottom: 51px;
-  right: 0;
   text-align: left;
-  left: 50%;
-  transform: translateX(-50%);
   width: 100%;
 
   div {
@@ -732,7 +744,8 @@ a.navItem:hover {
 
     span {
       border-left: none;
-      margin-left: none;
+      margin-left: 0;
+      padding-left: 0;
     }
   }
 

@@ -114,12 +114,22 @@
     }
 
     label {
-      color: $black-halftone;
+      color: rgba(80, 97, 118, 1.000);
       display: block;
       width: 372px;
-      font-size: 12px;
+      font-size: 13px;
+      font-weight: bold;
       padding: 5px 0 0 0;
       position: relative;
+
+      .requiredMarker {
+        position: absolute;
+        top: 26px;
+        color: rgba(104, 154, 214, 1.000);
+        font-weight: bold;
+        left: 5px;
+      }
+
 
       .infoTooltip {
         position: absolute;
@@ -135,14 +145,14 @@
 
     input, textarea {
       margin-top: 3px;
-      margin-bottom: 20px;
-      width: 460px;
+      margin-bottom: 5px;
+      width: 445px;
       display: block;
       border: none;
       background-color: transparent;
       border: 1px solid rgba(191, 203, 213, 1.000);
-      font-size: 14px;
-      padding: 5px 8px;
+      font-size: 13px;
+      padding: 12px 12px;
       font-family: $body-font;
       &.error {
         border: 1px solid rgba(255, 8, 96, 1.000);
@@ -151,6 +161,12 @@
         outline: none;
         border: 1px solid rgba(46, 168, 122, 1.000);
       }
+    }
+
+    input {
+      padding: 0 15px;
+      height: 35px;
+      line-height: 35px;
     }
 
     .errorMessage {
@@ -287,8 +303,8 @@
   .submitProposal:disabled .sendIcon {
     display: none;
   }
-  .alignCenter {
-    text-align: center;
+  .createProposalActions {
+    text-align: right;
     margin-top: 30px;
   }
 }

@@ -243,6 +243,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                     <label htmlFor="titleInput">
                       Title
                       {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
+                      <div className={css.requiredMarker}>*</div>
                     </label>
                     <Field
                       autoFocus
@@ -256,6 +257,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
                     <label htmlFor="descriptionInput">
                       Description
+                      <div className={css.requiredMarker}>*</div>
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                       {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
                     </label>
@@ -285,6 +287,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         <label htmlFor="beneficiary">
                           Recipient
                           {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
+                          <div className={css.requiredMarker}>*</div>
                         </label>
                         <UserSearchField
                           daoAvatarAddress={daoAvatarAddress}
@@ -357,7 +360,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
                       {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>
-                    <div className={css.alignCenter}>
+                    <div className={css.createProposalActions}>
                       <button className={css.exitProposalCreation} onClick={this.goBack.bind(this, dao.address)}>
                         Cancel
                       </button>

@@ -155,7 +155,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
     ) as boolean;
 
     const accountHasRewards = rewardsForCurrentUser.length !== 0;
-    const redeemable = accountHasRewards || beneficiaryHasRewards;
+    const redeemable = proposal.executedAt && (accountHasRewards || beneficiaryHasRewards);
     const executable = proposalEnded(proposal) && !proposal.executedAt;
 
     const proposalClass = classNames({
@@ -172,7 +172,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       });
 
     const actionButtonClass = classNames({
-        [css.invisible]: !proposalEnded(proposal) && !(this.state.expired || executable || redeemable),
+        [css.invisible]: (!proposalEnded(proposal) && !this.state.expired) && !redeemable && !executable,
         [css.stateChange]: true
       });
 
