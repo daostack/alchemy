@@ -48,6 +48,7 @@
 	margin-bottom: 0px;
 	display: inline-block;
 	height: 185px;
+	position: relative;
 	box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
 	overflow: hidden;
 	transition: all .25s ease;
@@ -227,11 +228,10 @@ button.disabled {
 
 .detailView .predictions h3 {
 	display: block;
-	border-bottom: 1px solid rgba(191, 203, 213, 1.000);
 	color: rgba(104, 155, 214, 1.000);
 	width: 100%;
 	position: absolute;
-	top: -20px;
+	top: 0;
 
 	span {
 		padding: 10px;
@@ -996,12 +996,18 @@ button.disabled {
 	}
 }
 
+.predictionsDisabled {
+	font-size: 11px;
+}
+
 .stateChange {
 	float: left;
 	width: 50%;
 	text-align: right;
 	font-size: 12px;
-	position: relative;
+	position: absolute;
+	top: 0;
+	right: 0;
 
 	button {
 		background-color: rgba(0, 118, 255, 1.000);
@@ -1015,11 +1021,11 @@ button.disabled {
 	    margin: 0;
 	}
 
-	.executeProposal, .boostProposal {
+	.executeProposal, .boostProposal, .redeemRewards {
 		display: inline-block;
 		position: absolute;
-		top: 15px;
-		right: 15px;
+		top: 10px;
+		right: 10px;
 	}
 
 	.executeProposal, .boostProposal {
@@ -1063,6 +1069,17 @@ button.disabled {
 			font-weight: bold;
 		}
 	}
+}
+
+.predictionsDisabled {
+    font-size: 11px;
+    padding-top: 4px;
+    color: rgba(154, 169, 181, 1.000);
+}
+
+.detailView	.predictionsDisabled {
+	text-align: right;
+	font-size: 13px;
 }
 
 .detailView .stateChange {
@@ -1275,6 +1292,7 @@ button.disabled {
 .detailView .proposalActions {
 	flex-grow: 1;
 	min-width: 350px;
+	padding-left: 60px;
 	border-top: none;
 }
 

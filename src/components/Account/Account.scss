@@ -17,6 +17,14 @@ a.historyView {
   font-size: 13px;
 }
 
+a.detailView {
+  position: relative;
+  top: -6px;
+  font-size: 13px;
+  color: rgba(85, 85, 85, 1.000);
+  left: 17px;
+}
+
 :global .membersPage {
   border-radius: 3px;
   height: 40px;
