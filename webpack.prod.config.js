@@ -1,19 +1,16 @@
 const path = require('path');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const merge = require('webpack-merge');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 
 const baseConfig = require('./webpack.base.config.js');
 
-
-const extractSass = new ExtractTextPlugin({
-  filename: "[name].[contenthash].css"
-});
-
 const config = merge(baseConfig, {
+  mode: 'production',
+
   devtool: 'nosources-source-map',
 
   output: {
@@ -27,61 +24,57 @@ const config = merge(baseConfig, {
     __dirname + '/src/index.tsx',
   ],
 
+  optimization: {
+    minimizer: [
+      new OptimizeCSSAssetsPlugin({})
+    ]
+  },
+
   module: {
     rules: [
       {
         test: /\.scss$/,
-        use: extractSass.extract({
-          use: [
-            {
-              loader: "css-loader",
-              options: {
-                minimize: true,
-                modules: true, // Use CSS Modules
-                localIdentName: '[name]__[local]___[hash:base64:5]',
-                importLoaders: 2
-              }
-            },
-            {
-              loader: "sass-loader"
-            },
-            {
-              loader: 'sass-resources-loader',
-              options: {
-                resources: ['./src/assets/styles/global-variables.scss']
-              },
-            },
-          ],
-        }),
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              modules: true,
+              importLoaders: 2,
+              localIdentName: "[name]--[local]--[hash:base64:5]"
+            }
+          },
+          'sass-loader',
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: ['./src/assets/styles/global-variables.scss']
+            }
+          }
+        ],
       },
     ],
   },
 
   plugins: [
-    extractSass,
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].[hash].css",
+      chunkFilename: "[id].[hash].css",
+      modules: true
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         'API_URL': JSON.stringify(process.env.API_URL || "https://daostack-alchemy.herokuapp.com"),
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "https://alchemy.daostack.io"),
         'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
-        'NODE_ENV': JSON.stringify(process.env.NODE_ENV) || JSON.stringify("production"),
+        'NODE_ENV': JSON.stringify(process.env.NODE_ENV) || JSON.stringify("production")
       },
     }),
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
-    ]),
-    new UglifyJsPlugin({
-      test: /\.js($|\?)/i,
-      sourceMap: false,
-      extractComments: true,
-      parallel: true,
-      uglifyOptions: {
-        ecma: 6,
-        mangle: {
-          reserved: ['BigNumber'],
-        }
-      }
-    })
+    ])
   ],
 });
 

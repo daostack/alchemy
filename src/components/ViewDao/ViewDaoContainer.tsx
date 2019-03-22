@@ -294,6 +294,18 @@ For additional information check out our <a href="https://docs.google.com/docume
         />
         <DaoSidebar address={dao.address} />
         <div className={css.wrapper}>
+          <div className={css.noticeWrapper}>
+            <div className={css.noticeBuffer}></div>
+            <div className={css.notice}>
+              <div>
+                <img src="/assets/images/Icon/notice.svg"/>
+                Alchemy and Arc are in Alpha. There will be BUGS! All reputation accumulated will be reset. We don't guarantee complete security. *Play at your own risk*
+                <button className={css.closeNotice}>
+                  <img src="/assets/images/Icon/x.svg"/>
+                </button>
+              </div>
+            </div>
+          </div>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/history"
               render={(props) => <DaoHistoryContainer {...props} currentAccountAddress={currentAccountAddress} />} />

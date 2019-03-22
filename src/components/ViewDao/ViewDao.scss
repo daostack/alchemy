@@ -20,6 +20,7 @@ button:hover {
   flex-grow: 2;
   padding: 50px 50px 100px;
   overflow: scroll;
+  position: relative;
 }
 
 .proposalHistory {
@@ -71,6 +72,57 @@ button:hover {
 }
 
 
+.noticeWrapper {
+  width: 100%;
+  position: fixed;
+  display: flex;
+  height: 40px;
+  bottom: 0;
+  left: 0;
+  z-index: 100000;
+}
+
+.noticeBuffer {
+  min-width: 250px;
+  max-width: 250px;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.notice {
+  flex-grow: 2;
+  background-color: white;
+  padding: 11px 8px;
+  color: rgba(80, 97, 118, 1.000);
+  font-size: 11px;
+  text-align: left;
+  width: 100%;
+
+  div {
+    padding-left: 15px;
+
+    img {
+      margin-right: 8px;
+    }
+
+    b {
+      color: $accent-3;
+    }
+  }
+
+  .notice::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  .closeNotice {
+    position: absolute;
+    border: none;
+    outline: none;
+    right: 6px;
+    top: 13px;
+  }
+}
 
 .menuWrapper {
   bottom: 0;
@@ -80,6 +132,7 @@ button:hover {
   width: 100%;
   border-top: 2px solid rgba(78, 137, 208, 1.000);
   transition: all .25s ease;
+  padding-top: 20px;
 
   ul {
     width: 100%;
@@ -93,6 +146,7 @@ button:hover {
       list-style: none;
       margin: 0;
       width: 100%;
+      height: 24px;
 
       a {
         color: rgba(196, 215, 236, 1.000);
@@ -104,13 +158,13 @@ button:hover {
       }
 
       a:hover {
-        background-color: rgba(19, 46, 91, 1.000);
+        background-color: rgba(32, 104, 188, 1.000);
         cursor: pointer;
       }
 
       ul {
         left: 50px;
-        top: -150px;
+        top: -120px;
         opacity: 0;
         transform: scale(0);
         transition: all .25s ease;
@@ -133,9 +187,19 @@ button:hover {
         left: 0;
         opacity: 1;
         transform: scale(1);
-        top: -180px;
+        top: -120px;
         transform: translateX(100%);
-        background-color: rgba(19, 46, 91, 1.000);
+        background-color: rgba(32, 104, 188, 1.000);
+      }
+    }
+
+    li.daoStack {
+      padding-top: 10px;
+
+      img {
+        margin-top: -3px;
+        top: 4px;
+        position: relative;
       }
     }
   }
@@ -680,7 +744,8 @@ a.navItem:hover {
 
     span {
       border-left: none;
-      margin-left: none;
+      margin-left: 0;
+      padding-left: 0;
     }
   }
 

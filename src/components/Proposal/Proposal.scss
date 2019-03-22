@@ -47,19 +47,20 @@
 	margin-top: 20px;
 	margin-bottom: 0px;
 	display: inline-block;
-    height: 185px;
+	height: 185px;
 	box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
-    overflow: hidden;
-    transition: all .25s ease;
+	overflow: hidden;
+	transition: all .25s ease;
+	vertical-align: top;
 
-    .predictions .boostedAmount, .predictions .centered {
-    	opacity: 0;
-    	transition: all .25s ease;
-    }
+  .predictions .boostedAmount, .predictions .centered {
+  	opacity: 0;
+  	transition: all .25s ease;
+  }
 
-    .description, .url {
-    	display: none;
-    }
+  .description, .url {
+  	display: none;
+  }
 }
 
 .proposal:hover {
@@ -67,23 +68,24 @@
 	box-shadow: 0 0 2px 0 #3278CA;
 	height: 225px;
 	margin-bottom: -40px;
+	overflow: visible;
 
-    .predictions .boostedAmount, .predictions .centered {
-    	opacity: 1;
-    }
+  .predictions .boostedAmount, .predictions .centered {
+  	opacity: 1;
+  }
 }
 
 .detailView.proposal:hover  {
 	margin-bottom: 0;
 	border: none;
 	box-shadow: none;
+	top: initial;
 }
 
-.closedProposal.proposal:hover, .passedProposal.proposal:hover {
-	height: 185px;
-	margin-bottom: 0;
-	border: none;
-	box-shadow: none;
+.closedProposal.proposal:hover {
+	height: 65px;
+	overflow: hidden;
+	top: initial;
 }
 
 .proposal.openProposal {
@@ -414,6 +416,14 @@ button.disabled {
 	.upvote, .downvote {
 		opacity: 1;
 		z-index: 0;
+	}
+
+	.votedFor .upvote, .votedAgainst .downvote  {
+		opacity: 0;
+	}
+
+	.votedFor .upvote.upvoted, .votedAgainst .downvote.downvoted {
+		opacity: 1;
 	}
 
 	.downvotePending .downvotePendingIcon {
@@ -991,6 +1001,7 @@ button.disabled {
 	width: 50%;
 	text-align: right;
 	font-size: 12px;
+	position: relative;
 
 	button {
 		background-color: rgba(0, 118, 255, 1.000);
@@ -1289,16 +1300,6 @@ button.disabled {
 	margin-right: 5px;
 }
 
-.voteGraphs:hover .reputationTurnout {
-	opacity: 1;
-	left: -5px;
-	transform: translateY(-50%) scale(1);
-}
-
-.detailView .voteGraphs:hover .reputationTurnout {
-	left: -87px;
-}
-
 .proposal .enablePredictions {
 	display: block;
 	width: 100%;
@@ -1409,11 +1410,20 @@ button.disabled {
 
 		b {
 			font-weight: normal;
+			font-size: 11px;
+			text-align: center;
 
 			img {
 				display: none;
 			}
 		}
+	}
+
+	span.boostedAmount {
+		display: block;
+		margin-top: 5px;
+		text-align: center;
+		height: 18px;
 	}
 
 	button {
@@ -1543,6 +1553,9 @@ button.disabled {
 .boostedAmount {
 	display: block;
 	margin-top: 10px;
+	min-height: 8px;
+	font-size: 11px;
+	text-align: center;
 	padding-top: 43px;
 }
 

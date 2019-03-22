@@ -93,8 +93,6 @@ module.exports = {
   },
 
   plugins: [
-    // do not emit compiled assets that include errors
-    new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({
       template: 'src/index.html'
     }),

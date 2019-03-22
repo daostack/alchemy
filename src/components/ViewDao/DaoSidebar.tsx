@@ -97,9 +97,6 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                   : <li><Link to="/daos">View DAOs</Link></li>
                 }
                 <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
-                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
-                <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
-                <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
                 <li>
                   <a>Buy GEN</a>
                   <ul>
@@ -110,6 +107,14 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                     <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
                     <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
                   </ul>
+                </li>
+                <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
+                <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
+                <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
+                <li className={css.daoStack}>
+                  <a href="http://daostack.io" target="_blank">
+                    <img src="/assets/images/Icon/dao-logo.svg"/> DAOstack
+                  </a>
                 </li>
               </ul>
             </div>

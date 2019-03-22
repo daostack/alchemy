@@ -104,12 +104,12 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       [css.unconfirmedVote] : isVoting,
     });
     const voteUpButtonClass = classNames({
-      [css.voted]: !isVotingYes && currentVote === IProposalOutcome.Pass,
+      [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
       [css.disabled]: votingDisabled,
       [css.upvotePending]: isVotingYes,
     });
     const voteDownButtonClass = classNames({
-      [css.voted]: !isVotingNo && currentVote === IProposalOutcome.Fail,
+      [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
       [css.downvotePending]: isVotingNo,
     });
@@ -123,7 +123,9 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     });
 
     const voteControls = classNames({
-      [css.voteControls]: true
+      [css.voteControls]: true,
+      [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
+      [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail
     });
 
     // TODO: not using this? If so, we can remove these commented lines
@@ -186,45 +188,6 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                    <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "
                 }
-                <div className={css.reputationTurnout}>
-                  <div className={css.header}>Reputation turnout</div>
-                  <div className={css.turnoutInfo}>
-                    {/* TODO: <span className={css.description}>{proposal.votes.length} accounts holding {proposal.totalVotes} reputation have voted</span>*/}
-                    <div className={css.turnoutGraph}>
-                      <div className={css.turnoutStats}>
-                        <span className={css.forLabel}>
-                          <ReputationView
-                            daoName={dao.name}
-                            totalReputation={dao.reputationTotalSupply}
-                            reputation={proposal.votesFor}
-                          /> for
-                        </span>
-                        <span className={css.againstLabel}>
-                          <ReputationView
-                            daoName={dao.name}
-                            totalReputation={dao.reputationTotalSupply}
-                            reputation={proposal.votesAgainst}
-                          /> against
-                        </span>
-                      </div>
-                      <div className={css.graph}>
-                        <div className={css.forBar} style={styles.forBar}></div>
-                        <div className={css.divider}></div>
-                        <div className={css.againstBar} style={styles.againstBar}></div>
-                      </div>
-                      <div className={css.reputationThreshold}>
-                        <ReputationView
-                          daoName={dao.name}
-                          totalReputation={dao.reputationTotalSupply}
-                          reputation={dao.reputationTotalSupply.div(new BN(2))}
-                        /> NEEDED FOR DECISION BY VOTE
-                      </div>
-                    </div>
-                  </div>
-                  <div className={css.tooltipPointer}>
-                    <img src="/assets/images/tooltip-pointer.svg"/>
-                  </div>
-                </div>
                 { this.props.detailView ?
                    <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
                  : " "
@@ -235,7 +198,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               <div className={css.voteUp}>
                 <div>
                 <div className={css.label}>For</div>
-                  <span onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                  <span className={voteUpButtonClass}>
                     <img className={css.upvote} src="/assets/images/Icon/vote/for-gray.svg"/>
                     <img className={css.upvote + " " + css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
                     <svg className={css.upvotePendingIcon} viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
@@ -270,7 +233,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               <div className={css.voteDown}>
                 <div>
                   <div className={css.label}>Against</div>
-                  <span onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                  <span className={voteDownButtonClass}>
                     <img className={css.downvote} src="/assets/images/Icon/vote/against-gray.svg"/>
                     <img className={css.downvote + " " + css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
                     <svg className={css.downvotePendingIcon} width="41px" height="29px" viewBox="0 0 41 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">

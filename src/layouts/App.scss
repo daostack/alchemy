@@ -367,57 +367,6 @@ body {
   overflow: hidden;
 }
 
-.notice {
-  background-color: white;
-  padding: 11px 8px;
-  color: #4e6176;
-  position: fixed;
-  font-size: 12px;
-  z-index: 1000;
-  bottom: 0;
-  right: 0;
-  text-align: center;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-
-  div {
-    margin-right: 120px;
-    margin-left: 25px;
-
-    b {
-      color: $accent-3;
-    }
-  }
-
-  img {
-    position: absolute;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
-  }
-
-  .reportBugs {
-    border: 1px solid rgba(255,255,255,.7);
-    color: rgba(255,255,255,1);
-    font-size: 14px;
-    position: absolute;
-    display: inline-block;
-    padding: 0 8px;
-    transform: translateY(-50%);
-    top: 50%;
-    line-height: 23px;
-    right: 8px;
-  }
-
-  .notice::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-
-}
-
 .breadcrumbsContainer {
   position: absolute;
   width: 100%;
