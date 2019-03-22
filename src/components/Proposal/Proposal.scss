@@ -309,6 +309,10 @@ button.disabled {
 	}
 }
 
+.detailView .castVoteFor {
+	padding-left: 5px;
+}
+
 .voteStatus.hasVoted {
 
 	.voteRecord {
@@ -661,6 +665,8 @@ button.disabled {
 		text-align: left;
 		margin-left: 0;
 		display: block;
+		font-size: 16px;
+		color: rgba(0, 29, 52, 1.000);
 
 		img {
 			top: -10px;
@@ -700,7 +706,6 @@ button.disabled {
     .voteButtons {
 	    float: left;
 	    text-align: right;
-	    margin-top: 13px;
 	    margin-left: 42px;
 	    width: auto;
 	    display: inline-block;
@@ -996,10 +1001,6 @@ button.disabled {
 	}
 }
 
-.predictionsDisabled {
-	font-size: 11px;
-}
-
 .stateChange {
 	float: left;
 	width: 50%;
@@ -1069,17 +1070,6 @@ button.disabled {
 			font-weight: bold;
 		}
 	}
-}
-
-.predictionsDisabled {
-    font-size: 11px;
-    padding-top: 4px;
-    color: rgba(154, 169, 181, 1.000);
-}
-
-.detailView	.predictionsDisabled {
-	text-align: right;
-	font-size: 13px;
 }
 
 .detailView .stateChange {
@@ -1442,6 +1432,11 @@ button.disabled {
 		}
 	}
 
+	span.disabledPredictions {
+		font-size: 11px;
+	    color: rgba(154, 169, 181, 1.000);
+	}
+
 	span.boostedAmount {
 		display: block;
 		margin-top: 5px;
@@ -1764,7 +1759,7 @@ button.cancelPrediction {
 	}
 }
 
-.detailView.predictions {
+.detailView .predictions {
 	padding-top: 50px;
 	padding-bottom: 40px;
 
@@ -1773,7 +1768,6 @@ button.cancelPrediction {
 		font-weight: bold;
 		font-size: 16px;
 		display: block;
-		margin-left: 3px;
 	}
 
 	span.boostedAmount span {
@@ -1794,9 +1788,11 @@ button.cancelPrediction {
 	    }
 	}
 
-	span.disabledPredections {
-		color: rgba(154, 169, 181, 1.000);
+	span.disabledPredictions {
 		border-left: none;
+	    font-size: 13px;
+	    padding-top: 4px;
+	    color: rgba(154, 169, 181, 1.000);
 	}
 }
 
@@ -1820,7 +1816,9 @@ button.cancelPrediction {
 
 	.disabledPredictions {
 		display: block;
-		color: rgba(154, 169, 181, 1.000);
+	    padding-top: 4px;
+		font-size: 13px;
+	    color: rgba(154, 169, 181, 1.000);
 	}
 
 	.detailIcon {
@@ -1863,7 +1861,7 @@ button.cancelPrediction {
 		left: -32px;
 		top: -14px;
 		height: 20px;
-		width: 20px;
+		width: 22px;
 	}
 }
 
