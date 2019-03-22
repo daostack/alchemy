@@ -180,7 +180,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       <div className={proposalClass + " " + css.clearfix}>
         <div className={css.proposalCreator}>
           <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
-          <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
+          <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
         </div>
         <div className={css.endDate}>
           {closingTime(proposal).format("MMM D, YYYY")}

@@ -290,7 +290,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
           </div>
           <div className={css.createdBy}>
             <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={detailView}/>
-            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
+            <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
           </div>
           <div className={css.description}>
             {proposal.description}

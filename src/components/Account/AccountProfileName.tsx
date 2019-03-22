@@ -8,6 +8,7 @@ import * as classNames from "classnames";
 import * as css from "./Account.scss";
 
 interface IProps {
+  accountAddress: string;
   accountProfile?: IProfileState;
   daoAvatarAddress?: string;
   detailView?: boolean;
@@ -17,15 +18,16 @@ interface IProps {
 export default class AccountProfileName extends React.Component<IProps, null> {
 
   public render() {
-    const { accountProfile, daoAvatarAddress, historyView } = this.props;
+    const { accountAddress, accountProfile, daoAvatarAddress, historyView } = this.props;
 
     const accountNameClass = classNames({
       [css.historyView]: this.props.historyView
     });
 
-    return (accountProfile && accountProfile.name ?
-      <Link className={accountNameClass} to={"/profile/" + accountProfile.ethereumAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>{accountProfile.name}</Link>
-      : " "
+    return (
+      <Link className={accountNameClass} to={"/profile/" + accountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+        {accountProfile && accountProfile.name ? accountProfile.name : accountAddress.substr(0, 6) + "..."}
+      </Link>
     );
   }
 }
