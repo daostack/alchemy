@@ -1412,11 +1412,20 @@ button.disabled {
 
 		b {
 			font-weight: normal;
+			font-size: 11px;
+			text-align: center;
 
 			img {
 				display: none;
 			}
 		}
+	}
+
+	span.boostedAmount {
+		display: block;
+		margin-top: 5px;
+		text-align: center;
+		height: 18px;
 	}
 
 	button {
