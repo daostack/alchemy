@@ -51,6 +51,7 @@
 	box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
 	overflow: hidden;
 	transition: all .25s ease;
+	vertical-align: top;
 
   .predictions .boostedAmount, .predictions .centered {
   	opacity: 0;
@@ -68,7 +69,6 @@
 	height: 225px;
 	margin-bottom: -40px;
 	overflow: visible;
-	top: -86px;
 
   .predictions .boostedAmount, .predictions .centered {
   	opacity: 1;
@@ -82,7 +82,7 @@
 	top: initial;
 }
 
-.closedProposal.proposal:hover, .passedProposal.proposal:hover {
+.closedProposal.proposal:hover {
 	height: 65px;
 	overflow: hidden;
 	top: initial;
