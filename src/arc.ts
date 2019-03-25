@@ -157,6 +157,7 @@ export function getArc(): Arc {
     const arcSettings = getArcSettings();
     console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
     console.log(arcSettings);
+    console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
     const arc: Arc = new Arc(arcSettings);
     if (typeof(window) !== "undefined") {
       (<any> window).arc = arc;
@@ -166,3 +167,4 @@ export function getArc(): Arc {
 }
 
 export { Arc };
+
