@@ -15,7 +15,7 @@ const providers = {
   staging: {
     graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
     graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
-    web3Provider: `wss://rinkeby.infura.io/ws`, // this is the default fallback if we do not have MM installed
+    web3Provider: `wss://rinkeby.infura.io/ws/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
        host: "ipfs.infura.io",
        port: "5001",
@@ -26,7 +26,7 @@ const providers = {
   production: {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
     graphqlWsProvider: "wss://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
-    web3Provider: `wss://mainnet.infura.io/ws`, // this is the default fallback if we do not have MM installed
+    web3Provider: `wss://mainnet.infura.io/ws/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
        host: "ipfs.infura.io",
        port: "5001",
