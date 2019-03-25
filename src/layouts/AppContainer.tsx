@@ -81,9 +81,9 @@ class AppContainer extends React.Component<IProps, IState> {
     try {
       // only set the account if the network is correct
       // TODO: display big error if not on correct network
-      checkNetwork(arc.web3);
+      checkNetwork();
 
-      const accounts = await promisify(arc.web3.eth.getAccounts)();
+      const accounts = await arc.web3.eth.getAccounts();
       currentAddress = accounts[0];
       if (currentAddress && this.props.currentAccountAddress !== currentAddress) {
         this.props.setCurrentAccount(currentAddress);
