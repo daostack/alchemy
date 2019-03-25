@@ -1,11 +1,10 @@
+import { IDAOState } from "@daostack/client";
+import { getArc } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { getArc } from "arc";
-import Util from "lib/util";
-
 import * as css from "./DaoList.scss";
-import { IDAOState } from "@daostack/client";
 
 interface IProps {
   address: string;
@@ -19,7 +18,7 @@ const DaoContainer = (props: IProps) => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
-        throw state.error;
+        return <div>{ state.error.message }</div>;
       } else {
         const dao = state.data;
         return <Link

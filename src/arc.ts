@@ -140,7 +140,8 @@ export function checkNetwork() {
 }
 
 export function enableMetamask() {
-  // check if Metamask account access is enabled, and if not, ask to enable it
+  // check if Metamask account access is enabled, and if not, call the (async) function
+  // that will ask the user to enable it
   const ethereum = (<any> window).ethereum;
   if (!ethereum) {
     const msg = `Please install metamask`;

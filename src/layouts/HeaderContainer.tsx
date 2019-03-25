@@ -59,13 +59,17 @@ class HeaderContainer extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public handleClickTour = (e: any) => {
+  public handleClickTour = () => {
     const { showTour } = this.props;
     showTour();
   }
 
-  public handleClickLogin = (e: any) => {
-    enableMetamask();
+  public handleClickLogin = () => {
+    try {
+      enableMetamask();
+    } catch (err) {
+      this.props.showNotification(NotificationStatus.Failure, err.message);
+    }
   }
 
   public render() {
