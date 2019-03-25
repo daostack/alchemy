@@ -36,8 +36,7 @@ const providers = {
   }
 };
 
-function getContractAddresses(key: "private"|"rinkeby"|"main") {
-
+export function getContractAddresses(key: "private"|"rinkeby"|"main") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
   const addresses = {
@@ -49,14 +48,13 @@ function getContractAddresses(key: "private"|"rinkeby"|"main") {
   return addresses;
 }
 
-// TODO: move pollforAccountChanges to client lib? (as an currentAddres(): Observable<Address>)
-// Polling is Evil!
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
+// Polling is Evil!
 export function pollForAccountChanges(web3: any, currentAccountAddress?: string, interval: number = 2000) {
   return Observable.create((observer: any) => {
     let account: any;
     let prevAccount = currentAccountAddress;
-    let timeout = setInterval(() => {
+    const timeout = setInterval(() => {
       web3.eth.getAccounts().then((accounts: any) => {
         if (accounts) {
           account = accounts[0];
@@ -167,4 +165,3 @@ export function getArc(): Arc {
 }
 
 export { Arc };
-
