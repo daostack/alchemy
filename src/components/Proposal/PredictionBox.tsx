@@ -315,7 +315,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                         failButton
                     )
                   :
-                  <span className={css.disabledPredections}>
+                  <span className={css.disabledPredictions}>
                      Predictions are disabled
                   </span>
                 }
@@ -371,7 +371,8 @@ class PredictionBox extends React.Component<IProps, IState> {
                     </Tooltip> :
                     passButton
                   )
-                : "Pass"
+                :
+                <span className={css.disabledPredictions}>Predictions are disabled</span>
               }
               {
                 proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
@@ -382,7 +383,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                       </Tooltip> :
                       failButton
                   )
-                : "Fail"
+                : " "
               }
             </div>
             : " "

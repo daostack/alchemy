@@ -48,6 +48,7 @@
 	margin-bottom: 0px;
 	display: inline-block;
 	height: 185px;
+	position: relative;
 	box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
 	overflow: hidden;
 	transition: all .25s ease;
@@ -80,12 +81,21 @@
 	border: none;
 	box-shadow: none;
 	top: initial;
+	
+	.predictions .boostedAmount, .predictions .centered {
+	  	opacity: 1;
+	}
 }
 
 .closedProposal.proposal:hover {
 	height: 65px;
 	overflow: hidden;
 	top: initial;
+	box-shadow: none;
+
+	.predictions .boostedAmount, .predictions .centered {
+		opacity: 0;
+	}
 }
 
 .proposal.openProposal {
@@ -227,11 +237,10 @@ button.disabled {
 
 .detailView .predictions h3 {
 	display: block;
-	border-bottom: 1px solid rgba(191, 203, 213, 1.000);
 	color: rgba(104, 155, 214, 1.000);
 	width: 100%;
 	position: absolute;
-	top: -20px;
+	top: 0;
 
 	span {
 		padding: 10px;
@@ -307,6 +316,10 @@ button.disabled {
 	.castVoteAgainst {
 		color: rgba(246, 80, 80, 1.000);
 	}
+}
+
+.detailView .castVoteFor {
+	padding-left: 5px;
 }
 
 .voteStatus.hasVoted {
@@ -552,7 +565,7 @@ button.disabled {
 	display: flex;
 
 	.proposalCreator {
-		width: 100px;
+		width: 170px;
 	}
 
 	.endDate {
@@ -661,6 +674,8 @@ button.disabled {
 		text-align: left;
 		margin-left: 0;
 		display: block;
+		font-size: 16px;
+		color: rgba(0, 29, 52, 1.000);
 
 		img {
 			top: -10px;
@@ -700,7 +715,6 @@ button.disabled {
     .voteButtons {
 	    float: left;
 	    text-align: right;
-	    margin-top: 13px;
 	    margin-left: 42px;
 	    width: auto;
 	    display: inline-block;
@@ -1001,7 +1015,9 @@ button.disabled {
 	width: 50%;
 	text-align: right;
 	font-size: 12px;
-	position: relative;
+	position: absolute;
+	top: 0;
+	right: 0;
 
 	button {
 		background-color: rgba(0, 118, 255, 1.000);
@@ -1015,11 +1031,11 @@ button.disabled {
 	    margin: 0;
 	}
 
-	.executeProposal, .boostProposal {
+	.executeProposal, .boostProposal, .redeemRewards {
 		display: inline-block;
 		position: absolute;
-		top: 15px;
-		right: 15px;
+		top: 10px;
+		right: 10px;
 	}
 
 	.executeProposal, .boostProposal {
@@ -1275,6 +1291,7 @@ button.disabled {
 .detailView .proposalActions {
 	flex-grow: 1;
 	min-width: 350px;
+	padding-left: 60px;
 	border-top: none;
 }
 
@@ -1401,11 +1418,16 @@ button.disabled {
 	float: right;
 	width: 50%;
 
+
+	.stakesFor span, .stakesAgainst span {
+		width: 50px;
+	}
+
 	span {
 	    text-align: left;
 	    display: inline-block;
 	    color: rgba(104, 154, 214, 1.000);
-	    min-width: 45px;
+	    min-width: 3%;
 	    font-size: 13px;
 
 		b {
@@ -1417,6 +1439,11 @@ button.disabled {
 				display: none;
 			}
 		}
+	}
+
+	span.disabledPredictions {
+		font-size: 11px;
+	    color: rgba(154, 169, 181, 1.000);
 	}
 
 	span.boostedAmount {
@@ -1741,7 +1768,7 @@ button.cancelPrediction {
 	}
 }
 
-.detailView.predictions {
+.detailView .predictions {
 	padding-top: 50px;
 	padding-bottom: 40px;
 
@@ -1750,7 +1777,6 @@ button.cancelPrediction {
 		font-weight: bold;
 		font-size: 16px;
 		display: block;
-		margin-left: 3px;
 	}
 
 	span.boostedAmount span {
@@ -1771,9 +1797,11 @@ button.cancelPrediction {
 	    }
 	}
 
-	span.disabledPredections {
-		color: rgba(154, 169, 181, 1.000);
+	span.disabledPredictions {
 		border-left: none;
+	    font-size: 13px;
+	    padding-top: 4px;
+	    color: rgba(154, 169, 181, 1.000);
 	}
 }
 
@@ -1797,7 +1825,9 @@ button.cancelPrediction {
 
 	.disabledPredictions {
 		display: block;
-		color: rgba(154, 169, 181, 1.000);
+	    padding-top: 4px;
+		font-size: 13px;
+	    color: rgba(154, 169, 181, 1.000);
 	}
 
 	.detailIcon {
@@ -1840,7 +1870,7 @@ button.cancelPrediction {
 		left: -32px;
 		top: -14px;
 		height: 20px;
-		width: 20px;
+		width: 22px;
 	}
 }
 

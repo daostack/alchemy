@@ -50,7 +50,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
               <div className={css.memberAddress}>
                 { profile ?
                   <div>
-                    <AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} />
+                    <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={dao.address} />
                     {Object.keys(profile.socialURLs).length === 0 ? "" :
                       <span>
                         <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>

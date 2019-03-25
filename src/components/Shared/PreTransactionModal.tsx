@@ -221,19 +221,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <div className={buyGensClass}>
                     <h4>
                       You do not have enough GEN
-                      <span>YOUR STAKE: {stakeAmount} - WALLET BALANCE: {accountGens}</span>
                     </h4>
-                    <div className={css.exchangeList}>
-                      Select an exchange  &#8964;
-                      <ul>
-                        <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-                        <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-                        <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-                        <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-                        <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
-                      </ul>
-                    </div>
-                    <span>Use one of our trusted exchanges to acquire more GEN</span>
                   </div>
                  <div className={css.formGroup + " " + css.clearfix}>
                     <input
@@ -243,10 +231,20 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       ref={(input) => { this.stakeInput = input; }}
                       className={css.predictionAmount}
                       onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
-                      value={stakeAmount}
+                      placeholder="0"
                     />
                     <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
-                    <span>Your balance: {accountGens} GEN</span>
+                    <div className={css.yourBalance}>Your balance: {accountGens} GEN</div>
+                    <div className={css.exchangeList}>
+                      Buy GEN &#8964;
+                      <ul>
+                        <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
+                        <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
+                        <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
+                        <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
+                        <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div> : ""

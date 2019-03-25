@@ -17,6 +17,7 @@ export const helpButton: string;
 export const hover: string;
 export const launchMetaMask: string;
 export const disabled: string;
+export const yourBalance: string;
 export const preTransactionBottom: string;
 export const bg: string;
 export const decisionGraph: string;

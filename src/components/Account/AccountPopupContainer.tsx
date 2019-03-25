@@ -82,7 +82,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
           <AccountImage accountAddress={accountAddress} />
         </div>
         <div className={css.accountInfo}>
-          <div className={css.name}><AccountProfileName accountProfile={profile} daoAvatarAddress={dao.address} /></div>
+          <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={dao.address} /></div>
           {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
             <div>
               <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
