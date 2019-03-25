@@ -1,12 +1,12 @@
 import { getArc } from "arc";
-import BigNumber from "bignumber.js";
 import Util from "lib/util";
 import * as moment from "moment";
 import { IRootState } from "reducers";
 import { VoteOptions } from "reducers/arcReducer";
 import { Action, Dispatch, Middleware } from "redux";
 import { REHYDRATE, RehydrateAction } from "redux-persist";
-import { dismissOperation, IOperation, IOperationsState, isOperationsAction, IUpdateOperation, OperationError, OperationStatus } from "./operations";
+import { dismissOperation, IOperation, IOperationsState, isOperationsAction,
+  IUpdateOperation, OperationError, OperationStatus } from "./operations";
 
 /** -- Model -- */
 

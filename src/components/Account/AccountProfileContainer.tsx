@@ -129,13 +129,16 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao, ethBalance, genBalance } = this.props;
+    const { accountAddress, accountInfo, accountProfile,
+      currentAccountAddress, dao, ethBalance, genBalance } = this.props;
 
     const editing = currentAccountAddress && accountAddress === currentAccountAddress;
 
     return (
       <div className={css.profileWrapper}>
-        <BreadcrumbsItem to={`/profile/${accountAddress}`}>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/profile/${accountAddress}`}>
+          { editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}
+        </BreadcrumbsItem>
 
         { dao ? <DaoSidebar address={dao.address} /> : ""}
 
