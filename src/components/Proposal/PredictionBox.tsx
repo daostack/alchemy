@@ -371,7 +371,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                     </Tooltip> :
                     passButton
                   )
-                : 
+                :
                 <span className={css.disabledPredictions}>Predictions are disabled</span>
               }
               {
