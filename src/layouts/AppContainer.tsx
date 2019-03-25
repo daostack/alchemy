@@ -8,7 +8,6 @@ import HomeContainer from "components/Home/HomeContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
-const promisify = require("es6-promisify");
 import * as History from "history";
 import HeaderContainer from "layouts/HeaderContainer";
 import * as React from "react";
