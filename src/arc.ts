@@ -1,7 +1,7 @@
-import { Arc, Address } from "@daostack/client";
+import { Address, Arc } from "@daostack/client";
+import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Util from "./lib/util";
-const Web3 = require("web3");
 
 const providers = {
   dev: {
@@ -127,11 +127,7 @@ export function checkNetwork() {
     }
 
     // check if Metamask account access is enabled, and if not, ask to enable it
-    if (!ethereum.selectedAddress) {
-      ethereum.enable().catch((err: Error) => {
-        throw err;
-      });
-    }
+    enableMetamask();
   } else {
     // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
     if (process.env.NODE_ENV === "development") {
@@ -142,6 +138,41 @@ export function checkNetwork() {
     }
   }
 }
+
+export function enableMetamask() {
+  // check if Metamask account access is enabled, and if not, ask to enable it
+  const ethereum = (<any> window).ethereum;
+  if (!ethereum) {
+    const msg = `Please install metamask`;
+    throw Error(msg);
+  }
+  if (!ethereum.selectedAddress) {
+    ethereum.enable().catch((err: Error) => {
+      throw err;
+    });
+  }
+}
+
+/**
+ * check if the web3 connection is ready to send transactions, and warn the user if it is not
+ * @return true if things are fine, false if not
+ */
+export function checkNetworkAndWarn(showNotification?: any): boolean {
+  try {
+    checkNetwork();
+    return true;
+  } catch (err) {
+    // TODO: this should of course not be an alert, but a Modal
+    const msg =  `Cannot send transction: ${err.message}`;
+    if (showNotification) {
+      showNotification(NotificationStatus.Failure, msg);
+    } else {
+      alert(msg);
+    }
+    return false;
+  }
+}
+
 // get appropriate Arc configuration for the given environment
 function getArcSettings(): any {
   let arcSettings: any;

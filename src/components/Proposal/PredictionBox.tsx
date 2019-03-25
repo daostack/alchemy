@@ -1,12 +1,12 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { getArc } from "arc";
+import { checkNetworkAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util, { checkNetworkAndWarn } from "lib/util";
+import Util from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -16,7 +16,7 @@ import { IRootState } from "reducers";
 import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, of } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import { isStakePending } from "selectors/operations";
 
 import * as css from "./Proposal.scss";
