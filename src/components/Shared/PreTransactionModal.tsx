@@ -235,16 +235,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       placeholder="0"
                     />
                     <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
-                    <div className={css.yourBalance}>Your balance: {accountGens} GEN</div>
-                    <div className={css.exchangeList}>
-                      Buy GEN &#8964;
-                      <ul>
-                        <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-                        <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-                        <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-                        <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-                        <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
-                      </ul>
+                    <div className={css.yourBalance}>
+                      <div>Your balance: {accountGens} GEN</div>
+                      <div className={css.exchangeList}>
+                        Buy GEN &#8964;
+                        <ul>
+                          <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
+                          <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
+                          <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
+                          <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
+                          <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -283,26 +285,29 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
         </div>
            */}
-            { (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
-              <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
-                <button
-                  className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
-                  disabled={true}
-                  onClick={this.handleClickAction.bind(this)}
-                  data-test-id="launch-metamask"
-                >
-                  {transactionType}
-                </button>
-              </Tooltip> :
+            {
               <div className={css.preTransactionBottom}>
                 <div className={css.closeTransactionContainer}>
                   <button onClick={this.props.closeAction}>
                     Cancel
                   </button>
                 </div>
-                <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
-                  {transactionType}
-                </button>
+                { (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
+                    <button
+                      className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
+                      disabled={true}
+                      onClick={this.handleClickAction.bind(this)}
+                      data-test-id="launch-metamask"
+                    >
+                      {transactionType}
+                    </button>
+                  </Tooltip>
+                  :
+                  <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
+                    {transactionType}
+                  </button>
+                }
               </div>
             }
           </div>
