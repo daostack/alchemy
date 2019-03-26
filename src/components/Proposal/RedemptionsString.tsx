@@ -6,6 +6,10 @@ import Util from "lib/util";
 
 import ReputationView from "components/Account/ReputationView";
 
+
+import * as classNames from "classnames";
+import * as css from "./Proposal.scss";
+
 interface IProps {
   currentAccountAddress: Address;
   dao: IDAOState;
@@ -61,7 +65,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
       rewardComponents.push(<ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
-    return <span>
+    return <span className={css.redemptionString}>
     {rewardComponents.reduce((acc: any, v: any) => {
       return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>
     }, null)}
