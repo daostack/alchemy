@@ -81,7 +81,7 @@
 	border: none;
 	box-shadow: none;
 	top: initial;
-	
+
 	.predictions .boostedAmount, .predictions .centered {
 	  	opacity: 1;
 	}
@@ -291,7 +291,7 @@ button.disabled {
 }
 
 .detailView .voteStatus {
-	z-index: 1000;
+	z-index: 1000000;
 }
 
 .historyView .voteStatus {

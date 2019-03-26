@@ -67,7 +67,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     return <span className={css.redemptionString}>
     {rewardComponents.reduce((acc: any, v: any) => {
       return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
-    }, null)};
+    }, null)}
     </span>;
   }
 }
