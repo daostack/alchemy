@@ -221,6 +221,16 @@ button.disabled {
 	}
 }
 
+.buttonsOnly .castVote button img {
+	position: relative;
+	top: 4px;
+}
+
+.buttonsOnly .castVote button:nth-child(2) img {
+	top: 6px;
+	position: relative;
+}
+
 .detailView .failButton, .detailView .passButton {
     position: relative;
     top: 1px;
@@ -1093,6 +1103,12 @@ button.disabled {
 	float: none;
 	width: auto;
 	text-align: left;
+	position: relative;
+
+	.redeemRewards {
+		position: initial;
+		margin-top: 30px;
+	}
 }
 
 .proposalInfo {
