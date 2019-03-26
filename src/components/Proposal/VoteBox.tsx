@@ -94,7 +94,11 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       },
     };
 
-    const votingDisabled = !currentAccountState || !currentAccountState.reputation || !!currentVote;
+    const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
+                            proposal.stage === IProposalStage.Executed ||
+                            !currentAccountState ||
+                            currentAccountState.reputation.eq(new BN(0)) ||
+                            !!currentVote;
 
     const wrapperClass = classNames({
       [css.detailView] : detailView,
