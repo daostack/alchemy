@@ -1,17 +1,18 @@
-import { IDAOState, IMemberState, IProposalStage, IProposalState, ITransactionUpdate } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalStage, IProposalState  } from "@daostack/client";
+import { checkNetworkAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import TransferDetails from "components/Proposal/TransferDetails";
 import VoteGraph from "components/Proposal/VoteGraph";
 import Util from "lib/util";
-import { checkNetworkAndWarn, humanProposalTitle } from "lib/util";
+import { humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 //@ts-ignore
 import { Modal } from "react-router-modal";
-import { NotificationStatus, showNotification } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./PreTransactionModal.scss";
 

@@ -1,13 +1,6 @@
 import { Address, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
-import { NotificationStatus } from "reducers/notifications";
-import { checkNetwork, getArc } from "../arc";
-
-// haven’t figured out how to get web3 typings to properly expose the Web3 constructor.
-// v1.0 may improve on this entire Web3 typings experience
-/* tslint:disable-next-line:no-var-requires */
-const Web3 = require("web3");
-const path = require("path");
+import { getArc } from "../arc";
 
 // TODO: not sure why these helper functions are wrapped in a class
 export default class Util {
@@ -79,26 +72,6 @@ export default class Util {
 
   public static defaultAccount() {
     return getArc().web3.eth.defaultAccount;
-  }
-}
-
-/**
- * check if the web3 connection is ready to send transactions, and warn the user if it is not
- * @return true if things are fine, false if not
- */
-export function checkNetworkAndWarn(showNotification?: any): boolean {
-  try {
-    checkNetwork();
-    return true;
-  } catch (err) {
-    // TODO: this should of course not be an alert, but a Modal
-    const msg =  `Cannot send transction: ${err.message}`;
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
-    } else {
-      alert(msg);
-    }
-    return false;
   }
 }
 

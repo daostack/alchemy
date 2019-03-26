@@ -5,21 +5,6 @@
   "env": {
     "API_URL": {
       "required": true
-    },
-    "AWS_ACCESS_KEY_ID": {
-      "required": true
-    },
-    "AWS_SECRET_ACCESS_KEY": {
-      "required": true
-    },
-    "DEFAULT_ACCOUNT_MNEMONIC": {
-      "required": true
-    },
-    "INFURA_KEY": {
-      "required": true
-    },
-    "S3_BUCKET": {
-      "required": true
     }
   },
   "formation": {

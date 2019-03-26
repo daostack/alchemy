@@ -299,7 +299,8 @@ For additional information check out our <a href="https://docs.google.com/docume
             <div className={css.notice}>
               <div>
                 <img src="/assets/images/Icon/notice.svg"/>
-                Alchemy and Arc are in Alpha. There will be BUGS! All reputation accumulated will be reset. We don't guarantee complete security. *Play at your own risk*
+                Alchemy and Arc are in Alpha. There will be BUGS! All reputation accumulated will be reset.
+                We don't guarantee complete security. *Play at your own risk*
                 <button className={css.closeNotice}>
                   <img src="/assets/images/Icon/x.svg"/>
                 </button>
@@ -312,9 +313,15 @@ For additional information check out our <a href="https://docs.google.com/docume
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={(props) => <DaoMembersContainer {...props} dao={dao} />} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions"
-              render={(props) => <DaoRedemptionsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress}  />} />
+              render={(props) =>
+                <DaoRedemptionsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
+              }
+            />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
-              render={(props) => <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />} />
+              render={(props) =>
+                <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
+              }
+            />
             <Route path="/dao/:daoAvatarAddress"
               render={(props) => <DaoProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
           </Switch>

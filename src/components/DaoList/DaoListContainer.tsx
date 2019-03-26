@@ -1,9 +1,7 @@
-import * as React from "react";
-import { getArc } from "arc";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-
 import { IDAOState } from "@daostack/client";
-
+import { getArc, getContractAddresses } from "arc";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import * as React from "react";
 import DaoContainer from "./DaoContainer";
 import * as css from "./DaoList.scss";
 
@@ -15,7 +13,16 @@ class DaoListContainer extends React.Component<IProps, null> {
 
   public render() {
     const { daos } = this.props;
-    const daoNodes = daos.map((dao: IDAOState) => {
+    let daosToShow: IDAOState[] = [];
+    // filter DAOs depending on environment
+    // TODO: this is a temporary fix until https://github.com/daostack/subgraph/issues/152 is resolved
+    if (process.env.NODE_ENV === "staging") {
+      const deployedDAO =  getContractAddresses("rinkeby").dao.Avatar.toLowerCase();
+      daosToShow = daos.filter((dao) => dao.address === deployedDAO);
+    } else {
+      daosToShow = daos;
+    }
+    const daoNodes = daosToShow.map((dao: IDAOState) => {
       return (
         <DaoContainer key={dao.address}  address={dao.address}/>
       );
@@ -31,7 +38,7 @@ class DaoListContainer extends React.Component<IProps, null> {
       }
 }
 
-export default (props: { address: string}) => {
+export default () => {
   const arc = getArc();
   return <Subscribe observable={arc.daos()}>{(state: IObservableState<IDAOState[]>) => {
       if (state.isLoading) {

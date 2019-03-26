@@ -1,6 +1,5 @@
 // Run this script with ts-node scripts/mintGen.ts
 const BN = require("bn.js");
-const promisify = require("es6-promisify");
 const { first } = require("rxjs/operators");
 const { getArc } = require("../src/arc.ts");
 
@@ -12,7 +11,7 @@ async function main() {
   console.log(`GEN token found at ${genToken.getContract().options.address}`);
   const daoAddress = "0x46d6cdc1dc33a3bf63bb2e654e5622173365ed6a";
 
-  const accounts = await promisify(web3.eth.getAccounts)();
+  const accounts = await web3.eth.getAccounts();
   web3.eth.defaultAccount = accounts[0];
 
   await Promise.all([daoAddress, ...accounts].map(async (account) => {

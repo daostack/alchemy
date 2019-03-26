@@ -8,7 +8,6 @@ import HomeContainer from "components/Home/HomeContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
-const promisify = require("es6-promisify");
 import * as History from "history";
 import HeaderContainer from "layouts/HeaderContainer";
 import * as React from "react";
@@ -81,9 +80,9 @@ class AppContainer extends React.Component<IProps, IState> {
     try {
       // only set the account if the network is correct
       // TODO: display big error if not on correct network
-      checkNetwork(arc.web3);
+      checkNetwork();
 
-      const accounts = await promisify(arc.web3.eth.getAccounts)();
+      const accounts = await arc.web3.eth.getAccounts();
       currentAddress = accounts[0];
       if (currentAddress && this.props.currentAccountAddress !== currentAddress) {
         this.props.setCurrentAccount(currentAddress);
