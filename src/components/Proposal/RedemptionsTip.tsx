@@ -38,7 +38,7 @@ export default (props: IProps) => {
           </ul>
         </div>;
       rewardComponents.push(c);
-    }  else if (reward.tokensForStaker.gt(new BN("0"))) {
+    }  else if (reward.tokensForStaker.gt(new BN(0))) {
       c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
@@ -46,8 +46,7 @@ export default (props: IProps) => {
         </ul>
       </div>;
       rewardComponents.push(c);
-
-    }  else if (reward.daoBountyForStaker.gt(new BN("0"))) {
+    }  else if (reward.daoBountyForStaker.gt(new BN(0))) {
       c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
@@ -62,7 +61,6 @@ export default (props: IProps) => {
   const hasEthReward = proposal.ethReward.gt(new BN(0));
   const hasExternalReward = proposal.externalTokenReward.gt(new BN(0));
   const hasReputationReward = proposal.reputationReward.gt(new BN(0));
-  const hasProposingRepReward = proposal.proposingRepReward.gt(new BN(0));
 
   return <div>
     {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
@@ -88,22 +86,10 @@ export default (props: IProps) => {
         </ul>
       </div> : ""
     }
-      <React.Fragment>
-        {hasProposingRepReward ?
-          <div>
-            <strong>For creating the proposal you will receive:</strong>
-            <ul>
-              <li><ReputationView reputation={proposal.proposingRepReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-            </ul>
-          </div> : ""
-        }
-        { rewardComponents }
+    <React.Fragment>
+      { rewardComponents }
     </React.Fragment>
 
-    {rewards.length === 0 && !beneficiaryHasRewards && executable ?
-      <span>Executing a proposal ensures that the target of the proposal receives their reward or punishment.</span>
-      : ""
-    }
     {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ""}
   </div>;
 };

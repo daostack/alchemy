@@ -98,6 +98,7 @@ export const timer: string;
 export const executeProposal: string;
 export const boostProposal: string;
 export const redeemRewards: string;
+export const redemptionString: string;
 export const proposalPassInfo: string;
 export const proposalFailInfo: string;
 export const closedTime: string;

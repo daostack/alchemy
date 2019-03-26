@@ -24,6 +24,7 @@ import { isRedeemPending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import RedeemButton from "./RedeemButton";
+import RedemptionsString from "./RedemptionsString";
 import RedemptionsTip from "./RedemptionsTip";
 import TransferDetails from "./TransferDetails";
 import VoteBox from "./VoteBox";
@@ -280,7 +281,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
                       <span> Execute</span>
                     </button>
                   : redeemable ?
-                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                    <div>
+                      <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposal} rewards={rewardsForCurrentUser} />
+                      <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                    </div>
                   : ""
                 }
               </div>
