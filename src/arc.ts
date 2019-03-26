@@ -127,7 +127,7 @@ export function checkNetwork() {
     }
 
     // check if Metamask account access is enabled, and if not, ask to enable it
-    enableMetamask();
+    // enableMetamask();
   } else {
     // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
     if (process.env.NODE_ENV === "development") {
