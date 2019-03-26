@@ -92,17 +92,17 @@
 }
 
 .launchMetaMask {
-    border-radius: 15px;
-    height: 30px;
-    background-color: rgba(0, 113, 255, 1.000);
-    color: $white;
-    border: 0;
-    outline: none;
-    line-height: 30px;
-    padding: 0 15px;
-    margin: 0 20px 20px 0;
-    display: inline-block;
-    float: right;
+  border-radius: 15px;
+  height: 30px;
+  background-color: rgba(0, 113, 255, 1.000);
+  color: $white;
+  border: 0;
+  outline: none;
+  line-height: 30px;
+  padding: 0 15px;
+  margin: 0 20px 20px 0;
+  display: inline-block;
+  float: right;
 
   img {
     position: relative;
@@ -119,7 +119,7 @@
   color: rgba(80, 97, 118, 1.000);
   font-size: 11px;
   position: relative;
-  top: 5px;
+  display: inline-block;
   left: -10px;
 }
 .preTransactionBottom {
@@ -201,7 +201,7 @@ input[type=number] {
             position: relative;
             top: 5px;
           }
-          
+
           span {
             font-weight: bold;
             color: rgba(0, 28, 53, 1.000);
@@ -566,7 +566,6 @@ input[type=number] {
       }
 
       .genError {
-        height: 100%;
         position: absolute;
         width: 300px;
         text-align: center;
@@ -599,12 +598,11 @@ input[type=number] {
         width: auto;
         position: relative;
         top: -8px;
-        left: 51px;
-        text-align: center;
+        text-align: left;
         float: left;
         transform: translate(0,0);
         display: inline-block;
-        margin: 5px 0;
+        margin: 0;
 
         ul {
           position: absolute;
@@ -616,7 +614,7 @@ input[type=number] {
           margin: 0;
           width: 150px;
           left: -1px;
-          padding: 0;
+          padding: 10px 5px;
           opacity: 0;
           transform: scale(0);
           transition: all .25s ease;
