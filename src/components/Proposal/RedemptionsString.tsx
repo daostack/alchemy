@@ -6,7 +6,6 @@ import Util from "lib/util";
 
 import ReputationView from "components/Account/ReputationView";
 
-
 import * as classNames from "classnames";
 import * as css from "./Proposal.scss";
 
@@ -44,10 +43,10 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     if (currentAccountAddress === proposal.beneficiary) {
       if (proposal.ethReward.gt(zero)) {
-        rewardComponents.push(Util.fromWei(proposal.ethReward).toFixed(2).toLocaleString() + " ETH")
+        rewardComponents.push(Util.fromWei(proposal.ethReward).toFixed(2).toLocaleString() + " ETH");
       }
       if (proposal.externalTokenReward.gt(zero)) {
-        rewardComponents.push(Util.fromWei(proposal.externalTokenReward).toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol)
+        rewardComponents.push(Util.fromWei(proposal.externalTokenReward).toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
       }
       if (proposal.nativeTokenReward.gt(zero)) {
         rewardComponents.push(Util.fromWei(proposal.nativeTokenReward).toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
@@ -67,8 +66,8 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     return <span className={css.redemptionString}>
     {rewardComponents.reduce((acc: any, v: any) => {
-      return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>
-    }, null)}
+      return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
+    }, null)};
     </span>;
   }
 }
