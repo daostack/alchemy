@@ -1,12 +1,12 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { getArc } from "arc";
+import { checkNetworkAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util, { checkNetworkAndWarn} from "lib/util";
+import Util from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";

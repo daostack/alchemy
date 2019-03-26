@@ -1,12 +1,11 @@
 import { IDAOState, IExecutionState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { getArc } from "arc";
+import { checkNetworkAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
-import { checkNetworkAndWarn } from "lib/util";
 import Util from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";

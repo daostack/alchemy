@@ -224,6 +224,10 @@ button:hover {
   background-color: $sky;
   color: $white;
   flex-grow: 1;
+
+  &:hover {
+    z-index: 100000;
+  }
 }
 
 .navHeading {

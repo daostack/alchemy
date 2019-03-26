@@ -115,12 +115,28 @@
   }
 }
 
+.yourBalance {
+  color: rgba(80, 97, 118, 1.000);
+  font-size: 11px;
+  position: relative;
+  top: 5px;
+  left: -10px;
+}
 .preTransactionBottom {
   padding: 20px 30px;
   border: 1px solid rgba(191, 203, 213, 1.000);
   text-align: right;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
 
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
 .metaMaskModal {
   width: 100%;
   height: 100%;
@@ -550,18 +566,20 @@
       }
 
       .genError {
-        background-color: rgba(0, 0, 0, 0.8);
         height: 100%;
         position: absolute;
         width: 300px;
         text-align: center;
-        color: $white;
-        left: -150px;
+        color: rgba(80, 97, 118, 1.000);
+        left: 41px;
+        top: 81px;
 
         h4 {
           color: $accent-2;
           font-size: 14px;
           font-family: $body-font;
+          text-align: left;
+          font-weight: normal;
           margin: 0;
           padding-top: 8px;
         }
@@ -570,37 +588,32 @@
           display: block;
           font-size: 10px;
           font-weight: normal;
-          color: $white-halftone;
+          color: rgba(80, 97, 118, 1.000);
         }
 
       }
 
       div.exchangeList {
-        color: $white;
-        font-size: 12px;
-        color: $white;
-        border: 1px solid $white;
-        width: 150px;
+        color: rgba(5, 113, 255, 1.000);
+        font-size: 11px;
+        width: auto;
         position: relative;
-        top: 0;
-        left: 0;
-          text-align: center;
-          transform: translate(0,0);
-          display: inline-block;
-          height: 30px;
-          margin: 11px;
-          line-height: 30px;
+        top: -8px;
+        left: 51px;
+        text-align: center;
+        float: left;
+        transform: translate(0,0);
+        display: inline-block;
+        margin: 5px 0;
 
         ul {
           position: absolute;
           top: -130px;
           left: 0;
-          background-color: rgba(0, 0, 0, 0.8);
+          background-color: white;
           list-style: none;
+          box-shadow: $shadow-3;
           margin: 0;
-          border-left: 1px solid $white;
-          border-right:  1px solid $white;
-          border-bottom:  1px solid $white;
           width: 150px;
           left: -1px;
           padding: 0;
@@ -609,30 +622,27 @@
           transition: all .25s ease;
 
           a {
-            color: $white;
             font-weight: bold;
             width: 100%;
+            color: rgba(80, 97, 118, 1.000);
             display: inline-block;
             padding: 8px 0;
 
             &:hover {
-              background-color: $black;
+              background-color: rgba(80, 97, 118, .1);
             }
           }
         }
 
         &:hover {
-          background-color: $black-thirdtone;
           cursor: pointer;
           border-bottom: none;
-          border-left: 1px solid $white;
-          border-right:  1px solid $white;
-          border-top:  1px solid $white;
+          text-decoration: underline;
 
           ul {
             opacity: 1;
             transform: scale(1);
-            top: 30px;
+            top: 21px;
           }
         }
       }

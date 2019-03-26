@@ -34,7 +34,7 @@ export default class TransferDetails extends React.Component<IProps, null> {
         <strong className={css.transferAmount}></strong>
         <img src="/assets/images/Icon/Transfer.svg" />
         <AccountPopupContainer accountAddress={proposal.beneficiary} dao={dao} />
-        <AccountProfileName accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
+        <AccountProfileName accountAddress={proposal.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
       </div>
     );
   }

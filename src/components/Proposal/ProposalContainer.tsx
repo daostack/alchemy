@@ -1,7 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
-import { getArc } from "arc";
+import { checkNetworkAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -10,7 +9,7 @@ import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { CommentCount } from "disqus-react";
-import Util, { checkNetworkAndWarn, humanProposalTitle } from "lib/util";
+import Util, { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -21,10 +20,11 @@ import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReduc
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
-import { isRedeemPending, isStakePending, isVotePending } from "selectors/operations";
+import { isRedeemPending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
 import RedeemButton from "./RedeemButton";
+import RedemptionsString from "./RedemptionsString";
 import RedemptionsTip from "./RedemptionsTip";
 import TransferDetails from "./TransferDetails";
 import VoteBox from "./VoteBox";
@@ -281,7 +281,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
                       <span> Execute</span>
                     </button>
                   : redeemable ?
-                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                    <div>
+                      <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposal} rewards={rewardsForCurrentUser} />
+                      <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                    </div>
                   : ""
                 }
               </div>
@@ -290,7 +293,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
           </div>
           <div className={css.createdBy}>
             <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={detailView}/>
-            <AccountProfileName accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
+            <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={detailView}/>
           </div>
           <div className={css.description}>
             {proposal.description}

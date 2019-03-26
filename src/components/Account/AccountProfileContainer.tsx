@@ -7,7 +7,6 @@ import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import DaoSidebar from "components/ViewDao/DaoSidebar";
-import promisify = require("es6-promisify");
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
@@ -20,7 +19,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
+import { combineLatest } from "rxjs";
 import * as io from "socket.io-client";
 import * as css from "./Account.scss";
 
@@ -96,13 +95,15 @@ class AccountProfileContainer extends React.Component<IProps, null> {
 
     const web3 = await Util.getWeb3();
     const timestamp = new Date().getTime().toString();
-    const text = "Please sign this message to confirm your request to update your profile to name '" + values.name + "' and description '" + values.description + "'. There's no gas cost to you. Timestamp:" + timestamp;
+    const text = ("Please sign this message to confirm your request to update your profile to name '" +
+      values.name + "' and description '" + values.description +
+      "'. There's no gas cost to you. Timestamp:" + timestamp);
     const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
 
     const method = "personal_sign";
     // TODO: do we need promisify here? web3 1.0 supports promises natively
     // and if we can do without, we can drop the dependency on es6-promises
-    const sendAsync = promisify(web3.currentProvider.sendAsync);
+    const sendAsync = web3.currentProvider.sendAsync;
     const params = [msg, accountAddress];
     const result = await sendAsync({ method, params, accountAddress });
     if (result.error) {
@@ -128,13 +129,16 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, accountInfo, accountProfile, currentAccountAddress, dao, ethBalance, genBalance } = this.props;
+    const { accountAddress, accountInfo, accountProfile,
+      currentAccountAddress, dao, ethBalance, genBalance } = this.props;
 
     const editing = currentAccountAddress && accountAddress === currentAccountAddress;
 
     return (
       <div className={css.profileWrapper}>
-        <BreadcrumbsItem to={`/profile/${accountAddress}`}>{ editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/profile/${accountAddress}`}>
+          { editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}
+        </BreadcrumbsItem>
 
         { dao ? <DaoSidebar address={dao.address} /> : ""}
 
