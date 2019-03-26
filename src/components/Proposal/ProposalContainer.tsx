@@ -221,7 +221,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
         identifier: proposal.id
       };
 
-    return (
+    return (proposal.stage === IProposalStage.Queued && this.state.expired ? "" :
       <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
         <div className={css.proposalInfo}>
           <h3 className={css.proposalTitleTop}>
