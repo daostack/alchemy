@@ -192,124 +192,127 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
                 <div className={css.helpButton}>
                   <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>?</button>
-                  <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
-                    <div className={css.helpBox}>
-                      <div className={css.pointer}></div>
-                      <div className={css.bg}></div>
-                      <div className={css.bridge}></div>
-                      <div className={css.header}>
-                        <h2>Genesis Protocol</h2>
-                        <h3>{rulesHeader}</h3>
-                      </div>
-                      <div className={css.body}>{rules}</div>
-                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                    </div>
-                  </span>
                 </div> : ""
               }
             </div>
-            <div className={css.proposalInfo}>
-              <div className={css.proposalTitle}>
-                <strong>{humanProposalTitle(proposal)}</strong>
-              </div>
-              <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
-            </div>
-            { /******* Staking form ******  **/
-              actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?
-              <div className={css.stakingInfo + " " + css.clearfix}>
-                <div className={css.stakingForm}>
-                  <span className={css.yourStakeTitle}>Your stake</span>
-                  <div className={buyGensClass}>
-                    <h4>
-                      You do not have enough GEN
-                    </h4>
+            <div className={css.preTransactionContent}>
+              <span className={classNames({[css.help]: true, [css.hidden]: !this.state.instructionsOpen})}>
+                <div className={css.helpBox}>
+                  <div className={css.bg}></div>
+                  <div className={css.header}>
                   </div>
-                 <div className={css.formGroup + " " + css.clearfix}>
-                    <input
-                      autoFocus={true}
-                      type="number"
-                      min="1"
-                      ref={(input) => { this.stakeInput = input; }}
-                      className={css.predictionAmount}
-                      onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
-                      placeholder="0"
-                    />
-                    <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
-                    <div className={css.yourBalance}>
-                      <div>Your balance: {accountGens} GEN</div>
-                      <div className={css.exchangeList}>
-                        Buy GEN &#8964;
-                        <ul>
-                          <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-                          <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-                          <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-                          <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-                          <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
-                        </ul>
+                  <div className={css.body}>
+                    <h2>Genesis Protocol</h2>
+                    <h3>{rulesHeader}</h3>
+                    {rules}
+                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
+                  </div>
+                </div>
+              </span>
+
+              <div className={css.proposalInfo}>
+                <div className={css.proposalTitle}>
+                  <strong>{humanProposalTitle(proposal)}</strong>
+                </div>
+                <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
+              </div>
+              { /******* Staking form ******  **/
+                actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?
+                <div className={css.stakingInfo + " " + css.clearfix}>
+                  <div className={css.stakingForm}>
+                    <span className={css.yourStakeTitle}>Your stake</span>
+                    <div className={buyGensClass}>
+                      <h4>
+                        You do not have enough GEN
+                      </h4>
+                    </div>
+                   <div className={css.formGroup + " " + css.clearfix}>
+                      <input
+                        autoFocus={true}
+                        type="number"
+                        min="1"
+                        ref={(input) => { this.stakeInput = input; }}
+                        className={css.predictionAmount}
+                        onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}
+                        placeholder="0"
+                      />
+                      <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
+                      <div className={css.yourBalance}>
+                        <div>Your balance: {accountGens} GEN</div>
+                        <div className={css.exchangeList}>
+                          Buy GEN &#8964;
+                          <ul>
+                            <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
+                            <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
+                            <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
+                            <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
+                            <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div> : ""
-            }
-            {actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp ?
-              <div className={css.decisionGraph}>
-                 <h3>State after your vote</h3>
-                 <div className={css.clearfix}>
-                   <div className={css.graphContainer}>
-                     <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
+                </div> : ""
+              }
+              {actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp ?
+                <div className={css.decisionGraph}>
+                   <h3>State after your vote</h3>
+                   <div className={css.clearfix}>
+                     <div className={css.graphContainer}>
+                       <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
+                     </div>
+                     <div className={css.graphInfo}>
+                       <div>
+                         <img src="/assets/images/Icon/vote/for.svg"/>
+                         For <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationFor} />
+                       </div>
+                       <div>
+                         <img src="/assets/images/Icon/vote/against.svg"/>
+                         Against <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationAgainst} />
+                       </div>
                    </div>
-                   <div className={css.graphInfo}>
-                     <div>
-                       <img src="/assets/images/Icon/vote/for.svg"/>
-                       For <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationFor} />
-                     </div>
-                     <div>
-                       <img src="/assets/images/Icon/vote/against.svg"/>
-                       Against <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationAgainst} />
-                     </div>
-                 </div>
-                 </div>
-              </div>
-              : ""
-            }
-          {/*
-        <div className={css.transactionInstructions}>
-
-          <p>
-            When you click "Launch MetaMask" we will pop up a Metamask dialogue.
-            This dialogue will ask you to approve your transaction, including a small ETH cost.
-            It will set a default gas limit and gas price. It's fine to stick with these defaults.
-            You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
-          </p>
-
-        </div>
-           */}
-            {
-              <div className={css.preTransactionBottom}>
-                <div className={css.closeTransactionContainer}>
-                  <button onClick={this.props.closeAction}>
-                    Cancel
-                  </button>
+                   </div>
                 </div>
-                { (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
-                    <button
-                      className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
-                      disabled={true}
-                      onClick={this.handleClickAction.bind(this)}
-                      data-test-id="launch-metamask"
-                    >
+                : ""
+              }
+            {/*
+          <div className={css.transactionInstructions}>
+
+            <p>
+              When you click "Launch MetaMask" we will pop up a Metamask dialogue.
+              This dialogue will ask you to approve your transaction, including a small ETH cost.
+              It will set a default gas limit and gas price. It's fine to stick with these defaults.
+              You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target='_blank'>this calculator</a> to adjust the gas price.
+            </p>
+
+          </div>
+             */}
+              {
+                <div className={css.preTransactionBottom}>
+                  <div className={css.closeTransactionContainer}>
+                    <button onClick={this.props.closeAction}>
+                      Cancel
+                    </button>
+                  </div>
+                  { (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
+                    <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
+                      <button
+                        className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
+                        disabled={true}
+                        onClick={this.handleClickAction.bind(this)}
+                        data-test-id="launch-metamask"
+                      >
+                        {transactionType}
+                      </button>
+                    </Tooltip>
+                    :
+                    <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
                       {transactionType}
                     </button>
-                  </Tooltip>
-                  :
-                  <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
-                    {transactionType}
-                  </button>
-                }
-              </div>
-            }
+                  }
+                </div>
+              }
+            </div>
           </div>
         </div>
       </Modal>
