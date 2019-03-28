@@ -75,6 +75,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
   public toggleInstructions() {
     this.setState({ instructionsOpen: !this.state.instructionsOpen });
+
   }
 
   public render() {
@@ -120,6 +121,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <p>If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
+                  <div className={css.notification}>
+                    <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
+                  </div>
+                  <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
+                  <div className={css.passFailConditions}>
+                    <span className={css.passCondition}>
+                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                    <span className={css.failCondition}>
+                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                  </div>
                 </div>;
         break;
       case ActionTypes.VoteDown:
@@ -135,6 +148,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <p>If you vote for something to pass and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>If you vote for something to fail and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
+                  <div className={css.notification}>
+                    <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
+                  </div>
+                  <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
+                  <div className={css.passFailConditions}>
+                    <span className={css.passCondition}>
+                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                    <span className={css.failCondition}>
+                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                  </div>
                 </div>;
         break;
       case ActionTypes.StakePass:
@@ -149,6 +174,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
                   <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
                   <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
+                  <div className={css.notification}>
+                    <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
+                  </div>
+                  <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
+                  <div className={css.passFailConditions}>
+                    <span className={css.passCondition}>
+                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                    <span className={css.failCondition}>
+                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                  </div>
                 </div>;
         break;
       case ActionTypes.StakeFail:
@@ -162,6 +199,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
                   <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
                   <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
+                  <div className={css.notification}>
+                    <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
+                  </div>
+                  <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
+                  <div className={css.passFailConditions}>
+                    <span className={css.passCondition}>
+                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                    <span className={css.failCondition}>
+                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                    </span>
+                  </div>
                 </div>;
         break;
       case ActionTypes.Redeem:
@@ -190,8 +239,12 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                 </div>
               </div>
               {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
-                <div className={css.helpButton}>
-                  <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>?</button>
+                <div className={classNames({[css.helpButton]: true, [css.open]: this.state.instructionsOpen})}>
+                  <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>
+                    <b> &lt; Got it</b>
+                    <span>?</span>
+                    <span>x</span>
+                  </button>
                 </div> : ""
               }
             </div>
@@ -205,7 +258,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                     <h2>Genesis Protocol</h2>
                     <h3>{rulesHeader}</h3>
                     {rules}
-                    <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
                   </div>
                 </div>
               </span>
