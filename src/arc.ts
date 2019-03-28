@@ -108,17 +108,6 @@ export async function checkNetwork() {
   if (web3Provider && web3Provider.isMetaMask) {
     // we are interacting with Metamask, let's just use window.ethereum to interact with MM
     const ethereum = (<any> window).ethereum;
-    // for (let i = 0; i < 10; i++) {
-    //   if (!(<any> window).ethereum.netWorkVersion) {
-    //     // this is probably because MM is not completely configured yet: we try another again
-    //     console.log(`Metamask is present but network is unknown - waiting a bit`);
-    //     console.log((<any> window).ethereum.netWorkVersion);
-    //     await setTimeout(() => true, 100);
-    //   } else {
-    //     break;
-    //   }
-    // }
-
     const networkName = Util.networkName(ethereum.networkVersion);
     let expectedNetworkName;
     switch (process.env.NODE_ENV) {
@@ -171,9 +160,6 @@ export async function checkNetwork() {
 export async function getCurrentUser(): Promise<Address> {
   await checkNetwork();
   return (<any> window).ethereum.selectedAddress;
-  // const arc = getArc();
-  // const accounts = await arc.web3.eth.getAccounts();
-  // return accounts[0];
 }
 
 export function enableMetamask() {
