@@ -1,6 +1,6 @@
 import {Address } from "@daostack/client";
 import * as web3Actions from "actions/web3Actions";
-import { checkNetwork, getArc, pollForAccountChanges } from "arc";
+import { getArc, getCurrentUser, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -80,16 +80,18 @@ class AppContainer extends React.Component<IProps, IState> {
     try {
       // only set the account if the network is correct
       // TODO: display big error if not on correct network
-      checkNetwork();
-
-      const accounts = await arc.web3.eth.getAccounts();
-      currentAddress = accounts[0];
+      currentAddress = await getCurrentUser();
+      console.log( `current address`, currentAddress);
       if (currentAddress && this.props.currentAccountAddress !== currentAddress) {
         this.props.setCurrentAccount(currentAddress);
       }
     } catch (err) {
       console.warn(err.message);
-      this.props.showNotification(NotificationStatus.Failure, err.message);
+      if (err.message.match(/no metamask/i)) {
+        // if no metamask instance is found, we do not bother the user (yet)
+      } else {
+        this.props.showNotification(NotificationStatus.Failure, err.message);
+      }
     }
 
     pollForAccountChanges(arc.web3).subscribe(
@@ -122,7 +124,8 @@ class AppContainer extends React.Component<IProps, IState> {
 
         { connectionStatus === ConnectionStatus.Pending ? <div>Checking connection status...</div> :
           <div className={css.container}>
-            <Route path="/" render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
+            <Route path="/"
+              render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
 
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
