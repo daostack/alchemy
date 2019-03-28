@@ -177,6 +177,8 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription:
     (err: Error) => {
       let msg: string;
       msg = `${txDescription}: transaction failed :-(`;
+      console.warn(msg);
+      console.warn(err.message);
       dispatch(showNotification(NotificationStatus.Failure, msg));
     }
   ];
