@@ -53,7 +53,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
   public handleClickVote(vote: number, event: any) {
     if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
     const { currentAccountState } = this.props;
-    if (currentAccountState.reputation) {
+    if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
@@ -94,7 +94,11 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       },
     };
 
-    const votingDisabled = !currentAccountState || !currentAccountState.reputation || !!currentVote;
+    const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
+                            proposal.stage === IProposalStage.Executed ||
+                            !currentAccountState ||
+                            currentAccountState.reputation.eq(new BN(0)) ||
+                            !!currentVote;
 
     const wrapperClass = classNames({
       [css.detailView] : detailView,
@@ -294,13 +298,24 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     } else {
       return (
         <div className={voteStatusClass} >
+          {this.state.showPreVoteModal ?
+            <PreTransactionModal
+              actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+              action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
+              closeAction={this.closePreVoteModal.bind(this)}
+              currentAccount={currentAccountState}
+              dao={dao}
+              effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
+              proposal={proposal}
+            /> : ""
+          }
           <div className={css.castVote}>
             <span className={css.buttonsOnlyVoteLabel}>Vote: </span>
             <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
-              <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
+              <img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/><span> For</span>
             </button>
             <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-              <img src="/assets/images/Icon/vote/against-btn-selected.svg"/><span> Against</span>
+              <img src="/assets/images/Icon/vote/against-btn-selected-w.svg"/><span> Against</span>
             </button>
           </div>
           <div className={css.voteRecord}>
