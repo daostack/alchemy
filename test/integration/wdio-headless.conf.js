@@ -8,7 +8,7 @@ exports.config = {
   capabilities: [{
     ...config.capabilities[0],
     chromeOptions: {
-        args: ['headless', 'disable-gpu', 'disable-web-security']
+        args: ['headless', 'disable-gpu']
     },
   }],
   waitforTimeout: 900000, // 15 minutes
