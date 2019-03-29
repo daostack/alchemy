@@ -357,6 +357,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   <div>
                     <VoteBox
                       buttonsOnly={true}
+                      expired={this.state.expired}
                       isVotingNo={isVotingNo}
                       isVotingYes={isVotingYes}
                       currentVote={currentAccountVote}
@@ -374,6 +375,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
         <div className={css.proposalActions + " " + css.clearfix}>
            <VoteBox
+            expired={this.state.expired}
             isVotingNo={isVotingNo}
             isVotingYes={isVotingYes}
             currentVote={currentAccountVote}

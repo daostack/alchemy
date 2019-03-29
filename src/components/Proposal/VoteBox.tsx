@@ -21,6 +21,7 @@ interface IContainerProps {
   currentVote: number;
   dao: IDAOState;
   detailView?: boolean;
+  expired?: boolean;
   historyView?: boolean;
   proposal: IProposalState;
   voteOnProposal: typeof arcActions.voteOnProposal;
@@ -70,6 +71,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
       proposal,
       dao,
       detailView,
+      expired,
       historyView,
       isVotingNo,
       isVotingYes,
@@ -96,6 +98,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
 
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
                             proposal.stage === IProposalStage.Executed ||
+                            (proposal.stage === IProposalStage.Boosted && expired) ||
                             !currentAccountState ||
                             currentAccountState.reputation.eq(new BN(0)) ||
                             !!currentVote;
@@ -341,6 +344,7 @@ interface IProps {
   currentAccountAddress: Address;
   currentVote: number;
   dao: IDAOState;
+  expired?: boolean;
   proposal: IProposalState;
   isVotingNo: boolean;
   isVotingYes: boolean;
