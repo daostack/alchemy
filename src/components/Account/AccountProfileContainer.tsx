@@ -106,7 +106,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
     const sendAsync = web3.currentProvider.sendAsync;
     const params = [msg, accountAddress];
     const result = await sendAsync({ method, params, accountAddress });
-    if (!result || result.error) {
+    if (result.error) {
       console.error("Signing canceled, data was not saved");
       showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
       setSubmitting(false);

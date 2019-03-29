@@ -3,7 +3,7 @@ import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Util from "./lib/util";
 
-const providers = {
+const settings = {
   dev: {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
@@ -12,8 +12,8 @@ const providers = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/daostack-alchemy-rinkeby",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v6",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v6",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
        host: "ipfs.infura.io",
@@ -88,11 +88,21 @@ export function subscribeToAccountChanges(web3: any, currentAccountAddress?: Add
   });
 }
 
+// TODO: move this to utils
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
+  return new Promise((resolve) => {
+    (async function waitForIt(): Promise<void> {
+      if (await test()) { return resolve(); }
+      setTimeout(waitForIt, 30);
+    })();
+  });
+}
+
 /**
  * Checks if the web3 provider is as expected; throw an Error if it is not
  * @return
  */
-export function checkNetwork() {
+export async function checkNetwork() {
   const web3: any = getArc().web3;
   const web3Provider = web3.currentProvider;
   if (web3Provider && web3Provider.isMetaMask) {
@@ -120,23 +130,36 @@ export function checkNetwork() {
     }
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
+    } else if (!(<any> window).ethereum.netWorkVersion) {
+      // networkVersion is undefined  - probably becuase metamask has not done initializing yet
+      // we ignore this :-)
+
     } else {
-      // TODO: error message is for developers, need to write something more user friendly here
       const msg = `Please connect to "${expectedNetworkName}" (you are connected to "${networkName}" now)`;
       throw new Error(msg);
     }
 
-    // check if Metamask account access is enabled, and if not, ask to enable it
-    enableMetamask();
   } else {
     // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
     if (process.env.NODE_ENV === "development") {
       const msg = `No metamask connection found - you may not be able to do transactions`;
       console.warn(msg);
     } else {
-      throw new Error(`No metamask instance found - you may want to install that.`);
+      throw new Error(`No metamask instance found.`);
     }
   }
+}
+
+/**
+ * get the current user from the web3 provider (metamask)
+ * this function will throw an Error if there is anything wrong with the connection
+ * (when no provider is available, or the provider is not the expected provider)
+ * which need to be handled by the caller of the function
+ * @return [description]
+ */
+export async function getCurrentUser(): Promise<Address> {
+  await checkNetwork();
+  return (<any> window).ethereum.selectedAddress;
 }
 
 export function enableMetamask() {
@@ -144,7 +167,7 @@ export function enableMetamask() {
   // that will ask the user to enable it
   const ethereum = (<any> window).ethereum;
   if (!ethereum) {
-    const msg = `Please install metamask`;
+    const msg = `Please install or enable metamask`;
     throw Error(msg);
   }
   if (!ethereum.selectedAddress) {
@@ -179,16 +202,16 @@ function getArcSettings(): any {
   let arcSettings: any;
   switch (process.env.NODE_ENV || "development") {
     case "development": {
-      arcSettings = providers.dev;
+      arcSettings = settings.dev;
       break;
     }
     case "staging" : {
-      arcSettings = providers.staging;
+      arcSettings = settings.staging;
       break;
     }
     case "production" : {
       throw Error("No settings for production NODE_ENV==\"production\" avaiable (yet)");
-    //   arcSettings = providers.production;
+    //   arcSettings = settings.production;
       // break;
     }
     default: {
