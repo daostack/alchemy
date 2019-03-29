@@ -33,6 +33,7 @@ interface IContainerProps {
   currentAccountAddress: Address;
   dao: IDAOState;
   detailView?: boolean;
+  expired?: boolean;
   historyView?: boolean;
   threshold: number;
 }
@@ -111,6 +112,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       detailView,
+      expired,
       historyView,
       proposal,
       isPredictingFail,
@@ -189,6 +191,9 @@ class PredictionBox extends React.Component<IProps, IState> {
     const stakeDownClass = classNames({
       [css.predicted]: currentAccountPrediction === VoteOptions.No,
     });
+
+    const stakingEnabled = proposal.stage === IProposalStage.Queued ||
+                            (proposal.stage === IProposalStage.PreBoosted && !expired);
 
     const hasGens = currentAccountGens.gt(new BN(0));
     const disableStakePass = !hasGens || currentAccountPrediction === VoteOptions.No;
@@ -295,7 +300,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             { this.props.detailView ?
               <div className={css.stakeControls}>
                 {
-                 proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
+                  stakingEnabled
                   ? (
                     tip(VoteOptions.No) !== "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -306,7 +311,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                   : " "
                 }
                 {
-                  proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
+                  stakingEnabled
                   ? (
                       tip(VoteOptions.Yes) !== "" ?
                         <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
@@ -363,7 +368,7 @@ class PredictionBox extends React.Component<IProps, IState> {
           { !this.props.detailView ?
             <div className={css.centered}>
               {
-               proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
+                stakingEnabled
                 ? (
                   tip(VoteOptions.No) !== "" ?
                     <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -375,7 +380,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 <span className={css.disabledPredictions}>Predictions are disabled</span>
               }
               {
-                proposal.stage === IProposalStage.Queued || proposal.stage === IProposalStage.PreBoosted
+                stakingEnabled
                 ? (
                     tip(VoteOptions.Yes) !== "" ?
                       <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>

@@ -405,6 +405,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             beneficiaryProfile={beneficiaryProfile}
             currentAccountAddress={currentAccountAddress}
             dao={dao}
+            expired={this.state.expired}
             proposal={proposal}
             threshold={threshold}
             detailView={detailView}
