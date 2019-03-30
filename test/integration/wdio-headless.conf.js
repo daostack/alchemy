@@ -7,8 +7,8 @@ exports.config = {
   maxInstances: 1,
   capabilities: [{
     ...config.capabilities[0],
-    chromeOptions: {
-        args: ['headless', 'disable-gpu']
+    'goog:chromeOptions': {
+        args: ['--headless', '--disable-gpu']
     },
   }],
   waitforTimeout: 900000, // 15 minutes
