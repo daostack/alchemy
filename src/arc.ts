@@ -61,6 +61,7 @@ export function pollForAccountChanges(web3: any, currentAccountAddress?: string,
         } else if (web3.eth.accounts) {
           account = web3.eth.accounts[0].address;
         }
+        account = account.toLowerCase();
         if (prevAccount !== account && account) {
           console.log(`ACCOUNT CHANGED; new account is ${account}`);
           observer.next(account);
@@ -159,7 +160,7 @@ export async function checkNetwork() {
  */
 export async function getCurrentUser(): Promise<Address> {
   await checkNetwork();
-  return (<any> window).ethereum.selectedAddress;
+  return (<any> window).ethereum.selectedAddress.toLowerCase();
 }
 
 export function enableMetamask() {
