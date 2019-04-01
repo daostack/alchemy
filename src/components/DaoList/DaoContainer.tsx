@@ -1,9 +1,11 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState, IProposalStage, Member, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { combineLatest } from "rxjs";
+
 import * as css from "./DaoList.scss";
 
 interface IProps {
@@ -13,14 +15,20 @@ interface IProps {
 const DaoContainer = (props: IProps) => {
   const { address } = props;
   const arc = getArc();
+  const dao = arc.dao(address);
+  const observable = combineLatest(
+    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
+    dao.members(),
+    dao.state() // DAO state
+  );
 
-  return <Subscribe observable={arc.dao(address).state()}>{(state: IObservableState<IDAOState>) => {
+  return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], Member[], IDAOState]>) => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const dao = state.data;
+        const dao = state.data[2];
         return <Link
           className={css.daoLink}
           to={"/dao/" + dao.address}
@@ -32,26 +40,26 @@ const DaoContainer = (props: IProps) => {
 
             <div className={css.clearfix + " " + css.daoInfoContainer}>
               <div className={css.daoInfoTitle}>
-                Monthly Activity
+                Statistics
+                {/* Reputation holders, Open proposals, and GEN staked.*/}
               </div>
-              <Subscribe observable={dao.token.state()}>{ (state: any) =>  (state.data &&
-                  <div>
-                    <div className={css.daoInfo}>
-                      <b>{state.data.symbol}</b>
-                      <span>Token</span>
-                     </div>
-                    <div className={css.daoInfo}>
-                      <b>{Util.fromWei(state.data.totalSupply).toLocaleString()}</b>
-                      <span>Num tokens</span>
-                     </div>
-                  </div>
-              )}</Subscribe>
-              <Subscribe observable={dao.reputation.state()}>{ (state: any) =>  (state.data &&
-                <div className={css.daoInfo}>
-                  <b>{Util.fromWei(state.data.totalSupply).toLocaleString()}</b>
-                  <span>Reputation</span>
-                </div>
-              )}</Subscribe>
+
+
+              <div className={css.daoInfo}>
+                <b>{state.data[1].length}</b>
+                <span>Reputation Holders</span>
+               </div>
+
+              <div className={css.daoInfo}>
+                <b>{state.data[0].length}</b>
+                <span>Open Proposals</span>
+               </div>
+
+              <div className={css.daoInfo}>
+                <b>TODO</b>
+                <span>GEN Staked</span>
+              </div>
+              )
             </div>
           </div>
         </Link>;
