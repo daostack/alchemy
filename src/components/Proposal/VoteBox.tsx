@@ -175,7 +175,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               </div>
               <div className={css.voteRecord}>
                 You voted
-                <span className={css.castVoteFor}>
+                <span className={css.castVoteFor} data-test-id="youVotedFor">
                   - For
                 </span>
                 <span className={css.castVoteAgainst}>
@@ -274,7 +274,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
           { !this.props.detailView ?
             <div className={voteStatusClass} >
               <div className={css.castVote}>
-                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
                   <img src="/assets/images/Icon/vote/for-btn-selected.svg"/><span> For</span>
                 </button>
                 <button onClick={votingDisabled ? null : this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
@@ -283,7 +283,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               </div>
               <div className={css.voteRecord}>
                 You voted
-                <span className={css.castVoteFor}>
+                <span className={css.castVoteFor} data-test-id="youVotedFor">
                   - For
                 </span>
                 <span className={css.castVoteAgainst}>
@@ -320,7 +320,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
           </div>
           <div className={css.voteRecord}>
             You voted
-            <span className={css.castVoteFor}>
+            <span className={css.castVoteFor} data-test-id="youVotedFor">
               - For
             </span>
             <span className={css.castVoteAgainst}>

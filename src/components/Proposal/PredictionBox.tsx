@@ -225,7 +225,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     ;
 
     const passButton = (
-      <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)}>
+      <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)} data-test-id="stakePass">
         <img className={css.stakeIcon} src="/assets/images/Icon/v.svg"/> Pass
         <img src="/assets/images/Icon/Loading-black.svg"/>
       </button>
