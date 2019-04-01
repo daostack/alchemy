@@ -41,9 +41,7 @@ const DaoContainer = (props: IProps) => {
             <div className={css.clearfix + " " + css.daoInfoContainer}>
               <div className={css.daoInfoTitle}>
                 Statistics
-                {/* Reputation holders, Open proposals, and GEN staked.*/}
               </div>
-
 
               <div className={css.daoInfo}>
                 <b>{state.data[1].length}</b>
