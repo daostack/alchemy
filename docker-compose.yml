@@ -61,19 +61,19 @@ services:
       GRAPH_LOG: "graph.log"
 
   ipfs:
-    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.14-v4-0.0.6
+    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.14-v8-0.0.8
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: daostack/subgraph-postgres:ganache-0.0.1-rc.14-v4-0.0.6
+    image: daostack/subgraph-postgres:ganache-0.0.1-rc.14-v8-0.0.8
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/migration:0.0.1-rc.14-v4
+    image: daostack/migration:0.0.1-rc.14-v8
     ports:
       - 8545:8545
     command: >
