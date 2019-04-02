@@ -64,6 +64,19 @@
   }
 }
 
+a.attachmentLink, a.attachmentLink:visited {
+	font-size: 11px;
+	color: rgba(0, 113, 255, 1.000);
+	display: inline-block;
+	margin-bottom: 15px;
+
+	img {
+		position: relative;
+		top: 2px;
+		margin-right: 5px;
+	}
+}
+
 .detailLink img {
     margin-left: 8px;
     height: 12px;
