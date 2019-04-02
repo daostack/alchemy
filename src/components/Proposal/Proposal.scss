@@ -77,6 +77,16 @@ a.attachmentLink, a.attachmentLink:visited {
 	}
 }
 
+.detailLink img {
+    margin-left: 8px;
+    height: 12px;
+    opacity: .5;
+}
+
+.detailView .detailLink img {
+	display: none;
+}
+
 .proposal:hover {
 	z-index: 1000;
 	box-shadow: 0 0 2px 0 #3278CA;
@@ -143,18 +153,12 @@ a.attachmentLink, a.attachmentLink:visited {
 	height: auto;
 }
 
-.failedProposal {
-
-  .proposalInfo {
+.failedProposal .proposalInfo, .passedProposal .proposalInfo {
   	left: 60px;
-  }
 }
 
-.passedProposal {
-
-	.proposalInfo {
-	  	left: 60px;
-	}
+.detailView.failedProposal .proposalInfo, .detailView.passedProposal .proposalInfo {
+  	left: 0;
 }
 
 button.disabled {
@@ -1083,6 +1087,7 @@ button.disabled {
 .redemptionString {
 	position: absolute;
 	top: 12px;
+	width: 100%;
 	right: 85px;
 	display: block;
 	color: rgba(49, 120, 202, 1.000);
@@ -1117,10 +1122,25 @@ button.disabled {
 	width: auto;
 	text-align: left;
 	position: relative;
+}
 
-	.redeemRewards {
-		position: initial;
-		margin-top: 30px;
+
+.detailView .redeemRewards {
+	position: initial;
+	margin-top: 30px;
+	right: auto;
+	top: auto;
+	height: 30px;
+	border-radius: 30px;
+	background-color: #0376ff;
+	color: $white;
+	line-height: 30px;
+	padding: 0 15px;
+	margin-top: 0;
+	margin-bottom: 15px;
+
+	img {
+		margin-right: 5px;
 	}
 }
 
@@ -1328,7 +1348,7 @@ button.disabled {
 .detailView .proposalActions {
 	flex-grow: 1;
 	min-width: 350px;
-	padding-left: 60px;
+	padding-left: 0;
 	border-top: none;
 }
 
