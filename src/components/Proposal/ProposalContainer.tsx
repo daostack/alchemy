@@ -250,6 +250,20 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 : " "
               }
             </span>
+            {this.props.detailView ?
+              <div>
+                {this.state.expired && proposal.stage === IProposalStage.Boosted ?
+                <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                  <img src="/assets/images/Icon/execute.svg"/>
+                  <span>Execute</span>
+                </button>
+                : redeemable ?
+                  <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                : " "
+                }
+              </div>
+              : " "
+            }
             <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
           </h3>
           <div className={css.cardTop + " " + css.clearfix}>
@@ -349,13 +363,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span>Boost</span>
                   </button>
-                  : this.state.expired && proposal.stage === IProposalStage.Boosted ?
-                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
-                    <img src="/assets/images/Icon/execute.svg"/>
-                    <span>Execute</span>
-                  </button>
-                  : redeemable ?
-                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
                   :
                   <div>
                     <VoteBox
