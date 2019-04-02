@@ -99,7 +99,6 @@
 
 .closedProposal.proposal:hover {
 	height: 65px;
-	overflow: hidden;
 	top: initial;
 	box-shadow: none;
 
@@ -572,7 +571,6 @@ button.disabled {
 .proposal.closedProposal {
 	display: block;
 	width: 100%;
-	max-width: 960px;
 	margin: 0 auto 3px auto;
 	border-radius: 3px;
 	height: 65px;
