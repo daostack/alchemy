@@ -38,7 +38,6 @@ button:hover {
 .closedProposalsHeader {
   display: block;
   width: 100%;
-  max-width: 960px;
   margin: 0 auto 10px auto;
   display: flex;
   font-size: 12px;
@@ -46,11 +45,11 @@ button:hover {
   text-align: left;
 
   .votes, .predictions {
-    width: 100px;
+    width: 103px;
   }
 
   .proposalCreator {
-    width: 100px;
+    width: 170px;
   }
 
   .endDate {
@@ -58,11 +57,12 @@ button:hover {
   }
 
   .title {
-    width: 250px;
+    width: 255px;
+    padding: 0 15px;
   }
 
   .closeReason {
-    width: 160px;
+    width: 150px;
     position: relative;
   }
 
