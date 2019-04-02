@@ -9,6 +9,8 @@ export const boostedAmount: string;
 export const centered: string;
 export const description: string;
 export const url: string;
+export const attachmentLink: string;
+export const detailLink: string;
 export const detailView: string;
 export const closedProposal: string;
 export const openProposal: string;
