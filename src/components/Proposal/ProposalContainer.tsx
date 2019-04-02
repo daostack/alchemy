@@ -330,7 +330,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 : " "
               }
             </span>
-            <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
+            <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+              {humanProposalTitle(proposal)}
+              <img src="/assets/images/Icon/Open.svg"/>
+            </Link>
           </h3>
           <div className={css.proposalDetails}>
             <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>

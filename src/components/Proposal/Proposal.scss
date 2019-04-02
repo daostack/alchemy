@@ -64,6 +64,16 @@
   }
 }
 
+.detailLink img {
+    margin-left: 8px;
+    height: 12px;
+    opacity: .5;
+}
+
+.detailView .detailLink img {
+	display: none;
+}
+
 .proposal:hover {
 	z-index: 1000;
 	box-shadow: 0 0 2px 0 #3278CA;
