@@ -312,18 +312,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div className={css.description}>
             {proposal.description}
           </div>
-          {this.props.detailView ?
-              <a href="#" className={css.attachmentLink}>
+          {this.props.detailView && proposal.url ?
+              <a href={proposal.url} className={css.attachmentLink}>
                 <img src="/assets/images/Icon/Attachment.svg"/>
                 Attachment &gt;
               </a>
             : " "
-          }
-          {proposal.url ?
-            <div className={css.url}>
-              <a href={proposal.url} target="_blank">Attached link</a>
-            </div>
-            : ""
           }
           <h3 className={css.proposalTitleBottom}>
             <span data-test-id="proposal-closes-in">
