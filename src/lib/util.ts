@@ -78,3 +78,12 @@ export default class Util {
 export function humanProposalTitle(proposal: IProposalState) {
   return proposal.title || "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }
+
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
+  return new Promise((resolve) => {
+    (async function waitForIt(): Promise<void> {
+      if (await test()) { return resolve(); }
+      setTimeout(waitForIt, 30);
+    })();
+  });
+}

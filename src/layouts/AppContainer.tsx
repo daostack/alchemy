@@ -94,14 +94,11 @@ class AppContainer extends React.Component<IProps, IState> {
       }
     }
 
-    pollForAccountChanges(arc.web3).subscribe(
+    pollForAccountChanges(arc.web3, currentAddress).subscribe(
       (newAddress: Address) => {
-        if (currentAddress && currentAddress !== newAddress) {
+        if (currentAddress !== newAddress) {
           this.props.setCurrentAccount(undefined);
           window.location.reload();
-        } else {
-          this.props.setCurrentAccount(newAddress);
-          currentAddress = newAddress;
         }
       }
     );
