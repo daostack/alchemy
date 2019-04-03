@@ -19,9 +19,10 @@ import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest } from "rxjs";
+import { combineLatest, of } from "rxjs";
 import * as io from "socket.io-client";
 import * as css from "./Account.scss";
+import { promisify } from 'util';
 
 const socket = io(process.env.API_URL);
 
@@ -101,11 +102,11 @@ class AccountProfileContainer extends React.Component<IProps, null> {
     const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
 
     const method = "personal_sign";
-    // TODO: do we need promisify here? web3 1.0 supports promises natively
-    // and if we can do without, we can drop the dependency on es6-promises
-    const sendAsync = web3.currentProvider.sendAsync;
+
+    // Create promise-based version of send
+    const send = promisify(web3.currentProvider.send);
     const params = [msg, accountAddress];
-    const result = await sendAsync({ method, params, accountAddress });
+    const result = await send({ method, params, accountAddress });
     if (result.error) {
       console.error("Signing canceled, data was not saved");
       showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
@@ -279,27 +280,24 @@ export default (props: RouteComponentProps<any>) => {
   const daoAvatarAddress = queryValues.daoAvatarAddress as string;
   const accountAddress = props.match.params.accountAddress;
 
-  if (daoAvatarAddress) {
-    const observable = combineLatest(
-      arc.dao(daoAvatarAddress).state(),
-      arc.dao(daoAvatarAddress).member(accountAddress).state(),
-      arc.ethBalance(accountAddress),
-      arc.GENToken().balanceOf(accountAddress)
-    );
+  const observable = combineLatest(
+    daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
+    daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state(): of(null),
+    arc.ethBalance(accountAddress),
+    arc.GENToken().balanceOf(accountAddress)
+  );
 
-    return <Subscribe observable={observable}>{
-      (state: IObservableState<[IDAOState, IMemberState, BN, BN]>) => {
-        if (state.error) {
-          return <div>{state.error.message}</div>;
-        } else if (state.data) {
-          const dao = state.data[0];
-          return <ConnectedAccountProfileContainer dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
-        } else {
-          return <div>Loading... xx</div>;
-        }
+  return <Subscribe observable={observable}>{
+    (state: IObservableState<[IDAOState, IMemberState, BN, BN]>) => {
+      if (state.error) {
+        return <div>{state.error.message}</div>;
+      } else if (state.data) {
+        const dao = state.data[0];
+        return <ConnectedAccountProfileContainer dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
+      } else {
+        return <div>Loading...</div>;
       }
-    }</Subscribe>;
-  } else {
-    return <ConnectedAccountProfileContainer accountAddress={accountAddress} {...props} />;
-  }
+    }
+  }</Subscribe>;
+
 };
