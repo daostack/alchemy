@@ -18,17 +18,17 @@ const DaoContainer = (props: IProps) => {
   const dao = arc.dao(address);
   const observable = combineLatest(
     dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
-    dao.members(),
     dao.state() // DAO state
   );
 
-  return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], Member[], IDAOState]>) => {
+  return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], IDAOState]>) => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const dao = state.data[2];
+        const dao = state.data[1];
+
         return <Link
           className={css.daoLink}
           to={"/dao/" + dao.address}
@@ -44,7 +44,7 @@ const DaoContainer = (props: IProps) => {
               </div>
 
               <div className={css.daoInfo}>
-                <b>{state.data[1].length}</b>
+                <b>{dao.memberCount}</b>
                 <span>Reputation Holders</span>
                </div>
 
