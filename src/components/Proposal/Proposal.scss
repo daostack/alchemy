@@ -64,19 +64,6 @@
   }
 }
 
-a.attachmentLink, a.attachmentLink:visited {
-	font-size: 11px;
-	color: rgba(0, 113, 255, 1.000);
-	display: inline-block;
-	margin-bottom: 15px;
-
-	img {
-		position: relative;
-		top: 2px;
-		margin-right: 5px;
-	}
-}
-
 .detailLink img {
     margin-left: 8px;
     height: 12px;
@@ -112,7 +99,6 @@ a.attachmentLink, a.attachmentLink:visited {
 
 .closedProposal.proposal:hover {
 	height: 65px;
-	overflow: hidden;
 	top: initial;
 	box-shadow: none;
 
@@ -585,7 +571,6 @@ button.disabled {
 .proposal.closedProposal {
 	display: block;
 	width: 100%;
-	max-width: 960px;
 	margin: 0 auto 3px auto;
 	border-radius: 3px;
 	height: 65px;
@@ -1156,6 +1141,19 @@ button.disabled {
 
 	a {
 		color: $black;
+	}
+
+	a.attachmentLink, a.attachmentLink:visited {
+		font-size: 11px;
+		color: rgba(0, 113, 255, 1.000);
+		display: inline-block;
+		margin-bottom: 15px;
+
+		img {
+			position: relative;
+			top: 2px;
+			margin-right: 5px;
+		}
 	}
 
 	h3 {

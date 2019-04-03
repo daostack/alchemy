@@ -80,41 +80,31 @@ const DAOProposalsContainer = (props: {
             : ""
       }
 
-      { proposalsBoosted.length > 0 ?
-        <div className={css.boostedContainer}>
-          <div className={css.proposalsHeader}>
-            Boosted Proposals
-          </div>
-          <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
-            {boostedProposalsHTML}
-          </div>
+      <div className={css.boostedContainer}>
+        <div className={css.proposalsHeader}>
+          Boosted Proposals
         </div>
-        : ""
-      }
+        <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
+          {boostedProposalsHTML}
+        </div>
+      </div>
 
-      { proposalsPreBoosted.length > 0 ?
-        <div className={css.regularContainer}>
-          <div className={css.proposalsHeader}>
-            Pending Proposals
-          </div>
-          <div className={css.proposalsContainer}>
-            {preBoostedProposalsHTML}
-          </div>
+      <div className={css.regularContainer}>
+        <div className={css.proposalsHeader}>
+          Pending Proposals
         </div>
-        : ""
-      }
-
-      { proposalsQueued.length > 0 ?
-        <div className={css.regularContainer}>
-          <div className={css.proposalsHeader}>
-            Regular Proposals
-          </div>
-          <div className={css.proposalsContainer}>
-            {queuedProposalsHTML}
-          </div>
+        <div className={css.proposalsContainer}>
+          {preBoostedProposalsHTML}
         </div>
-        : ""
-      }
+      </div>
+      <div className={css.regularContainer}>
+        <div className={css.proposalsHeader}>
+          Regular Proposals
+        </div>
+        <div className={css.proposalsContainer}>
+          {queuedProposalsHTML}
+        </div>
+      </div>
     </div>
   );
 };
