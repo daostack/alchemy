@@ -118,10 +118,10 @@
 }
 .rc-tooltip-inner {
   padding: 8px 10px;
-  color: $white;
+  color: $black;
   text-align: left;
   text-decoration: none;
-  background-color: $black-halftone;
+  background-color: $white;
   border-radius: none;
   box-shadow: $shadow-2;
 
@@ -145,7 +145,7 @@
   bottom: -5px;
   margin-left: -6px;
   border-width: 6px 6px 0;
-  border-top-color: $black-halftone;
+  border-top-color: $white;
 }
 .rc-tooltip-placement-top .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-topLeft .rc-tooltip-arrow-inner,
@@ -153,7 +153,7 @@
   bottom: 1px;
   margin-left: -6px;
   border-width: 6px 6px 0;
-  border-top-color:  $black-halftone;
+  border-top-color:  $white;
 }
 .rc-tooltip-placement-top .rc-tooltip-arrow {
   left: 50%;
@@ -170,7 +170,7 @@
   left: -5px;
   margin-top: -6px;
   border-width: 6px 6px 6px 0;
-  border-right-color:  $black-halftone;
+  border-right-color:  $white;
 }
 .rc-tooltip-placement-right .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-rightTop .rc-tooltip-arrow-inner,
@@ -178,7 +178,7 @@
   left: 1px;
   margin-top: -6px;
   border-width: 6px 6px 6px 0;
-  border-right-color:  $black-halftone;
+  border-right-color:  $white;
 }
 .rc-tooltip-placement-right .rc-tooltip-arrow {
   top: 50%;
@@ -196,7 +196,7 @@
   right: -5px;
   margin-top: -6px;
   border-width: 6px 0 6px 6px;
-  border-left-color:  $black-halftone;
+  border-left-color:  $white;
 }
 .rc-tooltip-placement-left .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-leftTop .rc-tooltip-arrow-inner,
@@ -204,7 +204,7 @@
   right: 1px;
   margin-top: -6px;
   border-width: 6px 0 6px 6px;
-  border-left-color: $black-halftone;
+  border-left-color: $white;
 }
 .rc-tooltip-placement-left .rc-tooltip-arrow {
   top: 50%;
@@ -222,7 +222,7 @@
   top: -5px;
   margin-left: -6px;
   border-width: 0 6px 6px;
-  border-bottom-color:  $black-halftone;
+  border-bottom-color:  $white;
 }
 .rc-tooltip-placement-bottom .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-bottomLeft .rc-tooltip-arrow-inner,
@@ -230,7 +230,7 @@
   top: 1px;
   margin-left: -6px;
   border-width: 0 6px 6px;
-  border-bottom-color: $black-halftone;
+  border-bottom-color: $white;
 }
 .rc-tooltip-placement-bottom .rc-tooltip-arrow {
   left: 50%;
