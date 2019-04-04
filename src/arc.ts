@@ -23,8 +23,8 @@ const settings = {
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
-    graphqlWsProvider: "wss://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v8",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v8",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
        host: "ipfs.infura.io",
@@ -212,9 +212,8 @@ function getArcSettings(): any {
       break;
     }
     case "production" : {
-      throw Error("No settings for production NODE_ENV==\"production\" avaiable (yet)");
-    //   arcSettings = settings.production;
-      // break;
+      arcSettings = settings.production;
+      break;
     }
     default: {
       console.log(process.env.NODE_ENV === "development");
