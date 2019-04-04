@@ -42,7 +42,7 @@ export default (props: IProps) => {
       c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
-          <li>{reward.tokensForStaker} GEN</li>
+          <li>{Util.fromWei(reward.tokensForStaker)} GEN</li>
         </ul>
       </div>;
       rewardComponents.push(c);
@@ -50,7 +50,7 @@ export default (props: IProps) => {
       c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
-          <li>{reward.daoBountyForStaker} GEN bounty {dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : ""}</li>
+          <li>{Util.fromWei(reward.daoBountyForStaker)} GEN bounty {dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : ""}</li>
         </ul>
       </div >;
       rewardComponents.push(c);

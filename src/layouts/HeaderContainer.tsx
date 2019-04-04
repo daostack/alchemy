@@ -27,8 +27,9 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = ownProps.dao;
   return {
+    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao,
-    ethAccountAddress: state.web3.ethAccountAddress,
+    ethAccountAddress: state.web3.ethAccountAddress
   };
 };
 
