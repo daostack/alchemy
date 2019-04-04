@@ -95,3 +95,12 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
   }
   return returnString + (symbol ? " " + symbol : "");
 }
+
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
+  return new Promise((resolve) => {
+    (async function waitForIt(): Promise<void> {
+      if (await test()) { return resolve(); }
+      setTimeout(waitForIt, 30);
+    })();
+  });
+}

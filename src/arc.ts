@@ -73,32 +73,6 @@ export function pollForAccountChanges(web3: any, currentAccountAddress?: string,
   });
 }
 
-export function subscribeToAccountChanges(web3: any, currentAccountAddress?: Address) {
-  let prevAccount = currentAccountAddress;
-  return Observable.create((observer: any) => {
-    const sub = web3.on("accountsChanged", (accounts: Address[]) => {
-      const account = accounts[0];
-      if (prevAccount !== account && account) {
-          console.log(`ACCOUNT CHANGED; new account is ${account}`);
-          observer.next(account);
-          prevAccount = account;
-        }
-      }
-    );
-    return () => sub.unsubscribe();
-  });
-}
-
-// TODO: move this to utils
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
-  return new Promise((resolve) => {
-    (async function waitForIt(): Promise<void> {
-      if (await test()) { return resolve(); }
-      setTimeout(waitForIt, 30);
-    })();
-  });
-}
-
 /**
  * Checks if the web3 provider is as expected; throw an Error if it is not
  * @return
@@ -160,7 +134,9 @@ export async function checkNetwork() {
  */
 export async function getCurrentUser(): Promise<Address> {
   await checkNetwork();
-  const address = (<any> window).ethereum.selectedAddress;
+  const web3: any = getArc().web3;
+  const accounts = await web3.eth.getAccounts();
+  const address = accounts[0];
   return address ? address.toLowerCase() : address;
 }
 
