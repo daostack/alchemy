@@ -182,7 +182,7 @@ a.detailView {
 }
 
 .targetAccount:hover {
-    z-index: 1000000;
+    z-index: 10000000;
 
   .avatar {
     width: 80px;
@@ -232,6 +232,7 @@ a.detailView {
 
 .profileContainer {
   max-width: 800px;
+  width: 100%;
   border-radius: 15px;
   margin: 0 auto;
   margin-top: 40px;
@@ -257,7 +258,7 @@ a.detailView {
       border-radius: 10px;
     }
   }
-  
+
   .profileDataContainer {
     width: 100%;
     display: flex;
@@ -311,7 +312,7 @@ a.detailView {
     display: block;
     border: 1px solid #d0d9e1;
     padding: 15px;
-    width: 90%;
+    width: 95%;
     font-size: 14px;
   }
 
