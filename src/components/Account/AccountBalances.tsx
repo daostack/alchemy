@@ -5,7 +5,7 @@ import AccountBalance from "components/Account/AccountBalance";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as css from "layouts/App.scss";
-import Util from "lib/util";
+import { formatTokens } from "lib/util";
 import * as React from "react";
 import { combineLatest, of } from "rxjs";
 
@@ -32,7 +32,7 @@ class AccountBalances extends React.Component<Props, null>  {
             <AccountBalance tokenSymbol="GEN" balance={genBalance} accountAddress={currentAccountState.address} />
           </div>
           <div>
-            <span>{Util.fromWei(genAllowance)}</span> GEN approved for staking
+            <span>{formatTokens(genAllowance, "GEN")}</span> approved for staking
           </div>
           {/*TODO: { dao && dao.externalTokenAddress
             ? <div>

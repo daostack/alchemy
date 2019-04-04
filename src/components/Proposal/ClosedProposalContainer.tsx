@@ -6,7 +6,7 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { default as Util, humanProposalTitle } from "lib/util";
+import { humanProposalTitle, formatTokens } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -227,12 +227,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
         </div>
         <div className={myActionsClass}>
           <div className={css.myVote}>
-            <span>{Util.fromWei(currentAccountVoteAmount).toFixed(2)} Rep</span>
+            <span>{formatTokens(currentAccountVoteAmount, "Rep")}</span>
             <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
             <img className={css.failVote} src="/assets/images/Icon/vote/against-fill.svg"/>
           </div>
           <div className={css.myStake}>
-            <span>{Util.fromWei(currentAccountStakeAmount).toFixed(2)} GEN</span>
+            <span>{formatTokens(currentAccountStakeAmount, "GEN")}</span>
             <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
             <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
           </div>

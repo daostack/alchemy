@@ -6,7 +6,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
+import { default as Util, formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -253,7 +253,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             <div className={css.clearfix}>
               <div className={css.stakesFor}>
                 <img src="/assets/images/Icon/v-small-line.svg"/>
-                {Util.fromWei(proposal.stakesFor).toFixed(2)}
+                {formatTokens(proposal.stakesFor)}
               </div>
               <div className={css.forBar}>
                 <b>Pass</b>
@@ -263,7 +263,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             <div className={css.clearfix}>
               <div className={css.stakesAgainst}>
                 <img src="/assets/images/Icon/x-small-line.svg"/>
-                {Util.fromWei(proposal.stakesAgainst).toFixed(2)}
+                {formatTokens(proposal.stakesAgainst)}
               </div>
               <div className={css.againstBar}>
                 <b>Fail</b>
@@ -333,7 +333,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               <div className={css.stakesFor}>
                 <img className={css.defaultIcon} src="/assets/images/Icon/v-small-line.svg"/>
                 <img className={css.detailIcon} src="/assets/images/Icon/v-small.svg"/>
-                <span>{Util.fromWei(proposal.stakesFor).toFixed(2)}</span>
+                {formatTokens(proposal.stakesFor)}
               </div>
               <div className={css.forBar}>
                 <b>Pass</b>
@@ -344,7 +344,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               <div className={css.stakesAgainst}>
                 <img className={css.defaultIcon} src="/assets/images/Icon/x-small-line.svg"/>
                 <img className={css.detailIcon} src="/assets/images/Icon/x-small.svg"/>
-                <span>{Util.fromWei(proposal.stakesAgainst).toFixed(2)}</span>
+                {formatTokens(proposal.stakesAgainst)}
               </div>
               <div className={css.againstBar}>
                 <b>Fail</b>

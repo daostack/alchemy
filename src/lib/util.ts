@@ -78,3 +78,20 @@ export default class Util {
 export function humanProposalTitle(proposal: IProposalState) {
   return proposal.title || "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }
+
+export function formatTokens(amountWei: BN, symbol?: string): string {
+  const amount = Util.fromWei(amountWei);
+  let returnString;
+  if (amount < 1) {
+    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 3});
+  } else if (amount < 100) {
+    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  } else if (amount < 1000) {
+    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+  } else if (amount < 1000000) {
+    returnString = (amount / 1000).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "k";
+  } else {
+    returnString = (amount / 1000000).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
+  }
+  return returnString + (symbol ? " " + symbol : "");
+}
