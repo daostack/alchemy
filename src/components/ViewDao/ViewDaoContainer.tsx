@@ -80,7 +80,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      // On production this is used to wait 10 seconds to load changes since last cache before showing the DAO
       showTourIntro: false,
       showTourOutro: false,
       tourCount: 0,
