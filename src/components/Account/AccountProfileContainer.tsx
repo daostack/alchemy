@@ -22,7 +22,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import * as io from "socket.io-client";
 import * as css from "./Account.scss";
-import { promisify } from 'util';
+import { promisify } from "util";
 
 const socket = io(process.env.API_URL);
 
@@ -282,7 +282,7 @@ export default (props: RouteComponentProps<any>) => {
 
   const observable = combineLatest(
     daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
-    daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state(): of(null),
+    daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),
     arc.ethBalance(accountAddress),
     arc.GENToken().balanceOf(accountAddress)
   );
