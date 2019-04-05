@@ -56,7 +56,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      instructionsOpen: false,
+      instructionsOpen: true,
       stakeAmount: 0
     };
   }
@@ -75,7 +75,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
   public toggleInstructions() {
     this.setState({ instructionsOpen: !this.state.instructionsOpen });
-
   }
 
   public render() {
@@ -84,6 +83,13 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
     let icon, transactionType, rulesHeader, rules, actionTypeClass;
     let accountGens, buyGensClass, reputationFor, reputationAgainst, yesPercentage, noPercentage;
+
+
+
+    const modalWindowClass = classNames({
+      [css.modalWindow]: true,
+      [css.instructionsOpen]: this.state.instructionsOpen
+    });
 
     if (actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp) {
       reputationFor = proposal.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
@@ -227,7 +233,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       <Modal onBackdropClick={this.props.closeAction}>
         <div className={css.metaMaskModal}>
           <div className={css.bg} onClick={this.props.closeAction}></div>
-          <div className={css.modalWindow}>
+          <div className={modalWindowClass}>
             <div className={css.transactionHeader + " " + css.clearfix + " " + actionTypeClass}>
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
@@ -242,8 +248,8 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                 <div className={classNames({[css.helpButton]: true, [css.open]: this.state.instructionsOpen})}>
                   <button className={css.hover}  onClick={this.toggleInstructions.bind(this)}>
                     <b> &lt; Got it</b>
-                    <span>?</span>
                     <span>x</span>
+                    <span>?</span>
                   </button>
                 </div> : ""
               }
