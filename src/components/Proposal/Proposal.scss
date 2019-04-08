@@ -1096,6 +1096,20 @@ button.disabled {
 	color: rgba(49, 120, 202, 1.000);
 }
 
+.detailView .proposalTitleTop .executeProposal {
+	background-color: #0076ff;
+    border-radius: 15px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 15px;
+    color: white;
+    border: none;
+    transition: all .25s ease;
+    margin: 0;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
 .detailView .cardTop {
 	height: auto;
 
