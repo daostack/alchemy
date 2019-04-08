@@ -2,6 +2,7 @@ import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Util from "./lib/util";
+import { promisify } from "util";
 
 const settings = {
   dev: {
@@ -85,7 +86,8 @@ export async function checkNetwork() {
   if (web3Provider && web3Provider.isMetaMask) {
     // we are interacting with Metamask, let's just use window.ethereum to interact with MM
     const ethereum = (<any> window).ethereum;
-    const networkName = Util.networkName(ethereum.networkVersion);
+    const network = await web3.eth.net.getNetworkType();
+    const networkName = Util.networkName(network);
     let expectedNetworkName;
     switch (process.env.NODE_ENV) {
       case "development": {
@@ -105,6 +107,7 @@ export async function checkNetwork() {
       }
 
     }
+
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
     } else if (!(<any> window).ethereum.networkVersion) {
