@@ -124,7 +124,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
 
     const proposalValues = {...values,
       ethReward: Util.toWei(Number(values.ethReward)),
@@ -141,13 +141,14 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     await this.props.createProposal(this.props.daoAvatarAddress, title, description, url, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
   }
 
-  public goBack(address: string) {
-    const { history } = this.props;
+  public goBack(e: any) {
+    const { history, daoAvatarAddress } = this.props;
+    e.preventDefault();
 
     if (history.length > 0) {
       history.goBack();
     } else {
-      history.push("/dao/" + address);
+      history.push("/dao/" + daoAvatarAddress);
     }
   }
 
@@ -360,7 +361,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
                     </div>
                     <div className={css.createProposalActions}>
-                      <button className={css.exitProposalCreation} onClick={this.goBack.bind(this, dao.address)}>
+                      <button className={css.exitProposalCreation} onClick={this.goBack.bind(this)}>
                         Cancel
                       </button>
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>

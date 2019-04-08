@@ -109,9 +109,6 @@ export async function checkNetwork() {
 
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
-    } else if (!(<any> window).ethereum.networkVersion) {
-      // networkVersion is undefined  - probably becuase metamask has not done initializing yet
-      // we ignore this :-)
     } else {
       const msg = `Please connect to "${expectedNetworkName}" (you are connected to "${networkName}" now)`;
       throw new Error(msg);
@@ -162,9 +159,9 @@ export function enableMetamask() {
  * check if the web3 connection is ready to send transactions, and warn the user if it is not
  * @return true if things are fine, false if not
  */
-export function checkNetworkAndWarn(showNotification?: any): boolean {
+export async function checkNetworkAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    checkNetwork();
+    await checkNetwork();
     return true;
   } catch (err) {
     // TODO: this should of course not be an alert, but a Modal

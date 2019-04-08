@@ -32,7 +32,7 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
-  connectionState: state.web3.connectionStatus,
+  connectionStatus: state.web3.connectionStatus,
   currentAccountAddress: state.web3.ethAccountAddress,
   history: ownProps.history,
   sortedNotifications: sortedNotifications()(state),
@@ -76,13 +76,12 @@ class AppContainer extends React.Component<IProps, IState> {
       // TODO: display big error if not on correct network
       currentAddress = await getCurrentUser();
       console.log( `current address`, currentAddress);
-      if (currentAddress && this.props.currentAccountAddress !== currentAddress) {
+      if (this.props.currentAccountAddress !== currentAddress) {
         this.props.setCurrentAccount(currentAddress);
       }
 
       pollForAccountChanges(arc.web3, currentAddress).subscribe(
         (newAddress: Address) => {
-          console.log("current address = ", currentAddress, "new addtess = ", newAddress);
           if (currentAddress !== newAddress) {
             this.props.setCurrentAccount(undefined);
             window.location.reload();
@@ -91,6 +90,7 @@ class AppContainer extends React.Component<IProps, IState> {
       );
     } catch (err) {
       console.warn(err.message);
+      this.props.setCurrentAccount(undefined);
       if (err.message.match(/no metamask/i)) {
         // if no metamask instance is found, we do not bother the user (yet)
       } else {
