@@ -82,16 +82,30 @@ const DAOProposalsContainer = (props: {
 
       <div className={css.boostedContainer}>
         <div className={css.proposalsHeader}>
-          Boosted Proposals
+          Boosted Proposals ({proposalsBoosted.length})
         </div>
         <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
           {boostedProposalsHTML}
+          {proposalsBoosted.length === 0
+            ?
+              <div>
+                <img src="/assets/images/yoga.svg"/>
+              </div>
+            : " "
+          }
         </div>
       </div>
 
       <div className={css.regularContainer}>
         <div className={css.proposalsHeader}>
-          Pending Proposals
+          Pending Proposals ({proposalsPreBoosted.length})
+          {proposalsPreBoosted.length === 0
+            ?
+              <div>
+                <img src="/assets/images/yoga.svg"/>
+              </div>
+            : " "
+          }
         </div>
         <div className={css.proposalsContainer}>
           {preBoostedProposalsHTML}
@@ -99,7 +113,14 @@ const DAOProposalsContainer = (props: {
       </div>
       <div className={css.regularContainer}>
         <div className={css.proposalsHeader}>
-          Regular Proposals
+          Regular Proposals ({proposalsQueued.length})
+          {proposalsQueued.length === 0
+            ?
+              <div>
+                <img src="/assets/images/yoga.svg"/>
+              </div>
+            : " "
+          }
         </div>
         <div className={css.proposalsContainer}>
           {queuedProposalsHTML}

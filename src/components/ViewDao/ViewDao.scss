@@ -767,6 +767,10 @@ a.navItem:hover {
   color: $black-halftone;
   font-weight: $bold;
 
+  img {
+    margin-top: 8px;
+  }
+
   span {
     position: absolute;
     right: 0;
