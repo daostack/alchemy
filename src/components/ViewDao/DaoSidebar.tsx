@@ -55,7 +55,9 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               </li>
               <li>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
+{/*                TODO: Make this notification work!   
                   <span className={css.notification + " " + css.redemptionNotification}></span>
+*/}                  
                   <img src="/assets/images/Icon/menu/redemption.svg"/>
                   Redemptions
                  </NavLink>
