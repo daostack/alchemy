@@ -350,11 +350,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
               <img src="/assets/images/Icon/Open.svg"/>
             </Link>
           </h3>
-          <div className={css.proposalDetails}>
-            <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
-              <CommentCount shortname={process.env.DISQUS_SITE} config={disqusConfig} />
-            </Link>
-          </div>
           <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={detailView}/>
 
           {this.props.detailView ?
