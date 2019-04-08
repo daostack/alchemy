@@ -61,9 +61,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     };
   }
 
-  public handleClickAction() {
+  public async handleClickAction() {
     const { actionType } = this.props;
-    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
       this.props.action(this.state.stakeAmount);
