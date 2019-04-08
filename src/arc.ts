@@ -105,10 +105,9 @@ export async function checkNetwork() {
     }
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
-    } else if (!(<any> window).ethereum.netWorkVersion) {
+    } else if (!(<any> window).ethereum.networkVersion) {
       // networkVersion is undefined  - probably becuase metamask has not done initializing yet
       // we ignore this :-)
-
     } else {
       const msg = `Please connect to "${expectedNetworkName}" (you are connected to "${networkName}" now)`;
       throw new Error(msg);
