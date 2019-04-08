@@ -28,9 +28,10 @@ const settings = {
     graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v8",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
-       host: "ipfs.infura.io",
-       port: "5001",
-       protocol: "https"
+      "host": "subgraph.daostack.io",
+      "port": "443",
+      "protocol": "https",
+      "api-path": "/ipfs/api/v0/"
     },
     contractAddresses: getContractAddresses("main")
   }
