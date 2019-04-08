@@ -84,8 +84,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     let icon, transactionType, rulesHeader, rules, actionTypeClass;
     let accountGens, buyGensClass, reputationFor, reputationAgainst, yesPercentage, noPercentage;
 
-
-
     const modalWindowClass = classNames({
       [css.modalWindow]: true,
       [css.instructionsOpen]: this.state.instructionsOpen
