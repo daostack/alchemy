@@ -2,7 +2,6 @@ import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Util from "./lib/util";
-import { promisify } from "util";
 
 const settings = {
   dev: {
