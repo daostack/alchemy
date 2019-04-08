@@ -4,6 +4,7 @@ export const background: string;
 export const fadeEnter: string;
 export const fadeEnterActive: string;
 export const fadeExit: string;
+export const metaMaskLogin: string;
 export const fadeExitActive: string;
 export const header: string;
 export const logoContainer: string;
