@@ -85,6 +85,16 @@ class AppContainer extends React.Component<IProps, IState> {
       if (currentAddress && this.props.currentAccountAddress !== currentAddress) {
         this.props.setCurrentAccount(currentAddress);
       }
+
+      pollForAccountChanges(arc.web3, currentAddress).subscribe(
+        (newAddress: Address) => {
+          console.log("current address = ", currentAddress, "new addtess = ", newAddress);
+          if (currentAddress !== newAddress) {
+            this.props.setCurrentAccount(undefined);
+            window.location.reload();
+          }
+        }
+      );
     } catch (err) {
       console.warn(err.message);
       if (err.message.match(/no metamask/i)) {
@@ -93,16 +103,6 @@ class AppContainer extends React.Component<IProps, IState> {
         this.props.showNotification(NotificationStatus.Failure, err.message);
       }
     }
-
-    pollForAccountChanges(arc.web3, currentAddress).subscribe(
-      (newAddress: Address) => {
-        if (currentAddress !== newAddress) {
-          this.props.setCurrentAccount(undefined);
-          window.location.reload();
-        }
-      }
-    );
-
   }
 
   public render() {
