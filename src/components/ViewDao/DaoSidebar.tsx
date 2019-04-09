@@ -2,7 +2,7 @@ import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
+import { formatTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -74,7 +74,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                   } else if ( state.error) {
                     return <li>{ state.error.message}</li>;
                   } else {
-                    return <li><strong>{ Util.fromWei(new BN(state.data)) }</strong> ETH</li>;
+                    return <li><strong>{ formatTokens(new BN(state.data)) }</strong> ETH</li>;
                   }
                 }
               }</Subscribe>
@@ -85,7 +85,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                   } else if ( state.error) {
                     return <li>{ state.error.message}</li>;
                   } else {
-                    return <li><strong>{ Util.fromWei(state.data) }</strong> GEN</li>;
+                    return <li><strong>{ formatTokens(state.data) }</strong> GEN</li>;
                   }
                 }
               }</Subscribe>

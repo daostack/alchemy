@@ -4,9 +4,6 @@
   clear: both;
 }
 
-.hidden {
-  display: none;
-}
 
 .stakeFail, .stakePass, .voteDown, .voteUp {
   display: block;
@@ -214,6 +211,10 @@ input[type=number] {
   }
 }
 
+.instructionsOpen {
+  display: block;
+}
+
 .metaMaskModal {
   width: 100%;
   height: 100%;
@@ -319,8 +320,10 @@ input[type=number] {
   .help {
     width: 340px;
     height: 100%;
-    right: -340px;
+    left: 500px;
+    opacity: 1;
     position: absolute;
+    transition: all .25s ease;
 
     .notification {
       font-size: 11px;
@@ -346,7 +349,13 @@ input[type=number] {
     }
   }
 
-   .helpBox {
+  .help.hidden {
+    width: 0px;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  .helpBox {
       transition: all .25s ease;
       width: 340px;
       position: relative;
@@ -406,12 +415,17 @@ input[type=number] {
       }
     }
 
+  .instructionsOpen.modalWindow {
+    margin-left: -170px;
+  }
+
   .modalWindow {
     width: 500px;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
+    transition: all .25s ease;
     border-radius: 15px 15px 0 0;
 
     .decisionGraph {

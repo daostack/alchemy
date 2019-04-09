@@ -1,12 +1,8 @@
-import BN = require("bn.js");
-import * as React from "react";
-
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
-import Util from "lib/util";
-
+import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
-
-import * as classNames from "classnames";
+import { formatTokens } from "lib/util";
+import * as React from "react";
 import * as css from "./Proposal.scss";
 
 interface IProps {
@@ -28,8 +24,6 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     let gen = new BN(0);
 
     for (const reward of rewards) {
-      const c = null;
-
       if (reward.reputationForProposer.gt(zero)) {
         reputation = reputation.add(reward.reputationForProposer);
       } else if (reward.reputationForVoter.gt(zero)) {
@@ -43,13 +37,13 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     if (currentAccountAddress === proposal.beneficiary) {
       if (proposal.ethReward.gt(zero)) {
-        rewardComponents.push(Util.fromWei(proposal.ethReward).toFixed(2).toLocaleString() + " ETH");
+        rewardComponents.push(formatTokens(proposal.ethReward, "ETH"));
       }
       if (proposal.externalTokenReward.gt(zero)) {
-        rewardComponents.push(Util.fromWei(proposal.externalTokenReward).toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
+        rewardComponents.push(formatTokens(proposal.externalTokenReward, dao.externalTokenSymbol));
       }
       if (proposal.nativeTokenReward.gt(zero)) {
-        rewardComponents.push(Util.fromWei(proposal.nativeTokenReward).toFixed(2).toLocaleString() + " " + dao.tokenSymbol);
+        rewardComponents.push(formatTokens(proposal.nativeTokenReward, dao.tokenSymbol));
       }
       if (proposal.reputationReward.gt(zero)) {
         reputation.add(proposal.reputationReward);
@@ -57,15 +51,17 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     }
 
     if (gen.gt(zero)) {
-      rewardComponents.push(Util.fromWei(gen).toFixed(2).toLocaleString() + " GEN");
+      rewardComponents.push(formatTokens(gen, "GEN"));
     }
 
     if (reputation.gt(zero)) {
-      rewardComponents.push(<ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
+      rewardComponents.push(
+        <ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
     return <span className={css.redemptionString}>
     {rewardComponents.reduce((acc: any, v: any) => {
+      // TODO: why this "null?" test that will never pass?
       return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
     }, null)}
     </span>;

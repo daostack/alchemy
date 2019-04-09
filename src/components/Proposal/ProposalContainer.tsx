@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkNetworkAndWarn, getArc } from "arc";
 import BN = require("bn.js");
