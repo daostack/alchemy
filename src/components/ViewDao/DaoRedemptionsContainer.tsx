@@ -4,7 +4,7 @@ import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
-import Util from "lib/util";
+import { formatTokens } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -53,20 +53,24 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     const totalRewards = [];
     // if (ethReward) {
-    //   totalRewards.push(ethReward.toFixed(2).toLocaleString() + " ETH");
+    //   totalRewards.push(formatTokens(ethReward, "ETH"));
     // }
     // if (externalTokenReward) {
-    //   totalRewards.push(externalTokenReward.toFixed(2).toLocaleString() + " " + dao.externalTokenSymbol);
+    //   totalRewards.push(formatTokens(externalTokenReward, dao.externalTokenSymbol));
     // }
     if (genReward) {
-      totalRewards.push(Util.fromWei(genReward).toFixed(2).toLocaleString() + " GEN");
+      totalRewards.push(formatTokens(genReward, "GEN"));
     }
     if (reputationReward) {
       totalRewards.push(
         <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
       );
     }
-    const totalRewardsString = <strong>{totalRewards.reduce((acc, v) => acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>, null)}</strong>;
+    const totalRewardsString = <strong>
+        {totalRewards.reduce((acc, v) => {
+          return acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>;
+        }, null)};
+      </strong>;
 
     return(
       <div>

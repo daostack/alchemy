@@ -12,24 +12,26 @@ const settings = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v8",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v8",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v9-genesis",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v9-genesis",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
-       host: "ipfs.infura.io",
-       port: "5001",
-       protocol: "https"
+      "host": "rinkeby.subgraph.daostack.io",
+      "port": "443",
+      "protocol": "https",
+      "api-path": "/ipfs/api/v0/"
     },
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v8",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v8",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v9",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v9",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
-       host: "ipfs.infura.io",
-       port: "5001",
-       protocol: "https"
+      "host": "subgraph.daostack.io",
+      "port": "443",
+      "protocol": "https",
+      "api-path": "/ipfs/api/v0/"
     },
     contractAddresses: getContractAddresses("main")
   }

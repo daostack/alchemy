@@ -1,7 +1,7 @@
 import { IDAOState, IProposalStage, Member, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
+import { formatTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { combineLatest } from "rxjs";
@@ -17,7 +17,10 @@ const DaoContainer = (props: IProps) => {
   const arc = getArc();
   const dao = arc.dao(address);
   const observable = combineLatest(
-    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
+    dao.proposals({
+      stage: IProposalStage.Queued,
+      expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
+    }), // the list of queued proposals
     dao.state() // DAO state
   );
 
@@ -59,7 +62,7 @@ const DaoContainer = (props: IProps) => {
               </div>
               )
             </div>
-          </div>
+          </div>;
         </Link>;
       }
     }
