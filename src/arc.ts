@@ -12,8 +12,8 @@ const settings = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v8",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v8",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v9-genesis",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v9-genesis",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
@@ -24,8 +24,8 @@ const settings = {
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v8",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v8",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v9",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v9",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "subgraph.daostack.io",
