@@ -68,64 +68,65 @@ const DAOProposalsContainer = (props: {
       <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/create`} data-test-id="createProposal">+ New proposal</Link>
       <h2 className={css.queueType}>Contribution Reward</h2>
       { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
-            ? <div className={css.noDecisions}>
-                <img className={css.relax} src="/assets/images/meditate.svg"/>
-                <div className={css.proposalsHeader}>
-                  No upcoming proposals
-                </div>
-                <div className={css.cta}>
-                  <Link to={`/dao/${dao.address}/proposals/create`} data-test-id="createProposal">Create a proposal</Link>
-                </div>
-              </div>
-            : ""
+        ? <div className={css.noDecisions}>
+            <img className={css.relax} src="/assets/images/meditate.svg"/>
+            <div className={css.proposalsHeader}>
+              No upcoming proposals
+            </div>
+            <div className={css.cta}>
+              <Link to={`/dao/${dao.address}/proposals/create`} data-test-id="createProposal">Create a proposal</Link>
+            </div>
+          </div>
+        : 
+        <div>
+          <div className={css.boostedContainer}>
+            <div className={css.proposalsHeader}>
+              Boosted Proposals ({proposalsBoosted.length})
+            </div>
+            <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
+              {boostedProposalsHTML}
+              {proposalsBoosted.length === 0
+                ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                : " "
+              }
+            </div>
+          </div>
+
+          <div className={css.regularContainer}>
+            <div className={css.proposalsHeader}>
+              Pending Proposals ({proposalsPreBoosted.length})
+              {proposalsPreBoosted.length === 0
+                ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                : " "
+              }
+            </div>
+            <div className={css.proposalsContainer}>
+              {preBoostedProposalsHTML}
+            </div>
+          </div>
+          <div className={css.regularContainer}>
+            <div className={css.proposalsHeader}>
+              Regular Proposals ({proposalsQueued.length})
+              {proposalsQueued.length === 0
+                ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                : " "
+              }
+            </div>
+            <div className={css.proposalsContainer}>
+              {queuedProposalsHTML}
+            </div>
+          </div>
+        </div>
       }
-
-      <div className={css.boostedContainer}>
-        <div className={css.proposalsHeader}>
-          Boosted Proposals ({proposalsBoosted.length})
-        </div>
-        <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
-          {boostedProposalsHTML}
-          {proposalsBoosted.length === 0
-            ?
-              <div>
-                <img src="/assets/images/yoga.svg"/>
-              </div>
-            : " "
-          }
-        </div>
-      </div>
-
-      <div className={css.regularContainer}>
-        <div className={css.proposalsHeader}>
-          Pending Proposals ({proposalsPreBoosted.length})
-          {proposalsPreBoosted.length === 0
-            ?
-              <div>
-                <img src="/assets/images/yoga.svg"/>
-              </div>
-            : " "
-          }
-        </div>
-        <div className={css.proposalsContainer}>
-          {preBoostedProposalsHTML}
-        </div>
-      </div>
-      <div className={css.regularContainer}>
-        <div className={css.proposalsHeader}>
-          Regular Proposals ({proposalsQueued.length})
-          {proposalsQueued.length === 0
-            ?
-              <div>
-                <img src="/assets/images/yoga.svg"/>
-              </div>
-            : " "
-          }
-        </div>
-        <div className={css.proposalsContainer}>
-          {queuedProposalsHTML}
-        </div>
-      </div>
     </div>
   );
 };

@@ -607,6 +607,7 @@ button.disabled {
 	}
 
 	.title {
+		flex-grow: 1;
 		width: 250px;
 		padding: 15px;
 		font-size: 13px;
@@ -672,6 +673,7 @@ button.disabled {
 	.myActions.iVoted .myVote, .myActions.iStaked .myStake {
 		display: block;
 		padding-bottom: 5px;
+	    text-align: left;
 	}
 
 	.myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
@@ -686,6 +688,7 @@ button.disabled {
 		color: rgba(80, 97, 118, 1.000);
 		padding-top: 10px;
 		text-align: center;
+		width: 130px;
 	}
 }
 
