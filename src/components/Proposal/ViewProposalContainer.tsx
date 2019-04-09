@@ -4,12 +4,12 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 
-import ProposalContainer from "./ProposalContainer";
+import { Address, IDAOState, IProposalStage, IProposalState } from "@daostack/client";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { Address, IDAOState, IProposalState, IProposalStage } from "@daostack/client";
+import ProposalContainer from "./ProposalContainer";
 
-import * as css from "./ViewProposal.scss";
 import { getArc } from "arc";
+import * as css from "./ViewProposal.scss";
 
 interface IProps extends RouteComponentProps<any> {
   proposal: IProposalState;

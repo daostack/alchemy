@@ -21,8 +21,8 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import * as io from "socket.io-client";
-import * as css from "./Account.scss";
 import { promisify } from "util";
+import * as css from "./Account.scss";
 
 const socket = io(process.env.API_URL);
 

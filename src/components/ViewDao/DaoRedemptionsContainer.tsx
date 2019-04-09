@@ -29,8 +29,8 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,
     // the original code also considers ethREward and externalTokenRewards
     // let ethReward = 0
-    let genReward = new BN("0");
-    let reputationReward = new BN(0);
+    const genReward = new BN("0");
+    const reputationReward = new BN(0);
     // , externalTokenReward = 0;
     proposals.forEach((proposal) => {
       // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably

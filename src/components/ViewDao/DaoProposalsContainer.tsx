@@ -77,7 +77,7 @@ const DAOProposalsContainer = (props: {
               <Link to={`/dao/${dao.address}/proposals/create`} data-test-id="createProposal">Create a proposal</Link>
             </div>
           </div>
-        : 
+        :
         <div>
           <div className={css.boostedContainer}>
             <div className={css.proposalsHeader}>

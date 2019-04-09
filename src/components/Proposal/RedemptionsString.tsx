@@ -1,7 +1,7 @@
 import BN = require("bn.js");
 import * as React from "react";
 
-import { Address, IDAOState, IRewardState, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import Util from "lib/util";
 
 import ReputationView from "components/Account/ReputationView";
@@ -28,7 +28,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     let gen = new BN(0);
 
     for (const reward of rewards) {
-      let c = null;
+      const c = null;
 
       if (reward.reputationForProposer.gt(zero)) {
         reputation = reputation.add(reward.reputationForProposer);
