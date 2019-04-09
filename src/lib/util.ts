@@ -82,7 +82,9 @@ export function humanProposalTitle(proposal: IProposalState) {
 export function formatTokens(amountWei: BN, symbol?: string): string {
   const amount = Util.fromWei(amountWei);
   let returnString;
-  if (amount < 1) {
+  if (amount < 0.001) {
+    returnString = "~0.001";
+  } else if (amount < 1) {
     returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 3});
   } else if (amount < 100) {
     returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
