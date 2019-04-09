@@ -53,6 +53,26 @@ body {
   opacity: 1;
 }
 
+.metaMaskLogin {
+  width: 120px;
+  height: 30px;
+  line-height: 30px;
+  font-weight: bold;
+  font-size: 12px;
+  background-color: rgba(5, 118, 255, 1.000);
+  border: none;
+  border-radius: 15px;
+  color: $white;
+  position: relative;
+  top: 9px;
+  right: 10px;
+
+  img {
+    height: 12px;
+    margin-right: 5px;
+  }
+}
+
 .fadeExit.fadeExitActive {
   opacity: 0.01;
   transition: opacity 1000ms ease-in;
@@ -133,9 +153,6 @@ body {
     position: relative;
     display: inline-block;
     text-align: center;
-    height: 50px;
-    width: 65px;
-    background-color: rgba(42, 42, 42, 0);
     transition: all .25s ease;
 
     .accountImage {

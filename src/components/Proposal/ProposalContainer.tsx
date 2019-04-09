@@ -250,6 +250,20 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 : " "
               }
             </span>
+            {this.props.detailView ?
+              <div>
+                {this.state.expired && proposal.stage === IProposalStage.Boosted ?
+                <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                  <img src="/assets/images/Icon/execute.svg"/>
+                  <span>Execute</span>
+                </button>
+                : redeemable ?
+                  <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                : " "
+                }
+              </div>
+              : " "
+            }
             <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
           </h3>
           <div className={css.cardTop + " " + css.clearfix}>
@@ -298,11 +312,12 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div className={css.description}>
             {proposal.description}
           </div>
-          {proposal.url ?
-            <div className={css.url}>
-              <a href={proposal.url} target="_blank">Attached link</a>
-            </div>
-            : ""
+          {this.props.detailView && proposal.url ?
+              <a href={proposal.url} className={css.attachmentLink}>
+                <img src="/assets/images/Icon/Attachment.svg"/>
+                Attachment &gt;
+              </a>
+            : " "
           }
           <h3 className={css.proposalTitleBottom}>
             <span data-test-id="proposal-closes-in">
@@ -330,7 +345,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
                 : " "
               }
             </span>
-            <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
+            <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+              {humanProposalTitle(proposal)}
+              <img src="/assets/images/Icon/Open.svg"/>
+            </Link>
           </h3>
           <div className={css.proposalDetails}>
             <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id}>
@@ -346,13 +364,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span>Boost</span>
                   </button>
-                  : this.state.expired && proposal.stage === IProposalStage.Boosted ?
-                  <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
-                    <img src="/assets/images/Icon/execute.svg"/>
-                    <span>Execute</span>
-                  </button>
-                  : redeemable ?
-                    <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
                   :
                   <div>
                     <VoteBox

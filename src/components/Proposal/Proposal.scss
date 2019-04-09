@@ -64,6 +64,16 @@
   }
 }
 
+.detailLink img {
+    margin-left: 8px;
+    height: 12px;
+    opacity: .5;
+}
+
+.detailView .detailLink img {
+	display: none;
+}
+
 .proposal:hover {
 	z-index: 1000;
 	box-shadow: 0 0 2px 0 #3278CA;
@@ -89,7 +99,6 @@
 
 .closedProposal.proposal:hover {
 	height: 65px;
-	overflow: hidden;
 	top: initial;
 	box-shadow: none;
 
@@ -130,18 +139,12 @@
 	height: auto;
 }
 
-.failedProposal {
-
-  .proposalInfo {
+.failedProposal .proposalInfo, .passedProposal .proposalInfo {
   	left: 60px;
-  }
 }
 
-.passedProposal {
-
-	.proposalInfo {
-	  	left: 60px;
-	}
+.detailView.failedProposal .proposalInfo, .detailView.passedProposal .proposalInfo {
+  	left: 0;
 }
 
 button.disabled {
@@ -210,6 +213,10 @@ button.disabled {
 		position: relative;
 		top: 5px;
 	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
 }
 
 .castVote button:nth-child(2) {
@@ -219,6 +226,10 @@ button.disabled {
 		position: relative;
 		top: 2px;
 	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
 }
 
 .buttonsOnly .castVote button img {
@@ -226,8 +237,18 @@ button.disabled {
 	top: 4px;
 }
 
+.buttonsOnly .castVote button img.buttonLoadingImg {
+	position: relative;
+	top: 3px;
+}
+
 .buttonsOnly .castVote button:nth-child(2) img {
 	top: 6px;
+	position: relative;
+}
+
+.buttonsOnly .castVote button:nth-child(2) img.buttonLoadingImg {
+	top: 3px;
 	position: relative;
 }
 
@@ -568,7 +589,6 @@ button.disabled {
 .proposal.closedProposal {
 	display: block;
 	width: 100%;
-	max-width: 960px;
 	margin: 0 auto 3px auto;
 	border-radius: 3px;
 	height: 65px;
@@ -1070,6 +1090,7 @@ button.disabled {
 .redemptionString {
 	position: absolute;
 	top: 12px;
+	width: 100%;
 	right: 85px;
 	display: block;
 	color: rgba(49, 120, 202, 1.000);
@@ -1104,10 +1125,45 @@ button.disabled {
 	width: auto;
 	text-align: left;
 	position: relative;
+}
 
-	.redeemRewards {
-		position: initial;
-		margin-top: 30px;
+.buttonLoadingImg {
+	display: none;
+	width: 13px;
+}
+
+.buttonLoading img {
+	display: none;
+}
+
+.buttonLoading img.buttonLoadingImg {
+	display: inline-block;
+}
+
+.buttonLoading {
+	opacity: .7;
+}
+
+
+
+
+
+.detailView .redeemRewards {
+	position: initial;
+	margin-top: 30px;
+	right: auto;
+	top: auto;
+	height: 30px;
+	border-radius: 30px;
+	background-color: #0376ff;
+	color: $white;
+	line-height: 30px;
+	padding: 0 15px;
+	margin-top: 0;
+	margin-bottom: 15px;
+
+	img {
+		margin-right: 5px;
 	}
 }
 
@@ -1123,6 +1179,19 @@ button.disabled {
 
 	a {
 		color: $black;
+	}
+
+	a.attachmentLink, a.attachmentLink:visited {
+		font-size: 11px;
+		color: rgba(0, 113, 255, 1.000);
+		display: inline-block;
+		margin-bottom: 15px;
+
+		img {
+			position: relative;
+			top: 2px;
+			margin-right: 5px;
+		}
 	}
 
 	h3 {
@@ -1315,7 +1384,7 @@ button.disabled {
 .detailView .proposalActions {
 	flex-grow: 1;
 	min-width: 350px;
-	padding-left: 60px;
+	padding-left: 0;
 	border-top: none;
 }
 

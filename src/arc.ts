@@ -23,8 +23,8 @@ const settings = {
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
-    graphqlWsProvider: "wss://subgraph.daostack.io/subgraphs/name/daostack-alchemy-mainnet",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v8",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v8",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
        host: "ipfs.infura.io",
@@ -61,8 +61,8 @@ export function pollForAccountChanges(web3: any, currentAccountAddress?: string,
         } else if (web3.eth.accounts) {
           account = web3.eth.accounts[0].address;
         }
-        account = account.toLowerCase();
-        if (prevAccount !== account && account) {
+        account = account ? account.toLowerCase() : account;
+        if (prevAccount !== account) {
           console.log(`ACCOUNT CHANGED; new account is ${account}`);
           observer.next(account);
           prevAccount = account;
@@ -70,32 +70,6 @@ export function pollForAccountChanges(web3: any, currentAccountAddress?: string,
       });
     }, interval);
     return() => clearTimeout(timeout);
-  });
-}
-
-export function subscribeToAccountChanges(web3: any, currentAccountAddress?: Address) {
-  let prevAccount = currentAccountAddress;
-  return Observable.create((observer: any) => {
-    const sub = web3.on("accountsChanged", (accounts: Address[]) => {
-      const account = accounts[0];
-      if (prevAccount !== account && account) {
-          console.log(`ACCOUNT CHANGED; new account is ${account}`);
-          observer.next(account);
-          prevAccount = account;
-        }
-      }
-    );
-    return () => sub.unsubscribe();
-  });
-}
-
-// TODO: move this to utils
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
-  return new Promise((resolve) => {
-    (async function waitForIt(): Promise<void> {
-      if (await test()) { return resolve(); }
-      setTimeout(waitForIt, 30);
-    })();
   });
 }
 
@@ -160,7 +134,10 @@ export async function checkNetwork() {
  */
 export async function getCurrentUser(): Promise<Address> {
   await checkNetwork();
-  return (<any> window).ethereum.selectedAddress.toLowerCase();
+  const web3: any = getArc().web3;
+  const accounts = await web3.eth.getAccounts();
+  const address = accounts[0];
+  return address ? address.toLowerCase() : address;
 }
 
 export function enableMetamask() {
@@ -211,9 +188,8 @@ function getArcSettings(): any {
       break;
     }
     case "production" : {
-      throw Error("No settings for production NODE_ENV==\"production\" avaiable (yet)");
-    //   arcSettings = settings.production;
-      // break;
+      arcSettings = settings.production;
+      break;
     }
     default: {
       console.log(process.env.NODE_ENV === "development");
