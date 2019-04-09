@@ -9,7 +9,6 @@ describe("Members page", () => {
       chai.Should();
       addresses = getContractAddresses();
       daoAddress = addresses.Avatar.toLowerCase();
-      await browser.url(`http://127.0.0.1:3000`);
     });
 
     it("should exist", async () => {

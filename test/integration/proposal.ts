@@ -11,10 +11,6 @@ describe("Proposals", () => {
     });
 
     it("Create a proposal, vote for it, stake on it", async () => {
-
-      // This sets the seen_disclaimer cookie to true so we can move on
-      await browser.url("/");
-
       const url = `/dao/${daoAddress}/`;
       await browser.url(url);
 
@@ -49,13 +45,11 @@ describe("Proposals", () => {
 
       // check that the proposal appears in the list
       // test for the title
-      const titleElement = await $(`[data-test-id=\"proposal-title\"]=${title}`);
+      let titleElement = await $(`[data-test-id=\"proposal-title\"]=${title}`);
       await titleElement.waitForExist();
 
-      // check if this container really exists
-      // next line is there to locate the proposal component, so we can click on the various buttons
-      const proposal = await titleElement.$("./../../..");
-      //assert(await proposal.isExisting());
+      // locate the new proposal element
+      let proposal = await titleElement.$("./../../..");
 
       await proposal.scrollIntoView();
 
@@ -64,7 +58,7 @@ describe("Proposals", () => {
       await proposal.click();
       const voteButton = await proposal.$(`[data-test-id="voteFor"]`);
       await voteButton.click();
-      const launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
+      let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
       await launchMetaMaskButton.click();
 
       await proposal.click();
@@ -73,6 +67,7 @@ describe("Proposals", () => {
 
       const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);
       await stakeButton.click();
+      launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
       await launchMetaMaskButton.click();
       // TODO: what to look for? check that staking amount for increased by amount staked...
     });
