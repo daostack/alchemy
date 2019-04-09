@@ -42,7 +42,7 @@ services:
       context: ./docker/postgres/
 
   graph-node:
-    image: graphprotocol/graph-node:v0.6.0
+    image: graphprotocol/graph-node:latest@sha256:c3a539c724a997154037fa80f00fdb9e5e7ab294f2de7494cd95a61d829626d1
     ports:
       - 8000:8000
       - 8001:8001
