@@ -27,8 +27,9 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = ownProps.dao;
   return {
+    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
     dao,
-    ethAccountAddress: state.web3.ethAccountAddress,
+    ethAccountAddress: state.web3.ethAccountAddress
   };
 };
 
@@ -122,7 +123,8 @@ class HeaderContainer extends React.Component<IProps, null> {
               </div>
             ||
               <div className={css.accountInfo}>
-                <button onClick={this.handleClickLogin}>
+                <button className={css.metaMaskLogin} onClick={this.handleClickLogin}>
+                  <img src="/assets/images/metamask.png"/>
                   Please log in!
                 </button>
               </div>

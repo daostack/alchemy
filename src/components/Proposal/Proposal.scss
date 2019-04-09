@@ -213,6 +213,10 @@ button.disabled {
 		position: relative;
 		top: 5px;
 	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
 }
 
 .castVote button:nth-child(2) {
@@ -222,6 +226,10 @@ button.disabled {
 		position: relative;
 		top: 2px;
 	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
 }
 
 .buttonsOnly .castVote button img {
@@ -229,8 +237,18 @@ button.disabled {
 	top: 4px;
 }
 
+.buttonsOnly .castVote button img.buttonLoadingImg {
+	position: relative;
+	top: 3px;
+}
+
 .buttonsOnly .castVote button:nth-child(2) img {
 	top: 6px;
+	position: relative;
+}
+
+.buttonsOnly .castVote button:nth-child(2) img.buttonLoadingImg {
+	top: 3px;
 	position: relative;
 }
 
@@ -1108,6 +1126,26 @@ button.disabled {
 	text-align: left;
 	position: relative;
 }
+
+.buttonLoadingImg {
+	display: none;
+	width: 13px;
+}
+
+.buttonLoading img {
+	display: none;
+}
+
+.buttonLoading img.buttonLoadingImg {
+	display: inline-block;
+}
+
+.buttonLoading {
+	opacity: .7;
+}
+
+
+
 
 
 .detailView .redeemRewards, .detailView .executeProposal {
