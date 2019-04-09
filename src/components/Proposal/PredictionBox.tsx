@@ -193,7 +193,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     });
 
     const stakingEnabled = proposal.stage === IProposalStage.Queued ||
-                            (proposal.stage === IProposalStage.PreBoosted && !expired);
+                            (proposal.stage === IProposalStage.PreBoosted);
 
     const hasGens = currentAccountGens.gt(new BN(0));
     const disableStakePass = !hasGens || currentAccountPrediction === VoteOptions.No;
