@@ -98,8 +98,8 @@ class PredictionBox extends React.Component<IProps, IState> {
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
-  public handleClickPreApprove = (event: any) => {
-    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+  public handleClickPreApprove = async (event: any) => {
+    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
     this.setState({ showApproveModal: false });
