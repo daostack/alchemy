@@ -324,10 +324,21 @@ button.disabled {
     float: right;
     border: none;
     margin-top: 13px;
-    border: none;
     height: 20px;
     line-height: 20px;
 }
+
+.detailView .proposalInfo .voteStatus.hasVoted .voteRecord {
+	display: inline-block;
+    float: left;
+    margin-top: 13px;
+    font-size: 13px;
+    margin-left: 0;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #bfcbd5;
+}
+
 
 .voteRecord {
 	margin: 10px;
