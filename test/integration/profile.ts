@@ -8,7 +8,6 @@ describe('Profile page', () => {
 
     before(async () => {
       chai.Should();
-      await browser.url('http://127.0.0.1:3000/');
       addresses = getContractAddresses();
       daoAddress = addresses.Avatar.toLowerCase();
     })

@@ -65,12 +65,6 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount() {
     const { cookies, history } = this.props;
-
-    // If this person has not seen the disclaimer, show them the home page
-    if (!cookies.get("seen_disclaimer")) {
-      cookies.set("seen_disclaimer", "true", { path: "/" });
-      history.replace("/");
-    }
   }
 
   public async componentDidMount() {
