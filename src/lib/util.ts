@@ -90,12 +90,8 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
   let returnString;
   if (amount === 0) {
     returnString = "0";
-  } else if (amount < 0.001) {
-    returnString = "~0.001";
-  } else if (amount < 1) {
-    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 3});
-  } else if (amount < 100) {
-    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+  } else if (amount < 0.01) {
+    returnString = "+0";
   } else if (amount < 1000) {
     returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   } else if (amount < 1000000) {
