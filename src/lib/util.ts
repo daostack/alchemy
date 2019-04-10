@@ -23,16 +23,22 @@ export default class Util {
 
   public static networkName(id: string) {
     switch (id) {
+      case "main":
       case "1":
-        return "mainnet";
+        return "main";
+      case "morden":
       case "2":
         return "morden";
+      case "ropsten":
       case "3":
         return "ropsten";
+      case "rinkeby":
       case "4":
         return "rinkeby";
+      case "kovan":
       case "42":
         return "kovan";
+      case "private":
       case "1512051714758":
         return "ganache";
       default:

@@ -6,7 +6,7 @@ addons:
 bundler_args: "--jobs=4 --retry=3"
 
 before_install:
-  - sudo apt-get install -y libsecret-1-dev
+  - sudo apt-get install -y libsecret-1-dev curl
 addons:
   chrome: stable
 
@@ -28,6 +28,8 @@ script:
   # prin the status of the services
   - npm run service-status
 
+  # show the daos that are indexed
+  - ./scripts/checkDaos.sh
   - echo -en 'travis_fold:end:script.4\\r'
 
   # check lint
@@ -42,6 +44,7 @@ script:
   - docker-compose logs graph-node
   - echo -en 'travis_fold:end:script.3\\r'
 
+  - ./scripts/checkDaos.sh
 
   # see if the app builds correctly
   - npm run build-travis

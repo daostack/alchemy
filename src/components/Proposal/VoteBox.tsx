@@ -51,8 +51,8 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     };
   }
 
-  public handleClickVote(vote: number, event: any) {
-    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+  public async handleClickVote(vote: number, event: any) {
+    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
     const { currentAccountState } = this.props;
     if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
