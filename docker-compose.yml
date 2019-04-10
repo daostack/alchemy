@@ -76,5 +76,3 @@ services:
     image: daostack/migration:0.0.1-rc.16-v0
     ports:
       - 8545:8545
-    command: >
-      --gasLimit 8000000
