@@ -82,9 +82,6 @@ const DAOProposalsContainer = (props: {
           <div className={css.boostedContainer}>
             <div className={css.proposalsHeader}>
               Boosted Proposals ({proposalsBoosted.length})
-            </div>
-            <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
-              {boostedProposalsHTML}
               {proposalsBoosted.length === 0
                 ?
                   <div>
@@ -92,6 +89,9 @@ const DAOProposalsContainer = (props: {
                   </div>
                 : " "
               }
+            </div>
+            <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
+              {boostedProposalsHTML}
             </div>
           </div>
 
