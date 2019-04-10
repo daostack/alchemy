@@ -176,7 +176,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               <div className={css.castVote}>
                 {!votingDisabled ?
                   <div>
-                    <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                    <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
                       <img src="/assets/images/Icon/vote/for-btn-selected.svg"/>
                       <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                       <span> For</span>
@@ -300,7 +300,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
               <div className={css.castVote}>
                 {!votingDisabled ?
                   <div>
-                    <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                    <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
                       <img src="/assets/images/Icon/vote/for-btn-selected.svg"/>
                       <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                       <span> For</span>
@@ -352,7 +352,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
           <div className={css.castVote}>
             {!votingDisabled ?
               <div>
-                <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass}>
+                <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
                   <img src="/assets/images/Icon/vote/for-btn-selected-w.svg"/>
                   <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                   <span> For</span>
