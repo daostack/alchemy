@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { chai, getContractAddresses } from "./utils";
+import { getContractAddresses } from "./utils";
 
 describe("Proposals", () => {
     let daoAddress: string;
@@ -14,10 +14,10 @@ describe("Proposals", () => {
       const url = `/dao/${daoAddress}/`;
       await browser.url(url);
 
-      const createProposalButton = await $('a[data-test-id="createProposal"]');
+      const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
       await createProposalButton.waitForExist();
 
-      await createProposalButton.click()
+      await createProposalButton.click();
 
       const titleInput = await $("*[id=\"titleInput\"]");
       await titleInput.waitForExist();
@@ -40,7 +40,7 @@ describe("Proposals", () => {
       const ethReward = Math.floor(Math.random() * 1000);
       const ethRewardInput = await $("#ethRewardInput");
       await ethRewardInput.setValue(ethReward);
-      const createProposalSubmitButton = await $("*[type=\"submit\"]")
+      const createProposalSubmitButton = await $("*[type=\"submit\"]");
       await createProposalSubmitButton.click();
 
       // check that the proposal appears in the list
