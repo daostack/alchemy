@@ -1180,9 +1180,8 @@ button.disabled {
 
 
 
-.detailView .redeemRewards {
+.detailView .redeemRewards, .detailView .executeProposal {
 	position: initial;
-	margin-top: 30px;
 	right: auto;
 	top: auto;
 	height: 30px;
@@ -1198,6 +1197,7 @@ button.disabled {
 		margin-right: 5px;
 	}
 }
+
 
 .proposalInfo {
 	font-size: $body;
@@ -1535,6 +1535,21 @@ button.disabled {
 .voteStatus {
 	display: block;
 	width: 100%;
+}
+
+.votingDisabled {
+	font-size: 11px;
+  color: rgba(154, 169, 181, 1.000);
+}
+
+.votingDisabled.cardView {
+	padding-top: 7px;
+}
+
+.votingDisabled.sideRailView {
+    font-size: 13px;
+    position: relative;
+    top: 2px;
 }
 
 .predictions {
