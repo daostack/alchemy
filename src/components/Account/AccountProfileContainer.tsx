@@ -10,7 +10,7 @@ import DaoSidebar from "components/ViewDao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
-import Util from "lib/util";
+import { default as Util, formatTokens } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -252,8 +252,8 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                         {accountInfo
                            ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> </div>
                            : ""}
-                         <div><strong>GEN:</strong><br/><span>{Util.fromWei(genBalance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></div>
--                        <div><strong>ETH:</strong><br/><span>{Util.fromWei(ethBalance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></div>
+                         <div><strong>GEN:</strong><br/><span>{formatTokens(genBalance)}</span></div>
+-                        <div><strong>ETH:</strong><br/><span>{formatTokens(ethBalance)}</span></div>
                       </div>
                       <div>
                         <strong>ETH Address:</strong><br/>

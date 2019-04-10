@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkNetworkAndWarn, getArc } from "arc";
 import BN = require("bn.js");
@@ -109,8 +109,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
   }
 
-  public handleClickExecute(event: any) {
-    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+  public async handleClickExecute(event: any) {
+    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
     this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
   }
 
@@ -313,7 +313,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             {proposal.description}
           </div>
           {this.props.detailView && proposal.url ?
-              <a href={proposal.url} className={css.attachmentLink}>
+              <a href={proposal.url} className={css.attachmentLink} target="_blank">
                 <img src="/assets/images/Icon/Attachment.svg"/>
                 Attachment &gt;
               </a>

@@ -23,16 +23,22 @@ export default class Util {
 
   public static networkName(id: string) {
     switch (id) {
+      case "main":
       case "1":
-        return "mainnet";
+        return "main";
+      case "morden":
       case "2":
         return "morden";
+      case "ropsten":
       case "3":
         return "ropsten";
+      case "rinkeby":
       case "4":
         return "rinkeby";
+      case "kovan":
       case "42":
         return "kovan";
+      case "private":
       case "1512051714758":
         return "ganache";
       default:
@@ -77,6 +83,27 @@ export default class Util {
 
 export function humanProposalTitle(proposal: IProposalState) {
   return proposal.title || "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
+}
+
+export function formatTokens(amountWei: BN, symbol?: string): string {
+  const amount = Util.fromWei(amountWei);
+  let returnString;
+  if (amount === 0) {
+    returnString = "0";
+  } else if (amount < 0.001) {
+    returnString = "~0.001";
+  } else if (amount < 1) {
+    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 3});
+  } else if (amount < 100) {
+    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+  } else if (amount < 1000) {
+    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+  } else if (amount < 1000000) {
+    returnString = (amount / 1000).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "k";
+  } else {
+    returnString = (amount / 1000000).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
+  }
+  return returnString + (symbol ? " " + symbol : "");
 }
 
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {

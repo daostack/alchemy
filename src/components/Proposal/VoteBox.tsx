@@ -52,8 +52,8 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     };
   }
 
-  public handleClickVote(vote: number, event: any) {
-    if (!checkNetworkAndWarn(this.props.showNotification)) { return; }
+  public async handleClickVote(vote: number, event: any) {
+    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
     const { currentAccountState } = this.props;
     if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
@@ -85,8 +85,8 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     const votesAgainst = Util.fromWei(proposal.votesAgainst);
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-    const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputationSupply * 100)) : 0;
-    const noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputationSupply * 100)) : 0;
+    const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, +(votesFor / totalReputationSupply * 100).toFixed(2)) : 0;
+    const noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, +(votesAgainst / totalReputationSupply * 100).toFixed(2)) : 0;
 
     const styles = {
       forBar: {
@@ -251,7 +251,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                         </g>
                     </svg>
                     <span>
-                      {yesPercentage}%
+                      <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.votesFor} hideSymbol={true} />
                       <b className={css.label}> Rep</b>
                     </span>
                   </span>
@@ -286,7 +286,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
                         </g>
                     </svg>
                     <span>
-                      {noPercentage}%
+                      <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.votesAgainst} hideSymbol={true} />
                       <b className={css.label}> Rep</b>
                     </span>
                   </span>

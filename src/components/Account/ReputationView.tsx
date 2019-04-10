@@ -5,18 +5,19 @@ import Util from "lib/util";
 
 interface IProps {
   daoName?: string;
+  hideSymbol?: boolean;
   reputation: BN;
   totalReputation: BN;
 }
 
 export default class ReputationView extends React.Component<IProps, null> {
   public render() {
-    const { daoName, reputation, totalReputation } = this.props;
+    const { daoName, hideSymbol, reputation, totalReputation } = this.props;
 
     return (
-      <Tooltip overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}>
+      <Tooltip overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}>
         <span data-test-id="reputation">
-          {(totalReputation.gt(new BN(0)) ? 100 * Util.fromWei(reputation) / Util.fromWei(totalReputation) : 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}% Rep.
+          {(totalReputation.gt(new BN(0)) ? 100 * Util.fromWei(reputation) / Util.fromWei(totalReputation) : 0).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}% {hideSymbol ? "" : "Rep."}
         </span>
       </Tooltip>
     );

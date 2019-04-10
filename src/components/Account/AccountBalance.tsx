@@ -1,5 +1,5 @@
 import BN = require("bn.js");
-import Util from "lib/util";
+import { formatTokens } from "lib/util";
 import * as React from "react";
 import * as css from "./Account.scss";
 
@@ -20,7 +20,7 @@ export default class Balance extends React.Component<Props, null>  {
 
     return (
       <span className={css.accountBalance}>
-        {Util.fromWei(balance).toFixed(2).toLocaleString()} {tokenSymbol}
+        {formatTokens(balance, tokenSymbol)}
       </span>
     );
   }

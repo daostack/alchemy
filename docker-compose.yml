@@ -61,20 +61,18 @@ services:
       GRAPH_LOG: "graph.log"
 
   ipfs:
-    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.14-v8-0.0.8
+    image: daostack/subgraph-ipfs:ganache-0.0.1-rc.16-v0-0.0.9
     ports:
       - 5001:5001
 
   postgres4graphnode:
-    image: daostack/subgraph-postgres:ganache-0.0.1-rc.14-v8-0.0.8
+    image: daostack/subgraph-postgres:ganache-0.0.1-rc.16-v0-0.0.9
     ports:
       - 9432:5432
     environment:
       POSTGRES_PASSWORD: 'letmein'
 
   ganache:
-    image: daostack/migration:0.0.1-rc.14-v8
+    image: daostack/migration:0.0.1-rc.16-v0
     ports:
       - 8545:8545
-    command: >
-      --gasLimit 8000000
