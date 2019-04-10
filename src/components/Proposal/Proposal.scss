@@ -714,12 +714,16 @@ button.disabled {
 
 	span {
 		position: relative;
-		width: 70px;
+		width: 120px;
 		text-align: left;
 		margin-left: 0;
 		display: block;
 		font-size: 16px;
 		color: rgba(0, 29, 52, 1.000);
+
+		span {
+			display: inline;
+		}
 
 		img {
 			top: -10px;
