@@ -121,7 +121,7 @@ export default (props: IOwnProps) => {
         const dao = state.data[0];
         return <ConnectedAccountPopupContainer dao={dao} accountAddress={props.accountAddress} accountInfo={state.data[1]} {...props} />;
       } else {
-        return <div>Loading... xx</div>;
+        return <div>Loading...</div>;
       }
     }
   }</Subscribe>;
