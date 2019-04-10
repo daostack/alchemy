@@ -58,8 +58,8 @@ describe("Proposals", () => {
       await proposal.click();
       const voteButton = await proposal.$(`[data-test-id="voteFor"]`);
       await voteButton.click();
-      let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
-      await launchMetaMaskButton.click();
+      // let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
+      // await launchMetaMaskButton.click();
 
       await proposal.click();
       const youVotedFor = await proposal.$(`span[data-test-id="youVotedFor"`);
