@@ -88,7 +88,7 @@ export function humanProposalTitle(proposal: IProposalState) {
 export function formatTokens(amountWei: BN, symbol?: string): string {
   const amount = Util.fromWei(amountWei);
   let returnString;
-  if (amount == 0) {
+  if (amount === 0) {
     returnString = "0";
   } else if (amount < 0.001) {
     returnString = "~0.001";
