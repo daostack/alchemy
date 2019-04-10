@@ -56,7 +56,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      instructionsOpen: true,
+      instructionsOpen: false,
       stakeAmount: 0
     };
   }

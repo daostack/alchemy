@@ -1,7 +1,7 @@
 import BN = require("bn.js");
+import Util from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
-import Util from "lib/util";
 
 interface IProps {
   daoName?: string;

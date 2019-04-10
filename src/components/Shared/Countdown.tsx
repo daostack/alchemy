@@ -52,9 +52,9 @@ class Countdown extends React.Component<IProps, IState> {
   }
 
   public calculateCountdown(endDate: Date | moment.Moment) {
-    let endDateMoment = moment(endDate), now = new Date();
+    const endDateMoment = moment(endDate), now = new Date();
 
-    let diff = endDateMoment.diff(now);
+    const diff = endDateMoment.diff(now);
 
     // clear countdown when date is reached
     if (diff <= 0) {
@@ -89,8 +89,8 @@ class Countdown extends React.Component<IProps, IState> {
 
     let percentageComplete = 0;
     if (this.props.fromDate) {
-      let endDateMoment = moment(this.props.toDate);
-      let timeLeft = endDateMoment.diff(new Date());
+      const endDateMoment = moment(this.props.toDate);
+      const timeLeft = endDateMoment.diff(new Date());
       if (timeLeft <= 0) {
         percentageComplete = 100;
       } else {
