@@ -1,6 +1,6 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames = require("classnames");
 import * as React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, RouteComponentProps } from "react-router-dom";
 
 import * as profileActions from "actions/profilesActions";

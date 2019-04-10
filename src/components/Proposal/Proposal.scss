@@ -324,10 +324,21 @@ button.disabled {
     float: right;
     border: none;
     margin-top: 13px;
-    border: none;
     height: 20px;
     line-height: 20px;
 }
+
+.detailView .proposalInfo .voteStatus.hasVoted .voteRecord {
+	display: inline-block;
+    float: left;
+    margin-top: 13px;
+    font-size: 13px;
+    margin-left: 0;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #bfcbd5;
+}
+
 
 .voteRecord {
 	margin: 10px;
@@ -607,6 +618,7 @@ button.disabled {
 	}
 
 	.title {
+		flex-grow: 1;
 		width: 250px;
 		padding: 15px;
 		font-size: 13px;
@@ -672,6 +684,7 @@ button.disabled {
 	.myActions.iVoted .myVote, .myActions.iStaked .myStake {
 		display: block;
 		padding-bottom: 5px;
+	    text-align: left;
 	}
 
 	.myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
@@ -686,6 +699,7 @@ button.disabled {
 		color: rgba(80, 97, 118, 1.000);
 		padding-top: 10px;
 		text-align: center;
+		width: 130px;
 	}
 }
 
@@ -700,12 +714,16 @@ button.disabled {
 
 	span {
 		position: relative;
-		width: 70px;
+		width: 120px;
 		text-align: left;
 		margin-left: 0;
 		display: block;
 		font-size: 16px;
 		color: rgba(0, 29, 52, 1.000);
+
+		span {
+			display: inline;
+		}
 
 		img {
 			top: -10px;
@@ -1094,6 +1112,20 @@ button.disabled {
 	right: 85px;
 	display: block;
 	color: rgba(49, 120, 202, 1.000);
+}
+
+.detailView .proposalTitleTop .executeProposal {
+	background-color: #0076ff;
+    border-radius: 15px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 15px;
+    color: white;
+    border: none;
+    transition: all .25s ease;
+    margin: 0;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .detailView .cardTop {

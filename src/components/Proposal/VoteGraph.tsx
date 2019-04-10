@@ -5,6 +5,7 @@ import * as classNames from "classnames";
 import * as css from "./VoteGraph.scss";
 
 interface IProps {
+  detailView?: boolean;
   noPercentage: number;
   relative?: boolean;
   size: number;
@@ -13,10 +14,16 @@ interface IProps {
 
 export default class VoteGraph extends React.Component<IProps, null> {
   public render() {
-    const { noPercentage, relative, size, yesPercentage} = this.props;
+    const { detailView, noPercentage, relative, size, yesPercentage} = this.props;
+
+    const yesWinning = yesPercentage > noPercentage;
+    const noWinning = noPercentage > yesPercentage;
 
     const containerClass = classNames({
-      [css.container] : true
+      [css.container] : true,
+      [css.detailView] : detailView,
+      [css.noWinning] : noWinning,
+      [css.yesWinning] : yesWinning
      });
 
     const displayYesPercentage = relative ? yesPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : yesPercentage;
@@ -24,6 +31,8 @@ export default class VoteGraph extends React.Component<IProps, null> {
 
     return (
       <div className={containerClass}>
+        <img className={css.yesWinning} src="/assets/images/Icon/Vote/for.svg"/>
+        <img className={css.noWinning} src="/assets/images/Icon/Vote/against.svg"/>
         <svg className={css.yesVotesCircle} viewBox="0 0 33.83098862 33.83098862" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
           <circle stroke="#efefef" strokeWidth="2" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
           <circle className={css.circleChartCircle} stroke="rgba(2, 190, 144, 1.000)" strokeWidth="2" strokeDasharray={displayYesPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />

@@ -57,8 +57,9 @@ button:hover {
   }
 
   .title {
-    width: 255px;
+    width: 250px;
     padding: 0 15px;
+    flex-grow: 1;
   }
 
   .closeReason {
@@ -68,6 +69,7 @@ button:hover {
 
   .myActions {
     text-align: left;
+    width: 130px;
   }
 }
 
@@ -224,6 +226,7 @@ button:hover {
   background-color: $sky;
   color: $white;
   flex-grow: 1;
+  overflow: scroll;
 
   &:hover {
     z-index: 100000;
@@ -262,6 +265,7 @@ button:hover {
 .daoNavigation {
   position: relative;
   height: 100%;
+  min-height: 730px;
 
   .daoName {
     padding: 15px;
@@ -764,6 +768,10 @@ a.navItem:hover {
   border-top: 1px solid rgba(191, 203, 213, 1.000);
   color: $black-halftone;
   font-weight: $bold;
+
+  img {
+    margin-top: 8px;
+  }
 
   span {
     position: absolute;

@@ -1,7 +1,7 @@
-import { createSelector } from "reselect";
-import { IRootState } from "../reducers";
 import { INotification, INotificationsState } from "reducers/notifications";
 import { IOperation, IOperationsState } from "reducers/operations";
+import { createSelector } from "reselect";
+import { IRootState } from "../reducers";
 
 const notifications = (state: IRootState) => state.notifications;
 

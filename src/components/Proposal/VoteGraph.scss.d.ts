@@ -1,4 +1,7 @@
 export const container: string;
+export const detailView: string;
+export const yesWinning: string;
+export const noWinning: string;
 export const yesVotesCircle: string;
 export const noVotesCircle: string;
 export const circleChartCircle: string;

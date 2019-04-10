@@ -1,5 +1,27 @@
 .container {
   position: relative;
+
+  img {
+    position: absolute;
+    display: none;
+    width: 15px;
+    top: 11px;
+    left: 13px;
+  }
+}
+
+.container.detailView img {
+    width: 26px;
+    top: 29px;
+    left: 32px;
+}
+
+.container.yesWinning img.yesWinning {
+  display: block;
+}
+
+.container.noWinning img.noWinning {
+  display: block;
 }
 
 .yesVotesCircle {

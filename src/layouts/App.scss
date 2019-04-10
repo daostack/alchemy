@@ -153,15 +153,17 @@ body {
     position: relative;
     display: inline-block;
     text-align: center;
+    width: 50px;
     transition: all .25s ease;
 
     .accountImage {
       border: none;
       background: transparent;
-
       padding: 0;
-      margin: 13px 0 0 0;
+      margin: 0 0 0 0;
       height: 50px;
+      position: relative;
+      top: 12px;
 
       img {
         width: 24px;

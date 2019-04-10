@@ -1,12 +1,8 @@
+import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
-import * as React from "react";
-
-import { Address, IDAOState, IRewardState, IProposalState } from "@daostack/client";
-import { formatTokens } from "lib/util";
-
 import ReputationView from "components/Account/ReputationView";
-
-import * as classNames from "classnames";
+import { formatTokens } from "lib/util";
+import * as React from "react";
 import * as css from "./Proposal.scss";
 
 interface IProps {
@@ -28,8 +24,6 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     let gen = new BN(0);
 
     for (const reward of rewards) {
-      let c = null;
-
       if (reward.reputationForProposer.gt(zero)) {
         reputation = reputation.add(reward.reputationForProposer);
       } else if (reward.reputationForVoter.gt(zero)) {
@@ -61,7 +55,8 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     }
 
     if (reputation.gt(zero)) {
-      rewardComponents.push(<ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
+      rewardComponents.push(
+        <ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
     return <span className={css.redemptionString}>

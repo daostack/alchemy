@@ -1,6 +1,6 @@
 import { routerReducer } from "react-router-redux";
 import { combineReducers, Reducer } from "redux";
-import { persistReducer, createTransform } from "redux-persist";
+import { createTransform, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import arcReducer, { IArcState } from "./arcReducer";
@@ -35,7 +35,7 @@ const onlyPending = createTransform(
     if (key === "operations") {
       const out = {...state} as IOperationsState;
 
-      for (let k in out) {
+      for (const k in out) {
         if (!(out[k].status === OperationStatus.Sent || out[k].error)) {
           delete out[k];
         }
