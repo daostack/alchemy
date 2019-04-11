@@ -111,7 +111,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
   public async handleClickExecute(event: any) {
     if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
-    this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
+    this.props.executeProposal(this.props.dao.address, this.props.proposal.id, this.props.currentAccountAddress);
   }
 
   public handleClickRedeem(event: any) {
