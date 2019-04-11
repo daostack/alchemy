@@ -145,6 +145,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       threshold
     } = this.props;
 
+    // TODO: should be the DAO balance of the proposal.externalToken
     const externalTokenBalance = dao.externalTokenBalance;
 
     const beneficiaryHasRewards = (
