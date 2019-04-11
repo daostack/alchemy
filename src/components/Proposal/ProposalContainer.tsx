@@ -221,6 +221,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
         identifier: proposal.id
       };
 
+    const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
+
     return (proposal.stage === IProposalStage.Queued && this.state.expired ? "" :
       <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
         <div className={css.proposalInfo}>
@@ -312,8 +314,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div className={css.description}>
             {proposal.description}
           </div>
-          {this.props.detailView && proposal.url ?
-              <a href={proposal.url} className={css.attachmentLink} target="_blank">
+          {this.props.detailView && url ?
+              <a href={url} className={css.attachmentLink} target="_blank">
                 <img src="/assets/images/Icon/Attachment.svg"/>
                 Attachment &gt;
               </a>
