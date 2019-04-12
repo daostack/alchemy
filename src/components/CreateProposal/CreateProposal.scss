@@ -4,6 +4,13 @@
   clear: both;
 }
 
+.downV {
+  position: absolute;
+  right: 20px;
+  bottom: 21px;
+  z-index: 1000;
+}
+
 .createProposalWrapper {
   width: 540px;
   border-radius: 15px 15px 0 0;
@@ -96,10 +103,8 @@
 
       .externalTokenSelect {
         display: block;
-        font-size: 16px;
-        font-family: sans-serif;
-        color: #444;
-        padding: .6em 1.4em .5em .8em;
+        font-size: 13PX;
+        color: rgba(154, 169, 181, 1.000);
         margin: 0;
         border: 1px solid #aaa;
         border-radius: 0;
@@ -108,8 +113,11 @@
         appearance: none;
         background-color: #fff;
         position: absolute;
-        bottom: 4px;
+        bottom: 5px;
+        height: 37px;
+        padding: 0 30px 0 15px;
         right: 0px;
+        border: 1px solid #bfcbd5;
       }
     }
 

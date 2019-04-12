@@ -335,6 +335,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       </div>
 
                       <div className={css.reward}>
+                        <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                         <label htmlFor="externalRewardInput">
                           External Token Reward
                           {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
