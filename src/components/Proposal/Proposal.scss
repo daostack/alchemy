@@ -47,7 +47,6 @@
 	margin-top: 20px;
 	margin-bottom: 0px;
 	display: inline-block;
-	height: 185px;
 	position: relative;
 	box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
 	overflow: hidden;
@@ -75,15 +74,18 @@
 }
 
 .proposal:hover {
-	z-index: 1000;
+	z-index: 10000;
 	box-shadow: 0 0 2px 0 #3278CA;
-	height: 225px;
-	margin-bottom: -40px;
 	overflow: visible;
+	margin-bottom: -37px;
 
-  .predictions .boostedAmount, .predictions .centered {
-  	opacity: 1;
-  }
+	.proposalActions {
+		height: 102px;
+	}
+
+	.predictions .boostedAmount, .predictions .centered {
+		opacity: 1;
+	}
 }
 
 .detailView.proposal:hover  {
@@ -1384,8 +1386,11 @@ button.disabled {
 
 .proposalActions {
 	position: relative;
+	transition: all .25s ease;
 	margin-top: 15px;
 	border-top: 1px solid rgba(215, 225, 237, 1.000);
+	height: 65px;
+	overflow: hidden;
 }
 
 .proposalTitleTop {
