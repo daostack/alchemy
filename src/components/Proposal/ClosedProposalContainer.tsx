@@ -84,18 +84,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
     };
   }
 
-  public handleClickExecute(event: any) {
-    this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
-  }
-
-  public handleClickRedeem(event: any) {
-    this.setState({ preRedeemModalOpen: true });
-  }
-
-  public closePreRedeemModal(event: any) {
-    this.setState({ preRedeemModalOpen: false });
-  }
-
   public render() {
     const {
       beneficiaryProfile,
