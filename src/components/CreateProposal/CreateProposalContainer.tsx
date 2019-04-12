@@ -26,6 +26,7 @@ const emptyProposal: IProposalState = {
   daoBountyConst: 0, // TODO
   description: "",
   descriptionHash: "",
+  downStakeNeededToQueue: new BN(0),
   ethReward: new BN(0),
   executedAt: 0,
   executionState: IExecutionState.None,
@@ -50,9 +51,11 @@ const emptyProposal: IProposalState = {
   stakesFor: new BN(0),
   stakesAgainst: new BN(0),
   stage: IProposalStage.Queued,
-  thresholdConst: 0, // TODO
+  thresholdConst: new BN(0),
+  threshold: new BN(0),
   totalRepWhenExecuted: new BN(0),
   title: "",
+  upstakeNeededToPreBoost: new BN(0),
   url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
