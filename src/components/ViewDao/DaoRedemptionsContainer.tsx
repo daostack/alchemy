@@ -69,7 +69,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const totalRewardsString = <strong>
         {totalRewards.reduce((acc, v) => {
           return acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>;
-        }, null)};
+        }, null)}
       </strong>;
 
     return(
