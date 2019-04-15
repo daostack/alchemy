@@ -102,6 +102,11 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
   return returnString + (symbol ? " " + symbol : "");
 }
 
+export function tokenSymbol(tokenAddress: string) {
+  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token] === tokenAddress);
+  return symbol || "?";
+}
+
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
   return new Promise((resolve) => {
     (async function waitForIt(): Promise<void> {

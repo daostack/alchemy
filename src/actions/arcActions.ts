@@ -24,6 +24,7 @@ export function createProposal(
   nativeTokenReward: BN,
   reputationReward: BN,
   ethReward: BN,
+  externalTokenAddress: string,
   externalTokenReward: BN,
   beneficiaryAddress: string
 ): ThunkAction<any, IRootState, null> {
@@ -52,7 +53,7 @@ export function createProposal(
         reputationReward,
         ethReward,
         externalTokenReward,
-        externalTokenAddress: "",
+        externalTokenAddress,
         periodLength: 0, // TODO: check what the default "periodLength" should be here
         periods: 1, // "periodLength 0 requires periods to be 1"
         title,

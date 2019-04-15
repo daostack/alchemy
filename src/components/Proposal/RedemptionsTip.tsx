@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
-import Util, { formatTokens } from "lib/util";
+import Util, { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
@@ -78,8 +78,10 @@ export default (props: IProps) => {
           }
           {hasExternalReward ?
             <li>
-              {formatTokens(proposal.externalTokenReward, dao.externalTokenSymbol)}
-              {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
+              {formatTokens(proposal.externalTokenReward, tokenSymbol(proposal.externalToken))}
+              {/* TODO: should be looking at the DAO balance of proposal.externalToken
+                {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
+              */}
             </li> : ""
           }
           {hasReputationReward ? <li><ReputationView reputation={proposal.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}

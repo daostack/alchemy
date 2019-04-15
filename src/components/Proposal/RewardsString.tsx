@@ -2,7 +2,7 @@ import BN = require("bn.js");
 import * as React from "react";
 
 import { IDAOState, IProposalState } from "@daostack/client";
-import { formatTokens } from "lib/util";
+import { formatTokens, tokenSymbol } from "lib/util";
 
 import ReputationView from "components/Account/ReputationView";
 
@@ -20,8 +20,8 @@ export default class RewardsString extends React.Component<IProps, null> {
     if (proposal.ethReward.gt(new BN(0))) {
       rewards.push(formatTokens(proposal.ethReward, "ETH"));
     }
-    if (dao.externalTokenSymbol && proposal.externalTokenReward.gt(new BN(0))) {
-      rewards.push(formatTokens(proposal.externalTokenReward, dao.externalTokenSymbol));
+    if (proposal.externalToken && proposal.externalTokenReward.gt(new BN(0))) {
+      rewards.push(formatTokens(proposal.externalTokenReward, tokenSymbol(proposal.externalToken)));
     }
     if (proposal.nativeTokenReward.gt(new BN(0))) {
       rewards.push(formatTokens(proposal.nativeTokenReward, dao.tokenSymbol));
