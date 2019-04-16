@@ -4,16 +4,11 @@
   img {
     position: absolute;
     display: none;
-    width: 15px;
-    top: 11px;
-    left: 13px;
+    top: 50%;
+    left: 50%;
+    height: 40%;
+    transform: translate(-50%,-50%);
   }
-}
-
-.container.detailView img {
-    width: 26px;
-    top: 29px;
-    left: 32px;
 }
 
 .container.yesWinning img.yesWinning {

@@ -5,7 +5,6 @@ import * as classNames from "classnames";
 import * as css from "./VoteGraph.scss";
 
 interface IProps {
-  detailView?: boolean;
   noPercentage: number;
   relative?: boolean;
   size: number;
@@ -14,14 +13,13 @@ interface IProps {
 
 export default class VoteGraph extends React.Component<IProps, null> {
   public render() {
-    const { detailView, noPercentage, relative, size, yesPercentage} = this.props;
+    const {noPercentage, relative, size, yesPercentage} = this.props;
 
     const yesWinning = yesPercentage > noPercentage;
     const noWinning = noPercentage > yesPercentage;
 
     const containerClass = classNames({
       [css.container] : true,
-      [css.detailView] : detailView,
       [css.noWinning] : noWinning,
       [css.yesWinning] : yesWinning
      });
