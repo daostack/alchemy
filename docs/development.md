@@ -14,7 +14,7 @@ and run the alchemy server in a separate terminal:
   # ...  point your browser to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK
   # ... develop away
   # ... commit your changes
-  docker-compose down -v
+  docker-compose down
 ```
 
 Alternatively you can run the webserver inside the `alchemy` container. This is how the tests on travis are run.
@@ -27,7 +27,7 @@ Alternatively you can run the webserver inside the `alchemy` container. This is 
   # ...  point your browser to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK and connect to localhost:8545
   # ... develop away
   # ... commit your changes
-  docker-compose down -v
+  docker-compose down
 ```
 
 See [docker](./docker.md) for details about the docker containers.
