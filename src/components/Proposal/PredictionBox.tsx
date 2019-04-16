@@ -170,7 +170,6 @@ class PredictionBox extends React.Component<IProps, IState> {
     // round second decimal up
     const stakesFor = Util.fromWei(proposal.stakesFor);
     const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
-    const stakingLeftToBoost = Math.ceil((threshold - (stakesFor - stakesAgainst)) * 100) / 100;
     const isPassing = stakesFor >= stakesAgainst;
     const isFailing = stakesAgainst >= stakesFor;
     const maxWidth = Math.max(stakesFor, stakesAgainst);
@@ -290,7 +289,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}
-            secondaryHeader={stakingLeftToBoost + " GEN for boost!"}
+            secondaryHeader={formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
           /> : ""
         }
 
@@ -354,11 +353,18 @@ class PredictionBox extends React.Component<IProps, IState> {
           </div>
           <span className={css.boostedAmount}>
             {
-              proposal.stage === IProposalStage.Queued && stakingLeftToBoost > 0 ?
+              proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
                 <span>
                   <b>
                     <img src="/assets/images/Icon/Boost-slate.svg" />
-                    {stakingLeftToBoost.toFixed(2)} GEN to boost
+                    {formatTokens(proposal.upstakeNeededToPreBoost, "GEN")} to boost
+                  </b>
+                </span>
+              : proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.gt(new BN(0)) ?
+                <span>
+                  <b>
+                    <img src="/assets/images/Icon/Boost-slate.svg" />
+                    {formatTokens(proposal.downStakeNeededToQueue, "GEN")} to un-boost
                   </b>
                 </span>
               : ""

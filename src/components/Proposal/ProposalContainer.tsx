@@ -111,7 +111,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
   public async handleClickExecute(event: any) {
     if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
-    this.props.executeProposal(this.props.dao.address, this.props.proposal.id);
+    this.props.executeProposal(this.props.dao.address, this.props.proposal.id, this.props.currentAccountAddress);
   }
 
   public handleClickRedeem(event: any) {
@@ -145,6 +145,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
       threshold
     } = this.props;
 
+    // TODO: should be the DAO balance of the proposal.externalToken
     const externalTokenBalance = dao.externalTokenBalance;
 
     const beneficiaryHasRewards = (
@@ -220,6 +221,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
         url: process.env.BASE_URL + "/dao/" + dao.address + "/proposal/" + proposal.id,
         identifier: proposal.id
       };
+
+    const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
 
     return (proposal.stage === IProposalStage.Queued && this.state.expired ? "" :
       <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
@@ -312,8 +315,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div className={css.description}>
             {proposal.description}
           </div>
-          {this.props.detailView && proposal.url ?
-              <a href={proposal.url} className={css.attachmentLink} target="_blank">
+          {this.props.detailView && url ?
+              <a href={url} className={css.attachmentLink} target="_blank">
                 <img src="/assets/images/Icon/Attachment.svg"/>
                 Attachment &gt;
               </a>

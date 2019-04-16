@@ -24,6 +24,7 @@ export function createProposal(
   nativeTokenReward: BN,
   reputationReward: BN,
   ethReward: BN,
+  externalTokenAddress: string,
   externalTokenReward: BN,
   beneficiaryAddress: string
 ): ThunkAction<any, IRootState, null> {
@@ -52,7 +53,7 @@ export function createProposal(
         reputationReward,
         ethReward,
         externalTokenReward,
-        externalTokenAddress: "",
+        externalTokenAddress,
         periodLength: 0, // TODO: check what the default "periodLength" should be here
         periods: 1, // "periodLength 0 requires periods to be 1"
         title,
@@ -78,13 +79,14 @@ export function createProposal(
   };
 }
 
-export function executeProposal(avatarAddress: string, proposalId: string) {
+export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Dispatch<any>) => {
     const arc = getArc();
     // TODO: the subscription should defined in a separate contant so it can be reuse
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
+    const proposalObj = arc.dao(avatarAddress).proposal(proposalId);
     // @ts-ignore
-    await arc.dao(avatarAddress).proposal(proposalId).execute().subscribe(...observer);
+    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
   };
 }
 

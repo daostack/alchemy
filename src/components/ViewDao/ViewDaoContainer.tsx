@@ -156,8 +156,6 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
       },
       {
         target: "." + css.holdings,
-        // TODO: Not clear to me how to get the "externalTokenAddress" from the DAO (seems part of proposals...)
-        // content: `The amount in ${dao.externalTokenAddress ? dao.externalTokenSymbol : "ETH"} represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.`,
         content: `The amount in ETH represents the budget currently available for funding proposals. The amount in GEN represents the amount currently available for rewarding voters and predictors.`,
         placement: "left",
         disableBeacon: true

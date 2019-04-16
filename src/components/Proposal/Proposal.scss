@@ -47,7 +47,6 @@
 	margin-top: 20px;
 	margin-bottom: 0px;
 	display: inline-block;
-	height: 185px;
 	position: relative;
 	box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
 	overflow: hidden;
@@ -75,25 +74,17 @@
 }
 
 .proposal:hover {
-	z-index: 1000;
+	z-index: 10000;
 	box-shadow: 0 0 2px 0 #3278CA;
-	height: 225px;
-	margin-bottom: -40px;
 	overflow: visible;
+	margin-bottom: -37px;
 
-  .predictions .boostedAmount, .predictions .centered {
-  	opacity: 1;
-  }
-}
-
-.detailView.proposal:hover  {
-	margin-bottom: 0;
-	border: none;
-	box-shadow: none;
-	top: initial;
+	.proposalActions {
+		height: 102px;
+	}
 
 	.predictions .boostedAmount, .predictions .centered {
-	  	opacity: 1;
+		opacity: 1;
 	}
 }
 
@@ -104,6 +95,22 @@
 
 	.predictions .boostedAmount, .predictions .centered {
 		opacity: 0;
+	}
+}
+
+.detailView.proposal:hover, .detailView.closedProposal.proposal:hover  {
+	margin-bottom: 0;
+	border: none;
+	box-shadow: none;
+	top: initial;
+	height: auto;
+
+	.predictions .boostedAmount, .predictions .centered {
+	  	opacity: 1;
+	}
+
+	.proposalActions {
+		height: auto;
 	}
 }
 
@@ -219,8 +226,36 @@ button.disabled {
 	}
 }
 
+
+.detailView .castVote button:nth-child(1) {
+	border-radius: 15px 0 0 15px;
+	width: 60px;
+
+	img {
+		position: relative;
+		top: 5px;
+	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
+}
+
 .castVote button:nth-child(2) {
 	border-radius: 0 10px 10px 0;
+
+	img {
+		position: relative;
+		top: 2px;
+	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
+}
+
+.detailView .castVote button:nth-child(2) {
+	border-radius: 0 15px 15px 0;
 
 	img {
 		position: relative;
@@ -552,18 +587,6 @@ button.disabled {
 		width: auto;
 		margin-right: 1px;
 	}
-
-	button:nth-child(2) {
-		border-radius: 15px 0 0 15px;
-		padding-left: 15px;
-		padding-right: 12px;
-	}
-
-	button:nth-child(3) {
-		border-radius: 0 15px 15px 0;
-		padding-right: 15px;
-	}
-
 
 	.castVote span {
 		top: 0;
@@ -1180,9 +1203,8 @@ button.disabled {
 
 
 
-.detailView .redeemRewards {
+.detailView .redeemRewards, .detailView .executeProposal {
 	position: initial;
-	margin-top: 30px;
 	right: auto;
 	top: auto;
 	height: 30px;
@@ -1198,6 +1220,7 @@ button.disabled {
 		margin-right: 5px;
 	}
 }
+
 
 .proposalInfo {
 	font-size: $body;
@@ -1384,8 +1407,11 @@ button.disabled {
 
 .proposalActions {
 	position: relative;
+	transition: all .25s ease;
 	margin-top: 15px;
 	border-top: 1px solid rgba(215, 225, 237, 1.000);
+	height: 65px;
+	overflow: hidden;
 }
 
 .proposalTitleTop {
@@ -1418,6 +1444,8 @@ button.disabled {
 	min-width: 350px;
 	padding-left: 0;
 	border-top: none;
+	height: auto;
+	overflow: visible;
 }
 
 .detailView .predictions, .detailView .voteBox {
@@ -1535,6 +1563,21 @@ button.disabled {
 .voteStatus {
 	display: block;
 	width: 100%;
+}
+
+.votingDisabled {
+	font-size: 11px;
+  color: rgba(154, 169, 181, 1.000);
+}
+
+.votingDisabled.cardView {
+	padding-top: 7px;
+}
+
+.votingDisabled.sideRailView {
+    font-size: 13px;
+    position: relative;
+    top: 2px;
 }
 
 .predictions {

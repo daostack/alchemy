@@ -4,6 +4,13 @@
   clear: both;
 }
 
+.downV {
+  position: absolute;
+  right: 20px;
+  bottom: 21px;
+  z-index: 1000;
+}
+
 .createProposalWrapper {
   width: 540px;
   border-radius: 15px 15px 0 0;
@@ -49,48 +56,74 @@
   form {
     padding: 0 30px 30px 30px;
 
+    textarea {
+      height: 50px;
+    }
+
+    input, textarea {
+      margin-top: 3px;
+      margin-bottom: 5px;
+      width: 445px;
+      display: block;
+      border: none;
+      background-color: transparent;
+      border: 1px solid rgba(191, 203, 213, 1.000);
+      font-size: 13px;
+      padding: 12px 12px;
+      font-family: $body-font;
+      &.error {
+        border: 1px solid rgba(255, 8, 96, 1.000);
+      }
+      &:focus {
+        outline: none;
+        border: 1px solid rgba(46, 168, 122, 1.000);
+      }
+    }
+
+    input {
+      padding: 0 15px;
+      height: 35px;
+      line-height: 35px;
+    }
+
     .contributionReward {
       width: 110px;
       display: inline-block;
     }
 
-    .addReward {
-      font-size: 18px;
-      font-weigt: bold;
-      border: 1px solid rgba(191, 203, 213, 1.000);
-      height: 30px;
-      text-align: center;
-      width: 30px;
-      color: rgba(0, 113, 255, 1.000);
-    }
 
-    .rewardRow {
-      width: 100%;
+    .reward {
+      float: left;
+      width: 235px;
+      position: relative;
 
-      .rewardAmount {
-        width: 50%;
-        float: left;
+      input {
+        width: 200px;
       }
 
-      .rewardRecipient {
-        width: 50%;
-        position: relative;
-        float: left;
-        top: 6px;
-        position: relative;
-
-        input {
-          width: 220px;
-        }
-      }
-
-      .rewardArrow {
+      .externalTokenSelect {
+        display: block;
+        font-size: 13PX;
+        color: rgba(154, 169, 181, 1.000);
+        margin: 0;
+        border: 1px solid #aaa;
+        border-radius: 0;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: #fff;
         position: absolute;
-        left: -26px;
-        top: 9px;
+        bottom: 5px;
+        height: 37px;
+        padding: 0 30px 0 15px;
+        right: 0px;
+        border: 1px solid #bfcbd5;
       }
     }
 
+    .reward:nth-child(even) {
+      margin-right: 10px;
+    }
 
     .contributionType {
       border-top: 1px solid rgba(191, 203, 213, 1.000);
@@ -139,36 +172,6 @@
       }
     }
 
-    textarea {
-      height: 50px;
-    }
-
-    input, textarea {
-      margin-top: 3px;
-      margin-bottom: 5px;
-      width: 445px;
-      display: block;
-      border: none;
-      background-color: transparent;
-      border: 1px solid rgba(191, 203, 213, 1.000);
-      font-size: 13px;
-      padding: 12px 12px;
-      font-family: $body-font;
-      &.error {
-        border: 1px solid rgba(255, 8, 96, 1.000);
-      }
-      &:focus {
-        outline: none;
-        border: 1px solid rgba(46, 168, 122, 1.000);
-      }
-    }
-
-    input {
-      padding: 0 15px;
-      height: 35px;
-      line-height: 35px;
-    }
-
     .errorMessage {
       position: relative;
       left: 10px;
@@ -181,10 +184,9 @@
       text-transform: uppercase;
       left: 0;
       font-size: $small;
+      z-index: -10;
     }
-    .addTransfer {
-      display: block;
-    }
+
   }
 
   .recommendedTemplate {

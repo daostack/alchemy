@@ -6,7 +6,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { Field, Formik, FormikProps } from "formik";
 import * as H from "history";
-import Util from "lib/util";
+import { default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -26,6 +26,7 @@ const emptyProposal: IProposalState = {
   daoBountyConst: 0, // TODO
   description: "",
   descriptionHash: "",
+  downStakeNeededToQueue: new BN(0),
   ethReward: new BN(0),
   executedAt: 0,
   executionState: IExecutionState.None,
@@ -50,9 +51,11 @@ const emptyProposal: IProposalState = {
   stakesFor: new BN(0),
   stakesAgainst: new BN(0),
   stage: IProposalStage.Queued,
-  thresholdConst: 0, // TODO
+  thresholdConst: new BN(0),
+  threshold: new BN(0),
   totalRepWhenExecuted: new BN(0),
   title: "",
+  upstakeNeededToPreBoost: new BN(0),
   url: "",
   votesFor: new BN(0),
   votesAgainst: new BN(0),
@@ -97,6 +100,7 @@ interface FormValues {
   beneficiary: string;
   description: string;
   ethReward: number;
+  externalToken: string;
   externalTokenReward: number;
   nativeTokenReward: number;
   reputationReward: number;
@@ -128,6 +132,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
 
     const proposalValues = {...values,
       ethReward: Util.toWei(Number(values.ethReward)),
+      externalToken: values.externalToken,
       externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
       nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
       reputationReward: Util.toWei(Number(values.reputationReward))
@@ -136,9 +141,9 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
     this.setState({
       proposalDetails: { ...emptyProposal, ...proposalValues}
     });
-    const { beneficiary, description, ethReward, externalTokenReward, nativeTokenReward, reputationReward, title, url } = proposalValues;
+    const { beneficiary, description, ethReward, externalToken, externalTokenReward, nativeTokenReward, reputationReward, title, url } = proposalValues;
     setSubmitting(false);
-    await this.props.createProposal(this.props.daoAvatarAddress, title, description, url, nativeTokenReward, reputationReward, ethReward, externalTokenReward, beneficiary);
+    await this.props.createProposal(this.props.daoAvatarAddress, title, description, url, nativeTokenReward, reputationReward, ethReward, externalToken, externalTokenReward, beneficiary);
   }
 
   public goBack(e: any) {
@@ -176,6 +181,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   beneficiary: "",
                   description: "",
                   ethReward: 0,
+                  externalToken: TOKENS["GEN"],
                   externalTokenReward: 0,
                   nativeTokenReward: 0,
                   reputationReward: 0,
@@ -223,7 +229,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   require("title");
                   require("beneficiary");
 
-                  if (!values.ethReward && !values.reputationReward) {
+                  if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
                     errors.rewards = "Please select at least some reward";
                   }
 
@@ -282,8 +288,8 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                       className={touched.url && errors.url ? css.error : null}
                     />
 
-                    <div className={css.addTransfer}>
-                      <div className={css.rewardRecipient}>
+                    <div>
+                      <div>
                         <label htmlFor="beneficiary">
                           Recipient
                           {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
@@ -297,53 +303,67 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         />
                       </div>
 
-                      <label htmlFor="reputationRewardInput">
-                        Reputation reward:
-                        {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
-                      </label>
-                      <Field
-                        id="reputationRewardInput"
-                        placeholder="How much reputation to reward"
-                        name="reputationReward"
-                        type="number"
-                        className={touched.reputationReward && errors.reputationReward ? css.error : null}
-                        step={0.1}
-                      />
+                      <div className={css.reward}>
+                        <label htmlFor="ethRewardInput">
+                          ETH Reward
+                          {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
+                        </label>
+                        <Field
+                          id="ethRewardInput"
+                          placeholder="How much ETH to reward"
+                          name="ethReward"
+                          type="number"
+                          className={touched.ethReward && errors.ethReward ? css.error : null}
+                          min={0}
+                          step={0.1}
+                        />
+                      </div>
 
-                      {dao.externalTokenAddress
-                        ? <div>
-                            <label htmlFor="externalRewardInput">
-                              Proposal budget ({dao.externalTokenSymbol}):
-                              {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
-                            </label>
-                            <Field
-                              id="externalTokenRewardInput"
-                              placeholder={`How much ${dao.externalTokenSymbol} to reward`}
-                              name="externalTokenReward"
-                              type="number"
-                              className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
-                              min={0}
-                              step={0.1}
-                            />
-                          </div>
-                        : <div>
-                            <label htmlFor="ethRewardInput">
-                              ETH Reward:
-                              {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
-                            </label>
-                            <Field
-                              id="ethRewardInput"
-                              placeholder="How much ETH to reward"
-                              name="ethReward"
-                              type="number"
-                              className={touched.ethReward && errors.ethReward ? css.error : null}
-                              min={0}
-                              step={0.1}
-                            />
-                          </div>
-                      }
+                      <div className={css.reward}>
+                        <label htmlFor="reputationRewardInput">
+                          Reputation Reward
+                          {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
+                        </label>
+                        <Field
+                          id="reputationRewardInput"
+                          placeholder="How much reputation to reward"
+                          name="reputationReward"
+                          type="number"
+                          className={touched.reputationReward && errors.reputationReward ? css.error : null}
+                          step={0.1}
+                        />
+                      </div>
 
-                      <div style={{display: "none"}}>
+                      <div className={css.reward}>
+                        <img src="/assets/images/Icon/down.svg" className={css.downV}/>
+                        <label htmlFor="externalRewardInput">
+                          External Token Reward
+                          {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
+                        </label>
+                        <Field
+                          id="externalTokenRewardInput"
+                          placeholder={`How many tokens to reward`}
+                          name="externalTokenReward"
+                          type="number"
+                          className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
+                          min={0}
+                          step={0.1}
+                        />
+                        <Field
+                          id="externalTokenInput"
+                          name="externalToken"
+                          component="select"
+                          className={css.externalTokenSelect}
+                        >
+                          { Object.keys(TOKENS).map((token) => <option key={token} value={TOKENS[token]}>{token}</option>) }
+                        </Field>
+                      </div>
+
+                      <div className={css.reward}>
+                        <label htmlFor="nativeTokenRewardInput">
+                          DAO token ({dao.tokenSymbol}) Reward
+                          {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                        </label>
                         <Field
                           id="nativeTokenRewardInput"
                           maxLength={10}
@@ -352,13 +372,12 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                           type="number"
                           className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
                         />
-                        <label htmlFor="nativeTokenRewardInput">
-                          {dao.tokenSymbol} reward:
-                          {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
-                        </label>
                       </div>
 
-                      {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
+                      {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
+                          && touched.reputationReward && errors.rewards &&
+                        <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                      }
                     </div>
                     <div className={css.createProposalActions}>
                       <button className={css.exitProposalCreation} type="button" onClick={this.goBack.bind(this)}>
