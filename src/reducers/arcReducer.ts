@@ -186,12 +186,21 @@ export const initialState: IArcState = {
 };
 
 export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
-  // TODO: how does quiet ending period play into this?
-  const start = proposal.boostedAt || proposal.preBoostedAt || proposal.createdAt;
-  const duration = proposal.boostedAt ? proposal.boostedVotePeriodLimit :
-                     proposal.preBoostedAt ? proposal.preBoostedVotePeriodLimit :
-                      proposal.queuedVotePeriodLimit;
-  return moment((proposal.executedAt || start + duration) * 1000);
+  switch (proposal.stage) {
+    case IProposalStage.ExpiredInQueue:
+    case IProposalStage.Queued:
+      return moment((proposal.createdAt + proposal.queuedVotePeriodLimit) * 1000);
+    case IProposalStage.PreBoosted:
+      console.log(proposal.preBoostedAt, proposal.preBoostedVotePeriodLimit, (proposal.preBoostedAt + proposal.preBoostedVotePeriodLimit) * 1000, moment((proposal.preBoostedAt + proposal.preBoostedVotePeriodLimit) * 1000));
+      return moment((proposal.preBoostedAt + proposal.preBoostedVotePeriodLimit) * 1000);
+    case IProposalStage.Boosted:
+      return moment((proposal.boostedAt + proposal.boostedVotePeriodLimit) * 1000);
+    // TODO: waiting on client library to return proposal.quietEndingPeriod
+    // case IProposalStage.QuietEndingPeriod:
+    //   return moment((proposal.quietEndingPeriodBeganAt + proposal.quietEndingPeriod) * 1000);
+    case IProposalStage.Executed:
+      return moment(proposal.executedAt * 1000);
+  }
 };
 
 export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
