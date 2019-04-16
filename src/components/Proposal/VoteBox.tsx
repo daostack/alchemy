@@ -212,11 +212,11 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             <div className={css.voteDivider}>
               <div className={css.voteGraphs}>
                 { !this.props.detailView ?
-                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} detailView={detailView} />
+                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted}/>
                  : " "
                 }
                 { this.props.detailView ?
-                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted}  detailView={detailView}/>
+                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted}/>
                  : " "
                 }
               </div>
