@@ -88,17 +88,6 @@
 	}
 }
 
-.detailView.proposal:hover  {
-	margin-bottom: 0;
-	border: none;
-	box-shadow: none;
-	top: initial;
-
-	.predictions .boostedAmount, .predictions .centered {
-	  	opacity: 1;
-	}
-}
-
 .closedProposal.proposal:hover {
 	height: 65px;
 	top: initial;
@@ -106,6 +95,22 @@
 
 	.predictions .boostedAmount, .predictions .centered {
 		opacity: 0;
+	}
+}
+
+.detailView.proposal:hover, .detailView.closedProposal.proposal:hover  {
+	margin-bottom: 0;
+	border: none;
+	box-shadow: none;
+	top: initial;
+	height: auto;
+
+	.predictions .boostedAmount, .predictions .centered {
+	  	opacity: 1;
+	}
+
+	.proposalActions {
+		height: auto;
 	}
 }
 
@@ -221,8 +226,36 @@ button.disabled {
 	}
 }
 
+
+.detailView .castVote button:nth-child(1) {
+	border-radius: 15px 0 0 15px;
+	width: 60px;
+
+	img {
+		position: relative;
+		top: 5px;
+	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
+}
+
 .castVote button:nth-child(2) {
 	border-radius: 0 10px 10px 0;
+
+	img {
+		position: relative;
+		top: 2px;
+	}
+
+	img.buttonLoadingImg {
+		top: 1px;
+	}
+}
+
+.detailView .castVote button:nth-child(2) {
+	border-radius: 0 15px 15px 0;
 
 	img {
 		position: relative;
@@ -554,18 +587,6 @@ button.disabled {
 		width: auto;
 		margin-right: 1px;
 	}
-
-	button:nth-child(2) {
-		border-radius: 15px 0 0 15px;
-		padding-left: 15px;
-		padding-right: 12px;
-	}
-
-	button:nth-child(3) {
-		border-radius: 0 15px 15px 0;
-		padding-right: 15px;
-	}
-
 
 	.castVote span {
 		top: 0;
@@ -1423,6 +1444,8 @@ button.disabled {
 	min-width: 350px;
 	padding-left: 0;
 	border-top: none;
+	height: auto;
+	overflow: visible;
 }
 
 .detailView .predictions, .detailView .voteBox {
