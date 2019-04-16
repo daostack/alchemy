@@ -229,7 +229,7 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                   require("title");
                   require("beneficiary");
 
-                  if (!values.ethReward && !values.reputationReward) {
+                  if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
                     errors.rewards = "Please select at least some reward";
                   }
 
@@ -374,7 +374,10 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
                         />
                       </div>
 
-                      {(touched.ethReward || touched.externalTokenReward) && touched.reputationReward && errors.rewards && <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>}
+                      {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
+                          && touched.reputationReward && errors.rewards &&
+                        <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                      }
                     </div>
                     <div className={css.createProposalActions}>
                       <button className={css.exitProposalCreation} type="button" onClick={this.goBack.bind(this)}>
