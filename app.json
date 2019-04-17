@@ -5,6 +5,12 @@
   "env": {
     "API_URL": {
       "required": true
+    },
+    "NODE_ENV": {
+      "required": true
+    },
+    "DISQUS_SITE": {
+      "required": true
     }
   },
   "formation": {
