@@ -125,7 +125,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
     if (votesOfCurrentUser.length > 0) {
       currentVote = votesOfCurrentUser[0];
       currentAccountVote = currentVote.outcome;
-      currentAccountVoteAmount = currentVote.amount;
+      currentAccountVoteAmount = new BN(currentVote.amount);
     }
 
     let currentStake: IStake;

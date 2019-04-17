@@ -86,8 +86,8 @@ export function humanProposalTitle(proposal: IProposalState) {
 }
 
 export function formatTokens(amountWei: BN, symbol?: string): string {
-  const amount = Math.abs(Util.fromWei(amountWei));
   const negative = amountWei.lt(new BN(0));
+  const amount = Math.abs(Util.fromWei(amountWei));
   let returnString;
   if (amount === 0) {
     returnString = "0";
