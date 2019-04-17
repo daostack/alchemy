@@ -146,10 +146,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     // TODO: should be the DAO balance of the proposal.externalToken
-    const externalTokenBalance = dao.externalTokenBalance;
+    const externalTokenBalance = dao.externalTokenBalance || new BN(0);
 
     const beneficiaryHasRewards = (
-      proposal.reputationReward.gt(new BN(0)) ||
+      !proposal.reputationReward.isZero() ||
       proposal.nativeTokenReward.gt(new BN(0)) ||
       (proposal.ethReward.gt(new BN(0)) && daoEthBalance.gte(proposal.ethReward)) ||
       (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))

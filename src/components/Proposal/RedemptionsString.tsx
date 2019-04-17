@@ -45,7 +45,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
       if (proposal.nativeTokenReward.gt(zero)) {
         rewardComponents.push(formatTokens(proposal.nativeTokenReward, dao.tokenSymbol));
       }
-      if (proposal.reputationReward.gt(zero)) {
+      if (!proposal.reputationReward.isZero()) {
         reputation.add(proposal.reputationReward);
       }
     }

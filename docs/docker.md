@@ -20,7 +20,7 @@ The `docker-compose up` command will build and start up a number of different co
 
 After you finish working with the containers, do not forget to shut down the containers
 ```sh
-docker-compose down -v
+docker-compose down
 ```
 
 ## If you just want to see it running

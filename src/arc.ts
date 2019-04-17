@@ -12,8 +12,8 @@ const settings = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v9-genesis",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v9-genesis",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v12_without_gen",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v12_without_gen",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
@@ -33,19 +33,19 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: getContractAddresses("main")
+    contractAddresses: getContractAddresses("mainnet")
   }
 };
 
-export function getContractAddresses(key: "private"|"rinkeby"|"main") {
+export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
   const addresses = {
-      ...deployedContractAddresses[key],
+      ...deployedContractAddresses[key].base,
    };
   if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
-    }
+    throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
+  }
   return addresses;
 }
 

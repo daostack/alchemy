@@ -60,7 +60,7 @@ export default (props: IProps) => {
 
   const hasEthReward = proposal.ethReward.gt(new BN(0));
   const hasExternalReward = proposal.externalTokenReward.gt(new BN(0));
-  const hasReputationReward = proposal.reputationReward.gt(new BN(0));
+  const hasReputationReward = !proposal.reputationReward.isZero();
 
   return <div>
     {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
