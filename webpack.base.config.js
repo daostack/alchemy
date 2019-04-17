@@ -112,7 +112,6 @@ module.exports = {
   node: {
     fs: 'empty',
     net: 'empty',
-    tls: 'empty',
-    Buffer: false
+    tls: 'empty'
   }
 };
