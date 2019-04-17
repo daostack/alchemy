@@ -433,7 +433,7 @@ export default (props: IContainerProps) => {
         return <div>{ state.error.message }</div>;
       } else {
         const currentAccountGens = state.data[0] || new BN(0);
-        const currentAccountGenStakingAllowance = state.data[1] ? new BN(state.data[1].amount) : new BN(0);
+        const currentAccountGenStakingAllowance = new BN(state.data[1]);
         const stakes = state.data[2];
         return <ConnectedPredictionBox {...props }
           currentAccountGens={currentAccountGens}

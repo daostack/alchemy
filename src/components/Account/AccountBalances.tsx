@@ -76,7 +76,7 @@ export default (props: { dao: IDAOState, address: Address}) => {
           return <div>{state.error}</div>;
         } else {
           return <AccountBalances
-            dao={props.dao} currentAccountState={state.data[0]} ethBalance={new BN(state.data[1])} genBalance={state.data[2]} genAllowance={state.data[3] ? new BN(state.data[3].amount) : new BN(0)} />;
+            dao={props.dao} currentAccountState={state.data[0]} ethBalance={new BN(state.data[1])} genBalance={state.data[2]} genAllowance={new BN(state.data[3])} />;
         }
       }
     }</Subscribe>;
