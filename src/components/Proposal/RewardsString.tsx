@@ -26,7 +26,7 @@ export default class RewardsString extends React.Component<IProps, null> {
     if (proposal.nativeTokenReward.gt(new BN(0))) {
       rewards.push(formatTokens(proposal.nativeTokenReward, dao.tokenSymbol));
     }
-    if (proposal.reputationReward.gt(new BN(0))) {
+    if (!proposal.reputationReward.isZero()) {
       rewards.push(
         <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.reputationReward}/>
       );
