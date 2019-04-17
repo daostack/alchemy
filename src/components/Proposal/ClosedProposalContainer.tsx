@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -98,10 +98,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     // TODO: need to get the balance of the proposal.externalTokenAddress
-    const externalTokenBalance = dao.externalTokenBalance;
+    const externalTokenBalance = dao.externalTokenBalance || new BN(0);
 
     const beneficiaryHasRewards = (
-      proposal.reputationReward.gt(new BN(0)) ||
+      !proposal.reputationReward.isZero() ||
       proposal.nativeTokenReward.gt(new BN(0)) ||
       (proposal.ethReward.gt(new BN(0)) && daoEthBalance.gte(proposal.ethReward)) ||
       (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))
@@ -125,16 +125,17 @@ class ProposalContainer extends React.Component<IProps, IState> {
     if (votesOfCurrentUser.length > 0) {
       currentVote = votesOfCurrentUser[0];
       currentAccountVote = currentVote.outcome;
-      currentAccountVoteAmount = currentVote.amount;
+      currentAccountVoteAmount = new BN(currentVote.amount);
     }
 
     let currentStake: IStake;
+    // TODO: this is not good at all. What if the user staked more than one time?
     if (stakesOfCurrentUser.length > 0) {
       currentStake = stakesOfCurrentUser[0];
     }
     if (currentStake) {
       currentAccountPrediction = currentStake.outcome;
-      currentAccountStakeAmount = currentStake.amount;
+      currentAccountStakeAmount = new BN(currentStake.amount);
     }
 
     const myActionsClass = classNames({

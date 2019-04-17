@@ -45,6 +45,7 @@ const emptyProposal: IProposalState = {
   proposingRepReward: new BN(0),
   queuedVoteRequiredPercentage: 50, //TODO: need to rethink this whole emptyProposal thing...
   queuedVotePeriodLimit: 0, // TODO: shouldnt have to think about this here
+  quietEndingPeriod: 0,
   quietEndingPeriodBeganAt: 0,
   reputationReward: new BN(0),
   resolvedAt: 0,

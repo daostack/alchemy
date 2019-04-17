@@ -86,7 +86,8 @@ export function humanProposalTitle(proposal: IProposalState) {
 }
 
 export function formatTokens(amountWei: BN, symbol?: string): string {
-  const amount = Util.fromWei(amountWei);
+  const negative = amountWei.lt(new BN(0));
+  const amount = Math.abs(Util.fromWei(amountWei));
   let returnString;
   if (amount === 0) {
     returnString = "0";
@@ -99,7 +100,7 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
   } else {
     returnString = (amount / 1000000).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
   }
-  return returnString + (symbol ? " " + symbol : "");
+  return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
 }
 
 export function tokenSymbol(tokenAddress: string) {
