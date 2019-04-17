@@ -33,19 +33,19 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: getContractAddresses("main")
+    contractAddresses: getContractAddresses("mainnet")
   }
 };
 
-export function getContractAddresses(key: "private"|"rinkeby"|"main") {
+export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
   const addresses = {
-      ...deployedContractAddresses[key],
+      ...deployedContractAddresses[key].base,
    };
   if (!addresses || addresses === {}) {
-      throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
-    }
+    throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
+  }
   return addresses;
 }
 
