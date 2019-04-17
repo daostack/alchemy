@@ -5,6 +5,12 @@
   "env": {
     "API_URL": {
       "required": true
+    },
+    "NODE_ENV": {
+      "required": true
+    },
+    "DISQUS_SITE": {
+      "required": true
     }
   },
   "formation": {
@@ -18,6 +24,8 @@
   "buildpacks": [
     {
       "url": "heroku/nodejs",
+    },
+    {
       "url": "https://github.com/heroku/heroku-buildpack-apt"
     }
   ]

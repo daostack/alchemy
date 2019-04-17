@@ -98,7 +98,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     // TODO: need to get the balance of the proposal.externalTokenAddress
-    const externalTokenBalance = dao.externalTokenBalance;
+    const externalTokenBalance = dao.externalTokenBalance || new BN(0);
 
     const beneficiaryHasRewards = (
       !proposal.reputationReward.isZero() ||
