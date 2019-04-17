@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -129,12 +129,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
     }
 
     let currentStake: IStake;
+    // TODO: this is not good at all. What if the user staked more than one time?
     if (stakesOfCurrentUser.length > 0) {
       currentStake = stakesOfCurrentUser[0];
     }
     if (currentStake) {
       currentAccountPrediction = currentStake.outcome;
-      currentAccountStakeAmount = currentStake.amount;
+      currentAccountStakeAmount = new BN(currentStake.amount);
     }
 
     const myActionsClass = classNames({
