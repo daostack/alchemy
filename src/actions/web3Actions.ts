@@ -1,6 +1,7 @@
 import BN = require("bn.js");
 import * as Redux from "redux";
 import { first } from "rxjs/operators";
+import * as Sentry from "@sentry/browser";
 
 import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";
@@ -29,6 +30,10 @@ export function setCurrentAccount(accountAddress: string) {
       payload
     };
     dispatch(action);
+
+    Sentry.configureScope((scope) => {
+      scope.setUser({ "id": accountAddress || "" });
+    });
 
     // if the accountAddress is undefined, we are done
     if (accountAddress === undefined) {
