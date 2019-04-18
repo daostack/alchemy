@@ -14,7 +14,8 @@ async function renderApp() {
   library.add(faGithub, faTwitter, faFacebook);
 
   Sentry.init({
-    dsn: "https://748c6f9811fe407ca2853b64bf638690@sentry.io/1419793"
+    dsn: "https://748c6f9811fe407ca2853b64bf638690@sentry.io/1419793",
+    environment: process.env.NODE_ENV
   });
 
   ReactDOM.render(
