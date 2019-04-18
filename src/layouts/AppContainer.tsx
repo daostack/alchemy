@@ -21,7 +21,7 @@ import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
 import { ConnectionStatus } from "reducers/web3Reducer";
 import { sortedNotifications } from "../selectors/notifications";
-import * as Sentry from '@sentry/browser';
+import * as Sentry from "@sentry/browser";
 
 import * as css from "./App.scss";
 
@@ -74,10 +74,10 @@ class AppContainer extends React.Component<IProps, IState> {
   public componentDidCatch(error: Error, errorInfo: any) {
     this.setState({ error: error.toString() });
 
-    Sentry.withScope(scope => {
+    Sentry.withScope((scope) => {
       scope.setExtras(errorInfo);
       const sentryEventId = Sentry.captureException(error);
-      this.setState({ sentryEventId })
+      this.setState({ sentryEventId });
     });
   }
 
