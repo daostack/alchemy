@@ -1,6 +1,5 @@
 import classNames = require("classnames");
 import Util from "lib/util";
-import * as moment from "moment";
 import * as React from "react";
 import Linkify from "react-linkify";
 import { NotificationStatus, showNotification } from "reducers/notifications";
@@ -48,7 +47,7 @@ export default class Notification extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { title, message, timestamp, status, url, fullErrorMessage, minimize } = this.props;
+    const { title, message, status, url, fullErrorMessage, minimize } = this.props;
 
     const transactionClass = classNames({
       [css.pendingTransaction]: true,

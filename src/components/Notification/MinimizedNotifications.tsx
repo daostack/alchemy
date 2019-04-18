@@ -1,9 +1,5 @@
 import classNames = require("classnames");
-import Util from "lib/util";
-import * as moment from "moment";
 import * as React from "react";
-import Linkify from "react-linkify";
-import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as css from "./Notification.scss";
 
 interface IProps {

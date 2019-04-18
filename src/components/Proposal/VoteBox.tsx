@@ -88,15 +88,6 @@ class VoteBox extends React.Component<IContainerProps, IState> {
     const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, +(votesFor / totalReputationSupply * 100).toFixed(2)) : 0;
     const noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, +(votesAgainst / totalReputationSupply * 100).toFixed(2)) : 0;
 
-    const styles = {
-      forBar: {
-        width: yesPercentage + "%",
-      },
-      againstBar: {
-        width: noPercentage + "%",
-      },
-    };
-
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
                             proposal.stage === IProposalStage.Executed ||
                             (proposal.stage === IProposalStage.Boosted && expired) ||

@@ -7,7 +7,6 @@ import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as appCss from "layouts/App.scss";
 import Util from "lib/util";
-import { denormalize } from "normalizr";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Cookies, withCookies } from "react-cookie";
@@ -91,8 +90,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    const { cookies } = this.props;
-
+    //const { cookies } = this.props;
     // TODO: disable tour for now until we update it
     // if (!cookies.get("seen_tour")) {
     //   cookies.set("seen_tour", "true", { path: "/" });

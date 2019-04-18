@@ -112,12 +112,10 @@ class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       detailView,
-      expired,
       historyView,
       proposal,
       isPredictingFail,
       isPredictingPass,
-      threshold,
       stakeProposal,
       stakesOfCurrentUser
     } = this.props;
@@ -184,12 +182,6 @@ class PredictionBox extends React.Component<IProps, IState> {
       [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
     });
-    const stakeUpClass = classNames({
-      [css.predicted]: currentAccountPrediction === VoteOptions.Yes,
-    });
-    const stakeDownClass = classNames({
-      [css.predicted]: currentAccountPrediction === VoteOptions.No,
-    });
 
     const stakingEnabled = proposal.stage === IProposalStage.Queued ||
                             (proposal.stage === IProposalStage.PreBoosted);
@@ -197,16 +189,6 @@ class PredictionBox extends React.Component<IProps, IState> {
     const hasGens = currentAccountGens.gt(new BN(0));
     const disableStakePass = !hasGens || currentAccountPrediction === VoteOptions.No;
     const disableStakeFail = !hasGens || currentAccountPrediction === VoteOptions.Yes;
-
-    const passPrediction = classNames({
-      [css.passPrediction]: true,
-      [css.disabled]: disableStakePass
-    });
-
-    const failPrediction = classNames({
-      [css.failPrediction]: true,
-      [css.disabled]: disableStakeFail
-    });
 
     const passButtonClass = classNames({
       [css.pendingPrediction]: isPredictingPass,

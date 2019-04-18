@@ -21,8 +21,8 @@ export default class AccountProfileName extends React.Component<IProps, null> {
     const { accountAddress, accountProfile, daoAvatarAddress, historyView, detailView } = this.props;
 
     const accountNameClass = classNames({
-      [css.detailView]: this.props.detailView,
-      [css.historyView]: this.props.historyView
+      [css.detailView]: detailView,
+      [css.historyView]: historyView
     });
 
     return (

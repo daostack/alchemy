@@ -1,6 +1,5 @@
 import { Action, Dispatch, Middleware } from "redux";
 import { REHYDRATE, RehydrateAction } from "redux-persist";
-import { IRootState } from "../reducers";
 
 /** -- Model -- */
 
@@ -76,7 +75,6 @@ export const operationsReducer =
       }
 
       if (a.type === "Operations/Dismiss") {
-        const action = a as IDismissOperation;
         const {[a.payload.id]: _, ...rest } = state;
         return rest;
       }

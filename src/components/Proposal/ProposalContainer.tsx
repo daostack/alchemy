@@ -8,8 +8,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { CommentCount } from "disqus-react";
-import Util, { humanProposalTitle } from "lib/util";
+import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -177,15 +176,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
         [css.stateChange]: true
       });
 
-    // Calculate reputation percentages
-    const totalReputation = Util.fromWei(proposal.stage === IProposalStage.Executed ? proposal.totalRepWhenExecuted : dao.reputationTotalSupply);
-    const votesFor = Util.fromWei(proposal.votesFor);
-    const votesAgainst = Util.fromWei(proposal.votesAgainst);
-    const yesPercentage = totalReputation && votesFor ? Math.max(2, Math.ceil(votesFor / totalReputation * 100)) : 0;
-    const noPercentage = totalReputation && votesAgainst ? Math.max(2, Math.ceil(votesAgainst / totalReputation * 100)) : 0;
-    const passedByDecision = totalReputation ? (votesFor / totalReputation) > 0.5 : false;
-    const failedByDecision = totalReputation ? (votesAgainst / totalReputation) > 0.5 : false;
-
     let currentAccountVote = 0;
 
     const redeemProps = {
@@ -207,20 +197,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
       currentVote = votesOfCurrentUser[0];
       currentAccountVote = currentVote.outcome;
     }
-
-    const styles = {
-        forBar: {
-          width: yesPercentage + "%",
-        },
-        againstBar: {
-          width: noPercentage + "%",
-        },
-      };
-
-    const disqusConfig = {
-        url: process.env.BASE_URL + "/dao/" + dao.address + "/proposal/" + proposal.id,
-        identifier: proposal.id
-      };
 
     const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
 

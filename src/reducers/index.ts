@@ -1,10 +1,10 @@
 import { routerReducer } from "react-router-redux";
-import { combineReducers, Reducer } from "redux";
+import { combineReducers } from "redux";
 import { createTransform, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 import arcReducer, { IArcState } from "./arcReducer";
-import { INotificationsState, notificationsReducer, NotificationStatus } from "./notifications";
+import { INotificationsState, notificationsReducer } from "./notifications";
 import { IOperationsState, operationsReducer, OperationStatus } from "./operations";
 import profilesReducer, { IProfilesState } from "./profilesReducer";
 import uiReducer, { IUIState } from "./uiReducer";

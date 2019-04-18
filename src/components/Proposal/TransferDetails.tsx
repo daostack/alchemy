@@ -23,8 +23,8 @@ export default class TransferDetails extends React.Component<IProps, null> {
     const { beneficiaryProfile, dao, proposal, detailView, transactionModal } = this.props;
 
     const transferDetailsClass = classNames({
-      [css.detailView]: this.props.detailView,
-      [css.transactionModal]: this.props.transactionModal,
+      [css.detailView]: detailView,
+      [css.transactionModal]: transactionModal,
       [css.transferDetails]: true,
     });
 

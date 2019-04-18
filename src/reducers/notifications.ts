@@ -1,7 +1,6 @@
 import { getArc } from "arc";
 import Util from "lib/util";
 import * as moment from "moment";
-import { IRootState } from "reducers";
 import { VoteOptions } from "reducers/arcReducer";
 import { Action, Dispatch, Middleware } from "redux";
 import { REHYDRATE, RehydrateAction } from "redux-persist";
@@ -102,7 +101,6 @@ export const notificationsReducer =
 
       if (a.type === "Notifications/Show") {
         const action = a as IShowNotification;
-        const { status, title, message, timestamp } = action.payload;
         const id = action.payload.id;
 
         if (state.map((n) => n.id).indexOf(id) === -1) {
@@ -235,7 +233,6 @@ export const notificationUpdater: Middleware =
 
       (async () => {
 
-        const state = getState() as any as IRootState;
         const network = Util.networkName(await getArc().web3.eth.net.getId()).toLowerCase();
 
         if (action.type === REHYDRATE) {
@@ -257,7 +254,6 @@ export const notificationUpdater: Middleware =
 
         // also dismiss the corrosponding operation if it exists.
         if (isNotificationsAction(action) && action.type === "Notifications/Dismiss") {
-          const {payload: {id}} = action as IDismissNotification;
           dismissOperation(action.payload.id)(dispatch);
         }
       })();

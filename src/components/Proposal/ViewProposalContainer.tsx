@@ -1,10 +1,9 @@
-import * as classNames from "classnames";
 import { DiscussionEmbed } from "disqus-react";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 
-import { Address, IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IProposalState } from "@daostack/client";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import ProposalContainer from "./ProposalContainer";
 
