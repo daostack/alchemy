@@ -12,8 +12,8 @@ const settings = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v12_without_gen",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v12_without_gen",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v13",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v13",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
@@ -24,8 +24,8 @@ const settings = {
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v11-without-gen",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v11-without-gen",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v13-without-gen",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v13-without-gen",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "subgraph.daostack.io",
@@ -41,7 +41,7 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
   const addresses = {
-      ...deployedContractAddresses[key].base,
+      ...deployedContractAddresses[key]
    };
   if (!addresses || addresses === {}) {
     throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
