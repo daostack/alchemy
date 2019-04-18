@@ -62,7 +62,7 @@
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js"
   },
   "dependencies": {
-    "@daostack/client": "0.0.55",
+    "@daostack/client": "0.1.0",
     "@daostack/migration": "0.0.1-rc.16-v1",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -79,6 +79,7 @@
     "express": "^4.16.4",
     "fibers": "^3.1.1",
     "formik": "^0.11.11",
+    "geopattern": "^1.2.3",
     "heroku-client": "^3.0.7",
     "immutability-helper": "2.6.4",
     "moment": "^2.23.0",
@@ -119,6 +120,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/classnames": "^2.2.6",
+    "@types/geopattern": "^1.2.3",
     "@types/graphql": "^14.0.4",
     "@types/jest": "^24.0.11",
     "@types/node": "^10.11.0",
