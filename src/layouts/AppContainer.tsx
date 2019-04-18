@@ -21,6 +21,8 @@ import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
 import { ConnectionStatus } from "reducers/web3Reducer";
 import { sortedNotifications } from "../selectors/notifications";
+import * as Sentry from '@sentry/browser';
+
 import * as css from "./App.scss";
 
 interface IStateProps {
@@ -53,6 +55,8 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
+  error: string;
+  sentryEventId: string;
   notificationsMinimized: boolean;
 }
 
@@ -60,7 +64,21 @@ class AppContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { notificationsMinimized: false };
+    this.state = {
+      error: null,
+      sentryEventId: null,
+      notificationsMinimized: false
+    };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: any) {
+    this.setState({ error: error.toString() });
+
+    Sentry.withScope(scope => {
+      scope.setExtras(errorInfo);
+      const sentryEventId = Sentry.captureException(error);
+      this.setState({ sentryEventId })
+    });
   }
 
   public async componentWillMount() {
@@ -108,6 +126,13 @@ class AppContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     const { notificationsMinimized } = this.state;
+
+    if (this.state.error) {
+      // Render error fallback UI
+      return (
+        <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
+      );
+    }
 
     return (
       <div className={css.outer}>
