@@ -1,6 +1,7 @@
 import { IDAOState, IProposalStage, Member, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import * as GeoPattern from "geopattern";
 import { formatTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -31,6 +32,7 @@ const DaoContainer = (props: IProps) => {
         return <div>{ state.error.message }</div>;
       } else {
         const dao = state.data[1];
+        const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
         return <Link
           className={css.daoLink}
@@ -39,7 +41,7 @@ const DaoContainer = (props: IProps) => {
           data-test-id="dao-link"
         >
           <div className={css.dao}>
-            <h3 className={css.daoName}>{dao.name}</h3>
+            <h3 className={css.daoName} style={{backgroundImage: bgPattern.toDataUrl()}}>{dao.name}</h3>
 
             <div className={css.clearfix + " " + css.daoInfoContainer}>
               <div className={css.daoInfoTitle}>
