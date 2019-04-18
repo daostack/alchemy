@@ -41,7 +41,7 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
   const addresses = {
-      ...deployedContractAddresses[key].base,
+      ...deployedContractAddresses[key]
    };
   if (!addresses || addresses === {}) {
     throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
