@@ -99,7 +99,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
 
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
                             proposal.stage === IProposalStage.Executed ||
-                            (proposal.stage === IProposalStage.Boosted && expired) ||
+                            ((proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && expired) ||
                             !currentAccountState ||
                             currentAccountState.reputation.eq(new BN(0)) ||
                             !!currentVote;
@@ -111,7 +111,7 @@ class VoteBox extends React.Component<IContainerProps, IState> {
         "Can't change your vote" :
       currentAccountState.reputation.eq(new BN(0)) ?
         "Voting requires reputation in " + dao.name :
-      proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) ?
+      proposal.stage === IProposalStage.ExpiredInQueue || ((proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && expired) ?
         "Can't vote on expired proposals" :
       proposal.stage === IProposalStage.Executed ?
         "Can't vote on executed proposals" :
@@ -212,11 +212,11 @@ class VoteBox extends React.Component<IContainerProps, IState> {
             <div className={css.voteDivider}>
               <div className={css.voteGraphs}>
                 { !this.props.detailView ?
-                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted}/>
+                   <VoteGraph size={40} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod}/>
                  : " "
                 }
                 { this.props.detailView ?
-                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted}/>
+                   <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod}/>
                  : " "
                 }
               </div>
