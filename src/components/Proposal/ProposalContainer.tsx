@@ -229,9 +229,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
         <div className={css.proposalInfo}>
           <h3 className={css.proposalTitleTop}>
             <span data-test-id="proposal-closes-in">
-              {proposal.stage === IProposalStage.QuietEndingPeriod ?
+              {proposal.stage === IProposalStage.QuietEndingPeriod && !this.state.expired ?
                 <strong>
-                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
+                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
                   <div className={css.help}>
                     <img src="/assets/images/Icon/Help-light.svg" />
                     <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
@@ -255,7 +255,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             </span>
             {this.props.detailView ?
               <div>
-                {this.state.expired && proposal.stage === IProposalStage.Boosted ?
+                {this.state.expired && (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ?
                 <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   <span>Execute</span>
@@ -291,7 +291,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span>Boost</span>
                   </button>
-                  : proposal.stage === IProposalStage.Boosted ?
+                  : proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod ?
                     <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                       {/* If proposal is boosted, even if it has rewards, make them execute it first */}
                       <img src="/assets/images/Icon/execute.svg"/>
@@ -324,9 +324,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
           }
           <h3 className={css.proposalTitleBottom}>
             <span data-test-id="proposal-closes-in">
-              {proposal.stage === IProposalStage.QuietEndingPeriod ?
+              {proposal.stage === IProposalStage.QuietEndingPeriod && !this.state.expired ?
                 <strong>
-                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
+                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
                   <div className={css.help}>
                     <img src="/assets/images/Icon/Help-light.svg" />
                     <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />

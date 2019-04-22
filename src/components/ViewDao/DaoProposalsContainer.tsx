@@ -138,7 +138,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
-    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Boosted }), // the list of boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state() // DAO state
   );
   return <Subscribe observable={observable}>{
