@@ -19,11 +19,12 @@ import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
 import * as proposalCss from "../Proposal/Proposal.scss";
+import AllSchemesContainer from "./AllSchemesContainer";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
-import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 import DaoSidebar from "./DaoSidebar";
+import SchemeProposalsContainer from "./SchemeProposalsContainer";
 import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
@@ -319,8 +320,8 @@ For additional information check out our <a href="https://docs.google.com/docume
                 <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
               }
             />
-            <Route path="/dao/:daoAvatarAddress"
-              render={(props) => <DaoProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
+            <Route path="/dao/:daoAvatarAddress/proposals/:schemeName" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
+            <Route path="/dao/:daoAvatarAddress" render={(props) => <AllSchemesContainer {...props} />} />
           </Switch>
         </div>
       </div>

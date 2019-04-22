@@ -23,7 +23,7 @@ const Fade = ({ children, ...props }: any) => (
   </CSSTransition>
 );
 
-const DAOProposalsContainer = (props: {
+const SchemeProposalsContainer = (props: {
   currentAccountAddress: Address,
   dao: IDAOState,
   proposalsBoosted: Proposal[],
@@ -38,6 +38,7 @@ const DAOProposalsContainer = (props: {
       { proposalsQueued.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
           <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          }
         </Fade>
       ))}
     </TransitionGroup>
@@ -149,7 +150,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
         throw state.error;
       } else {
         const data = state.data;
-        return <DAOProposalsContainer proposalsQueued={data[0]} proposalsPreBoosted={data[1]} proposalsBoosted={data[2]} dao={data[3]} currentAccountAddress={currentAccountAddress}/>;
+        return <SchemeProposalsContainer proposalsQueued={data[0]} proposalsPreBoosted={data[1]} proposalsBoosted={data[2]} dao={data[3]} currentAccountAddress={currentAccountAddress}/>;
       }
     }
   }</Subscribe>;
