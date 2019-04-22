@@ -8,8 +8,8 @@ interface IProps {
   detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
+  overTime?: boolean;
   onEnd?(): any;
-  overTime?: boolean
 }
 
 interface IState {
