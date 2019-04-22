@@ -1,4 +1,4 @@
-import { IDAOState, IMemberState, IProposalStage, IProposalState  } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
 import { checkNetworkAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -82,7 +82,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     const { stakeAmount } = this.state;
 
     let icon, transactionType, rulesHeader, rules, actionTypeClass;
-    let accountGens, buyGensClass, reputationFor, reputationAgainst, yesPercentage, noPercentage;
+    let accountGens, buyGensClass, reputationFor, reputationAgainst;
 
     const modalWindowClass = classNames({
       [css.modalWindow]: true,
@@ -92,12 +92,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     if (actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp) {
       reputationFor = proposal.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
       reputationAgainst = proposal.votesAgainst.add(actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
-
-      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
-
-      // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-      yesPercentage = totalReputation && reputationFor.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationFor) / totalReputation * 100)) : 0;
-      noPercentage = totalReputation && reputationAgainst.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationAgainst) / totalReputation * 100)) : 0;
     }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
@@ -315,7 +309,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                    <h3>State after your vote</h3>
                    <div className={css.clearfix}>
                      <div className={css.graphContainer}>
-                       <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
+                       <VoteGraph size={90} proposal={proposal} dao={dao} />
                      </div>
                      <div className={css.graphInfo}>
                        <div>

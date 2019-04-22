@@ -59,7 +59,6 @@ export const daoPrefs: string;
 export const genTitle: string;
 export const genStats: string;
 export const caption: string;
-export const centered: string;
 export const small: string;
 export const leftAlign: string;
 export const rightAlign: string;

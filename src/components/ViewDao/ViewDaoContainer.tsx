@@ -3,7 +3,7 @@ import * as profilesActions from "actions/profilesActions";
 import * as uiActions from "actions/uiActions";
 import { getArc } from "arc";
 import * as classNames from "classnames";
-import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
+import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as appCss from "layouts/App.scss";
 import Util from "lib/util";
@@ -314,7 +314,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>
-                <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
+                <ProposalDetailsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} proposalId={props.match.params.proposalId} />
               }
             />
             <Route path="/dao/:daoAvatarAddress"

@@ -1,0 +1,223 @@
+.wrapper {
+  display: block;
+  position: relative;
+  z-index: 0;
+  width: 100%;
+
+  // span {
+  //   border: none;
+  //   position: absolute;
+  //   width: 30px;
+  //   height: 18px;
+  //   font-family: $body-font;
+  //   background-color: transparent;
+  //   outline: none;
+  //   margin-left: 5px;
+
+  //   span {
+  //     position: relative;
+  //     display: block;
+  //     margin-left: 10px;
+  //     font-size: 12px;
+  //     font-weight: bold;
+  //     color: rgba(80, 97, 118, 1.000);
+  //   }
+
+  //   img {
+  //     position: absolute;
+  //     top: 0;
+  //     left: 0;
+  //   }
+  // }
+}
+
+.voteRecord, .castVote, .castVoteFor, .castVoteAgainst {
+  display: none;
+}
+
+.voteRecord {
+  margin: 10px;
+  border: 1px solid #bfcbd5;
+  border-radius: 3px;
+  height: 23px;
+  line-height: 23px;
+  padding: 0 15px;
+  font-size: 11px;
+  margin-top: -4px;
+  text-align: center;
+
+  .castVoteFor {
+    color: rgba(0, 190, 144, 1.000);
+  }
+
+  .castVoteAgainst {
+    color: rgba(246, 80, 80, 1.000);
+  }
+}
+
+.hasVoted {
+  .voteRecord {
+    display: block;
+  }
+}
+
+.hasNotVoted {
+  .castVote {
+    display: block;
+    margin: -4px auto 15px auto;
+    text-align: center;
+  }
+}
+
+.votedFor .castVoteFor, .votedAgainst .castVoteAgainst {
+  display: inline;
+}
+
+.votingDisabled {
+  font-size: 11px;
+  color: rgba(154, 169, 181, 1.000);
+  padding-top: 7px;
+}
+
+button.disabled {
+  cursor: not-allowed !important;
+}
+
+.stateChange .altStyle {
+  margin-top: 30px;
+
+  .voteControls {
+    display: block;
+  }
+
+  button {
+    height: 30px;
+    line-height: 30px;
+    width: auto;
+    margin-right: 1px;
+  }
+
+  .castVote span {
+    top: 0;
+  }
+
+  .castVote .altStyleVoteLabel {
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-block;
+    margin-right: 30px;
+    color: rgba(0, 29, 52, 1.000);
+  }
+}
+
+.castVote button {
+  font-weight: $bold;
+  color: rgba(3, 118, 255, 1.000);
+  background-color: rgba(225, 235, 247, 1.000);
+  height: 25px;
+  line-height: 25px;
+  transition: all .25s ease;
+  position: relative;
+  border: 0;
+  margin: 0 1px;
+  display: inline-block;
+  width: 75px;
+  // opacity: 0;
+  transition: all .25s ease;
+  padding: 0 5px;
+  font-size: 11px;
+
+  img {
+    margin-right: 4px;
+  }
+
+  span {
+    display: inline-block;
+    position: relative;
+    top: -2px;
+  }
+}
+
+// .proposal:hover .castVote button {
+//   opacity: 1;
+// }
+
+.historyView.proposal:hover .castVote button {
+  opacity: 0;
+  display: none;
+}
+
+
+.buttonLoadingImg {
+  display: none;
+  width: 13px;
+}
+
+
+.castVote button:nth-child(1) {
+  border-radius: 10px 0 0 10px;
+  width: 60px;
+
+  img {
+    position: relative;
+    top: 5px;
+  }
+
+  img.buttonLoadingImg {
+    top: 1px;
+  }
+}
+
+
+.castVote button:nth-child(2) {
+  border-radius: 0 10px 10px 0;
+
+  img {
+    position: relative;
+    top: 2px;
+  }
+
+  img.buttonLoadingImg {
+    top: 1px;
+  }
+}
+
+.altStyle .castVote button img {
+  position: relative;
+  top: 4px;
+}
+
+.altStyle .castVote button img.buttonLoadingImg {
+  position: relative;
+  top: 3px;
+}
+
+.altStyle .castVote button:nth-child(2) img {
+  top: 6px;
+  position: relative;
+}
+
+.altStyle .castVote button:nth-child(2) img.buttonLoadingImg {
+  top: 3px;
+  position: relative;
+}
+
+.detailView .hasVoted .voteRecord {
+  display: inline-block;
+    float: right;
+    border: none;
+    margin-top: 13px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.detailView .proposalInfo .hasVoted .voteRecord {
+  display: inline-block;
+    float: left;
+    margin-top: 13px;
+    font-size: 13px;
+    margin-left: 0;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #bfcbd5;
+}

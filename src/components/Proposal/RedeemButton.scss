@@ -1,0 +1,55 @@
+button.disabled {
+  cursor: not-allowed !important;
+}
+
+.redeemRewards {
+  border: 1px solid $accent-1;
+  color: $accent-1;
+  background-color: transparent;
+  padding: 5px 5px;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  cursor: pointer;
+  font-weight: bold;
+
+  &.pending {
+    border: 1px solid $black-tenthtone;
+    color: $black-halftone;
+
+    img {
+      display: inline-block;
+      height: 16px;
+      position: relative;
+      top: 4px;
+      margin-left: 5px;
+      margin-top: -6px;
+    }
+  }
+}
+
+/* in .stateChange */
+.redeemRewards {
+  display: inline-block;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.detailView .redeemRewards, .detailView .executeProposal {
+  position: initial;
+  right: auto;
+  top: auto;
+  height: 30px;
+  border-radius: 30px;
+  background-color: #0376ff;
+  color: $white;
+  line-height: 30px;
+  padding: 0 15px;
+  margin-top: 0;
+  margin-bottom: 15px;
+
+  img {
+    margin-right: 5px;
+  }
+}

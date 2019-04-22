@@ -19,7 +19,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import { isStakePending } from "selectors/operations";
 
-import * as css from "./Proposal.scss";
+import * as css from "./PredictionBox.scss";
 
 interface IState {
   pendingPrediction: number;
@@ -35,7 +35,6 @@ interface IContainerProps {
   detailView?: boolean;
   expired?: boolean;
   historyView?: boolean;
-  threshold: number;
 }
 
 interface IDispatchProps {
@@ -229,7 +228,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
-          <h3><span>Predictions</span></h3>
+          { this.props.detailView ? <h3><span>Predictions</span></h3> : "" }
           <div className={css.stakes}>
             <div className={css.clearfix}>
               <div className={css.stakesFor}>
@@ -277,9 +276,9 @@ class PredictionBox extends React.Component<IProps, IState> {
 
         <div>
           <div className={css.statusTitle}>
-            <h3>Predictions</h3>
             { this.props.detailView ?
               <div className={css.stakeControls}>
+                <h3>Predictions</h3>
                 {
                   stakingEnabled
                   ? (
@@ -309,6 +308,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               : " "
             }
           </div>
+
           <div className={css.stakes}>
             <div className={css.clearfix}>
               <div className={css.stakesFor}>
@@ -333,17 +333,18 @@ class PredictionBox extends React.Component<IProps, IState> {
               </div>
             </div>
           </div>
-          <span className={css.boostedAmount}>
+
+          <div className={css.stakeControls}>
             {
               proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
-                <span>
+                <span className={css.boostedAmount}>
                   <b>
                     <img src="/assets/images/Icon/Boost-slate.svg" />
                     {formatTokens(proposal.upstakeNeededToPreBoost, "GEN")} to boost
                   </b>
                 </span>
               : proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.gt(new BN(0)) ?
-                <span>
+                <span className={css.boostedAmount}>
                   <b>
                     <img src="/assets/images/Icon/Boost-slate.svg" />
                     {formatTokens(proposal.downStakeNeededToQueue, "GEN")} to un-boost
@@ -352,35 +353,35 @@ class PredictionBox extends React.Component<IProps, IState> {
               : ""
             }
 
-          </span>
-          { !this.props.detailView ?
-            <div className={css.centered}>
-              {
-                stakingEnabled
-                ? (
-                  tip(VoteOptions.No) !== "" ?
-                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                      {passButton}
-                    </Tooltip> :
-                    passButton
-                  )
-                :
-                <span className={css.disabledPredictions}>Predictions are disabled</span>
-              }
-              {
-                stakingEnabled
-                ? (
-                    tip(VoteOptions.Yes) !== "" ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                        {failButton}
+            { !this.props.detailView ?
+              <div className={css.centered}>
+                {
+                  stakingEnabled
+                  ? (
+                    tip(VoteOptions.No) !== "" ?
+                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                        {passButton}
                       </Tooltip> :
-                      failButton
-                  )
-                : " "
-              }
-            </div>
-            : " "
-          }
+                      passButton
+                    )
+                  :
+                  <span className={css.disabledPredictions}>Predictions are disabled</span>
+                }
+                {
+                  stakingEnabled
+                  ? (
+                      tip(VoteOptions.Yes) !== "" ?
+                        <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                          {failButton}
+                        </Tooltip> :
+                        failButton
+                    )
+                  : " "
+                }
+              </div>
+              : " "
+            }
+          </div>
         </div>
       </div>
     );

@@ -1,0 +1,140 @@
+.wrapper {
+  float: left;
+  width: 50%;
+  text-align: left;
+  margin-top: 9px;
+
+  .label {
+    display: none;
+  }
+
+  span {
+    border: none;
+    position: absolute;
+    width: 30px;
+    height: 18px;
+    font-family: DINProLight;
+    background-color: transparent;
+    outline: none;
+    margin-left: 5px;
+
+    span {
+      position: relative;
+      display: block;
+      margin-left: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #506176;
+      top: -10px;
+    }
+  }
+}
+
+.wrapper.detailView  {
+  text-align: right;
+  margin-left: 42px;
+  width: auto;
+  display: inline-block;
+
+  .label {
+    display: inline-block;
+    text-align: left;
+  }
+
+  div.label {
+    font-size: 13px;
+    color: rgba(154, 169, 181, 1.000);
+    display: block;
+  }
+
+  b.label {
+    margin-left: 5px;
+  }
+}
+
+.voteUp {
+  position: relative;
+  display: block;
+  height: 20px;
+  margin-top: 4px;
+}
+
+.voteDown {
+  position: relative;
+  display: block;
+  height: 20px;
+}
+
+.upvoted, .downvoted {
+  display: none;
+}
+
+.votedFor .upvote, .votedAgainst .downvote  {
+  display: none;
+}
+
+.votedFor .upvoted, .votedAgainst .downvoted {
+  display: inline;
+}
+
+.upvotePending .upvote, .downvotePending .downvote {
+  opacity: 0;
+}
+
+.downvotePending .downvotePendingIcon {
+  opacity: 1;
+}
+
+.upvotePending .upvotePendingIcon {
+  opacity: 1;
+}
+
+.downvotePendingIcon, .upvotePendingIcon {
+  left: 0;
+  opacity: 0;
+  display: none;
+  width: 28px;
+  height: 15px;
+}
+
+.downvotePendingIcon {
+  top: 2px;
+}
+
+.upvotePendingIcon {
+  top: 3px;
+}
+
+.detailView {
+  span {
+    position: relative;
+    width: 120px;
+    text-align: left;
+    margin-left: 0;
+    display: block;
+    font-size: 16px;
+    color: rgba(0, 29, 52, 1.000);
+
+    span {
+      display: inline;
+    }
+
+    img {
+      top: -10px;
+      left: -32px;
+      width: 18px;
+
+    }
+  }
+
+  .voteUp {
+    height: auto;
+    margin-bottom: 10px;
+  }
+}
+
+.verifyMask {
+  transform: translateY(30px);
+  opacity: 0;
+  animation: verifying 1s linear infinite;
+}

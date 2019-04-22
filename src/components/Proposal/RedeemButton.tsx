@@ -2,7 +2,7 @@ import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/clie
 import * as classNames from "classnames";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
-import * as css from "./Proposal.scss";
+import * as css from "./RedeemButton.scss";
 import RedemptionsTip from "./RedemptionsTip";
 
 interface IProps {

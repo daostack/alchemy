@@ -17,7 +17,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import PredictionBox from "./PredictionBox";
 import * as css from "./Proposal.scss";
-import VoteBox from "./VoteBox";
+import VoteBreakdown from "./VoteBreakdown";
 
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
@@ -166,6 +166,10 @@ class ProposalContainer extends React.Component<IProps, IState> {
         break;
     }
 
+    const voteControls = classNames({
+      [css.voteControls]: true,
+    });
+
     return (
       <div className={proposalClass + " " + css.clearfix}>
         <div className={css.proposalCreator}>
@@ -179,23 +183,17 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
         </div>
         <div className={css.votes}>
-          <VoteBox
-            isVotingNo={false}
-            isVotingYes={false}
-            currentVote={currentAccountVote}
-            currentAccountAddress={currentAccountAddress}
-            dao={dao}
-            proposal={proposal}
-            historyView={true}
-          />
+          <div className={voteControls + " " + css.clearfix}>
+            <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} />
+          </div>
         </div>
+
         <div className={css.predictions}>
           <PredictionBox
             beneficiaryProfile={beneficiaryProfile}
             currentAccountAddress={this.props.currentAccountAddress}
             dao={dao}
             proposal={proposal}
-            threshold={0}
             historyView={true}
           />
         </div>

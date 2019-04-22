@@ -1,19 +1,27 @@
-import * as React from "react";
-
 import * as classNames from "classnames";
+import * as React from "react";
+import { IDAOState, IProposalStage, IProposalState, } from "@daostack/client";
+import { default as Util } from "lib/util";
 
 import * as css from "./VoteGraph.scss";
 
 interface IProps {
-  noPercentage: number;
-  relative?: boolean;
+  dao: IDAOState;
+  proposal: IProposalState;
   size: number;
-  yesPercentage: number;
 }
 
 export default class VoteGraph extends React.Component<IProps, null> {
   public render() {
-    const {noPercentage, relative, size, yesPercentage} = this.props;
+    const { dao, proposal, size } = this.props;
+
+    const totalReputationSupply = Util.fromWei(dao.reputationTotalSupply);
+    const votesFor = Util.fromWei(proposal.votesFor);
+    const votesAgainst = Util.fromWei(proposal.votesAgainst);
+
+    // If percentages are less than 2 then set them to 2 so they can be visibly noticed
+    const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, +(votesFor / totalReputationSupply * 100).toFixed(2)) : 0;
+    const noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, +(votesAgainst / totalReputationSupply * 100).toFixed(2)) : 0;
 
     const yesWinning = yesPercentage > noPercentage;
     const noWinning = noPercentage > yesPercentage;
@@ -24,6 +32,7 @@ export default class VoteGraph extends React.Component<IProps, null> {
       [css.yesWinning] : yesWinning
      });
 
+    const relative = proposal.stage === IProposalStage.Boosted
     const displayYesPercentage = relative ? yesPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : yesPercentage;
     const displayNoPercentage = relative ? noPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : noPercentage;
 
