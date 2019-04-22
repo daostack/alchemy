@@ -248,7 +248,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <div className={css.timer}>
               {!proposalEnded(proposal) ?
                   !this.state.expired ?
-                    <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded.bind(this)} overTime={true}/> :
+                    <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded.bind(this)} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !this.state.expired}/> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
