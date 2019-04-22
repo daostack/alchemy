@@ -315,7 +315,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                    <h3>State after your vote</h3>
                    <div className={css.clearfix}>
                      <div className={css.graphContainer}>
-                       <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
+                       <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod} />
                      </div>
                      <div className={css.graphInfo}>
                        <div>

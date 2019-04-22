@@ -8,6 +8,7 @@ interface IProps {
   detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
+  overTime?: boolean;
   onEnd?(): any;
 }
 
@@ -127,6 +128,12 @@ class Countdown extends React.Component<IProps, IState> {
         <span className={css.timeSection}>
           <strong>{this.addLeadingZeros(countDown.min)}m</strong>
         </span>
+        {this.props.overTime ?
+          <strong className={css.overTime}>
+            <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
+          </strong>
+          : " "
+        }
       </div>
     );
   }

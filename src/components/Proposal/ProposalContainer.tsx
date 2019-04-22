@@ -228,34 +228,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
       <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
         <div className={css.proposalInfo}>
           <h3 className={css.proposalTitleTop}>
-            <span data-test-id="proposal-closes-in">
-              {proposal.stage === IProposalStage.QuietEndingPeriod ?
-                <strong>
-                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                  <div className={css.help}>
-                    <img src="/assets/images/Icon/Help-light.svg" />
-                    <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
-                    <div className={css.helpBox}>
-                      <div className={css.pointer}></div>
-                      <div className={css.bg}></div>
-                      <div className={css.bridge}></div>
-                      <div className={css.header}>
-                        <h2>Genesis Protocol</h2>
-                        <h3>RULES FOR OVERTIME</h3>
-                      </div>
-                      <div className={css.body}>
-                        <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                      </div>
-                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                    </div>
-                  </div>
-                </strong>
-                : " "
-              }
-            </span>
             {this.props.detailView ?
               <div>
-                {this.state.expired && proposal.stage === IProposalStage.Boosted ?
+                {this.state.expired && (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ?
                 <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   <span>Execute</span>
@@ -273,7 +248,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
             <div className={css.timer}>
               {!proposalEnded(proposal) ?
                   !this.state.expired ?
-                    <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded.bind(this)} /> :
+                    <Countdown toDate={closingTime(proposal)} detailView={detailView} onEnd={this.countdownEnded.bind(this)} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !this.state.expired}/> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
@@ -291,7 +266,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/boost.svg"/>
                     <span>Boost</span>
                   </button>
-                  : proposal.stage === IProposalStage.Boosted ?
+                  : proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod ?
                     <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                       {/* If proposal is boosted, even if it has rewards, make them execute it first */}
                       <img src="/assets/images/Icon/execute.svg"/>
@@ -323,31 +298,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
             : " "
           }
           <h3 className={css.proposalTitleBottom}>
-            <span data-test-id="proposal-closes-in">
-              {proposal.stage === IProposalStage.QuietEndingPeriod ?
-                <strong>
-                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                  <div className={css.help}>
-                    <img src="/assets/images/Icon/Help-light.svg" />
-                    <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
-                    <div className={css.helpBox}>
-                      <div className={css.pointer}></div>
-                      <div className={css.bg}></div>
-                      <div className={css.bridge}></div>
-                      <div className={css.header}>
-                        <h2>Genesis Protocol</h2>
-                        <h3>RULES FOR OVERTIME</h3>
-                      </div>
-                      <div className={css.body}>
-                        <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                      </div>
-                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                    </div>
-                  </div>
-                </strong>
-                : " "
-              }
-            </span>
             <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
               {humanProposalTitle(proposal)}
               <img src="/assets/images/Icon/Open.svg"/>
