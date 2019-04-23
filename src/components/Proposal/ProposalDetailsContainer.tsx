@@ -17,7 +17,7 @@ import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
-import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
+import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
@@ -158,17 +158,9 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
     const isVoting = isVotingNo || isVotingYes;
 
     const proposalClass = classNames({
-        [css.detailView]: true,
-        [css.clearfix]: true,
-        [css.proposal]: true,
-        [css.openProposal]: proposal.stage === IProposalStage.Queued ||
-          proposal.stage === IProposalStage.PreBoosted ||
-          proposal.stage === IProposalStage.Boosted ||
-          proposal.stage === IProposalStage.QuietEndingPeriod,
-        [css.failedProposal]: proposalFailed(proposal),
-        [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: redeemable
-      });
+      [css.proposal]: true,
+      "clearfix": true
+    });
 
     let currentAccountVote = 0;
 
@@ -195,18 +187,9 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
     const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
 
     const voteWrapperClass = classNames({
-      [css.detailView] : true,
       [css.voteBox] : true,
-      [css.clearfix] : true,
+      "clearfix" : true,
       [css.unconfirmedVote] : isVoting
-    });
-
-    const voteStatusClass = classNames({
-      [css.voteStatus]: true
-    });
-
-    const voteControls = classNames({
-      [css.voteControls]: true
     });
 
     const disqusConfig = {
@@ -216,40 +199,14 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
     };
 
     return (
-      <div className={css.proposalContainer}>
+      <div className={css.wrapper}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
 
-        <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
+        <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <h3 className={css.proposalTitleTop}>
-              <span data-test-id="proposal-closes-in">
-                {proposal.stage === IProposalStage.QuietEndingPeriod ?
-                  <strong>
-                    <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                    <div className={css.help}>
-                      <img src="/assets/images/Icon/Help-light.svg" />
-                      <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
-                      <div className={css.helpBox}>
-                        <div className={css.pointer}></div>
-                        <div className={css.bg}></div>
-                        <div className={css.bridge}></div>
-                        <div className={css.header}>
-                          <h2>Genesis Protocol</h2>
-                          <h3>RULES FOR OVERTIME</h3>
-                        </div>
-                        <div className={css.body}>
-                          <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                        </div>
-                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                      </div>
-                    </div>
-                  </strong>
-                  : " "
-                }
-              </span>
-
               <div>
-                {expired && proposal.stage === IProposalStage.Boosted ?
+                {expired && (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ?
                 <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   <span>Execute</span>
@@ -262,29 +219,30 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
             </h3>
-            <div className={css.cardTop + " " + css.clearfix}>
-              <div className={css.timer}>
-                {!proposalEnded(proposal) ?
-                    !expired ?
-                      <Countdown toDate={closingTime(proposal)} detailView={true} onEnd={this.countdownEnded.bind(this)} /> :
-                      <span className={css.closedTime}>
-                        {proposal.stage === IProposalStage.Queued ? "Expired" :
-                         proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
-                         "Closed"}&nbsp;
-                         {closingTime(proposal).format("MMM D, YYYY")}
-                      </span>
-                    : " "
-                }
-              </div>
 
+            <div className={css.timer + " clearfix"}>
+              {!proposalEnded(proposal) ?
+                  !expired ?
+                    <Countdown toDate={closingTime(proposal)} detailView={true} onEnd={this.countdownEnded.bind(this)} /> :
+                    <span className={css.closedTime}>
+                      {proposal.stage === IProposalStage.Queued ? "Expired" :
+                       proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
+                       "Closed"}&nbsp;
+                       {closingTime(proposal).format("MMM D, YYYY")}
+                    </span>
+                  : " "
+              }
             </div>
+
             <div className={css.createdBy}>
               <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={true}/>
               <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={true}/>
             </div>
+
             <div className={css.description}>
               {proposal.description}
             </div>
+
             {url ?
               <a href={url} className={css.attachmentLink} target="_blank">
                 <img src="/assets/images/Icon/Attachment.svg"/>
@@ -292,37 +250,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               </a>
               : " "
             }
-            <h3 className={css.proposalTitleBottom}>
-              <span data-test-id="proposal-closes-in">
-                {proposal.stage === IProposalStage.QuietEndingPeriod ?
-                  <strong>
-                    <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                    <div className={css.help}>
-                      <img src="/assets/images/Icon/Help-light.svg" />
-                      <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
-                      <div className={css.helpBox}>
-                        <div className={css.pointer}></div>
-                        <div className={css.bg}></div>
-                        <div className={css.bridge}></div>
-                        <div className={css.header}>
-                          <h2>Genesis Protocol</h2>
-                          <h3>RULES FOR OVERTIME</h3>
-                        </div>
-                        <div className={css.body}>
-                          <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                        </div>
-                        <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                      </div>
-                    </div>
-                  </strong>
-                  : " "
-                }
-              </span>
-              <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                {humanProposalTitle(proposal)}
-                <img src="/assets/images/Icon/Open.svg"/>
-              </Link>
-            </h3>
+
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true}/>
 
             <div className={css.stateChange}>
@@ -337,19 +265,21 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
             </div>
           </div>
 
-          <div className={css.proposalActions + " " + css.clearfix}>
+          <div className={css.proposalActions + " clearfix"}>
             <div className={voteWrapperClass}>
-              <div className={voteStatusClass} >
+              <div>
                 <div className={css.statusTitle}>
                   <h3>Votes</h3>
                   <span>{proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"}</span>
                 </div>
 
-                <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
+                <div className={css.voteControls}>
+                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
+                </div>
               </div>
 
-              <div className={voteControls + " " + css.clearfix}>
-                <div className={css.voteDivider}>
+              <div className={css.voteStatus + " clearfix"}>
+                <div className={css.voteGraph}>
                   <VoteGraph size={90} dao={dao} proposal={proposal }/>
                 </div>
 
@@ -384,6 +314,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
             />
           </div>
         </div>
+
         <h3 className={css.discussionTitle}>Discussion</h3>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
       </div>
@@ -408,7 +339,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IVote[], BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
+        return <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {

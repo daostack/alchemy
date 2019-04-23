@@ -226,7 +226,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
         <div className={css.metaMaskModal}>
           <div className={css.bg} onClick={this.props.closeAction}></div>
           <div className={modalWindowClass}>
-            <div className={css.transactionHeader + " " + css.clearfix + " " + actionTypeClass}>
+            <div className={css.transactionHeader + " clearfix " + actionTypeClass}>
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
@@ -268,7 +268,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               </div>
               { /******* Staking form ******  **/
                 actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?
-                <div className={css.stakingInfo + " " + css.clearfix}>
+                <div className={css.stakingInfo + " clearfix"}>
                   <div className={css.stakingForm}>
                     <span className={css.yourStakeTitle}>Your stake</span>
                     <div className={buyGensClass}>
@@ -276,7 +276,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                         You do not have enough GEN
                       </h4>
                     </div>
-                   <div className={css.formGroup + " " + css.clearfix}>
+                   <div className={css.formGroup + " clearfix"}>
                       <input
                         autoFocus={true}
                         type="number"
@@ -307,7 +307,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               {actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp ?
                 <div className={css.decisionGraph}>
                    <h3>State after your vote</h3>
-                   <div className={css.clearfix}>
+                   <div className="clearfix">
                      <div className={css.graphContainer}>
                        <VoteGraph size={90} proposal={proposal} dao={dao} />
                      </div>

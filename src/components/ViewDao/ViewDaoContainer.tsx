@@ -17,7 +17,7 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
-import * as proposalCss from "../Proposal/Proposal.scss";
+import * as proposalCss from "../Proposal/ProposalCard.scss";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoProposalsContainer from "./DaoProposalsContainer";

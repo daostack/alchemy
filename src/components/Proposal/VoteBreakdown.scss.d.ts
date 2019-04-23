@@ -1,5 +1,7 @@
 export const wrapper: string;
 export const label: string;
+export const voteBreakdown: string;
+export const reputation: string;
 export const detailView: string;
 export const voteUp: string;
 export const voteDown: string;

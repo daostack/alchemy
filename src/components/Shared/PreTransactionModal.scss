@@ -1,10 +1,3 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-
 .stakeFail, .stakePass, .voteDown, .voteUp {
   display: block;
 }
@@ -629,6 +622,9 @@ input[type=number] {
         transform: none;
         text-align: center;
 
+        margin-top: 7px;
+        width: 100%;
+
         span {
           font-size: $body;
           padding-top: 5px;
@@ -641,16 +637,6 @@ input[type=number] {
         margin-top: 8px;
         border: 1px solid $accent-1;
         color: $accent-1;
-      }
-
-      .clearfix {
-        margin-top: 7px;
-        position: relative;
-        top: auto;
-        left: auto;
-        width: 100%;
-        text-align: center;
-        transform: none;
       }
 
       .genError {

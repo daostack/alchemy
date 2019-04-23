@@ -21,7 +21,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import { isRedeemPending, isVotePending } from "selectors/operations";
 import PredictionBox from "./PredictionBox";
-import * as css from "./Proposal.scss";
+import * as css from "./ProposalCard.scss";
 import RedeemButton from "./RedeemButton";
 import RedemptionsString from "./RedemptionsString";
 import RedemptionsTip from "./RedemptionsTip";
@@ -93,7 +93,7 @@ interface IState {
   expired: boolean;
 }
 
-class ProposalContainer extends React.Component<IProps, IState> {
+class ProposalCardContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -157,13 +157,8 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const proposalClass = classNames({
         [css.proposal]: true,
-        [css.openProposal]: proposal.stage === IProposalStage.Queued ||
-          proposal.stage === IProposalStage.PreBoosted ||
-          proposal.stage === IProposalStage.Boosted ||
-          proposal.stage === IProposalStage.QuietEndingPeriod,
         [css.failedProposal]: proposalFailed(proposal),
-        [css.passedProposal]: proposalPassed(proposal),
-        [css.redeemable]: redeemable
+        [css.passedProposal]: proposalPassed(proposal)
       });
 
     const actionButtonClass = classNames({
@@ -195,7 +190,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
     const voteWrapperClass = classNames({
       [css.voteBox] : true,
-      [css.clearfix] : true,
+      "clearfix" : true,
       [css.unconfirmedVote] : isVoting
     });
 
@@ -204,38 +199,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
     });
 
     return (proposal.stage === IProposalStage.Queued && this.state.expired ? "" :
-      <div className={proposalClass + " " + css.clearfix} data-test-id={"proposal-" + proposal.id}>
+      <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
         <div className={css.proposalInfo}>
-          <h3 className={css.proposalTitleTop}>
-            <span data-test-id="proposal-closes-in">
-              {proposal.stage === IProposalStage.QuietEndingPeriod ?
-                <strong>
-                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                  <div className={css.help}>
-                    <img src="/assets/images/Icon/Help-light.svg" />
-                    <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
-                    <div className={css.helpBox}>
-                      <div className={css.pointer}></div>
-                      <div className={css.bg}></div>
-                      <div className={css.bridge}></div>
-                      <div className={css.header}>
-                        <h2>Genesis Protocol</h2>
-                        <h3>RULES FOR OVERTIME</h3>
-                      </div>
-                      <div className={css.body}>
-                        <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                      </div>
-                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                    </div>
-                  </div>
-                </strong>
-                : " "
-              }
-            </span>
-
-            <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
-          </h3>
-          <div className={css.cardTop + " " + css.clearfix}>
+          <div className={css.cardTop + " clearfix"}>
             <div className={css.timer}>
               {!proposalEnded(proposal) ?
                   !this.state.expired ?
@@ -256,7 +222,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
                   <img src="/assets/images/Icon/boost.svg"/>
                   <span>Boost</span>
                 </button>
-                : proposal.stage === IProposalStage.Boosted ?
+                : (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ?
                   <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
                     {/* If proposal is boosted, even if it has rewards, make them execute it first */}
                     <img src="/assets/images/Icon/execute.svg"/>
@@ -280,31 +246,6 @@ class ProposalContainer extends React.Component<IProps, IState> {
           </div>
 
           <h3>
-            <span data-test-id="proposal-closes-in">
-              {proposal.stage === IProposalStage.QuietEndingPeriod ?
-                <strong>
-                  <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME: CLOSES {closingTime(proposal).fromNow().toUpperCase()}
-                  <div className={css.help}>
-                    <img src="/assets/images/Icon/Help-light.svg" />
-                    <img className={css.hover} src="/assets/images/Icon/Help-light-hover.svg" />
-                    <div className={css.helpBox}>
-                      <div className={css.pointer}></div>
-                      <div className={css.bg}></div>
-                      <div className={css.bridge}></div>
-                      <div className={css.header}>
-                        <h2>Genesis Protocol</h2>
-                        <h3>RULES FOR OVERTIME</h3>
-                      </div>
-                      <div className={css.body}>
-                        <p>Boosted proposals can only pass if the final 1 day of voting has seen “no change of decision”. In case of change of decision on the last day of voting, the voting period is increased one day. This condition (and procedure) remains until a resolution is reached, with the decision kept unchanged for the last 24 hours.</p>
-                      </div>
-                      <a href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol</a>
-                    </div>
-                  </div>
-                </strong>
-                : " "
-              }
-            </span>
             <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
               {humanProposalTitle(proposal)}
               <img src="/assets/images/Icon/Open.svg"/>
@@ -314,9 +255,9 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
         </div>
 
-        <div className={css.proposalActions + " " + css.clearfix}>
+        <div className={css.proposalActions + " clearfix"}>
           <div className={voteWrapperClass}>
-            <div className={voteControls + " " + css.clearfix}>
+            <div className={voteControls + " clearfix"}>
               <div className={css.voteDivider}>
                 <VoteGraph dao={dao} size={40} proposal={proposal} />
               </div>
@@ -346,21 +287,23 @@ class ProposalContainer extends React.Component<IProps, IState> {
             : ""
           }
 
-          <PredictionBox
-            beneficiaryProfile={beneficiaryProfile}
-            currentAccountAddress={currentAccountAddress}
-            dao={dao}
-            expired={this.state.expired}
-            proposal={proposal}
-            detailView={false}
-          />
+          <div className={css.predictions}>
+            <PredictionBox
+              beneficiaryProfile={beneficiaryProfile}
+              currentAccountAddress={currentAccountAddress}
+              dao={dao}
+              expired={this.state.expired}
+              proposal={proposal}
+              detailView={false}
+            />
+          </div>
         </div>
       </div>
     );
   }
 }
 
-export const ConnectedProposalContainer = connect<IStateProps,   IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
+export const ConnectedProposalCardContainer = connect<IStateProps,   IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalCardContainer);
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address }) => {
 
@@ -384,7 +327,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
         const rewards = state.data[1];
         const votes = state.data[2];
         const daoEthBalance = state.data[3];
-        return <ConnectedProposalContainer
+        return <ConnectedProposalCardContainer
           currentAccountAddress={props.currentAccountAddress}
           daoEthBalance={daoEthBalance}
           proposal={proposal}

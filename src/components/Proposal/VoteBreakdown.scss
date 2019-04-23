@@ -2,67 +2,92 @@
   float: left;
   width: 50%;
   text-align: left;
-  margin-top: 9px;
+}
 
-  .label {
-    display: none;
+.label {
+  display: none;
+}
+
+.voteBreakdown {
+  border: none;
+  position: relative;
+  display: block;
+  width: 73px;
+  height: 20px;
+  font-family: DINProLight;
+  background-color: transparent;
+  outline: none;
+  margin-left: 5px;
+
+  img {
+    vertical-align: middle;
   }
 
-  span {
-    border: none;
-    position: absolute;
-    width: 30px;
-    height: 18px;
-    font-family: DINProLight;
-    background-color: transparent;
-    outline: none;
-    margin-left: 5px;
-
-    span {
-      position: relative;
-      display: block;
-      margin-left: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #506176;
-      top: -10px;
-    }
+  .reputation {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #506176;
+    vertical-align: middle;
   }
 }
 
-.wrapper.detailView  {
+.detailView  {
   text-align: right;
   margin-left: 42px;
   width: auto;
   display: inline-block;
 
   .label {
-    display: inline-block;
     text-align: left;
+    display: inline
   }
 
-  div.label {
+  span.label {
     font-size: 13px;
     color: rgba(154, 169, 181, 1.000);
-    display: block;
   }
 
   b.label {
     margin-left: 5px;
+    font-size: 16px;
+  }
+
+  .voteBreakdown {
+    position: relative;
+    width: 120px;
+    text-align: left;
+    margin-left: 5px;
+    display: block;
+    color: rgba(0, 29, 52, 1.000);
+
+    .reputation {
+      top: 0px;
+      font-size: 16px;
+    }
+
+    img {
+      top: -10px;
+      left: -32px;
+      width: 18px;
+    }
   }
 }
 
 .voteUp {
   position: relative;
   display: block;
-  height: 20px;
-  margin-top: 4px;
+  margin-top: 9px;
+}
+
+.detailView .voteUp {
+  height: auto;
+  margin-bottom: 10px;
 }
 
 .voteDown {
   position: relative;
-  display: block;
-  height: 20px;
 }
 
 .upvoted, .downvoted {
@@ -105,36 +130,24 @@
   top: 3px;
 }
 
-.detailView {
-  span {
-    position: relative;
-    width: 120px;
-    text-align: left;
-    margin-left: 0;
-    display: block;
-    font-size: 16px;
-    color: rgba(0, 29, 52, 1.000);
-
-    span {
-      display: inline;
-    }
-
-    img {
-      top: -10px;
-      left: -32px;
-      width: 18px;
-
-    }
-  }
-
-  .voteUp {
-    height: auto;
-    margin-bottom: 10px;
-  }
-}
-
 .verifyMask {
   transform: translateY(30px);
   opacity: 0;
   animation: verifying 1s linear infinite;
 }
+
+@keyframes verifying {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+}
+

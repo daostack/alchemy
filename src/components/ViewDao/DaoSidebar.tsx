@@ -20,7 +20,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
     const arc = getArc();
 
     return (
-      <div className={css.daoSidebar + " " + css.clearfix}>
+      <div className={css.daoSidebar + " clearfix"}>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address}>

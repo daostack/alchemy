@@ -5,7 +5,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import { combineLatest } from "rxjs";
-import ClosedProposalContainer from "../Proposal/ClosedProposalContainer";
+import ProposalHistoryRow from "../Proposal/ProposalHistoryRowContainer";
 import * as css from "./ViewDao.scss";
 
 interface IProps {
@@ -20,7 +20,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
     const { proposals, dao, currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ClosedProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     return(

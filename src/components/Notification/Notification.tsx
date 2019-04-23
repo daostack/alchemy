@@ -51,7 +51,7 @@ export default class Notification extends React.Component<IProps, null> {
 
     const transactionClass = classNames({
       [css.pendingTransaction]: true,
-      [css.clearfix]: true,
+      "clearfix": true,
       [css.pending]: status === NotificationViewStatus.Pending,
       [css.error]: status === NotificationViewStatus.Failure,
       [css.success]: status === NotificationViewStatus.Success,
@@ -65,7 +65,7 @@ export default class Notification extends React.Component<IProps, null> {
           <img className={css.error} src="/assets/images/Icon/Error-notification.svg" />
         </div>
         <div className={css.transactionMessage}>
-          <div className={css.clearfix}>
+          <div className="clearfix">
             <div className={css.left}>
               <span className={css.pending}>{title}</span>
               <span className={css.success}>{title}</span>

@@ -13,8 +13,6 @@ export const stateChange: string;
 export const altStyle: string;
 export const voteControls: string;
 export const altStyleVoteLabel: string;
-export const historyView: string;
-export const proposal: string;
 export const buttonLoadingImg: string;
 export const detailView: string;
 export const proposalInfo: string;

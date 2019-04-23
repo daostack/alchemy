@@ -42,7 +42,7 @@ const DaoContainer = (props: IProps) => {
           <div className={css.dao}>
             <h3 className={css.daoName} style={{backgroundImage: bgPattern.toDataUrl()}}>{dao.name}</h3>
 
-            <div className={css.clearfix + " " + css.daoInfoContainer}>
+            <div className={"clearfix " + css.daoInfoContainer}>
               <div className={css.daoInfoTitle}>
                 Statistics
               </div>

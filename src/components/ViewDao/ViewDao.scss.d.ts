@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const loading: string;
 export const wrapper: string;
 export const proposalHistory: string;
@@ -38,7 +37,6 @@ export const memberAddress: string;
 export const socialButton: string;
 export const proposalsContainer: string;
 export const boostedProposalsContainer: string;
-export const openProposal: string;
 export const navItem: string;
 export const navRedemption: string;
 export const daoProposalsContainer: string;

@@ -174,11 +174,11 @@ class PredictionBox extends React.Component<IProps, IState> {
     const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst / maxWidth * 100, 3);
 
     const wrapperClass = classNames({
+      [css.predictions] : true,
       [css.detailView] : detailView,
       [css.historyView] : historyView,
       [css.isPassing] : isPassing,
       [css.isFailing] : isFailing,
-      [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
     });
 
@@ -230,7 +230,7 @@ class PredictionBox extends React.Component<IProps, IState> {
         <div className={wrapperClass}>
           { this.props.detailView ? <h3><span>Predictions</span></h3> : "" }
           <div className={css.stakes}>
-            <div className={css.clearfix}>
+            <div className="clearfix">
               <div className={css.stakesFor}>
                 <img src="/assets/images/Icon/v-small-line.svg"/>
                 {formatTokens(proposal.stakesFor)}
@@ -240,7 +240,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 <span style={{width: passWidth + "%"}}></span>
               </div>
             </div>
-            <div className={css.clearfix}>
+            <div className="clearfix">
               <div className={css.stakesAgainst}>
                 <img src="/assets/images/Icon/x-small-line.svg"/>
                 {formatTokens(proposal.stakesAgainst)}
@@ -310,7 +310,7 @@ class PredictionBox extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.stakes}>
-            <div className={css.clearfix}>
+            <div className="clearfix">
               <div className={css.stakesFor}>
                 <img className={css.defaultIcon} src="/assets/images/Icon/v-small-line.svg"/>
                 <img className={css.detailIcon} src="/assets/images/Icon/v-small.svg"/>
@@ -321,7 +321,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 <span style={{width: passWidth + "%"}}></span>
               </div>
             </div>
-            <div className={css.clearfix}>
+            <div className="clearfix">
               <div className={css.stakesAgainst}>
                 <img className={css.defaultIcon} src="/assets/images/Icon/x-small-line.svg"/>
                 <img className={css.detailIcon} src="/assets/images/Icon/x-small.svg"/>

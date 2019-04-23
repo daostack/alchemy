@@ -1,9 +1,3 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
 .centered {
   text-align: center;
   padding-bottom: 13px;
@@ -95,14 +89,6 @@
     }
   }
 
-  .passButton {
-    border-radius: 10px 0 0 10px;
-  }
-
-  .failButton {
-    border-radius: 0 10px 10px 0;
-  }
-
   button.pendingPrediction {
 
     strong {
@@ -187,6 +173,37 @@
   }
 }
 
+.passButton {
+  border-radius: 10px 0 0 10px;
+}
+
+.failButton {
+  border-radius: 0 10px 10px 0;
+}
+
+.detailView .failButton, .detailView .passButton {
+    position: relative;
+    top: 1px;
+}
+
+.detailView .passButton {
+    position: relative;
+    top: 0px;
+}
+
+.detailView h3 {
+  display: block;
+  color: rgba(104, 155, 214, 1.000);
+  width: 100%;
+  position: absolute;
+  top: 0;
+
+  span {
+    padding: 10px;
+    font-size: 21px;
+  }
+}
+
 .predictions.unconfirmedPrediction {
   .loading { display: block; }
 }
@@ -215,7 +232,7 @@
   display: block;
   width: 100%;
   position: absolute;
-  top: 66px;
+  top: 80px;
   text-align: center;
 
   button {
@@ -333,6 +350,31 @@
 
 .stakeControls {
   padding-top: 24px;
+}
+
+@keyframes pendingPassPrediction {
+  0% {
+    border: 1px solid $black-tenthtone;
+  }
+  50% {
+
+    border: 1px solid $accent-1;
+  }
+  100% {
+    border: 1px solid $black-tenthtone;
+  }
+}
+@keyframes pendingFailPrediction {
+  0% {
+    border: 1px solid $black-tenthtone;
+  }
+  50% {
+
+    border: 1px solid $accent-2;
+  }
+  100% {
+    border: 1px solid $black-tenthtone;
+  }
 }
 
 /**** Pre-approve *****/
