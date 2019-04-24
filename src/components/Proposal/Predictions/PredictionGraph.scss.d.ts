@@ -10,5 +10,4 @@ export const detailView: string;
 export const disabledPredictions: string;
 export const historyView: string;
 export const isPassing: string;
-export const stakes: string;
 export const isFailing: string;
