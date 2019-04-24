@@ -3,32 +3,6 @@
   position: relative;
   z-index: 0;
   width: 100%;
-
-  // span {
-  //   border: none;
-  //   position: absolute;
-  //   width: 30px;
-  //   height: 18px;
-  //   font-family: $body-font;
-  //   background-color: transparent;
-  //   outline: none;
-  //   margin-left: 5px;
-
-  //   span {
-  //     position: relative;
-  //     display: block;
-  //     margin-left: 10px;
-  //     font-size: 12px;
-  //     font-weight: bold;
-  //     color: rgba(80, 97, 118, 1.000);
-  //   }
-
-  //   img {
-  //     position: absolute;
-  //     top: 0;
-  //     left: 0;
-  //   }
-  // }
 }
 
 .voteRecord, .castVote, .castVoteFor, .castVoteAgainst {
@@ -100,7 +74,6 @@ button.disabled {
   margin: 0 1px;
   display: inline-block;
   width: 75px;
-  transition: all .25s ease;
   padding: 0 5px;
   font-size: 11px;
 
