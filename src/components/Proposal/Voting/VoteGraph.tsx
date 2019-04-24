@@ -35,7 +35,7 @@ export default class VoteGraph extends React.Component<IProps, null> {
       [css.yesWinning] : yesWinning
      });
 
-    const relative = proposal.stage === IProposalStage.Boosted
+    const relative = proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod;
     const displayYesPercentage = relative ? yesPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : yesPercentage;
     const displayNoPercentage = relative ? noPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : noPercentage;
 

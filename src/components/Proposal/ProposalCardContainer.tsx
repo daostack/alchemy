@@ -208,7 +208,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
             <div className={css.timer}>
               {!proposalEnded(proposal) ?
                   !this.state.expired ?
-                    <Countdown toDate={closingTime(proposal)} detailView={false} onEnd={this.countdownEnded.bind(this)} /> :
+                    <Countdown toDate={closingTime(proposal)} detailView={false} onEnd={this.countdownEnded.bind(this)} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !this.state.expired} /> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold

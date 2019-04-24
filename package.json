@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
   "license": "GPL-3.0",
@@ -63,7 +63,7 @@
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js"
   },
   "dependencies": {
-    "@daostack/client": "0.1.0",
+    "@daostack/client": "0.1.2",
     "@daostack/migration": "0.0.1-rc.16-v1",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
