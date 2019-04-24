@@ -14,7 +14,7 @@ export default class Notification extends React.Component<IProps, null> {
 
     const transactionClass = classNames({
       [css.pendingTransaction]: true,
-      "clearfix": true,
+      clearfix: true,
       [css.pending]: true,
       [css.minimized]: true,
       [css.notificationMessage]: true,

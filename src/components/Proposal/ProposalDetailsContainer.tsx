@@ -161,7 +161,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
     const proposalClass = classNames({
       [css.proposal]: true,
-      "clearfix": true
+      clearfix: true
     });
 
     let currentAccountVote = 0;
@@ -190,7 +190,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
     const voteWrapperClass = classNames({
       [css.voteBox] : true,
-      "clearfix" : true,
+      clearfix : true,
       [css.unconfirmedVote] : isVoting
     });
 

@@ -193,7 +193,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
 
     const voteWrapperClass = classNames({
       [css.voteBox] : true,
-      "clearfix" : true,
+      clearfix : true,
       [css.unconfirmedVote] : isVoting
     });
 

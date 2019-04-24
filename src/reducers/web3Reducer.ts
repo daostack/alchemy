@@ -1,5 +1,3 @@
-
-
 export enum ActionTypes {
   WEB3_CONNECT = "WEB3_CONNECT",
   WEB3_SET_ACCOUNT = "WEB3_SET_ACCOUNT",
