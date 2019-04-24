@@ -20,15 +20,18 @@ import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import { isRedeemPending, isVotePending } from "selectors/operations";
-import PredictionBox from "./PredictionBox";
-import * as css from "./ProposalCard.scss";
+import BoostAmount from "./Predictions/BoostAmount";
+import PredictionButtons from "./Predictions/PredictionButtons";
+import PredictionGraph from "./Predictions/PredictionGraph";
 import RedeemButton from "./RedeemButton";
 import RedemptionsString from "./RedemptionsString";
 import RedemptionsTip from "./RedemptionsTip";
 import TransferDetails from "./TransferDetails";
-import VoteButtons from "./VoteButtons";
-import VoteGraph from "./VoteGraph";
-import VoteBreakdown from "./VoteBreakdown";
+import VoteButtons from "./Voting/VoteButtons";
+import VoteGraph from "./Voting/VoteGraph";
+import VoteBreakdown from "./Voting/VoteBreakdown";
+
+import * as css from "./ProposalCard.scss";
 
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
@@ -288,14 +291,20 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           }
 
           <div className={css.predictions}>
-            <PredictionBox
-              beneficiaryProfile={beneficiaryProfile}
-              currentAccountAddress={currentAccountAddress}
-              dao={dao}
-              expired={this.state.expired}
+             <PredictionGraph
               proposal={proposal}
-              detailView={false}
             />
+            <BoostAmount proposal={proposal} />
+
+            <div className={css.predictionButtons}>
+              <PredictionButtons
+                beneficiaryProfile={beneficiaryProfile}
+                currentAccountAddress={currentAccountAddress}
+                dao={dao}
+                expired={this.state.expired}
+                proposal={proposal}
+              />
+            </div>
           </div>
         </div>
       </div>

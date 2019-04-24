@@ -22,14 +22,16 @@ import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import { isRedeemPending, isVotePending } from "selectors/operations";
-import PredictionBox from "./PredictionBox";
+import BoostAmount from "./Predictions/BoostAmount";
+import PredictionButtons from "./Predictions/PredictionButtons";
+import PredictionGraph from "./Predictions/PredictionGraph";
 import * as css from "./ProposalDetails.scss";
 import RedeemButton from "./RedeemButton";
 import RedemptionsTip from "./RedemptionsTip";
 import TransferDetails from "./TransferDetails";
-import VoteButtons from "./VoteButtons";
-import VoteGraph from "./VoteGraph";
-import VoteBreakdown from "./VoteBreakdown";
+import VoteButtons from "./Voting/VoteButtons";
+import VoteGraph from "./Voting/VoteGraph";
+import VoteBreakdown from "./Voting/VoteBreakdown";
 
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
@@ -205,18 +207,6 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <h3 className={css.proposalTitleTop}>
-              <div>
-                {expired && (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ?
-                <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
-                  <img src="/assets/images/Icon/execute.svg"/>
-                  <span>Execute</span>
-                </button>
-                : redeemable ?
-                  <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
-                : " "
-                }
-              </div>
-
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
             </h3>
 
@@ -254,13 +244,30 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
             <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true}/>
 
             <div className={css.stateChange}>
-              {expired && proposal.stage === IProposalStage.PreBoosted ?
-                <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
-                  <img src="/assets/images/Icon/boost.svg"/>
-                  <span>Boost</span>
-                </button>
+              { expired && (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) ?
+                 <button className={css.executeProposal} onClick={this.handleClickExecute.bind(this)}>
+                   <img src="/assets/images/Icon/execute.svg"/>
+                   <span>Execute</span>
+                 </button>
                 :
-                <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} altStyle={true} />
+                expired && proposal.stage === IProposalStage.PreBoosted ?
+                  <button className={css.boostProposal} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
+                    <img src="/assets/images/Icon/boost.svg"/>
+                    <span>Boost</span>
+                  </button>
+                :
+                redeemable ?
+                  <RedeemButton handleClickRedeem={this.handleClickRedeem.bind(this)} {...redeemProps} />
+                :
+                <VoteButtons
+                  altStyle={true}
+                  currentAccountAddress={currentAccountAddress}
+                  currentVote={currentAccountVote}
+                  dao={dao}
+                  expired={expired}
+                  isVotingNo={isVotingNo}
+                  isVotingYes={isVotingYes}
+                  proposal={proposal} />
               }
             </div>
           </div>
@@ -273,7 +280,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                   <span>{proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"}</span>
                 </div>
 
-                <div className={css.voteControls}>
+                <div className={css.voteButtons}>
                   <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
                 </div>
               </div>
@@ -304,14 +311,31 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               : ""
             }
 
-            <PredictionBox
-              beneficiaryProfile={beneficiaryProfile}
-              currentAccountAddress={currentAccountAddress}
-              dao={dao}
-              expired={this.state.expired}
-              proposal={proposal}
-              detailView={true}
-            />
+            <div className={css.predictions}>
+              <div className={css.statusTitle}>
+                <h3>Predictions</h3>
+              </div>
+
+              <div className={css.stakeButtons}>
+                <PredictionButtons
+                  beneficiaryProfile={beneficiaryProfile}
+                  currentAccountAddress={currentAccountAddress}
+                  dao={dao}
+                  expired={this.state.expired}
+                  proposal={proposal}
+                  detailView={true}
+                />
+              </div>
+
+              <div className={css.predictionStatus}>
+                <PredictionGraph
+                  proposal={proposal}
+                  detailView={true}
+                />
+                <BoostAmount detailView={true} proposal={proposal} />
+              </div>
+            </div>
+
           </div>
         </div>
 

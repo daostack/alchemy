@@ -15,12 +15,12 @@ import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
-import PredictionBox from "./PredictionBox";
+import PredictionGraph from "./Predictions/PredictionGraph";
+import VoteBreakdown from "./Voting/VoteBreakdown";
+
 import * as css from "./ProposalHistoryRow.scss";
-import VoteBreakdown from "./VoteBreakdown";
 
 interface IStateProps {
-  beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountAddress: Address;
   stakesOfCurrentUser: IStake[];
@@ -42,7 +42,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const dao = ownProps.dao;
 
   return {
-    beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccountAddress: ownProps.currentAccountAddress,
     dao,
@@ -80,7 +79,6 @@ class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
 
   public render() {
     const {
-      beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
       dao,
@@ -90,7 +88,8 @@ class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
     } = this.props;
 
     const proposalClass = classNames({
-      [css.wrapper]: true
+      [css.wrapper]: true,
+      "clearfix": true
     });
 
     let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
@@ -142,10 +141,11 @@ class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
 
     const voteControls = classNames({
       [css.voteControls]: true,
+      "clearfix": true
     });
 
     return (
-      <div className={proposalClass + " clearfix"}>
+      <div className={proposalClass}>
         <div className={css.proposalCreator}>
           <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
           <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
@@ -157,16 +157,13 @@ class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
           <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
         </div>
         <div className={css.votes}>
-          <div className={voteControls + " clearfix"}>
+          <div className={voteControls}>
             <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} />
           </div>
         </div>
 
         <div className={css.predictions}>
-          <PredictionBox
-            beneficiaryProfile={beneficiaryProfile}
-            currentAccountAddress={this.props.currentAccountAddress}
-            dao={dao}
+          <PredictionGraph
             proposal={proposal}
             historyView={true}
           />

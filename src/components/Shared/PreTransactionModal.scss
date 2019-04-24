@@ -3,10 +3,10 @@
 }
 
 .genLabel.genSymbol {
-    top: 3px;
-    left: 143px;
-    opacity: .5;
-    position: absolute;
+  top: 3px;
+  left: 143px;
+  opacity: .5;
+  position: absolute;
 }
 
 .yourStakeTitle {
@@ -102,22 +102,22 @@
 }
 
 .helpButton.open button.hover {
-    b {
-      display: block;
-      width: 50px;
-      position: absolute;
-      left: -60px;
-      color: white;
-      font-weight: normal;
-      font-size: 13px;
-    }
+  b {
+    display: block;
+    width: 50px;
+    position: absolute;
+    left: -60px;
+    color: white;
+    font-weight: normal;
+    font-size: 13px;
+  }
 
-    span:nth-child(1) {
-      display: none;
-    }
-    span:nth-child(2) {
-      display: block;
-    }
+  span:nth-child(1) {
+    display: none;
+  }
+  span:nth-child(2) {
+    display: block;
+  }
 }
 
 .launchMetaMask {
@@ -151,11 +151,13 @@
   display: inline-block;
   left: -10px;
 }
+
 .preTransactionBottom {
   padding: 20px 30px;
   border-top: 1px solid rgba(191, 203, 213, 1.000);
   text-align: right;
 }
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
@@ -258,26 +260,26 @@ input[type=number] {
     .graphInfo{
       float: left;
       width: 50%;
-      padding: 32px 0 10px 0;
+      padding: 48px 0 10px 0;
 
       div {
-          padding-bottom: 15px;
-          font-size: 16px;
-          display: block;
-          width: 100%;
-          color: rgba(154, 169, 181, 1.000);
+        padding-bottom: 15px;
+        font-size: 16px;
+        display: block;
+        width: 100%;
+        color: rgba(154, 169, 181, 1.000);
 
-          img {
-            width: 20px;
-            margin-right: 7px;
-            position: relative;
-            top: 5px;
-          }
+        img {
+          width: 20px;
+          margin-right: 7px;
+          position: relative;
+          top: 5px;
+        }
 
-          span {
-            font-weight: bold;
-            color: rgba(0, 28, 53, 1.000);
-          }
+        span {
+          font-weight: bold;
+          color: rgba(0, 28, 53, 1.000);
+        }
       }
     }
   }
@@ -310,7 +312,6 @@ input[type=number] {
         top: 0;
     }
   }
-
   .help {
     width: 340px;
     height: 100%;
@@ -350,64 +351,64 @@ input[type=number] {
   }
 
   .helpBox {
-      transition: all .25s ease;
-      width: 340px;
-      position: relative;
-      top: 0px;
+    transition: all .25s ease;
+    width: 340px;
+    position: relative;
+    top: 0px;
+    height: 100%;
+    z-index: 10000;
+    border-left: 1px solid rgba(191, 203, 213, 1.000);
+
+    .bg {
+      width: 100%;
       height: 100%;
-      z-index: 10000;
-      border-left: 1px solid rgba(191, 203, 213, 1.000);
+      background-color: rgba(255,255,255, 1);
+      position: absolute;
+      z-index: 0;
+    }
 
-      .bg {
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255,255,255, 1);
-        position: absolute;
-        z-index: 0;
+    .header {
+      position: absolute;
+      text-align: center;
+      height: 50px;
+      width: 100%;
+      background-color: #132e5b;
+      top: -51px;
+      padding-left: 15px;
+      left: -15px;
+      border-radius: 0 15px 0 0;
+    }
+
+    .body {
+      position: relative;
+      height: 100%;
+      overflow: scroll;
+
+      h2 {
+        margin: 0;
+        font-size: 22px;
+        padding-top: 30px;
+        font-weight: bold;
+        color: rgba(0, 26, 35, 1.000);
       }
 
-      .header {
-        position: absolute;
-        text-align: center;
-        height: 50px;
-        width: 100%;
-        background-color: #132e5b;
-        top: -51px;
-        padding-left: 15px;
-        left: -15px;
-        border-radius: 0 15px 0 0;
+      h3 {
+        margin: 0;
+        color: rgba(0, 26, 35, 1.000);
+        font-size: 11px;
+        text-align: left;
+        font-weight: normal;
+        padding: 0 30px 15px 30px;
       }
 
-      .body {
-        position: relative;
-        height: 100%;
-        overflow: scroll;
-
-        h2 {
-          margin: 0;
-          font-size: 22px;
-          padding-top: 30px;
-          font-weight: bold;
-          color: rgba(0, 26, 35, 1.000);
-        }
-
-        h3 {
-          margin: 0;
-          color: rgba(0, 26, 35, 1.000);
-          font-size: 11px;
-          text-align: left;
-          font-weight: normal;
-          padding: 0 30px 15px 30px;
-        }
-
-        p {
-          font-size: 13px;
-          color: rgba(80, 97, 118, 1.000);
-          padding: 0 25px 14px 25px;
-          margin: 0;
-        }
+      p {
+        font-size: 13px;
+        color: rgba(80, 97, 118, 1.000);
+        padding: 0 25px 14px 25px;
+        margin: 0;
       }
     }
+  }
 
   .instructionsOpen.modalWindow {
     margin-left: -170px;

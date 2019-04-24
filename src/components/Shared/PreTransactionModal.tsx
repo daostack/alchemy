@@ -4,7 +4,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import TransferDetails from "components/Proposal/TransferDetails";
-import VoteGraph from "components/Proposal/VoteGraph";
+import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Util from "lib/util";
 import { humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
@@ -309,7 +309,13 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                    <h3>State after your vote</h3>
                    <div className="clearfix">
                      <div className={css.graphContainer}>
-                       <VoteGraph size={90} proposal={proposal} dao={dao} />
+                       <VoteGraph
+                         dao={dao}
+                         newVotesAgainst={actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0)}
+                         newVotesFor={actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0)}
+                         proposal={proposal}
+                         size={90}
+                       />
                      </div>
                      <div className={css.graphInfo}>
                        <div>

@@ -6,7 +6,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { default as Util, formatTokens } from "lib/util";
+import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -19,7 +19,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import { isStakePending } from "selectors/operations";
 
-import * as css from "./PredictionBox.scss";
+import * as css from "./PredictionButtons.scss";
 
 interface IState {
   pendingPrediction: number;
@@ -164,21 +164,10 @@ class PredictionBox extends React.Component<IProps, IState> {
       );
     }
 
-    // round second decimal up
-    const stakesFor = Util.fromWei(proposal.stakesFor);
-    const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
-    const isPassing = stakesFor >= stakesAgainst;
-    const isFailing = stakesAgainst >= stakesFor;
-    const maxWidth = Math.max(stakesFor, stakesAgainst);
-    const passWidth = stakesFor <= 0.0001 ? 0 : Math.max(stakesFor / maxWidth * 100, 3);
-    const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst / maxWidth * 100, 3);
-
     const wrapperClass = classNames({
       [css.predictions] : true,
       [css.detailView] : detailView,
       [css.historyView] : historyView,
-      [css.isPassing] : isPassing,
-      [css.isFailing] : isFailing,
       [css.unconfirmedPrediction] : isPredicting,
     });
 
@@ -228,30 +217,6 @@ class PredictionBox extends React.Component<IProps, IState> {
     if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
-          { this.props.detailView ? <h3><span>Predictions</span></h3> : "" }
-          <div className={css.stakes}>
-            <div className="clearfix">
-              <div className={css.stakesFor}>
-                <img src="/assets/images/Icon/v-small-line.svg"/>
-                {formatTokens(proposal.stakesFor)}
-              </div>
-              <div className={css.forBar}>
-                <b>Pass</b>
-                <span style={{width: passWidth + "%"}}></span>
-              </div>
-            </div>
-            <div className="clearfix">
-              <div className={css.stakesAgainst}>
-                <img src="/assets/images/Icon/x-small-line.svg"/>
-                {formatTokens(proposal.stakesAgainst)}
-              </div>
-              <div className={css.againstBar}>
-                <b>Fail</b>
-                <span style={{width: failWidth + "%"}}></span>
-              </div>
-            </div>
-          </div>
-
           <div className={css.enablePredictions}>
             <button onClick={this.showApprovalModal}>Enable Predicting</button>
           </div>
@@ -274,114 +239,27 @@ class PredictionBox extends React.Component<IProps, IState> {
           /> : ""
         }
 
-        <div>
-          <div className={css.statusTitle}>
-            { this.props.detailView ?
-              <div className={css.stakeControls}>
-                <h3>Predictions</h3>
-                {
-                  stakingEnabled
-                  ? (
-                    tip(VoteOptions.No) !== "" ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                        {passButton}
-                      </Tooltip> :
-                      passButton
-                    )
-                  : " "
-                }
-                {
-                  stakingEnabled
-                  ? (
-                      tip(VoteOptions.Yes) !== "" ?
-                        <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                          {failButton}
-                        </Tooltip> :
-                        failButton
-                    )
-                  :
-                  <span className={css.disabledPredictions}>
-                     Predictions are disabled
-                  </span>
-                }
-              </div>
-              : " "
-            }
-          </div>
-
-          <div className={css.stakes}>
-            <div className="clearfix">
-              <div className={css.stakesFor}>
-                <img className={css.defaultIcon} src="/assets/images/Icon/v-small-line.svg"/>
-                <img className={css.detailIcon} src="/assets/images/Icon/v-small.svg"/>
-                {formatTokens(proposal.stakesFor)}
-              </div>
-              <div className={css.forBar}>
-                <b>Pass</b>
-                <span style={{width: passWidth + "%"}}></span>
-              </div>
-            </div>
-            <div className="clearfix">
-              <div className={css.stakesAgainst}>
-                <img className={css.defaultIcon} src="/assets/images/Icon/x-small-line.svg"/>
-                <img className={css.detailIcon} src="/assets/images/Icon/x-small.svg"/>
-                {formatTokens(proposal.stakesAgainst)}
-              </div>
-              <div className={css.againstBar}>
-                <b>Fail</b>
-                <span style={{width: failWidth + "%"}}></span>
-              </div>
-            </div>
-          </div>
-
-          <div className={css.stakeControls}>
-            {
-              proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
-                <span className={css.boostedAmount}>
-                  <b>
-                    <img src="/assets/images/Icon/Boost-slate.svg" />
-                    {formatTokens(proposal.upstakeNeededToPreBoost, "GEN")} to boost
-                  </b>
-                </span>
-              : proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.gt(new BN(0)) ?
-                <span className={css.boostedAmount}>
-                  <b>
-                    <img src="/assets/images/Icon/Boost-slate.svg" />
-                    {formatTokens(proposal.downStakeNeededToQueue, "GEN")} to un-boost
-                  </b>
-                </span>
-              : ""
-            }
-
-            { !this.props.detailView ?
-              <div className={css.centered}>
-                {
-                  stakingEnabled
-                  ? (
-                    tip(VoteOptions.No) !== "" ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                        {passButton}
-                      </Tooltip> :
-                      passButton
-                    )
-                  :
-                  <span className={css.disabledPredictions}>Predictions are disabled</span>
-                }
-                {
-                  stakingEnabled
-                  ? (
-                      tip(VoteOptions.Yes) !== "" ?
-                        <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                          {failButton}
-                        </Tooltip> :
-                        failButton
-                    )
-                  : " "
-                }
-              </div>
-              : " "
-            }
-          </div>
+        <div className={css.stakeControls}>
+          { stakingEnabled
+            ? <span>
+              {
+              tip(VoteOptions.No) !== "" ?
+                <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                  {passButton}
+                </Tooltip> :
+                passButton
+              }
+              {tip(VoteOptions.Yes) !== "" ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                    {failButton}
+                  </Tooltip> :
+                  failButton
+              }
+            </span>
+            : <span className={css.disabledPredictions}>
+               Predictions are disabled
+            </span>
+          }
         </div>
       </div>
     );

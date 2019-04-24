@@ -1,3 +1,4 @@
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import * as React from "react";
 import { IDAOState, IProposalStage, IProposalState, } from "@daostack/client";
@@ -9,15 +10,17 @@ interface IProps {
   dao: IDAOState;
   proposal: IProposalState;
   size: number;
+  newVotesAgainst?: BN;
+  newVotesFor?: BN;
 }
 
 export default class VoteGraph extends React.Component<IProps, null> {
   public render() {
-    const { dao, proposal, size } = this.props;
+    const { dao, newVotesAgainst, newVotesFor, proposal, size } = this.props;
 
     const totalReputationSupply = Util.fromWei(dao.reputationTotalSupply);
-    const votesFor = Util.fromWei(proposal.votesFor);
-    const votesAgainst = Util.fromWei(proposal.votesAgainst);
+    const votesFor = Util.fromWei(proposal.votesFor.add(newVotesFor || new BN(0)));
+    const votesAgainst = Util.fromWei(proposal.votesAgainst.add(newVotesAgainst || new BN(0)));
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, +(votesFor / totalReputationSupply * 100).toFixed(2)) : 0;

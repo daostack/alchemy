@@ -69,8 +69,8 @@ button.disabled {
 	}
 
 	h3 {
-		font-size: $body;
-		margin: 4px 10px 10px 11px;
+		font-size: 28px;
+		margin: 4px 10px 10px 0px;
 	}
 
 	.closedTime {
@@ -128,8 +128,7 @@ button.disabled {
 	}
 }
 
-/* TODO: how much of this goes into votebuttons? */
-.voteControls {
+.voteButtons {
 	float: right;
   top: 13px;
   right: 10px;
@@ -147,6 +146,28 @@ button.disabled {
     right: 40px;
     position: relative;
   }
+}
+
+.predictions {
+  padding-bottom: 12px;
+  width: 100%;
+  line-height: 20px;
+  position: relative;
+  background-color: white;
+  border-right: 1px solid #d7e1ed;
+  border-radius: 0 15px 15px 15px;
+  margin: 0 0 20px 20px;
+
+  .predictionStatus {
+  	padding-top: 70px;
+	}
+}
+
+.stakeButtons {
+  float: right;
+  top: 9px;
+  right: 10px;
+  position: relative;
 }
 
 .timer {
@@ -168,7 +189,7 @@ button.disabled {
 	text-align: left;
 	font-size: 12px;
 	position: relative;
-	top: 0;
+	top: 20px;
 	right: 0;
 
 	button {
@@ -181,20 +202,6 @@ button.disabled {
 		border: none;
 		transition: all .25s ease;
 	  margin: 0;
-	}
-
-	.executeProposal, .boostProposal {
-		display: inline-block;
-		position: absolute;
-		top: 10px;
-		right: 10px;
-		width: 20px;
-		overflow: hidden;
-
-		span {
-			display: inline-block;
-			padding-left: 6px;
-		}
 	}
 
 	.executeProposal {
@@ -256,16 +263,6 @@ button.disabled {
 	margin-top: 15px;
 	flex-grow: 1;
 	min-width: 350px;
-}
-
-.proposalLabel {
-	position: absolute;
-	top: -26px;
-	font-size: 12px;
-	font-weight: normal;
-	color: rgba(115, 160, 216, 1.000);
-	background-color: $white;
-	padding: 5px;
 }
 
 .createdBy {

@@ -1,5 +1,5 @@
 .wrapper {
-  display: block;
+  background-color: white;
   width: 100%;
   margin: 0 auto 3px auto;
   border-radius: 3px;
@@ -13,10 +13,10 @@
 
 .endDate {
   width: 50px;
-    font-size: 13px;
-    color: rgba(154, 169, 181, 1.000);
-    padding-top: 15px;
-    text-align: center;
+  font-size: 13px;
+  color: rgba(154, 169, 181, 1.000);
+  padding-top: 15px;
+  text-align: center;
 }
 
 .title {
@@ -58,10 +58,10 @@
     margin-top: -3px;
 
     img {
-        width: 15px;
-        position: relative;
-        top: 4px;
-        margin-right: 5px;
+      width: 15px;
+      position: relative;
+      top: 4px;
+      margin-right: 5px;
     }
   }
 
@@ -78,6 +78,7 @@
 
 .predictions, .votes, .myActions {
   width: 100px;
+
   .myVote, .myStake, .passVote, .failVote, .forStake, .againstStake {
     display: none;
   }
@@ -86,7 +87,7 @@
 .myActions.iVoted .myVote, .myActions.iStaked .myStake {
   display: block;
   padding-bottom: 5px;
-    text-align: left;
+  text-align: left;
 }
 
 .myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
@@ -115,19 +116,3 @@
     color: rgba(154, 169, 181, 1.000);
   }
 }
-
-// .historyView .voteStatus {
-//   display: none;
-// }
-
-// .historyView {
-//   font-size: 13px;
-// }
-
-
-// .historyView.voteBox {
-//   width: auto;
-//   border-left: none;
-//   float: none;
-//   border-right: none;
-// }

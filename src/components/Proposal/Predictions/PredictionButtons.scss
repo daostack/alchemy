@@ -1,27 +1,4 @@
-.centered {
-  text-align: center;
-  padding-bottom: 13px;
-}
-
-// .predictions .boostedAmount, .predictions .centered {
-//   opacity: 0;
-//   transition: all .25s ease;
-// }
-
-// .predictions .boostedAmount, .predictions .centered {
-//   opacity: 1;
-// }
-
-// .predictions h3 {
-//   display: none;
-// }
-
 .predictions {
-  position: relative;
-  margin-left: -1px;
-  float: right;
-  width: 50%;
-
   .stakesFor span, .stakesAgainst span {
     width: 50px;
   }
@@ -44,19 +21,10 @@
     }
   }
 
-  span.disabledPredictions {
+  .disabledPredictions {
     font-size: 11px;
     color: rgba(154, 169, 181, 1.000);
-    padding-top: 24px;
-  }
-
-  .boostedAmount {
-    display: block;
-    height: 18px;
-    min-height: 8px;
-    font-size: 11px;
-    text-align: center;
-    padding-top: 0px;
+    padding-top: 18px;
   }
 
   button {
@@ -181,51 +149,8 @@
   border-radius: 0 10px 10px 0;
 }
 
-.detailView .failButton, .detailView .passButton {
-    position: relative;
-    top: 1px;
-}
-
-.detailView .passButton {
-    position: relative;
-    top: 0px;
-}
-
-.detailView h3 {
-  display: block;
-  color: rgba(104, 155, 214, 1.000);
-  width: 100%;
-  position: absolute;
-  top: 0;
-
-  span {
-    padding: 10px;
-    font-size: 21px;
-  }
-}
-
 .predictions.unconfirmedPrediction {
   .loading { display: block; }
-}
-
-.isPassing .stakes .forBar {
-  span {
-    background-color: rgba(0, 190, 144, 1.000);
-  }
-}
-
-.isFailing .stakes .againstBar {
-  span {
-    background-color: rgba(246, 80, 80, 1.000);
-  }
-}
-
-.detailView.predictions {
-  float: none;
-  width: auto;
-  background-color: $white;
-  border-radius: 0 15px 15px 15px;
-  margin: 0 0 20px 20px;
 }
 
 .enablePredictions {
@@ -250,18 +175,54 @@
   }
 }
 
-.detailView .enablePredictions {
-  display: block;
-  width: 100%;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  text-align: right;
+.detailView {
+  .failButton {
+    position: relative;
+    top: 1px;
+  }
 
-  button {
-    display: inline-block;
+  .passButton {
+    position: relative;
+    top: 0px;
+  }
+
+  h3 {
+    display: block;
+    color: rgba(104, 155, 214, 1.000);
+    width: 100%;
+    position: absolute;
+    top: 0;
+
+    span {
+      padding: 10px;
+      font-size: 21px;
+    }
+  }
+
+  .predictions {
+    background-color: $white;
+    border-radius: 0 15px 15px 15px;
+    margin: 0 0 20px 20px;
+  }
+
+  .enablePredictions {
+    display: block;
+    width: 100%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-align: right;
+
+    button {
+      display: inline-block;
+    }
+  }
+
+  .disabledPredictions {
+    padding-top: 0px;
   }
 }
+/* EO Detail View */
 
 .historyView.predictions {
   span {
@@ -271,85 +232,9 @@
   }
 }
 
-.historyView .stakes {
-  top: 15px;
-
-  .stakesAgainst, .stakesFor {
-    color: rgba(154, 169, 181, 1.000);
-    font-weight: normal;
-  }
-
-  .forBar, .againstBar {
-    display: none;
-  }
-}
-
-.stakes {
-  position: relative;
-  top: 13px;
-  font-size: 12px;
-  width: 83%;
-  margin-top: -3px;
-  left: 50%;
-  transform: translate(-50%,0);
-
-  img {
-    position: relative;
-    top: 3px;
-    margin-right: 5px;
-  }
-
-  .stakesFor {
-    margin-bottom: 3px;
-  }
-
-  .stakesFor, .forBar, .stakesAgainst, .againstBar {
-    float: left;
-    font-weight: bold;
-    color: rgba(104, 154, 214, 1.000);
-  }
-
-  .forBar, .againstBar {
-    height: 18px;
-    width: 55px;
-    position: relative;
-
-    b {
-      font-weight: normal;
-      font-size: 10px;
-      display: inline-block;
-      color: rgba(154, 169, 181, 1.000);
-      margin-left: 5px;
-    }
-
-    span {
-      display: block;
-      position: absolute;
-      width: 100%;
-      bottom: 0;
-      margin-left: 5px;
-      height: 2px;
-      background-color: rgba(208, 214, 220, 1.000);
-    }
-  }
-}
-
-.stakes .defaultIcon {
-  display: inline-block;
-}
-
-.stakes .detailIcon {
-  display: none;
-}
-
-.statusTitle .stakeControls {
-  position: absolute;
-  right: 10px;
-  top: -2px;
-}
-
 .stakeControls {
-  padding-top: 24px;
+  position: relative;
+  text-align: center;
 }
 
 @keyframes pendingPassPrediction {
