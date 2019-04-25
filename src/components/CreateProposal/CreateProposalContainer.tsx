@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { checkNetworkAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
-import { Field, Formik, FormikProps } from "formik";
+import { ErrorMessage, Field, Formik, Form, FormikProps } from "formik";
 import * as H from "history";
 import { default as Util } from "lib/util";
 import * as React from "react";
@@ -99,6 +99,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   public render() {
     const {  daoAvatarAddress } = this.props;
     const arc = getArc();
+
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
@@ -110,6 +111,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
           //   .filter((proposal) => !proposalEnded(proposal))
           //   .map((proposal) => proposal.description);
           const proposalDescriptions: string[] = [];
+
           return (
             <div className={css.createProposalWrapper}>
               <h2>
@@ -183,11 +185,11 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   setFieldTouched,
                   setFieldValue
                 }: FormikProps<FormValues>) =>
-                  <form onSubmit={handleSubmit} noValidate>
+                  <Form noValidate>
 
                     <label htmlFor="titleInput">
                       Title
-                      {touched.title && errors.title && <span className={css.errorMessage}>{errors.title}</span>}
+                      <ErrorMessage name='title'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       <div className={css.requiredMarker}>*</div>
                     </label>
                     <Field
@@ -204,7 +206,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                       Description
                       <div className={css.requiredMarker}>*</div>
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      {touched.description && errors.description && <span className={css.errorMessage}>{errors.description}</span>}
+                      <ErrorMessage name='description'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       component="textarea"
@@ -216,7 +218,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
                     <label htmlFor="urlInput">
                       URL
-                      {touched.url && errors.url && <span className={css.errorMessage}>{errors.url}</span>}
+                      <ErrorMessage name='url'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       id="urlInput"
@@ -231,7 +233,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                       <div>
                         <label htmlFor="beneficiary">
                           Recipient
-                          {touched.beneficiary && errors.beneficiary && <span className={css.errorMessage}>{errors.beneficiary}</span>}
+                          <ErrorMessage name='beneficiary'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           <div className={css.requiredMarker}>*</div>
                         </label>
                         <UserSearchField
@@ -245,7 +247,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                       <div className={css.reward}>
                         <label htmlFor="ethRewardInput">
                           ETH Reward
-                          {touched.ethReward && errors.ethReward && <span className={css.errorMessage}>{errors.ethReward}</span>}
+                          <ErrorMessage name='ethReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="ethRewardInput"
@@ -261,7 +263,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                       <div className={css.reward}>
                         <label htmlFor="reputationRewardInput">
                           Reputation Reward
-                          {touched.reputationReward && errors.reputationReward && <span className={css.errorMessage}>{errors.reputationReward}</span>}
+                          <ErrorMessage name='reputationReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="reputationRewardInput"
@@ -277,7 +279,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                         <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                         <label htmlFor="externalRewardInput">
                           External Token Reward
-                          {touched.externalTokenReward && errors.externalTokenReward && <span className={css.errorMessage}>{errors.externalTokenReward}</span>}
+                          <ErrorMessage name='externalTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="externalTokenRewardInput"
@@ -301,7 +303,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                       <div className={css.reward}>
                         <label htmlFor="nativeTokenRewardInput">
                           DAO token ({dao.tokenSymbol}) Reward
-                          {touched.nativeTokenReward && errors.nativeTokenReward && <span className={css.errorMessage}>{errors.nativeTokenReward}</span>}
+                          <ErrorMessage name='nativeTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="nativeTokenRewardInput"
@@ -326,7 +328,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                         Submit proposal
                       </button>
                     </div>
-                  </form>
+                  </Form>
                 }
               />
 
