@@ -116,18 +116,23 @@ button.disabled {
 }
 
 .altStyle {
+  .castVote {
+    text-align: left;
+  }
+
   .castVote button {
     height: 30px;
     line-height: 30px;
     width: auto;
-    margin-right: 1px;
+    margin-right: 5px;
+    border-radius: 30px;
     background: #0071ff;
+    padding: 0 15px;
 
     span {
       font-weight: bold;
       font-size: 13px;
       display: inline-block;
-      margin-right: 30px;
       color: white;
     }
   }
