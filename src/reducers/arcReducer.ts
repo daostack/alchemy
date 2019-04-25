@@ -1,7 +1,7 @@
 import * as update from "immutability-helper";
 import * as moment from "moment";
 
-import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
+import { RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
 import { IProposalOutcome, IProposalStage, IProposalState as IProposalStateFromDaoStackClient } from "@daostack/client";
@@ -248,7 +248,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_VOTE: {
       const { meta, sequence, payload } = action as VoteAction;
-      const { avatarAddress, proposalId, voteOption, voterAddress } = meta;
+      const { avatarAddress, proposalId, voterAddress } = meta;
       const voteKey = `${proposalId}-${voterAddress}`;
       const accountKey = `${voterAddress}-${avatarAddress}`;
 
@@ -292,7 +292,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_STAKE: {
       const { meta, sequence, payload } = action as StakeAction;
-      const { avatarAddress, stakerAddress, proposalId, prediction, stakeAmount } = meta;
+      const { avatarAddress, stakerAddress, proposalId } = meta;
       const stakeKey = `${proposalId}-${stakerAddress}`;
       const accountKey = `${stakerAddress}-${avatarAddress}`;
 
@@ -338,7 +338,7 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Success: {
-          const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
+          const { currentAccount, beneficiary, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
           // Update beneficiary reputation
           state = update(state, {

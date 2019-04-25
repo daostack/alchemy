@@ -83,8 +83,6 @@ export async function checkNetwork() {
   const web3: any = getArc().web3;
   const web3Provider = web3.currentProvider;
   if (web3Provider && web3Provider.isMetaMask) {
-    // we are interacting with Metamask, let's just use window.ethereum to interact with MM
-    const ethereum = (<any> window).ethereum;
     const network = await web3.eth.net.getNetworkType();
     const networkName = Util.networkName(network);
     let expectedNetworkName;

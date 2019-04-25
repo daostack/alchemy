@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const downV: string;
 export const createProposalWrapper: string;
 export const editIcon: string;

@@ -63,10 +63,6 @@ class AppContainer extends React.Component<IProps, IState> {
     this.state = { notificationsMinimized: false };
   }
 
-  public async componentWillMount() {
-    const { cookies, history } = this.props;
-  }
-
   public async componentDidMount() {
     // get the Arc object as early the lifetime of the app
     const arc = getArc();

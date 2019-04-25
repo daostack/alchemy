@@ -20,7 +20,7 @@ class DaoListContainer extends React.Component<IProps, null> {
     });
     return (
       <div className={css.wrapper}>
-        <div className={css.daoListHeader + " " + css.clearfix}>
+        <div className={css.daoListHeader + " clearfix"}>
           <h2 data-test-id="header-all-daos">All DAOs</h2>
         </div>
         {daoNodes ? daoNodes : "None"}

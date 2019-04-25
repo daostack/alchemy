@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const stakeFail: string;
 export const stakePass: string;
 export const voteDown: string;

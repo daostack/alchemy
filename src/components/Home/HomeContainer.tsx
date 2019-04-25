@@ -17,7 +17,7 @@ class HomeContainer extends React.Component<null, null> {
               <Link to="/daos" data-test-id="link-to-alchemy">View Alchemy</Link>
           </div>
         </div>
-        <div className={css.aboutAlchemy + " " + css.clearfix}>
+        <div className={css.aboutAlchemy + " clearfix"}>
           <div className={css.column}>
             <img src="/assets/images/Home/AlphaGenesisDao.png"/>
           </div>

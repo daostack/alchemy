@@ -5,7 +5,7 @@ import * as React from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
-import ProposalContainer from "../Proposal/ProposalContainer";
+import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
 const Fade = ({ children, ...props }: any) => (
@@ -37,8 +37,7 @@ const SchemeProposalsContainer = (props: {
     <TransitionGroup className="queued-proposals-list">
       { proposalsQueued.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
-          }
+          <ProposalCardContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -48,7 +47,7 @@ const SchemeProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao}  currentAccountAddress={currentAccountAddress}/>
+          <ProposalCardContainer proposalId={proposal.id} dao={dao}  currentAccountAddress={currentAccountAddress}/>
         </Fade>
       ))}
     </TransitionGroup>
@@ -58,7 +57,7 @@ const SchemeProposalsContainer = (props: {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsBoosted.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalCardContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>

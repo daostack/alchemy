@@ -1,6 +1,4 @@
-import BN = require("bn.js");
 import * as Redux from "redux";
-import { first } from "rxjs/operators";
 
 import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";

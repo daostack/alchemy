@@ -6,7 +6,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { default as Util, formatTokens } from "lib/util";
+import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -19,7 +19,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import { isStakePending } from "selectors/operations";
 
-import * as css from "./Proposal.scss";
+import * as css from "./PredictionButtons.scss";
 
 interface IState {
   pendingPrediction: number;
@@ -35,7 +35,6 @@ interface IContainerProps {
   detailView?: boolean;
   expired?: boolean;
   historyView?: boolean;
-  threshold: number;
 }
 
 interface IDispatchProps {
@@ -112,12 +111,10 @@ class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       detailView,
-      expired,
       historyView,
       proposal,
       isPredictingFail,
       isPredictingPass,
-      threshold,
       stakeProposal,
       stakesOfCurrentUser
     } = this.props;
@@ -167,28 +164,11 @@ class PredictionBox extends React.Component<IProps, IState> {
       );
     }
 
-    // round second decimal up
-    const stakesFor = Util.fromWei(proposal.stakesFor);
-    const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
-    const isPassing = stakesFor >= stakesAgainst;
-    const isFailing = stakesAgainst >= stakesFor;
-    const maxWidth = Math.max(stakesFor, stakesAgainst);
-    const passWidth = stakesFor <= 0.0001 ? 0 : Math.max(stakesFor / maxWidth * 100, 3);
-    const failWidth = stakesAgainst <= 0.0001 ? 0 : Math.max(stakesAgainst / maxWidth * 100, 3);
-
     const wrapperClass = classNames({
+      [css.predictions] : true,
       [css.detailView] : detailView,
       [css.historyView] : historyView,
-      [css.isPassing] : isPassing,
-      [css.isFailing] : isFailing,
-      [css.predictions] : true,
       [css.unconfirmedPrediction] : isPredicting,
-    });
-    const stakeUpClass = classNames({
-      [css.predicted]: currentAccountPrediction === VoteOptions.Yes,
-    });
-    const stakeDownClass = classNames({
-      [css.predicted]: currentAccountPrediction === VoteOptions.No,
     });
 
     const stakingEnabled = proposal.stage === IProposalStage.Queued ||
@@ -197,16 +177,6 @@ class PredictionBox extends React.Component<IProps, IState> {
     const hasGens = currentAccountGens.gt(new BN(0));
     const disableStakePass = !hasGens || currentAccountPrediction === VoteOptions.No;
     const disableStakeFail = !hasGens || currentAccountPrediction === VoteOptions.Yes;
-
-    const passPrediction = classNames({
-      [css.passPrediction]: true,
-      [css.disabled]: disableStakePass
-    });
-
-    const failPrediction = classNames({
-      [css.failPrediction]: true,
-      [css.disabled]: disableStakeFail
-    });
 
     const passButtonClass = classNames({
       [css.pendingPrediction]: isPredictingPass,
@@ -247,30 +217,6 @@ class PredictionBox extends React.Component<IProps, IState> {
     if (currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
-          <h3><span>Predictions</span></h3>
-          <div className={css.stakes}>
-            <div className={css.clearfix}>
-              <div className={css.stakesFor}>
-                <img src="/assets/images/Icon/v-small-line.svg"/>
-                {formatTokens(proposal.stakesFor)}
-              </div>
-              <div className={css.forBar}>
-                <b>Pass</b>
-                <span style={{width: passWidth + "%"}}></span>
-              </div>
-            </div>
-            <div className={css.clearfix}>
-              <div className={css.stakesAgainst}>
-                <img src="/assets/images/Icon/x-small-line.svg"/>
-                {formatTokens(proposal.stakesAgainst)}
-              </div>
-              <div className={css.againstBar}>
-                <b>Fail</b>
-                <span style={{width: failWidth + "%"}}></span>
-              </div>
-            </div>
-          </div>
-
           <div className={css.enablePredictions}>
             <button onClick={this.showApprovalModal}>Enable Predicting</button>
           </div>
@@ -293,111 +239,26 @@ class PredictionBox extends React.Component<IProps, IState> {
           /> : ""
         }
 
-        <div>
-          <div className={css.statusTitle}>
-            <h3>Predictions</h3>
-            { this.props.detailView ?
-              <div className={css.stakeControls}>
-                {
-                  stakingEnabled
-                  ? (
-                    tip(VoteOptions.No) !== "" ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                        {passButton}
-                      </Tooltip> :
-                      passButton
-                    )
-                  : " "
-                }
-                {
-                  stakingEnabled
-                  ? (
-                      tip(VoteOptions.Yes) !== "" ?
-                        <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                          {failButton}
-                        </Tooltip> :
-                        failButton
-                    )
-                  :
-                  <span className={css.disabledPredictions}>
-                     Predictions are disabled
-                  </span>
-                }
-              </div>
-              : " "
-            }
-          </div>
-          <div className={css.stakes}>
-            <div className={css.clearfix}>
-              <div className={css.stakesFor}>
-                <img className={css.defaultIcon} src="/assets/images/Icon/v-small-line.svg"/>
-                <img className={css.detailIcon} src="/assets/images/Icon/v-small.svg"/>
-                {formatTokens(proposal.stakesFor)}
-              </div>
-              <div className={css.forBar}>
-                <b>Pass</b>
-                <span style={{width: passWidth + "%"}}></span>
-              </div>
-            </div>
-            <div className={css.clearfix}>
-              <div className={css.stakesAgainst}>
-                <img className={css.defaultIcon} src="/assets/images/Icon/x-small-line.svg"/>
-                <img className={css.detailIcon} src="/assets/images/Icon/x-small.svg"/>
-                {formatTokens(proposal.stakesAgainst)}
-              </div>
-              <div className={css.againstBar}>
-                <b>Fail</b>
-                <span style={{width: failWidth + "%"}}></span>
-              </div>
-            </div>
-          </div>
-          <span className={css.boostedAmount}>
-            {
-              proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
-                <span>
-                  <b>
-                    <img src="/assets/images/Icon/Boost-slate.svg" />
-                    {formatTokens(proposal.upstakeNeededToPreBoost, "GEN")} to boost
-                  </b>
-                </span>
-              : proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.gt(new BN(0)) ?
-                <span>
-                  <b>
-                    <img src="/assets/images/Icon/Boost-slate.svg" />
-                    {formatTokens(proposal.downStakeNeededToQueue, "GEN")} to un-boost
-                  </b>
-                </span>
-              : ""
-            }
-
-          </span>
-          { !this.props.detailView ?
-            <div className={css.centered}>
+        <div className={css.stakeControls}>
+          { stakingEnabled
+            ? <span>
               {
-                stakingEnabled
-                ? (
-                  tip(VoteOptions.No) !== "" ?
-                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                      {passButton}
-                    </Tooltip> :
-                    passButton
-                  )
-                :
-                <span className={css.disabledPredictions}>Predictions are disabled</span>
+              tip(VoteOptions.No) !== "" ?
+                <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                  {passButton}
+                </Tooltip> :
+                passButton
               }
-              {
-                stakingEnabled
-                ? (
-                    tip(VoteOptions.Yes) !== "" ?
-                      <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                        {failButton}
-                      </Tooltip> :
-                      failButton
-                  )
-                : " "
+              {tip(VoteOptions.Yes) !== "" ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                    {failButton}
+                  </Tooltip> :
+                  failButton
               }
-            </div>
-            : " "
+            </span>
+            : <span className={css.disabledPredictions}>
+               Predictions are disabled
+            </span>
           }
         </div>
       </div>

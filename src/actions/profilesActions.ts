@@ -74,20 +74,14 @@ export function updateProfile(accountAddress: string, name: string, description:
       meta: { accountAddress }
     } as UpdateProfileAction);
 
-    let serverAccount: any = false;
     try {
-      const response = await axios.patch(process.env.API_URL + "/api/accounts", {
+      await axios.patch(process.env.API_URL + "/api/accounts", {
         ethereumAccountAddress: accountAddress,
         name,
         description,
         timestamp,
         signature
       });
-
-      if (response.data.length > 0) {
-        serverAccount = response.data[0];
-      }
-
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
       console.error("Error saving profile to server: ", errorMsg);

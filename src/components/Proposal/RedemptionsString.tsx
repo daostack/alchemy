@@ -3,7 +3,6 @@ import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
-import * as css from "./Proposal.scss";
 
 interface IProps {
   currentAccountAddress: Address;
@@ -59,7 +58,16 @@ export default class RedemptionsString extends React.Component<IProps, null> {
         <ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
-    return <span className={css.redemptionString}>
+    const redemptionsStyle = {
+      position: "absolute" as "absolute",
+      top: "12px",
+      width: "100%",
+      right: "85px",
+      display: "block",
+      color: "rgba(49, 120, 202, 1.000)"
+    };
+
+    return <span style={redemptionsStyle}>
     {rewardComponents.reduce((acc: any, v: any) => {
       return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
     }, null)}

@@ -8,7 +8,7 @@ import { formatTokens } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
-import ProposalContainer from "../Proposal/ProposalContainer";
+import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
 interface IProps {
@@ -23,7 +23,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const { dao, proposals, currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalCardContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,

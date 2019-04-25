@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const homeWrapper: string;
 export const topTriangle: string;
 export const leftTriangle: string;
