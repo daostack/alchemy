@@ -1,10 +1,10 @@
-import { IDAOState, IMemberState, IProposalStage, IProposalState  } from "@daostack/client";
+import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
 import { checkNetworkAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import TransferDetails from "components/Proposal/TransferDetails";
-import VoteGraph from "components/Proposal/VoteGraph";
+import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Util from "lib/util";
 import { humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
@@ -82,7 +82,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     const { stakeAmount } = this.state;
 
     let icon, transactionType, rulesHeader, rules, actionTypeClass;
-    let accountGens, buyGensClass, reputationFor, reputationAgainst, yesPercentage, noPercentage;
+    let accountGens, buyGensClass, reputationFor, reputationAgainst;
 
     const modalWindowClass = classNames({
       [css.modalWindow]: true,
@@ -92,12 +92,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     if (actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp) {
       reputationFor = proposal.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
       reputationAgainst = proposal.votesAgainst.add(actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
-
-      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
-
-      // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-      yesPercentage = totalReputation && reputationFor.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationFor) / totalReputation * 100)) : 0;
-      noPercentage = totalReputation && reputationAgainst.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationAgainst) / totalReputation * 100)) : 0;
     }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
@@ -232,7 +226,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
         <div className={css.metaMaskModal}>
           <div className={css.bg} onClick={this.props.closeAction}></div>
           <div className={modalWindowClass}>
-            <div className={css.transactionHeader + " " + css.clearfix + " " + actionTypeClass}>
+            <div className={css.transactionHeader + " clearfix " + actionTypeClass}>
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
@@ -274,7 +268,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               </div>
               { /******* Staking form ******  **/
                 actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?
-                <div className={css.stakingInfo + " " + css.clearfix}>
+                <div className={css.stakingInfo + " clearfix"}>
                   <div className={css.stakingForm}>
                     <span className={css.yourStakeTitle}>Your stake</span>
                     <div className={buyGensClass}>
@@ -282,7 +276,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                         You do not have enough GEN
                       </h4>
                     </div>
-                   <div className={css.formGroup + " " + css.clearfix}>
+                   <div className={css.formGroup + " clearfix"}>
                       <input
                         autoFocus={true}
                         type="number"
@@ -313,9 +307,15 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               {actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp ?
                 <div className={css.decisionGraph}>
                    <h3>State after your vote</h3>
-                   <div className={css.clearfix}>
+                   <div className="clearfix">
                      <div className={css.graphContainer}>
-                       <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod} />
+                       <VoteGraph
+                         dao={dao}
+                         newVotesAgainst={actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0)}
+                         newVotesFor={actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0)}
+                         proposal={proposal}
+                         size={90}
+                       />
                      </div>
                      <div className={css.graphInfo}>
                        <div>

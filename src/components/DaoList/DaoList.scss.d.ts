@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const wrapper: string;
 export const loading: string;
 export const daoInfoContainer: string;

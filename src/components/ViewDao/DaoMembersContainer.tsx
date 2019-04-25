@@ -40,7 +40,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
           const memberState = state.data;
           const profile = profiles[memberState.address];
           return (
-            <div className={css.member + " " + css.clearfix}
+            <div className={css.member + " clearfix"}
               key={"member_" + memberState.address}
               data-test-id={"member_" + memberState.address}>
               <AccountImage

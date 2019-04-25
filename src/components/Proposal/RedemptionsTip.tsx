@@ -9,7 +9,6 @@ interface IProps {
   beneficiaryHasRewards: boolean;
   currentAccountAddress: Address;
   dao: IDAOState;
-  executable: boolean;
   accountHasRewards: boolean;
   proposal: IProposalState;
   redeemable: boolean;
@@ -17,7 +16,7 @@ interface IProps {
 }
 
 export default (props: IProps) => {
-  const { proposal, currentAccountAddress, dao, executable, beneficiaryHasRewards, isRedeemPending, rewards } = props;
+  const { proposal, currentAccountAddress, dao, beneficiaryHasRewards, isRedeemPending, rewards } = props;
 
   const rewardComponents = [];
   for (const reward of rewards) {
@@ -63,7 +62,7 @@ export default (props: IProps) => {
   const hasReputationReward = !proposal.reputationReward.isZero();
 
   return <div>
-    {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
+    {(beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
           {(currentAccountAddress === proposal.beneficiary) ?

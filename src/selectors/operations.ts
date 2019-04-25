@@ -1,8 +1,7 @@
 import { VoteOptions } from "reducers/arcReducer";
 import { createSelector } from "reselect";
-import Util from "../lib/util";
 import { IRootState } from "../reducers";
-import { IOperation, IOperationsState, OperationStatus } from "../reducers/operations";
+import { IOperationsState, OperationStatus } from "../reducers/operations";
 
 const operations = (state: IRootState) => state.operations;
 

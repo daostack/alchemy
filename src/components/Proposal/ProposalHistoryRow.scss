@@ -1,0 +1,118 @@
+.wrapper {
+  background-color: white;
+  width: 100%;
+  margin: 0 auto 3px auto;
+  border-radius: 3px;
+  height: 65px;
+  display: flex;
+}
+
+.proposalCreator {
+  width: 170px;
+}
+
+.endDate {
+  width: 50px;
+  font-size: 13px;
+  color: rgba(154, 169, 181, 1.000);
+  padding-top: 15px;
+  text-align: center;
+}
+
+.title {
+  flex-grow: 1;
+  width: 250px;
+  padding: 15px;
+  font-size: 13px;
+  position: relative;
+  color: rgba(80, 97, 118, 1.000);
+
+  a {
+    color: rgba(80, 97, 118, 1.000);
+  }
+
+  a:visited {
+    color: rgba(80, 97, 118, 1.000);
+  }
+
+  div {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+  }
+}
+
+.closeReason {
+  width: 160px;
+  position: relative;
+
+  .decisionPassed, .decisionFailed {
+    display: none;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    margin-top: -3px;
+
+    img {
+      width: 15px;
+      position: relative;
+      top: 4px;
+      margin-right: 5px;
+    }
+  }
+
+  .decisionReason {
+    font-size: 13px;
+    color: rgba(154, 169, 181, 1.000);
+    padding-top: 3px;
+  }
+}
+
+.closeReason.decisionPassed .decisionPassed, .closeReason.decisionFailed .decisionFailed {
+  display: block;
+}
+
+.predictions, .votes, .myActions {
+  width: 100px;
+
+  .myVote, .myStake, .passVote, .failVote, .forStake, .againstStake {
+    display: none;
+  }
+}
+
+.myActions.iVoted .myVote, .myActions.iStaked .myStake {
+  display: block;
+  padding-bottom: 5px;
+  text-align: left;
+}
+
+.myActions.forStake .forStake, .myActions.againstStake .againstStake, .myActions.passVote .passVote, .myActions.failVote .failVote {
+  display: inline-block;
+  margin-left: 7px;
+  position: relative;
+  top: 3px;
+}
+
+.myActions {
+  font-size: 13px;
+  color: rgba(80, 97, 118, 1.000);
+  padding-top: 10px;
+  text-align: center;
+  width: 130px;
+}
+
+.voteControls {
+  button span {
+    font-weight: normal;
+    color: rgba(154, 169, 181, 1.000);
+  }
+
+  span {
+    font-weight: normal;
+    color: rgba(154, 169, 181, 1.000);
+  }
+}

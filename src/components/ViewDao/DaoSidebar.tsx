@@ -1,6 +1,7 @@
 import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
+import * as GeoPattern from "geopattern";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { formatTokens } from "lib/util";
 import * as React from "react";
@@ -19,12 +20,14 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
 
     const arc = getArc();
 
+    const bgPattern = GeoPattern.generate(dao.address + dao.name);
+
     return (
-      <div className={css.daoSidebar + " " + css.clearfix}>
+      <div className={css.daoSidebar + " clearfix"}>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address}>
-              <b className={css.daoIcon}></b>
+              <b className={css.daoIcon} style={{backgroundImage: bgPattern.toDataUrl()}}></b>
               <span>{dao.name}</span>
             </Link>
             <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>

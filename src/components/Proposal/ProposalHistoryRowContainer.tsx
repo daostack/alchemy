@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, IRewardState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, IStake, IVote } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { getArc } from "arc";
 import BN = require("bn.js");
@@ -14,17 +14,15 @@ import { IRootState } from "reducers";
 import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, of } from "rxjs";
-import PredictionBox from "./PredictionBox";
-import * as css from "./Proposal.scss";
-import VoteBox from "./VoteBox";
+import { combineLatest, of } from "rxjs";
+import PredictionGraph from "./Predictions/PredictionGraph";
+import VoteBreakdown from "./Voting/VoteBreakdown";
+
+import * as css from "./ProposalHistoryRow.scss";
 
 interface IStateProps {
-  beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountAddress: Address;
-  daoEthBalance: BN;
-  rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
   dao: IDAOState;
@@ -33,10 +31,8 @@ interface IStateProps {
 
 interface IContainerProps {
   dao: IDAOState;
-  daoEthBalance: BN;
   currentAccountAddress: Address;
   proposal: IProposalState;
-  rewardsForCurrentUser: IRewardState[];
   stakesOfCurrentUser: IStake[];
   votesOfCurrentUser: IVote[];
 }
@@ -46,13 +42,10 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const dao = ownProps.dao;
 
   return {
-    beneficiaryProfile: state.profiles[proposal.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccountAddress: ownProps.currentAccountAddress,
     dao,
-    daoEthBalance: ownProps.daoEthBalance,
     proposal,
-    rewardsForCurrentUser: ownProps.rewardsForCurrentUser,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
     votesOfCurrentUser: ownProps.votesOfCurrentUser
   };
@@ -74,7 +67,7 @@ interface IState {
   preRedeemModalOpen: boolean;
 }
 
-class ProposalContainer extends React.Component<IProps, IState> {
+class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -86,37 +79,17 @@ class ProposalContainer extends React.Component<IProps, IState> {
 
   public render() {
     const {
-      beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
       dao,
-      daoEthBalance,
       proposal,
-      rewardsForCurrentUser,
       stakesOfCurrentUser,
       votesOfCurrentUser,
     } = this.props;
 
-    // TODO: need to get the balance of the proposal.externalTokenAddress
-    const externalTokenBalance = dao.externalTokenBalance || new BN(0);
-
-    const beneficiaryHasRewards = (
-      !proposal.reputationReward.isZero() ||
-      proposal.nativeTokenReward.gt(new BN(0)) ||
-      (proposal.ethReward.gt(new BN(0)) && daoEthBalance.gte(proposal.ethReward)) ||
-      (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))
-    ) as boolean;
-
-    const accountHasRewards = rewardsForCurrentUser.length !== 0;
-
-    const redeemable = accountHasRewards || beneficiaryHasRewards;
-
     const proposalClass = classNames({
-      [css.proposal]: true,
-      [css.closedProposal]: true,
-      [css.failedProposal]: proposalFailed(proposal),
-      [css.passedProposal]: proposalPassed(proposal),
-      [css.redeemable]: redeemable
+      [css.wrapper]: true,
+      clearfix: true
     });
 
     let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
@@ -166,8 +139,13 @@ class ProposalContainer extends React.Component<IProps, IState> {
         break;
     }
 
+    const voteControls = classNames({
+      [css.voteControls]: true,
+      clearfix: true
+    });
+
     return (
-      <div className={proposalClass + " " + css.clearfix}>
+      <div className={proposalClass}>
         <div className={css.proposalCreator}>
           <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
           <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
@@ -179,23 +157,14 @@ class ProposalContainer extends React.Component<IProps, IState> {
           <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
         </div>
         <div className={css.votes}>
-          <VoteBox
-            isVotingNo={false}
-            isVotingYes={false}
-            currentVote={currentAccountVote}
-            currentAccountAddress={currentAccountAddress}
-            dao={dao}
-            proposal={proposal}
-            historyView={true}
-          />
+          <div className={voteControls}>
+            <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} />
+          </div>
         </div>
+
         <div className={css.predictions}>
-          <PredictionBox
-            beneficiaryProfile={beneficiaryProfile}
-            currentAccountAddress={this.props.currentAccountAddress}
-            dao={dao}
+          <PredictionGraph
             proposal={proposal}
-            threshold={0}
             historyView={true}
           />
         </div>
@@ -232,7 +201,7 @@ class ProposalContainer extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalContainer);
+export const ConnectedProposalHistoryRowContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRowContainer);
 
 export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
   const arc = getArc();
@@ -240,28 +209,23 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
 
   const observable = combineLatest(
     dao.proposal(props.proposalId).state(),
-    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
     props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
     props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
-    concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IRewardState[], IStake[], IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, IStake[], IVote[]]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal {props.proposalId.substr(0, 6)}...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
         const proposal = state.data[0];
-        const rewards = state.data[1];
-        const stakes = state.data[2];
-        const votes = state.data[3];
-        return <ConnectedProposalContainer
+        const stakes = state.data[1];
+        const votes = state.data[2];
+        return <ConnectedProposalHistoryRowContainer
           currentAccountAddress={props.currentAccountAddress}
           proposal={proposal}
           dao={props.dao}
-          daoEthBalance={state.data[4]}
-          rewardsForCurrentUser={rewards}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}
           />;

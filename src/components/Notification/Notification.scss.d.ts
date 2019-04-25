@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const pendingTransaction: string;
 export const pending: string;
 export const success: string;

@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const accountBalance: string;
 export const historyView: string;
 export const detailView: string;

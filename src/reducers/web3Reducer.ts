@@ -1,9 +1,3 @@
-import BN = require("bn.js");
-import Web3 = require("web3");
-
-import { AsyncActionSequence } from "actions/async";
-import { ApproveAction, ConnectAction } from "actions/web3Actions";
-
 export enum ActionTypes {
   WEB3_CONNECT = "WEB3_CONNECT",
   WEB3_SET_ACCOUNT = "WEB3_SET_ACCOUNT",

@@ -14,3 +14,9 @@
 	height: 100%;
 	color: $black;
 }
+
+:global(.clearfix:after) {
+  content: "";
+  display: table;
+  clear: both;
+}

@@ -1,9 +1,5 @@
 import classNames = require("classnames");
-import Util from "lib/util";
-import * as moment from "moment";
 import * as React from "react";
-import Linkify from "react-linkify";
-import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as css from "./Notification.scss";
 
 interface IProps {
@@ -18,7 +14,7 @@ export default class Notification extends React.Component<IProps, null> {
 
     const transactionClass = classNames({
       [css.pendingTransaction]: true,
-      [css.clearfix]: true,
+      clearfix: true,
       [css.pending]: true,
       [css.minimized]: true,
       [css.notificationMessage]: true,
