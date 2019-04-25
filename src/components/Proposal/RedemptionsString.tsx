@@ -34,18 +34,20 @@ export default class RedemptionsString extends React.Component<IProps, null> {
       }
     }
 
-    if (currentAccountAddress === proposal.beneficiary) {
-      if (proposal.ethReward.gt(zero)) {
-        rewardComponents.push(formatTokens(proposal.ethReward, "ETH"));
+    const contributionReward = proposal.contributionReward;
+
+    if (currentAccountAddress === contributionReward.beneficiary) {
+      if (contributionReward.ethReward.gt(zero)) {
+        rewardComponents.push(formatTokens(contributionReward.ethReward, "ETH"));
       }
-      if (proposal.externalTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(proposal.externalTokenReward, tokenSymbol(proposal.externalToken)));
+      if (contributionReward.externalTokenReward.gt(zero)) {
+        rewardComponents.push(formatTokens(contributionReward.externalTokenReward, tokenSymbol(contributionReward.externalToken)));
       }
-      if (proposal.nativeTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(proposal.nativeTokenReward, dao.tokenSymbol));
+      if (contributionReward.nativeTokenReward.gt(zero)) {
+        rewardComponents.push(formatTokens(contributionReward.nativeTokenReward, dao.tokenSymbol));
       }
-      if (!proposal.reputationReward.isZero()) {
-        reputation.add(proposal.reputationReward);
+      if (!contributionReward.reputationReward.isZero()) {
+        reputation.add(contributionReward.reputationReward);
       }
     }
 

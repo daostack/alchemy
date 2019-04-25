@@ -61,7 +61,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const dao = ownProps.dao;
 
   return {
-    beneficiaryProfile: state.profiles[proposal.beneficiary],
+    beneficiaryProfile: state.profiles[proposal.contributionReward.beneficiary],
     creatorProfile: state.profiles[proposal.proposer],
     currentAccountAddress: ownProps.currentAccountAddress,
     dao,
@@ -146,11 +146,13 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
     // TODO: should be the DAO balance of the proposal.externalToken
     const externalTokenBalance = dao.externalTokenBalance || new BN(0);
 
+    const contributionReward = proposal.contributionReward;
+
     const beneficiaryHasRewards = (
-      !proposal.reputationReward.isZero() ||
-      proposal.nativeTokenReward.gt(new BN(0)) ||
-      (proposal.ethReward.gt(new BN(0)) && daoEthBalance.gte(proposal.ethReward)) ||
-      (proposal.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(proposal.externalTokenReward))
+      !contributionReward.reputationReward.isZero() ||
+      contributionReward.nativeTokenReward.gt(new BN(0)) ||
+      (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
+      (contributionReward.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(contributionReward.externalTokenReward))
     ) as boolean;
 
     const accountHasRewards = rewardsForCurrentUser.length !== 0;

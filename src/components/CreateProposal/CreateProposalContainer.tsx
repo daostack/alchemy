@@ -1,7 +1,6 @@
-import { IDAOState, IExecutionState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalType } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkNetworkAndWarn, getArc } from "arc";
-import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { Field, Formik, FormikProps } from "formik";
@@ -13,61 +12,6 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IWeb3State } from "reducers/web3Reducer";
 import * as css from "./CreateProposal.scss";
-
-const emptyProposal: IProposalState = {
-  accountsWithUnclaimedRewards: [],
-  activationTime: 0,
-  beneficiary: null,
-  boostedAt: 0,
-  boostedVotePeriodLimit: 0,
-  createdAt: 0,
-  confidenceThreshold: 0,
-  dao: null,
-  daoBountyConst: 0, // TODO
-  description: "",
-  descriptionHash: "",
-  downStakeNeededToQueue: new BN(0),
-  ethReward: new BN(0),
-  executedAt: 0,
-  executionState: IExecutionState.None,
-  expiresInQueueAt: 0,
-  externalToken: null,
-  externalTokenReward: new BN(0),
-  nativeTokenReward: new BN(0),
-  id: null,
-  organizationId: null,
-  paramsHash: "",
-  periods: 1,
-  periodLength: 0, // TODO
-  preBoostedAt: 0,
-  preBoostedVotePeriodLimit: 0,
-  proposer: null,
-  proposingRepReward: new BN(0),
-  queuedVoteRequiredPercentage: 50, //TODO: need to rethink this whole emptyProposal thing...
-  queuedVotePeriodLimit: 0, // TODO: shouldnt have to think about this here
-  quietEndingPeriod: 0,
-  quietEndingPeriodBeganAt: 0,
-  reputationReward: new BN(0),
-  resolvedAt: 0,
-  stakesFor: new BN(0),
-  stakesAgainst: new BN(0),
-  stage: IProposalStage.Queued,
-  thresholdConst: new BN(0),
-  threshold: new BN(0),
-  totalRepWhenExecuted: new BN(0),
-  title: "",
-  upstakeNeededToPreBoost: new BN(0),
-  url: "",
-  votesFor: new BN(0),
-  votesAgainst: new BN(0),
-  votesCount: 0,
-  winningOutcome: IProposalOutcome.Fail,
-  votingMachine: null
-};
-
-interface IState {
-  proposalDetails: IProposalState;
-}
 
 interface IStateProps {
   currentAccount: string;
@@ -111,15 +55,11 @@ interface FormValues {
   [key: string]: any;
 }
 
-class CreateProposalContainer extends React.Component<IProps, IState> {
+class CreateProposalContainer extends React.Component<IProps, null> {
   private web3: any;
 
   constructor(props: IProps) {
     super(props);
-
-    this.state = {
-      proposalDetails: emptyProposal
-    };
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -131,20 +71,18 @@ class CreateProposalContainer extends React.Component<IProps, IState> {
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
     if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
 
+    if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
+
     const proposalValues = {...values,
+      type: IProposalType.ContributionReward,
       ethReward: Util.toWei(Number(values.ethReward)),
-      externalToken: values.externalToken,
       externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
       nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
       reputationReward: Util.toWei(Number(values.reputationReward))
     };
 
-    this.setState({
-      proposalDetails: { ...emptyProposal, ...proposalValues}
-    });
-    const { beneficiary, description, ethReward, externalToken, externalTokenReward, nativeTokenReward, reputationReward, title, url } = proposalValues;
     setSubmitting(false);
-    await this.props.createProposal(this.props.daoAvatarAddress, title, description, url, nativeTokenReward, reputationReward, ethReward, externalToken, externalTokenReward, beneficiary);
+    await this.props.createProposal(this.props.daoAvatarAddress, proposalValues);
   }
 
   public goBack(e: any) {

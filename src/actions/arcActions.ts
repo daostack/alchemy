@@ -1,13 +1,9 @@
-import { DAO, IProposalOutcome, ITransactionState, ITransactionUpdate } from "@daostack/client";
-import { AsyncActionSequence, IAsyncAction } from "actions/async";
+import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate } from "@daostack/client";
+import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
-import BN = require("bn.js");
 import Util from "lib/util";
 import { push } from "react-router-redux";
-import {
-  ActionTypes,
-  IRedemptionState,
-} from "reducers/arcReducer";
+import { IRedemptionState } from "reducers/arcReducer";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { Dispatch } from "redux";
@@ -16,49 +12,12 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-export function createProposal(
-  daoAvatarAddress: string,
-  title: string,
-  description: string,
-  url: string,
-  nativeTokenReward: BN,
-  reputationReward: BN,
-  ethReward: BN,
-  externalTokenAddress: string,
-  externalTokenReward: BN,
-  beneficiaryAddress: string
-): ThunkAction<any, IRootState, null> {
+export function createProposal(daoAvatarAddress: string, proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const meta = {
-      avatarAddress: daoAvatarAddress,
-    };
-
     try {
       const arc = getArc();
 
-      if (!beneficiaryAddress.startsWith("0x")) { beneficiaryAddress = "0x" + beneficiaryAddress; }
-      beneficiaryAddress = beneficiaryAddress.toLowerCase();
-
-      dispatch({
-        type: ActionTypes.ARC_CREATE_PROPOSAL,
-        sequence: AsyncActionSequence.Pending,
-        meta,
-      } as CreateProposalAction);
-
       const dao = new DAO(daoAvatarAddress, arc);
-      const proposalOptions = {
-        beneficiary: beneficiaryAddress,
-        description,
-        nativeTokenReward,
-        reputationReward,
-        ethReward,
-        externalTokenReward,
-        externalTokenAddress,
-        periodLength: 0, // TODO: check what the default "periodLength" should be here
-        periods: 1, // "periodLength 0 requires periods to be 1"
-        title,
-        url
-      };
 
       // TODO: use the Option stages of the client lib to communicate about the progress
       const observer = operationNotifierObserver(dispatch, "Create proposal");
@@ -69,11 +28,6 @@ export function createProposal(
       dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
       console.error(err);
-      dispatch({
-        type: ActionTypes.ARC_CREATE_PROPOSAL,
-        sequence: AsyncActionSequence.Failure,
-        meta,
-      } as CreateProposalAction);
       throw err;
     }
   };
