@@ -1,8 +1,8 @@
-import { Address, IDAOState, IProposalStage, Proposal } from "@daostack/client";
+import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
 import SchemeCardContainer from "./SchemeCardContainer";
@@ -81,7 +81,6 @@ export default(props: { } & RouteComponentProps<any>) => {
       } else if (state.error) {
         throw state.error;
       } else {
-        const data = state.data;
         return <AllSchemesContainer dao={state.data[0]} />;
       }
     }

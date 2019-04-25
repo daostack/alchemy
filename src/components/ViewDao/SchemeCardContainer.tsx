@@ -1,12 +1,9 @@
-import { Address, IDAOState, IProposalStage, IProposalState, Proposal } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { combineLatest } from "rxjs";
+import { Link } from "react-router-dom";
 import { humanProposalTitle } from "lib/util";
-import ProposalContainer from "../Proposal/ProposalContainer";
 import * as css from "./SchemeCard.scss";
 
 interface IExternalProps {
@@ -65,7 +62,6 @@ export default(props: IExternalProps) => {
       } else if (state.error) {
         throw state.error;
       } else {
-        const data = state.data;
         return <SchemeCardContainer {...props} proposals={state.data} />;
       }
     }
