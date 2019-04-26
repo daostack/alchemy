@@ -23,13 +23,15 @@ const Fade = ({ children, ...props }: any) => (
   </CSSTransition>
 );
 
-const SchemeProposalsContainer = (props: {
-  currentAccountAddress: Address,
-  dao: IDAOState,
-  proposalsBoosted: Proposal[],
-  proposalsPreBoosted: Proposal[],
-  proposalsQueued: Proposal[]
-}) => {
+interface IProps {
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  proposalsBoosted: Proposal[];
+  proposalsPreBoosted: Proposal[];
+  proposalsQueued: Proposal[];
+}
+
+const SchemeProposalsContainer = (props: IProps) => {
 
   const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted } = props;
 
@@ -66,6 +68,7 @@ const SchemeProposalsContainer = (props: {
   return (
     <div className={css.daoProposalsContainer}>
       <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/create`} data-test-id="createProposal">+ New proposal</Link>
+      <Link to={`/dao/${dao.address}/proposals/create/SchemeRegistrar`}>Create a SchemeRegistrar proposal</Link>
       <h2 className={css.queueType}>Contribution Reward</h2>
       { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
         ? <div className={css.noDecisions}>
@@ -131,9 +134,14 @@ const SchemeProposalsContainer = (props: {
   );
 };
 
-export default(props: {currentAccountAddress: Address } & RouteComponentProps<any>) => {
+interface IExternalProps {
+  currentAccountAddress: Address;
+}
+
+export default(props: IExternalProps & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
-  const currentAccountAddress =  props.currentAccountAddress;
+//  const scheme = props.match.params.schemeName;
+
   const arc = getArc();
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
@@ -141,6 +149,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
     arc.dao(daoAvatarAddress).proposals({ stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state() // DAO state
   );
+
   return <Subscribe observable={observable}>{
     (state: IObservableState<[Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
       if (state.isLoading) {
@@ -149,7 +158,7 @@ export default(props: {currentAccountAddress: Address } & RouteComponentProps<an
         throw state.error;
       } else {
         const data = state.data;
-        return <SchemeProposalsContainer proposalsQueued={data[0]} proposalsPreBoosted={data[1]} proposalsBoosted={data[2]} dao={data[3]} currentAccountAddress={currentAccountAddress}/>;
+        return <SchemeProposalsContainer proposalsQueued={data[0]} proposalsPreBoosted={data[1]} proposalsBoosted={data[2]} dao={data[3]} {...props}/>;
       }
     }
   }</Subscribe>;

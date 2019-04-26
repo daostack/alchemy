@@ -85,7 +85,6 @@
       display: inline-block;
     }
 
-
     .reward {
       float: left;
       width: 235px;
@@ -119,25 +118,27 @@
       margin-right: 10px;
     }
 
-    .contributionType {
-      border-top: 1px solid rgba(191, 203, 213, 1.000);
-      border-right: 1px solid rgba(191, 203, 213, 1.000);
-      border-bottom: 1px solid rgba(191, 203, 213, 1.000);
-      width: 75px;
-      font-size: 14px;
-      position: relative;
-      height: 28px;
-      display: inline-block;
-      top: 9px;
+    .schemeSelect {
+      display: block;
+      font-size: 13PX;
+      color: rgba(154, 169, 181, 1.000);
+      margin: 0;
+      border: 1px solid #aaa;
+      border-radius: 0;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      appearance: none;
+      background-color: #fff;
+      position: absolute;
+      bottom: 5px;
+      height: 37px;
+      padding: 0 30px 0 15px;
+      right: 0px;
+      border: 1px solid #bfcbd5;
     }
 
-    .contributionTypeDropdown {
-      width: 75px;
-      height: 28px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      border: 0;
+    .permissionCheckbox {
+      font-size: 9px;
     }
 
     label {
@@ -197,6 +198,7 @@
 
   .transactionList {
     padding: 30px 0;
+
     .transactionListHeader {
       font-size: $body;
       font-weight: $normal;
@@ -210,6 +212,7 @@
         font-size: $small;
       }
     }
+
     table {
       font-size: $caption;
       width: 100%;
@@ -217,6 +220,7 @@
       border-spacing: 0;
       margin-top: 12px;
       color: $black-halftone;
+
       td {
         padding: 8px 0;
         border-spacing: 0;
@@ -224,10 +228,12 @@
         border-bottom: $gray-border-halftone;
       }
     }
+
     .tokenAmount {
       color: $accent-1;
       font-weight: $bold;
     }
+
     .userAvatar {
       height: 20px;
       position: relative;
@@ -235,13 +241,24 @@
       margin: 0 8px;
       margin-top: -6px;
     }
+
     .transferIcon {
       margin-left: 8px;
     }
+
     .transferTotals {
       text-align: right;
     }
   }
+
+  .schemeFields {
+    border-top: 2px solid gray;
+  }
+
+  .schemeSelectContainer {
+    position: relative;
+  }
+
   .exitProposalCreation {
     cursor: pointer;
     height: 30px;
@@ -257,6 +274,7 @@
     border-radius: 15px;
     color: rgba(0, 113, 255, 1.000);
   }
+
   .submitProposal {
     height: 30px;
     border: none;
@@ -286,6 +304,7 @@
       display: none;
     }
   }
+
   .submitProposal:disabled .loading {
     display: inline-block;
   }
@@ -299,6 +318,7 @@
   .submitProposal:disabled .sendIcon {
     display: none;
   }
+
   .createProposalActions {
     text-align: right;
     margin-top: 30px;
