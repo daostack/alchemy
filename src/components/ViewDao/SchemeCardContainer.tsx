@@ -21,22 +21,36 @@ const SchemeCardContainer = (props: IInternalProps) => {
 
   const { dao, schemeName, proposals } = props;
 
-  console.log("num proposals = ", proposals.length);
+  const numProposals = proposals.length;
 
   const proposalsHTML = proposals.map((proposal: IProposalState) => (
-    <div key={proposal.id}>
-      {humanProposalTitle(proposal)}
-    </div>
+    <a key={proposal.id} className={css.proposalTitle} href="#">
+      <span>
+        <em className={css.miniGraph}></em>
+        {humanProposalTitle(proposal)}
+      </span>
+      <b>
+        4h : 34m
+      </b>
+    </a>
   ));
 
   return (
     <div className={css.wrapper}>
-      <h2><Link to={`/dao/${dao.address}/proposals/${schemeName}`}>{schemeName}</Link></h2>
-      <div>
-        <Link to={`/dao/${dao.address}/proposals/create`}>Create a proposal</Link>
-      </div>
+      <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${schemeName}`}>
+        <h2>{schemeName}</h2>
+        <div>
+          <b>21</b> <span>Boosted</span> <b>21</b> <span>Pending</span> <b>21</b> <span>Regular</span> 
+        </div>
+      </Link>
+      <Link className={css.createProposalLink} to={`/dao/${dao.address}/proposals/create`}>
+        <div>
+          <span>&#43;</span>
+          <strong>Create a proposal</strong>
+        </div>
+      </Link>
       { proposals.length === 0
-        ? <div>
+        ? <div >
             <img src="/assets/images/meditate.svg"/>
             <div>
               No upcoming proposals
@@ -45,6 +59,9 @@ const SchemeCardContainer = (props: IInternalProps) => {
         :
         <div>
           {proposalsHTML}
+          <div className={css.numProposals}>
+            <Link to={`/dao/${dao.address}/proposals/${schemeName}`}>View all {numProposals} &gt;</Link>
+          </div>
         </div>
       }
     </div>

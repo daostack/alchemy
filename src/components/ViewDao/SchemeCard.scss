@@ -1,5 +1,124 @@
 .wrapper {
-  width: 300px;
-  background: white;
-  border: 1px solid black;
+	background: white;
+	width: 47.5%;
+	margin: 0 2.5% 40px 0;
+	position: relative;
+	float: left;
+	border-radius: 20px 20px 0 0;
+
+
+	a.headerLink {
+		padding: 25px;
+		display: block;
+		color: rgba(0, 29, 52, 1.000);
+		border: 1px solid $white;
+		border-radius: 20px 20px 0 0;
+		transition: all .25s ease;
+
+		h2 {
+			font-size: 21px;
+			font-weight: bold;
+			margin: 0;
+			padding: 0;
+		}
+
+		div {
+			padding-top: 10px;
+			font-size: 16px;
+
+			b {
+				color: rgba(0, 29, 52, 1.000);
+			}
+
+			span {
+				color: rgba(154, 169, 181, 1.000);
+			}
+		}
+
+		&:hover {
+			border: 1px solid rgba(172, 199, 230, 1.000);
+		}
+	}
+
+	a.createProposalLink {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		color: $white;
+		font-size: 11px;
+		border-radius: 10px;
+		height: 20px;
+		display: block;
+		overflow: hidden;
+		width: 20px;
+		transition: all .25s ease;
+		background-color: rgba(6, 118, 255, 1.000);
+
+		div {
+			width: 95px;
+			margin-left: 20px;
+		}
+
+		span {
+			font-size: 22px;
+			position: absolute;
+			top: -7px;
+			left: 5px;
+			display: block;
+		}
+
+		strong {
+			font-weight: normal;
+			position: relative;
+			top: 3px;
+		}
+
+		&:hover {
+			width: 115px;
+		}
+
+	}
 }
+
+a.proposalTitle {
+	padding: 10px 16px;
+	border: 1px solid $white;
+	border-top: 1px solid rgba(224, 232, 241, 1.000);
+	font-size: 11px;
+	color: rgba(80, 97, 118, 1.000);
+	display: block;
+	position: relative;
+	transition: all .25s ease;
+
+	&:hover {
+		border: 1px solid rgba(172, 199, 230, 1.000);
+	}
+
+	.miniGraph {
+	    width: 16px;
+	    height: 16px;
+	    border: 2px solid #f65050;
+	    border-radius: 30px;
+	    display: inline-block;
+	    margin-top: -10px;
+	    top: 6px;
+	    position: relative;
+	    margin-right: 8px;
+	}
+
+	b {
+		display: block;
+		position: absolute;
+		right: 16px;
+		top: 10px;
+		font-weight: normal;
+		color: rgba(154, 169, 181, 1.000);
+	}
+}
+
+.numProposals {
+	position: absolute;
+	bottom: -20px;
+	font-size: 11px;
+}
+
