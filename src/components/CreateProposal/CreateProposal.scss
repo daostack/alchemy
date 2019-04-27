@@ -20,7 +20,6 @@
     border-radius: 15px 15px 0 0;
     position: relative;
     margin: 0;
-    margin-bottom: 20px;
     padding: 0;
     color: $white;
     height: 40px;
@@ -48,7 +47,7 @@
   }
 
   form {
-    padding: 0 30px 30px 30px;
+    padding: 20px 30px 30px 30px;
 
     textarea {
       height: 50px;
@@ -65,6 +64,7 @@
       font-size: 13px;
       padding: 12px 12px;
       font-family: $body-font;
+
       &.error {
         border: 1px solid rgba(255, 8, 96, 1.000);
       }
@@ -118,24 +118,6 @@
       margin-right: 10px;
     }
 
-    .schemeSelect {
-      display: block;
-      font-size: 13PX;
-      color: rgba(154, 169, 181, 1.000);
-      margin: 0;
-      border: 1px solid #aaa;
-      border-radius: 0;
-      -moz-appearance: none;
-      -webkit-appearance: none;
-      appearance: none;
-      background-color: #fff;
-      position: absolute;
-      bottom: 5px;
-      height: 37px;
-      padding: 0 30px 0 15px;
-      right: 0px;
-      border: 1px solid #bfcbd5;
-    }
 
     .permissionCheckbox {
       font-size: 9px;
@@ -252,7 +234,7 @@
   }
 
   .schemeFields {
-    border-top: 2px solid gray;
+    display: block;
   }
 
   .schemeSelectContainer {
@@ -322,5 +304,137 @@
   .createProposalActions {
     text-align: right;
     margin-top: 30px;
+  }
+}
+
+
+.createProposalWrapper.schemeRegistrar {
+  width: 730px;
+  content: "";
+  clear: both;
+  display: table;
+
+  .schemeRegistrarSidebar {
+    width: 199px;
+    float: left;
+
+    .schemeItem {
+      position: relative;
+      border-top: 1px solid rgba(233, 238, 244, 1.000);
+      padding: 15px 0;
+
+      .schemeTitle {
+        font-size: 11px;
+        display: block;
+        padding: 8px;
+        background-color: $white;
+        top: -17px;
+        position: absolute;
+        left: 22px;
+      }
+    }
+
+    .addScheme {
+      display: block;
+      margin: 30px 0;
+    }
+  
+    button {
+      display: block;
+      position: relative;
+      border: 0;
+      outline: none;
+      font-size: 13px;
+      font-weight: bold;
+      color: rgba(80, 97, 118, 1.000);
+      margin: 0;
+      padding: 15px 30px;
+      width: 100%;
+      text-align: left;
+
+      span {
+        display: none;
+      }
+    }
+
+    button:hover, button.selected {
+      background-color: rgba(233, 238, 244, 1.000);
+
+      span {
+        width: 23px;
+        height: 18px;
+        position: absolute;
+        right: -13px;
+        transform: rotate(63deg) skew(35deg);
+        display: block;
+        top: 13px;
+        background-color: #e9eef4;
+      }
+    }
+  }
+
+  .schemeRegistrarForm {
+    width: 530px;
+    float: left;
+    border-left: 1px solid #e9eef4;
+  }
+
+  label {
+    z-index: 100;
+  }
+
+  .otherScheme {
+    padding: 0 15px 0 180px;
+    width: 280px;
+  }
+
+  .schemeSelect {
+    display: block;
+    font-size: 13px;
+    color: rgba(154, 169, 181, 1.000);
+    margin: 0;
+    border: 1px solid #aaa;
+    border-radius: 0;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    position: absolute;
+    bottom: 0px;
+    height: 37px;
+    padding: 0 30px 0 15px;
+    left: 0;
+    z-index: 0;
+    border: 1px solid #bfcbd5;
+  }
+
+  .permissions {
+    display: block;
+    padding-top: 15px;
+
+    .permissionsLabel {
+      font-size: 13px;
+      font-weight: bold;
+      color: rgba(80, 97, 118, 1.000);
+    }
+
+    .permissionCheckbox  {
+      width: 50%;
+      display: inline-block;
+      padding: 4px 0 0 0;
+
+      input {
+        display: inline;
+        width: 20px;
+        height: 13px;
+      }
+
+      label {
+        font-size: 11px;
+        font-weight: normal;
+        display: inline;
+        z-index: 1000;
+      }
+    }
   }
 }
