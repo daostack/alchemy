@@ -45,7 +45,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
   return (
     <div className={css.wrapper}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${schemeName}`}>
-        <h2>{schemeName.replace(/([A-Z])/g, ' $1')}</h2>
+        <h2>{schemeName.replace(/([A-Z])/g, " $1")}</h2>
         <div>
           <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
         </div>

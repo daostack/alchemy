@@ -13,7 +13,7 @@ import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
   daoAvatarAddress: string;
-  handleClose: () => any
+  handleClose: () => any;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -164,7 +164,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
                     <label htmlFor="titleInput">
                       Title
-                      <ErrorMessage name='title'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       <div className={css.requiredMarker}>*</div>
                     </label>
                     <Field
@@ -181,7 +181,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       Description
                       <div className={css.requiredMarker}>*</div>
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      <ErrorMessage name='description'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       component="textarea"
@@ -193,7 +193,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
                     <label htmlFor="urlInput">
                       URL
-                      <ErrorMessage name='url'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       id="urlInput"
@@ -208,7 +208,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       <div>
                         <label htmlFor="beneficiary">
                           Recipient
-                          <ErrorMessage name='beneficiary'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <ErrorMessage name="beneficiary">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           <div className={css.requiredMarker}>*</div>
                         </label>
                         <UserSearchField
@@ -222,7 +222,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       <div className={css.reward}>
                         <label htmlFor="ethRewardInput">
                           ETH Reward
-                          <ErrorMessage name='ethReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="ethRewardInput"
@@ -238,7 +238,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       <div className={css.reward}>
                         <label htmlFor="reputationRewardInput">
                           Reputation Reward
-                          <ErrorMessage name='reputationReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <ErrorMessage name="reputationReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="reputationRewardInput"
@@ -254,7 +254,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                         <img src="/assets/images/Icon/down.svg" className={css.downV}/>
                         <label htmlFor="externalRewardInput">
                           External Token Reward
-                          <ErrorMessage name='externalTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <ErrorMessage name="externalTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="externalTokenRewardInput"
@@ -278,7 +278,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       <div className={css.reward}>
                         <label htmlFor="nativeTokenRewardInput">
                           DAO token ({dao.tokenSymbol}) Reward
-                          <ErrorMessage name='nativeTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <ErrorMessage name="nativeTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         </label>
                         <Field
                           id="nativeTokenRewardInput"

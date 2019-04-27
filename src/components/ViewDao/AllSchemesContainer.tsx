@@ -24,7 +24,6 @@ const Fade = ({ children, ...props }: any) => (
   </CSSTransition>
 );
 
-
 interface IProps {
   dao: IDAOState;
   schemes: Scheme[];

@@ -11,7 +11,7 @@ import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
   daoAvatarAddress: string;
-  handleClose: () => any
+  handleClose: () => any;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -127,7 +127,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                     if (values.title.length > 120) {
                       errors.title = "Title is too long (max 120 characters)";
                     }
-  {/*
+                    {/*
                     if (!arc.web3.utils.isAddress(values.beneficiary)) {
                       errors.beneficiary = "Invalid address";
                     }*/}
@@ -158,7 +158,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
                       <label htmlFor="titleInput">
                         Title
-                        <ErrorMessage name='title'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                         <div className={css.requiredMarker}>*</div>
                       </label>
                       <Field
@@ -175,7 +175,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                         Description
                         <div className={css.requiredMarker}>*</div>
                         <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                        <ErrorMessage name='description'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
                         component="textarea"
@@ -187,7 +187,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
                       <label htmlFor="urlInput">
                         URL
-                        <ErrorMessage name='url'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
                       <Field
                         id="urlInput"
@@ -202,7 +202,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                         <div className={css.schemeSelectContainer}>
                           <label htmlFor="schemeInput">
                             Scheme
-                            <ErrorMessage name='scheme'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                            <ErrorMessage name="scheme">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                             <div className={css.requiredMarker}>*</div>
                           </label>
                           <Field
@@ -227,7 +227,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                         <div>
                           <label htmlFor="parametersHashInput">
                             Parameter Hash
-                            <ErrorMessage name='parametersHash'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                            <ErrorMessage name="parametersHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           </label>
                           <Field
                             id="parametersHashInput"

@@ -40,15 +40,15 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
     return (
       <div className={css.createProposalWrapper}>
-        <BreadcrumbsItem to={"/dao/" + daoAvatarAddress + "/proposals/" + schemeName + "/create"}>Create {schemeName.replace(/([A-Z])/g, ' $1')} Proposal</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + daoAvatarAddress + "/proposals/" + schemeName + "/create"}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
 
         <h2>
           <span>+ New proposal <b>| {schemeName}</b></span>
         </h2>
 
-        { schemeName === 'ContributionReward' ?
+        { schemeName === "ContributionReward" ?
             <CreateContributionRewardProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} />
-          : schemeName === 'SchemeRegistrar' ?
+          : schemeName === "SchemeRegistrar" ?
             <CreateSchemeRegistrarProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} />
           : ""
         }
