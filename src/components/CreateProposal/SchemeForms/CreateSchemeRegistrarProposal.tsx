@@ -79,20 +79,9 @@ class CreateProposalContainer extends React.Component<IProps, null> {
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
 
-          // TODO: this is used to check uniqueness of proposalDescriptions,
-          // it is disabled at this moment, but should be restored
-          // const proposalDescriptions = (dao.proposals as IProposalState[])
-          //   .filter((proposal) => !proposalEnded(proposal))
-          //   .map((proposal) => proposal.description);
-          const proposalDescriptions: string[] = [];
-
           return (
-
-            <div className={css.createProposalWrapper + " " + css.schemeRegistrar}>
-                <h2>
-                  <span>+ New proposal <b>| Scheme Registrar</b></span>
-                </h2>
-                <div className={css.schemeRegistrarSidebar}>
+            <div className={css.schemeRegistrar}>
+              <div className={css.schemeRegistrarSidebar}>
                 <button className={css.addScheme + " " + css.selected}>
                   <span></span>
                   Add Scheme
@@ -109,6 +98,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   </button>
                 </div>
               </div>
+
               <div className={css.schemeRegistrarForm}>
                 <Formik
                   initialValues={{
@@ -137,13 +127,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                     if (values.title.length > 120) {
                       errors.title = "Title is too long (max 120 characters)";
                     }
-
-                    // TODO: do we want this uniqueness check still?
-                    if (proposalDescriptions.indexOf(values.description) !== -1) {
-                      errors.description = "Must be unique";
-                    }
   {/*
-                    if (!this.web3.utils.isAddress(values.beneficiary)) {
+                    if (!arc.web3.utils.isAddress(values.beneficiary)) {
                       errors.beneficiary = "Invalid address";
                     }*/}
 
@@ -285,7 +270,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                         </div>
                       </div>
                       <div className={css.createProposalActions}>
-                        <button className={css.exitProposalCreation} type="button" onClick={this.goBack.bind(this)}>
+                        <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                           Cancel
                         </button>
                         <button className={css.submitProposal} type="submit" disabled={isSubmitting}>

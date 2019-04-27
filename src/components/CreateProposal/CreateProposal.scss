@@ -6,7 +6,6 @@
 }
 
 .createProposalWrapper {
-  width: 540px;
   border-radius: 15px 15px 0 0;
   background-color: $white;
   position: fixed;
@@ -307,8 +306,11 @@
   }
 }
 
+.contributionReward {
+  width: 540px;
+}
 
-.createProposalWrapper.schemeRegistrar {
+.schemeRegistrar {
   width: 730px;
   content: "";
   clear: both;
@@ -338,7 +340,7 @@
       display: block;
       margin: 30px 0;
     }
-  
+
     button {
       display: block;
       position: relative;

@@ -91,220 +91,222 @@ class CreateContributionReward extends React.Component<IProps, null> {
           const proposalDescriptions: string[] = [];
 
           return (
-            <Formik
-              initialValues={{
-                beneficiary: "",
-                description: "",
-                ethReward: 0,
-                externalToken: TOKENS["GEN"],
-                externalTokenReward: 0,
-                nativeTokenReward: 0,
-                reputationReward: 0,
-                title: "",
-                url: ""
-              } as FormValues}
-              validate={(values: FormValues) => {
-                const errors: any = {};
+            <div className={css.contributionReward}>
+              <Formik
+                initialValues={{
+                  beneficiary: "",
+                  description: "",
+                  ethReward: 0,
+                  externalToken: TOKENS["GEN"],
+                  externalTokenReward: 0,
+                  nativeTokenReward: 0,
+                  reputationReward: 0,
+                  title: "",
+                  url: ""
+                } as FormValues}
+                validate={(values: FormValues) => {
+                  const errors: any = {};
 
-                const require = (name: string) => {
-                  if (!(values as any)[name]) {
-                    errors[name] = "Required";
-                  }
-                };
-
-                const nonNegative = (name: string) => {
-                  if ((values as any)[name] < 0) {
-                    errors[name] = "Please enter a non-negative reward";
-                  }
-                };
-
-                if (values.title.length > 120) {
-                  errors.title = "Title is too long (max 120 characters)";
-                }
-
-                // TODO: do we want this uniqueness check still?
-                if (proposalDescriptions.indexOf(values.description) !== -1) {
-                  errors.description = "Must be unique";
-                }
-
-                if (!arc.web3.utils.isAddress(values.beneficiary)) {
-                  errors.beneficiary = "Invalid address";
-                }
-
-                const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
-                if (values.url && !pattern.test(values.url)) {
-                  errors.url = "Invalid URL";
-                }
-
-                nonNegative("ethReward");
-                nonNegative("externalTokenReward");
-                nonNegative("nativeTokenReward");
-
-                require("description");
-                require("title");
-                require("beneficiary");
-
-                if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
-                  errors.rewards = "Please select at least some reward";
-                }
-
-                return errors;
-              }}
-              onSubmit={this.handleSubmit}
-              render={({
-                errors,
-                touched,
-                handleSubmit,
-                isSubmitting,
-                setFieldTouched,
-                setFieldValue
-              }: FormikProps<FormValues>) =>
-                <Form noValidate>
-
-                  <label htmlFor="titleInput">
-                    Title
-                    <ErrorMessage name='title'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    <div className={css.requiredMarker}>*</div>
-                  </label>
-                  <Field
-                    autoFocus
-                    id="titleInput"
-                    maxLength={120}
-                    placeholder="Summarize your proposal"
-                    name="title"
-                    type="text"
-                    className={touched.title && errors.title ? css.error : null}
-                  />
-
-                  <label htmlFor="descriptionInput">
-                    Description
-                    <div className={css.requiredMarker}>*</div>
-                    <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                    <ErrorMessage name='description'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                  <Field
-                    component="textarea"
-                    id="descriptionInput"
-                    placeholder="Describe your proposal in greater detail"
-                    name="description"
-                    className={touched.description && errors.description ? css.error : null}
-                  />
-
-                  <label htmlFor="urlInput">
-                    URL
-                    <ErrorMessage name='url'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  </label>
-                  <Field
-                    id="urlInput"
-                    maxLength={120}
-                    placeholder="Description URL"
-                    name="url"
-                    type="text"
-                    className={touched.url && errors.url ? css.error : null}
-                  />
-
-                  <div>
-                    <div>
-                      <label htmlFor="beneficiary">
-                        Recipient
-                        <ErrorMessage name='beneficiary'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        <div className={css.requiredMarker}>*</div>
-                      </label>
-                      <UserSearchField
-                        daoAvatarAddress={daoAvatarAddress}
-                        name="beneficiary"
-                        onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
-                        onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                      />
-                    </div>
-
-                    <div className={css.reward}>
-                      <label htmlFor="ethRewardInput">
-                        ETH Reward
-                        <ErrorMessage name='ethReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="ethRewardInput"
-                        placeholder="How much ETH to reward"
-                        name="ethReward"
-                        type="number"
-                        className={touched.ethReward && errors.ethReward ? css.error : null}
-                        min={0}
-                        step={0.1}
-                      />
-                    </div>
-
-                    <div className={css.reward}>
-                      <label htmlFor="reputationRewardInput">
-                        Reputation Reward
-                        <ErrorMessage name='reputationReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="reputationRewardInput"
-                        placeholder="How much reputation to reward"
-                        name="reputationReward"
-                        type="number"
-                        className={touched.reputationReward && errors.reputationReward ? css.error : null}
-                        step={0.1}
-                      />
-                    </div>
-
-                    <div className={css.reward}>
-                      <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                      <label htmlFor="externalRewardInput">
-                        External Token Reward
-                        <ErrorMessage name='externalTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="externalTokenRewardInput"
-                        placeholder={`How many tokens to reward`}
-                        name="externalTokenReward"
-                        type="number"
-                        className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
-                        min={0}
-                        step={0.1}
-                      />
-                      <Field
-                        id="externalTokenInput"
-                        name="externalToken"
-                        component="select"
-                        className={css.externalTokenSelect}
-                      >
-                        { Object.keys(TOKENS).map((token) => <option key={token} value={TOKENS[token]}>{token}</option>) }
-                      </Field>
-                    </div>
-
-                    <div className={css.reward}>
-                      <label htmlFor="nativeTokenRewardInput">
-                        DAO token ({dao.tokenSymbol}) Reward
-                        <ErrorMessage name='nativeTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      </label>
-                      <Field
-                        id="nativeTokenRewardInput"
-                        maxLength={10}
-                        placeholder="How many tokens to reward"
-                        name="nativeTokenReward"
-                        type="number"
-                        className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
-                      />
-                    </div>
-
-                    {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
-                        && touched.reputationReward && errors.rewards &&
-                      <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                  const require = (name: string) => {
+                    if (!(values as any)[name]) {
+                      errors[name] = "Required";
                     }
-                  </div>
-                  <div className={css.createProposalActions}>
-                    <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                      Cancel
-                    </button>
-                    <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                      Submit proposal
-                    </button>
-                  </div>
-                </Form>
-              }
-            />
+                  };
+
+                  const nonNegative = (name: string) => {
+                    if ((values as any)[name] < 0) {
+                      errors[name] = "Please enter a non-negative reward";
+                    }
+                  };
+
+                  if (values.title.length > 120) {
+                    errors.title = "Title is too long (max 120 characters)";
+                  }
+
+                  // TODO: do we want this uniqueness check still?
+                  if (proposalDescriptions.indexOf(values.description) !== -1) {
+                    errors.description = "Must be unique";
+                  }
+
+                  if (!arc.web3.utils.isAddress(values.beneficiary)) {
+                    errors.beneficiary = "Invalid address";
+                  }
+
+                  const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+                  if (values.url && !pattern.test(values.url)) {
+                    errors.url = "Invalid URL";
+                  }
+
+                  nonNegative("ethReward");
+                  nonNegative("externalTokenReward");
+                  nonNegative("nativeTokenReward");
+
+                  require("description");
+                  require("title");
+                  require("beneficiary");
+
+                  if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
+                    errors.rewards = "Please select at least some reward";
+                  }
+
+                  return errors;
+                }}
+                onSubmit={this.handleSubmit}
+                render={({
+                  errors,
+                  touched,
+                  handleSubmit,
+                  isSubmitting,
+                  setFieldTouched,
+                  setFieldValue
+                }: FormikProps<FormValues>) =>
+                  <Form noValidate>
+
+                    <label htmlFor="titleInput">
+                      Title
+                      <ErrorMessage name='title'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div className={css.requiredMarker}>*</div>
+                    </label>
+                    <Field
+                      autoFocus
+                      id="titleInput"
+                      maxLength={120}
+                      placeholder="Summarize your proposal"
+                      name="title"
+                      type="text"
+                      className={touched.title && errors.title ? css.error : null}
+                    />
+
+                    <label htmlFor="descriptionInput">
+                      Description
+                      <div className={css.requiredMarker}>*</div>
+                      <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                      <ErrorMessage name='description'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    </label>
+                    <Field
+                      component="textarea"
+                      id="descriptionInput"
+                      placeholder="Describe your proposal in greater detail"
+                      name="description"
+                      className={touched.description && errors.description ? css.error : null}
+                    />
+
+                    <label htmlFor="urlInput">
+                      URL
+                      <ErrorMessage name='url'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    </label>
+                    <Field
+                      id="urlInput"
+                      maxLength={120}
+                      placeholder="Description URL"
+                      name="url"
+                      type="text"
+                      className={touched.url && errors.url ? css.error : null}
+                    />
+
+                    <div>
+                      <div>
+                        <label htmlFor="beneficiary">
+                          Recipient
+                          <ErrorMessage name='beneficiary'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <div className={css.requiredMarker}>*</div>
+                        </label>
+                        <UserSearchField
+                          daoAvatarAddress={daoAvatarAddress}
+                          name="beneficiary"
+                          onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
+                          onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                        />
+                      </div>
+
+                      <div className={css.reward}>
+                        <label htmlFor="ethRewardInput">
+                          ETH Reward
+                          <ErrorMessage name='ethReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="ethRewardInput"
+                          placeholder="How much ETH to reward"
+                          name="ethReward"
+                          type="number"
+                          className={touched.ethReward && errors.ethReward ? css.error : null}
+                          min={0}
+                          step={0.1}
+                        />
+                      </div>
+
+                      <div className={css.reward}>
+                        <label htmlFor="reputationRewardInput">
+                          Reputation Reward
+                          <ErrorMessage name='reputationReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="reputationRewardInput"
+                          placeholder="How much reputation to reward"
+                          name="reputationReward"
+                          type="number"
+                          className={touched.reputationReward && errors.reputationReward ? css.error : null}
+                          step={0.1}
+                        />
+                      </div>
+
+                      <div className={css.reward}>
+                        <img src="/assets/images/Icon/down.svg" className={css.downV}/>
+                        <label htmlFor="externalRewardInput">
+                          External Token Reward
+                          <ErrorMessage name='externalTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="externalTokenRewardInput"
+                          placeholder={`How many tokens to reward`}
+                          name="externalTokenReward"
+                          type="number"
+                          className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
+                          min={0}
+                          step={0.1}
+                        />
+                        <Field
+                          id="externalTokenInput"
+                          name="externalToken"
+                          component="select"
+                          className={css.externalTokenSelect}
+                        >
+                          { Object.keys(TOKENS).map((token) => <option key={token} value={TOKENS[token]}>{token}</option>) }
+                        </Field>
+                      </div>
+
+                      <div className={css.reward}>
+                        <label htmlFor="nativeTokenRewardInput">
+                          DAO token ({dao.tokenSymbol}) Reward
+                          <ErrorMessage name='nativeTokenReward'>{msg => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        </label>
+                        <Field
+                          id="nativeTokenRewardInput"
+                          maxLength={10}
+                          placeholder="How many tokens to reward"
+                          name="nativeTokenReward"
+                          type="number"
+                          className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
+                        />
+                      </div>
+
+                      {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
+                          && touched.reputationReward && errors.rewards &&
+                        <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                      }
+                    </div>
+                    <div className={css.createProposalActions}>
+                      <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
+                        Cancel
+                      </button>
+                      <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                        Submit proposal
+                      </button>
+                    </div>
+                  </Form>
+                }
+              />
+            </div>
           );
         } else {
           return null;
