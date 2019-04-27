@@ -1,3 +1,4 @@
+export const loading: string;
 export const wrapper: string;
 export const headerLink: string;
 export const createProposalLink: string;

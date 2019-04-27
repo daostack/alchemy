@@ -2,8 +2,6 @@ import {Address } from "@daostack/client";
 import * as web3Actions from "actions/web3Actions";
 import { getArc, getCurrentUser, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
-import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
-import CreateSchemeRegistrarProposal from "components/CreateProposal/CreateSchemeRegistrarProposal";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import HomeContainer from "components/Home/HomeContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -121,16 +119,7 @@ class AppContainer extends React.Component<IProps, IState> {
               <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
               <Route path="/" component={HomeContainer} />
             </Switch>
-            <ModalRoute
-              path="/dao/:daoAvatarAddress/proposals/create"
-              parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
-              component={CreateProposalContainer}
-            />
-            <ModalRoute
-              path="/dao/:daoAvatarAddress/proposals/create/SchemeRegistrar"
-              parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
-              component={CreateSchemeRegistrarProposal}
-            />
+
             <ModalContainer
               modalClassName={css.modal}
               backdropClassName={css.backdrop}

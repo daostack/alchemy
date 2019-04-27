@@ -1,7 +1,8 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
@@ -26,22 +27,15 @@ const Fade = ({ children, ...props }: any) => (
 
 interface IProps {
   dao: IDAOState;
+  schemes: Scheme[];
 }
 
 const AllSchemesContainer = (props: IProps) => {
-
-  const { dao } = props;
-
-  // TODO: load different schemes from the subgraph
-  const schemes = [
-    {
-      name: "Contribution Reward"
-    }
-  ];
+  const { dao, schemes } = props;
 
   const schemeCardsHTML = (
     <TransitionGroup>
-      { schemes.map((scheme: any) => (
+      { schemes.map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.name}>
           <SchemeCardContainer dao={dao} schemeName={scheme.name} />
         </Fade>
@@ -51,6 +45,8 @@ const AllSchemesContainer = (props: IProps) => {
 
   return (
     <div className={css.wrapper}>
+      <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+
       <h1>All Schemes</h1>
       { schemes.length === 0
         ? <div>
@@ -72,16 +68,17 @@ export default(props: { } & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
   const arc = getArc();
   const observable = combineLatest(
-    arc.dao(daoAvatarAddress).state() // DAO state
+    arc.dao(daoAvatarAddress).state(), // DAO state
+    arc.dao(daoAvatarAddress).schemes()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IDAOState]>): any => {
+    (state: IObservableState<[IDAOState, Scheme[]]>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
-        return <AllSchemesContainer dao={state.data[0]} />;
+        return <AllSchemesContainer dao={state.data[0]} schemes={state.data[1]} />;
       }
     }
   }</Subscribe>;
