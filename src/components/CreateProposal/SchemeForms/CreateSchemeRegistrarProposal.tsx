@@ -3,28 +3,21 @@ import * as arcActions from "actions/arcActions";
 import { checkNetworkAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import * as H from "history";
-//import { default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import { IWeb3State } from "reducers/web3Reducer";
-import * as css from "./CreateProposal.scss";
+import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
-  currentAccount: string;
   daoAvatarAddress: string;
-  history: H.History;
-  web3: IWeb3State;
+  handleClose: () => any
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    currentAccount: state.web3.ethAccountAddress,
-    daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
-    history: ownProps.history,
-    web3: state.web3,
+    daoAvatarAddress : ownProps.daoAvatarAddress,
+    handleClose: ownProps.handleClose
   };
 };
 
@@ -58,16 +51,11 @@ interface FormValues {
 }
 
 class CreateProposalContainer extends React.Component<IProps, null> {
-  //private web3: any;
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  public async componentDidMount() {
-    //this.web3 = Util.getWeb3();
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
@@ -83,19 +71,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     await this.props.createProposal(this.props.daoAvatarAddress, proposalValues);
   }
 
-  public goBack(e: any) {
-    const { history, daoAvatarAddress } = this.props;
-    e.preventDefault();
-
-    if (history.length > 0) {
-      history.goBack();
-    } else {
-      history.push("/dao/" + daoAvatarAddress);
-    }
-  }
-
   public render() {
-    const {  daoAvatarAddress } = this.props;
+    const {  daoAvatarAddress, handleClose } = this.props;
     const arc = getArc();
 
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
@@ -146,10 +123,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                   if (proposalDescriptions.indexOf(values.description) !== -1) {
                     errors.description = "Must be unique";
                   }
-{/*
-                  if (!this.web3.utils.isAddress(values.beneficiary)) {
-                    errors.beneficiary = "Invalid address";
-                  }*/}
 
                   const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
                   if (values.url && !pattern.test(values.url)) {
@@ -286,7 +259,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                     </div>
 
                     <div className={css.createProposalActions}>
-                      <button className={css.exitProposalCreation} type="button" onClick={this.goBack.bind(this)}>
+                      <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                         Cancel
                       </button>
                       <button className={css.submitProposal} type="submit" disabled={isSubmitting}>

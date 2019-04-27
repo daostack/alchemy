@@ -2,6 +2,7 @@ import { Address, IDAOState, IProposalStage, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
@@ -29,11 +30,12 @@ interface IProps {
   proposalsBoosted: Proposal[];
   proposalsPreBoosted: Proposal[];
   proposalsQueued: Proposal[];
+  schemeName: string;
 }
 
 const SchemeProposalsContainer = (props: IProps) => {
 
-  const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted } = props;
+  const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted, schemeName } = props;
 
   const queuedProposalsHTML = (
     <TransitionGroup className="queued-proposals-list">
@@ -67,9 +69,11 @@ const SchemeProposalsContainer = (props: IProps) => {
 
   return (
     <div className={css.daoProposalsContainer}>
-      <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/create`} data-test-id="createProposal">+ New proposal</Link>
-      <Link to={`/dao/${dao.address}/proposals/create/SchemeRegistrar`}>Create a SchemeRegistrar proposal</Link>
-      <h2 className={css.queueType}>Contribution Reward</h2>
+      <BreadcrumbsItem to={"/dao/" + dao.address + "/proposals/" + schemeName}>{schemeName.replace(/([A-Z])/g, ' $1')}</BreadcrumbsItem>
+
+      <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${schemeName}/create/`} data-test-id="createProposal">+ New proposal</Link>
+
+      <h2 className={css.queueType}>{schemeName.replace(/([A-Z])/g, ' $1')}</h2>
       { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
         ? <div className={css.noDecisions}>
             <img className={css.relax} src="/assets/images/meditate.svg"/>
@@ -77,7 +81,7 @@ const SchemeProposalsContainer = (props: IProps) => {
               No upcoming proposals
             </div>
             <div className={css.cta}>
-              <Link to={`/dao/${dao.address}/proposals/create`} data-test-id="createProposal">Create a proposal</Link>
+              <Link to={`/dao/${dao.address}/proposals/${schemeName}/create/`} data-test-id="createProposal">Create a proposal</Link>
             </div>
           </div>
         :
@@ -140,13 +144,13 @@ interface IExternalProps {
 
 export default(props: IExternalProps & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
-//  const scheme = props.match.params.schemeName;
+  const schemeName = props.match.params.schemeName;
 
   const arc = getArc();
   const observable = combineLatest(
-    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
-    arc.dao(daoAvatarAddress).proposals({ stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
-    arc.dao(daoAvatarAddress).proposals({ stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ type: schemeName, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
+    arc.dao(daoAvatarAddress).proposals({ type: schemeName, stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
+    arc.dao(daoAvatarAddress).proposals({ type: schemeName, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state() // DAO state
   );
 
@@ -158,7 +162,7 @@ export default(props: IExternalProps & RouteComponentProps<any>) => {
         throw state.error;
       } else {
         const data = state.data;
-        return <SchemeProposalsContainer proposalsQueued={data[0]} proposalsPreBoosted={data[1]} proposalsBoosted={data[2]} dao={data[3]} {...props}/>;
+        return <SchemeProposalsContainer proposalsQueued={data[0]} proposalsPreBoosted={data[1]} proposalsBoosted={data[2]} dao={data[3]} schemeName={schemeName} {...props} />;
       }
     }
   }</Subscribe>;
