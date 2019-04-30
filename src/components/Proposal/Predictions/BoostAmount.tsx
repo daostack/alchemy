@@ -35,7 +35,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
               </b>
             </span>
           : proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.gt(new BN(0)) ?
-            <span className={css.boostedAmount}>
+            <span className={css.boostedAmount + " " + css.unboostAmount}>
               <b>
                 {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}
                 {formatTokens(proposal.downStakeNeededToQueue, "GEN")} to un-boost
