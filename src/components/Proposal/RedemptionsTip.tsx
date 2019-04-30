@@ -5,21 +5,19 @@ import Util, { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
-  isRedeemPending: boolean;
   beneficiaryHasRewards: boolean;
   currentAccountAddress: Address;
   dao: IDAOState;
-  accountHasRewards: boolean;
+  isRedeemPending: boolean;
   proposal: IProposalState;
-  redeemable: boolean;
-  rewards: IRewardState[];
+  rewardsForCurrentUser: IRewardState[];
 }
 
 export default (props: IProps) => {
-  const { proposal, currentAccountAddress, dao, beneficiaryHasRewards, isRedeemPending, rewards } = props;
+  const { beneficiaryHasRewards, currentAccountAddress, dao, isRedeemPending, proposal, rewardsForCurrentUser } = props;
 
   const rewardComponents = [];
-  for (const reward of rewards) {
+  for (const reward of rewardsForCurrentUser) {
     let c = null;
     if (reward.reputationForProposer.gt(new BN(0))) {
       c = <div key={reward.id}>

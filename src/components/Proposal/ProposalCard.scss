@@ -109,8 +109,9 @@
 }
 
 .voteButtons {
-  padding-top: 13px;
+  padding-top: 9px;
   text-align: center;
+  padding-bottom: 10px;
 }
 
 .voteControls {
@@ -155,51 +156,14 @@
   }
 }
 
-.stateChange {
+.actionButton {
   float: left;
   width: 50%;
   text-align: right;
   font-size: 12px;
   position: absolute;
-  top: 0;
-  right: 0;
-
-  button {
-    background-color: rgba(0, 118, 255, 1.000);
-    border-radius: 10px;
-    height: 20px;
-    line-height: 20px;
-    padding: 0 6px;
-    color: $white;
-    border: none;
-    transition: all .25s ease;
-    margin: 0;
-  }
-
-  .executeProposal, .boostProposal {
-    display: inline-block;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
-
-  .executeProposal, .boostProposal {
-    width: 20px;
-    overflow: hidden;
-
-    span {
-      display: inline-block;
-      padding-left: 6px;
-    }
-  }
-
-  .executeProposal:hover {
-    width: 76px;
-  }
-
-  .boostProposal:hover {
-    width: 66px;
-  }
+  top: 10px;
+  right: 10px;
 }
 
 .proposalActions {
