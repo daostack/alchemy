@@ -38,7 +38,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
             <span className={css.boostedAmount + " " + css.unboostAmount}>
               <b>
                 {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}
-                {formatTokens(proposal.downStakeNeededToQueue, "GEN")} to un-boost
+                {formatTokens(proposal.downStakeNeededToQueue, "GEN")} on Fail to un-boost
               </b>
             </span>
           : ""

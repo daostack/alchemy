@@ -143,7 +143,7 @@ class ActionButton extends React.Component<IProps, IState> {
           proposal.stage === IProposalStage.PreBoosted && expired && proposal.downStakeNeededToQueue.lte(new BN(0)) ?
             <button className={css.unboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
-              <span> Un-Boost</span>
+              <span>Un-Boost</span>
             </button> :
           proposal.stage === IProposalStage.PreBoosted && expired ?
             <button className={css.boostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
