@@ -162,20 +162,17 @@ class ActionButton extends React.Component<IProps, IState> {
                   : ""
               }
               <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                <button
-                  style={{ whiteSpace: "nowrap" }}
-                  disabled={false}
-                  className={redeemButtonClass}
-                  onClick={this.handleClickRedeem.bind(this)}
-                >
+                <button className={redeemButtonClass} onClick={this.handleClickRedeem.bind(this)}>
                   <img src="/assets/images/Icon/redeem.svg" />
-                  {
-                    isRedeemPending ?
-                      " Redeem in progress" :
-                      beneficiaryHasRewards && !accountHasRewards ?
-                        " Redeem for beneficiary" :
-                        " Redeem"
-                  }
+                  <span>
+                    {
+                      isRedeemPending ?
+                        " Redeem in progress" :
+                        beneficiaryHasRewards && !accountHasRewards ?
+                          " Redeem for beneficiary" :
+                          " Redeem"
+                    }
+                  </span>
                 </button>
               </Tooltip>
             </div>
