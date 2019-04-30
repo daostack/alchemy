@@ -59,11 +59,9 @@ export default class RedemptionsString extends React.Component<IProps, null> {
     }
 
     const redemptionsStyle = {
-      position: "absolute" as "absolute",
-      top: "12px",
-      width: "100%",
-      right: "85px",
-      display: "block",
+      position: "relative" as "relative",
+      right: "5px",
+      display: "inline-block",
       color: "rgba(49, 120, 202, 1.000)"
     };
 
