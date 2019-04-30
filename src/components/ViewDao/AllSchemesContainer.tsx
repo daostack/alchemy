@@ -36,7 +36,7 @@ const AllSchemesContainer = (props: IProps) => {
     <TransitionGroup>
       { schemes.map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.name}>
-          <SchemeCardContainer dao={dao} schemeName={scheme.name} />
+          <SchemeCardContainer dao={dao} schemeName={scheme.name || "SchemeRegistrar"} />
         </Fade>
       ))}
     </TransitionGroup>

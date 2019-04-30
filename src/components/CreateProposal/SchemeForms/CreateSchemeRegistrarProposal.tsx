@@ -111,7 +111,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
                       upgradeController: false,
                       genericCall: false
                     },
-                    scheme: "",
+                    scheme: arc.contractAddresses.base.ContributionReward,
                     title: "",
                     url: ""
                   } as FormValues}

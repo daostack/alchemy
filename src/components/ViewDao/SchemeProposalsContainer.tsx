@@ -51,7 +51,7 @@ const SchemeProposalsContainer = (props: IProps) => {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalCardContainer proposalId={proposal.id} dao={dao}  currentAccountAddress={currentAccountAddress}/>
+          <ProposalCardContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>

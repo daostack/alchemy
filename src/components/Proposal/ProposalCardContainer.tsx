@@ -50,7 +50,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
   const proposal = ownProps.proposal;
 
   return {...ownProps,
-    beneficiaryProfile: state.profiles[proposal.contributionReward.beneficiary],
+    beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposal.proposer],
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state)
@@ -92,12 +92,6 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
 
     const isVoting = isVotingNo || isVotingYes;
 
-    const proposalClass = classNames({
-        [css.proposal]: true,
-        [css.failedProposal]: proposalFailed(proposal),
-        [css.passedProposal]: proposalPassed(proposal)
-      });
-
     let currentAccountVote = 0;
 
     let currentVote: IVote;
@@ -105,6 +99,12 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
       currentVote = votesOfCurrentUser[0];
       currentAccountVote = currentVote.outcome;
     }
+
+    const proposalClass = classNames({
+      [css.proposal]: true,
+      [css.failedProposal]: proposalFailed(proposal),
+      [css.passedProposal]: proposalPassed(proposal)
+    });
 
     const voteWrapperClass = classNames({
       [css.voteBox] : true,
@@ -202,7 +202,13 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalCardContainer = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCardContainer);
 
-export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address }) => {
+interface IExternalProps {
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  proposalId: string;
+}
+
+export default (props: IExternalProps) => {
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
