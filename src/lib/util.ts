@@ -104,7 +104,7 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
 }
 
 export function tokenSymbol(tokenAddress: string) {
-  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token] === tokenAddress);
+  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token].toLowerCase() === tokenAddress.toLowerCase());
   return symbol || "?";
 }
 
