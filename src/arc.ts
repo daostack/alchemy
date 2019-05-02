@@ -46,7 +46,7 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   if (!addresses || addresses === {}) {
     throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
   }
-  return addresses;
+  return addresses.base;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
