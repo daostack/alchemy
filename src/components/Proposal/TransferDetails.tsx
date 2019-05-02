@@ -46,10 +46,17 @@ export default class TransferDetails extends React.Component<IProps, null> {
       // TODO: how to best figure out of this is an add or edit scheme proposal?
 
       return (
-        <div className={transferDetailsClass}>
-          { schemeRegistrar.schemeToRemove ?
-              <span>Remove {schemeRegistrar.schemeToRemove}</span> :
-              <span>Add {schemeRegistrar.schemeToRegister}</span>
+        <div className={transferDetailsClass + " " + css.schemeRegistrar}>
+          { true ?
+              <span>
+                <img src="/assets/images/Icon/delete.svg"/> Remove Scheme
+              </span>
+              : schemeRegistrar.schemeToRemove  ?
+              <span>
+                <img src="/assets/images/Icon/edit-sm.svg"/> Edit Scheme
+              </span>
+              :
+              <span><b>+</b> Add Scheme</span>
           }
         </div>
       );
