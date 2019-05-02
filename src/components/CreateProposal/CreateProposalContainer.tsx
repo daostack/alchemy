@@ -36,7 +36,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   }
 
   public render() {
-    const {  daoAvatarAddress, schemeName } = this.props;
+    const {  daoAvatarAddress } = this.props;
+    const schemeName = this.props.schemeName || "ContributionReward";
 
     return (
       <div className={css.createProposalWrapper}>
