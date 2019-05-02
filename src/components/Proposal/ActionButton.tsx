@@ -42,7 +42,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   const proposal = ownProps.proposal;
 
   return {...ownProps,
-    beneficiaryProfile: state.profiles[proposal.beneficiary],
+    beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
     isRedeemPending: ownProps.currentAccountAddress && isRedeemPending(proposal.id, ownProps.currentAccountAddress)(state),
   };
 };
@@ -95,26 +95,29 @@ class ActionButton extends React.Component<IProps, IState> {
       rewardsForCurrentUser
     } = this.props;
 
-    // TODO: should be the DAO balance of the proposal.externalToken
-    //const externalTokenBalance = dao.externalTokenBalance || new BN(0);
-
-    const beneficiaryHasRewards = (
-      !proposal.reputationReward.isZero() ||
-      proposal.nativeTokenReward.gt(new BN(0)) ||
-      (proposal.ethReward.gt(new BN(0)) && daoEthBalance.gte(proposal.ethReward)) ||
-      (proposal.externalTokenReward.gt(new BN(0)))
-    ) as boolean;
-
-    const accountHasRewards = rewardsForCurrentUser.length !== 0;
     const executable = proposalEnded(proposal) && !proposal.executedAt;
-    const redeemable = proposal.executedAt && (accountHasRewards || beneficiaryHasRewards);
 
-    const redemptionsTip = RedemptionsTip({ beneficiaryHasRewards, currentAccountAddress, dao, isRedeemPending, proposal, rewardsForCurrentUser });
+    let accountHasRewards, beneficiaryHasRewards, redeemable = false, redemptionsTip, redeemButtonClass;
+    if (proposal.contributionReward) {
+      const contributionReward = proposal.contributionReward;
 
-    const redeemButtonClass = classNames({
-      [css.redeemButton]: true,
-      [css.pending]: isRedeemPending,
-    });
+      beneficiaryHasRewards = (
+        !contributionReward.reputationReward.isZero() ||
+        contributionReward.nativeTokenReward.gt(new BN(0)) ||
+        (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
+        contributionReward.externalTokenReward.gt(new BN(0))
+      ) as boolean;
+
+      accountHasRewards = rewardsForCurrentUser.length !== 0;
+      redeemable = proposal.executedAt && (accountHasRewards || beneficiaryHasRewards);
+
+      redemptionsTip = RedemptionsTip({ beneficiaryHasRewards, currentAccountAddress, dao, isRedeemPending, proposal, rewardsForCurrentUser });
+
+      redeemButtonClass = classNames({
+        [css.redeemButton]: true,
+        [css.pending]: isRedeemPending,
+      });
+    }
 
     const wrapperClass = classNames({
       [css.wrapper]: true,
@@ -162,17 +165,20 @@ class ActionButton extends React.Component<IProps, IState> {
                   : ""
               }
               <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
-                <button className={redeemButtonClass} onClick={this.handleClickRedeem.bind(this)}>
+                <button
+                  style={{ whiteSpace: "nowrap" }}
+                  disabled={false}
+                  className={redeemButtonClass}
+                  onClick={this.handleClickRedeem.bind(this)}
+                >
                   <img src="/assets/images/Icon/redeem.svg" />
-                  <span>
-                    {
-                      isRedeemPending ?
-                        " Redeem in progress" :
-                        beneficiaryHasRewards && !accountHasRewards ?
-                          " Redeem for beneficiary" :
-                          " Redeem"
-                    }
-                  </span>
+                  {
+                    isRedeemPending ?
+                      " Redeem in progress" :
+                      beneficiaryHasRewards && !accountHasRewards ?
+                        " Redeem for beneficiary" :
+                        " Redeem"
+                  }
                 </button>
               </Tooltip>
             </div>
