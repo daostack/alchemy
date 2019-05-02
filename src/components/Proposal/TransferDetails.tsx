@@ -6,6 +6,7 @@ import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfileState } from "reducers/profilesReducer";
 import RewardsString from "./RewardsString";
+import { Link } from "react-router-dom";
 
 import * as css from "./TransferDetails.scss";
 
@@ -47,16 +48,18 @@ export default class TransferDetails extends React.Component<IProps, null> {
 
       return (
         <div className={transferDetailsClass + " " + css.schemeRegistrar}>
-          { true ?
-              <span>
+          { schemeRegistrar.schemeToRemove  ?
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
                 <img src="/assets/images/Icon/delete.svg"/> Remove Scheme
-              </span>
-              : schemeRegistrar.schemeToRemove  ?
-              <span>
+              </Link>
+              : false ?
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
                 <img src="/assets/images/Icon/edit-sm.svg"/> Edit Scheme
-              </span>
+              </Link>
               :
-              <span><b>+</b> Add Scheme</span>
+              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+                <b>+</b> Add Scheme
+              </Link>
           }
         </div>
       );
