@@ -116,3 +116,22 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
     })();
   });
 }
+
+export function knownContracts() {
+  const arc = getArc();
+
+  return {
+    [arc.contractAddresses.base.ContributionReward.toLowerCase()]: "Contribution Reward",
+    [arc.contractAddresses.base.SchemeRegistrar.toLowerCase()]: "Scheme Registrar",
+    [arc.contractAddresses.base.GenericScheme.toLowerCase()]: "Generic Scheme",
+  };
+}
+
+export function contractName(address: string) {
+  const contracts = knownContracts();
+  if (address.toLowerCase() in contracts) {
+    return contracts[address.toLowerCase()];
+  }
+
+  return address.slice(0, 4) + "..." + address.slice(-4);
+}

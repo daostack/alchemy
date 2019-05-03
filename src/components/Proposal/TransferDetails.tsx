@@ -7,6 +7,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfileState } from "reducers/profilesReducer";
 import RewardsString from "./RewardsString";
 import { Link } from "react-router-dom";
+import { contractName } from "lib/util";
 
 import * as css from "./TransferDetails.scss";
 
@@ -50,15 +51,15 @@ export default class TransferDetails extends React.Component<IProps, null> {
         <div className={transferDetailsClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                <img src="/assets/images/Icon/delete.svg"/> Remove Scheme
+                <img src="/assets/images/Icon/delete.svg"/> Remove Scheme {contractName(schemeRegistrar.schemeToRemove)}
               </Link>
-              : false ?
+              : schemeRegistrar.schemeToRegister ?
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                <img src="/assets/images/Icon/edit-sm.svg"/> Edit Scheme
+                <img src="/assets/images/Icon/edit-sm.svg"/> Edit Scheme {contractName(schemeRegistrar.schemeToRegister)}
               </Link>
               :
               <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                <b>+</b> Add Scheme
+                <b>+</b> Add Scheme {contractName(schemeRegistrar.schemeToRegister)}
               </Link>
           }
         </div>

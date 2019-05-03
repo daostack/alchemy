@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -16,9 +16,9 @@ interface IExternalProps {
 
 interface IInternalProps {
   dao: IDAOState;
-  boostedProposals: IProposalState[];
-  preBoostedProposals: IProposalState[];
-  queuedProposals: IProposalState[];
+  boostedProposals: Proposal[];
+  preBoostedProposals: Proposal[];
+  queuedProposals: Proposal[];
   schemeName: string;
 }
 
@@ -29,17 +29,29 @@ const SchemeCardContainer = (props: IInternalProps) => {
   const numProposals = boostedProposals.length + preBoostedProposals.length + queuedProposals.length;
   const proposals = boostedProposals.concat(preBoostedProposals).concat(queuedProposals).slice(0, 3);
 
-  const proposalsHTML = proposals.map((proposal: IProposalState) => (
-    <a key={proposal.id} className={css.proposalTitle} href="#">
-      <span>
-        <em className={css.miniGraph}></em>
-        {humanProposalTitle(proposal)}
-      </span>
-      <b>
-        {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
-        <Countdown toDate={closingTime(proposal)} detailView={false} /> :
-      </b>
-    </a>
+  const proposalsHTML = proposals.map((proposal: Proposal) => (
+    <Subscribe key={proposal.id} observable={proposal.state()}>{
+      (state: IObservableState<IProposalState>): any => {
+        if (state.isLoading) {
+          return <div>Loading...</div>;
+        } else if (state.error) {
+          throw state.error;
+        } else {
+          return (
+            <Link className={css.proposalTitle} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+              <span>
+                <em className={css.miniGraph}></em>
+                {humanProposalTitle(state.data)}
+              </span>
+              <b>
+                {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
+                <Countdown toDate={closingTime(state.data)} detailView={false} /> :
+              </b>
+            </Link>
+          );
+        }
+      }
+    }</Subscribe>
   ));
 
   return (
@@ -88,7 +100,7 @@ export default(props: IExternalProps) => {
     dao.proposals({ type: props.schemeName, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }) // the list of boosted proposals
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IProposalState[], IProposalState[]]>): any => {
+    (state: IObservableState<[Proposal[], Proposal[], Proposal[]]>): any => {
       if (state.isLoading) {
         return  <div><img src="/assets/images/Icon/Loading-black.svg"/></div>;
       } else if (state.error) {
