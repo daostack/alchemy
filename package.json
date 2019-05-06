@@ -63,7 +63,7 @@
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js"
   },
   "dependencies": {
-    "@daostack/client": "0.1.2-2",
+    "@daostack/client": "0.1.8",
     "@daostack/migration": "0.0.1-rc.16-v1",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
@@ -79,7 +79,7 @@
     "ethereumjs-util": "^6.1.0",
     "express": "^4.16.4",
     "fibers": "^3.1.1",
-    "formik": "^0.11.11",
+    "formik": "^1.5.2",
     "history": "4.7.2",
     "geopattern": "^1.2.3",
     "heroku-client": "^3.0.7",
@@ -111,7 +111,7 @@
     "redux-thunk": "2.2.0",
     "reselect": "^3.0.1",
     "run-with-ganache": "^0.1.1",
-    "rxjs": "^6.4.0",
+    "rxjs": "6.4.0",
     "socket.io-client": "^2.2.0",
     "truffle-contract": "^3.0.1",
     "ts-node": "^5.0.1",

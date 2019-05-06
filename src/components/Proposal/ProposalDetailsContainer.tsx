@@ -52,7 +52,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
   const proposal = ownProps.proposal;
 
   return {...ownProps,
-    beneficiaryProfile: state.profiles[proposal.beneficiary],
+    beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposal.proposer],
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
     isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state)
