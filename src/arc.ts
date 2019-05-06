@@ -12,8 +12,8 @@ const settings = {
     contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v13",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v13",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v17",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v17",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
@@ -24,8 +24,8 @@ const settings = {
     contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v13-without-gen",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v13-without-gen",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v17",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v17",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "subgraph.daostack.io",
@@ -46,7 +46,7 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   if (!addresses || addresses === {}) {
     throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
   }
-  return addresses;
+  return addresses.base;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
@@ -83,8 +83,6 @@ export async function checkNetwork() {
   const web3: any = getArc().web3;
   const web3Provider = web3.currentProvider;
   if (web3Provider && web3Provider.isMetaMask) {
-    // we are interacting with Metamask, let's just use window.ethereum to interact with MM
-    const ethereum = (<any> window).ethereum;
     const network = await web3.eth.net.getNetworkType();
     const networkName = Util.networkName(network);
     let expectedNetworkName;

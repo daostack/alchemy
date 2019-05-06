@@ -23,19 +23,21 @@ export default class TransferDetails extends React.Component<IProps, null> {
     const { beneficiaryProfile, dao, proposal, detailView, transactionModal } = this.props;
 
     const transferDetailsClass = classNames({
-      [css.detailView]: this.props.detailView,
-      [css.transactionModal]: this.props.transactionModal,
+      [css.detailView]: detailView,
+      [css.transactionModal]: transactionModal,
       [css.transferDetails]: true,
     });
 
-    return (
-      <div className={transferDetailsClass}>
-        <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
-        <strong className={css.transferAmount}></strong>
-        <img src="/assets/images/Icon/Transfer.svg" />
-        <AccountPopupContainer accountAddress={proposal.beneficiary} dao={dao} />
-        <AccountProfileName accountAddress={proposal.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
-      </div>
-    );
+    if (proposal.contributionReward) {
+      return (
+        <div className={transferDetailsClass}>
+          <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
+          <strong className={css.transferAmount}></strong>
+          <img src="/assets/images/Icon/Transfer.svg" />
+          <AccountPopupContainer accountAddress={proposal.contributionReward.beneficiary} dao={dao} />
+          <AccountProfileName accountAddress={proposal.contributionReward.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address} />
+        </div>
+      );
+    }
   }
 }

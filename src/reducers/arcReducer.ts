@@ -1,7 +1,7 @@
 import * as update from "immutability-helper";
 import * as moment from "moment";
 
-import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
+import { RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
 import { IProposalOutcome, IProposalStage, IProposalState as IProposalStateFromDaoStackClient } from "@daostack/client";
@@ -194,9 +194,8 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
       return moment((proposal.preBoostedAt + proposal.preBoostedVotePeriodLimit) * 1000);
     case IProposalStage.Boosted:
       return moment((proposal.boostedAt + proposal.boostedVotePeriodLimit) * 1000);
-    // TODO: waiting on client library to return proposal.quietEndingPeriod
-    // case IProposalStage.QuietEndingPeriod:
-    //   return moment((proposal.quietEndingPeriodBeganAt + proposal.quietEndingPeriod) * 1000);
+    case IProposalStage.QuietEndingPeriod:
+      return moment((proposal.quietEndingPeriodBeganAt + proposal.quietEndingPeriod) * 1000);
     case IProposalStage.Executed:
       return moment(proposal.executedAt * 1000);
   }
@@ -249,7 +248,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_VOTE: {
       const { meta, sequence, payload } = action as VoteAction;
-      const { avatarAddress, proposalId, voteOption, voterAddress } = meta;
+      const { avatarAddress, proposalId, voterAddress } = meta;
       const voteKey = `${proposalId}-${voterAddress}`;
       const accountKey = `${voterAddress}-${avatarAddress}`;
 
@@ -293,7 +292,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_STAKE: {
       const { meta, sequence, payload } = action as StakeAction;
-      const { avatarAddress, stakerAddress, proposalId, prediction, stakeAmount } = meta;
+      const { avatarAddress, stakerAddress, proposalId } = meta;
       const stakeKey = `${proposalId}-${stakerAddress}`;
       const accountKey = `${stakerAddress}-${avatarAddress}`;
 
@@ -339,7 +338,7 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Success: {
-          const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
+          const { currentAccount, beneficiary, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
           // Update beneficiary reputation
           state = update(state, {

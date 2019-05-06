@@ -1,0 +1,138 @@
+.wrapper {
+  position: relative;
+  font-size: 12px;
+  padding-left: 10px;
+
+  img {
+    position: relative;
+    top: 3px;
+    margin-right: 5px;
+  }
+
+   .stakeGraph {
+     height: 25px;
+   }
+
+  .stakesFor {
+    margin-bottom: 3px;
+  }
+
+  .stakesFor, .forBar, .stakesAgainst, .againstBar {
+    float: left;
+    font-weight: bold;
+    color: rgba(104, 154, 214, 1.000);
+  }
+
+  .forBar, .againstBar {
+    height: 18px;
+    width: 55px;
+    position: relative;
+
+    b {
+      font-weight: normal;
+      font-size: 10px;
+      display: inline-block;
+      color: rgba(154, 169, 181, 1.000);
+      margin-left: 5px;
+    }
+
+    span {
+      display: block;
+      position: absolute;
+      width: 100%;
+      bottom: 0;
+      margin-left: 5px;
+      height: 2px;
+      background-color: rgba(208, 214, 220, 1.000);
+    }
+  }
+}
+
+.defaultIcon {
+  display: inline-block;
+}
+
+.detailIcon {
+  display: none;
+}
+
+.detailView.wrapper {
+   width: 85%;
+   margin-top: 30px;
+   margin-left: auto;
+   padding-bottom: 20px;
+
+   .disabledPredictions {
+     display: block;
+     padding-top: 4px;
+     font-size: 13px;
+     color: rgba(154, 169, 181, 1.000);
+   }
+
+   .detailIcon {
+     display: inline-block;
+   }
+
+   .defaultIcon {
+     display: none;
+   }
+
+   .stakeGraph {
+     width: 100%;
+     height: 40px;
+     position: relative;
+     margin-bottom: 10px;
+   }
+
+   .stakesFor, .stakesAgainst {
+     position: absolute;
+     top: 21px;
+     left: 3px;
+   }
+
+   .forBar, .againstBar {
+     position: absolute;
+     top: 0;
+
+     b {
+       color: rgba(154, 169, 181, 1.000);
+       font-size: 13px;
+       position: relative;
+       top: -4px;
+       margin-left: 3px;
+     }
+   }
+
+   img {
+     position: absolute;
+     left: -32px;
+     top: -14px;
+     height: 20px;
+     width: 22px;
+   }
+}
+
+.historyView.wrapper {
+  top: 15px;
+
+  .stakesAgainst, .stakesFor {
+    color: rgba(154, 169, 181, 1.000);
+    font-weight: normal;
+  }
+
+  .forBar, .againstBar {
+    display: none;
+  }
+}
+
+.isPassing .forBar {
+  span {
+    background-color: rgba(0, 190, 144, 1.000);
+  }
+}
+
+.isFailing .againstBar {
+  span {
+    background-color: rgba(246, 80, 80, 1.000);
+  }
+}

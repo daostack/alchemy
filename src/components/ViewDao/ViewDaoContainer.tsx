@@ -3,11 +3,10 @@ import * as profilesActions from "actions/profilesActions";
 import * as uiActions from "actions/uiActions";
 import { getArc } from "arc";
 import * as classNames from "classnames";
-import ViewProposalContainer from "components/Proposal/ViewProposalContainer";
+import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as appCss from "layouts/App.scss";
 import Util from "lib/util";
-import { denormalize } from "normalizr";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Cookies, withCookies } from "react-cookie";
@@ -18,7 +17,7 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
-import * as proposalCss from "../Proposal/Proposal.scss";
+import * as proposalCss from "../Proposal/ProposalCard.scss";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoProposalsContainer from "./DaoProposalsContainer";
@@ -91,8 +90,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    const { cookies } = this.props;
-
+    //const { cookies } = this.props;
     // TODO: disable tour for now until we update it
     // if (!cookies.get("seen_tour")) {
     //   cookies.set("seen_tour", "true", { path: "/" });
@@ -316,7 +314,7 @@ For additional information check out our <a href="https://docs.google.com/docume
             />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>
-                <ViewProposalContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
+                <ProposalDetailsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} proposalId={props.match.params.proposalId} />
               }
             />
             <Route path="/dao/:daoAvatarAddress"

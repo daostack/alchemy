@@ -1,6 +1,4 @@
-import BN = require("bn.js");
 import * as Redux from "redux";
-import { first } from "rxjs/operators";
 import * as Sentry from "@sentry/browser";
 
 import { getProfile } from "actions/profilesActions";

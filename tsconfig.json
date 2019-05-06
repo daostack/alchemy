@@ -8,10 +8,13 @@
     "target": "es6",
     "jsx": "react",
     "baseUrl": "src",
-    "skipLibCheck": true
+    "rootDirs": ["src", "stories"],
+    "skipLibCheck": true,
+    "noUnusedLocals": true
   },
   "include": [
     "./src/**/*",
     "./typings/*"
-  ]
+  ],
+  "exclude": ["node_modules", "build", "scripts"]
 }

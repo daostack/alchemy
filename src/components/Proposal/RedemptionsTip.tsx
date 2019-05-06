@@ -5,22 +5,19 @@ import Util, { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
-  isRedeemPending: boolean;
   beneficiaryHasRewards: boolean;
   currentAccountAddress: Address;
   dao: IDAOState;
-  executable: boolean;
-  accountHasRewards: boolean;
+  isRedeemPending: boolean;
   proposal: IProposalState;
-  redeemable: boolean;
-  rewards: IRewardState[];
+  rewardsForCurrentUser: IRewardState[];
 }
 
 export default (props: IProps) => {
-  const { proposal, currentAccountAddress, dao, executable, beneficiaryHasRewards, isRedeemPending, rewards } = props;
+  const { beneficiaryHasRewards, currentAccountAddress, dao, isRedeemPending, proposal, rewardsForCurrentUser } = props;
 
   const rewardComponents = [];
-  for (const reward of rewards) {
+  for (const reward of rewardsForCurrentUser) {
     let c = null;
     if (reward.reputationForProposer.gt(new BN(0))) {
       c = <div key={reward.id}>
@@ -58,33 +55,35 @@ export default (props: IProps) => {
 
   }
 
-  const hasEthReward = proposal.ethReward.gt(new BN(0));
-  const hasExternalReward = proposal.externalTokenReward.gt(new BN(0));
-  const hasReputationReward = !proposal.reputationReward.isZero();
+  const contributionReward = proposal.contributionReward;
+
+  const hasEthReward = contributionReward.ethReward.gt(new BN(0));
+  const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
+  const hasReputationReward = !contributionReward.reputationReward.isZero();
 
   return <div>
-    {(props.beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
+    {(beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
-          {(currentAccountAddress === proposal.beneficiary) ?
-              "As the" : "The"} beneficiary of the proposal {currentAccountAddress === proposal.beneficiary ? "you " : ""}will receive:
+          {(currentAccountAddress === contributionReward.beneficiary) ?
+              "As the" : "The"} beneficiary of the proposal {currentAccountAddress === contributionReward.beneficiary ? "you " : ""}will receive:
         </strong>
         <ul>
           {hasEthReward ?
             <li>
-              {formatTokens(proposal.ethReward, "ETH")}
-              {/*TODO: subscribe to ethBalance, {dao.ethBalance < proposal.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
+              {formatTokens(contributionReward.ethReward, "ETH")}
+              {/*TODO: subscribe to ethBalance, {dao.ethBalance < contributionReward.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
             </li> : ""
           }
           {hasExternalReward ?
             <li>
-              {formatTokens(proposal.externalTokenReward, tokenSymbol(proposal.externalToken))}
+              {formatTokens(contributionReward.externalTokenReward, tokenSymbol(contributionReward.externalToken))}
               {/* TODO: should be looking at the DAO balance of proposal.externalToken
                 {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
               */}
             </li> : ""
           }
-          {hasReputationReward ? <li><ReputationView reputation={proposal.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
+          {hasReputationReward ? <li><ReputationView reputation={contributionReward.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
         </ul>
       </div> : ""
     }

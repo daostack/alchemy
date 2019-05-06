@@ -1,0 +1,192 @@
+.hidden {
+  display: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.loading {
+  display: none;
+  position: absolute;
+  width: 80%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  text-align: center;
+  z-index: 100000;
+  box-shadow: $shadow-2;
+  border-radius: 3px;
+  background-color: $white;
+
+  img {
+    height: 35px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+  }
+}
+
+.proposalContainer {
+  max-width: $max-width;
+  background-color: $white;
+}
+
+.proposal {
+  width: 315px;
+  border-radius: 0 15px 15px 15px;
+  background-color: $white;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+  display: inline-block;
+  position: relative;
+  box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
+  overflow: hidden;
+  transition: all .25s ease;
+  vertical-align: top;
+
+  .description, .url {
+    display: none;
+  }
+}
+
+.proposalInfo {
+  font-size: $body;
+
+  a {
+    color: $black;
+  }
+
+  h3 {
+    font-size: $body;
+    margin: 4px 10px 10px 11px;
+  }
+
+  .closedTime {
+    position: relative;
+    display: block;
+    font-weight: $normal;
+    font-size: 11px;
+    color: $black-halftone;
+    margin: 6px 0 0 12px;
+  }
+}
+
+.detailLink img {
+  margin-left: 8px;
+  height: 12px;
+  opacity: .5;
+}
+
+.proposal:hover {
+  z-index: 10000;
+  box-shadow: 0 0 2px 0 #3278CA;
+  overflow: visible;
+  margin-bottom: -51px;
+
+  .proposalActions {
+    height: 114px;
+  }
+}
+
+.failedProposal .proposalInfo, .passedProposal .proposalInfo {
+  left: 60px;
+}
+
+.voteBox {
+  position: relative;
+  float: left;
+  border-right: 1px solid rgba(215, 225, 237, 1.000);
+  width: 49%;
+}
+
+.voteBox.unconfirmedVote {
+  .loading {
+    display: block;
+  }
+}
+
+.voteButtons {
+  padding-top: 9px;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.voteControls {
+  width: 100%;
+  text-align: center;
+  position: relative;
+  height: 70px;
+  z-index: 100;
+
+  .voteDivider {
+    width: 40%;
+    float: left;
+    text-align: right;
+  }
+}
+
+.predictions {
+  position: relative;
+  float: right;
+  width: 49%;
+  padding-top: 10px;
+}
+
+.predictionButtons {
+  padding-top: 5px;
+}
+
+.cardTop {
+  height: 20px;
+
+  .timer {
+    float: left;
+    width: 80%;
+    text-align: left;
+    font-size: 12px;
+
+    span {
+      display: inline-block;
+      margin: 6px 0 0 12px;
+      opacity: .6;
+    }
+  }
+}
+
+.actionButton {
+  float: left;
+  width: 50%;
+  text-align: right;
+  font-size: 12px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.proposalActions {
+  position: relative;
+  transition: all .25s ease;
+  margin-top: 15px;
+  border-top: 1px solid rgba(215, 225, 237, 1.000);
+  height: 63px;
+  overflow: hidden;
+}
+
+.createdBy {
+  font-size: $small;
+  color: $black-thirdtone;
+  margin-top: 16px;
+
+  .targetAccount {
+    top: 7px;
+    left: 4px;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

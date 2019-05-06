@@ -1,9 +1,3 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
 .downV {
   position: absolute;
   right: 20px;
@@ -12,7 +6,6 @@
 }
 
 .createProposalWrapper {
-  width: 540px;
   border-radius: 15px 15px 0 0;
   background-color: $white;
   position: fixed;
@@ -26,7 +19,6 @@
     border-radius: 15px 15px 0 0;
     position: relative;
     margin: 0;
-    margin-bottom: 20px;
     padding: 0;
     color: $white;
     height: 40px;
@@ -54,7 +46,7 @@
   }
 
   form {
-    padding: 0 30px 30px 30px;
+    padding: 20px 30px 30px 30px;
 
     textarea {
       height: 50px;
@@ -71,6 +63,7 @@
       font-size: 13px;
       padding: 12px 12px;
       font-family: $body-font;
+
       &.error {
         border: 1px solid rgba(255, 8, 96, 1.000);
       }
@@ -90,7 +83,6 @@
       width: 110px;
       display: inline-block;
     }
-
 
     .reward {
       float: left;
@@ -125,25 +117,9 @@
       margin-right: 10px;
     }
 
-    .contributionType {
-      border-top: 1px solid rgba(191, 203, 213, 1.000);
-      border-right: 1px solid rgba(191, 203, 213, 1.000);
-      border-bottom: 1px solid rgba(191, 203, 213, 1.000);
-      width: 75px;
-      font-size: 14px;
-      position: relative;
-      height: 28px;
-      display: inline-block;
-      top: 9px;
-    }
 
-    .contributionTypeDropdown {
-      width: 75px;
-      height: 28px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      border: 0;
+    .permissionCheckbox {
+      font-size: 9px;
     }
 
     label {
@@ -203,6 +179,7 @@
 
   .transactionList {
     padding: 30px 0;
+
     .transactionListHeader {
       font-size: $body;
       font-weight: $normal;
@@ -216,6 +193,7 @@
         font-size: $small;
       }
     }
+
     table {
       font-size: $caption;
       width: 100%;
@@ -223,6 +201,7 @@
       border-spacing: 0;
       margin-top: 12px;
       color: $black-halftone;
+
       td {
         padding: 8px 0;
         border-spacing: 0;
@@ -230,10 +209,12 @@
         border-bottom: $gray-border-halftone;
       }
     }
+
     .tokenAmount {
       color: $accent-1;
       font-weight: $bold;
     }
+
     .userAvatar {
       height: 20px;
       position: relative;
@@ -241,13 +222,24 @@
       margin: 0 8px;
       margin-top: -6px;
     }
+
     .transferIcon {
       margin-left: 8px;
     }
+
     .transferTotals {
       text-align: right;
     }
   }
+
+  .schemeFields {
+    display: block;
+  }
+
+  .schemeSelectContainer {
+    position: relative;
+  }
+
   .exitProposalCreation {
     cursor: pointer;
     height: 30px;
@@ -263,6 +255,7 @@
     border-radius: 15px;
     color: rgba(0, 113, 255, 1.000);
   }
+
   .submitProposal {
     height: 30px;
     border: none;
@@ -292,6 +285,7 @@
       display: none;
     }
   }
+
   .submitProposal:disabled .loading {
     display: inline-block;
   }
@@ -305,8 +299,144 @@
   .submitProposal:disabled .sendIcon {
     display: none;
   }
+
   .createProposalActions {
     text-align: right;
     margin-top: 30px;
+  }
+}
+
+.contributionReward {
+  width: 540px;
+}
+
+.schemeRegistrar {
+  width: 730px;
+  content: "";
+  clear: both;
+  display: table;
+
+  .schemeRegistrarSidebar {
+    width: 199px;
+    float: left;
+
+    .schemeItem {
+      position: relative;
+      border-top: 1px solid rgba(233, 238, 244, 1.000);
+      padding: 15px 0;
+
+      .schemeTitle {
+        font-size: 11px;
+        display: block;
+        padding: 8px;
+        background-color: $white;
+        top: -17px;
+        position: absolute;
+        left: 22px;
+      }
+    }
+
+    .addScheme {
+      display: block;
+      margin: 30px 0;
+    }
+
+    button {
+      display: block;
+      position: relative;
+      border: 0;
+      outline: none;
+      font-size: 13px;
+      font-weight: bold;
+      color: rgba(80, 97, 118, 1.000);
+      margin: 0;
+      padding: 15px 30px;
+      width: 100%;
+      text-align: left;
+
+      span {
+        display: none;
+      }
+    }
+
+    button:hover, button.selected {
+      background-color: rgba(233, 238, 244, 1.000);
+
+      span {
+        width: 23px;
+        height: 18px;
+        position: absolute;
+        right: -13px;
+        transform: rotate(63deg) skew(35deg);
+        display: block;
+        top: 13px;
+        background-color: #e9eef4;
+      }
+    }
+  }
+
+  .schemeRegistrarForm {
+    width: 530px;
+    float: left;
+    border-left: 1px solid #e9eef4;
+  }
+
+  label {
+    z-index: 100;
+  }
+
+  .otherScheme {
+    padding: 0 15px 0 180px;
+    width: 280px;
+  }
+
+  .schemeSelect {
+    display: block;
+    font-size: 13px;
+    color: rgba(154, 169, 181, 1.000);
+    margin: 0;
+    border: 1px solid #aaa;
+    border-radius: 0;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    position: absolute;
+    bottom: 0px;
+    height: 37px;
+    padding: 0 30px 0 15px;
+    left: 0;
+    z-index: 0;
+    border: 1px solid #bfcbd5;
+  }
+
+  .permissions {
+    display: block;
+    padding-top: 15px;
+
+    .permissionsLabel {
+      font-size: 13px;
+      font-weight: bold;
+      color: rgba(80, 97, 118, 1.000);
+    }
+
+    .permissionCheckbox  {
+      width: 50%;
+      display: inline-block;
+      padding: 4px 0 0 0;
+
+      input {
+        display: inline;
+        width: 20px;
+        height: 13px;
+      }
+
+      label {
+        font-size: 11px;
+        font-weight: normal;
+        display: inline;
+        z-index: 1000;
+      }
+    }
   }
 }
