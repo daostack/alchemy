@@ -61,7 +61,7 @@
 
   h3 {
     font-size: $body;
-    margin: 4px 10px 10px 11px;
+    margin: 4px 20px 10px 20px;
   }
 
   .closedTime {
@@ -146,12 +146,14 @@
     float: left;
     width: 80%;
     text-align: left;
-    font-size: 12px;
+    font-size: 11px;
 
     span {
+      font-family: "Open Sans";
       display: inline-block;
-      margin: 6px 0 0 12px;
+      margin: 6px 0 0 6px;
       opacity: .6;
+      color: rgba(104, 155, 214, 1.000);
     }
   }
 }
@@ -178,7 +180,7 @@
 .createdBy {
   font-size: $small;
   color: $black-thirdtone;
-  margin-top: 16px;
+  margin: 15px 10px 5px 10px;
 
   .targetAccount {
     top: 7px;

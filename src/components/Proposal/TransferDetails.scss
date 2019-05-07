@@ -6,9 +6,14 @@
   display: inline-block;
   padding: 5px;
   max-width: 92%;
-  margin: 0 auto;
+  margin: 0 20px 20px 20px;
   display: block;
   text-align: center;
+  font-family: "Open Sans";
+
+  strong {
+    font-weight: normal;
+  }
 }
 
 .detailView.transferDetails, .transactionModal.transferDetails {
@@ -26,7 +31,6 @@
 }
 
 .transferAmount {
-  font-weight: $bold;
   color: $accent-1;
   margin: 0 3px;
 }
