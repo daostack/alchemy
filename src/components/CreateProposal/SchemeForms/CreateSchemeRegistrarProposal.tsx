@@ -1,4 +1,4 @@
-import { IProposalType, Scheme } from "@daostack/client";
+import { IProposalType, Queue } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkNetworkAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
@@ -14,7 +14,7 @@ import * as css from "../CreateProposal.scss";
 interface IStateProps {
   daoAvatarAddress: string;
   handleClose: () => any;
-  registeredSchemes?: Scheme[];
+  registeredSchemes?: Queue[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
@@ -108,9 +108,9 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
     const arc = getArc();
 
     const defaultSchemes = [
-      arc.contractAddresses.base.ContributionReward,
-      arc.contractAddresses.base.SchemeRegistrar,
-      arc.contractAddresses.base.GenericScheme
+      arc.contractAddresses.ContributionReward,
+      arc.contractAddresses.SchemeRegistrar,
+      arc.contractAddresses.GenericScheme
     ];
 
     const unregisteredSchemeAddresses = defaultSchemes.filter((address) => !registeredSchemes.find((scheme) => scheme.address.toLowerCase() === address.toLowerCase()));
@@ -162,7 +162,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 upgradeController: false,
                 genericCall: false
               },
-              schemeToAdd: arc.contractAddresses.base.ContributionReward,
+              schemeToAdd: arc.contractAddresses.ContributionReward,
               title: "",
               url: ""
             } as FormValues}
@@ -398,9 +398,9 @@ const ConnectedCreateSchemeRegistrarProposalContainer= connect(mapStateToProps, 
 
 export default(props: IStateProps) => {
   const arc = getArc();
-  const observable = arc.dao(props.daoAvatarAddress).schemes();
+  const observable = arc.dao(props.daoAvatarAddress).queues();
   return <Subscribe observable={observable}>{
-    (state: IObservableState<Scheme[]>): any => {
+    (state: IObservableState<Queue[]>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
       } else if (state.error) {

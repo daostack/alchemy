@@ -104,7 +104,7 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
 }
 
 export function tokenSymbol(tokenAddress: string) {
-  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token] === tokenAddress);
+  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token].toLowerCase() === tokenAddress.toLowerCase());
   return symbol || "?";
 }
 
@@ -121,9 +121,9 @@ export function knownContracts() {
   const arc = getArc();
 
   return {
-    [arc.contractAddresses.base.ContributionReward.toLowerCase()]: "Contribution Reward",
-    [arc.contractAddresses.base.SchemeRegistrar.toLowerCase()]: "Scheme Registrar",
-    [arc.contractAddresses.base.GenericScheme.toLowerCase()]: "Generic Scheme",
+    [arc.contractAddresses.ContributionReward.toLowerCase()]: "Contribution Reward",
+    [arc.contractAddresses.SchemeRegistrar.toLowerCase()]: "Scheme Registrar",
+    [arc.contractAddresses.GenericScheme.toLowerCase()]: "Generic Scheme",
   };
 }
 

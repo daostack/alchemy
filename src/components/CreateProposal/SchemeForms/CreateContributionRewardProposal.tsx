@@ -164,7 +164,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
                     <label htmlFor="titleInput">
                       Title
-                      <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       <div className={css.requiredMarker}>*</div>
                     </label>
                     <Field
@@ -181,7 +181,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       Description
                       <div className={css.requiredMarker}>*</div>
                       <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                      <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       component="textarea"
@@ -193,7 +193,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
                     <label htmlFor="urlInput">
                       URL
-                      <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       id="urlInput"
@@ -208,7 +208,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       <div>
                         <label htmlFor="beneficiary">
                           Recipient
-                          <ErrorMessage name="beneficiary">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           <div className={css.requiredMarker}>*</div>
                         </label>
                         <UserSearchField

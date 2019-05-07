@@ -32,22 +32,16 @@
   position: relative;
 }
 
-// .executeProposal:hover {
-
-// .executeProposal:hover {
-//   width: 76px;
-// }
-
-// .boostProposal:hover {
-//   width: 66px;
-// }
+.unboostButton {
+  img {
+    transform: rotate(180deg);
+  }
+}
 
 .redeemButton {
-  background-color: transparent;
-  border: 1px solid $accent-1;
-  color: $accent-1;
-  padding: 5px 5px;
-  font-weight: bold;
+  img {
+    margin-left: -1px;
+  }
 
   &.pending {
     border: 1px solid $black-tenthtone;

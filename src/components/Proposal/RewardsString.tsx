@@ -17,7 +17,6 @@ export default class RewardsString extends React.Component<IProps, null> {
     const { dao, proposal, separator } = this.props;
 
     const contributionReward = proposal.contributionReward;
-
     const rewards = [];
     if (contributionReward.ethReward.gt(new BN(0))) {
       rewards.push(formatTokens(contributionReward.ethReward, "ETH"));
