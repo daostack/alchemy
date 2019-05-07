@@ -150,6 +150,7 @@ button:hover {
         padding: 5px 0 5px 30px;
         width: auto;
         display: block;
+        font-family: "Open Sans";
         font-size: 12px;
       }
 
@@ -227,7 +228,8 @@ button:hover {
 }
 
 .navHeading {
-  font-size: 12px;
+  font-family: "Open Sans";
+  font-size: 11px;
   border-bottom: 1px solid rgba(78, 137, 209, 1.000);
   width: 100%;
   display: block;
@@ -261,12 +263,13 @@ button:hover {
   min-height: 730px;
 
   .daoName {
-    padding: 15px;
+    padding: 20px;
 
     a {
       display: block;
       position: relative;
-      font-size: 24px;
+      font-size: 29px;
+      line-height: 29px;
       font-weight: bold;
 
       span {
@@ -290,6 +293,7 @@ button:hover {
     }
   }
   .navigation {
+    font-family: "Open Sans";
 
     ul {
       margin-top: 15px;
@@ -309,6 +313,7 @@ button:hover {
         top: -2px;
         background-color: rgba(246, 80, 80, 1.000);
         display: inline-block;
+        opacity: 0;
       }
 
       img {
