@@ -1,4 +1,4 @@
-import { IDAOState, Scheme } from "@daostack/client";
+import { IDAOState, Queue } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -26,17 +26,17 @@ const Fade = ({ children, ...props }: any) => (
 
 interface IProps {
   dao: IDAOState;
-  schemes: Scheme[];
+  queues: Queue[];
 }
 
 const AllSchemesContainer = (props: IProps) => {
-  const { dao, schemes } = props;
+  const { dao, queues } = props;
 
   const schemeCardsHTML = (
     <TransitionGroup>
-      { schemes.map((scheme: Scheme) => (
-        <Fade key={"scheme " + scheme.name}>
-          <SchemeCardContainer dao={dao} schemeName={scheme.name || "SchemeRegistrar"} />
+      { queues.map((queue: Queue) => (
+        <Fade key={"scheme " + queue.name}>
+          <SchemeCardContainer dao={dao} scheme={queue} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -47,7 +47,7 @@ const AllSchemesContainer = (props: IProps) => {
       <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
       <h1>All Schemes</h1>
-      { schemes.length === 0
+      { queues.length === 0
         ? <div>
             <img src="/assets/images/meditate.svg"/>
             <div>
@@ -66,18 +66,19 @@ const AllSchemesContainer = (props: IProps) => {
 export default(props: { } & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
   const arc = getArc();
+
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).state(), // DAO state
-    arc.dao(daoAvatarAddress).schemes()
+    arc.dao(daoAvatarAddress).queues()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IDAOState, Scheme[]]>): any => {
+    (state: IObservableState<[IDAOState, Queue[]]>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
-        return <AllSchemesContainer dao={state.data[0]} schemes={state.data[1]} />;
+        return <AllSchemesContainer dao={state.data[0]} queues={state.data[1]} />;
       }
     }
   }</Subscribe>;

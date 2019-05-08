@@ -102,13 +102,13 @@ class ActionButton extends React.Component<IProps, IState> {
       const contributionReward = proposal.contributionReward;
 
       // TODO: should be the DAO balance of the proposal.externalToken
-      const externalTokenBalance = dao.externalTokenBalance || new BN(0);
+      //const externalTokenBalance = dao.externalTokenBalance || new BN(0);
 
       beneficiaryHasRewards = (
         !contributionReward.reputationReward.isZero() ||
         contributionReward.nativeTokenReward.gt(new BN(0)) ||
         (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
-        (contributionReward.externalTokenReward.gt(new BN(0)) && externalTokenBalance.gte(contributionReward.externalTokenReward))
+        (contributionReward.externalTokenReward.gt(new BN(0))) // && externalTokenBalance.gte(contributionReward.externalTokenReward))
       ) as boolean;
 
       accountHasRewards = rewardsForCurrentUser.length !== 0;

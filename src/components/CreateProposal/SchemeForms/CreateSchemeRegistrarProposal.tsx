@@ -8,13 +8,13 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import { contractName } from "lib/util";
+import { knownSchemes, schemeName } from "lib/util";
 import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
   daoAvatarAddress: string;
   handleClose: () => any;
-  registeredSchemes?: Queue[];
+  queues?: Queue[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
@@ -63,7 +63,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    this.state = { currentTab: 'addScheme' };
+    this.state = { currentTab: "addScheme" };
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
@@ -85,10 +85,10 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     const currentTab = this.state.currentTab;
     const proposalValues = {...values,
-      type: this.state.currentTab == "removeScheme" ? IProposalType.SchemeRegistrarProposeToRemove : IProposalType.SchemeRegistrarPropose,
+      type: this.state.currentTab === "removeScheme" ? IProposalType.SchemeRegistrarProposeToRemove : IProposalType.SchemeRegistrarPropose,
       parametersHash: values.parametersHash,
       permissions: "0x" + permissions.toString(16).padStart(8, "0"),
-      scheme: currentTab === "addScheme" ? (values.schemeToAdd == "Other" ? values.otherScheme : values.schemeToAdd) :
+      scheme: currentTab === "addScheme" ? (values.schemeToAdd === "Other" ? values.otherScheme : values.schemeToAdd) :
               currentTab === "editScheme" ? values.schemeToEdit :
               values.schemeToRemove
     };
@@ -102,18 +102,12 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
   }
 
   public render() {
-    const { handleClose, registeredSchemes } = this.props;
+    const { handleClose, queues } = this.props;
     const currentTab = this.state.currentTab;
 
     const arc = getArc();
 
-    const defaultSchemes = [
-      arc.contractAddresses.ContributionReward,
-      arc.contractAddresses.SchemeRegistrar,
-      arc.contractAddresses.GenericScheme
-    ];
-
-    const unregisteredSchemeAddresses = defaultSchemes.filter((address) => !registeredSchemes.find((scheme) => scheme.address.toLowerCase() === address.toLowerCase()));
+    const unregisteredSchemeAddresses = Object.keys(knownSchemes()).filter((address) => !queues.find((queue) => queue.scheme.toLowerCase() === address.toLowerCase()));
 
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
@@ -276,7 +270,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       className={css.schemeSelect}
                     >
                       {unregisteredSchemeAddresses.map((address) => {
-                        return <option key={`add_scheme_${address}`} value={address}>{contractName(address)}</option>;
+                        return <option key={`add_scheme_${address}`} value={address}>{schemeName(address)}</option>;
                       })}
                       <option value="Other">Other</option>
                     </Field>
@@ -303,8 +297,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       defaultValue=""
                     >
                       <option value="">Select a scheme...</option>
-                      {registeredSchemes.map((scheme, i) => {
-                        return <option key={`edit_scheme_${scheme.address}`} value={scheme.address}>{contractName(scheme.address)}</option>;
+                      {queues.map((queue, i) => {
+                        return <option key={`edit_scheme_${queue.scheme}`} value={queue.scheme}>{schemeName(queue.scheme)}</option>;
                       })}
                     </Field>
                   </div>
@@ -370,8 +364,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       defaultValue=""
                     >
                       <option value="">Select a scheme...</option>
-                      {registeredSchemes.map((scheme, i) => {
-                        return <option key={`remove_scheme_${scheme.address}`} value={scheme.address}>{contractName(scheme.address)}</option>
+                      {queues.map((queue, i) => {
+                        return <option key={`remove_scheme_${queue.scheme}`} value={queue.scheme}>{schemeName(queue.scheme)}</option>;
                       })}
                     </Field>
                   </div>
@@ -394,7 +388,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
   }
 }
 
-const ConnectedCreateSchemeRegistrarProposalContainer= connect(mapStateToProps, mapDispatchToProps)(CreateSchemeRegistrarProposalContainer);
+const ConnectedCreateSchemeRegistrarProposalContainer = connect(mapStateToProps, mapDispatchToProps)(CreateSchemeRegistrarProposalContainer);
 
 export default(props: IStateProps) => {
   const arc = getArc();
@@ -406,7 +400,7 @@ export default(props: IStateProps) => {
       } else if (state.error) {
         throw state.error;
       } else {
-        return <ConnectedCreateSchemeRegistrarProposalContainer {...props} registeredSchemes={state.data} />;
+        return <ConnectedCreateSchemeRegistrarProposalContainer {...props} queues={state.data} />;
       }
     }
   }</Subscribe>;

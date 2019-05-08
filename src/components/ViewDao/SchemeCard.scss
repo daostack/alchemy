@@ -9,12 +9,11 @@
 
 .wrapper {
 	background: white;
-	width: 47.5%;
+	width: 40.5%;
 	margin: 0 2.5% 40px 0;
 	position: relative;
 	float: left;
 	border-radius: 20px 20px 0 0;
-
 
 	a.headerLink {
 		padding: 25px;
@@ -23,13 +22,6 @@
 		border: 1px solid $white;
 		border-radius: 20px 20px 0 0;
 		transition: all .25s ease;
-
-		h2 {
-			font-size: 21px;
-			font-weight: bold;
-			margin: 0;
-			padding: 0;
-		}
 
 		div {
 			padding-top: 10px;
@@ -47,6 +39,13 @@
 		&:hover {
 			border: 1px solid rgba(172, 199, 230, 1.000);
 		}
+	}
+
+	h2 {
+		font-size: 21px;
+		font-weight: bold;
+		margin: 0;
+		padding: 0;
 	}
 
 	a.createProposalLink {
@@ -86,6 +85,17 @@
 			width: 115px;
 		}
 
+	}
+}
+
+.unsupportedScheme {
+	h2 {
+		padding: 25px;
+	}
+
+	div {
+		text-align: center;
+		padding: 0 25px 25px 25px;
 	}
 }
 

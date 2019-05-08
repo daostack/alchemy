@@ -117,7 +117,7 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
   });
 }
 
-export function knownContracts() {
+export function knownSchemes() {
   const arc = getArc();
 
   return {
@@ -127,8 +127,8 @@ export function knownContracts() {
   };
 }
 
-export function contractName(address: string) {
-  const contracts = knownContracts();
+export function schemeName(address: string) {
+  const contracts = knownSchemes();
   if (address.toLowerCase() in contracts) {
     return contracts[address.toLowerCase()];
   }
