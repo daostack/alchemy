@@ -156,7 +156,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 upgradeController: false,
                 genericCall: false
               },
-              schemeToAdd: arc.contractAddresses.ContributionReward,
+              schemeToAdd: unregisteredSchemeAddresses ? unregisteredSchemeAddresses[0] : "Other",
               title: "",
               url: ""
             } as FormValues}

@@ -6,8 +6,7 @@ import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfileState } from "reducers/profilesReducer";
 import RewardsString from "./RewardsString";
-import { Link } from "react-router-dom";
-import { schemeName } from "lib/util";
+import { schemeName, default as Util } from "lib/util";
 
 import * as css from "./TransferDetails.scss";
 
@@ -19,7 +18,21 @@ interface IProps {
   transactionModal?: boolean;
 }
 
-export default class TransferDetails extends React.Component<IProps, null> {
+interface IState {
+  network: string;
+}
+
+export default class TransferDetails extends React.Component<IProps, IState> {
+
+  constructor(props: IProps) {
+    super(props);
+    this.state = { network: "" };
+  }
+
+  public async componentWillMount() {
+    this.setState({ network: (await Util.networkName()).toLowerCase() });
+  }
+
   public render() {
 
     const { beneficiaryProfile, dao, proposal, detailView, transactionModal } = this.props;
@@ -44,23 +57,30 @@ export default class TransferDetails extends React.Component<IProps, null> {
 
     if (proposal.schemeRegistrar) {
       const schemeRegistrar = proposal.schemeRegistrar;
+      const etherscanLink = `https://${this.state.network !== "main" ? `${this.state.network}.` : ""}etherscan.io/address/`;
 
       // TODO: how to best figure out of this is an add or edit scheme proposal?
 
       return (
         <div className={transferDetailsClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                <img src="/assets/images/Icon/delete.svg"/> Remove Scheme {schemeName(schemeRegistrar.schemeToRemove)}
-              </Link>
+              <span>
+                <img src="/assets/images/Icon/delete.svg"/>&nbsp;
+                Remove Scheme&nbsp;
+                <a href={etherscanLink + schemeRegistrar.schemeToRemove} target="_blank">{schemeName(schemeRegistrar.schemeToRemove)}</a>
+              </span>
               : schemeRegistrar.schemeToRegister ?
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                <img src="/assets/images/Icon/edit-sm.svg"/> Edit Scheme {schemeName(schemeRegistrar.schemeToRegister)}
-              </Link>
+              <span>
+                <b>+</b>&nbsp;
+                Add Scheme&nbsp;
+                <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
+              </span>
               :
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                <b>+</b> Add Scheme {schemeName(schemeRegistrar.schemeToRegister)}
-              </Link>
+              <span>
+                <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
+                Edit Scheme&nbsp;
+                <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
+              </span>
           }
         </div>
       );

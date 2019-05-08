@@ -83,8 +83,7 @@ export async function checkNetwork() {
   const web3: any = getArc().web3;
   const web3Provider = web3.currentProvider;
   if (web3Provider && web3Provider.isMetaMask) {
-    const network = await web3.eth.net.getNetworkType();
-    const networkName = Util.networkName(network);
+    const networkName = await Util.networkName();
     let expectedNetworkName;
     switch (process.env.NODE_ENV) {
       case "development": {

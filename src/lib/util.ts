@@ -21,7 +21,10 @@ export default class Util {
     return getArc().web3.eth.getBalance(account);
   }
 
-  public static networkName(id: string) {
+  public static async networkName(id?: string) {
+    if (!id) {
+      id = (await Util.getNetworkId()).toString();
+    }
     switch (id) {
       case "main":
       case "1":
@@ -72,8 +75,8 @@ export default class Util {
   public static getWeb3() {
     return getArc().web3;
   }
-  public static getNetworkId() {
-    return getArc().web3.eth.net.getId();
+  public static async getNetworkId() {
+    return await getArc().web3.eth.net.getId();
   }
 
   public static defaultAccount() {
