@@ -39,8 +39,11 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
     // TODO: the subscription should defined in a separate contant so it can be reuse
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = arc.dao(avatarAddress).proposal(proposalId);
+
+    // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
+    //   pass in null to not redeem any GenesisProtocol rewards
     // @ts-ignore
-    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
+    await proposalObj.claimRewards(null).subscribe(...observer);
   };
 }
 
