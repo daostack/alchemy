@@ -59,6 +59,10 @@
     color: $black;
   }
 
+  strong a {
+    color: rgba(80, 97, 118, 1.000);
+  }
+
   h3 {
     font-size: $body;
     margin: 4px 20px 10px 20px;
@@ -82,7 +86,7 @@
 
 .proposal:hover {
   z-index: 10000;
-  box-shadow: 0 0 2px 0 #3278CA;
+  box-shadow: 0 0 15px 0 rgba(49, 120, 202, .300);
   overflow: visible;
   margin-bottom: -51px;
 
@@ -173,7 +177,7 @@
   transition: all .25s ease;
   margin-top: 15px;
   border-top: 1px solid rgba(215, 225, 237, 1.000);
-  height: 63px;
+  height: 64px;
   overflow: hidden;
 }
 

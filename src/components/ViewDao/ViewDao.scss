@@ -504,6 +504,7 @@ a.navRedemption:hover {
   border-radius: 15px;
   display: block;
   position: absolute;
+  z-index: 100;
   right: 0;
   top: 11px;
   padding: 0 15px;
@@ -716,6 +717,7 @@ a.navItem:hover {
   position: relative;
   bottom: -10px;
   color: rgba(104, 155, 214, 1.000);
+  z-index: 0;
 }
 
 .daoHistoryHeader {

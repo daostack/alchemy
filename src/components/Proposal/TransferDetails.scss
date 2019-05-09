@@ -35,15 +35,19 @@
   margin: 0 3px;
 }
 
+.accountName {
+  color: rgba(80, 97, 118, 1.000);
+}
+
 .transferType {
   display: inline-block;
-  color: $black-halftone;
+  color: rgba(80, 97, 118, 1.000);
 
   strong {
-    color: $black-septone;
+    color: rgba(80, 97, 118, 1.000);
 
     em {
-      color: $black-halftone;
+      color: rgba(80, 97, 118, 1.000);
       font-style: normal;
       font-weight: normal;
     }
