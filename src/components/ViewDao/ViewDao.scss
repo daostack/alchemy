@@ -89,9 +89,10 @@ button:hover {
   flex-grow: 2;
   background-color: white;
   padding: 11px 8px;
-  color: rgba(80, 97, 118, 1.000);
+  color: rgba(78, 97, 118, 1.000);
   font-size: 11px;
   text-align: left;
+  font-family: "Open Sans";
   width: 100%;
 
   div {
@@ -150,6 +151,7 @@ button:hover {
         padding: 5px 0 5px 30px;
         width: auto;
         display: block;
+        font-family: "Open Sans";
         font-size: 12px;
       }
 
@@ -227,7 +229,8 @@ button:hover {
 }
 
 .navHeading {
-  font-size: 12px;
+  font-family: "Open Sans";
+  font-size: 11px;
   border-bottom: 1px solid rgba(78, 137, 209, 1.000);
   width: 100%;
   display: block;
@@ -261,12 +264,13 @@ button:hover {
   min-height: 730px;
 
   .daoName {
-    padding: 15px;
+    padding: 20px;
 
     a {
       display: block;
       position: relative;
-      font-size: 24px;
+      font-size: 29px;
+      line-height: 29px;
       font-weight: bold;
 
       span {
@@ -290,6 +294,7 @@ button:hover {
     }
   }
   .navigation {
+    font-family: "Open Sans";
 
     ul {
       margin-top: 15px;
@@ -309,6 +314,7 @@ button:hover {
         top: -2px;
         background-color: rgba(246, 80, 80, 1.000);
         display: inline-block;
+        opacity: 0;
       }
 
       img {
@@ -498,6 +504,7 @@ a.navRedemption:hover {
   border-radius: 15px;
   display: block;
   position: absolute;
+  z-index: 100;
   right: 0;
   top: 11px;
   padding: 0 15px;
@@ -706,7 +713,11 @@ a.navItem:hover {
   margin-top: 0;
   font-weight: bold;
   padding: 0;
+  font-size: 28px;
+  position: relative;
+  bottom: -10px;
   color: rgba(104, 155, 214, 1.000);
+  z-index: 0;
 }
 
 .daoHistoryHeader {
@@ -751,7 +762,7 @@ a.navItem:hover {
   padding-top: 20px;
   padding-bottom: 20px;
   border-top: 1px solid rgba(191, 203, 213, 1.000);
-  color: $black-halftone;
+  color: rgba(154, 169, 181, 1.000);
   font-weight: $bold;
 
   img {

@@ -10,7 +10,7 @@
   }
 
    .stakeGraph {
-     height: 25px;
+     height: 22px;
    }
 
   .stakesFor {
@@ -34,6 +34,9 @@
       display: inline-block;
       color: rgba(154, 169, 181, 1.000);
       margin-left: 5px;
+      font-family: "Open Sans";
+      position: relative;
+      top: 2px;
     }
 
     span {
