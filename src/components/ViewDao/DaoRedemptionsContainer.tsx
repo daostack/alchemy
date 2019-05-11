@@ -35,19 +35,21 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     proposals.forEach((proposal) => {
       // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
       const reward = proposal.gpRewards[0];
-      // ethReward += Util.fromWei(reward.amount);
-    //   externalTokenReward += Util.fromWei(reward.amount);
-      if (reward.tokensForStaker) {
-        genReward.iadd(new BN(reward.tokensForStaker));
-      }
-      if (reward.daoBountyForStaker) {
-        genReward.iadd(new BN(reward.daoBountyForStaker));
-      }
-      if (reward.reputationForVoter) {
-        reputationReward.iadd(new BN(reward.reputationForVoter));
+      if (reward) {
+        // ethReward += Util.fromWei(reward.amount);
+      //   externalTokenReward += Util.fromWei(reward.amount);
+        if (reward.tokensForStaker) {
+          genReward.iadd(new BN(reward.tokensForStaker));
         }
-      if (reward.reputationForProposer) {
-        reputationReward.iadd(new BN(reward.reputationForProposer));
+        if (reward.daoBountyForStaker) {
+          genReward.iadd(new BN(reward.daoBountyForStaker));
+        }
+        if (reward.reputationForVoter) {
+          reputationReward.iadd(new BN(reward.reputationForVoter));
+          }
+        if (reward.reputationForProposer) {
+          reputationReward.iadd(new BN(reward.reputationForProposer));
+        }
       }
     });
 

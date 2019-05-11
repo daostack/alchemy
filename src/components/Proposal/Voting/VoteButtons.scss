@@ -46,6 +46,13 @@
 .votingDisabled {
   font-size: 11px;
   color: rgba(154, 169, 181, 1.000);
+  padding-top: 0px;
+  position: relative;
+  top: -5px;
+}
+
+.detailView .votingDisabled {
+  top: 0;
   padding-top: 7px;
 }
 

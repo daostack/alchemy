@@ -59,9 +59,13 @@
     color: $black;
   }
 
+  strong a {
+    color: rgba(80, 97, 118, 1.000);
+  }
+
   h3 {
     font-size: $body;
-    margin: 4px 10px 10px 11px;
+    margin: 4px 20px 10px 20px;
   }
 
   .closedTime {
@@ -82,7 +86,7 @@
 
 .proposal:hover {
   z-index: 10000;
-  box-shadow: 0 0 2px 0 #3278CA;
+  box-shadow: 0 0 15px 0 rgba(49, 120, 202, .300);
   overflow: visible;
   margin-bottom: -51px;
 
@@ -146,12 +150,14 @@
     float: left;
     width: 80%;
     text-align: left;
-    font-size: 12px;
+    font-size: 11px;
 
     span {
+      font-family: "Open Sans";
       display: inline-block;
-      margin: 6px 0 0 12px;
+      margin: 6px 0 0 6px;
       opacity: .6;
+      color: rgba(104, 155, 214, 1.000);
     }
   }
 }
@@ -171,14 +177,14 @@
   transition: all .25s ease;
   margin-top: 15px;
   border-top: 1px solid rgba(215, 225, 237, 1.000);
-  height: 63px;
+  height: 64px;
   overflow: hidden;
 }
 
 .createdBy {
   font-size: $small;
   color: $black-thirdtone;
-  margin-top: 16px;
+  margin: 15px 10px 5px 10px;
 
   .targetAccount {
     top: 7px;

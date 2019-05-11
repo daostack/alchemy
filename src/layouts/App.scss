@@ -1,16 +1,10 @@
 $header-height: 100px;
 
 @font-face {
-  font-family: "DINProLight";
-  src: url("/assets/fonts/DINPro-Light.woff");
+  font-family: "AccordBold";
+  src: url("/assets/fonts/Accord-Bold.ttf");
   font-weight: regular;
 }
-@font-face {
-  font-family: "DINProLight";
-  src: url("/assets/fonts/DINPro-Bold.woff");
-  font-weight: bold;
-}
-
 
 @font-face {
   font-family: "GaramondProDisplay";
@@ -18,8 +12,12 @@ $header-height: 100px;
 }
 
 body {
-  font-family: "DINProLight", sans-serif;
+  font-family: "AccordBold", sans-serif;
   font-weight: 400;
+
+  p {
+    font-family: "Open Sans";
+  }
 }
 
 .outer {

@@ -184,6 +184,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 currentVote={currentAccountVote}
                 dao={dao}
+                detailView={true}
                 expired={expired}
                 isVotingNo={isVotingNo}
                 isVotingYes={isVotingYes}
@@ -201,7 +202,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 </div>
 
                 <div className={css.voteButtons}>
-                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
+                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} detailView={true} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
                 </div>
               </div>
 
