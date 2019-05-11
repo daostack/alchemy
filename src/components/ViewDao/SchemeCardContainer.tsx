@@ -57,14 +57,15 @@ const SchemeCardContainer = (props: IInternalProps) => {
 
   if (knownScheme) {
     return (
-      <div className={css.wrapper}>
+      <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
         <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.name}`}>
           <h2>{scheme.name.replace(/([A-Z])/g, " $1")}</h2>
           <div>
             <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
           </div>
         </Link>
-        <Link className={css.createProposalLink} to={`/dao/${dao.address}/proposals/${scheme.name}/create`}>
+        <Link className={css.createProposalLink} to={`/dao/${dao.address}/proposals/${scheme.name}/create`}
+          data-test-id={`createProposal-${scheme.name}`}>
           <div>
             <span>&#43;</span>
             <strong>Create a proposal</strong>
