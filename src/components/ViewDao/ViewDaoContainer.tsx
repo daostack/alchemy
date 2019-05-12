@@ -37,8 +37,8 @@ interface IStateProps extends RouteComponentProps<any> {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    currentAccountAddress: state.web3.ethAccountAddress,
-    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
+    currentAccountAddress: state.web3.currentAccountAddress,
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     dao: ownProps.dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     tourVisible: state.ui.tourVisible

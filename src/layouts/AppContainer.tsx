@@ -1,6 +1,8 @@
-import {Address } from "@daostack/client";
+// const Web3 = require("web3");
+import { Address } from "@daostack/client";
+import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getArc, getCurrentUser, pollForAccountChanges } from "arc";
+import { getCurrentAccountAddress, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -19,14 +21,10 @@ import { Route, Switch } from "react-router-dom";
 import { ModalContainer, ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
-import { ConnectionStatus } from "reducers/web3Reducer";
 import { sortedNotifications } from "../selectors/notifications";
-import * as Sentry from "@sentry/browser";
-
 import * as css from "./App.scss";
 
 interface IStateProps {
-  connectionStatus: ConnectionStatus;
   cookies: Cookies;
   currentAccountAddress: string;
   history: History.History;
@@ -34,8 +32,7 @@ interface IStateProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => ({
-  connectionStatus: state.web3.connectionStatus,
-  currentAccountAddress: state.web3.ethAccountAddress,
+  currentAccountAddress: state.web3.currentAccountAddress,
   history: ownProps.history,
   sortedNotifications: sortedNotifications()(state),
 });
@@ -83,23 +80,16 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentDidMount() {
     // get the Arc object as early the lifetime of the app
-    const arc = getArc();
+    // const arc = await getArc();
     let currentAddress: Address;
     try {
       // only set the account if the network is correct
-      // TODO: display big error if not on correct network
-      currentAddress = await getCurrentUser();
-      console.log( `current address`, currentAddress);
-      if (this.props.currentAccountAddress !== currentAddress) {
-        this.props.setCurrentAccount(currentAddress);
-      }
-
-      pollForAccountChanges(arc.web3, currentAddress).subscribe(
+      currentAddress = await getCurrentAccountAddress();
+      pollForAccountChanges(currentAddress).subscribe(
         (newAddress: Address) => {
-          if (currentAddress !== newAddress) {
-            this.props.setCurrentAccount(undefined);
-            window.location.reload();
-          }
+          // const mmProvider = checkWeb3Connection();
+          // arc.setWeb3Provider(new Web3(mmProvider));
+          this.props.setCurrentAccount(newAddress);
         }
       );
     } catch (err) {
@@ -115,7 +105,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public render() {
     const {
-      connectionStatus,
+      // connectionStatus,
       dismissNotification,
       showNotification,
       sortedNotifications,
@@ -134,7 +124,6 @@ class AppContainer extends React.Component<IProps, IState> {
       <div className={css.outer}>
         <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
-        { connectionStatus === ConnectionStatus.Pending ? <div>Checking connection status...</div> :
           <div className={css.container}>
             <Route path="/"
               render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
@@ -157,7 +146,6 @@ class AppContainer extends React.Component<IProps, IState> {
               bodyModalClassName={css.modalBody}
             />
           </div>
-        }
         <div className={css.pendingTransactions}>
           {notificationsMinimized ?
             <MinimizedNotifications

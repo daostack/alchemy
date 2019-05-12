@@ -14,14 +14,14 @@ export enum ConnectionStatus {
 export interface IWeb3State {
   accounts: string[];
   connectionStatus: ConnectionStatus;
-  ethAccountAddress: string | null;
+  currentAccountAddress: string | null;
   networkId: number;
 }
 
 export const initialState: IWeb3State = {
   accounts: [],
   connectionStatus: ConnectionStatus.Pending,
-  ethAccountAddress: null,
+  currentAccountAddress: null,
   networkId: 0 // unknown network
 };
 
