@@ -1,5 +1,7 @@
 .wrapper {
   position: relative;
+  font-family: "Open Sans";
+  font-weight: normal;
 }
 
 .boostedAmount {
@@ -8,6 +10,10 @@
   color: #0076ff;
   text-align: center;
   padding-top: 2px;
+
+  b {
+    font-weight: normal;
+  }
 }
 
 .detailView .boostedAmount {

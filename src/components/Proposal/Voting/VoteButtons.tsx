@@ -19,6 +19,7 @@ interface IContainerProps {
   currentAccountState: IMemberState|undefined;
   currentVote: number;
   dao: IDAOState;
+  detailView?: boolean;
   expired?: boolean;
   proposal: IProposalState;
   voteOnProposal: typeof arcActions.voteOnProposal;
@@ -30,6 +31,7 @@ interface IContainerProps {
 interface IState {
   currentVote: number;
   showPreVoteModal: boolean;
+  detailView?: boolean;
 }
 
 const mapDispatchToProps = {
@@ -65,6 +67,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       altStyle,
       currentVote,
       currentAccountState,
+      detailView,
       proposal,
       dao,
       expired,
@@ -114,6 +117,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
       [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
+      [css.detailView]: detailView
     });
 
     return (
@@ -173,6 +177,7 @@ interface IProps {
   currentAccountAddress: Address;
   currentVote: number;
   dao: IDAOState;
+  detailView?: boolean;
   expired?: boolean;
   proposal: IProposalState;
   isVotingNo?: boolean;
