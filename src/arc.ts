@@ -1,7 +1,8 @@
+// const Web3 = require("web3");
 import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-import Util from "./lib/util";
+import { getNetworkName } from "./lib/util";
 
 const settings = {
   dev: {
@@ -38,7 +39,7 @@ const settings = {
 };
 
 /**
- * get the conract address from the @daostack/migration repository.
+ * get the contract address from the @daostack/migration repository.
  * These may be out of date: consider using getContractAddressesFromSubgraph instead
  * @param  key the network where the contracts are deployed: one of private, rinkeby, mainnet
  * @return   an Array mapping contract names to addresses
@@ -57,12 +58,14 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
 
 /**
  * check if the web3 connection is ready to send transactions, and warn the user if it is not
- * @return true if things are fine, false if not
+ *
+ * @param showNotification the warning will be sent using the showNotification function;
+ *    it will use `alert()` if no such function is provided
+ * @return the web3 connection, if everything is fine
  */
 export async function checkWeb3ConnectionAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    await checkWeb3Connection();
-    return true;
+    return checkWeb3Connection();
   } catch (err) {
     const msg =  `${err.message}`;
     if (showNotification) {
@@ -70,22 +73,20 @@ export async function checkWeb3ConnectionAndWarn(showNotification?: any): Promis
     } else {
       alert(msg);
     }
-    return false;
   }
 }
 
 /**
- * Checks if the web3 provider is ready to send transactions and configured as expected;
- * throws an Error if something is wrong.
+ * Checks if the web3 Provider is ready to send transactions and configured as expected;
+ * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export async function checkWeb3Connection() {
-  const web3Provider = await getMetaMask();
+export function checkWeb3Connection() {
+  const web3Provider = getMetaMask();
   // const web3: any = undefined;
   if (web3Provider && web3Provider.isMetaMask) {
     const networkId = web3Provider.networkVersion;
-    // const network = await web3.eth.net.getNetworkType();
-    const networkName = Util.networkName(networkId);
+    const networkName = getNetworkName(networkId);
     let expectedNetworkName;
     switch (process.env.NODE_ENV) {
       case "development": {
@@ -101,7 +102,7 @@ export async function checkWeb3Connection() {
         break;
       }
       default: {
-        throw new Error(`Uknown NODE_ENV: ${process.env.NODE_ENV}`);
+        throw new Error(`Unknown NODE_ENV: ${process.env.NODE_ENV}`);
       }
 
     }
@@ -113,7 +114,7 @@ export async function checkWeb3Connection() {
       throw new Error(msg);
     }
 
-    await enableMetamask();
+    // await enableMetamask();
     return web3Provider;
   } else {
     // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
@@ -127,19 +128,15 @@ export async function checkWeb3Connection() {
 }
 
 /**
- * get the current user from the web3 provider (metamask)
- * this function will throw an Error if there is anything wrong with the connection
- * (when no provider is available, or the provider is not the expected provider)
- * which need to be handled by the caller of the function
+ * get the current user from the web3 Provider (metamask)
  * @return [description]
  */
-export function getCurrentAccountAddress(): Address {
-  const ethereum = getMetaMask();
-  return ethereum.selectedAddress;
-  // const web3: any = getArc().web3;
-  // const accounts = await web3.eth.getAccounts();
-  // const address = accounts[0];
-  // return address ? address.toLowerCase() : address;
+export async function getCurrentAccountAddress(): Promise<Address> {
+  // const ethereum = getMetaMask();
+  // return ethereum.selectedAddress;
+  const web3: any = getArc().web3;
+  const accounts = await web3.eth.getAccounts();
+  return accounts[0];
 }
 
 /**
@@ -163,10 +160,8 @@ export async function enableMetamask(): Promise<any> {
   // check if Metamask account access is enabled, and if not, call the (async) function
   // that will ask the user to enable it
   const ethereum = getMetaMask();
-  if (!ethereum.selectedAddress) {
-    await ethereum.enable();
-    return ethereum;
-  }
+  await ethereum.enable();
+  return ethereum;
 }
 
 // get appropriate Arc configuration for the given environment
@@ -199,8 +194,15 @@ export function getArc(): Arc {
   if (typeof(window) !== "undefined" && (<any> window).arc) {
     return (<any> window).arc;
   } else {
-
     const arcSettings = getArcSettings();
+    if (typeof window !== "undefined" &&
+      (typeof (window as any).ethereum !== "undefined" || typeof (window as any).web3 !== "undefined")
+    ) {
+      // Web3 browser user detected. You can now use the Provider.
+      console.log("using web3 provider provided by browser");
+      arcSettings.web3Provider = (window as any).ethereum || (window as any).web3.currentProvider;
+    }
+
     console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
     console.log(arcSettings);
     console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
@@ -214,18 +216,21 @@ export function getArc(): Arc {
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
 // Polling is Evil!
-// TODO: check if this (new?) function can replace polling: https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
+// TODO: check if this (new?) function can replace polling:
+// https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
 export function pollForAccountChanges(currentAccountAddress?: string, interval: number = 2000) {
   console.log("start polling for account");
   return Observable.create((observer: any) => {
     let prevAccount = currentAccountAddress;
     function emitIfNewAccount() {
-      const account  = getCurrentAccountAddress();
-      if (prevAccount !== account) {
-        console.log(`ACCOUNT CHANGED; new account is ${account}`);
-        observer.next(account);
-        prevAccount = account;
-      }
+      getCurrentAccountAddress()
+        .then((account) => {
+          if (prevAccount !== account) {
+            observer.next(account);
+            prevAccount = account;
+          }
+        })
+        .catch((err) => { console.warn(err.message); });
     }
 
     emitIfNewAccount();
