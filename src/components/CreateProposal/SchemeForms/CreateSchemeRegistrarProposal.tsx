@@ -1,6 +1,6 @@
 import { IDAOState, IProposalType } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkNetworkAndWarn, getArc } from "arc";
+import { checkWeb3ConnectionAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import * as React from "react";
@@ -59,7 +59,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
+    if (!(await checkWeb3ConnectionAndWarn(this.props.showNotification))) { return; }
 
     const proposalValues = {...values,
       type: IProposalType.SchemeRegistrarPropose,

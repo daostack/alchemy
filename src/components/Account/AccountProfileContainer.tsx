@@ -44,7 +44,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     accountAddress,
     accountInfo: ownProps.accountInfo,
     accountProfile: state.profiles[accountAddress],
-    currentAccountAddress: state.web3.ethAccountAddress ? state.web3.ethAccountAddress.toLowerCase() : null,
+    currentAccountAddress: state.web3.currentAccountAddress ? state.web3.currentAccountAddress.toLowerCase() : null,
     dao: ownProps.dao,
     ethBalance: ownProps.ethBalance,
     genBalance: ownProps.genBalance

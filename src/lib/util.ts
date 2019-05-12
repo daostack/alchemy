@@ -2,7 +2,6 @@ import { Address, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import { getArc } from "../arc";
 
-// TODO: not sure why these helper functions are wrapped in a class
 export default class Util {
   public static fromWei(amount: BN): number {
     try {
@@ -115,4 +114,29 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
       setTimeout(waitForIt, 30);
     })();
   });
+}
+
+export function networkName(id: string): string {
+  switch (id) {
+    case "main":
+    case "1":
+      return "main";
+    case "morden":
+    case "2":
+      return "morden";
+    case "ropsten":
+    case "3":
+      return "ropsten";
+    case "rinkeby":
+    case "4":
+      return "rinkeby";
+    case "kovan":
+    case "42":
+      return "kovan";
+    case "private":
+    case "1512051714758":
+      return "ganache";
+    default:
+      return `unknown (${id})`;
+  }
 }

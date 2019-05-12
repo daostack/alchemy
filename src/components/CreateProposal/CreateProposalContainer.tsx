@@ -38,7 +38,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   public render() {
     const {  daoAvatarAddress } = this.props;
     const schemeName = this.props.schemeName || "ContributionReward";
-
     return (
       <div className={css.createProposalWrapper}>
         <BreadcrumbsItem to={"/dao/" + daoAvatarAddress + "/proposals/" + schemeName + "/create"}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>

@@ -37,6 +37,12 @@ const settings = {
   }
 };
 
+/**
+ * get the conract address from the @daostack/migration repository.
+ * These may be out of date: consider using getContractAddressesFromSubgraph instead
+ * @param  key the network where the contracts are deployed: one of private, rinkeby, mainnet
+ * @return   an Array mapping contract names to addresses
+ */
 export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
@@ -49,42 +55,37 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   return addresses.base;
 }
 
-// cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
-// Polling is Evil!
-// TODO: check if this (new?) function can replace polling: https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
-export function pollForAccountChanges(web3: any, currentAccountAddress?: string, interval: number = 2000) {
-  return Observable.create((observer: any) => {
-    let account: any;
-    let prevAccount = currentAccountAddress;
-    const timeout = setInterval(() => {
-      web3.eth.getAccounts().then((accounts: any) => {
-        if (accounts) {
-          account = accounts[0];
-        } else if (web3.eth.accounts) {
-          account = web3.eth.accounts[0].address;
-        }
-        account = account ? account.toLowerCase() : account;
-        if (prevAccount !== account) {
-          console.log(`ACCOUNT CHANGED; new account is ${account}`);
-          observer.next(account);
-          prevAccount = account;
-        }
-      });
-    }, interval);
-    return() => clearTimeout(timeout);
-  });
+/**
+ * check if the web3 connection is ready to send transactions, and warn the user if it is not
+ * @return true if things are fine, false if not
+ */
+export async function checkWeb3ConnectionAndWarn(showNotification?: any): Promise<boolean> {
+  try {
+    await checkWeb3Connection();
+    return true;
+  } catch (err) {
+    const msg =  `${err.message}`;
+    if (showNotification) {
+      showNotification(NotificationStatus.Failure, msg);
+    } else {
+      alert(msg);
+    }
+    return false;
+  }
 }
 
 /**
- * Checks if the web3 provider is as expected; throw an Error if it is not
+ * Checks if the web3 provider is ready to send transactions and configured as expected;
+ * throws an Error if something is wrong.
  * @return
  */
-export async function checkNetwork() {
-  const web3: any = getArc().web3;
-  const web3Provider = web3.currentProvider;
+export async function checkWeb3Connection() {
+  const web3Provider = await getMetaMask();
+  // const web3: any = undefined;
   if (web3Provider && web3Provider.isMetaMask) {
-    const network = await web3.eth.net.getNetworkType();
-    const networkName = Util.networkName(network);
+    const networkId = web3Provider.networkVersion;
+    // const network = await web3.eth.net.getNetworkType();
+    const networkName = Util.networkName(networkId);
     let expectedNetworkName;
     switch (process.env.NODE_ENV) {
       case "development": {
@@ -112,11 +113,13 @@ export async function checkNetwork() {
       throw new Error(msg);
     }
 
+    await enableMetamask();
+    return web3Provider;
   } else {
     // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
     if (process.env.NODE_ENV === "development") {
       const msg = `No metamask connection found - you may not be able to do transactions`;
-      console.warn(msg);
+      console.log(msg);
     } else {
       throw new Error(`No metamask instance found.`);
     }
@@ -130,46 +133,39 @@ export async function checkNetwork() {
  * which need to be handled by the caller of the function
  * @return [description]
  */
-export async function getCurrentUser(): Promise<Address> {
-  await checkNetwork();
-  const web3: any = getArc().web3;
-  const accounts = await web3.eth.getAccounts();
-  const address = accounts[0];
-  return address ? address.toLowerCase() : address;
+export function getCurrentAccountAddress(): Address {
+  const ethereum = getMetaMask();
+  return ethereum.selectedAddress;
+  // const web3: any = getArc().web3;
+  // const accounts = await web3.eth.getAccounts();
+  // const address = accounts[0];
+  // return address ? address.toLowerCase() : address;
 }
 
-export function enableMetamask() {
-  // check if Metamask account access is enabled, and if not, call the (async) function
-  // that will ask the user to enable it
+/**
+ * check if a metamask instanse is available and an account is unlocked
+ * @return [description]
+ */
+export function getMetaMask(): any {
   const ethereum = (<any> window).ethereum;
   if (!ethereum) {
     const msg = `Please install or enable metamask`;
     throw Error(msg);
   }
-  if (!ethereum.selectedAddress) {
-    ethereum.enable().catch((err: Error) => {
-      throw err;
-    });
-  }
+  // if (!ethereum.selectedAddress) {
+  //   const msg = `No account selected in metamask`;
+  //   throw Error(msg);
+  // }
+  return ethereum;
 }
 
-/**
- * check if the web3 connection is ready to send transactions, and warn the user if it is not
- * @return true if things are fine, false if not
- */
-export async function checkNetworkAndWarn(showNotification?: any): Promise<boolean> {
-  try {
-    await checkNetwork();
-    return true;
-  } catch (err) {
-    // TODO: this should of course not be an alert, but a Modal
-    const msg =  `Cannot send transction: ${err.message}`;
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
-    } else {
-      alert(msg);
-    }
-    return false;
+export async function enableMetamask(): Promise<any> {
+  // check if Metamask account access is enabled, and if not, call the (async) function
+  // that will ask the user to enable it
+  const ethereum = getMetaMask();
+  if (!ethereum.selectedAddress) {
+    await ethereum.enable();
+    return ethereum;
   }
 }
 
@@ -216,4 +212,24 @@ export function getArc(): Arc {
   }
 }
 
-export { Arc };
+// cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
+// Polling is Evil!
+// TODO: check if this (new?) function can replace polling: https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
+export function pollForAccountChanges(currentAccountAddress?: string, interval: number = 2000) {
+  console.log("start polling for account");
+  return Observable.create((observer: any) => {
+    let prevAccount = currentAccountAddress;
+    function emitIfNewAccount() {
+      const account  = getCurrentAccountAddress();
+      if (prevAccount !== account) {
+        console.log(`ACCOUNT CHANGED; new account is ${account}`);
+        observer.next(account);
+        prevAccount = account;
+      }
+    }
+
+    emitIfNewAccount();
+    const timeout = setInterval(emitIfNewAccount, interval);
+    return() => clearTimeout(timeout);
+  });
+}
