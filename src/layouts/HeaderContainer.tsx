@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableMetamask, getArc } from "arc";
+import { checkWeb3Connection, enableMetamask, getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -67,10 +67,11 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   public handleClickLogin = () => {
     try {
-      enableMetamask();
+      checkWeb3Connection();
     } catch (err) {
       this.props.showNotification(NotificationStatus.Failure, err.message);
     }
+    enableMetamask();
   }
 
   public render() {
@@ -152,7 +153,7 @@ export default (props: RouteComponentProps<any>) => {
           if (state.isLoading) {
             return null;
           } else if (state.error) {
-            return <div>{state.error}</div>;
+            return <div>{state.error.message}</div>;
           } else {
             return <ConnectedHeaderContainer {...props} dao={state.data} />;
           }

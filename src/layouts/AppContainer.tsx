@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getCurrentAccountAddress, pollForAccountChanges } from "arc";
+import { checkWeb3Connection, getArc, getCurrentAccountAddress, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -80,16 +80,24 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentDidMount() {
     // get the Arc object as early the lifetime of the app
-    // const arc = await getArc();
+    const arc = await getArc();
+    console.log(arc);
     let currentAddress: Address;
     try {
       // only set the account if the network is correct
       currentAddress = await getCurrentAccountAddress();
+      if (currentAddress && checkWeb3Connection()) {
+        this.props.setCurrentAccount(currentAddress);
+      }
       pollForAccountChanges(currentAddress).subscribe(
         (newAddress: Address) => {
-          // const mmProvider = checkWeb3Connection();
-          // arc.setWeb3Provider(new Web3(mmProvider));
-          this.props.setCurrentAccount(newAddress);
+          console.log("new address!", newAddress);
+          if (newAddress && checkWeb3Connection()) {
+            this.props.setCurrentAccount(newAddress);
+            // TODO: we reload on setting a new account, but it would be more elegant
+            // if we did not need to
+            window.location.reload();
+          }
         }
       );
     } catch (err) {
@@ -98,7 +106,7 @@ class AppContainer extends React.Component<IProps, IState> {
       if (err.message.match(/no metamask/i)) {
         // if no metamask instance is found, we do not bother the user (yet)
       } else {
-        this.props.showNotification(NotificationStatus.Failure, err.message);
+        // this.props.showNotification(NotificationStatus.Failure, err.message);
       }
     }
   }
