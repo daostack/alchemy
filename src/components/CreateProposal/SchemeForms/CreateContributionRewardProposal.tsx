@@ -1,6 +1,6 @@
 import { IDAOState, IProposalType } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkWeb3ConnectionAndWarn, getArc } from "arc";
+import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -58,7 +58,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!(await checkWeb3ConnectionAndWarn(this.props.showNotification))) { return; }
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 

@@ -63,9 +63,9 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
  *    it will use `alert()` if no such function is provided
  * @return the web3 connection, if everything is fine
  */
-export async function checkWeb3ConnectionAndWarn(showNotification?: any): Promise<boolean> {
+export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    return checkWeb3Connection();
+    return checkWeb3Provider();
   } catch (err) {
     const msg =  `${err.message}`;
     if (showNotification) {
@@ -81,7 +81,7 @@ export async function checkWeb3ConnectionAndWarn(showNotification?: any): Promis
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export function checkWeb3Connection() {
+export function checkWeb3Provider() {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -107,13 +107,11 @@ export function checkWeb3Connection() {
     const networkName = getNetworkName(networkId);
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
+      return web3Provider;
     } else {
       const msg = `Please connect to "${expectedNetworkName}"`;
       throw new Error(msg);
     }
-
-    // await enableMetamask();
-    return web3Provider;
   } catch (err) {
     if (err.message.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
       const msg = `No metamask connection found - we are in "development" environment, so this may be ok`;
@@ -189,13 +187,8 @@ export function getArc(): Arc {
     return (<any> window).arc;
   } else {
     const arcSettings = getArcSettings();
-    if (typeof window !== "undefined" &&
-      (typeof (window as any).ethereum !== "undefined" || typeof (window as any).web3 !== "undefined")
-    ) {
-      // Web3 browser user detected. You can now use the Provider.
-      console.log("using web3 provider provided by browser");
-      arcSettings.web3Provider = (window as any).ethereum || (window as any).web3.currentProvider;
-    }
+
+    arcSettings.web3Provider = checkWeb3Provider();
 
     console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
     console.log(arcSettings);
