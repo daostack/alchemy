@@ -313,6 +313,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       <label htmlFor="parametersHashInput">
                         Parameters Hash
                         <ErrorMessage name="parametersHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <div className={css.requiredMarker}>*</div>
                       </label>
                       <Field
                         id="parametersHashInput"
