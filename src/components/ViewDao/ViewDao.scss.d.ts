@@ -7,6 +7,7 @@ export const votes: string;
 export const predictions: string;
 export const proposalCreator: string;
 export const endDate: string;
+export const scheme: string;
 export const title: string;
 export const closeReason: string;
 export const myActions: string;

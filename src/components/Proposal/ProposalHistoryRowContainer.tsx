@@ -153,6 +153,9 @@ class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
         <div className={css.endDate}>
           {closingTime(proposal).format("MMM D, YYYY")}
         </div>
+        <div className={css.scheme}>
+          <div>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</div>
+        </div>
         <div className={css.title}>
           <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
         </div>

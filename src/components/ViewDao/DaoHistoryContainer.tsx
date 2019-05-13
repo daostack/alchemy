@@ -34,6 +34,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
             <div className={css.closedProposalsHeader}>
                 <div className={css.proposalCreator}>Proposed by</div>
                 <div className={css.endDate}>End date</div>
+                <div className={css.scheme}>Scheme</div>
                 <div className={css.title}>Title</div>
                 <div className={css.votes}>Votes</div>
                 <div className={css.predictions}>Predictions</div>
