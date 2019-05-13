@@ -68,13 +68,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
             <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
           </div>
         </Link>
-        <Link className={css.createProposalLink} to={`/dao/${dao.address}/proposals/${scheme.name}/create`}
-          data-test-id={`createProposal-${scheme.name}`}>
-          <div>
-            <span>&#43;</span>
-            <strong>Create a proposal</strong>
-          </div>
-        </Link>
+
         {proposals.length === 0 ?
           <div className={css.loading}>
             <img src="/assets/images/meditate.svg"/>

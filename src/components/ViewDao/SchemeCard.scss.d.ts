@@ -1,7 +1,6 @@
 export const loading: string;
 export const wrapper: string;
 export const headerLink: string;
-export const createProposalLink: string;
 export const unsupportedScheme: string;
 export const proposalTitle: string;
 export const miniGraph: string;

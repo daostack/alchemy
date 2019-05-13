@@ -48,44 +48,6 @@
 		padding: 0;
 	}
 
-	a.createProposalLink {
-		position: absolute;
-		top: 10px;
-		right: 10px;
-		color: $white;
-		font-size: 11px;
-		border-radius: 10px;
-		height: 20px;
-		display: block;
-		overflow: hidden;
-		width: 20px;
-		transition: all .25s ease;
-		background-color: rgba(6, 118, 255, 1.000);
-
-		div {
-			width: 95px;
-			margin-left: 20px;
-		}
-
-		span {
-			font-size: 22px;
-			position: absolute;
-			top: -7px;
-			left: 5px;
-			display: block;
-		}
-
-		strong {
-			font-weight: normal;
-			position: relative;
-			top: 3px;
-		}
-
-		&:hover {
-			width: 115px;
-		}
-
-	}
 }
 
 .unsupportedScheme {
