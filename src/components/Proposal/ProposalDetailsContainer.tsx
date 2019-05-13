@@ -224,7 +224,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                   beneficiaryProfile={beneficiaryProfile}
                   currentAccountAddress={currentAccountAddress}
                   dao={dao}
-                  expired={this.state.expired}
+                  expired={expired}
                   proposal={proposal}
                   detailView={true}
                 />
@@ -235,7 +235,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                   proposal={proposal}
                   detailView={true}
                 />
-                <BoostAmount detailView={true} proposal={proposal} />
+                <BoostAmount detailView={true} expired={expired} proposal={proposal} />
               </div>
             </div>
 
