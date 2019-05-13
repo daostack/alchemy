@@ -82,47 +82,45 @@ export async function checkWeb3ConnectionAndWarn(showNotification?: any): Promis
  * @return
  */
 export function checkWeb3Connection() {
-  const web3Provider = getMetaMask();
-  // const web3: any = undefined;
-  if (web3Provider && web3Provider.isMetaMask) {
+  let expectedNetworkName;
+  switch (process.env.NODE_ENV) {
+    case "development": {
+      expectedNetworkName = "ganache";
+      break;
+    }
+    case "staging": {
+      expectedNetworkName = "rinkeby";
+      break;
+    }
+    case  "production": {
+      expectedNetworkName = "main";
+      break;
+    }
+    default: {
+      throw new Error(`Unknown NODE_ENV: ${process.env.NODE_ENV}`);
+    }
+  }
+
+  try {
+    const web3Provider = getMetaMask();
     const networkId = web3Provider.networkVersion;
     const networkName = getNetworkName(networkId);
-    let expectedNetworkName;
-    switch (process.env.NODE_ENV) {
-      case "development": {
-        expectedNetworkName = "ganache";
-        break;
-      }
-      case "staging": {
-        expectedNetworkName = "rinkeby";
-        break;
-      }
-      case  "production": {
-        expectedNetworkName = "main";
-        break;
-      }
-      default: {
-        throw new Error(`Unknown NODE_ENV: ${process.env.NODE_ENV}`);
-      }
-
-    }
-
     if (networkName === expectedNetworkName) {
       console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
     } else {
-      const msg = `Please connect to "${expectedNetworkName}" (you are connected to "${networkName}" now)`;
+      const msg = `Please connect to "${expectedNetworkName}"`;
       throw new Error(msg);
     }
 
     // await enableMetamask();
     return web3Provider;
-  } else {
-    // no metamask - we are perhaps testing? Anyway, we let this pass when the environment is development
-    if (process.env.NODE_ENV === "development") {
-      const msg = `No metamask connection found - you may not be able to do transactions`;
+  } catch (err) {
+    if (err.message.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
+      const msg = `No metamask connection found - we are in "development" environment, so this may be ok`;
       console.log(msg);
+      return settings.dev.web3Provider;
     } else {
-      throw new Error(`No metamask instance found.`);
+      throw err;
     }
   }
 }
@@ -149,10 +147,6 @@ export function getMetaMask(): any {
     const msg = `Please install or enable metamask`;
     throw Error(msg);
   }
-  // if (!ethereum.selectedAddress) {
-  //   const msg = `No account selected in metamask`;
-  //   throw Error(msg);
-  // }
   return ethereum;
 }
 

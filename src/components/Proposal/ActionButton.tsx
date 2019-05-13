@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IProposalStage, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkWeb3ConnectionAndWarn } from "arc";
 import BN = require("bn.js");
@@ -43,7 +43,8 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
 
   return {...ownProps,
     beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
-    isRedeemPending: ownProps.currentAccountAddress && isRedeemPending(proposal.id, ownProps.currentAccountAddress)(state),
+    isRedeemPending: ownProps.currentAccountAddress &&
+      isRedeemPending(proposal.id, ownProps.currentAccountAddress)(state),
   };
 };
 
