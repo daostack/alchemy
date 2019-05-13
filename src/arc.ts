@@ -124,7 +124,7 @@ export function checkWeb3Provider() {
 }
 
 /**
- * get the current user from the web3 Provider (metamask)
+ * get the current user from the web3 Provider
  * @return [description]
  */
 export async function getCurrentAccountAddress(): Promise<Address> {
@@ -187,8 +187,12 @@ export function getArc(): Arc {
     return (<any> window).arc;
   } else {
     const arcSettings = getArcSettings();
-
-    arcSettings.web3Provider = checkWeb3Provider();
+    try {
+      arcSettings.web3Provider = checkWeb3Provider();
+    } catch (err) {
+      // we could not get the web3 connection from metamask, so we use the default settings
+      console.log(err.message);
+    }
 
     console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
     console.log(arcSettings);

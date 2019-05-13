@@ -88,12 +88,6 @@ class AppContainer extends React.Component<IProps, IState> {
       if (currentAddress && checkWeb3Provider()) {
         this.props.setCurrentAccount(currentAddress);
         this.props.cookies.set("currentAddress", currentAddress);
-      } else  {
-        // we get the address from a previous cookie
-        const addressFromCookie = this.props.cookies.get("currentAddress");
-        if (addressFromCookie) {
-          this.props.setCurrentAccount(addressFromCookie);
-        }
       }
       pollForAccountChanges(currentAddress).subscribe(
         (newAddress: Address) => {
@@ -108,12 +102,14 @@ class AppContainer extends React.Component<IProps, IState> {
         }
       );
     } catch (err) {
+      // if no metamask instance is found, we do not bother the user (yet)
+      // if we find a cookie with the address, we'll use that
       console.warn(err.message);
-      this.props.setCurrentAccount(undefined);
-      if (err.message.match(/no metamask/i)) {
-        // if no metamask instance is found, we do not bother the user (yet)
+      const addressFromCookie = this.props.cookies.get("currentAddress");
+      if (addressFromCookie) {
+        this.props.setCurrentAccount(addressFromCookie);
       } else {
-        // this.props.showNotification(NotificationStatus.Failure, err.message);
+        this.props.setCurrentAccount(undefined);
       }
     }
   }
