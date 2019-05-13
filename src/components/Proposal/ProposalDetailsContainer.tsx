@@ -23,7 +23,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
-import TransferDetails from "./TransferDetails";
+import ProposalSummary from "./ProposalSummary";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
@@ -175,7 +175,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               : " "
             }
 
-            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true}/>
+            <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true}/>
 
             <div className={css.voteButtonsBottom}>
                <span className={css.voteLabel}>Vote:</span>

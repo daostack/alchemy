@@ -1,4 +1,4 @@
-.transferDetails {
+.proposalSummary {
   position: relative;
   border: 1px solid rgba(229, 235, 242, 1.000);
   border-radius: 2px;
@@ -16,7 +16,7 @@
   }
 }
 
-.transferDetails.schemeRegistrar {
+.proposalSummary.schemeRegistrar {
   display: inline-block;
   margin: 0 11px;
   font-size: 14px;
@@ -27,16 +27,16 @@
   }
 }
 
-.detailView.transferDetails, .transactionModal.transferDetails {
-    box-shadow: 0 1px 12px 0 rgba(26, 60, 88, 0.09);
-    background-color: $white;
-    font-size: 16px;
-    padding: 15px;
-    margin: 0 0 0 0;
-    max-width: 430px;
+.detailView.proposalSummary, .transactionModal.proposalSummary {
+  box-shadow: 0 1px 12px 0 rgba(26, 60, 88, 0.09);
+  background-color: $white;
+  font-size: 16px;
+  padding: 15px;
+  margin: 0 0 0 0;
+  max-width: 430px;
 }
 
-.transactionModal.transferDetails {
+.transactionModal.proposalSummary {
   max-width: 400px;
   margin: 0 auto;
 }
@@ -62,5 +62,14 @@
       font-style: normal;
       font-weight: normal;
     }
+  }
+}
+
+.detailView {
+  text-align: left;
+
+  table {
+    font-size: 13px;
+    border-top: 1px solid gray;
   }
 }

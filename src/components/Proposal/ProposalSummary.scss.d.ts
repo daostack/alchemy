@@ -1,4 +1,4 @@
-export const transferDetails: string;
+export const proposalSummary: string;
 export const schemeRegistrar: string;
 export const detailView: string;
 export const transactionModal: string;

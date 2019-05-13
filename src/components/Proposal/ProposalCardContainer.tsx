@@ -21,7 +21,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
-import TransferDetails from "./TransferDetails";
+import ProposalSummary from "./ProposalSummary";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
@@ -159,7 +159,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
               <img src="/assets/images/Icon/Open.svg"/>
             </Link>
           </h3>
-          <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false}/>
+          <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false}/>
 
         </div>
 
