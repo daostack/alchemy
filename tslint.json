@@ -6,7 +6,6 @@
     ],
     "jsRules": {},
     "rules": {
-        "max-line-length": false,
         "ban-types": false,
         "prefer-for-of": false,
         "no-console": [true, "log", "debug"],
