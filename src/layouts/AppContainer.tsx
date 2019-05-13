@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { checkWeb3Connection, getArc, getCurrentAccountAddress, pollForAccountChanges } from "arc";
+import { checkWeb3Provider, getArc, getCurrentAccountAddress, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -84,16 +84,21 @@ class AppContainer extends React.Component<IProps, IState> {
     console.log(arc);
     let currentAddress: Address;
     try {
-      // only set the account if the network is correct
       currentAddress = await getCurrentAccountAddress();
-      if (currentAddress && checkWeb3Connection()) {
+      if (currentAddress && checkWeb3Provider()) {
         this.props.setCurrentAccount(currentAddress);
         this.props.cookies.set("currentAddress", currentAddress);
+      } else  {
+        // we get the address from a previous cookie
+        const addressFromCookie = this.props.cookies.get("currentAddress");
+        if (addressFromCookie) {
+          this.props.setCurrentAccount(addressFromCookie);
+        }
       }
       pollForAccountChanges(currentAddress).subscribe(
         (newAddress: Address) => {
           console.log("new address!", newAddress);
-          if (newAddress && checkWeb3Connection()) {
+          if (newAddress && checkWeb3Provider()) {
             this.props.setCurrentAccount(newAddress);
             this.props.cookies.set("currentAddress", newAddress);
             // TODO: we reload on setting a new account,
