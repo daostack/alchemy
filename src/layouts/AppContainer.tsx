@@ -88,14 +88,16 @@ class AppContainer extends React.Component<IProps, IState> {
       currentAddress = await getCurrentAccountAddress();
       if (currentAddress && checkWeb3Connection()) {
         this.props.setCurrentAccount(currentAddress);
+        this.props.cookies.set("currentAddress", currentAddress);
       }
       pollForAccountChanges(currentAddress).subscribe(
         (newAddress: Address) => {
           console.log("new address!", newAddress);
           if (newAddress && checkWeb3Connection()) {
             this.props.setCurrentAccount(newAddress);
-            // TODO: we reload on setting a new account, but it would be more elegant
-            // if we did not need to
+            this.props.cookies.set("currentAddress", newAddress);
+            // TODO: we reload on setting a new account,
+            // but it would be more elegant if we did not need to
             window.location.reload();
           }
         }
@@ -131,7 +133,6 @@ class AppContainer extends React.Component<IProps, IState> {
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
-
           <div className={css.container}>
             <Route path="/"
               render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />

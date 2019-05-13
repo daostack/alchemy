@@ -1,8 +1,8 @@
 import { IDAOState } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
-import * as GeoPattern from "geopattern";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import * as GeoPattern from "geopattern";
 import { formatTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
