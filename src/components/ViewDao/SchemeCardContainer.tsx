@@ -2,6 +2,7 @@ import { IDAOState, IProposalStage, IProposalState, Proposal, Queue } from "@dao
 import { getArc } from "arc";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
@@ -38,15 +39,18 @@ const SchemeCardContainer = (props: IInternalProps) => {
         } else if (state.error) {
           throw state.error;
         } else {
+          const proposalState = state.data;
           return (
             <Link className={css.proposalTitle} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
               <span>
-                <em className={css.miniGraph}></em>
-                {humanProposalTitle(state.data)}
+                <em className={css.miniGraph}>
+                  <VoteGraph size={20} dao={dao} proposal={proposalState} />
+                </em>
+                {humanProposalTitle(proposalState)}
               </span>
               <b>
                 {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
-                <Countdown toDate={closingTime(state.data)} detailView={false} /> :
+                <Countdown toDate={closingTime(proposalState)} detailView={false} />
               </b>
             </Link>
           );

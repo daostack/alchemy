@@ -114,15 +114,10 @@ a.proposalTitle {
 	}
 
 	.miniGraph {
-	    width: 16px;
-	    height: 16px;
-	    border: 2px solid #f65050;
-	    border-radius: 30px;
-	    display: inline-block;
-	    margin-top: -10px;
-	    top: 6px;
-	    position: relative;
-	    margin-right: 8px;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    margin-right: 8px;
 	}
 
 	b {
