@@ -9,29 +9,27 @@ import * as css from "./CreateProposal.scss";
 
 interface IProps {
   daoAvatarAddress: string;
-  schemeName: string;
   history: H.History;
-
+  schemeName: string;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
+    history: ownProps.history,
     schemeName : ownProps.match.params.schemeName,
-    history: ownProps.history
   };
 };
 
 class CreateProposalContainer extends React.Component<IProps, null> {
 
-  public goBack(e: any) {
-    const { history, daoAvatarAddress } = this.props;
-    e.preventDefault();
+  public goBack() {
+    const { daoAvatarAddress, history, schemeName } = this.props;
 
     if (history.length > 0) {
       history.goBack();
     } else {
-      history.push("/dao/" + daoAvatarAddress);
+      history.push("/dao/" + daoAvatarAddress + "/proposals/" + schemeName);
     }
   }
 

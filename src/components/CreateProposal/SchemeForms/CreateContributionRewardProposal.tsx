@@ -72,6 +72,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
     setSubmitting(false);
     await this.props.createProposal(this.props.daoAvatarAddress, proposalValues);
+    this.props.handleClose();
   }
 
   public render() {

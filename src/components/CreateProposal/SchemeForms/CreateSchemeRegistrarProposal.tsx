@@ -95,6 +95,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     setSubmitting(false);
     await this.props.createProposal(this.props.daoAvatarAddress, proposalValues);
+    this.props.handleClose();
   }
 
   public handleTabClick = (tab: string) => (e: any) => {
@@ -156,7 +157,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 upgradeController: false,
                 genericCall: false
               },
-              schemeToAdd: unregisteredSchemeAddresses ? unregisteredSchemeAddresses[0] : "Other",
+              schemeToAdd: unregisteredSchemeAddresses.length > 0 ? unregisteredSchemeAddresses[0] : "Other",
               title: "",
               url: ""
             } as FormValues}
