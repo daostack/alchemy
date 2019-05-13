@@ -1,8 +1,5 @@
-.downV {
-  position: absolute;
-  right: 20px;
-  bottom: 21px;
-  z-index: 1000;
+.hidden {
+  display: none !important;
 }
 
 .createProposalWrapper {
@@ -297,6 +294,13 @@
     text-align: right;
     margin-top: 30px;
   }
+}
+
+.downV {
+  position: absolute;
+  right: 20px;
+  bottom: 21px;
+  z-index: 1000;
 }
 
 .contributionReward {

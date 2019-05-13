@@ -1,4 +1,4 @@
-export const downV: string;
+export const hidden: string;
 export const createProposalWrapper: string;
 export const editIcon: string;
 export const error: string;
@@ -22,6 +22,7 @@ export const submitProposal: string;
 export const loading: string;
 export const sendIcon: string;
 export const createProposalActions: string;
+export const downV: string;
 export const schemeRegistrar: string;
 export const schemeRegistrarSidebar: string;
 export const schemeItem: string;

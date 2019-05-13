@@ -211,176 +211,183 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
               setFieldTouched,
               setFieldValue,
               values
-            }: FormikProps<FormValues>) =>
-              <Form noValidate>
+            }: FormikProps<FormValues>) => {
+              const otherSchemeClass = classNames({
+                [css.otherScheme]: true,
+                [css.error]: touched.otherScheme && errors.otherScheme,
+                [css.hidden]: values.schemeToAdd !== "Other"
+              });
 
-                <label htmlFor="titleInput">
-                  Title
-                  <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                  <div className={css.requiredMarker}>*</div>
-                </label>
-                <Field
-                  autoFocus
-                  id="titleInput"
-                  maxLength={120}
-                  placeholder="Summarize your proposal"
-                  name="title"
-                  type="text"
-                  className={touched.title && errors.title ? css.error : null}
-                />
+              return (
+                <Form noValidate>
+                  <label htmlFor="titleInput">
+                    Title
+                    <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <div className={css.requiredMarker}>*</div>
+                  </label>
+                  <Field
+                    autoFocus
+                    id="titleInput"
+                    maxLength={120}
+                    placeholder="Summarize your proposal"
+                    name="title"
+                    type="text"
+                    className={touched.title && errors.title ? css.error : null}
+                  />
 
-                <label htmlFor="descriptionInput">
-                  Description
-                  <div className={css.requiredMarker}>*</div>
-                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                  <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-                <Field
-                  component="textarea"
-                  id="descriptionInput"
-                  placeholder="Describe your proposal in greater detail"
-                  name="description"
-                  className={touched.description && errors.description ? css.error : null}
-                />
+                  <label htmlFor="descriptionInput">
+                    Description
+                    <div className={css.requiredMarker}>*</div>
+                    <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                    <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                  <Field
+                    component="textarea"
+                    id="descriptionInput"
+                    placeholder="Describe your proposal in greater detail"
+                    name="description"
+                    className={touched.description && errors.description ? css.error : null}
+                  />
 
-                <label htmlFor="urlInput">
-                  URL
-                  <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-                <Field
-                  id="urlInput"
-                  maxLength={120}
-                  placeholder="Description URL"
-                  name="url"
-                  type="text"
-                  className={touched.url && errors.url ? css.error : null}
-                />
+                  <label htmlFor="urlInput">
+                    URL
+                    <ErrorMessage name="url">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  </label>
+                  <Field
+                    id="urlInput"
+                    maxLength={120}
+                    placeholder="Description URL"
+                    name="url"
+                    type="text"
+                    className={touched.url && errors.url ? css.error : null}
+                  />
 
-                <div className={css.addEditSchemeFields}>
-                  <div className={css.addSchemeSelectContainer}>
-                    <label htmlFor="schemeToAddInput">
-                      Scheme
-                      <ErrorMessage name="schemeToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                    <Field
-                      id="schemeToAddInput"
-                      name="schemeToAdd"
-                      component="select"
-                      className={css.schemeSelect}
-                    >
-                      {unregisteredSchemeAddresses.map((address) => {
-                        return <option key={`add_scheme_${address}`} value={address}>{schemeName(address)}</option>;
-                      })}
-                      <option value="Other">Other</option>
-                    </Field>
-                    <ErrorMessage name="otherScheme">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    <Field
-                      id="otherSchemeInput"
-                      placeholder="Enter scheme address"
-                      name="otherScheme"
-                      className={(touched.otherScheme && errors.otherScheme ? css.error : null) + " " + css.otherScheme}
-                    />
-                  </div>
-
-                  <div className={css.editSchemeSelectContainer}>
-                    <label htmlFor="schemeToEditInput">
-                      Scheme
-                      <ErrorMessage name="schemeToEdit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                    <Field
-                      id="schemeToEditInput"
-                      name="schemeToEdit"
-                      component="select"
-                      className={css.schemeSelect}
-                      defaultValue=""
-                    >
-                      <option value="">Select a scheme...</option>
-                      {queues.map((queue, i) => {
-                        return <option key={`edit_scheme_${queue.scheme}`} value={queue.scheme}>{schemeName(queue.scheme)}</option>;
-                      })}
-                    </Field>
-                  </div>
-
-                  <div className={css.parametersHash}>
-                    <label htmlFor="parametersHashInput">
-                      Parameters Hash
-                      <ErrorMessage name="parametersHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                    </label>
-                    <Field
-                      id="parametersHashInput"
-                      placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
-                      name="parametersHash"
-                      className={touched.parametersHash && errors.parametersHash ? css.error : null}
-                    />
-                  </div>
-                  <div className={css.permissions}>
-                    <div className={css.permissionsLabel}>
-                      Permissions
-                    </div>
-                    <div className={css.permissionCheckbox}>
-                      <Field id="registerOtherSchemesInput" type="checkbox" name="permissions.registerSchemes" />
-                      <label htmlFor="registerOtherSchemesInput">
-                        Register other schemes
+                  <div className={css.addEditSchemeFields}>
+                    <div className={css.addSchemeSelectContainer}>
+                      <label htmlFor="schemeToAddInput">
+                        Scheme
+                        <ErrorMessage name="schemeToAdd">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <div className={css.requiredMarker}>*</div>
                       </label>
+                      <Field
+                        id="schemeToAddInput"
+                        name="schemeToAdd"
+                        component="select"
+                        className={css.schemeSelect}
+                      >
+                        {unregisteredSchemeAddresses.map((address) => {
+                          return <option key={`add_scheme_${address}`} value={address}>{schemeName(address)}</option>;
+                        })}
+                        <option value="Other">Other...</option>
+                      </Field>
+                      <ErrorMessage name="otherScheme">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <Field
+                        id="otherSchemeInput"
+                        placeholder="Enter scheme address"
+                        name="otherScheme"
+                        className={otherSchemeClass}
+                      />
                     </div>
 
-                    <div className={css.permissionCheckbox}>
-                      <Field id="changeConstraintsInput" type="checkbox" name="permissions.changeConstraints" />
-                      <label htmlFor="changeConstraintsInput">
-                        Add/remove global constraints
+                    <div className={css.editSchemeSelectContainer}>
+                      <label htmlFor="schemeToEditInput">
+                        Scheme
+                        <ErrorMessage name="schemeToEdit">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <div className={css.requiredMarker}>*</div>
                       </label>
+                      <Field
+                        id="schemeToEditInput"
+                        name="schemeToEdit"
+                        component="select"
+                        className={css.schemeSelect}
+                        defaultValue=""
+                      >
+                        <option value="">Select a scheme...</option>
+                        {queues.map((queue, i) => {
+                          return <option key={`edit_scheme_${queue.scheme}`} value={queue.scheme}>{schemeName(queue.scheme)}</option>;
+                        })}
+                      </Field>
                     </div>
 
-                    <div className={css.permissionCheckbox}>
-                      <Field id="upgradeControllerInput" type="checkbox" name="permissions.upgradeController" />
-                      <label htmlFor="upgradeControllerInput">
-                        Upgrade the controller
+                    <div className={css.parametersHash}>
+                      <label htmlFor="parametersHashInput">
+                        Parameters Hash
+                        <ErrorMessage name="parametersHash">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       </label>
+                      <Field
+                        id="parametersHashInput"
+                        placeholder="e.g. 0x0000000000000000000000000000000000000000000000000000000000001234"
+                        name="parametersHash"
+                        className={touched.parametersHash && errors.parametersHash ? css.error : null}
+                      />
                     </div>
+                    <div className={css.permissions}>
+                      <div className={css.permissionsLabel}>
+                        Permissions
+                      </div>
+                      <div className={css.permissionCheckbox}>
+                        <Field id="registerOtherSchemesInput" type="checkbox" name="permissions.registerSchemes" />
+                        <label htmlFor="registerOtherSchemesInput">
+                          Register other schemes
+                        </label>
+                      </div>
 
-                    <div className={css.permissionCheckbox}>
-                      <Field id="genericCallInput" type="checkbox" name="permissions.genericCall" />
-                      <label htmlFor="genericCallInput">
-                        Call genericCall on behalf of
-                      </label>
+                      <div className={css.permissionCheckbox}>
+                        <Field id="changeConstraintsInput" type="checkbox" name="permissions.changeConstraints" />
+                        <label htmlFor="changeConstraintsInput">
+                          Add/remove global constraints
+                        </label>
+                      </div>
+
+                      <div className={css.permissionCheckbox}>
+                        <Field id="upgradeControllerInput" type="checkbox" name="permissions.upgradeController" />
+                        <label htmlFor="upgradeControllerInput">
+                          Upgrade the controller
+                        </label>
+                      </div>
+
+                      <div className={css.permissionCheckbox}>
+                        <Field id="genericCallInput" type="checkbox" name="permissions.genericCall" />
+                        <label htmlFor="genericCallInput">
+                          Call genericCall on behalf of
+                        </label>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className={css.removeSchemeFields}>
-                  <div className={css.removeSchemeSelectContainer}>
-                    <label htmlFor="schemeToRemoveInput">
-                      Scheme
-                      <ErrorMessage name="schemeToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                    <Field
-                      id="schemeToRemoveInput"
-                      name="schemeToRemove"
-                      component="select"
-                      className={css.schemeSelect}
-                      defaultValue=""
-                    >
-                      <option value="">Select a scheme...</option>
-                      {queues.map((queue, i) => {
-                        return <option key={`remove_scheme_${queue.scheme}`} value={queue.scheme}>{schemeName(queue.scheme)}</option>;
-                      })}
-                    </Field>
+                  <div className={css.removeSchemeFields}>
+                    <div className={css.removeSchemeSelectContainer}>
+                      <label htmlFor="schemeToRemoveInput">
+                        Scheme
+                        <ErrorMessage name="schemeToRemove">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <div className={css.requiredMarker}>*</div>
+                      </label>
+                      <Field
+                        id="schemeToRemoveInput"
+                        name="schemeToRemove"
+                        component="select"
+                        className={css.schemeSelect}
+                        defaultValue=""
+                      >
+                        <option value="">Select a scheme...</option>
+                        {queues.map((queue, i) => {
+                          return <option key={`remove_scheme_${queue.scheme}`} value={queue.scheme}>{schemeName(queue.scheme)}</option>;
+                        })}
+                      </Field>
+                    </div>
                   </div>
-                </div>
 
-                <div className={css.createProposalActions}>
-                  <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
-                    Cancel
-                  </button>
-                  <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                    Submit proposal
-                  </button>
-                </div>
-              </Form>
-            }
+                  <div className={css.createProposalActions}>
+                    <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
+                      Cancel
+                    </button>
+                    <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                      Submit proposal
+                    </button>
+                  </div>
+                </Form>
+              );
+            }}
           />
         </div>
       </div>
