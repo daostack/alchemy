@@ -71,10 +71,12 @@ const SchemeCardContainer = (props: IInternalProps) => {
 
         {proposals.length === 0 ?
           <div className={css.loading}>
-            <img src="/assets/images/meditate.svg"/>
-            <div>
-              No upcoming proposals
-            </div>
+            <Link to={`/dao/${dao.address}/proposals/${scheme.name}`}>
+              <img src="/assets/images/meditate.svg"/>
+              <div>
+                No upcoming proposals
+              </div>
+            </Link>
           </div>
         :
           <div>
