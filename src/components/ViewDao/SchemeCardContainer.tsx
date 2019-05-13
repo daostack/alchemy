@@ -28,7 +28,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
   const { dao, scheme, boostedProposals, preBoostedProposals, queuedProposals } = props;
 
   const numProposals = boostedProposals.length + preBoostedProposals.length + queuedProposals.length;
-  const proposals = boostedProposals.concat(preBoostedProposals).concat(queuedProposals).slice(0, 3);
+  const proposals = boostedProposals.slice(0, 3);
   const knownScheme = Object.keys(knownSchemes()).includes(scheme.scheme.toLowerCase());
 
   const proposalsHTML = proposals.map((proposal: Proposal) => (
