@@ -23,9 +23,9 @@ import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
 import Tooltip from "rc-tooltip";
 import TransferDetails from "./TransferDetails";
+import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
-import VoteBreakdown from "./Voting/VoteBreakdown";
 
 import * as css from "./ProposalCard.scss";
 

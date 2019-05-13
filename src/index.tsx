@@ -1,9 +1,9 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFacebook, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import * as Sentry from "@sentry/browser";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
-import * as Sentry from "@sentry/browser";
 
 import { App } from "./App";
 

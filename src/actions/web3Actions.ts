@@ -1,11 +1,10 @@
-import * as Redux from "redux";
 import * as Sentry from "@sentry/browser";
-
 import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
+import * as Redux from "redux";
 import { AsyncActionSequence, IAsyncAction } from "./async";
 
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;

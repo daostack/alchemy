@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import { checkWeb3ConnectionAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
-import { ErrorMessage, Field, Formik, Form, FormikProps } from "formik";
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";

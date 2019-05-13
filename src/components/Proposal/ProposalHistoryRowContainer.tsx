@@ -6,7 +6,7 @@ import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, formatTokens } from "lib/util";
+import { formatTokens, humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
