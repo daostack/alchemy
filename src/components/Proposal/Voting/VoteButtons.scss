@@ -87,7 +87,7 @@ button.disabled {
   span {
     display: inline-block;
     position: relative;
-    top: -2px;
+    top: 0px;
   }
 }
 
@@ -97,7 +97,8 @@ button.disabled {
 
   img {
     position: relative;
-    top: 5px;
+    top: 4px;
+    height: 14px;
   }
 
   img.buttonLoadingImg {
@@ -111,6 +112,7 @@ button.disabled {
   img {
     position: relative;
     top: 2px;
+    height: 14px;
   }
 
   img.buttonLoadingImg {

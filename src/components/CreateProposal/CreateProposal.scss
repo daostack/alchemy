@@ -302,12 +302,18 @@
 
   .createProposalActions {
     text-align: right;
-    margin-top: 30px;
+    margin-top: 20px;
   }
 }
 
 .contributionReward {
   width: 540px;
+}
+
+.clearfix:after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
 .schemeRegistrar {

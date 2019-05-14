@@ -163,30 +163,32 @@ button:hover {
       ul {
         left: 50px;
         top: -120px;
+        width: 150px;
         opacity: 0;
         transform: scale(0);
         transition: all .25s ease;
+        padding-bottom: 10px;
 
         li {
           text-align: center;
 
           a {
-            padding: 5px 5px 5px 5px;
+            padding: 8px;
           }
 
           img {
             position: relative;
             top: 0;
+            height: 14px;
             left: 0;
           }
         }
       }
       &:hover ul {
-        left: 0;
+        left: 100px;
         opacity: 1;
-        transform: scale(1);
-        top: -120px;
-        transform: translateX(100%);
+        top: -80px;
+        transform: translateX(100%) scale(1);
         background-color: rgba(32, 104, 188, 1.000);
       }
     }
@@ -221,7 +223,6 @@ button:hover {
   background-color: $sky;
   color: $white;
   flex-grow: 1;
-  overflow: scroll;
 
   &:hover {
     z-index: 100000;
@@ -261,7 +262,8 @@ button:hover {
 .daoNavigation {
   position: relative;
   height: 100%;
-  min-height: 730px;
+  min-height: 750px;
+  background-color: rgba(48, 120, 202, 1.000);
 
   .daoName {
     padding: 20px;
@@ -408,12 +410,24 @@ button:hover {
 
 .membersContainer {
   margin: 10px 0;
+
+  h2 {
+    font-size: 28px;
+    color: rgba(104, 154, 214, 1.000);
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid rgba(195, 212, 231, 1.000);
+    margin-bottom: 15px;
+    padding-bottom: 3px;
+  }
 }
 
 .member {
   padding: 5px 0;
   display: flex;
+  font-family: $body-font;
   justify-content: space-between;
+  font-size: 14px;
   align-items: center;
 
   img {

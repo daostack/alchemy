@@ -24,6 +24,7 @@ export const submitProposal: string;
 export const loading: string;
 export const sendIcon: string;
 export const createProposalActions: string;
+export const clearfix: string;
 export const schemeRegistrar: string;
 export const schemeRegistrarSidebar: string;
 export const schemeItem: string;
