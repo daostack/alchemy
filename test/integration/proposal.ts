@@ -14,7 +14,10 @@ describe("Proposals", () => {
       const url = `/dao/${daoAddress}/`;
       await browser.url(url);
 
-      const createProposalButton = await $("a[data-test-id=\"createProposal-ContributionReward\"]");
+      const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
+      await schemeCard.click();
+
+      const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
       await createProposalButton.waitForExist();
 
       await createProposalButton.click();
@@ -43,8 +46,6 @@ describe("Proposals", () => {
       const createProposalSubmitButton = await $("*[type=\"submit\"]");
       await createProposalSubmitButton.click();
 
-      const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
-      await schemeCard.click();
       // check that the proposal appears in the list
       // test for the title
       let titleElement = await $(`[data-test-id=\"proposal-title\"]=${title}`);
