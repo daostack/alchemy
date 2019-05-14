@@ -1,11 +1,10 @@
-import * as Redux from "redux";
 import * as Sentry from "@sentry/browser";
-
 import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
+import * as Redux from "redux";
 import { AsyncActionSequence, IAsyncAction } from "./async";
 
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
@@ -13,13 +12,9 @@ export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 export function setCurrentAccount(accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
     const payload = {
-      ethAccountAddress: accountAddress,
+      currentAccountAddress: accountAddress,
       connectionStatus : ConnectionStatus.Connected
     };
-
-    // TODO: is this the place to put this? seems a bit odd
-    const arc = getArc();
-    arc.web3.eth.defaultAccount = accountAddress;
 
     let action;
 
@@ -52,7 +47,7 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
 export function approveStakingGens(daoAvatarAddress: string) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
-    const currentAccountAddress: string = getState().web3.ethAccountAddress;
+    const currentAccountAddress: string = getState().web3.currentAccountAddress;
 
     const meta = { accountAddress: currentAccountAddress };
 

@@ -1,4 +1,4 @@
-import { getArc } from "arc";
+// import { getArc } from "arc";
 import Util from "lib/util";
 import * as moment from "moment";
 import { VoteOptions } from "reducers/arcReducer";
@@ -233,7 +233,8 @@ export const notificationUpdater: Middleware =
 
       (async () => {
 
-        const network = Util.networkName(await getArc().web3.eth.net.getId()).toLowerCase();
+        // const network = getNetworkName(await getArc().web3.eth.net.getId()).toLowerCase();
+        const network = "...";
 
         if (action.type === REHYDRATE) {
           const a = action as RehydrateAction;

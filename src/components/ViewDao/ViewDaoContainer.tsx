@@ -37,8 +37,8 @@ interface IStateProps extends RouteComponentProps<any> {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    currentAccountAddress: state.web3.ethAccountAddress,
-    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
+    currentAccountAddress: state.web3.currentAccountAddress,
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     dao: ownProps.dao,
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     tourVisible: state.ui.tourVisible
@@ -314,7 +314,11 @@ For additional information check out our <a href="https://docs.google.com/docume
             />
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>
-                <ProposalDetailsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} proposalId={props.match.params.proposalId} />
+                <ProposalDetailsContainer {...props}
+                  dao={dao}
+                  currentAccountAddress={currentAccountAddress}
+                  proposalId={props.match.params.proposalId}
+                />
               }
             />
             <Route path="/dao/:daoAvatarAddress"

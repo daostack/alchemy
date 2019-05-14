@@ -2,7 +2,6 @@ import { Address, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import { getArc } from "../arc";
 
-// TODO: not sure why these helper functions are wrapped in a class
 export default class Util {
   public static fromWei(amount: BN): number {
     try {
@@ -19,31 +18,6 @@ export default class Util {
 
   public static getBalance(account: Address) {
     return getArc().web3.eth.getBalance(account);
-  }
-
-  public static networkName(id: string) {
-    switch (id) {
-      case "main":
-      case "1":
-        return "main";
-      case "morden":
-      case "2":
-        return "morden";
-      case "ropsten":
-      case "3":
-        return "ropsten";
-      case "rinkeby":
-      case "4":
-        return "rinkeby";
-      case "kovan":
-      case "42":
-        return "kovan";
-      case "private":
-      case "1512051714758":
-        return "ganache";
-      default:
-        return `unknown (${id})`;
-    }
   }
 
   public static copyToClipboard(value: any) {
@@ -82,7 +56,8 @@ export default class Util {
 }
 
 export function humanProposalTitle(proposal: IProposalState) {
-  return proposal.title || "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
+  return proposal.title ||
+    "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }
 
 export function formatTokens(amountWei: BN, symbol?: string): string {
@@ -96,9 +71,11 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
   } else if (amount < 1000) {
     returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   } else if (amount < 1000000) {
-    returnString = (amount / 1000).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "k";
+    returnString = (amount / 1000)
+      .toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "k";
   } else {
-    returnString = (amount / 1000000).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
+    returnString = (amount / 1000000)
+      .toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
   }
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
 }
@@ -108,11 +85,36 @@ export function tokenSymbol(tokenAddress: string) {
   return symbol || "?";
 }
 
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
-  return new Promise((resolve) => {
-    (async function waitForIt(): Promise<void> {
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
+  return new Promise((resolve, reject) => {
+    const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
-      setTimeout(waitForIt, 30);
-    })();
+    }, 30);
+    setTimeout(() => { clearTimeout(timerId); return reject(); }, timeOut);
   });
+}
+
+export function getNetworkName(id: string): string {
+  switch (id) {
+    case "main":
+    case "1":
+      return "main";
+    case "morden":
+    case "2":
+      return "morden";
+    case "ropsten":
+    case "3":
+      return "ropsten";
+    case "rinkeby":
+    case "4":
+      return "rinkeby";
+    case "kovan":
+    case "42":
+      return "kovan";
+    case "private":
+    case "1512051714758":
+      return "ganache";
+    default:
+      return `unknown (${id})`;
+  }
 }

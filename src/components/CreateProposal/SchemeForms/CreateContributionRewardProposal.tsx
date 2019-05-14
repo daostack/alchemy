@@ -1,9 +1,9 @@
 import { IDAOState, IProposalType } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkNetworkAndWarn, getArc } from "arc";
+import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
-import { ErrorMessage, Field, Formik, Form, FormikProps } from "formik";
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -58,7 +58,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
+    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 

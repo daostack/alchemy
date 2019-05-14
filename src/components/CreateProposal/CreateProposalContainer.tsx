@@ -1,10 +1,10 @@
+import CreateContributionRewardProposal from "components/CreateProposal/SchemeForms/CreateContributionRewardProposal";
+import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
 import * as H from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import CreateContributionRewardProposal from "components/CreateProposal/SchemeForms/CreateContributionRewardProposal";
-import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
 import * as css from "./CreateProposal.scss";
 
 interface IProps {
@@ -38,7 +38,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   public render() {
     const {  daoAvatarAddress } = this.props;
     const schemeName = this.props.schemeName || "ContributionReward";
-
     return (
       <div className={css.createProposalWrapper}>
         <BreadcrumbsItem to={"/dao/" + daoAvatarAddress + "/proposals/" + schemeName + "/create"}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
