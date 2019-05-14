@@ -16,10 +16,6 @@ export function setCurrentAccount(accountAddress: string) {
       connectionStatus : ConnectionStatus.Connected
     };
 
-    // TODO: is this the place to put this? seems a bit odd
-    const arc = getArc();
-    arc.web3.eth.defaultAccount = accountAddress;
-
     let action;
 
     action = {
