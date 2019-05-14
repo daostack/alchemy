@@ -1,5 +1,5 @@
-// const Web3 = require("web3");
 import { Address, Arc } from "@daostack/client";
+import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import { getNetworkName } from "./lib/util";
@@ -63,15 +63,22 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
  *    it will use `alert()` if no such function is provided
  * @return the web3 connection, if everything is fine
  */
-export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
+export async function checkMetaMaskAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    return checkWeb3Provider();
+    const metamask = checkMetaMask();
+    await metamask.enable();
+    return metamask;
   } catch (err) {
-    const msg =  `${err.message}`;
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
+    const msg =  err.message;
+    if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
+      console.log( `No metamask connection found - we are in "development" environment, so this may be ok`);
+      return true;
     } else {
-      alert(msg);
+      if (showNotification) {
+        showNotification(NotificationStatus.Failure, msg);
+      } else {
+        alert(msg);
+      }
     }
   }
 }
@@ -81,7 +88,7 @@ export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export function checkWeb3Provider() {
+export function checkMetaMask() {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -101,25 +108,18 @@ export function checkWeb3Provider() {
     }
   }
 
-  try {
-    const web3Provider = getMetaMask();
-    const networkId = web3Provider.networkVersion;
-    const networkName = getNetworkName(networkId);
-    if (networkName === expectedNetworkName) {
-      console.log(`Connected to ${networkName} in ${process.env.NODE_ENV} environment - this is great`);
-      return web3Provider;
-    } else {
-      const msg = `Please connect to "${expectedNetworkName}"`;
-      throw new Error(msg);
-    }
-  } catch (err) {
-    if (err.message.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
-      const msg = `No metamask connection found - we are in "development" environment, so this may be ok`;
-      console.log(msg);
-      return settings.dev.web3Provider;
-    } else {
-      throw err;
-    }
+  const web3Provider = getMetaMask();
+  if (!web3Provider) {
+    const msg = `Please install or enable metamask`;
+    throw Error(msg);
+  }
+  const networkId = web3Provider.networkVersion;
+  const networkName = getNetworkName(networkId);
+  if (networkName === expectedNetworkName) {
+    return web3Provider;
+  } else {
+    const msg = `Please connect to "${expectedNetworkName}"`;
+    throw new Error(msg);
   }
 }
 
@@ -128,9 +128,7 @@ export function checkWeb3Provider() {
  * @return [description]
  */
 export async function getCurrentAccountAddress(): Promise<Address> {
-  // const ethereum = getMetaMask();
-  // return ethereum.selectedAddress;
-  const web3: any = getArc().web3;
+  const web3 = getArc().web3;
   const accounts = await web3.eth.getAccounts();
   return accounts[0];
 }
@@ -141,10 +139,6 @@ export async function getCurrentAccountAddress(): Promise<Address> {
  */
 export function getMetaMask(): any {
   const ethereum = (<any> window).ethereum;
-  if (!ethereum) {
-    const msg = `Please install or enable metamask`;
-    throw Error(msg);
-  }
   return ethereum;
 }
 
@@ -152,6 +146,10 @@ export async function enableMetamask(): Promise<any> {
   // check if Metamask account access is enabled, and if not, call the (async) function
   // that will ask the user to enable it
   const ethereum = getMetaMask();
+  if (!ethereum) {
+    const msg = `Please install or enable metamask`;
+    throw Error(msg);
+  }
   await ethereum.enable();
   return ethereum;
 }
@@ -183,26 +181,44 @@ function getArcSettings(): any {
 export function getArc(): Arc {
   // store the Arc instance in the global namespace on the 'window' object
   // (this is not best practice)
-  if (typeof(window) !== "undefined" && (<any> window).arc) {
-    return (<any> window).arc;
-  } else {
-    const arcSettings = getArcSettings();
-    try {
-      arcSettings.web3Provider = checkWeb3Provider();
-    } catch (err) {
-      // we could not get the web3 connection from metamask, so we use the default settings
-      console.log(err.message);
-    }
-
-    console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
-    console.log(arcSettings);
-    console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
-    const arc: Arc = new Arc(arcSettings);
-    if (typeof(window) !== "undefined") {
-      (<any> window).arc = arc;
-    }
-    return arc;
+  const arc = (<any> window).arc;
+  if (!arc) {
+    throw Error("window.arc is not defined - please call initArc first");
   }
+  return arc;
+}
+
+export async function initArc(): Promise<Arc> {
+  const arcSettings = getArcSettings();
+  const metamask = getMetaMask();
+  if (metamask) {
+    console.log("waiting for MetaMask to initialize");
+    //
+    await waitUntilTrue(() => metamask.networkVersion, 1000);
+    console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
+  }
+
+  try {
+    arcSettings.web3Provider = checkMetaMask();
+  } catch (err) {
+    // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
+    console.log(err.message);
+  }
+
+  // log some useful info
+  console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
+  console.log(arcSettings);
+  console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
+  if (arcSettings.web3Provider.isMetaMask) {
+    console.log("Using Metamask Web3 provider");
+  } else {
+    console.log("Using default Web3 provider");
+  }
+
+  const arc: Arc = new Arc(arcSettings);
+  // save the object on a global window object (I know, not nice, but it works..)
+  (<any> window).arc = arc;
+  return arc;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes

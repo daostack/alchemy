@@ -85,12 +85,12 @@ export function tokenSymbol(tokenAddress: string) {
   return symbol || "?";
 }
 
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean) {
-  return new Promise((resolve) => {
-    (async function waitForIt(): Promise<void> {
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
+  return new Promise((resolve, reject) => {
+    const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
-      setTimeout(waitForIt, 30);
-    })();
+    }, 30);
+    setTimeout(() => { clearTimeout(timerId); return reject(); }, timeOut);
   });
 }
 

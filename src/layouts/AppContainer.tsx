@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { checkWeb3Provider, getArc, getCurrentAccountAddress, pollForAccountChanges } from "arc";
+import { checkMetaMask, getCurrentAccountAddress, initArc, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -55,6 +55,7 @@ interface IState {
   error: string;
   sentryEventId: string;
   notificationsMinimized: boolean;
+  arcIsInitialized: boolean;
 }
 
 class AppContainer extends React.Component<IProps, IState> {
@@ -64,7 +65,8 @@ class AppContainer extends React.Component<IProps, IState> {
     this.state = {
       error: null,
       sentryEventId: null,
-      notificationsMinimized: false
+      notificationsMinimized: false,
+      arcIsInitialized: false
     };
   }
 
@@ -77,41 +79,50 @@ class AppContainer extends React.Component<IProps, IState> {
       this.setState({ sentryEventId });
     });
   }
-
-  public async componentDidMount() {
-    // get the Arc object as early the lifetime of the app
-    const arc = await getArc();
-    console.log(arc);
-    let currentAddress: Address;
-    try {
-      currentAddress = await getCurrentAccountAddress();
-      if (currentAddress && checkWeb3Provider()) {
+  public async componentWillMount() {
+    // we initialize Arc
+    initArc().then(async () => {
+      // if Metamask is available, we wathc for any account changes
+      let metamask: any;
+      const currentAddress = await getCurrentAccountAddress();
+      if (currentAddress)  {
+        console.log(`using address from web3 connection: ${currentAddress}`);
+        this.props.cookies.set("currentAddress", currentAddress, { path: "/"});
         this.props.setCurrentAccount(currentAddress);
-        this.props.cookies.set("currentAddress", currentAddress);
-      }
-      pollForAccountChanges(currentAddress).subscribe(
-        (newAddress: Address) => {
-          console.log("new address!", newAddress);
-          if (newAddress && checkWeb3Provider()) {
-            this.props.setCurrentAccount(newAddress);
-            this.props.cookies.set("currentAddress", newAddress);
-            // TODO: we reload on setting a new account,
-            // but it would be more elegant if we did not need to
-            window.location.reload();
-          }
-        }
-      );
-    } catch (err) {
-      // if no metamask instance is found, we do not bother the user (yet)
-      // if we find a cookie with the address, we'll use that
-      console.warn(err.message);
-      const addressFromCookie = this.props.cookies.get("currentAddress");
-      if (addressFromCookie) {
-        this.props.setCurrentAccount(addressFromCookie);
       } else {
-        this.props.setCurrentAccount(undefined);
+        const currentAddressFromCookie = this.props.cookies.get("currentAddress");
+        if (currentAddressFromCookie) {
+          console.log(`using address from cookie: ${currentAddressFromCookie}`);
+          this.props.setCurrentAccount(currentAddressFromCookie);
+        } else {
+          this.props.cookies.set("currentAddress", "", { path: "/"});
+          this.props.setCurrentAccount(undefined);
+        }
       }
-    }
+
+      this.setState({ arcIsInitialized: true });
+
+      try {
+        metamask = checkMetaMask();
+      } catch (err) {
+        // pass
+      }
+
+      if (metamask) {
+        pollForAccountChanges(currentAddress).subscribe(
+          (newAddress: Address) => {
+            if (newAddress && checkMetaMask()) {
+              console.log(`new address: ${newAddress}`);
+              this.props.setCurrentAccount(newAddress);
+              this.props.cookies.set("currentAddress", newAddress, { path: "/"});
+              // TODO: we reload on setting a new account,
+              // but it would be more elegant if we did not need to
+              window.location.reload();
+            }
+          });
+        }
+      }
+    );
   }
 
   public render() {
@@ -122,73 +133,73 @@ class AppContainer extends React.Component<IProps, IState> {
       sortedNotifications,
     } = this.props;
 
-    const { notificationsMinimized } = this.state;
-
-    if (this.state.error) {
+    if (!this.state.arcIsInitialized) {
+      return <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>;
+    } else if (this.state.error) {
       // Render error fallback UI
       return (
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
       );
-    }
+    } else {
+      return (
+        <div className={css.outer}>
+          <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
+            <div className={css.container}>
+              <Route path="/"
+                render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
 
-    return (
-      <div className={css.outer}>
-        <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
-          <div className={css.container}>
-            <Route path="/"
-              render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
-
-            <Switch>
-              <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-              <Route exact={true} path="/daos" component={DaoListContainer} />
-              <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
-              <Route path="/" component={HomeContainer} />
-            </Switch>
-            <ModalRoute
-              path="/dao/:daoAvatarAddress/proposals/create"
-              parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
-              component={CreateProposalContainer}
-            />
-            <ModalContainer
-              modalClassName={css.modal}
-              backdropClassName={css.backdrop}
-              containerClassName={css.modalContainer}
-              bodyModalClassName={css.modalBody}
-            />
+              <Switch>
+                <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
+                <Route exact={true} path="/daos" component={DaoListContainer} />
+                <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
+                <Route path="/" component={HomeContainer} />
+              </Switch>
+              <ModalRoute
+                path="/dao/:daoAvatarAddress/proposals/create"
+                parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}`}
+                component={CreateProposalContainer}
+              />
+              <ModalContainer
+                modalClassName={css.modal}
+                backdropClassName={css.backdrop}
+                containerClassName={css.modalContainer}
+                bodyModalClassName={css.modalBody}
+              />
+            </div>
+          <div className={css.pendingTransactions}>
+            {this.state.notificationsMinimized ?
+              <MinimizedNotifications
+                notifications={sortedNotifications.length}
+                unminimize={() => this.setState({notificationsMinimized: false})}
+              /> :
+              sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
+                <div key={id}>
+                  <Notification
+                      title={(title || status).toUpperCase()}
+                      status={
+                        status === NotificationStatus.Failure ?
+                          NotificationViewStatus.Failure :
+                        status === NotificationStatus.Success ?
+                          NotificationViewStatus.Success :
+                          NotificationViewStatus.Pending
+                      }
+                      message={message}
+                      fullErrorMessage={fullErrorMessage}
+                      url={url}
+                      timestamp={timestamp}
+                      dismiss={() => dismissNotification(id)}
+                      showNotification={showNotification}
+                      minimize={() => this.setState({notificationsMinimized: true})}
+                    />
+                  <br/>
+                </div>
+              ))
+            }
           </div>
-        <div className={css.pendingTransactions}>
-          {notificationsMinimized ?
-            <MinimizedNotifications
-              notifications={sortedNotifications.length}
-              unminimize={() => this.setState({notificationsMinimized: false})}
-            /> :
-            sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
-              <div key={id}>
-                <Notification
-                    title={(title || status).toUpperCase()}
-                    status={
-                      status === NotificationStatus.Failure ?
-                        NotificationViewStatus.Failure :
-                      status === NotificationStatus.Success ?
-                        NotificationViewStatus.Success :
-                        NotificationViewStatus.Pending
-                    }
-                    message={message}
-                    fullErrorMessage={fullErrorMessage}
-                    url={url}
-                    timestamp={timestamp}
-                    dismiss={() => dismissNotification(id)}
-                    showNotification={showNotification}
-                    minimize={() => this.setState({notificationsMinimized: true})}
-                  />
-                <br/>
-              </div>
-            ))
-          }
+          <div className={css.background}></div>
         </div>
-        <div className={css.background}></div>
-      </div>
-    );
+      );
+    }
   }
 }
 

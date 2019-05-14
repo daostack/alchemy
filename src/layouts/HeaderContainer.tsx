@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { checkWeb3Provider, enableMetamask, getArc } from "arc";
+import { checkMetaMask, enableMetamask, getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -67,7 +67,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   public handleClickLogin = () => {
     try {
-      checkWeb3Provider();
+      checkMetaMask();
     } catch (err) {
       this.props.showNotification(NotificationStatus.Failure, err.message);
     }
