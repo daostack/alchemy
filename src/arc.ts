@@ -183,12 +183,12 @@ export function getArc(): Arc {
   // (this is not best practice)
   const arc = (<any> window).arc;
   if (!arc) {
-    throw Error("window.arc is not defined - please call initArc first");
+    throw Error("window.arc is not defined - please call initializeArc first");
   }
   return arc;
 }
 
-export async function initArc(): Promise<Arc> {
+export async function initializeArc(): Promise<Arc> {
   const arcSettings = getArcSettings();
   const metamask = getMetaMask();
   if (metamask) {
