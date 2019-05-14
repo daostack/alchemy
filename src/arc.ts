@@ -226,7 +226,7 @@ export async function initializeArc(): Promise<Arc> {
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
 export function pollForAccountChanges(currentAccountAddress?: string, interval: number = 2000) {
-  console.log("start polling for account");
+  console.log("start polling for account changes");
   return Observable.create((observer: any) => {
     let prevAccount = currentAccountAddress;
     function emitIfNewAccount() {
@@ -242,6 +242,6 @@ export function pollForAccountChanges(currentAccountAddress?: string, interval: 
 
     emitIfNewAccount();
     const timeout = setInterval(emitIfNewAccount, interval);
-    return() => clearTimeout(timeout);
+    return () => clearTimeout(timeout);
   });
 }
