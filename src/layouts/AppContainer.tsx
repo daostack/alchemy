@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { checkMetaMask, getCurrentAccountAddress, initArc, pollForAccountChanges } from "arc";
+import { checkMetaMask, getCurrentAccountAddress, initializeArc, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
@@ -81,7 +81,7 @@ class AppContainer extends React.Component<IProps, IState> {
   }
   public async componentWillMount() {
     // we initialize Arc
-    initArc().then(async () => {
+    initializeArc().then(async () => {
       // if Metamask is available, we wathc for any account changes
       let metamask: any;
       const currentAddress = await getCurrentAccountAddress();
