@@ -8,6 +8,7 @@ import * as css from "./BoostAmount.scss";
 
 interface IProps {
   detailView?: boolean;
+  expired?: boolean;
   proposal: IProposalState;
 }
 
@@ -16,6 +17,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
   public render() {
     const {
       detailView,
+      expired,
       proposal,
     } = this.props;
 
@@ -27,7 +29,7 @@ export default class BoostAmount extends React.Component<IProps, null> {
     return (
       <div className={wrapperClass}>
         {
-          proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
+          proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
             <span className={css.boostedAmount}>
               <b>
                 {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}

@@ -111,6 +111,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       detailView,
+      expired,
       historyView,
       proposal,
       isPredictingFail,
@@ -171,7 +172,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       [css.unconfirmedPrediction] : isPredicting,
     });
 
-    const stakingEnabled = proposal.stage === IProposalStage.Queued ||
+    const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
                             (proposal.stage === IProposalStage.PreBoosted);
 
     const hasGens = currentAccountGens.gt(new BN(0));
