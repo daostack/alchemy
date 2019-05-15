@@ -1,5 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13">
-    <g fill="none" fill-rule="evenodd" stroke="#9AA9B5" stroke-linecap="square" stroke-width="1.8">
-        <path d="M1.841 1.841l9.031 9.031M11.159 1.841L2.132 11.16"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>x</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="x" transform="translate(1.000000, 1.000000)" stroke="#0376FF" stroke-width="1.8">
+            <path d="M0.841,0.841 L9.872,9.872 M10.159,0.841 L1.132,10.16" id="Shape"></path>
+        </g>
     </g>
 </svg>

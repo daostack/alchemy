@@ -10,7 +10,16 @@
   }
 
    .stakeGraph {
-     height: 22px;
+     display: flex;
+
+     .leftColumn {
+      padding-right: 5px;
+     }
+
+     .rightColumn {
+        flex-grow: 1;
+        padding-right: 19px;
+     }
    }
 
   .stakesFor {
@@ -18,22 +27,22 @@
   }
 
   .stakesFor, .forBar, .stakesAgainst, .againstBar {
-    float: left;
     font-weight: bold;
     color: rgba(104, 154, 214, 1.000);
   }
 
   .forBar, .againstBar {
+    width: 60px;
     height: 18px;
-    width: 55px;
     position: relative;
+    padding-left: 5px;
+    padding-top: 2px;
 
     b {
       font-weight: normal;
       font-size: 10px;
       display: inline-block;
       color: rgba(154, 169, 181, 1.000);
-      margin-left: 5px;
       font-family: "Open Sans";
       position: relative;
       top: 2px;
@@ -44,7 +53,6 @@
       position: absolute;
       width: 100%;
       bottom: 0;
-      margin-left: 5px;
       height: 2px;
       background-color: rgba(208, 214, 220, 1.000);
     }
@@ -87,15 +95,13 @@
      margin-bottom: 10px;
    }
 
-   .stakesFor, .stakesAgainst {
-     position: absolute;
-     top: 21px;
-     left: 3px;
-   }
+    .stakesFor, .stakesAgainst {
+      position: relative;
+    }
 
    .forBar, .againstBar {
-     position: absolute;
-     top: 0;
+     position: relative;
+     width: auto;
 
      b {
        color: rgba(154, 169, 181, 1.000);
@@ -109,9 +115,9 @@
    img {
      position: absolute;
      left: -32px;
-     top: -14px;
      height: 20px;
      width: 22px;
+     top: 0;
    }
 }
 

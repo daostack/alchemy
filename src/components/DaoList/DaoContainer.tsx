@@ -63,7 +63,7 @@ const DaoContainer = (props: IProps) => {
               </div>
               )
             </div>
-          </div>;
+          </div>
         </Link>;
       }
     }

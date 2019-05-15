@@ -205,7 +205,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       className={touched.url && errors.url ? css.error : null}
                     />
 
-                    <div>
+                    <div className={css.clearfix}>
                       <div>
                         <label htmlFor="beneficiary">
                           Recipient

@@ -3,12 +3,17 @@
 }
 
 a.historyView {
-  position: absolute;
-  top: 25px;
-  left: 66px;
-  display: block;
-  color: rgba(80, 97, 118, 1.000);
+  display: inline-block;
+  color: #506176;
   font-size: 13px;
+  width: 90px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 20px;
+  position: relative;
+  top: -3px;
+  left: 5px;
 }
 
 a.detailView {

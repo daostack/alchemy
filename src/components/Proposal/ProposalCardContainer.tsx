@@ -155,7 +155,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
 
           <h3>
             <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-              {humanProposalTitle(proposal)}
+              <span>{humanProposalTitle(proposal)}</span>
               <img src="/assets/images/Icon/Open.svg"/>
             </Link>
           </h3>

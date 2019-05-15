@@ -78,10 +78,22 @@
   }
 }
 
-.detailLink img {
-  margin-left: 8px;
-  height: 12px;
-  opacity: .5;
+.detailLink {
+  span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 250px;
+  }
+
+  img {
+    margin-left: 8px;
+    height: 12px;
+    opacity: .5;
+    position: relative;
+    top: -3px;
+  }
 }
 
 .proposal:hover {
@@ -142,7 +154,7 @@
 }
 
 .predictionButtons {
-  padding-top: 5px;
+  padding-top: 4px;
 }
 
 .cardTop {

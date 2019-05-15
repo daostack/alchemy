@@ -146,6 +146,7 @@
 
 .failButton {
   border-radius: 0 10px 10px 0;
+  top: 1px !important;
 }
 
 .predictions.unconfirmedPrediction {
@@ -165,6 +166,8 @@
     margin: 0 auto;
     border-radius: 3px;
     opacity: .5;
+    position: relative;
+    top: -5px;
   }
 
   span {
@@ -214,6 +217,7 @@
 
     button {
       display: inline-block;
+      top: 0;
     }
   }
 }
