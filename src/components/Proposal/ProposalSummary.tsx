@@ -4,9 +4,9 @@ import * as React from "react";
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
+import { default as Util, getNetworkName, schemeName } from "lib/util";
 import { IProfileState } from "reducers/profilesReducer";
 import RewardsString from "./RewardsString";
-import { getNetworkName, schemeName, default as Util } from "lib/util";
 
 import * as css from "./ProposalSummary.scss";
 

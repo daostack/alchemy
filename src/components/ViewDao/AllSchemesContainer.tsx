@@ -6,8 +6,8 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
-import SchemeCardContainer from "./SchemeCardContainer";
 import * as css from "./AllSchemes.scss";
+import SchemeCardContainer from "./SchemeCardContainer";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition

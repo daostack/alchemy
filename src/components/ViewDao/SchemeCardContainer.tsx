@@ -1,13 +1,13 @@
 import { IDAOState, IProposalStage, IProposalState, Proposal, Queue } from "@daostack/client";
 import { getArc } from "arc";
+import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import VoteGraph from "components/Proposal/Voting/VoteGraph";
+import { humanProposalTitle, knownSchemes } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
 import { combineLatest, of } from "rxjs";
-import { humanProposalTitle, knownSchemes } from "lib/util";
 import * as css from "./SchemeCard.scss";
 
 interface IExternalProps {

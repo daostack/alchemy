@@ -198,7 +198,6 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                         />
                       </div>
 
-
                       <div>
                         <label htmlFor="value">
                           ETH Value

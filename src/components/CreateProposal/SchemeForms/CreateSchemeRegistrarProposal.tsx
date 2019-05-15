@@ -4,11 +4,11 @@ import { checkMetaMaskAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import { knownSchemes, schemeName } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import { knownSchemes, schemeName } from "lib/util";
 import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
