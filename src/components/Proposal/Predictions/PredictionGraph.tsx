@@ -39,7 +39,7 @@ export default class PredictionGraph extends React.Component<IProps, null> {
 
     return (
       <div className={wrapperClass}>
-         
+
         <div className={css.stakeGraph}>
           <div className={css.leftColumn}>
             <div className={css.stakesFor}>
