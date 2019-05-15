@@ -115,7 +115,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <img src="/assets/images/Icon/Copy-black.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
                       </td>
                     </tr>
-                    <tr><th>Permissions:</th><td>{schemeRegistrar.schemeToRegisterPermission}</td></tr>
+                    <tr>
+                      <th>Permissions:</th>
+                      <td>
+                        <span>Register Other schemes</span><br/>
+                        <span>Upgrade the controller</span><br/>
+                        <span>Call genericCall on behalf of</span><br/>
+                      </td>
+                    </tr>
                   </table>
                   : ""
                 }
