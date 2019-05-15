@@ -166,6 +166,8 @@
     margin: 0 auto;
     border-radius: 3px;
     opacity: .5;
+    position: relative;
+    top: -5px;
   }
 
   span {
@@ -215,6 +217,7 @@
 
     button {
       display: inline-block;
+      top: 0;
     }
   }
 }
