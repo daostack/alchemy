@@ -1,5 +1,7 @@
 export const wrapper: string;
 export const stakeGraph: string;
+export const leftColumn: string;
+export const rightColumn: string;
 export const stakesFor: string;
 export const forBar: string;
 export const stakesAgainst: string;
