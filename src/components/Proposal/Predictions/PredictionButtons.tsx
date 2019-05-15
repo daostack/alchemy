@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { checkNetworkAndWarn, getArc } from "arc";
+import { checkMetaMaskAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -98,7 +98,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public handleClickPreApprove = async (event: any) => {
-    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
+    if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.dao.address);
     this.setState({ showApproveModal: false });
@@ -111,6 +111,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGenStakingAllowance,
       dao,
       detailView,
+      expired,
       historyView,
       proposal,
       isPredictingFail,
@@ -171,7 +172,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       [css.unconfirmedPrediction] : isPredicting,
     });
 
-    const stakingEnabled = proposal.stage === IProposalStage.Queued ||
+    const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
                             (proposal.stage === IProposalStage.PreBoosted);
 
     const hasGens = currentAccountGens.gt(new BN(0));

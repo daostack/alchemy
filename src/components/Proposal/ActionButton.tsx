@@ -1,6 +1,6 @@
-import { Address, IDAOState, IProposalState, IProposalStage, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
-import { checkNetworkAndWarn } from "arc";
+import { checkMetaMaskAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -43,7 +43,8 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
 
   return {...ownProps,
     beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
-    isRedeemPending: ownProps.currentAccountAddress && isRedeemPending(proposal.id, ownProps.currentAccountAddress)(state),
+    isRedeemPending: ownProps.currentAccountAddress &&
+      isRedeemPending(proposal.id, ownProps.currentAccountAddress)(state),
   };
 };
 
@@ -69,7 +70,7 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public async handleClickExecute(event: any) {
-    if (!(await checkNetworkAndWarn(showNotification))) { return; }
+    if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
     await this.props.executeProposal(this.props.dao.address, this.props.proposal.id, this.props.currentAccountAddress);
   }
 

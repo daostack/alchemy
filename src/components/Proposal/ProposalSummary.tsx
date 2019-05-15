@@ -6,7 +6,7 @@ import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { IProfileState } from "reducers/profilesReducer";
 import RewardsString from "./RewardsString";
-import { schemeName, default as Util } from "lib/util";
+import { getNetworkName, schemeName, default as Util } from "lib/util";
 
 import * as css from "./ProposalSummary.scss";
 
@@ -30,7 +30,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    this.setState({ network: (await Util.networkName()).toLowerCase() });
+    this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
   public render() {

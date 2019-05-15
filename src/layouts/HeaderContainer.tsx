@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableMetamask, getArc } from "arc";
+import { checkMetaMask, enableMetamask, getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -20,16 +20,16 @@ interface IStateProps {
   accounts: string[];
   currentAccountProfile: IProfileState;
   dao: IDAOState;
-  ethAccountAddress: string | null;
+  currentAccountAddress: string | null;
   networkId: number;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = ownProps.dao;
   return {
-    currentAccountProfile: state.profiles[state.web3.ethAccountAddress],
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     dao,
-    ethAccountAddress: state.web3.ethAccountAddress
+    currentAccountAddress: state.web3.currentAccountAddress
   };
 };
 
@@ -54,8 +54,8 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public copyAddress(e: any) {
-    const { showNotification, ethAccountAddress } = this.props;
-    Util.copyToClipboard(ethAccountAddress);
+    const { showNotification, currentAccountAddress } = this.props;
+    Util.copyToClipboard(currentAccountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
     e.preventDefault();
   }
@@ -67,17 +67,18 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   public handleClickLogin = () => {
     try {
-      enableMetamask();
+      checkMetaMask();
     } catch (err) {
       this.props.showNotification(NotificationStatus.Failure, err.message);
     }
+    enableMetamask();
   }
 
   public render() {
     const {
       currentAccountProfile,
       dao,
-      ethAccountAddress,
+      currentAccountAddress,
     } = this.props;
 
     const daoAvatarAddress = dao ? dao.address : null;
@@ -96,29 +97,29 @@ class HeaderContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.headerRight}>
-            { ethAccountAddress &&
+            { currentAccountAddress &&
               <div className={css.accountInfo}>
                 <div className={css.accountImage}>
                   <Link className={css.profileLink}
-                    to={"/profile/" + ethAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
-                    <AccountImage accountAddress={ethAccountAddress} />
+                    to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                    <AccountImage accountAddress={currentAccountAddress} />
                   </Link>
                 </div>
                 <div className={css.holdings}>
                   <div className={css.pointer}></div>
                   <div className={css.walletDetails}>
                     <div className={css.profileName}>
-                      <AccountProfileName accountAddress={ethAccountAddress}
+                      <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                     </div>
                     <div className={css.holdingsLabel}>Your wallet</div>
                     <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
-                      <span>{ethAccountAddress ? ethAccountAddress.slice(0, 40) : "No account known"}</span>
+                      <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
                       <img src="/assets/images/Icon/Copy-white.svg"/>
                       <div className={css.fade}></div>
                     </div>
                   </div>
-                  <AccountBalances dao={dao} address={ethAccountAddress} />
+                  <AccountBalances dao={dao} address={currentAccountAddress} />
                 </div>
               </div>
             ||
@@ -152,7 +153,7 @@ export default (props: RouteComponentProps<any>) => {
           if (state.isLoading) {
             return null;
           } else if (state.error) {
-            return <div>{state.error}</div>;
+            return <div>{state.error.message}</div>;
           } else {
             return <ConnectedHeaderContainer {...props} dao={state.data} />;
           }

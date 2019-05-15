@@ -1,8 +1,8 @@
+import { IDAOState, IProposalStage, IProposalState, } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import * as React from "react";
-import { IDAOState, IProposalStage, IProposalState, } from "@daostack/client";
 import { default as Util } from "lib/util";
+import * as React from "react";
 
 import * as css from "./VoteGraph.scss";
 

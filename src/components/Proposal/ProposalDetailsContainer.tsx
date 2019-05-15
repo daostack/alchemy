@@ -14,8 +14,8 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
-import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { proposalEnded } from "reducers/arcReducer";
+import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import { isVotePending } from "selectors/operations";
@@ -24,9 +24,9 @@ import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
 import ProposalSummary from "./ProposalSummary";
+import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
-import VoteBreakdown from "./Voting/VoteBreakdown";
 
 import * as css from "./ProposalDetails.scss";
 
@@ -225,7 +225,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                   beneficiaryProfile={beneficiaryProfile}
                   currentAccountAddress={currentAccountAddress}
                   dao={dao}
-                  expired={this.state.expired}
+                  expired={expired}
                   proposal={proposal}
                   detailView={true}
                 />
@@ -236,7 +236,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                   proposal={proposal}
                   detailView={true}
                 />
-                <BoostAmount detailView={true} proposal={proposal} />
+                <BoostAmount detailView={true} expired={expired} proposal={proposal} />
               </div>
             </div>
 
