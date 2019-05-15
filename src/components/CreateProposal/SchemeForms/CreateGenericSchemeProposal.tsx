@@ -119,6 +119,11 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                     errors.url = "Invalid URL";
                   }
 
+                  const bytesPattern = new RegExp("0x[0-9a-e]+", "i");
+                  if (values.callData && !bytesPattern.test(values.callData)) {
+                    errors.callData = "Invalid encoded ABI";
+                  }
+
                   require("callData");
                   nonEmpty("value");
                   nonNegative("value");
