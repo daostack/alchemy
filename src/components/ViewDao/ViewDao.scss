@@ -164,18 +164,18 @@ button:hover {
       ul {
         left: 50px;
         top: -80px;
-        width: 150px;
+        width: 120px;
         opacity: 0;
         transform: scale(0);
         transition: all .25s ease;
 
 
         li {
-          text-align: center;
+          text-align: left;
           height: auto;
 
           a {
-            padding: 5px;
+            padding: 8px 15px;
           }
 
           &:hover a {
@@ -187,11 +187,12 @@ button:hover {
             top: 0;
             height: 14px;
             left: 0;
+            margin-right: 5px;
           }
         }
       }
       &:hover ul {
-        left: 100px;
+        left: 130px;
         opacity: 1;
         top: -80px;
         transform: translateX(100%) scale(1);
