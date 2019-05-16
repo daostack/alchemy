@@ -9,8 +9,8 @@ interface IProps {
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
   overTime?: boolean;
-  onEnd?(): any;
   schemeView?: boolean;
+  onEnd?(): any;
 }
 
 interface IState {
