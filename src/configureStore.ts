@@ -4,7 +4,6 @@ import { notificationUpdater, successDismisser } from "reducers/notifications";
 import { operationsTracker } from "reducers/operations";
 import { applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
-import { persistStore } from "redux-persist";
 import thunkMiddleware from "redux-thunk";
 import reducers from "./reducers";
 
@@ -36,5 +35,4 @@ export const mockStore = () => createStore(
   ),
 );
 
-persistStore(store);
 export default store;

@@ -5,11 +5,17 @@ import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 
+import { persistStore } from "redux-persist";
 import { default as store, history } from "./configureStore";
 
 import AppContainer from "layouts/AppContainer";
 
 export class App extends React.Component<{}, null> {
+
+  public async componentWillMount() {
+    // Do this here because we need to have initialized Arc first
+    persistStore(store);
+  }
 
   public render() {
     return (

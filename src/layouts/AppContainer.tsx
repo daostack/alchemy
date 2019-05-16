@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { checkMetaMask, getCurrentAccountAddress, initializeArc, pollForAccountChanges } from "arc";
+import { checkMetaMask, getCurrentAccountAddress, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import HomeContainer from "components/Home/HomeContainer";
@@ -54,7 +54,6 @@ interface IState {
   error: string;
   sentryEventId: string;
   notificationsMinimized: boolean;
-  arcIsInitialized: boolean;
 }
 
 class AppContainer extends React.Component<IProps, IState> {
@@ -65,7 +64,6 @@ class AppContainer extends React.Component<IProps, IState> {
       error: null,
       sentryEventId: null,
       notificationsMinimized: false,
-      arcIsInitialized: false
     };
   }
 
@@ -78,11 +76,9 @@ class AppContainer extends React.Component<IProps, IState> {
       this.setState({ sentryEventId });
     });
   }
-  public async componentWillMount() {
-    // we initialize Arc
-    await initializeArc();
 
-    // if Metamask is available, we wathc for any account changes
+  public async componentWillMount() {
+    // if Metamask is available, we watch for any account changes
     let metamask: any;
     const currentAddress = await getCurrentAccountAddress();
     if (currentAddress)  {
@@ -99,8 +95,6 @@ class AppContainer extends React.Component<IProps, IState> {
         this.props.setCurrentAccount(undefined);
       }
     }
-
-    this.setState({ arcIsInitialized: true });
 
     try {
       metamask = checkMetaMask();
@@ -132,14 +126,11 @@ class AppContainer extends React.Component<IProps, IState> {
       sortedNotifications,
     } = this.props;
 
-    if (!this.state.arcIsInitialized) {
-      return <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>;
-    } else if (this.state.error) {
+    if (this.state.error) {
       // Render error fallback UI
       return (
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
       );
-
     } else {
       return (
         <div className={css.outer}>
