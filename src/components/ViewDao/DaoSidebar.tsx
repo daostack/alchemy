@@ -100,8 +100,8 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                 <li>
                   <a>Buy GEN</a>
                   <ul>
-                    <li><a href="https://www.ethfinex.com/" target="_blank"><img src="/assets/images/Exchanges/ethfinex.svg"/> Ethfinex</a></li>
                     <li><a href="https://www.bitfinex.com/" target="_blank"><img src="/assets/images/Exchanges/bitfinex.png"/> Bitfinex</a></li>
+                    <li><a href="https://www.ethfinex.com/" target="_blank"><img src="/assets/images/Exchanges/ethfinex.svg"/> Ethfinex</a></li>
                     <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
                     <li><a href="https://slow.trade" target="_blank"><img src="https://slow.trade/favicon-32x32.png"/> Slow Trade</a></li>
                   </ul>
