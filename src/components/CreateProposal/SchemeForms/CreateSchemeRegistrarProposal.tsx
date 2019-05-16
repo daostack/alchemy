@@ -85,7 +85,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     const currentTab = this.state.currentTab;
     const proposalValues = {...values,
-      type: this.state.currentTab === "removeScheme" ? IProposalType.SchemeRegistrarProposeToRemove : IProposalType.SchemeRegistrarPropose,
+      type: this.state.currentTab === "removeScheme" ? IProposalType.SchemeRegistrarRemove : this.state.currentTab === "addScheme" ? IProposalType.SchemeRegistrarAdd : IProposalType.SchemeRegistrarEdit,
       parametersHash: values.parametersHash,
       permissions: "0x" + permissions.toString(16).padStart(8, "0"),
       scheme: currentTab === "addScheme" ? (values.schemeToAdd === "Other" ? values.otherScheme : values.schemeToAdd) :
