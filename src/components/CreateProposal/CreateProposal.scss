@@ -313,31 +313,31 @@
   display: table;
 }
 
-.schemeRegistrar {
+.createWrapperWithSidebar {
   width: 730px;
   content: "";
   clear: both;
   display: table;
 
-  .schemeRegistrarSidebar {
+  .sidebar {
     width: 199px;
     float: left;
 
-    .schemeItem {
-      position: relative;
-      border-top: 1px solid rgba(233, 238, 244, 1.000);
-      padding: 15px 0;
+    // .schemeItem {
+    //   position: relative;
+    //   border-top: 1px solid rgba(233, 238, 244, 1.000);
+    //   padding: 15px 0;
 
-      .schemeTitle {
-        font-size: 11px;
-        display: block;
-        padding: 8px;
-        background-color: $white;
-        top: -17px;
-        position: absolute;
-        left: 22px;
-      }
-    }
+    //   .schemeTitle {
+    //     font-size: 11px;
+    //     display: block;
+    //     padding: 8px;
+    //     background-color: $white;
+    //     top: -17px;
+    //     position: absolute;
+    //     left: 22px;
+    //   }
+    // }
 
     .addSchemeButton {
       display: block;
@@ -378,10 +378,18 @@
     }
   }
 
-  .schemeRegistrarForm {
+  .formWrapper {
     width: 530px;
     float: left;
     border-left: 1px solid #e9eef4;
+
+    .tab {
+      display: none;
+    }
+
+    .tab.selected {
+      display: block;
+    }
   }
 
   .addEditSchemeFields, .removeSchemeFields, .addSchemeSelectContainer, .editSchemeSelectContainer {

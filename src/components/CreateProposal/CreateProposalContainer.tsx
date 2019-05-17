@@ -1,4 +1,5 @@
 import CreateContributionRewardProposal from "components/CreateProposal/SchemeForms/CreateContributionRewardProposal";
+import CreateDutchXProposal from "components/CreateProposal/SchemeForms/CreateDutchXProposal";
 import CreateGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
 import * as H from "history";
@@ -50,8 +51,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
           : schemeName === "SchemeRegistrar" ?
             <CreateSchemeRegistrarProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} />
           : schemeName === "GenericScheme" ?
-            <CreateGenericSchemeProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} />
-          : ""
+            <CreateDutchXProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} />
+          : <CreateGenericSchemeProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} />
         }
       </div>
     );

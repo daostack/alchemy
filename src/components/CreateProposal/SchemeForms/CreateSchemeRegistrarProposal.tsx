@@ -122,15 +122,15 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
     });
 
     const schemeRegistrarFormClass = classNames({
-      [css.schemeRegistrarForm]: true,
+      [css.formWrapper]: true,
       [css.addScheme]: currentTab === "addScheme",
       [css.removeScheme]: currentTab === "removeScheme",
       [css.editScheme]: currentTab === "editScheme"
     });
 
     return (
-      <div className={css.schemeRegistrar}>
-        <div className={css.schemeRegistrarSidebar}>
+      <div className={css.createWrapperWithSidebar}>
+        <div className={css.sidebar}>
           <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")}>
             <span></span>
             Add Scheme
