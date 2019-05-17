@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as React from "react";
 
 import * as classNames from "classnames";
@@ -90,12 +90,13 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
               : schemeRegistrar.schemeToRegister ?
               <div>
                 <span>
-                  <b>+</b>&nbsp;
-                  Add Scheme&nbsp;
+                  <b>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
+                  {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
                   <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
                 </span>
                 { detailView ?
                   <table>
+                    <tbody>
                     <tr>
                       <th>
                         Address:
@@ -123,26 +124,13 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <span>Call genericCall on behalf of</span><br/>
                       </td>
                     </tr>
+                    </tbody>
                   </table>
                   : ""
                 }
               </div>
               :
-              <div>
-                <span>
-                  <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-                  Edit Scheme&nbsp;
-                  <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
-                </span>
-                { detailView ?
-                  <table>
-                    <tr><th>Address:</th><td>{schemeRegistrar.schemeToRegister.slice(43)}...</td></tr>
-                    <tr><th>Param Hash:</th><td>{schemeRegistrar.schemeToRegisterParamsHash.slice(43)}...</td></tr>
-                    <tr><th>Permissions:</th><td>{schemeRegistrar.schemeToRegisterPermission}</td></tr>
-                  </table>
-                  : ""
-                }
-              </div>
+              ""
           }
         </div>
       );
