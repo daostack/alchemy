@@ -1,0 +1,128 @@
+{
+  "name": "dxDao",
+  "addresses": {
+    "main": [],
+    "rinkeby": [],
+    "private": []
+  },
+  "actions": [
+    {
+      "id": "updateMasterCopy",
+      "label": "Update MasterCopy",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_masterCopy",
+            "type": "address"
+          }
+        ],
+        "name": "startMasterCopyCountdown",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "changeETHUSDOracle",
+      "label": "Change ETH:USD Oracle",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_ethUSDOracle",
+            "type": "address"
+          }
+        ],
+        "name": "initiateEthUsdOracleUpdate",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateAuctioneer",
+      "label": "Change DutchX Owner",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_auctioneer",
+            "type": "address"
+          }
+        ],
+        "name": "updateAuctioneer",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "addOrRemoveTokens",
+      "label": "Add Tokens (really add/remove)",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/TokenWhitelist.sol#L28",
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address[]"
+          },
+          {
+            "name": "approved",
+            "type": "bool"
+          }
+        ],
+        "name": "updateApprovalOfToken",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateThresholdNewTokenPair",
+      "label": "Update TokenPair Threshold",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L248",
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_thresholdNewTokenPair",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateThresholdNewTokenPair",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateThresholdNewAuction",
+      "label": "Update Action Threshold",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L252",
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_thresholdNewAuction",
+            "type": "uint256"
+          }
+        ],
+        "name": "updateThresholdNewAuction",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}
