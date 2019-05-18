@@ -36,6 +36,71 @@
   max-width: 430px;
 }
 
+
+.detailView.proposalSummary.schemeRegistrar {
+  box-shadow: 0 1px 12px 0 rgba(26, 60, 88, 0.09);
+  background-color: $white;
+  font-size: 13px;
+  padding: 0;
+  margin: 0 0 0 0;
+  max-width: 100%;
+
+  .summaryTitle {
+    padding: 20px;
+    display: block;
+    font-family: "AccordBold";
+    border-bottom: 1px solid rgba(233, 238, 244, 1.000);
+    
+    b {
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    a {
+      display: inline-block;
+      margin-left: 8px;
+    }
+  }
+
+  .summaryDetails {
+    padding: 20px;
+
+    th {
+      color: rgba(78, 97, 118, 1.000);
+
+      img {
+        margin-left: 5px;
+        opacity: .2;
+        position: relative;
+        top: 2px;
+      }
+    }
+
+    td {
+      color: rgba(154, 169, 181, 1.000);
+
+      span {
+        display: inline-block;
+        width: 80%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      img {
+        margin-bottom: -3px;
+        height: 24px;
+      }
+    }
+  }
+
+  table {
+    border-top: none;
+  }
+}
+
+
+
 .transactionModal.proposalSummary {
   max-width: 400px;
   margin: 0 auto;
