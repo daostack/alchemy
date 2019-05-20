@@ -194,8 +194,15 @@ export async function initializeArc(): Promise<Arc> {
   if (metamask) {
     console.log("waiting for MetaMask to initialize");
     //
-    await waitUntilTrue(() => metamask.networkVersion, 1000);
-    console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
+    try {
+      await waitUntilTrue(() => metamask.networkVersion, 1000);
+      console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
+    } catch (err) {
+      if (err.message.match(/timed out/)) {
+        throw Error("Could not connect to Metamask (time out)");
+      }
+      throw err;
+    }
   }
 
   try {
