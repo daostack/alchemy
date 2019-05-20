@@ -118,7 +118,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
         break;
       default:
         if (field.type.includes("[]")) {
-          return <FieldArray name={field.name} render={arrayHelpers => (
+          return <FieldArray name={field.name} render={(arrayHelpers) => (
             <div>
               {values[field.name] && values[field.name].length > 0 ? (
                 values[field.name].map((value: any, index: number) => (
@@ -132,14 +132,14 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                     </button>
                     <button
                       type="button"
-                      onClick={() => arrayHelpers.insert(index, '')} // insert an empty string at a position
+                      onClick={() => arrayHelpers.insert(index, "")} // insert an empty string at a position
                     >
                       +
                     </button>
                   </div>
                 ))
               ) : (
-                <button type="button" onClick={() => arrayHelpers.push('')}>
+                <button type="button" onClick={() => arrayHelpers.push("")}>
                   {/* show this when user has removed all items from the list */}
                   Add {field.label}
                 </button>
