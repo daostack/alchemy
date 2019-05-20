@@ -1,4 +1,4 @@
-import { IDAOState, IProposalState } from "@daostack/client";
+import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as React from "react";
 
 import * as classNames from "classnames";
@@ -89,60 +89,50 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
               </div>
               : schemeRegistrar.schemeToRegister ?
               <div>
-                <span>
-                  <b>+</b>&nbsp;
-                  Add Scheme&nbsp;
+                <span className={css.summaryTitle}>
+                  <b>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
+                  {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
                   <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
                 </span>
                 { detailView ?
-                  <table>
-                    <tr>
-                      <th>
-                        Address:
-                        <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">
-                          <img src="/assets/images/Icon/Open.svg"/>
-                        </a>
-                      </th>
-                      <td>
-                        {schemeRegistrar.schemeToRegister}
-                        <img src="/assets/images/Icon/Copy-black.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegister)} />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Param Hash:</th>
-                      <td>
-                        {schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}...
-                        <img src="/assets/images/Icon/Copy-black.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Permissions:</th>
-                      <td>
-                        <span>Register Other schemes</span><br/>
-                        <span>Upgrade the controller</span><br/>
-                        <span>Call genericCall on behalf of</span><br/>
-                      </td>
-                    </tr>
-                  </table>
+                  <div className={css.summaryDetails}>
+                    <table>
+                      <tbody>
+                      <tr>
+                        <th>
+                          Address:
+                          <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">
+                            <img src="/assets/images/Icon/Open.svg"/>
+                          </a>
+                        </th>
+                        <td>
+                          <span>{schemeRegistrar.schemeToRegister}</span>
+                          <img src="/assets/images/Icon/Copy-black.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegister)} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Param Hash:</th>
+                        <td>
+                          <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
+                          <img src="/assets/images/Icon/Copy-black.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Permissions:</th>
+                        <td>
+                          <span>Register Other schemes</span><br/>
+                          <span>Upgrade the controller</span><br/>
+                          <span>Call genericCall on behalf of</span><br/>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
                   : ""
                 }
               </div>
               :
-              <div>
-                <span>
-                  <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-                  Edit Scheme&nbsp;
-                  <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
-                </span>
-                { detailView ?
-                  <table>
-                    <tr><th>Address:</th><td>{schemeRegistrar.schemeToRegister.slice(43)}...</td></tr>
-                    <tr><th>Param Hash:</th><td>{schemeRegistrar.schemeToRegisterParamsHash.slice(43)}...</td></tr>
-                    <tr><th>Permissions:</th><td>{schemeRegistrar.schemeToRegisterPermission}</td></tr>
-                  </table>
-                  : ""
-                }
-              </div>
+              ""
           }
         </div>
       );
