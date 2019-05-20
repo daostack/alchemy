@@ -10,11 +10,16 @@
       "id": "updateMasterCopy",
       "label": "Update MasterCopy",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
+      "fields": [
+        {
+          "label": "New Contract Address",
+          "name": "_masterCopy"
+        }
+      ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "label": "New Contract Address",
             "name": "_masterCopy",
             "type": "address"
           }
@@ -30,6 +35,12 @@
       "id": "changeETHUSDOracle",
       "label": "Change ETH:USD Oracle",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
+      "fields": [
+        {
+          "label": "New Contract Address",
+          "name": "_ethUSDOracle"
+        }
+      ],
       "abi": {
         "constant": false,
         "inputs": [
@@ -50,11 +61,16 @@
       "id": "updateAuctioneer",
       "label": "Change DutchX Owner",
       "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
+      "fields": [
+        {
+          "label": "New Owner Address",
+          "name": "_auctioneer"
+        }
+      ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "label": "New Owner Address",
             "name": "_auctioneer",
             "type": "address"
           }
@@ -70,6 +86,16 @@
       "id": "addOrRemoveTokens",
       "label": "Add/Remove Tokens",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/TokenWhitelist.sol#L28",
+      "fields": [
+        {
+          "label": "Token address",
+          "name": "token"
+        },
+        {
+          "label": "Add?",
+          "name": "approved"
+        }
+      ],
       "abi": {
         "constant": false,
         "inputs": [
@@ -95,11 +121,16 @@
       "id": "updateThresholdNewTokenPair",
       "label": "Update TokenPair Threshold",
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L248",
+      "fields": [
+        {
+          "label": "New Threshold",
+          "name": "_thresholdNewTokenPair"
+        }
+      ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "label": "New Threshold",
             "name": "_thresholdNewTokenPair",
             "type": "uint256"
           }
@@ -115,11 +146,16 @@
       "id": "updateThresholdNewAuction",
       "label": "Update Action Threshold",
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L252",
+      "fields": [
+        {
+          "label": "New Threshold",
+          "name": "_thresholdNewAuction"
+        }
+      ],
       "abi": {
         "constant": false,
         "inputs": [
           {
-            "label": "New Threshold",
             "name": "_thresholdNewAuction",
             "type": "uint256"
           }
