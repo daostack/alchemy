@@ -322,6 +322,7 @@
   .sidebar {
     width: 199px;
     float: left;
+    padding-top: 30px;
 
     // .schemeItem {
     //   position: relative;
@@ -341,7 +342,6 @@
 
     .addSchemeButton {
       display: block;
-      margin: 30px 0 0 0;
     }
 
     button {

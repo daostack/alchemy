@@ -14,6 +14,7 @@
         "constant": false,
         "inputs": [
           {
+            "label": "New Contract Address",
             "name": "_masterCopy",
             "type": "address"
           }
@@ -33,6 +34,7 @@
         "constant": false,
         "inputs": [
           {
+            "label": "New Contract Address",
             "name": "_ethUSDOracle",
             "type": "address"
           }
@@ -52,6 +54,7 @@
         "constant": false,
         "inputs": [
           {
+            "label": "New Owner Address",
             "name": "_auctioneer",
             "type": "address"
           }
@@ -65,16 +68,18 @@
     },
     {
       "id": "addOrRemoveTokens",
-      "label": "Add Tokens (really add/remove)",
+      "label": "Add/Remove Tokens",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/TokenWhitelist.sol#L28",
       "abi": {
         "constant": false,
         "inputs": [
           {
+            "label": "Token address",
             "name": "token",
             "type": "address[]"
           },
           {
+            "label": "Add?",
             "name": "approved",
             "type": "bool"
           }
@@ -94,6 +99,7 @@
         "constant": false,
         "inputs": [
           {
+            "label": "New Threshold",
             "name": "_thresholdNewTokenPair",
             "type": "uint256"
           }
@@ -113,6 +119,7 @@
         "constant": false,
         "inputs": [
           {
+            "label": "New Threshold",
             "name": "_thresholdNewAuction",
             "type": "uint256"
           }

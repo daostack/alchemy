@@ -4,7 +4,7 @@ const dxDAOInfo = require("./dxDao.json");
 interface IABISpec {
   constant: boolean;
   name: string;
-  inputs: Array<{ name: string, type: string}>;
+  inputs: Array<{ name: string, type: string, label: string}>;
   outputs: any[];
   payable: boolean;
   stateMutability: string;

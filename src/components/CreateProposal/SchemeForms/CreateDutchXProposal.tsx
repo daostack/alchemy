@@ -36,13 +36,8 @@ interface FormValues {
   description: string;
   title: string;
   url: string;
-  auctionThreshold: number;
-  newContractAddress: string; // update mastercopy & Change ETH:USD oracle
-  newOwnerAddress: string; // Change DutchX owner
-  tokenWhitelist: string[];
-  tokenPairThreshold: number;
-  [key: string]: any; // TODO: "allowSyntheticDefaultImports": true in tsconfig.json should render this unecessary. But it is needed anyway
 
+  [key: string]: any; // TODO: "allowSyntheticDefaultImports": true in tsconfig.json should render this unecessary. But it is needed anyway
 }
 
 interface IState {
@@ -71,20 +66,22 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
 
-    // const proposalValues = {...values,
-    //   type: IProposalType.GenericScheme
-    // };
-
     const currentAction = this.state.currentAction;
+
     const callValues = [];
     for (let input of currentAction.abi.inputs) {
-      callValues.push(values[input.name].value);
+      callValues.push(values[input.name]);
     }
     const callData = this.state.genericSchemeInfo.encodeABI(currentAction, callValues);
     setSubmitting(false);
+
     await this.props.createProposal(
       this.props.daoAvatarAddress,
-      { type: IProposalType.GenericScheme,
+      {
+        title: values.title,
+        description: values.description,
+        url: values.url,
+        type: IProposalType.GenericScheme,
         callData
       }
     );
@@ -100,6 +97,27 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
+
+    const initialFormValues : FormValues = {
+      description: "",
+      title: "",
+      url: ""
+    };
+
+    actions.forEach((action) => action.abi.inputs.forEach((input) => {
+      switch (input.type) {
+        case "unit256":
+          initialFormValues[input.name] = 0;
+          break;
+        case "address":
+        case "string":
+          initialFormValues[input.name] = "";
+          break;
+        case "address[]":
+          initialFormValues[input.name] = [];
+          break;
+      }
+    }));
 
     return (
       <div className={css.createWrapperWithSidebar}>
@@ -120,17 +138,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
 
         <div className={css.formWrapper}>
           <Formik
-            initialValues={{
-              auctionThreshold: 0,
-              newContractAddress: "",
-              newOwnerAddress: "",
-              tokenWhitelist: [],
-              tokenPairThreshold: 0,
-
-              description: "",
-              title: "",
-              url: ""
-            } as FormValues}
+            initialValues={initialFormValues}
             validate={(values: FormValues) => {
               const errors: any = {};
 
@@ -212,34 +220,35 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                     className={touched.url && errors.url ? css.error : null}
                   />
                   <div key={currentAction.id}
-                       className={classNames({
-                          [css.tab]: true,
-                          [css.selected]: this.state.currentAction.id === currentAction.id
-                        })
-                      }
-                    >
-                    <div>
-                      <label htmlFor={currentAction.id }>
-                        { currentAction.label }
-                        <ErrorMessage name="newContractAddress">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        <div className={css.requiredMarker}>*</div>
-                      </label>
-                      {
-                        currentAction.abi.inputs.map((input: { name: string, type: string}) => {
-                          // TODO: show different field depending on input.type
-                          const name: string = input.name;
-                          return <Field
-                            id={name}
-                            key={name}
-                            placeholder={`${name} --- type is: ${input.type}`}
-                            name={name}
-                            /* why does the next line not wokr? */
-                            /* className={touched[name] && (errors[name] ? css.error : null} */
-                          />;
+                     className={classNames({
+                        [css.tab]: true,
+                        [css.selected]: this.state.currentAction.id === currentAction.id
+                      })
+                    }
+                  >
+                    {
+                      currentAction.abi.inputs.map((input: { name: string, type: string, label: string}) => {
+                        // TODO: show different field depending on input.type
+                        const inputName = input.name;
 
-                        })
-                      }
-                  </div>
+                        return (
+                          <div key={inputName}>
+                            <label htmlFor={inputName}>
+                              { input.label }
+                              <ErrorMessage name={inputName}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                              <div className={css.requiredMarker}>*</div>
+                            </label>
+
+                            <Field
+                              id={inputName}
+                              placeholder={`${input.name} --- type is: ${input.type}`}
+                              name={inputName}
+                              className={touched[inputName] && errors[inputName] ? css.error : null}
+                            />
+                          </div>
+                        );
+                      })
+                    }
                   </div>
 
                   <div className={css.createProposalActions}>
