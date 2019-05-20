@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as classNames from "classnames";
-import { getNetworkName } from "lib/util";
+// import { getNetworkName } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -16,20 +16,7 @@ interface IProps {
   transactionModal?: boolean;
 }
 
-interface IState {
-  network: string;
-}
-
-export default class ProposalSummary extends React.Component<IProps, IState> {
-
-  constructor(props: IProps) {
-    super(props);
-    this.state = { network: "" };
-  }
-
-  public async componentWillMount() {
-    this.setState({ network: (await getNetworkName()).toLowerCase() });
-  }
+export default class ProposalSummary extends React.Component<IProps> {
 
   public render() {
 

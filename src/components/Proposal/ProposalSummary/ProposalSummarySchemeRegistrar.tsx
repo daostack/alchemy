@@ -46,7 +46,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     const etherscanLink = `https://${this.state.network !== "main" ? `${this.state.network}.` : ""}etherscan.io/address/`;
 
       // TODO: how to best figure out of this is an add or edit scheme proposal?
-      // TODO: movet his into a separate component,
+      // ANSWER: from the proposal.type
     return (
         <div className={proposalSummaryClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?

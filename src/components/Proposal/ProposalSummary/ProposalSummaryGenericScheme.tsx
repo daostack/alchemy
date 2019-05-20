@@ -1,6 +1,5 @@
 import { IDAOState, IProposalState } from "@daostack/client";
 import * as classNames from "classnames";
-import {getNetworkName } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import { GenericSchemeInfo, GenericSchemeRegistry} from "../../../genericSchemeRegistry";
@@ -15,8 +14,6 @@ interface IProps {
 }
 
 interface IState {
-  network: string;
-  // actions: Action[];
   genericSchemeInfo: GenericSchemeInfo;
 }
 
@@ -27,17 +24,10 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     const genericSchemeRegistry = new GenericSchemeRegistry();
     // // TODO: make this generic (NOT specific to the dxDAO)
     const genericSchemeInfo = genericSchemeRegistry.genericSchemeInfo("dxDAO");
-    // const actions = genericSchemeInfo.actions();
 
     this.state = {
-      // actions,
-      genericSchemeInfo,
-      network: ""
+      genericSchemeInfo
     };
-  }
-
-  public async componentWillMount() {
-    this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
   public render() {
@@ -51,11 +41,12 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     try {
       decodedCallData = this.state.genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
     } catch (err) {
-      // TOOD: notifiy, not alert!
+      // TODO: notifiy, not alert!
       alert(err);
     }
     console.log(decodedCallData);
     return <div className={proposalSummaryClass}>
+      .... { decodedCallData.action.label}....
       Calling function { decodedCallData.action.abi.name}  with values { decodedCallData.values.map((value: any) => <div key={value}>{value}</div>) }
     </div>;
   }
