@@ -98,7 +98,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
 
-    const initialFormValues : FormValues = {
+    const initialFormValues: FormValues = {
       description: "",
       title: "",
       url: ""
