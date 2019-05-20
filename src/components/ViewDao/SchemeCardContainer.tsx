@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, Proposal, Queue } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, IProposalType, Proposal, Queue } from "@daostack/client";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
@@ -105,9 +105,19 @@ export default(props: IExternalProps) => {
 
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
-    knownScheme ? dao.proposals({ type: props.scheme.name, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }) : of([]), // the list of queued proposals
-    knownScheme ? dao.proposals({ type: props.scheme.name, stage: IProposalStage.PreBoosted }) : of([]), // the list of preboosted proposals
-    knownScheme ? dao.proposals({ type: props.scheme.name, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }) : of([]) // the list of boosted proposals
+    knownScheme ? dao.proposals({
+      type: props.scheme.name as IProposalType,
+      stage: IProposalStage.Queued,
+      expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
+    }) : of([]), // the list of queued proposals
+    knownScheme ? dao.proposals({
+      type: props.scheme.name as IProposalType,
+      stage: IProposalStage.PreBoosted
+    }) : of([]), // the list of preboosted proposals
+    knownScheme ? dao.proposals({
+      type: props.scheme.name as IProposalType,
+      stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
+    }) : of([]) // the list of boosted proposals
   );
 
   return <Subscribe observable={observable}>{
