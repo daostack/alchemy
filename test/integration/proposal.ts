@@ -7,7 +7,7 @@ describe("Proposals", () => {
 
     before(() => {
       addresses = getContractAddresses();
-      daoAddress = addresses.Avatar.toLowerCase();
+      daoAddress = addresses.dao.Avatar.toLowerCase();
     });
 
     it("Create a proposal, vote for it, stake on it", async () => {

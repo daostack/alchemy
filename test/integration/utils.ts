@@ -4,7 +4,7 @@ chai.Should();
 
 export function getContractAddresses() {
   const path = "@daostack/migration/migration.json";
-  const addresses = { ...require(path).private.base, ...require(path).private.dao };
+  const addresses = require(path).private;
   if (!addresses || addresses === {}) {
     throw Error(`No addresses found, does the file at ${path} exist?`);
   }

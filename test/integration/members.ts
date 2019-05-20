@@ -1,5 +1,5 @@
+import * as chai from "chai";
 import { getContractAddresses, userAddresses } from "./utils";
-import * as chai from 'chai';
 
 describe("Members page", () => {
     let addresses: string[];
@@ -8,7 +8,7 @@ describe("Members page", () => {
     before(async () => {
       chai.Should();
       addresses = getContractAddresses();
-      daoAddress = addresses.Avatar.toLowerCase();
+      daoAddress = addresses.dao.Avatar.toLowerCase();
     });
 
     it("should exist", async () => {
