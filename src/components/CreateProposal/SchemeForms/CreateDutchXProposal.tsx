@@ -4,7 +4,7 @@ import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -107,6 +107,60 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     this.setState({ currentAction: this.state.genericSchemeInfo.action(tab) });
   }
 
+  public renderField(field: { name: string, type: string, label: string}, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
+    let type = "string";
+    switch (field.type) {
+      case "uint256":
+        type = "number";
+        break;
+      case "bool":
+        type = "checkbox";
+        break;
+      default:
+        if (field.type.includes("[]")) {
+          return <FieldArray name={field.name} render={arrayHelpers => (
+            <div>
+              {values[field.name] && values[field.name].length > 0 ? (
+                values[field.name].map((value: any, index: number) => (
+                  <div key={field.name + "_" + index}>
+                    {this.renderField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: ""}, values, touched, errors)}
+                    <button
+                      type="button"
+                      onClick={() => arrayHelpers.remove(index)} // remove an item from the list
+                    >
+                      -
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => arrayHelpers.insert(index, '')} // insert an empty string at a position
+                    >
+                      +
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <button type="button" onClick={() => arrayHelpers.push('')}>
+                  {/* show this when user has removed all items from the list */}
+                  Add {field.label}
+                </button>
+              )}
+            </div>
+            )}
+          />;
+        }
+        break;
+    }
+
+    return <Field
+      id={field.name}
+      data-test-id={field.name}
+      placeholder={`${field.name} --- type is: ${field.type}`}
+      name={field.name}
+      type={type}
+      className={touched[field.name] && errors[field.name] ? css.error : null}
+    />;
+  }
+
   public render() {
     const { handleClose } = this.props;
 
@@ -121,12 +175,15 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
 
     actions.forEach((action) => action.abi.inputs.forEach((input: any) => {
       switch (input.type) {
-        case "unit256":
-          initialFormValues[input.name] = 0;
+        case "uint256":
+          initialFormValues[input.name] = "";
           break;
         case "address":
         case "string":
           initialFormValues[input.name] = "";
+          break;
+        case "bool":
+          initialFormValues[input.name] = false;
           break;
         case "address[]":
           initialFormValues[input.name] = [];
@@ -158,7 +215,8 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
               const errors: any = {};
 
               const valueIsRequired = (name: string) => {
-                if (!(values as any)[name]) {
+                const value = values[name];
+                if (!value || (Array.isArray(value) && value.length === 0)) {
                   errors[name] = "Required";
                 }
               };
@@ -176,7 +234,9 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
               }
 
               for (let input of this.state.currentAction.abi.inputs) {
-                valueIsRequired(input.name);
+                if (input.type !== "bool") {
+                  valueIsRequired(input.name);
+                }
               }
 
               return errors;
@@ -234,6 +294,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                     type="text"
                     className={touched.url && errors.url ? css.error : null}
                   />
+
                   <div key={currentAction.id}
                      className={classNames({
                         [css.tab]: true,
@@ -253,13 +314,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                               <div className={css.requiredMarker}>*</div>
                             </label>
 
-                            <Field
-                              id={field.name}
-                              data-test-id={field.name}
-                              placeholder={`${field.name} --- type is: ${field.type}`}
-                              name={field.name}
-                              className={touched[field.name] && errors[field.name] ? css.error : null}
-                            />
+                            {this.renderField(field, values, touched, errors)}
                           </div>
                         );
                       })
