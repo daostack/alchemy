@@ -1,3 +1,4 @@
+// const BN = require("bn.js");
 import { IProposalType, Queue } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
@@ -7,8 +8,8 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { showNotification } from "reducers/notifications";
-import { GenericSchemeInfo, GenericSchemeRegistry, IActionSpec } from "../../../genericSchemeRegistry";
+import { NotificationStatus, showNotification } from "reducers/notifications";
+import { Action, GenericSchemeInfo, GenericSchemeRegistry} from "../../../genericSchemeRegistry";
 import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
@@ -36,13 +37,12 @@ interface FormValues {
   description: string;
   title: string;
   url: string;
-
   [key: string]: any; // TODO: "allowSyntheticDefaultImports": true in tsconfig.json should render this unecessary. But it is needed anyway
 }
 
 interface IState {
-  actions: IActionSpec[];
-  currentAction: IActionSpec;
+  actions: Action[];
+  currentAction: Action;
   genericSchemeInfo: GenericSchemeInfo;
 }
 
@@ -72,19 +72,34 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     for (let input of currentAction.abi.inputs) {
       callValues.push(values[input.name]);
     }
-    const callData = this.state.genericSchemeInfo.encodeABI(currentAction, callValues);
+    let callData: string = "";
+    try {
+      callData = this.state.genericSchemeInfo.encodeABI(currentAction, callValues);
+    } catch (err) {
+      // TODO: show notification, not an alert, and close the form
+      alert(err.message);
+      showNotification(NotificationStatus.Failure, err.message);
+      this.props.handleClose();
+      return;
+    }
     setSubmitting(false);
 
-    await this.props.createProposal(
-      this.props.daoAvatarAddress,
-      {
-        title: values.title,
-        description: values.description,
-        url: values.url,
-        type: IProposalType.GenericScheme,
-        callData
-      }
-    );
+    try {
+      await this.props.createProposal(
+        this.props.daoAvatarAddress,
+        {
+          title: values.title,
+          description: values.description,
+          url: values.url,
+          type: IProposalType.GenericScheme,
+          value: 0, // amount of eth to send with the call
+          callData
+        }
+      );
+    } catch (err) {
+      alert(err.message);
+      throw err;
+    }
     this.props.handleClose();
   }
 
@@ -104,7 +119,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
       url: ""
     };
 
-    actions.forEach((action) => action.abi.inputs.forEach((input) => {
+    actions.forEach((action) => action.abi.inputs.forEach((input: any) => {
       switch (input.type) {
         case "unit256":
           initialFormValues[input.name] = 0;
@@ -227,23 +242,23 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                     }
                   >
                     {
-                      currentAction.abi.inputs.map((input: { name: string, type: string, label: string}) => {
-                        // TODO: show different field depending on input.type
-                        const inputName = input.name;
+                      currentAction.getFields().map((field: { name: string, type: string, label: string}) => {
+                        // TODO: show different field depending on field.type
 
                         return (
-                          <div key={inputName}>
-                            <label htmlFor={inputName}>
-                              { input.label }
-                              <ErrorMessage name={inputName}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <div key={field.name}>
+                            <label htmlFor={field.name}>
+                              { field.label }
+                              <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                               <div className={css.requiredMarker}>*</div>
                             </label>
 
                             <Field
-                              id={inputName}
-                              placeholder={`${input.name} --- type is: ${input.type}`}
-                              name={inputName}
-                              className={touched[inputName] && errors[inputName] ? css.error : null}
+                              id={field.name}
+                              data-test-id={field.name}
+                              placeholder={`${field.name} --- type is: ${field.type}`}
+                              name={field.name}
+                              className={touched[field.name] && errors[field.name] ? css.error : null}
                             />
                           </div>
                         );

@@ -1,13 +1,8 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
-import * as React from "react";
-
 import * as classNames from "classnames";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
-import AccountProfileName from "components/Account/AccountProfileName";
 import { default as Util, getNetworkName, schemeName } from "lib/util";
+import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
-import RewardsString from "./RewardsString";
-
 import * as css from "./ProposalSummary.scss";
 
 interface IProps {
@@ -20,13 +15,17 @@ interface IProps {
 
 interface IState {
   network: string;
+
 }
 
 export default class ProposalSummary extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { network: "" };
+    this.state = {
+      network: ""
+    };
+
   }
 
   public async componentWillMount() {
@@ -35,7 +34,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   public render() {
 
-    const { beneficiaryProfile, dao, proposal, detailView, transactionModal } = this.props;
+    const { proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -43,27 +42,12 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.proposalSummary]: true,
     });
 
-    if (proposal.contributionReward) {
-      return (
-        <div className={proposalSummaryClass}>
-          <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
-          <strong className={css.transferAmount}></strong>
-          <img src="/assets/images/Icon/Transfer.svg" />
-          <AccountPopupContainer accountAddress={proposal.contributionReward.beneficiary} dao={dao} />
-          <strong>
-            <AccountProfileName accountAddress={proposal.contributionReward.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address}/>
-          </strong>
-        </div>
-      );
-    }
-
-    if (proposal.schemeRegistrar) {
-      const schemeRegistrar = proposal.schemeRegistrar;
-      const etherscanLink = `https://${this.state.network !== "main" ? `${this.state.network}.` : ""}etherscan.io/address/`;
+    const schemeRegistrar = proposal.schemeRegistrar;
+    const etherscanLink = `https://${this.state.network !== "main" ? `${this.state.network}.` : ""}etherscan.io/address/`;
 
       // TODO: how to best figure out of this is an add or edit scheme proposal?
-
-      return (
+      // TODO: movet his into a separate component,
+    return (
         <div className={proposalSummaryClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?
               <div>
@@ -136,10 +120,6 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
           }
         </div>
       );
-    }
 
-    return (
-      <div className={proposalSummaryClass}>Unknown function call</div>
-    );
   }
 }

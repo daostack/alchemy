@@ -1,3 +1,6 @@
+/*
+ * TODO: This logic will move to the client library, where it willb e properly tested
+ */
 const Web3 = require("web3");
 const dxDAOInfo = require("./schemes/dxDao.json");
 
@@ -15,6 +18,7 @@ export interface IActionSpec {
   label: string;
   abi: IABISpec;
   notes: string;
+  fields: any[];
 }
 export interface IGenericSchemeJSON {
   name: string;
@@ -22,6 +26,36 @@ export interface IGenericSchemeJSON {
   actions: IActionSpec[];
 }
 
+export class Action implements IActionSpec {
+  public id: string;
+  public label: string;
+  public abi: IABISpec;
+  public notes: string;
+  public fields: any[];
+
+  constructor(options: IActionSpec) {
+    if (this.fields && this.abi.inputs.length !== this.fields.length) {
+      throw Error(`Error parsing action: the number if abi.inputs should equal the number of fields`);
+    }
+    this.id = options.id;
+    this.label = options.label;
+    this.abi = options.abi;
+    this.notes = options.notes;
+    this.fields = options.fields;
+  }
+
+  public getFields() {
+    const result: any[] = [];
+    for (let i = 0; i <  this.abi.inputs.length; i++) {
+      result.push({
+        name: this.abi.inputs[i].name,
+        type: this.abi.inputs[i].type,
+        label: this.fields && this.fields[i].label
+      });
+    }
+    return result;
+  }
+}
 export class GenericSchemeInfo {
   public specs: IGenericSchemeJSON;
 
@@ -29,12 +63,12 @@ export class GenericSchemeInfo {
     this.specs = info;
   }
   public actions() {
-    return this.specs.actions;
+    return this.specs.actions.map((spec) => new Action(spec));
   }
   public action(id: string) {
     for (const action of this.specs.actions) {
       if (action.id === id) {
-        return action;
+        return new Action(action);
       }
     }
     throw Error(`An action with id ${id} coult not be found`);
@@ -53,7 +87,7 @@ export class GenericSchemeInfo {
 
   /*
    * Tries to find a function corresponding to the calldata among this.actions()
-   * returns: the action, and the decoded values.
+   * returns: an object containing the action, and the decoded values.
    * It returns 'undefined' if the action could not be found
    */
   public decodeCallData(callData: string): { action: IActionSpec, values: any[]} {

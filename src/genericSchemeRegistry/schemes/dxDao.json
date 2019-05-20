@@ -100,12 +100,10 @@
         "constant": false,
         "inputs": [
           {
-            "label": "Token address",
             "name": "token",
             "type": "address[]"
           },
           {
-            "label": "Add?",
             "name": "approved",
             "type": "bool"
           }

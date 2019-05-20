@@ -129,7 +129,10 @@ class AppContainer extends React.Component<IProps, IState> {
     if (this.state.error) {
       // Render error fallback UI
       return (
+        <div>
+        <pre>{this.state.error}</pre>
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
+        </div>
       );
     } else {
       return (
