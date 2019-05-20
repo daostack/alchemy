@@ -102,13 +102,14 @@
    .forBar, .againstBar {
      position: relative;
      width: auto;
+     margin-bottom: 3px;
 
      b {
        color: rgba(154, 169, 181, 1.000);
        font-size: 13px;
        position: relative;
        top: -4px;
-       margin-left: 3px;
+       margin-left: 0;
      }
    }
 
