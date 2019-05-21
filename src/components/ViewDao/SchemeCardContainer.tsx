@@ -67,24 +67,24 @@ const SchemeCardContainer = (props: IInternalProps) => {
           <div>
             <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
           </div>
+          {proposals.length === 0 ?
+            <div className={css.loading}>
+                <img src="/assets/images/meditate.svg"/>
+                <div>
+                  No upcoming proposals
+                </div>
+            </div>
+            : " "
+          }
         </Link>
-
-        {proposals.length === 0 ?
-          <div className={css.loading}>
-            <Link to={`/dao/${dao.address}/proposals/${scheme.name}`}>
-              <img src="/assets/images/meditate.svg"/>
-              <div>
-                No upcoming proposals
-              </div>
-            </Link>
-          </div>
-        :
+        {proposals.length > 0 ?
           <div>
             {proposalsHTML}
             <div className={css.numProposals}>
               <Link to={`/dao/${dao.address}/proposals/${scheme.name}`}>View all {numProposals} &gt;</Link>
             </div>
           </div>
+          : " "
         }
       </div>
     );
