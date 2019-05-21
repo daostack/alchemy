@@ -119,18 +119,20 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
       default:
         if (field.type.includes("[]")) {
           return <FieldArray name={field.name} render={(arrayHelpers) => (
-            <div>
+            <div className={css.addToken}>
               {values[field.name] && values[field.name].length > 0 ? (
                 values[field.name].map((value: any, index: number) => (
-                  <div key={field.name + "_" + index}>
+                  <div key={field.name + "_" + index} className={css.tokenField}>
                     {this.renderField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: ""}, values, touched, errors)}
                     <button
+                      className={css.addSubtract}
                       type="button"
                       onClick={() => arrayHelpers.remove(index)} // remove an item from the list
                     >
                       -
                     </button>
                     <button
+                      className={css.addSubtract}
                       type="button"
                       onClick={() => arrayHelpers.insert(index, "")} // insert an empty string at a position
                     >
@@ -139,7 +141,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                   </div>
                 ))
               ) : (
-                <button type="button" onClick={() => arrayHelpers.push("")}>
+                <button className={css.addTokenButton} type="button" onClick={() => arrayHelpers.push("")}>
                   {/* show this when user has removed all items from the list */}
                   Add {field.label}
                 </button>

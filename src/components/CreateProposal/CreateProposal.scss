@@ -390,6 +390,38 @@
     .tab.selected {
       display: block;
     }
+
+    .addToken {
+      margin-top: 3px;
+      
+      .tokenField {
+        margin-bottom: 15px;
+      }
+
+      .addSubtract {
+        height: 30px;
+        padding: 0;
+        width: 30px;
+      }
+
+      .addTokenButton {
+        margin-bottom: 15px;
+      }
+
+      button {
+        border: none;
+        background-color: rgba(245, 247, 250, 1.000);
+        height: 30px;
+        line-height: 30px;
+        padding: 0 15px;
+        margin-right: 8px;
+        border-radius: 3px;
+        outline: none;
+        color: rgba(104, 155, 214, 1.000);
+        font-weight: bold;
+        text-align: center;
+      }
+    }
   }
 
   .addEditSchemeFields, .removeSchemeFields, .addSchemeSelectContainer, .editSchemeSelectContainer {
