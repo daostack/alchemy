@@ -28,6 +28,26 @@ button:hover {
   width: 100%;
 }
 
+.emptyRedemptions {
+  padding: 100px 0;
+  text-align: center;
+
+  img {
+    margin-right: -35px;
+  }
+
+  h2 {
+    height: 45px;
+    color: rgba(104, 155, 214, 1.000);
+  }
+
+  p {
+    color: rgba(154, 169, 181, 1.000);
+    font-size: 21px;
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
 
 .closedProposalsHeader {
   display: block;

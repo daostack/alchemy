@@ -86,7 +86,15 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         </div>
         <div className={css.proposalsContainer}>
           <div className={css.proposalsContainer}>
+          {proposals.length > 0 ?
             {proposalsHTML}
+          :
+            <div className={css.emptyRedemptions}>
+              <img src="/assets/images/empty-redemptions.svg"/>
+              <h2>Nothing to redeem</h2>
+              <p>Get more rewards by proposing a proposal that the DAO accepts, and by voting / staking in alignment with the DAO.</p>
+            </div>
+          }
           </div>
         </div>
       </div>
