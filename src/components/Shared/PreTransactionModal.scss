@@ -689,7 +689,7 @@ input[type=number] {
           margin: 0;
           width: 150px;
           left: -1px;
-          padding: 10px 5px;
+          padding: 0;
           opacity: 0;
           transform: scale(0);
           transition: all .25s ease;
@@ -700,6 +700,17 @@ input[type=number] {
             color: rgba(80, 97, 118, 1.000);
             display: inline-block;
             padding: 8px 0;
+
+            b {         
+              display: inline-block;
+              width: 40px;
+              text-align: left;
+            }
+
+            img {
+              height: 16px;
+              margin-bottom: -3px;
+            }
 
             &:hover {
               background-color: rgba(80, 97, 118, .1);

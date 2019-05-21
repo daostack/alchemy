@@ -164,7 +164,7 @@ button:hover {
       ul {
         left: 50px;
         top: -80px;
-        width: 120px;
+        width: 150px;
         opacity: 0;
         transform: scale(0);
         transition: all .25s ease;
@@ -176,6 +176,12 @@ button:hover {
 
           a {
             padding: 8px 15px;
+
+            b {         
+              display: inline-block;
+              width: 35px;
+              text-align: left;
+            }
           }
 
           &:hover a {
@@ -192,7 +198,7 @@ button:hover {
         }
       }
       &:hover ul {
-        left: 130px;
+        left: 100px;
         opacity: 1;
         top: -80px;
         transform: translateX(100%) scale(1);
