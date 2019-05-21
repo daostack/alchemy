@@ -62,7 +62,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
 
     const proposalValues = {...values,
-      type: IProposalType.SchemeRegistrarPropose,
+      type: IProposalType.SchemeRegistrarAdd,
       parametersHash: "0x0000000000000000000000000000000000000000000000000000000000001234", //TODO: use real value
       permissions: "0x0000001f" // values.permissions.registerOtherSchemes
     };
