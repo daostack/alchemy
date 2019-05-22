@@ -1,12 +1,12 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
-import * as React from "react";
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
 import { default as Util, getNetworkName, schemeName } from "lib/util";
+import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
-import RewardsString from "./RewardsString";
 import * as css from "./ProposalSummary.scss";
+import RewardsString from "./RewardsString";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
