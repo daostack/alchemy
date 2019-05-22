@@ -35,7 +35,7 @@ const AllSchemesContainer = (props: IProps) => {
   const schemeCardsHTML = (
     <TransitionGroup>
       { queues.map((queue: Queue) => (
-        <Fade key={"scheme " + queue.name}>
+        <Fade key={"scheme " + queue.id}>
           <SchemeCardContainer dao={dao} scheme={queue} />
         </Fade>
       ))}

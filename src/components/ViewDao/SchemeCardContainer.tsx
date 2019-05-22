@@ -92,7 +92,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
     return (
       <div className={css.wrapper + " " + css.unsupportedScheme}>
         <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || "[no name]"}</h2>
-        <div>Unsupported Scheme</div>
+        <div>Unsupported Scheme  at {scheme.scheme}</div>
       </div>
     );
   }
