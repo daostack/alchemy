@@ -90,7 +90,7 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
     const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
     }, 30);
-    setTimeout(() => { clearTimeout(timerId); return reject(); }, timeOut);
+    setTimeout(() => { clearTimeout(timerId); return reject(new Error("Test timed out..")); }, timeOut);
   });
 }
 

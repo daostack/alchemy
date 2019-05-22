@@ -88,7 +88,7 @@ export async function checkMetaMaskAndWarn(showNotification?: any): Promise<bool
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export async function checkMetaMask() {
+export async function checkMetaMask(metamask?: any) {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -108,13 +108,18 @@ export async function checkMetaMask() {
     }
   }
 
-  const web3Provider = getMetaMask();
+  let web3Provider: any;
+  if (metamask) {
+    web3Provider = metamask;
+  } else {
+    web3Provider = getMetaMask();
+  }
   if (!web3Provider) {
     const msg = `Please install or enable metamask`;
     throw Error(msg);
   }
 
-  const networkName = await getNetworkName();
+  const networkName = await getNetworkName(web3Provider.networkVersion);
   if (networkName === expectedNetworkName) {
     return web3Provider;
   } else {
@@ -194,15 +199,22 @@ export async function initializeArc(): Promise<Arc> {
   if (metamask) {
     console.log("waiting for MetaMask to initialize");
     //
-    await waitUntilTrue(() => metamask.networkVersion, 1000);
-    console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
+    try {
+      await waitUntilTrue(() => metamask.networkVersion, 1000);
+      console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
+    } catch (err) {
+      if (err.message.match(/timed out/)) {
+        console.log("Error: Could not connect to Metamask (time out)");
+      }
+      console.log(err);
+    }
   }
 
   try {
-    arcSettings.web3Provider = await checkMetaMask();
+    arcSettings.web3Provider = await checkMetaMask(metamask);
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
-    console.log(err.message);
+    console.log(err);
   }
 
   // log some useful info
