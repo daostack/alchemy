@@ -114,7 +114,7 @@ export async function checkMetaMask() {
     throw Error(msg);
   }
 
-  const networkName = await getNetworkName();
+  const networkName = await getNetworkName(web3Provider.networkName);
   if (networkName === expectedNetworkName) {
     return web3Provider;
   } else {
@@ -209,7 +209,7 @@ export async function initializeArc(): Promise<Arc> {
     arcSettings.web3Provider = await checkMetaMask();
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
-    console.log(err.message);
+    console.log(err);
   }
 
   // log some useful info

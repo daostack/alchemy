@@ -28,7 +28,7 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
 
       })
       .catch ((err) => {
-        console.log(err.message);
+        console.log(err);
       });
   }
 
