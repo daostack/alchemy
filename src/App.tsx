@@ -11,8 +11,8 @@ import { default as store, history } from "./configureStore";
 import * as css from "./layouts/App.scss";
 
 export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
-  constructor() {
-    super({});
+  constructor(props: {}) {
+    super(props);
     this.state = {
       arcIsInitialized: false
     };

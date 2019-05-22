@@ -81,13 +81,13 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount() {
     // we initialize Arc
-    const initializeArc = async () => {};
-    initializeArc()
-      .then(async () => {
+    // const initializeArc = async () => {};
+    // initializeArc();
+      // .then(async () => {
         // if Metamask is available, we wathc for any account changes
-        let metamask: any;
-        const currentAddress = await getCurrentAccountAddress();
-        if (currentAddress)  {
+    let metamask: any;
+    const currentAddress = await getCurrentAccountAddress();
+    if (currentAddress)  {
           console.log(`using address from web3 connection: ${currentAddress}`);
           this.props.cookies.set("currentAddress", currentAddress, { path: "/"});
           this.props.setCurrentAccount(currentAddress);
@@ -104,13 +104,13 @@ class AppContainer extends React.Component<IProps, IState> {
 
         // this.setState({ arcIsInitialized: true });
 
-        try {
+    try {
           metamask = checkMetaMask();
         } catch (err) {
           // pass
         }
 
-        if (metamask) {
+    if (metamask) {
           pollForAccountChanges(currentAddress).subscribe(
             (newAddress: Address) => {
               if (newAddress && checkMetaMask()) {
@@ -123,11 +123,11 @@ class AppContainer extends React.Component<IProps, IState> {
               }
             });
           }
-        }
-      )
-    .catch((err) => {
-      console.log(err.message);
-    });
+    //     }
+    //   )
+    // .catch((err) => {
+    //   console.log(err.message);
+    // });
   }
 
   public render() {
