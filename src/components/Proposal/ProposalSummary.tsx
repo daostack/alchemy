@@ -139,7 +139,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     }
 
     return (
-      <div className={proposalSummaryClass}>Unknown function call</div>
+      <div className={proposalSummaryClass}>Unknown function call <pre>{proposal.genericScheme.callData}</pre></div>
     );
   }
 }
