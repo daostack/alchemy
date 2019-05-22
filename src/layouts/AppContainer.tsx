@@ -54,6 +54,7 @@ interface IState {
   error: string;
   sentryEventId: string;
   notificationsMinimized: boolean;
+  // arcIsInitialized: boolean;
 }
 
 class AppContainer extends React.Component<IProps, IState> {
@@ -64,6 +65,7 @@ class AppContainer extends React.Component<IProps, IState> {
       error: null,
       sentryEventId: null,
       notificationsMinimized: false,
+      // arcIsInitialized: false
     };
   }
 
@@ -78,44 +80,54 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    // if Metamask is available, we watch for any account changes
-    let metamask: any;
-    const currentAddress = await getCurrentAccountAddress();
-    if (currentAddress)  {
-      console.log(`using address from web3 connection: ${currentAddress}`);
-      this.props.cookies.set("currentAddress", currentAddress, { path: "/"});
-      this.props.setCurrentAccount(currentAddress);
-    } else {
-      const currentAddressFromCookie = this.props.cookies.get("currentAddress");
-      if (currentAddressFromCookie) {
-        console.log(`using address from cookie: ${currentAddressFromCookie}`);
-        this.props.setCurrentAccount(currentAddressFromCookie);
-      } else {
-        this.props.cookies.set("currentAddress", "", { path: "/"});
-        this.props.setCurrentAccount(undefined);
-      }
-    }
-
-    try {
-      metamask = checkMetaMask();
-    } catch (err) {
-      // pass
-    }
-
-    if (metamask) {
-      pollForAccountChanges(currentAddress).subscribe(
-        (newAddress: Address) => {
-          if (newAddress && checkMetaMask()) {
-            console.log(`new address: ${newAddress}`);
-            this.props.setCurrentAccount(newAddress);
-            this.props.cookies.set("currentAddress", newAddress, { path: "/"});
-            // TODO: we reload on setting a new account,
-            // but it would be more elegant if we did not need to
-            window.location.reload();
+    // we initialize Arc
+    const initializeArc = async () => {};
+    initializeArc()
+      .then(async () => {
+        // if Metamask is available, we wathc for any account changes
+        let metamask: any;
+        const currentAddress = await getCurrentAccountAddress();
+        if (currentAddress)  {
+          console.log(`using address from web3 connection: ${currentAddress}`);
+          this.props.cookies.set("currentAddress", currentAddress, { path: "/"});
+          this.props.setCurrentAccount(currentAddress);
+        } else {
+          const currentAddressFromCookie = this.props.cookies.get("currentAddress");
+          if (currentAddressFromCookie) {
+            console.log(`using address from cookie: ${currentAddressFromCookie}`);
+            this.props.setCurrentAccount(currentAddressFromCookie);
+          } else {
+            this.props.cookies.set("currentAddress", "", { path: "/"});
+            this.props.setCurrentAccount(undefined);
           }
         }
-      );
-    }
+
+        // this.setState({ arcIsInitialized: true });
+
+        try {
+          metamask = checkMetaMask();
+        } catch (err) {
+          // pass
+        }
+
+        if (metamask) {
+          pollForAccountChanges(currentAddress).subscribe(
+            (newAddress: Address) => {
+              if (newAddress && checkMetaMask()) {
+                console.log(`new address: ${newAddress}`);
+                this.props.setCurrentAccount(newAddress);
+                this.props.cookies.set("currentAddress", newAddress, { path: "/"});
+                // TODO: we reload on setting a new account,
+                // but it would be more elegant if we did not need to
+                window.location.reload();
+              }
+            });
+          }
+        }
+      )
+    .catch((err) => {
+      console.log(err.message);
+    });
   }
 
   public render() {
@@ -128,9 +140,11 @@ class AppContainer extends React.Component<IProps, IState> {
 
     if (this.state.error) {
       // Render error fallback UI
-      return (
+      // TODO: style this!
+      return <div>
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
-      );
+        <pre>{ this.state.error }</pre>
+      </div>;
     } else {
       return (
         <div className={css.outer}>

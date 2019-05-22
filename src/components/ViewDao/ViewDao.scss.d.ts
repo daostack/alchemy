@@ -2,6 +2,7 @@ export const loading: string;
 export const wrapper: string;
 export const proposalHistory: string;
 export const outer: string;
+export const emptyRedemptions: string;
 export const closedProposalsHeader: string;
 export const votes: string;
 export const predictions: string;

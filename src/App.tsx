@@ -1,35 +1,54 @@
+import { initializeArc } from "arc";
+import AppContainer from "layouts/AppContainer";
 import * as React from "react";
 import { CookiesProvider } from "react-cookie";
 import { Provider } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
-
 import { persistStore } from "redux-persist";
 import { default as store, history } from "./configureStore";
+import * as css from "./layouts/App.scss";
 
-import AppContainer from "layouts/AppContainer";
-
-export class App extends React.Component<{}, null> {
+export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
+  constructor() {
+    super({});
+    this.state = {
+      arcIsInitialized: false
+    };
+  }
 
   public async componentWillMount() {
     // Do this here because we need to have initialized Arc first
-    persistStore(store);
+    // we initialize Arc
+    initializeArc()
+      .then(async () => {
+        this.setState({ arcIsInitialized: true });
+        persistStore(store);
+
+      })
+      .catch ((err) => {
+        console.log(err.message);
+      });
   }
 
   public render() {
-    return (
-      <Provider store={store}>
-        <ThroughProvider>
-          <CookiesProvider>
-            <ConnectedRouter history={history}>
-              <Switch>
-                <Route path="/" component={AppContainer}/>
-              </Switch>
-            </ConnectedRouter>
-          </CookiesProvider>
-        </ThroughProvider>
-      </Provider>
-    );
+    if (!this.state.arcIsInitialized) {
+      return <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>;
+    } else  {
+      return (
+        <Provider store={store}>
+          <ThroughProvider>
+            <CookiesProvider>
+              <ConnectedRouter history={history}>
+                <Switch>
+                  <Route path="/" component={AppContainer}/>
+                </Switch>
+              </ConnectedRouter>
+            </CookiesProvider>
+          </ThroughProvider>
+        </Provider>
+      );
+    }
   }
 }
