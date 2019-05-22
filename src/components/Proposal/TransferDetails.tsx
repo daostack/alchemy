@@ -1,8 +1,8 @@
 import { IDAOState, IProposalState } from "@daostack/client";
-import * as React from "react";
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
 import AccountProfileName from "components/Account/AccountProfileName";
+import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import RewardsString from "./RewardsString";
 import * as css from "./TransferDetails.scss";
