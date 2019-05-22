@@ -290,8 +290,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       <div className={css.yourBalance}>
                         <div>Your balance: {accountGens} GEN</div>
                         <div className={css.exchangeList}>
-                          Buy GEN &#8964;
+                          Buy GEN &gt;
                           <ul>
+                            <div className={css.diamond}></div>
                             <li>
                               <a href="https://www.bitfinex.com/" target="_blank">
                                 <b><img src="/assets/images/Exchanges/bitfinex.png"/></b>

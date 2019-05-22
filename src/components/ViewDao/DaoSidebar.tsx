@@ -100,6 +100,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                 <li>
                   <a>Buy GEN</a>
                   <ul>
+                    <div className={css.diamond}></div>
                     <li>
                       <a href="https://www.bitfinex.com/" target="_blank">
                         <b><img src="/assets/images/Exchanges/bitfinex.png"/></b>

@@ -181,21 +181,41 @@ button:hover {
         cursor: pointer;
       }
 
+      &:hover ul li a {
+        background-color: rgba(255,255,255,0);
+      }
+
       ul {
         left: 50px;
         top: -80px;
-        width: 150px;
+        width: 130px;
         opacity: 0;
         transform: scale(0);
         transition: all .25s ease;
-
+        padding: 10px 0 10px 0;
+        background-color: rgba(255,255,255,1);
+        border-radius: 0 10px 10px 0;
+        
+        .diamond {
+          width: 10px;
+          height: 10px;
+          background-color: #fff;
+          position: absolute;
+          z-index: 0;
+          top: 50%;
+          transform: translateY(-5px) rotate(45deg);
+          left: -5px;
+        }
 
         li {
           text-align: left;
+          position: relative;
+          z-index: 1000;
           height: auto;
 
           a {
             padding: 8px 15px;
+            color: rgba(78, 97, 118, 1.000);
 
             b {         
               display: inline-block;
@@ -205,7 +225,7 @@ button:hover {
           }
 
           &:hover a {
-            background-color: rgba(18, 46, 91, 1.000);
+            background-color: rgba(240, 245, 251, 1.000);
           }
 
           img {
@@ -218,11 +238,11 @@ button:hover {
         }
       }
       &:hover ul {
-        left: 100px;
+        left: 10px;
         opacity: 1;
-        top: -80px;
+        top: -90px;
         transform: translateX(100%) scale(1);
-        background-color: rgba(32, 104, 188, 1.000);
+        background-color: rgba(255,255,255,1);
       }
     }
 
