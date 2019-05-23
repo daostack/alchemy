@@ -92,7 +92,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                       return state.data.isZero() ? "" : <li><strong>{ formatTokens(state.data) }</strong> {tokenName}</li>;
                     }
                   }
-                }</Subscribe>
+                }</Subscribe>;
               })}
             </ul>
           </div>
