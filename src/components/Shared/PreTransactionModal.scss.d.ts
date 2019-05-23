@@ -60,4 +60,5 @@ export const formGroup: string;
 export const placePrediction: string;
 export const genError: string;
 export const exchangeList: string;
+export const diamond: string;
 export const transactionInstructions: string;
