@@ -51,13 +51,12 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   // THIS WILL NEED TO GO!!
   if (key === "rinkeby") {
     return {
-        Redeemer: "0x037d71a6ae2287ca2400b3b5b40a2937546e701e",
+        Redeemer: "0x48763e6a4e6b25ecefc6d697ff6bf55d95b7a1c9",
         GenesisProtocol: "0xe3692ad4ed2d2817bea59aed435ce17d28e884eb",
-        ContributionReward: "0x785108950399204d0ab0bd34c613c047abadbe62",
-        GenericScheme: "0x2c4170b899f451225145e686bb1897635884b45f",
-        SchemeRegistrar: "0x914c4e30ee2627d1411f77b9079c0e5da9c08f43",
-        GEN: "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf",
-
+        ContributionReward: "0x88fba19bf273cf75945ded8986745da140a99145",
+        GenericScheme: "0x5663ca36e790f1f55198404f35ba3afb64949150",
+        SchemeRegistrar: "0x5c946957903a173cde9da121aec73d549d6200cc",
+        GEN: "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
     };
   }
   const addresses = {
