@@ -133,7 +133,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       );
     } else if (proposal.genericScheme) {
       return (
-        <div className={proposalSummaryClass}>Unknown function call <pre>{proposal.genericScheme.callData}</pre>
+        <div className={proposalSummaryClass}>Unknown function call
+        to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
+        with callData: <pre>{proposal.genericScheme.callData}</pre>
         </div>
       );
     } else {
