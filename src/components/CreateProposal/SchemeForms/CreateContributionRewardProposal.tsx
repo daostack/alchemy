@@ -4,7 +4,7 @@ import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { default as Util } from "lib/util";
+import { default as Util, supportedTokens } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -97,7 +97,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   beneficiary: "",
                   description: "",
                   ethReward: 0,
-                  externalToken: TOKENS["GEN"],
+                  externalToken: arc.GENToken().address,
                   externalTokenReward: 0,
                   nativeTokenReward: 0,
                   reputationReward: 0,
@@ -271,7 +271,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                           component="select"
                           className={css.externalTokenSelect}
                         >
-                          { Object.keys(TOKENS).map((token) => <option key={token} value={TOKENS[token]}>{token}</option>) }
+                          { Object.keys(supportedTokens()).map((token) => <option key={token} value={supportedTokens()[token]}>{token}</option>) }
                         </Field>
                       </div>
 

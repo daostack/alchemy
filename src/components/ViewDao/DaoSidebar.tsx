@@ -1,9 +1,9 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
-import { formatTokens } from "lib/util";
+import { formatTokens, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -79,17 +79,21 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                   }
                 }
               }</Subscribe>
-              <Subscribe observable={arc.GENToken().balanceOf(dao.address)}>{
-                (state: IObservableState<BN>) => {
-                  if (state.isLoading) {
-                    return <li>... GEN</li>;
-                  } else if ( state.error) {
-                    return <li>{ state.error.message}</li>;
-                  } else {
-                    return <li><strong>{ formatTokens(state.data) }</strong> GEN</li>;
+
+              {Object.keys(supportedTokens()).map((tokenName) => {
+                const token = new Token(supportedTokens()[tokenName], arc);
+                <Subscribe observable={token.balanceOf(dao.address)}>{
+                  (state: IObservableState<BN>) => {
+                    if (state.isLoading) {
+                      return <li>... {tokenName}</li>;
+                    } else if ( state.error) {
+                      return <li>{ state.error.message}</li>;
+                    } else {
+                      return state.data.isZero() ? "" : <li><strong>{ formatTokens(state.data) }</strong> {tokenName}</li>;
+                    }
                   }
-                }
-              }</Subscribe>
+                }</Subscribe>
+              })}
             </ul>
           </div>
           <div className={css.menuWrapper}>

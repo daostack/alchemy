@@ -2,6 +2,8 @@ import { Address, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import { getArc } from "../arc";
 
+const tokens = require("data/tokens.json");
+
 export default class Util {
   public static fromWei(amount: BN): number {
     try {
@@ -60,6 +62,11 @@ export function humanProposalTitle(proposal: IProposalState) {
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }
 
+export function supportedTokens() {
+  tokens["GEN"] = getArc().GENToken().address;
+  return tokens;
+}
+
 export function formatTokens(amountWei: BN, symbol?: string): string {
   const negative = amountWei.lt(new BN(0));
   const amount = Math.abs(Util.fromWei(amountWei));
@@ -81,7 +88,7 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
 }
 
 export function tokenSymbol(tokenAddress: string) {
-  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token].toLowerCase() === tokenAddress.toLowerCase());
+  let symbol = Object.keys(supportedTokens()).find((token) => supportedTokens()[token].toLowerCase() === tokenAddress.toLowerCase());
   return symbol || "?";
 }
 
