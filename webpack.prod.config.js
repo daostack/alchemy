@@ -3,6 +3,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 
@@ -25,8 +26,13 @@ const config = merge(baseConfig, {
   ],
 
   optimization: {
+    minimize: true,
     minimizer: [
-      new OptimizeCSSAssetsPlugin({})
+      new OptimizeCSSAssetsPlugin({}),
+      new UglifyJsPlugin({uglifyOptions: {
+        compress: true
+        }
+      })
     ]
   },
 
