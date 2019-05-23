@@ -17,6 +17,7 @@ export const noticeBuffer: string;
 export const notice: string;
 export const closeNotice: string;
 export const menuWrapper: string;
+export const diamond: string;
 export const daoStack: string;
 export const daoIcon: string;
 export const daoSidebar: string;

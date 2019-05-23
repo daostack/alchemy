@@ -678,6 +678,7 @@ input[type=number] {
         transform: translate(0,0);
         display: inline-block;
         margin: 0;
+        padding-right: 25px;
 
         ul {
           position: absolute;
@@ -687,22 +688,57 @@ input[type=number] {
           list-style: none;
           box-shadow: $shadow-3;
           margin: 0;
-          width: 150px;
+          width: 120px;
           left: -1px;
-          padding: 10px 5px;
+          padding: 10px 0;
           opacity: 0;
           transform: scale(0);
           transition: all .25s ease;
+          background-color: rgba(255,255,255,1);
+          border-radius: 0 10px 10px 0;
+          
+          .diamond {
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            position: absolute;
+            z-index: 0;
+            top: 50%;
+            transform: translateY(-5px) rotate(45deg);
+            left: -5px;
+          }
+
+          li {
+            position: relative;
+            z-index: 100;
+          }
 
           a {
             font-weight: bold;
-            width: 100%;
             color: rgba(80, 97, 118, 1.000);
-            display: inline-block;
-            padding: 8px 0;
+            display: block;
+            padding: 5px 10px;
+
+            b {         
+              display: inline-block;
+              width: 30px;
+              text-align: left;
+              text-align: center;
+            }
+
+            img {
+              height: 14px;
+              margin-bottom: -3px;
+            }
+
+            span {
+              font-size: 11px;
+              font-family: "Open Sans";
+              font-weight: normal;
+            }
 
             &:hover {
-              background-color: rgba(80, 97, 118, .1);
+              background-color: rgba(240, 245, 251, 1.000);
             }
           }
         }
@@ -715,7 +751,8 @@ input[type=number] {
           ul {
             opacity: 1;
             transform: scale(1);
-            top: 21px;
+            top: -69px;
+            left: 64px;
           }
         }
       }
