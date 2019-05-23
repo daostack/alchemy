@@ -63,7 +63,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
     return (
       <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
         <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.name}`}>
-          <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || "[no name]"}</h2>
+          <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || "[unknown]"}</h2>
           <div>
             <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
           </div>
@@ -91,7 +91,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
   } else {
     return (
       <div className={css.wrapper + " " + css.unsupportedScheme}>
-        <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || "[no name]"}</h2>
+        <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || ""}</h2>
         <div>Unsupported Scheme  at {scheme.scheme}</div>
       </div>
     );
