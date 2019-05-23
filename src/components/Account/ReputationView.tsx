@@ -13,7 +13,7 @@ interface IProps {
 export default class ReputationView extends React.Component<IProps, null> {
   public render() {
     const { daoName, hideSymbol, reputation, totalReputation } = this.props;
-    const PRECISION  = 5; // home many digits behind
+    const PRECISION  = 2; // how many digits behind
     let percentage: number = 0;
     if (totalReputation.gt(new BN(0))) {
       percentage = new BN(100 * 10 ** PRECISION).mul(reputation).div(totalReputation).toNumber() / (10 ** PRECISION);
