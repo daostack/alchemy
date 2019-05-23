@@ -141,3 +141,12 @@ export async function getNetworkName(id?: string): Promise<string> {
       return `unknown (${id})`;
   }
 }
+
+export function linkToEtherScan(address: Address) {
+  let prefix = "";
+  const arc = getArc();
+  if (arc.web3.currentProvider.networkVersion === "4") {
+    prefix = "rinkeby.";
+  }
+  return `https://${prefix}etherscan.io/address/${address}`;
+}

@@ -121,7 +121,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
 
                   const bytesPattern = new RegExp("0x[0-9a-e]+", "i");
                   if (values.callData && !bytesPattern.test(values.callData)) {
-                    errors.callData = "Invalid encoded ABI";
+                    errors.callData = "Invalid encoded function call data";
                   }
 
                   require("callData");
@@ -185,14 +185,14 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                     <div>
                       <div>
                         <label htmlFor="callData">
-                          Encoded ABI
+                          Encoded function call data
                           <ErrorMessage name="callData">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           <div className={css.requiredMarker}>*</div>
                         </label>
                          <Field
                           id="callDataInput"
                           component="textarea"
-                          placeholder="The encoded ABI of the contract function call"
+                          placeholder="The encoded function call data of the contract function call"
                           name="callData"
                           className={touched.callData && errors.callData ? css.error : null}
                         />

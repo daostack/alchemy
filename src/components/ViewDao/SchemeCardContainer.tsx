@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, knownSchemes } from "lib/util";
+import { humanProposalTitle, knownSchemes, linkToEtherScan } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
@@ -92,7 +92,8 @@ const SchemeCardContainer = (props: IInternalProps) => {
     return (
       <div className={css.wrapper + " " + css.unsupportedScheme}>
         <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || ""}</h2>
-        <div>Unsupported Scheme  at {scheme.scheme}</div>
+      <div>Unsupported Scheme  at
+      <a href={linkToEtherScan(scheme.scheme)}> {scheme.scheme}</a></div>
       </div>
     );
   }
