@@ -47,6 +47,18 @@ const settings = {
 export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
+  // TODO: a quick hack for the dxDAO test: we need to get the address fromt he subgraph
+  // THIS WILL NEED TO GO!!
+  if (key === "rinkeby") {
+    return {
+        Redeemer: "0x48763e6a4e6b25ecefc6d697ff6bf55d95b7a1c9",
+        GenesisProtocol: "0xe3692ad4ed2d2817bea59aed435ce17d28e884eb",
+        ContributionReward: "0x88fba19bf273cf75945ded8986745da140a99145",
+        GenericScheme: "0x5663ca36e790f1f55198404f35ba3afb64949150",
+        SchemeRegistrar: "0x5c946957903a173cde9da121aec73d549d6200cc",
+        GEN: "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
+    };
+  }
   const addresses = {
       ...deployedContractAddresses[key]
    };

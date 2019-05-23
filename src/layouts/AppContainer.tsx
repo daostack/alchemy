@@ -54,7 +54,6 @@ interface IState {
   error: string;
   sentryEventId: string;
   notificationsMinimized: boolean;
-  // arcIsInitialized: boolean;
 }
 
 class AppContainer extends React.Component<IProps, IState> {
@@ -65,7 +64,6 @@ class AppContainer extends React.Component<IProps, IState> {
       error: null,
       sentryEventId: null,
       notificationsMinimized: false,
-      // arcIsInitialized: false
     };
   }
 
@@ -88,46 +86,39 @@ class AppContainer extends React.Component<IProps, IState> {
     let metamask: any;
     const currentAddress = await getCurrentAccountAddress();
     if (currentAddress)  {
-          console.log(`using address from web3 connection: ${currentAddress}`);
-          this.props.cookies.set("currentAddress", currentAddress, { path: "/"});
-          this.props.setCurrentAccount(currentAddress);
-        } else {
-          const currentAddressFromCookie = this.props.cookies.get("currentAddress");
-          if (currentAddressFromCookie) {
-            console.log(`using address from cookie: ${currentAddressFromCookie}`);
-            this.props.setCurrentAccount(currentAddressFromCookie);
-          } else {
-            this.props.cookies.set("currentAddress", "", { path: "/"});
-            this.props.setCurrentAccount(undefined);
-          }
-        }
-
-        // this.setState({ arcIsInitialized: true });
+      console.log(`using address from web3 connection: ${currentAddress}`);
+      this.props.cookies.set("currentAddress", currentAddress, { path: "/"});
+      this.props.setCurrentAccount(currentAddress);
+    } else {
+      const currentAddressFromCookie = this.props.cookies.get("currentAddress");
+      if (currentAddressFromCookie) {
+        console.log(`using address from cookie: ${currentAddressFromCookie}`);
+        this.props.setCurrentAccount(currentAddressFromCookie);
+      } else {
+        this.props.cookies.set("currentAddress", "", { path: "/"});
+        this.props.setCurrentAccount(undefined);
+      }
+    }
 
     try {
-          metamask = checkMetaMask();
-        } catch (err) {
-          // pass
-        }
+      metamask = await checkMetaMask();
+    } catch (err) {
+      console.log("MM not available or not set correctly: using default web3 provider: ", err.message);
+    }
 
     if (metamask) {
-          pollForAccountChanges(currentAddress).subscribe(
-            (newAddress: Address) => {
-              if (newAddress && checkMetaMask()) {
-                console.log(`new address: ${newAddress}`);
-                this.props.setCurrentAccount(newAddress);
-                this.props.cookies.set("currentAddress", newAddress, { path: "/"});
-                // TODO: we reload on setting a new account,
-                // but it would be more elegant if we did not need to
-                window.location.reload();
-              }
-            });
+      pollForAccountChanges(currentAddress).subscribe(
+        (newAddress: Address) => {
+          if (newAddress && checkMetaMask()) {
+            console.log(`new address: ${newAddress}`);
+            this.props.setCurrentAccount(newAddress);
+            this.props.cookies.set("currentAddress", newAddress, { path: "/"});
+            // TODO: we reload on setting a new account,
+            // but it would be more elegant if we did not need to
+            window.location.reload();
           }
-    //     }
-    //   )
-    // .catch((err) => {
-    //   console.log(err.message);
-    // });
+        });
+      }
   }
 
   public render() {

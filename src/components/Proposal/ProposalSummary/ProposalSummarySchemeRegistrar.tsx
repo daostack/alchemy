@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as classNames from "classnames";
-import { default as Util, getNetworkName, schemeName } from "lib/util";
+import { default as Util, getNetworkName, linkToEtherScan, schemeName } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -42,11 +42,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.proposalSummary]: true,
     });
 
-    const schemeRegistrar = proposal.schemeRegistrar;
-    const etherscanLink = `https://${this.state.network !== "main" ? `${this.state.network}.` : ""}etherscan.io/address/`;
-
       // TODO: how to best figure out of this is an add or edit scheme proposal?
       // ANSWER: from the proposal.type
+    const schemeRegistrar = proposal.schemeRegistrar;
     return (
         <div className={proposalSummaryClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?
@@ -54,14 +52,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                 <span>
                   <img src="/assets/images/Icon/delete.svg"/>&nbsp;
                   Remove Scheme&nbsp;
-                  <a href={etherscanLink + schemeRegistrar.schemeToRemove} target="_blank">{schemeName(schemeRegistrar.schemeToRemove)}</a>
+                  <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">{schemeName(schemeRegistrar.schemeToRemove)}</a>
                 </span>
                 { detailView ?
                   <table>
                     <tr>
                       <th>
                         Address:
-                        <a href={etherscanLink + schemeRegistrar.schemeToRemove} target="_blank">
+                        <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">
                           <img src="/assets/images/Icon/Open.svg"/>
                         </a>
                       </th>
@@ -76,7 +74,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                 <span className={css.summaryTitle}>
                   <b>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                   {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
-                  <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
+                  <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
                 </span>
                 { detailView ?
                   <div className={css.summaryDetails}>
@@ -85,7 +83,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                       <tr>
                         <th>
                           Address:
-                          <a href={etherscanLink + schemeRegistrar.schemeToRegister} target="_blank">
+                          <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">
                             <img src="/assets/images/Icon/Open.svg"/>
                           </a>
                         </th>

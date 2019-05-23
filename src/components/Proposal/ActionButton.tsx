@@ -133,7 +133,7 @@ class ActionButton extends React.Component<IProps, IState> {
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
             actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-            action={redeemProposal.bind(null, dao.address, proposal.id, currentAccountAddress)}
+            action={redeemProposal.bind(null, dao.address, proposal.id, proposal.contributionReward.beneficiary)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
             dao={dao}

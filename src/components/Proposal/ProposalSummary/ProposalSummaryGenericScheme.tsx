@@ -1,5 +1,6 @@
 import { IDAOState, IProposalState } from "@daostack/client";
 import * as classNames from "classnames";
+import { linkToEtherScan } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import { GenericSchemeInfo, GenericSchemeRegistry} from "../../../genericSchemeRegistry";
@@ -41,8 +42,13 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     try {
       decodedCallData = this.state.genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
     } catch (err) {
-      // TODO: notifiy, not alert!
-      alert(err);
+      // TODO: we should only show this info when we cannot find any decodedCallData
+      return (
+        <div className={proposalSummaryClass}>Unknown function call
+        to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
+        with callData: <pre>{proposal.genericScheme.callData}</pre>
+        </div>
+      );
     }
     console.log(decodedCallData);
     return <div className={proposalSummaryClass}>
