@@ -326,15 +326,16 @@ For additional information check out our <a href="https://docs.google.com/docume
                 />
               }
             />
-
-            <ModalRoute
-              path="/dao/:daoAvatarAddress/proposals/:schemeName/create"
-              parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}/proposals/${route.params.schemeName}`}
-              component={CreateProposalContainer}
-            />
             <Route path="/dao/:daoAvatarAddress/proposals/:schemeName" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} /> } />
             <Route path="/dao/:daoAvatarAddress" render={(props) => <AllSchemesContainer {...props} />} />
           </Switch>
+
+          <ModalRoute
+            path="/dao/:daoAvatarAddress/proposals/:schemeName/create"
+            parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}/proposals/${route.params.schemeName}/`}
+            component={CreateProposalContainer}
+          />
+
         </div>
       </div>
     );
