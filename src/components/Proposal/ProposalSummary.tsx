@@ -85,7 +85,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
               : schemeRegistrar.schemeToRegister ?
               <div>
                 <span className={css.summaryTitle}>
-                  <b>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
+                  <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                   {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
                   <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
                 </span>
