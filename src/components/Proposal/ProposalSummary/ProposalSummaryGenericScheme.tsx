@@ -44,16 +44,25 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     } catch (err) {
       // TODO: we should only show this info when we cannot find any decodedCallData
       return (
-        <div className={proposalSummaryClass}>Unknown function call
-        to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-        with callData: <pre>{proposal.genericScheme.callData}</pre>
+        <div className={proposalSummaryClass}>
+          Unknown function call
+          {detailView ?
+            <div>
+              to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
+              with callData: <pre>{proposal.genericScheme.callData}</pre>
+            </div>
+            : ""
+          }
         </div>
       );
     }
     console.log(decodedCallData);
     return <div className={proposalSummaryClass}>
-      .... { decodedCallData.action.label}....
-      Calling function { decodedCallData.action.abi.name}  with values { decodedCallData.values.map((value: any) => <div key={value}>{value}</div>) }
+      { decodedCallData.action.label }
+      {detailView ?
+        <div>Calling function { decodedCallData.action.abi.name} with values { decodedCallData.values.map((value: any) => <div key={value}>{value}</div>) }</div>
+        : ""
+      }
     </div>;
   }
 }

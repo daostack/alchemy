@@ -35,7 +35,7 @@ export default class ProposalSummary extends React.Component<IProps> {
     } else if (proposal.type === IProposalType.GenericScheme) {
       return <ProposalSummaryGenericScheme {...this.props} />;
     } else {
-      return <div className={proposalSummaryClass}>Unknown proposal!! </div>;
+      return <div className={proposalSummaryClass}>Unknown proposal type</div>;
     }
   }
 }
