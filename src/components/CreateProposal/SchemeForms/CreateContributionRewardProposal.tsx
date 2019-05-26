@@ -39,7 +39,7 @@ interface FormValues {
   beneficiary: string;
   description: string;
   ethReward: number;
-  externalToken: string;
+  externalTokenAddress: string;
   externalTokenReward: number;
   nativeTokenReward: number;
   reputationReward: number;
@@ -97,7 +97,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   beneficiary: "",
                   description: "",
                   ethReward: 0,
-                  externalToken: TOKENS["GEN"],
+                  externalTokenAddress: TOKENS["GEN"],
                   externalTokenReward: 0,
                   nativeTokenReward: 0,
                   reputationReward: 0,
@@ -267,7 +267,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                         />
                         <Field
                           id="externalTokenInput"
-                          name="externalToken"
+                          name="externalTokenAddress"
                           component="select"
                           className={css.externalTokenSelect}
                         >
