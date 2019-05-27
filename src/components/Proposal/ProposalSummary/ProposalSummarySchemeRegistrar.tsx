@@ -49,30 +49,32 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         <div className={proposalSummaryClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?
               <div>
-                <span>
+                <span className={css.summaryTitle}>
                   <img src="/assets/images/Icon/delete.svg"/>&nbsp;
                   Remove Scheme&nbsp;
                   <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">{schemeName(schemeRegistrar.schemeToRemove)}</a>
                 </span>
                 { detailView ?
-                  <table>
-                    <tr>
-                      <th>
-                        Address:
-                        <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">
-                          <img src="/assets/images/Icon/Open.svg"/>
-                        </a>
-                      </th>
-                      <td>{schemeRegistrar.schemeToRemove}</td>
-                    </tr>
-                  </table>
+                  <div className={css.summaryDetails}>
+                    <table>
+                      <tr>
+                        <th>
+                          Address:
+                          <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">
+                            <img src="/assets/images/Icon/Link-blue.svg"/>
+                          </a>
+                        </th>
+                        <td>{schemeRegistrar.schemeToRemove}</td>
+                      </tr>
+                    </table>
+                  </div>
                   : ""
                 }
               </div>
               : schemeRegistrar.schemeToRegister ?
               <div>
                 <span className={css.summaryTitle}>
-                  <b>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
+                  <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                   {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
                   <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
                 </span>
@@ -84,19 +86,19 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <th>
                           Address:
                           <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">
-                            <img src="/assets/images/Icon/Open.svg"/>
+                            <img src="/assets/images/Icon/Link-blue.svg"/>
                           </a>
                         </th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-black.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegister)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegister)} />
                         </td>
                       </tr>
                       <tr>
                         <th>Param Hash:</th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-black.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
                         </td>
                       </tr>
                       <tr>

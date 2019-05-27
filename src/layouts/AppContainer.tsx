@@ -17,7 +17,7 @@ import { Cookies, withCookies } from "react-cookie";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 //@ts-ignore
-import { ModalContainer, ModalRoute } from "react-router-modal";
+import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
 import { sortedNotifications } from "../selectors/notifications";

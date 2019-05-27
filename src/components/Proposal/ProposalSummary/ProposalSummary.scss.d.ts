@@ -1,4 +1,5 @@
 export const proposalSummary: string;
+export const schemeRegisterIcon: string;
 export const schemeRegistrar: string;
 export const detailView: string;
 export const transactionModal: string;
