@@ -95,7 +95,6 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
           <div className={css.menuWrapper}>
               <ul>
                 <li><Link to="/">Home</Link></li>
-                <li><Link to="/daos">View DAOs</Link></li>
                 <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
                 <li>
                   <a>Buy GEN</a>
