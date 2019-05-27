@@ -68,7 +68,7 @@
 }
 
 .detailView.wrapper {
-   width: 85%;
+   width: 80%;
    margin-top: 30px;
    margin-left: auto;
    padding-bottom: 20px;
@@ -90,7 +90,6 @@
 
    .stakeGraph {
      width: 100%;
-     height: 40px;
      position: relative;
      margin-bottom: 10px;
    }
@@ -99,10 +98,17 @@
       position: relative;
     }
 
+    .stakesFor {
+      padding-bottom: 35px;
+    }
+
+    .forBar {
+      margin-bottom: 38px;
+    }
+
    .forBar, .againstBar {
      position: relative;
      width: auto;
-     margin-bottom: 3px;
 
      b {
        color: rgba(154, 169, 181, 1.000);

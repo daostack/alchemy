@@ -21,8 +21,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
-
-import TransferDetails from "./TransferDetails";
+import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
@@ -93,12 +92,6 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
 
     const isVoting = isVotingNo || isVotingYes;
 
-    const proposalClass = classNames({
-        [css.proposal]: true,
-        [css.failedProposal]: proposalFailed(proposal),
-        [css.passedProposal]: proposalPassed(proposal)
-      });
-
     let currentAccountVote = 0;
 
     let currentVote: IVote;
@@ -106,6 +99,12 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
       currentVote = votesOfCurrentUser[0];
       currentAccountVote = currentVote.outcome;
     }
+
+    const proposalClass = classNames({
+      [css.proposal]: true,
+      [css.failedProposal]: proposalFailed(proposal),
+      [css.passedProposal]: proposalPassed(proposal)
+    });
 
     const voteWrapperClass = classNames({
       [css.voteBox] : true,
@@ -160,7 +159,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
               <img src="/assets/images/Icon/Open.svg"/>
             </Link>
           </h3>
-          <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false}/>
+          <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false}/>
 
         </div>
 
@@ -203,7 +202,13 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalCardContainer = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCardContainer);
 
-export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address }) => {
+interface IExternalProps {
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  proposalId: string;
+}
+
+export default (props: IExternalProps) => {
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);

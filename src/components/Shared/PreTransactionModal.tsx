@@ -3,7 +3,7 @@ import { checkMetaMaskAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
-import TransferDetails from "components/Proposal/TransferDetails";
+import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Util from "lib/util";
 import { humanProposalTitle } from "lib/util";
@@ -264,7 +264,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                 <div className={css.proposalTitle}>
                   <strong>{humanProposalTitle(proposal)}</strong>
                 </div>
-                <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
+                <ProposalSummary beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
               </div>
               { /******* Staking form ******  **/
                 actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?

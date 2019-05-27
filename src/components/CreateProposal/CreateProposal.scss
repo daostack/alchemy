@@ -1,8 +1,5 @@
-.downV {
-  position: absolute;
-  right: 20px;
-  bottom: 21px;
-  z-index: 1000;
+.hidden {
+  display: none !important;
 }
 
 .createProposalWrapper {
@@ -151,7 +148,8 @@
     .errorMessage {
       position: relative;
       left: 10px;
-      color: red
+      color: red;
+      font-size: 13px;
     }
 
     .errorMessage.someReward {
@@ -232,14 +230,6 @@
     }
   }
 
-  .schemeFields {
-    display: block;
-  }
-
-  .schemeSelectContainer {
-    position: relative;
-  }
-
   .exitProposalCreation {
     cursor: pointer;
     height: 30px;
@@ -306,6 +296,13 @@
   }
 }
 
+.downV {
+  position: absolute;
+  right: 20px;
+  bottom: 21px;
+  z-index: 1000;
+}
+
 .contributionReward {
   width: 540px;
 }
@@ -342,9 +339,9 @@
       }
     }
 
-    .addScheme {
+    .addSchemeButton {
       display: block;
-      margin: 30px 0;
+      margin: 30px 0 0 0;
     }
 
     button {
@@ -387,33 +384,62 @@
     border-left: 1px solid #e9eef4;
   }
 
+  .addEditSchemeFields, .removeSchemeFields, .addSchemeSelectContainer, .editSchemeSelectContainer {
+    display: none;
+    position: relative;
+  }
+
+  .editSchemeSelectContainer {
+    height: 63px;
+  }
+
+  .addScheme .addEditSchemeFields, .removeScheme .removeSchemeFields, .editScheme .addEditSchemeFields {
+    display: block;
+  }
+
+  .addScheme .addSchemeSelectContainer {
+    display: block;
+  }
+
+  .editScheme .editSchemeSelectContainer {
+    display: block;
+  }
+
+  .removeSchemeSelectContainer {
+    position: relative;
+  }
+
   label {
     z-index: 100;
   }
 
   .otherScheme {
-    padding: 0 15px 0 180px;
-    width: 280px;
+    width: 445px;
   }
 
   .schemeSelect {
     display: block;
     font-size: 13px;
-    color: rgba(154, 169, 181, 1.000);
-    margin: 0;
+    margin: 3px 0 5px 0;
     border: 1px solid #aaa;
     border-radius: 0;
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
     background-color: #fff;
-    position: absolute;
     bottom: 0px;
     height: 37px;
     padding: 0 30px 0 15px;
     left: 0;
     z-index: 0;
     border: 1px solid #bfcbd5;
+    width: 477px;
+  }
+
+  .parametersHash {
+    input {
+      font-size: 12px;
+    }
   }
 
   .permissions {

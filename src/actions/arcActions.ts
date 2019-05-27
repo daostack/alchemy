@@ -2,7 +2,6 @@ import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITran
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import Util from "lib/util";
-import { push } from "react-router-redux";
 import { IRedemptionState } from "reducers/arcReducer";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
@@ -23,9 +22,6 @@ export function createProposal(daoAvatarAddress: string, proposalOptions: IPropo
       const observer = operationNotifierObserver(dispatch, "Create proposal");
       // @ts-ignore
       await dao.createProposal(proposalOptions).subscribe(...observer);
-
-      // Go back to home page while action create proposal operation gets carried out
-      dispatch(push("/dao/" + daoAvatarAddress));
     } catch (err) {
       console.error(err);
       throw err;

@@ -46,7 +46,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         }
         if (reward.reputationForVoter) {
           reputationReward.iadd(new BN(reward.reputationForVoter));
-          }
+        }
         if (reward.reputationForProposer) {
           reputationReward.iadd(new BN(reward.reputationForProposer));
         }
