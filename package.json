@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "@daostack/client": "0.1.14",
-    "@daostack/migration": "0.0.1-rc.16-v1",
+    "@daostack/migration": "0.0.1-rc.19-v3",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
