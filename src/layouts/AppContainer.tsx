@@ -5,7 +5,6 @@ import * as web3Actions from "actions/web3Actions";
 import { checkMetaMask, getCurrentAccountAddress, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
-import HomeContainer from "components/Home/HomeContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
@@ -146,9 +145,8 @@ class AppContainer extends React.Component<IProps, IState> {
 
               <Switch>
                 <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-                <Route exact={true} path="/daos" component={DaoListContainer} />
                 <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
-                <Route path="/" component={HomeContainer} />
+                <Route path="/" component={DaoListContainer} />
               </Switch>
 
               <ModalContainer
