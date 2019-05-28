@@ -20,6 +20,8 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
 
     const arc = getArc();
 
+    const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
+
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
     return (
@@ -66,7 +68,12 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
             </ul>
           </div>
           <div className={css.daoHoldings}>
-            <span className={css.navHeading}><b>DAO Holdings</b></span>
+            <span className={css.navHeading}>
+              <b>DAO Holdings</b>
+              <a href={daoHoldingsAddress}>
+                <img src="/assets/images/Icon/link-white.svg"/>
+              </a>
+             </span>
             <ul>
               <Subscribe observable={arc.dao(dao.address).ethBalance()}>{
                 (state: IObservableState<BN>) => {
