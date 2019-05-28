@@ -31,6 +31,7 @@ interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
   currentAccountAddress: Address;
+
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;

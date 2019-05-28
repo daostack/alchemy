@@ -118,7 +118,14 @@ export function schemeName(address: string) {
     GenericScheme : "Generic Scheme"
   };
 
-  return NAMES[contractInfo.name] || address.slice(0, 4) + "..." + address.slice(-4);
+  if (NAMES[contractInfo.name]) {
+    return `${address.slice(0, 4)}...${address.slice(-4)} (${NAMES[contractInfo.name]})`;
+  }  else if (contractInfo.name) {
+    return `${address.slice(0, 4)}...${address.slice(-4)} (${contractInfo.name})`;
+  } else {
+    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+
+}
 }
 
 export async function getNetworkName(id?: string): Promise<string> {
