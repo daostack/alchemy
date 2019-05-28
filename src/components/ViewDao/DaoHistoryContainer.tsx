@@ -20,7 +20,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
     const { proposals, dao, currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.type + "_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     return(
