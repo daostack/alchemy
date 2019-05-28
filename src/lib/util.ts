@@ -102,7 +102,7 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
 export function isKnownScheme(address: Address) {
   const arc = getArc();
   const contractInfo = arc.getContractInfo(address);
-  if (contractInfo.name in ["ContributionReward", "SchemeRegistrar", "GenericScheme"]) {
+  if (["ContributionReward", "SchemeRegistrar", "GenericScheme"].includes(contractInfo.name)) {
     return true;
   } else {
     return false;

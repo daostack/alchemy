@@ -326,7 +326,7 @@ For additional information check out our <a href="https://docs.google.com/docume
                 />
               }
             />
-            <Route path="/dao/:daoAvatarAddress/proposals/:schemeName" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} /> } />
+            <Route path="/dao/:daoAvatarAddress/proposals/:scheme" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} /> } />
             <Route path="/dao/:daoAvatarAddress" render={(props) => <AllSchemesContainer {...props} />} />
           </Switch>
 

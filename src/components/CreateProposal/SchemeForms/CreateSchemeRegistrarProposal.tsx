@@ -1,10 +1,10 @@
-import { Address, IProposalType, Scheme } from "@daostack/client";
+import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { isKnownScheme, schemeName } from "lib/util";
+import { schemeName } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -12,7 +12,7 @@ import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 
 interface IContainerProps {
-  scheme: Address;
+  scheme: Scheme;
 }
 
 interface IStateProps {
@@ -102,8 +102,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
       type: proposalType,
       parametersHash: values.parametersHash,
       permissions: "0x" + permissions.toString(16).padStart(8, "0"),
-      scheme: this.props.scheme,
-      schemeToRegister: currentTab === "addScheme" ? (values.schemeToAdd === "Other" ? values.otherScheme : values.schemeToAdd) :
+      scheme: this.props.scheme.address,
+      schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
               currentTab === "editScheme" ? values.schemeToEdit :
               values.schemeToRemove
     };
@@ -126,8 +126,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     // TODO: this does not seem the logic that we want. We want to be able to add any address as a scheme
     // const unregisteredSchemeAddresses = Object.keys(knownSchemes()).filter((address) => !schemes.find((scheme) => scheme.address.toLowerCase() === address.toLowerCase()));
-    const knownSchemes = arc.contractAddresses.filter((contractInfo) => isKnownScheme(contractInfo.address));
-    const unregisteredSchemes = knownSchemes.filter((contractInfo) => !schemes.find((scheme) => scheme.address.toLowerCase() === contractInfo.address.toLowerCase()));
+    // const knownSchemes = arc.contractAddresses.filter((contractInfo) => isKnownScheme(contractInfo.address));
+    // const unregisteredSchemes = knownSchemes.filter((contractInfo) => !schemes.find((scheme) => scheme.address.toLowerCase() === contractInfo.address.toLowerCase()));
 
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
@@ -176,7 +176,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 upgradeController: false,
                 genericCall: false
               },
-              schemeToAdd: unregisteredSchemes.length > 0 ? unregisteredSchemes[0].address : "Other",
+              // schemeToAdd: unregisteredSchemes.length > 0 ? unregisteredSchemes[0].address : "Other",
               title: "",
               url: ""
             } as FormValues}
@@ -226,18 +226,18 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
             render={({
               errors,
               touched,
-              handleSubmit,
+              // handleSubmit,
               isSubmitting,
-              setFieldTouched,
-              setFieldValue,
-              values
+              // setFieldTouched,
+              // setFieldValue,
+              // values
             }: FormikProps<FormValues>) => {
-              const otherSchemeClass = classNames({
-                [css.otherScheme]: true,
-                [css.error]: touched.otherScheme && errors.otherScheme,
-                [css.hidden]: values.schemeToAdd !== "Other"
-              });
-
+              // const otherSchemeClass = classNames({
+              //   [css.otherScheme]: true,
+              //   [css.error]: touched.otherScheme && errors.otherScheme,
+              //   [css.hidden]: values.schemeToAdd !== "Other"
+              // });
+              //
               return (
                 <Form noValidate>
                   <label htmlFor="titleInput">
@@ -291,15 +291,23 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       </label>
                       <Field
                         id="schemeToAddInput"
+                        placeholder="Enter scheme address"
                         name="schemeToAdd"
-                        component="select"
-                        className={css.schemeSelect}
                       >
-                        {unregisteredSchemes.map((contractInfo) => {
+
+                        { /*
+                        className={css.schemeSelect}
+                        */}
+                        { /*
+                          unregisteredSchemes.map((contractInfo) => {
                           return <option key={`add_scheme_${contractInfo.address}`} value={contractInfo.address}>{schemeName(contractInfo.address)}</option>;
-                        })}
+                        })
+                      */}
+                        { /*
                         <option value="Other">Other...</option>
+                        */}
                       </Field>
+                      { /*
                       <ErrorMessage name="otherScheme">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                       <Field
                         id="otherSchemeInput"
@@ -307,6 +315,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                         name="otherScheme"
                         className={otherSchemeClass}
                       />
+                      */}
                     </div>
 
                     <div className={css.editSchemeSelectContainer}>
