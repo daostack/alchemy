@@ -70,11 +70,13 @@ class AppContainer extends React.Component<IProps, IState> {
   public componentDidCatch(error: Error, errorInfo: any) {
     this.setState({ error: error.toString() });
 
-    Sentry.withScope((scope) => {
-      scope.setExtras(errorInfo);
-      const sentryEventId = Sentry.captureException(error);
-      this.setState({ sentryEventId });
-    });
+    if (process.env.NODE_ENV === "PRODUCTION") {
+      Sentry.withScope((scope) => {
+        scope.setExtras(errorInfo);
+        const sentryEventId = Sentry.captureException(error);
+        this.setState({ sentryEventId });
+      });
+    }
   }
 
   public async componentWillMount() {
