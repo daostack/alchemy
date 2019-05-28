@@ -87,7 +87,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         <div className={css.proposalsContainer}>
           <div className={css.proposalsContainer}>
           {proposals.length > 0 ?
-            {proposalsHTML}
+            <div>{proposalsHTML}</div>
           :
             <div className={css.emptyRedemptions}>
               <img src="/assets/images/empty-redemptions.svg"/>
