@@ -1,9 +1,9 @@
-import { IDAOState, IProposalStage, IProposalState, IProposalType, Proposal, Queue } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState,  Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, knownSchemes, linkToEtherScan } from "lib/util";
+import { humanProposalTitle, isKnownScheme, linkToEtherScan } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
@@ -12,7 +12,7 @@ import * as css from "./SchemeCard.scss";
 
 interface IExternalProps {
   dao: IDAOState;
-  scheme: Queue;
+  scheme: Scheme;
 }
 
 interface IInternalProps {
@@ -20,7 +20,7 @@ interface IInternalProps {
   boostedProposals: Proposal[];
   preBoostedProposals: Proposal[];
   queuedProposals: Proposal[];
-  scheme: Queue;
+  scheme: Scheme;
 }
 
 const SchemeCardContainer = (props: IInternalProps) => {
@@ -29,7 +29,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
 
   const numProposals = boostedProposals.length + preBoostedProposals.length + queuedProposals.length;
   const proposals = boostedProposals.slice(0, 3);
-  const knownScheme = Object.keys(knownSchemes()).includes(scheme.scheme.toLowerCase());
+  // const knownScheme = Object.keys(knownSchemes()).includes(scheme.address.toLowerCase());
 
   const proposalsHTML = proposals.map((proposal: Proposal) => (
     <Subscribe key={proposal.id} observable={proposal.state()}>{
@@ -59,7 +59,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
     }</Subscribe>
   ));
 
-  if (knownScheme) {
+  if (isKnownScheme(scheme.address)) {
     return (
       <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
         <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.name}`}>
@@ -93,7 +93,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
       <div className={css.wrapper + " " + css.unsupportedScheme}>
         <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || ""}</h2>
       <div>Unsupported Scheme  at
-      <a href={linkToEtherScan(scheme.scheme)}> {scheme.scheme}</a></div>
+      <a href={linkToEtherScan(scheme.address)}>{scheme.address}</a></div>
       </div>
     );
   }
@@ -102,21 +102,21 @@ const SchemeCardContainer = (props: IInternalProps) => {
 export default(props: IExternalProps) => {
   const arc = getArc();
 
-  const knownScheme = Object.keys(knownSchemes()).includes(props.scheme.scheme.toLowerCase());
+  const knownScheme = isKnownScheme(props.scheme.address);
 
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
     knownScheme ? dao.proposals({
-      type: props.scheme.name as IProposalType,
+      scheme: props.scheme.address,
       stage: IProposalStage.Queued,
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
     }) : of([]), // the list of queued proposals
     knownScheme ? dao.proposals({
-      type: props.scheme.name as IProposalType,
+      scheme: props.scheme.address,
       stage: IProposalStage.PreBoosted
     }) : of([]), // the list of preboosted proposals
     knownScheme ? dao.proposals({
-      type: props.scheme.name as IProposalType,
+      scheme: props.scheme.address,
       stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
     }) : of([]) // the list of boosted proposals
   );

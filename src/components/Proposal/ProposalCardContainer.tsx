@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -39,7 +39,7 @@ interface IContainerProps {
   dao: IDAOState;
   currentAccountAddress: Address;
   daoEthBalance: BN;
-  proposal: IProposalState;
+  proposalState: IProposalState;
   rewardsForCurrentUser: IRewardState[];
   votesOfCurrentUser: IVote[];
 }
@@ -47,13 +47,13 @@ interface IContainerProps {
 type IProps = IStateProps & IContainerProps;
 
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps => {
-  const proposal = ownProps.proposal;
+  const proposalState = ownProps.proposalState;
 
   return {...ownProps,
-    beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
-    creatorProfile: state.profiles[proposal.proposer],
-    isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
-    isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state)
+    beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
+    creatorProfile: state.profiles[proposalState.proposer],
+    isVotingYes: isVotePending(proposalState.id, VoteOptions.Yes)(state),
+    isVotingNo: isVotePending(proposalState.id, VoteOptions.No)(state)
   };
 };
 
@@ -66,7 +66,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      expired: closingTime(props.proposal).isSameOrBefore(moment())
+      expired: closingTime(props.proposalState).isSameOrBefore(moment())
     };
   }
 
@@ -81,7 +81,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
       currentAccountAddress,
       dao,
       daoEthBalance,
-      proposal,
+      proposalState,
       isVotingNo,
       isVotingYes,
       rewardsForCurrentUser,
@@ -102,8 +102,8 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
 
     const proposalClass = classNames({
       [css.proposal]: true,
-      [css.failedProposal]: proposalFailed(proposal),
-      [css.passedProposal]: proposalPassed(proposal)
+      [css.failedProposal]: proposalFailed(proposalState),
+      [css.passedProposal]: proposalPassed(proposalState)
     });
 
     const voteWrapperClass = classNames({
@@ -116,19 +116,19 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
       [css.voteControls]: true
     });
 
-    return (proposal.stage === IProposalStage.Queued && this.state.expired ? "" :
-      <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
+    return (proposalState.stage === IProposalStage.Queued && this.state.expired ? "" :
+      <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposalState.id}>
         <div className={css.proposalInfo}>
           <div className={css.cardTop + " clearfix"}>
             <div className={css.timer}>
-              {!proposalEnded(proposal) ?
+              {!proposalEnded(proposalState) ?
                   !this.state.expired ?
-                    <Countdown toDate={closingTime(proposal)} detailView={false} onEnd={this.countdownEnded.bind(this)} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !this.state.expired} /> :
+                    <Countdown toDate={closingTime(proposalState)} detailView={false} onEnd={this.countdownEnded.bind(this)} overTime={proposalState.stage === IProposalStage.QuietEndingPeriod && !this.state.expired} /> :
                     <span className={css.closedTime}>
-                      {proposal.stage === IProposalStage.Queued ? "Expired" :
-                       proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
+                      {proposalState.stage === IProposalStage.Queued ? "Expired" :
+                       proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
                        "Closed"}&nbsp;
-                       {closingTime(proposal).format("MMM D, YYYY")}
+                       {closingTime(proposalState).format("MMM D, YYYY")}
                     </span>
                   : " "
               }
@@ -140,26 +140,26 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 dao={dao}
                 daoEthBalance={daoEthBalance}
                 expired={expired}
-                proposal={proposal}
+                proposal={proposalState}
                 rewardsForCurrentUser={rewardsForCurrentUser}
               />
             </div>
           </div>
           <div className={css.createdBy}>
-            <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={false}/>
-            <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false}/>
+            <AccountPopupContainer accountAddress={proposalState.proposer} dao={dao} detailView={false}/>
+            <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false}/>
           </div>
           <div className={css.description}>
-            {proposal.description}
+            {proposalState.description}
           </div>
 
           <h3>
-            <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-              <span>{humanProposalTitle(proposal)}</span>
+            <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposalState.id} data-test-id="proposal-title">
+              <span>{humanProposalTitle(proposalState)}</span>
               <img src="/assets/images/Icon/Open.svg"/>
             </Link>
           </h3>
-          <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false}/>
+          <ProposalSummary proposal={proposalState} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false}/>
 
         </div>
 
@@ -167,22 +167,22 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           <div className={voteWrapperClass}>
             <div className={voteControls + " clearfix"}>
               <div className={css.voteDivider}>
-                <VoteGraph dao={dao} size={40} proposal={proposal} />
+                <VoteGraph dao={dao} size={40} proposal={proposalState} />
               </div>
 
-              <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} detailView={false} />
+              <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposalState} detailView={false} />
             </div>
 
             <div className={css.voteButtons}>
-              <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
+              <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposalState} />
             </div>
           </div>
 
           <div className={css.predictions}>
              <PredictionGraph
-              proposal={proposal}
+              proposal={proposalState}
             />
-            <BoostAmount proposal={proposal} />
+            <BoostAmount proposal={proposalState} />
 
             <div className={css.predictionButtons}>
               <PredictionButtons
@@ -190,7 +190,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 expired={this.state.expired}
-                proposal={proposal}
+                proposal={proposalState}
               />
             </div>
           </div>
@@ -205,35 +205,36 @@ export const ConnectedProposalCardContainer = connect<IStateProps, IContainerPro
 interface IExternalProps {
   currentAccountAddress: Address;
   dao: IDAOState;
-  proposalId: string;
+  proposal: Proposal;
 }
 
 export default (props: IExternalProps) => {
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
+  const proposal = props.proposal;
 
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state(), // state of the current proposal
-    props.currentAccountAddress ? dao.proposal(props.proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
-    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]), //3
+    proposal.state(), // state of the current proposal
+    props.currentAccountAddress ? proposal.rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
+    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IVote[], BN]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
+        return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const proposal = state.data[0];
+        const proposalState = state.data[0];
         const rewards = state.data[1];
         const votes = state.data[2];
         const daoEthBalance = state.data[3];
         return <ConnectedProposalCardContainer
           currentAccountAddress={props.currentAccountAddress}
           daoEthBalance={daoEthBalance}
-          proposal={proposal}
+          proposalState={proposalState}
           dao={props.dao}
           rewardsForCurrentUser={rewards}
           votesOfCurrentUser={votes}

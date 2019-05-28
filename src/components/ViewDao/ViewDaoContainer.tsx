@@ -331,8 +331,8 @@ For additional information check out our <a href="https://docs.google.com/docume
           </Switch>
 
           <ModalRoute
-            path="/dao/:daoAvatarAddress/proposals/:schemeName/create"
-            parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}/proposals/${route.params.schemeName}/`}
+            path="/dao/:daoAvatarAddress/proposals/:scheme/create"
+            parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}/proposals/${route.params.scheme}/`}
             component={CreateProposalContainer}
           />
 

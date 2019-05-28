@@ -41,7 +41,7 @@ const SchemeProposalsContainer = (props: IProps) => {
     <TransitionGroup className="queued-proposals-list">
       { proposalsQueued.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalCardContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -51,7 +51,7 @@ const SchemeProposalsContainer = (props: IProps) => {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsPreBoosted.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalCardContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -61,7 +61,7 @@ const SchemeProposalsContainer = (props: IProps) => {
     <TransitionGroup className="boosted-proposals-list">
       { proposalsBoosted.map((proposal: Proposal) => (
         <Fade key={"proposal_" + proposal.id}>
-          <ProposalCardContainer proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress} />
+          <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
         </Fade>
       ))}
     </TransitionGroup>

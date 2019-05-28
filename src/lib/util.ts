@@ -94,23 +94,31 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
   });
 }
 
-export function knownSchemes() {
+/**
+ * return true if the address is the address of a known scheme (which we know how to represent)
+ * @param  address [description]
+ * @return         [description]
+ */
+export function isKnownScheme(address: Address) {
   const arc = getArc();
-
-  return {
-    [arc.contractAddresses.ContributionReward.toLowerCase()]: "Contribution Reward",
-    [arc.contractAddresses.SchemeRegistrar.toLowerCase()]: "Scheme Registrar",
-    [arc.contractAddresses.GenericScheme.toLowerCase()]: "Generic Scheme",
-  };
+  const contractInfo = arc.getContractInfo(address);
+  if (contractInfo.name in ["ContributionReward", "SchemeRegistrar", "GenericScheme"]) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export function schemeName(address: string) {
-  const contracts = knownSchemes();
-  if (address.toLowerCase() in contracts) {
-    return contracts[address.toLowerCase()];
-  }
+  const arc = getArc();
+  const contractInfo = arc.getContractInfo(address);
+  const NAMES: {[key: string]: string; }  = {
+    ContributionReward: "Contribution Reward",
+    SchemeRegistrar : "Scheme Registrar",
+    GenericScheme : "Generic Scheme"
+  };
 
-  return address.slice(0, 4) + "..." + address.slice(-4);
+  return NAMES[contractInfo.name] || address.slice(0, 4) + "..." + address.slice(-4);
 }
 
 export async function getNetworkName(id?: string): Promise<string> {

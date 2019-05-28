@@ -23,7 +23,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const { dao, proposals, currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalCardContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalCardContainer key={"proposal_" + proposal.id} proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,

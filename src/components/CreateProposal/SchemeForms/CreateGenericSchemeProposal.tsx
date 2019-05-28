@@ -1,4 +1,4 @@
-import { IDAOState, IProposalType } from "@daostack/client";
+import { Address, IDAOState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -8,6 +8,10 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
+
+interface IContainerProps {
+  scheme: Address;
+}
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -31,7 +35,7 @@ const mapDispatchToProps = {
   showNotification
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IContainerProps & IStateProps & IDispatchProps;
 
 interface FormValues {
   description: string;
@@ -51,13 +55,13 @@ class CreateGenericScheme extends React.Component<IProps, null> {
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
-
     const proposalValues = {...values,
-      type: IProposalType.GenericScheme
+      scheme: this.props.scheme,
+      dao: this.props.daoAvatarAddress
     };
 
     setSubmitting(false);
-    await this.props.createProposal(this.props.daoAvatarAddress, proposalValues);
+    await this.props.createProposal(proposalValues);
     this.props.handleClose();
   }
 

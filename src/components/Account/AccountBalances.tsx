@@ -66,7 +66,7 @@ export default (props: { dao: IDAOState, address: Address}) => {
       props.address && dao.member(props.address).state() || of(null),
       arc.ethBalance(props.address),
       arc.GENToken().balanceOf(props.address),
-      arc.allowance(props.address)
+      arc.allowance(props.address, arc.GENToken().address)
     );
 
     return <Subscribe observable={observable}>{(state: IObservableState<[IMemberState, BN, BN, any]>) => {

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -17,7 +17,8 @@ import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, of } from "rxjs";
+import { combineLatest, concat, from, of } from "rxjs";
+import { concatMap } from "rxjs/operators";
 import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
@@ -258,11 +259,12 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
   const proposalId = props.match.params.proposalId;
 
-  const observable = combineLatest(
-    dao.proposal(proposalId).state(), // state of the current proposal
-    props.currentAccountAddress ? dao.proposal(proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
-    props.currentAccountAddress ? dao.proposal(proposalId).votes({ voter: props.currentAccountAddress }) : of([]), //3
+  const observable = from(dao.proposal(proposalId)).pipe(concatMap((proposal: Proposal) => combineLatest(
+    proposal.state(), // state of the current proposal
+    props.currentAccountAddress ? proposal.rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
+    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
+  ))
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IRewardState[], IVote[], BN]>): any => {

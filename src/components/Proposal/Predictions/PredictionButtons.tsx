@@ -100,7 +100,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   public handleClickPreApprove = async (event: any) => {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
-    approveStakingGens(this.props.dao.address);
+    approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
   }
 
@@ -272,13 +272,14 @@ const ConnectedPredictionBox = connect(mapStateToProps, mapDispatchToProps)(Pred
 export default (props: IContainerProps) => {
 
   const arc = getArc();
-  const dao = arc.dao(props.dao.address);
   let observable;
+
+  const spender = "0xunknown";
   if (props.currentAccountAddress) {
     observable = combineLatest(
       arc.GENToken().balanceOf(props.currentAccountAddress),
-      arc.allowance(props.currentAccountAddress),
-      dao.proposal(props.proposal.id).stakes({ staker: props.currentAccountAddress})
+      arc.allowance(props.currentAccountAddress, spender),
+      props.proposal.proposal.stakes({ staker: props.currentAccountAddress})
     );
   } else {
     observable = combineLatest(

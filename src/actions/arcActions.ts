@@ -11,12 +11,12 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-export function createProposal(daoAvatarAddress: string, proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
+export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     try {
       const arc = getArc();
 
-      const dao = new DAO(daoAvatarAddress, arc);
+      const dao = new DAO(proposalOptions.dao, arc);
 
       // TODO: use the Option stages of the client lib to communicate about the progress
       const observer = operationNotifierObserver(dispatch, "Create proposal");

@@ -1,6 +1,5 @@
-import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, IStake, IVote } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, IStake, IVote, Proposal } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -67,7 +66,7 @@ interface IState {
   preRedeemModalOpen: boolean;
 }
 
-class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
+class ProposalHistoryRow extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -204,31 +203,29 @@ class ProposalHistoryRowContainer extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalHistoryRowContainer = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRowContainer);
+export const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
 
-export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address}) => {
-  const arc = getArc();
-  const dao = arc.dao(props.dao.address);
-
+export default (props: { proposal: Proposal, daoState: IDAOState, currentAccountAddress: Address}) => {
+  const proposal = props.proposal;
   const observable = combineLatest(
-    dao.proposal(props.proposalId).state(),
-    props.currentAccountAddress ? dao.proposal(props.proposalId).stakes({ staker: props.currentAccountAddress}) : of([]),
-    props.currentAccountAddress ? dao.proposal(props.proposalId).votes({ voter: props.currentAccountAddress }) : of([]),
+    proposal.state(),
+    props.currentAccountAddress ? proposal.stakes({ staker: props.currentAccountAddress}) : of([]),
+    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([])
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IStake[], IVote[]]>): any => {
       if (state.isLoading) {
-        return <div>Loading proposal {props.proposalId.substr(0, 6)}...</div>;
+        return <div>Loading proposal {proposal.id.substr(0, 6)}...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
         const proposal = state.data[0];
         const stakes = state.data[1];
         const votes = state.data[2];
-        return <ConnectedProposalHistoryRowContainer
+        return <ConnectedProposalHistoryRow
           currentAccountAddress={props.currentAccountAddress}
           proposal={proposal}
-          dao={props.dao}
+          dao={props.daoState}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}
           />;
