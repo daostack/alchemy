@@ -1,16 +1,16 @@
-import { Address, Arc } from "@daostack/client";
+import { Address, Arc, utils } from "@daostack/client";
 import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import { getNetworkName } from "./lib/util";
-
 const settings = {
   dev: {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     web3Provider: "ws://127.0.0.1:8545",
     ipfsProvider: "localhost",
-    contractAddresses: getContractAddresses("private")
+    // TODO: not import this on load, but later in getContractAddresses
+    contractAddresses: utils.getContractAddressesFromMigration("private")
   },
   staging: {
     graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v17",
@@ -22,7 +22,7 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: getContractAddresses("rinkeby")
+    contractAddresses: utils.getContractAddressesFromMigration("rinkeby")
   },
   production: {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v17",
@@ -34,7 +34,7 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: getContractAddresses("mainnet")
+    contractAddresses: utils.getContractAddressesFromMigration("mainnet")
   }
 };
 
