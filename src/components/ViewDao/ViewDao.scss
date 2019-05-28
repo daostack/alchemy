@@ -411,6 +411,17 @@ button:hover {
 .daoHoldings {
   display: block;
 
+  .navHeading b {
+    padding: 10px 25px 10px 10px;
+  }
+
+  .navHeading a {
+    display: inline-block;
+    position: relative;
+    top: 19px;
+    left: -14px;
+  }
+
   ul {
     margin-top: 15px;
     padding: 0;
