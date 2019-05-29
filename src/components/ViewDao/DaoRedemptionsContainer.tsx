@@ -85,7 +85,6 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
           }
         </div>
         <div className={css.proposalsContainer}>
-          <div className={css.proposalsContainer}>
           {proposals.length > 0 ?
             <div>{proposalsHTML}</div>
           :
@@ -95,7 +94,6 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
               <p>Get more rewards by proposing a proposal that the DAO accepts, and by voting / staking in alignment with the DAO.</p>
             </div>
           }
-          </div>
         </div>
       </div>
     );
