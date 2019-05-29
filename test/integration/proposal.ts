@@ -60,11 +60,16 @@ describe("Proposals", () => {
       // Click on proposal so voting controls appear
       await proposal.click();
       const voteButton = await proposal.$(`[data-test-id="voteFor"]`);
+      browser.pause(1000);
       await voteButton.click();
+      browser.pause(1000);
       let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
+      browser.pause(1000);
       await launchMetaMaskButton.click();
+      browser.pause(1000);
 
       await proposal.click();
+      browser.pause(1000);
       const youVotedFor = await proposal.$(`span[data-test-id="youVotedFor"`);
       await youVotedFor.waitForDisplayed();
 
