@@ -3,6 +3,7 @@ global.expect = chai.expect;
 chai.Should();
 
 export const LATEST_ARC_VERSION = "0.0.1-rc.19";
+
 export function getContractAddresses() {
   // contract addresses for testing...
   const migration = require("@daostack/migration/migration.json")["private"];
