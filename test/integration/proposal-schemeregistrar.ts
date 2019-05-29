@@ -10,18 +10,19 @@ describe("SchemeRegistrar Proposals", () => {
       daoAddress = addresses.Avatar.toLowerCase();
     });
 
-    it("Create a proposal, vote for it, stake on it", async () => {
+    it("Create a proposal to add a scheme", async () => {
       const url = `/dao/${daoAddress}/`;
       await browser.url(url);
 
-      browser.debug();
       const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
       await schemeCard.click();
 
       const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
       await createProposalButton.waitForExist();
-
       await createProposalButton.click();
+
+      const tab = await $("*[data-test-id=\"tab-AddScheme\"]");
+      await tab.click();
 
       const titleInput = await $("*[id=\"titleInput\"]");
       await titleInput.waitForExist();
@@ -29,21 +30,18 @@ describe("SchemeRegistrar Proposals", () => {
       const title = uuid();
       await titleInput.setValue(title);
 
-      // using uuid value so that the test will pass also if there is already a proposal with this description
-      // (which must be unique). TODO: find a way to reset the state
-      const descriptionInput = await $("#descriptionInput");
+      const descriptionInput = await $("*[id=\"descriptionInput\"]");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
-      const beneficiaryInput = await $("*[data-test-id=\"beneficiaryInput\"]");
-      await beneficiaryInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+      const schemeToAddInput = await $("*[id=\"schemeToAddInput\"]");
+      await schemeToAddInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
 
-      // ask for 100 rep
-      const repReward = Math.floor(Math.random() * 1000);
-      const reputationRewardInput = await $("*[id=\"reputationRewardInput\"]");
-      await reputationRewardInput.setValue(repReward);
-      const ethReward = Math.floor(Math.random() * 1000);
-      const ethRewardInput = await $("#ethRewardInput");
-      await ethRewardInput.setValue(ethReward);
+      const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
+      await parametersHashInput.setValue("0x0000000000000000000000000000000000000000000000000000000000001234");
+
+      // const registerOtherSchemesInput = await $("*[id=\"registerOtherSchemesInput\"]");
+      // await registerOtherSchemesInput.setValue(true);
+
       const createProposalSubmitButton = await $("*[type=\"submit\"]");
       await createProposalSubmitButton.click();
 
@@ -51,28 +49,74 @@ describe("SchemeRegistrar Proposals", () => {
       // test for the title
       let titleElement = await $(`[data-test-id=\"proposal-title\"]=${title}`);
       await titleElement.waitForExist();
-
-      // locate the new proposal element
-      let proposal = await titleElement.$("./../../..");
-
-      await proposal.scrollIntoView();
-
-      // vote for the proposal
-      // Click on proposal so voting controls appear
-      await proposal.click();
-      const voteButton = await proposal.$(`[data-test-id="voteFor"]`);
-      await voteButton.click();
-      let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
-      await launchMetaMaskButton.click();
-
-      await proposal.click();
-      const youVotedFor = await proposal.$(`span[data-test-id="youVotedFor"`);
-      await youVotedFor.waitForDisplayed();
-
-      const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);
-      await stakeButton.click();
-      launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
-      await launchMetaMaskButton.click();
     });
 
+    it("Create a proposal to edit a scheme", async () => {
+      const url = `/dao/${daoAddress}/`;
+      await browser.url(url);
+
+      const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
+      await schemeCard.click();
+
+      const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
+      await createProposalButton.waitForExist();
+      await createProposalButton.click();
+
+      const tab = await $("*[data-test-id=\"tab-EditScheme\"]");
+      await tab.click();
+
+      const titleInput = await $("*[id=\"titleInput\"]");
+      await titleInput.waitForExist();
+      const title = uuid();
+      await titleInput.setValue(title);
+
+      const descriptionInput = await $("*[id=\"descriptionInput\"]");
+      await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+
+      const schemeToEditInput = await $("select[id=\"schemeToEditInput\"]");
+      await schemeToEditInput.selectByIndex(2);
+
+      const parametersHashInput = await $("*[id=\"parametersHashInput\"]");
+      await parametersHashInput.setValue("0x0000000000000000000000000000000000000000000000000000000000001234");
+
+      const createProposalSubmitButton = await $("*[type=\"submit\"]");
+      await createProposalSubmitButton.click();
+
+      // check that the proposal appears in the list
+      let titleElement = await $(`[data-test-id=\"proposal-title\"]=${title}`);
+      await titleElement.waitForExist();
+    });
+
+    it.only("Create a proposal to remove a scheme", async () => {
+      const url = `/dao/${daoAddress}/`;
+      await browser.url(url);
+
+      const schemeCard = await $("[data-test-id=\"schemeCard-SchemeRegistrar\"]");
+      await schemeCard.click();
+
+      const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
+      await createProposalButton.waitForExist();
+      await createProposalButton.click();
+
+      const tab = await $("*[data-test-id=\"tab-RemoveScheme\"]");
+      await tab.click();
+
+      const titleInput = await $("*[id=\"titleInput\"]");
+      await titleInput.waitForExist();
+      const title = uuid();
+      await titleInput.setValue(title);
+
+      const descriptionInput = await $("*[id=\"descriptionInput\"]");
+      await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+
+      const schemeToEditInput = await $("select[id=\"schemeToRemoveInput\"]");
+      await schemeToEditInput.selectByIndex(2);
+
+      const createProposalSubmitButton = await $("*[type=\"submit\"]");
+      await createProposalSubmitButton.click();
+
+      // check that the proposal appears in the list
+      let titleElement = await $(`[data-test-id=\"proposal-title\"]=${title}`);
+      await titleElement.waitForExist();
+    });
 });
