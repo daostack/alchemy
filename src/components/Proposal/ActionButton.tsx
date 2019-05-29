@@ -155,7 +155,7 @@ class ActionButton extends React.Component<IProps, IState> {
         { proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.lte(new BN(0)) ?
             <button className={css.preboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
-              <span> Pre-Boost</span>
+              <span>Pre-Boost</span>
             </button> :
           proposal.stage === IProposalStage.PreBoosted && expired && proposal.downStakeNeededToQueue.lte(new BN(0)) ?
             <button className={css.unboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
@@ -170,7 +170,7 @@ class ActionButton extends React.Component<IProps, IState> {
           (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && expired ?
             <button className={css.executeButton} onClick={this.handleClickExecute.bind(this)}>
               <img src="/assets/images/Icon/execute.svg"/>
-              <span> Execute</span>
+              <span>Execute</span>
             </button>
           : redeemable ?
             <div>
@@ -184,6 +184,7 @@ class ActionButton extends React.Component<IProps, IState> {
                   disabled={false}
                   className={redeemButtonClass}
                   onClick={this.handleClickRedeem.bind(this)}
+                  data-test-id="button-redeem"
                 >
                   <img src="/assets/images/Icon/redeem.svg" />
                   {
