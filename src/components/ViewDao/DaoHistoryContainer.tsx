@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IProposalType } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -59,16 +59,20 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const observable = combineLatest(
     dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed] }),
     dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000) }),
+    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.GenericScheme }),
+    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.GenericScheme }),
+    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.SchemeRegistrarAdd }),
+    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.SchemeRegistrarAdd }),
     dao.state()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IProposalState[], IDAOState]>): any => {
+    (state: IObservableState<[IProposalState[], IProposalState[], IProposalState[], IProposalState[], IProposalState[], IProposalState[], IDAOState]>): any => {
       if (state.isLoading) {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else  {
-        return <DaoHistoryContainer proposals={state.data[0].concat(state.data[1])} dao={state.data[2]} currentAccountAddress={currentAccountAddress}/>;
+        return <DaoHistoryContainer proposals={state.data[0].concat(state.data[1]).concat(state.data[2]).concat(state.data[3]).concat(state.data[4]).concat(state.data[5])} dao={state.data[6]} currentAccountAddress={currentAccountAddress}/>;
       }
     }
   }</Subscribe>;

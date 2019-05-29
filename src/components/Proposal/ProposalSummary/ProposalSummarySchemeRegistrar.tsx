@@ -56,7 +56,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                 </span>
                 { detailView ?
                   <div className={css.summaryDetails}>
-                    <table>
+                    <table><tbody>
                       <tr>
                         <th>
                           Address:
@@ -66,7 +66,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         </th>
                         <td>{schemeRegistrar.schemeToRemove}</td>
                       </tr>
-                    </table>
+                    </tbody></table>
                   </div>
                   : ""
                 }

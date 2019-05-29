@@ -10,9 +10,6 @@ describe('Home page', () => {
     await browser.url('http://127.0.0.1:3000/')
     const title = await browser.getTitle();
     title.should.be.equal('Alchemy | DAOstack');
-    const linkToAlchemy = await $('*[data-test-id="link-to-alchemy"]');
-    await linkToAlchemy.waitForExist();
-    await linkToAlchemy.click();
     const daosHeader = await $('*[data-test-id="header-all-daos"]');
     await daosHeader.waitForExist()
     const daoLink = await $('*[data-test-id="dao-link"]');
