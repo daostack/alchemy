@@ -1,4 +1,4 @@
-import { Address, IDAOState } from "@daostack/client";
+import { IDAOState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -12,7 +12,7 @@ import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 
 interface IContainerProps {
-  scheme: Address;
+  scheme: Scheme;
 }
 
 interface IStateProps {
@@ -57,7 +57,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
-
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -67,7 +66,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
     const proposalValues = {...values,
-      scheme: this.props.scheme,
+      scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
       ethReward: Util.toWei(Number(values.ethReward)),
       externalTokenReward: Util.toWei(Number(values.externalTokenReward)),

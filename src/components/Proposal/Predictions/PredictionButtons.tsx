@@ -31,7 +31,6 @@ interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
   currentAccountAddress: Address;
-
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
@@ -275,12 +274,13 @@ export default (props: IContainerProps) => {
   const arc = getArc();
   let observable;
 
-  const spender = props.proposal.scheme.address;
-  if (props.currentAccountAddress) {
+  const spender = props.proposal.votingMachine;
+  const currentAccountAddress = props.currentAccountAddress.toLowerCase();
+  if (currentAccountAddress) {
     observable = combineLatest(
-      arc.GENToken().balanceOf(props.currentAccountAddress),
-      arc.allowance(props.currentAccountAddress, spender),
-      props.proposal.proposal.stakes({ staker: props.currentAccountAddress})
+      arc.GENToken().balanceOf(currentAccountAddress),
+      arc.allowance(currentAccountAddress, spender),
+      props.proposal.proposal.stakes({ staker: currentAccountAddress})
     );
   } else {
     observable = combineLatest(
@@ -303,7 +303,7 @@ export default (props: IContainerProps) => {
           currentAccountGens={currentAccountGens}
           currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
           stakesOfCurrentUser={stakes}
-          />;
+        />;
       }
     }
   }</Subscribe>;

@@ -124,11 +124,6 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     const arc = getArc();
 
-    // TODO: this does not seem the logic that we want. We want to be able to add any address as a scheme
-    // const unregisteredSchemeAddresses = Object.keys(knownSchemes()).filter((address) => !schemes.find((scheme) => scheme.address.toLowerCase() === address.toLowerCase()));
-    // const knownSchemes = arc.contractAddresses.filter((contractInfo) => isKnownScheme(contractInfo.address));
-    // const unregisteredSchemes = knownSchemes.filter((contractInfo) => !schemes.find((scheme) => scheme.address.toLowerCase() === contractInfo.address.toLowerCase()));
-
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
       [css.selected]: currentTab === "addScheme"
@@ -150,15 +145,15 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
     return (
       <div className={css.schemeRegistrar}>
         <div className={css.schemeRegistrarSidebar}>
-          <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")}>
+          <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
             <span></span>
             Add Scheme
           </button>
-          <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")}>
+          <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
             <span></span>
             Edit Scheme
           </button>
-          <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")}>
+          <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
             <span></span>
             Remove Scheme
           </button>
@@ -226,18 +221,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
             render={({
               errors,
               touched,
-              // handleSubmit,
               isSubmitting,
-              // setFieldTouched,
-              // setFieldValue,
-              // values
             }: FormikProps<FormValues>) => {
-              // const otherSchemeClass = classNames({
-              //   [css.otherScheme]: true,
-              //   [css.error]: touched.otherScheme && errors.otherScheme,
-              //   [css.hidden]: values.schemeToAdd !== "Other"
-              // });
-              //
               return (
                 <Form noValidate>
                   <label htmlFor="titleInput">
@@ -293,29 +278,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                         id="schemeToAddInput"
                         placeholder="Enter scheme address"
                         name="schemeToAdd"
-                      >
-
-                        { /*
-                        className={css.schemeSelect}
-                        */}
-                        { /*
-                          unregisteredSchemes.map((contractInfo) => {
-                          return <option key={`add_scheme_${contractInfo.address}`} value={contractInfo.address}>{schemeName(contractInfo.address)}</option>;
-                        })
-                      */}
-                        { /*
-                        <option value="Other">Other...</option>
-                        */}
-                      </Field>
-                      { /*
-                      <ErrorMessage name="otherScheme">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <Field
-                        id="otherSchemeInput"
-                        placeholder="Enter scheme address"
-                        name="otherScheme"
-                        className={otherSchemeClass}
                       />
-                      */}
                     </div>
 
                     <div className={css.editSchemeSelectContainer}>
