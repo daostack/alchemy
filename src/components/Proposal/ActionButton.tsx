@@ -1,9 +1,12 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkMetaMaskAndWarn } from "arc";
+import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import gql from "graphql-tag";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -115,7 +118,14 @@ class ActionButton extends React.Component<IProps, IState> {
       accountHasRewards = rewardsForCurrentUser.length !== 0;
       redeemable = proposal.executedAt && (accountHasRewards || beneficiaryHasRewards);
 
-      redemptionsTip = RedemptionsTip({ beneficiaryHasRewards, currentAccountAddress, dao, isRedeemPending, proposal, rewardsForCurrentUser });
+      redemptionsTip = RedemptionsTip({
+        beneficiaryHasRewards,
+        currentAccountAddress,
+        dao,
+        isRedeemPending,
+        proposal,
+        rewardsForCurrentUser
+      });
 
       redeemButtonClass = classNames({
         [css.redeemButton]: true,
@@ -193,4 +203,53 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActionButton);
+const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
+
+interface IMyProps {
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  daoEthBalance: BN;
+  detailView?: boolean;
+  expired: boolean;
+  proposal: IProposalState;
+}
+
+export default (props: IMyProps) => {
+
+  const arc = getArc();
+  const proposal = props.proposal;
+  const query = gql`       {
+    gprewards (where: {
+      beneficiary: "${props.currentAccountAddress}"
+      proposal: "${proposal.id}"
+    }) {
+      id
+      tokensForStaker
+      daoBountyForStaker
+      reputationForVoter
+      reputationForProposer
+      beneficiary
+    }
+  }`;
+  return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
+      if (state.isLoading) {
+        return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
+      } else if (state.error) {
+        return <div>{ state.error.message }</div>;
+      } else {
+        const rewardsFromGraphQl = state.data.data.gprewards;
+        const rewardsForCurrentUser = rewardsFromGraphQl.map((obj: any) => {
+          return {
+            id: obj.id,
+            tokensForStaker: new BN(obj.tokensForStaker),
+            daoBountyForStaker: new BN(obj.daoBountyForStaker),
+            reputationForVoter: new BN(obj.reputationForVoter),
+            reputationForProposer: new BN(obj.reputationForProposer),
+            beneficiary: obj.beneficiary
+          };
+        });
+        return <ConnectedActionButton { ...props} rewardsForCurrentUser={rewardsForCurrentUser} />;
+      }
+    }
+  }</Subscribe>;
+};
