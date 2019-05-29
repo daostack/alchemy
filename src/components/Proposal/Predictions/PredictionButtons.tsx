@@ -275,7 +275,7 @@ export default (props: IContainerProps) => {
   const arc = getArc();
   let observable;
 
-  const spender = "0xunknown";
+  const spender = props.proposal.scheme.address;
   if (props.currentAccountAddress) {
     observable = combineLatest(
       arc.GENToken().balanceOf(props.currentAccountAddress),

@@ -41,7 +41,6 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   public render() {
     const {  daoAvatarAddress, schemeId } = this.props;
     const arc = getArc();
-    //TODO: this should be the name of the scheme ("scheme" is the address)
 
     const observable = from(arc.scheme(schemeId));
     return <Subscribe observable={observable}>{(state: IObservableState<Scheme>) => {

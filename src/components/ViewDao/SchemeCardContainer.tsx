@@ -94,7 +94,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
 
 };
 
-const UknownSchemeCardContainer = (props: IInternalProps) => {
+const UnknownSchemeCardContainer = (props: IInternalProps) => {
 
   const { scheme, boostedProposals, preBoostedProposals, queuedProposals } = props;
 
@@ -144,7 +144,7 @@ export default (props: IExternalProps) => {
         if (isKnownScheme(props.scheme.address)) {
           return <SchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
         } else {
-          return <UknownSchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
+          return <UnknownSchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
         }
       }
     }

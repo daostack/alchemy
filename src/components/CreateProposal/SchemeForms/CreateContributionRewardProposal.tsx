@@ -67,7 +67,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
     const proposalValues = {...values,
-      // type: IProposalType.ContributionReward,
       scheme: this.props.scheme,
       dao: this.props.daoAvatarAddress,
       ethReward: Util.toWei(Number(values.ethReward)),
