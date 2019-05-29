@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IProposalType } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalType, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -66,7 +66,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
     dao.state()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IProposalState[], IProposalState[], IProposalState[], IProposalState[], IProposalState[], IDAOState]>): any => {
+    (state: IObservableState<[Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
       if (state.isLoading) {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       } else if (state.error) {
