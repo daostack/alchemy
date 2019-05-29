@@ -39,7 +39,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               : dao.name === "Identity" ?
                 <p>
                   A curated registry of identities on the Ethereum blockchain.&nbsp;
-                  <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank">Learn how to register.</a>
+                  <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank">How to register.</a>
                 </p>
               : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
             }
