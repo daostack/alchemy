@@ -87,7 +87,7 @@ describe("SchemeRegistrar Proposals", () => {
       await titleElement.waitForExist();
     });
 
-    it.only("Create a proposal to remove a scheme", async () => {
+    it("Create a proposal to remove a scheme", async () => {
       const url = `/dao/${daoAddress}/`;
       await browser.url(url);
 
