@@ -1,4 +1,4 @@
-import { Address, IDAOState } from "@daostack/client";
+import { IDAOState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -10,7 +10,7 @@ import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 
 interface IContainerProps {
-  scheme: Address;
+  scheme: Scheme;
 }
 
 interface IStateProps {
@@ -56,7 +56,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
     const proposalValues = {...values,
-      scheme: this.props.scheme,
+      scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress
     };
 
