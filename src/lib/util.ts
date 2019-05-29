@@ -111,21 +111,28 @@ export function isKnownScheme(address: Address) {
 
 export function schemeName(address: string) {
   const arc = getArc();
-  const contractInfo = arc.getContractInfo(address);
-  const NAMES: {[key: string]: string; }  = {
-    ContributionReward: "Contribution Reward",
-    SchemeRegistrar : "Scheme Registrar",
-    GenericScheme : "Generic Scheme"
-  };
+  try {
+    const contractInfo = arc.getContractInfo(address);
 
-  if (NAMES[contractInfo.name]) {
-    return `${address.slice(0, 4)}...${address.slice(-4)} (${NAMES[contractInfo.name]})`;
-  }  else if (contractInfo.name) {
-    return `${address.slice(0, 4)}...${address.slice(-4)} (${contractInfo.name})`;
-  } else {
-    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+    const NAMES: {[key: string]: string; }  = {
+      ContributionReward: "Contribution Reward",
+      SchemeRegistrar : "Scheme Registrar",
+      GenericScheme : "Generic Scheme"
+    };
 
-}
+    if (NAMES[contractInfo.name]) {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${NAMES[contractInfo.name]})`;
+    }  else if (contractInfo.name) {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${contractInfo.name})`;
+    } else {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+
+    }
+  } catch (err) {
+    if (err.message.match(/No contract/)) {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+    }
+  }
 }
 
 export async function getNetworkName(id?: string): Promise<string> {

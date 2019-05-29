@@ -50,7 +50,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  error: string;
+  error: Error;
   sentryEventId: string;
   notificationsMinimized: boolean;
 }
@@ -67,7 +67,7 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public componentDidCatch(error: Error, errorInfo: any) {
-    this.setState({ error: error.toString() });
+    this.setState({ error });
 
     if (process.env.NODE_ENV === "PRODUCTION") {
       Sentry.withScope((scope) => {
@@ -79,11 +79,6 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    // we initialize Arc
-    // const initializeArc = async () => {};
-    // initializeArc();
-      // .then(async () => {
-        // if Metamask is available, we wathc for any account changes
     let metamask: any;
     const currentAddress = await getCurrentAccountAddress();
     if (currentAddress)  {
@@ -135,7 +130,7 @@ class AppContainer extends React.Component<IProps, IState> {
       // TODO: style this!
       return <div>
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
-        <pre>{ this.state.error }</pre>
+        <pre>{ this.state.error.toString() }</pre>
       </div>;
     } else {
       return (
