@@ -72,13 +72,6 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
-          // TODO: this is used to check uniqueness of proposalDescriptions,
-          // it is disabled at this moment, but should be restored
-          // const proposalDescriptions = (dao.proposals as IProposalState[])
-          //   .filter((proposal) => !proposalEnded(proposal))
-          //   .map((proposal) => proposal.description);
-          const proposalDescriptions: string[] = [];
-
           return (
             <div className={css.contributionReward}>
               <Formik
@@ -111,11 +104,6 @@ class CreateGenericScheme extends React.Component<IProps, null> {
 
                   if (values.title.length > 120) {
                     errors.title = "Title is too long (max 120 characters)";
-                  }
-
-                  // TODO: do we want this uniqueness check still?
-                  if (proposalDescriptions.indexOf(values.description) !== -1) {
-                    errors.description = "Must be unique";
                   }
 
                   const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
