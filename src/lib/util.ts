@@ -3,6 +3,7 @@ import BN = require("bn.js");
 import { getArc } from "../arc";
 
 const tokens = require("data/tokens.json");
+const exchangesList = require("data/exchangesList.json");
 
 export default class Util {
   public static fromWei(amount: BN): number {
@@ -65,6 +66,10 @@ export function humanProposalTitle(proposal: IProposalState) {
 export function supportedTokens() {
   tokens["GEN"] = getArc().GENToken().address;
   return tokens;
+}
+
+export function getExchangesList() {
+  return exchangesList;
 }
 
 export function formatTokens(amountWei: BN, symbol?: string): string {

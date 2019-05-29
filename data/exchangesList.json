@@ -1,0 +1,22 @@
+[
+    {
+      "name": "Bitfinex",
+      "url": "https://www.bitfinex.com/",
+      "logo": "/assets/images/Exchanges/bitfinex.png"
+    },
+    {
+      "name": "Ethfinex",
+      "url": "https://www.ethfinex.com/",
+      "logo": "/assets/images/Exchanges/ethfinex.svg"
+    },
+    {
+      "name": "IDEX",
+      "url": "https://idex.market/eth/gen/",
+      "logo": "/assets/images/Exchanges/idex.png"
+    },
+    {
+      "name": "Slow Trade",
+      "url": "https://slow.trade",
+      "logo": "https://slow.trade/favicon-32x32.png"
+    }
+]
