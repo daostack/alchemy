@@ -119,7 +119,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <th>Permissions:</th>
                         <td>
                           {permissions & 2 ? <div>Register other schemes</div> : ""}
-                          {permissions & 4 ? <div>Change constraints></div> : ""}
+                          {permissions & 4 ? <div>Change constraints</div> : ""}
                           {permissions & 8 ? <div>Upgrade the controller</div> : ""}
                           {permissions & 16 ? <div>Call genericCall on behalf of</div> : ""}
                         </td>
