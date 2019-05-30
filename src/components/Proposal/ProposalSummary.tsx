@@ -55,6 +55,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       );
     } else if (proposal.schemeRegistrar) {
       const schemeRegistrar = proposal.schemeRegistrar;
+      const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission);
 
       // TODO: how to best figure out of this is an add or edit scheme proposal?
 
@@ -117,9 +118,10 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                       <tr>
                         <th>Permissions:</th>
                         <td>
-                          <span>Register Other schemes</span><br/>
-                          <span>Upgrade the controller</span><br/>
-                          <span>Call genericCall on behalf of</span><br/>
+                          {permissions & 2 ? <div>Register other schemes</div> : ""}
+                          {permissions & 4 ? <div>Change constraints></div> : ""}
+                          {permissions & 8 ? <div>Upgrade the controller</div> : ""}
+                          {permissions & 16 ? <div>Call genericCall on behalf of</div> : ""}
                         </td>
                       </tr>
                       </tbody>
