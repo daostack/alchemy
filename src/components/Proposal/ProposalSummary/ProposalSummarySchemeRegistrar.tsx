@@ -33,7 +33,6 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
   }
 
   public render() {
-
     const { proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
@@ -42,9 +41,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.proposalSummary]: true,
     });
 
-      // TODO: how to best figure out of this is an add or edit scheme proposal?
-      // ANSWER: from the proposal.type
     const schemeRegistrar = proposal.schemeRegistrar;
+    const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission, 16);
+
     return (
         <div className={proposalSummaryClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?
@@ -104,9 +103,10 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                       <tr>
                         <th>Permissions:</th>
                         <td>
-                          <span>Register Other schemes</span><br/>
-                          <span>Upgrade the controller</span><br/>
-                          <span>Call genericCall on behalf of</span><br/>
+                          {permissions & 2 ? <div>Register other schemes</div> : ""}
+                          {permissions & 4 ? <div>Change constraints</div> : ""}
+                          {permissions & 8 ? <div>Upgrade the controller</div> : ""}
+                          {permissions & 16 ? <div>Call genericCall on behalf of</div> : ""}
                         </td>
                       </tr>
                       </tbody>
