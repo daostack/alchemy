@@ -55,7 +55,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       );
     } else if (proposal.schemeRegistrar) {
       const schemeRegistrar = proposal.schemeRegistrar;
-      const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission);
+      const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission, 16);
 
       // TODO: how to best figure out of this is an add or edit scheme proposal?
 
