@@ -39,13 +39,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
+      [css.withDetails]: true
     });
 
     const schemeRegistrar = proposal.schemeRegistrar;
     const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission, 16);
 
     return (
-        <div className={proposalSummaryClass + " " + css.schemeRegistrar}>
+        <div className={proposalSummaryClass}>
           { schemeRegistrar.schemeToRemove  ?
               <div>
                 <span className={css.summaryTitle}>

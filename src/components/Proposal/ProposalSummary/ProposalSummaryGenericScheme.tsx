@@ -5,6 +5,7 @@ import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import { GenericSchemeInfo, GenericSchemeRegistry} from "../../../genericSchemeRegistry";
 import * as css from "./ProposalSummary.scss";
+import ProposalSummaryDutchX from "./ProposalSummaryDutchX";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -37,6 +38,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
+      [css.withDetails]: true
     });
     let decodedCallData: any;
     try {
@@ -45,9 +47,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       // TODO: we should only show this info when we cannot find any decodedCallData
       return (
         <div className={proposalSummaryClass}>
-          Unknown function call
+          <span className={css.summaryTitle}>Unknown function call</span>
           {detailView ?
-            <div>
+            <div className={css.summaryDetails}>
               to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
               with callData: <pre>{proposal.genericScheme.callData}</pre>
             </div>
@@ -56,11 +58,18 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
         </div>
       );
     }
-    console.log(decodedCallData);
+
+    // TODO: this should detect if this is a DutchX DAO GenericAction
+    if (true) {
+      return <div className={proposalSummaryClass}><ProposalSummaryDutchX callData={decodedCallData} detailView={detailView} /></div>;
+    }
+
     return <div className={proposalSummaryClass}>
-      { decodedCallData.action.label }
+      <span className={css.summaryTitle}>{ decodedCallData.action.label }</span>
       {detailView ?
-        <div>Calling function { decodedCallData.action.abi.name} with values { decodedCallData.values.map((value: any) => <div key={value}>{value}</div>) }</div>
+        <div className={css.summaryDetails}>
+          Calling function { decodedCallData.action.abi.name} with values { decodedCallData.values.map((value: any) => <div key={value}>{value}</div>) }
+        </div>
         : ""
       }
     </div>;
