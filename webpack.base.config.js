@@ -27,7 +27,8 @@ module.exports = {
       schemas: path.resolve(basePath, 'src/schemas'),
       src: path.resolve(basePath, 'src'),
       'ipfs-api': 'ipfs-api/dist',
-      'ipfs-http-client': 'ipfs-http-client/dist'
+      'ipfs-http-client': 'ipfs-http-client/dist',
+      'bn.js': 'node_modules/bn.js'
     },
   },
 
