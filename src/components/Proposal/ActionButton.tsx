@@ -11,7 +11,6 @@ import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { isRedeemPending } from "selectors/operations";
 import RedemptionsString from "./RedemptionsString";
 import RedemptionsTip from "./RedemptionsTip";
 
@@ -19,7 +18,6 @@ import * as css from "./ActionButton.scss";
 
 interface IStateProps {
   beneficiaryProfile: IProfileState;
-  isRedeemPending: boolean;
 }
 
 interface IContainerProps {
@@ -43,8 +41,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
 
   return {...ownProps,
     beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
-    isRedeemPending: ownProps.currentAccountAddress &&
-      isRedeemPending(proposal.id, ownProps.currentAccountAddress)(state),
   };
 };
 
@@ -90,7 +86,6 @@ class ActionButton extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       expired,
-      isRedeemPending,
       proposal,
       redeemProposal,
       rewardsForCurrentUser
@@ -115,11 +110,10 @@ class ActionButton extends React.Component<IProps, IState> {
       accountHasRewards = rewardsForCurrentUser.length !== 0;
       redeemable = proposal.executedAt && (accountHasRewards || beneficiaryHasRewards);
 
-      redemptionsTip = RedemptionsTip({ beneficiaryHasRewards, currentAccountAddress, dao, isRedeemPending, proposal, rewardsForCurrentUser });
+      redemptionsTip = RedemptionsTip({ beneficiaryHasRewards, currentAccountAddress, dao, proposal, rewardsForCurrentUser });
 
       redeemButtonClass = classNames({
         [css.redeemButton]: true,
-        [css.pending]: isRedeemPending,
       });
     }
 
@@ -177,8 +171,6 @@ class ActionButton extends React.Component<IProps, IState> {
                 >
                   <img src="/assets/images/Icon/redeem.svg" />
                   {
-                    isRedeemPending ?
-                      " Redeem in progress" :
                       beneficiaryHasRewards && !accountHasRewards ?
                         " Redeem for beneficiary" :
                         " Redeem"

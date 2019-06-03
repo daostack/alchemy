@@ -8,15 +8,15 @@ interface IProps {
   beneficiaryHasRewards: boolean;
   currentAccountAddress: Address;
   dao: IDAOState;
-  isRedeemPending: boolean;
   proposal: IProposalState;
   rewardsForCurrentUser: IRewardState[];
 }
 
 export default (props: IProps) => {
-  const { beneficiaryHasRewards, currentAccountAddress, dao, isRedeemPending, proposal, rewardsForCurrentUser } = props;
+  const { beneficiaryHasRewards, currentAccountAddress, dao, proposal, rewardsForCurrentUser } = props;
 
   const rewardComponents = [];
+  // rewards of current user
   for (const reward of rewardsForCurrentUser) {
     let c = null;
     if (reward.reputationForProposer.gt(new BN(0))) {
@@ -91,6 +91,5 @@ export default (props: IProps) => {
       { rewardComponents }
     </React.Fragment>
 
-    {isRedeemPending ? <strong><i>Warning: Redeeming for this proposal is already in progress</i></strong> : ""}
   </div>;
 };

@@ -18,10 +18,13 @@ export default class ReputationView extends React.Component<IProps, null> {
     if (totalReputation.gt(new BN(0))) {
       percentage = new BN(100 * 10 ** PRECISION).mul(reputation).div(totalReputation).toNumber() / (10 ** PRECISION);
     }
-    const percentageString = percentage.toLocaleString(undefined, {minimumFractionDigits: PRECISION, maximumFractionDigits: PRECISION});
+    let percentageString = percentage.toLocaleString(undefined, {minimumFractionDigits: PRECISION, maximumFractionDigits: PRECISION});
+    if (percentage === 0 && !reputation.isZero()) {
+      percentageString = `+${percentageString}`;
+    }
     return (
-      <Tooltip placement="bottom" overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}>
-        <span data-test-id="reputation">{ percentageString}  % {hideSymbol ? "" : "Rep."}</span>
+      <Tooltip placement="bottom" overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 18})} {daoName || ""} Reputation in total</span>}>
+        <span data-test-id="reputation">{ percentageString}% {hideSymbol ? "" : "Rep."}</span>
       </Tooltip>
     );
   }
