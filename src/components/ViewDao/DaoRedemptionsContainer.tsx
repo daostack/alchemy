@@ -23,7 +23,6 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const { dao, proposals, currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      console.log(proposal);
       return (<ProposalCardContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
