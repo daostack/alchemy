@@ -109,6 +109,7 @@ module.exports = {
         "KNC": JSON.stringify("0xdd974D5C2e2928deA5F71b9825b8b646686BD200")
       }
     }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
   node: {
     fs: 'empty',
