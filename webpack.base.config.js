@@ -28,7 +28,7 @@ module.exports = {
       src: path.resolve(basePath, 'src'),
       'ipfs-api': 'ipfs-api/dist',
       'ipfs-http-client': 'ipfs-http-client/dist',
-      'bn.js': 'node_modules/bn.js'
+      'bn.js': 'bn.js/lib/bn.js'
     },
   },
 
