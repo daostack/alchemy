@@ -79,7 +79,7 @@ export function getExchangesList() {
 
 export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
   const negative = amountWei.lt(new BN(0));
-  const amount = Math.abs(decimals === 18 ? Util.fromWei(amountWei) : amountWei.toNumber() / Math.pow(10, decimals));
+  const amount = Math.abs(decimals === 18 ? Util.fromWei(amountWei) : amountWei.div(new BN(10).pow(new BN(decimals))).toNumber());
 
   let returnString;
   if (amount === 0) {
