@@ -18,6 +18,7 @@ interface IState {
   days: number;
   hours: number;
   min: number;
+  seconds: number;
 }
 
 class Countdown extends React.Component<IProps, IState> {
@@ -30,7 +31,8 @@ class Countdown extends React.Component<IProps, IState> {
       years: 0,
       days: 0,
       hours: 0,
-      min: 0
+      min: 0,
+      seconds: 0
     };
   }
 
@@ -68,7 +70,8 @@ class Countdown extends React.Component<IProps, IState> {
       years: duration.years(),
       days: duration.days(),
       hours: duration.hours(),
-      min: duration.minutes()
+      min: duration.minutes(),
+      seconds: duration.seconds()
     };
 
     return timeLeft;
@@ -113,16 +116,15 @@ class Countdown extends React.Component<IProps, IState> {
     return (
       <div className={containerClass}>
         <div className={css.percentageContainer}>
-          <div style={{backgroundColor: "blue", height: "2px", width: percentageComplete + "%"}}></div>
+          <div style={{ backgroundColor: "blue", height: "2px", width: percentageComplete + "%" }}></div>
         </div>
         {this.props.detailView ?
-            <span>Proposal ends:</span>
+          <span>Proposal ends:</span>
           : " "
         }
-        <span className={css.timeSection}>
-           <strong>{this.addLeadingZeros(countDown.days)}d</strong>
-        </span>
-        &nbsp;:&nbsp;
+        {
+          Number(countDown.days) ? <span><span className={css.timeSection}><strong>{this.addLeadingZeros(countDown.days)}d</strong></span> &nbsp; : &nbsp;</span> : ""
+        }
         <span className={css.timeSection}>
           <strong>{this.addLeadingZeros(countDown.hours)}h</strong>
         </span>
@@ -130,6 +132,9 @@ class Countdown extends React.Component<IProps, IState> {
         <span className={css.timeSection}>
           <strong>{this.addLeadingZeros(countDown.min)}m</strong>
         </span>
+        {
+          Number(countDown.days) ? "" : <span> &nbsp; : &nbsp; <span className={css.timeSection}><strong>{this.addLeadingZeros(countDown.seconds)}s</strong></span></span>
+        }
         {this.props.overTime ?
           <strong className={css.overTime}>
             <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
