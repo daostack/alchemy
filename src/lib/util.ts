@@ -64,7 +64,12 @@ export function humanProposalTitle(proposal: IProposalState) {
 }
 
 export function supportedTokens() {
-  tokens["GEN"] = getArc().GENToken().address;
+  tokens[getArc().GENToken().address] = {
+    decimals: 18,
+    name: "DAOstack GEN",
+    symbol: "GEN"
+  };
+
   return tokens;
 }
 
@@ -72,9 +77,10 @@ export function getExchangesList() {
   return exchangesList;
 }
 
-export function formatTokens(amountWei: BN, symbol?: string): string {
+export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
   const negative = amountWei.lt(new BN(0));
-  const amount = Math.abs(Util.fromWei(amountWei));
+  const amount = Math.abs(decimals === 18 ? Util.fromWei(amountWei) : amountWei.toNumber() / Math.pow(10, decimals));
+
   let returnString;
   if (amount === 0) {
     returnString = "0";
@@ -93,8 +99,8 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
 }
 
 export function tokenSymbol(tokenAddress: string) {
-  let symbol = Object.keys(supportedTokens()).find((token) => supportedTokens()[token].toLowerCase() === tokenAddress.toLowerCase());
-  return symbol || "?";
+  const token = supportedTokens()[tokenAddress.toLowerCase()];
+  return token ? token["symbol"] : "?";
 }
 
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {

@@ -98,7 +98,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   beneficiary: "",
                   description: "",
                   ethReward: 0,
-                  externalToken: arc.GENToken().address,
+                  externalTokenAddress: arc.GENToken().address,
                   externalTokenReward: 0,
                   nativeTokenReward: 0,
                   reputationReward: 0,
@@ -272,7 +272,10 @@ class CreateContributionReward extends React.Component<IProps, null> {
                           component="select"
                           className={css.externalTokenSelect}
                         >
-                          { Object.keys(supportedTokens()).map((token) => <option key={token} value={supportedTokens()[token]}>{token}</option>) }
+                          { Object.keys(supportedTokens()).map((tokenAddress) => {
+                            const token = supportedTokens()[tokenAddress];
+                            return <option key={tokenAddress} value={tokenAddress}>{token["symbol"]}</option>;
+                          })}
                         </Field>
                       </div>
 

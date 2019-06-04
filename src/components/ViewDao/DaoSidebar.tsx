@@ -97,16 +97,17 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
                 }
               }</Subscribe>
 
-              {Object.keys(supportedTokens()).map((tokenName) => {
-                const token = new Token(supportedTokens()[tokenName], arc);
+              {Object.keys(supportedTokens()).map((tokenAddress) => {
+                const token = new Token(tokenAddress, arc);
+                const tokenData = supportedTokens()[tokenAddress];
                 <Subscribe observable={token.balanceOf(dao.address)}>{
                   (state: IObservableState<BN>) => {
                     if (state.isLoading) {
-                      return <li>... {tokenName}</li>;
+                      return <li>... {tokenData["symbol"]}</li>;
                     } else if ( state.error) {
                       return <li>{ state.error.message}</li>;
                     } else {
-                      return state.data.isZero() ? "" : <li><strong>{ formatTokens(state.data) }</strong> {tokenName}</li>;
+                      return state.data.isZero() ? "" : <li><strong>{ formatTokens(state.data, tokenData["symbol"], tokenData["decimals"]) }</strong></li>;
                     }
                   }
                 }</Subscribe>;
