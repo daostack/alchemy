@@ -39,7 +39,7 @@ you can recreate the docker environment by installing an starting all [services 
 ## Working with docker
 
 The easiest way to start developing is to work with docker.
-Here is a quick setup; there are more detailed instructions in [here](./documentation/development.md).
+Here is a quick setup; there are more detailed instructions in [here](./docs/development.md).
 
 After you have installed docker, run the following command to spin up ganache (with the migrated contracts), the caching server and the alchemy server:
 ```sh
