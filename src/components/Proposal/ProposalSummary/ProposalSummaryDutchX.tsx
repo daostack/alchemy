@@ -78,7 +78,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Set new token pair threshold to {callData.values[0]}
+              Set new token pair threshold to ${callData.values[0]}
             </span>
           </div>
         );
@@ -87,7 +87,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Set new auction threshold to {callData.values[0]}
+              Set new auction threshold to ${callData.values[0]}
             </span>
           </div>
         );
