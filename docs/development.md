@@ -30,7 +30,6 @@ Alternatively you can run the webserver inside the `alchemy` container. This is 
 
 See [docker](./docker.md) for details about the docker containers.
 
-*Due to a bug in ganache, the state is not persistent, so you must re-run `npm run setup-env` after you (re-)start docker (TBD: link to issue)*
 
 # Helpful scripts
 
