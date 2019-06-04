@@ -1,16 +1,15 @@
-import { Address, Arc, utils } from "@daostack/client";
+import { Address, Arc } from "@daostack/client";
 import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import { getNetworkName } from "./lib/util";
+
 const settings = {
   dev: {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     web3Provider: "ws://127.0.0.1:8545",
     ipfsProvider: "localhost",
-    // TODO: not import this on load, but later in getContractAddresses
-    contractAddresses: utils.getContractAddressesFromMigration("private")
   },
   staging: {
     graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v20",
@@ -22,7 +21,6 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: utils.getContractAddressesFromMigration("rinkeby")
   },
   production: {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v20",
@@ -34,39 +32,8 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: utils.getContractAddressesFromMigration("mainnet")
   }
 };
-
-/**
- * get the contract address from the @daostack/migration repository.
- * These may be out of date: consider using getContractAddressesFromSubgraph instead
- * @param  key the network where the contracts are deployed: one of private, rinkeby, mainnet
- * @return   an Array mapping contract names to addresses
- */
-export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
-  const deployedContractAddresses = require("@daostack/migration/migration.json");
-
-  // TODO: a quick hack for the dxDAO test: we need to get the address fromt he subgraph
-  // THIS WILL NEED TO GO!!
-  if (key === "rinkeby") {
-    return {
-        Redeemer: "0x48763e6a4e6b25ecefc6d697ff6bf55d95b7a1c9",
-        GenesisProtocol: "0xe3692ad4ed2d2817bea59aed435ce17d28e884eb",
-        ContributionReward: "0x88fba19bf273cf75945ded8986745da140a99145",
-        GenericScheme: "0x5663ca36e790f1f55198404f35ba3afb64949150",
-        SchemeRegistrar: "0x5c946957903a173cde9da121aec73d549d6200cc",
-        GEN: "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
-    };
-  }
-  const addresses = {
-      ...deployedContractAddresses[key]
-   };
-  if (!addresses || addresses === {}) {
-    throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
-  }
-  return addresses.base;
-}
 
 /**
  * check if the web3 connection is ready to send transactions, and warn the user if it is not
@@ -240,6 +207,8 @@ export async function initializeArc(): Promise<Arc> {
   }
 
   const arc: Arc = new Arc(arcSettings);
+  await arc.initialize();
+  console.log(arc.contractAddresses);
   // save the object on a global window object (I know, not nice, but it works..)
   (<any> window).arc = arc;
   return arc;

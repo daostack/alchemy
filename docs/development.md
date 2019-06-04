@@ -9,7 +9,6 @@ and run the alchemy server in a separate terminal:
   docker-compose build --no-cache # run this if package.json has changed
   docker-compose up graph-node alchemy-server # start the services needed by alchemy
   # in another terminal run:
-  npm run setup-env
   npm run start # start the development server
   # ...  point your browser to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK
   # ... develop away
@@ -23,7 +22,6 @@ Alternatively you can run the webserver inside the `alchemy` container. This is 
   docker-compose build # run this if package.json has changed
   docker-compose up alchemy # start alchemy and all the containers that depend on it
   # in another shell run this:
-  npm run setup-env # deploy contracts, configure subgraph...
   # ...  point your browser to 127.0.0.1:3000, OPEN AND UNLOCK METAMASK and connect to localhost:8545
   # ... develop away
   # ... commit your changes
