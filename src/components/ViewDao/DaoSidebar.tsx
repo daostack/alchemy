@@ -88,11 +88,11 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               <Subscribe observable={arc.dao(dao.address).ethBalance()}>{
                 (state: IObservableState<BN>) => {
                   if (state.isLoading) {
-                    return <li>... ETH</li>;
+                    return <li key="ETH">... ETH</li>;
                   } else if ( state.error) {
-                    return <li>{ state.error.message}</li>;
+                    return "";
                   } else {
-                    return <li><strong>{ formatTokens(new BN(state.data)) }</strong> ETH</li>;
+                    return <li key="ETH"><strong>{ formatTokens(new BN(state.data)) }</strong> ETH</li>;
                   }
                 }
               }</Subscribe>
@@ -100,14 +100,16 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               {Object.keys(supportedTokens()).map((tokenAddress) => {
                 const token = new Token(tokenAddress, arc);
                 const tokenData = supportedTokens()[tokenAddress];
-                <Subscribe observable={token.balanceOf(dao.address)}>{
+                return <Subscribe key={tokenAddress} observable={token.balanceOf(dao.address)}>{
                   (state: IObservableState<BN>) => {
-                    if (state.isLoading) {
-                      return <li>... {tokenData["symbol"]}</li>;
-                    } else if ( state.error) {
-                      return <li>{ state.error.message}</li>;
+                    if (state.isLoading || state.error || state.data.isZero()) {
+                      return "";
                     } else {
-                      return state.data.isZero() ? "" : <li><strong>{ formatTokens(state.data, tokenData["symbol"], tokenData["decimals"]) }</strong></li>;
+                      return (
+                        <li key={tokenAddress}>
+                          <strong>{ formatTokens(state.data, tokenData["symbol"], tokenData["decimals"]) }</strong>
+                        </li>
+                      );
                     }
                   }
                 }</Subscribe>;
