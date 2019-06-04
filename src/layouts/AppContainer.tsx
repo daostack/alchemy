@@ -136,23 +136,24 @@ class AppContainer extends React.Component<IProps, IState> {
       return (
         <div className={css.outer}>
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
-            <div className={css.container}>
-              <Route path="/"
-                render={ ( props ) => ( props.location.pathname !== "/") && <HeaderContainer {...props} /> } />
 
-              <Switch>
-                <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-                <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
-                <Route path="/" component={DaoListContainer} />
-              </Switch>
+          <div className={css.container}>
+            <Route path="/" render={ ( props ) => <HeaderContainer {...props} /> } />
 
-              <ModalContainer
-                modalClassName={css.modal}
-                backdropClassName={css.backdrop}
-                containerClassName={css.modalContainer}
-                bodyModalClassName={css.modalBody}
-              />
-            </div>
+            <Switch>
+              <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
+              <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
+              <Route path="/" component={DaoListContainer} />
+            </Switch>
+
+            <ModalContainer
+              modalClassName={css.modal}
+              backdropClassName={css.backdrop}
+              containerClassName={css.modalContainer}
+              bodyModalClassName={css.modalBody}
+            />
+          </div>
+
           <div className={css.pendingTransactions}>
             {this.state.notificationsMinimized ?
               <MinimizedNotifications
