@@ -72,6 +72,11 @@ button:hover {
 
   .endDate {
     width: 50px;
+    padding-right: 10px;
+  }
+
+  .scheme {
+    width: 80px;
   }
 
   .title {
@@ -199,7 +204,7 @@ button:hover {
         padding: 10px 0 10px 0;
         background-color: rgba(255,255,255,1);
         border-radius: 0 10px 10px 0;
-        
+
         .diamond {
           width: 10px;
           height: 10px;
@@ -221,7 +226,7 @@ button:hover {
             padding: 8px 10px;
             color: rgba(78, 97, 118, 1.000);
 
-            b {         
+            b {
               display: inline-block;
               width: 35px;
               text-align: center;
@@ -286,13 +291,29 @@ button:hover {
   }
 }
 
+.daoDescription {
+  padding: 0px 20px 0px 20px;
+
+  p {
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    color: silver;
+  }
+
+  a:hover {
+    color: white;
+  }
+}
+
 .navHeading {
   font-family: "Open Sans";
   font-size: 11px;
   border-bottom: 1px solid rgba(78, 137, 209, 1.000);
   width: 100%;
   display: block;
-  margin-top: -30px;
 
   b {
     display: inline-block;
@@ -405,6 +426,21 @@ button:hover {
 
 .daoHoldings {
   display: block;
+
+  .navHeading b {
+    padding: 10px 25px 10px 10px;
+  }
+
+  .navHeading {
+    margin-top: -30px;
+  }
+
+  .navHeading a {
+    display: inline-block;
+    position: relative;
+    top: 19px;
+    left: -14px;
+  }
 
   ul {
     margin-top: 15px;
@@ -691,13 +727,6 @@ a.navItem:hover {
   div {
     opacity: 0.75;
   }
-}
-
-.daoDescription {
-    float: left;
-    width: 360px;
-    padding-left: 90px;
-    margin-top: -13px;
 }
 
 .daoInfo {

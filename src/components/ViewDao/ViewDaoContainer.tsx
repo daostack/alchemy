@@ -3,6 +3,7 @@ import * as profilesActions from "actions/profilesActions";
 import * as uiActions from "actions/uiActions";
 import { getArc } from "arc";
 import * as classNames from "classnames";
+import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as appCss from "layouts/App.scss";
@@ -13,16 +14,19 @@ import { Cookies, withCookies } from "react-cookie";
 import Joyride from "react-joyride";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
+//@ts-ignore
+import { ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
 import * as proposalCss from "../Proposal/ProposalCard.scss";
+import AllSchemesContainer from "./AllSchemesContainer";
 import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
-import DaoProposalsContainer from "./DaoProposalsContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 import DaoSidebar from "./DaoSidebar";
+import SchemeProposalsContainer from "./SchemeProposalsContainer";
 import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
@@ -312,6 +316,7 @@ For additional information check out our <a href="https://docs.google.com/docume
                 <DaoRedemptionsContainer {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
               }
             />
+
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>
                 <ProposalDetailsContainer {...props}
@@ -321,9 +326,16 @@ For additional information check out our <a href="https://docs.google.com/docume
                 />
               }
             />
-            <Route path="/dao/:daoAvatarAddress"
-              render={(props) => <DaoProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
+            <Route path="/dao/:daoAvatarAddress/proposals/:schemeName" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} /> } />
+            <Route path="/dao/:daoAvatarAddress" render={(props) => <AllSchemesContainer {...props} />} />
           </Switch>
+
+          <ModalRoute
+            path="/dao/:daoAvatarAddress/proposals/:schemeName/create"
+            parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}/proposals/${route.params.schemeName}/`}
+            component={CreateProposalContainer}
+          />
+
         </div>
       </div>
     );

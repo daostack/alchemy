@@ -14,6 +14,9 @@ describe("Proposals", () => {
       const url = `/dao/${daoAddress}/`;
       await browser.url(url);
 
+      const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
+      await schemeCard.click();
+
       const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
       await createProposalButton.waitForExist();
 

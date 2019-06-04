@@ -102,11 +102,14 @@ class ActionButton extends React.Component<IProps, IState> {
     if (proposal.contributionReward) {
       const contributionReward = proposal.contributionReward;
 
+      // TODO: should be the DAO balance of the proposal.externalToken
+      //const externalTokenBalance = dao.externalTokenBalance || new BN(0);
+
       beneficiaryHasRewards = (
         !contributionReward.reputationReward.isZero() ||
         contributionReward.nativeTokenReward.gt(new BN(0)) ||
         (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
-        contributionReward.externalTokenReward.gt(new BN(0))
+        (contributionReward.externalTokenReward.gt(new BN(0))) // && externalTokenBalance.gte(contributionReward.externalTokenReward))
       ) as boolean;
 
       accountHasRewards = rewardsForCurrentUser.length !== 0;
@@ -130,7 +133,7 @@ class ActionButton extends React.Component<IProps, IState> {
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
             actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-            action={redeemProposal.bind(null, dao.address, proposal.id, currentAccountAddress)}
+            action={redeemProposal.bind(null, dao.address, proposal.id, proposal.contributionReward.beneficiary)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
             dao={dao}

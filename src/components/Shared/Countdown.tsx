@@ -9,6 +9,7 @@ interface IProps {
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
   overTime?: boolean;
+  schemeView?: boolean;
   onEnd?(): any;
 }
 
@@ -106,6 +107,7 @@ class Countdown extends React.Component<IProps, IState> {
     const containerClass = classNames({
       [css.detailView]: this.props.detailView,
       [css.container]: true,
+      [css.schemeView]: this.props.schemeView,
     });
 
     return (
