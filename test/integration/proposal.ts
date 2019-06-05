@@ -71,6 +71,8 @@ describe("Proposals", () => {
       const enablePredictionsButton = await proposal.$(`[data-test-id="button-enable-predicting"]`);
       if (await enablePredictionsButton.isExisting()) {
         await enablePredictionsButton.click();
+        const buttonPreapprove = await $("[data-test-id=\"button-preapprove\"]");
+        await buttonPreapprove.click();
       }
 
       const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);

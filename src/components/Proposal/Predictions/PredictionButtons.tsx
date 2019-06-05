@@ -157,7 +157,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
-                <button onClick={this.handleClickPreApprove}>Preapprove</button>
+                <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
           </div>
