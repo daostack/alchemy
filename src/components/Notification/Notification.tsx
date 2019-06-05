@@ -91,9 +91,9 @@ export default class Notification extends React.Component<IProps, null> {
         </div>
         <div className={css.notificationControls}>
           <button className={css.pending} onClick={() => minimize()}><img style={{width: "18px", height: "18px"}} src="/assets/images/Icon/Minimize-notification.svg" /></button>
-          <button className={css.pending} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
-          <button className={css.success} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
-          <button className={css.error} onClick={(e) => this.handleClose(e)}><img src="/assets/images/Icon/Close.svg" /></button>
+          <button className={css.pending} onClick={(e) => this.handleClose(e)} data-test-id="button-notification-close"><img src="/assets/images/Icon/Close.svg" /></button>
+          <button className={css.success} onClick={(e) => this.handleClose(e)}  data-test-id="button-notification-close"><img src="/assets/images/Icon/Close.svg" /></button>
+          <button className={css.error} onClick={(e) => this.handleClose(e)}  data-test-id="button-notification-close"><img src="/assets/images/Icon/Close.svg" /></button>
         </div>
       </div>
     );

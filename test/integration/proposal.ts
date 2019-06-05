@@ -70,6 +70,10 @@ describe("Proposals", () => {
 
       const enablePredictionsButton = await proposal.$(`[data-test-id="button-enable-predicting"]`);
       if (await enablePredictionsButton.isExisting()) {
+        // get notifications out of the way
+        const buttonCloseNotification = await $$(`[data-test-id="button-notification-close"]`);
+        await buttonCloseNotification.forEach(async (button: any) => await button.click());
+
         await enablePredictionsButton.click();
         const buttonPreapprove = await $("[data-test-id=\"button-preapprove\"]");
         await buttonPreapprove.click();
