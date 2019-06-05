@@ -30,7 +30,7 @@ interface IState {
 interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
-  currentAccountAddress: Address;
+  currentAccountAddress?: Address;
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
@@ -275,7 +275,7 @@ export default (props: IContainerProps) => {
   let observable;
 
   const spender = props.proposal.votingMachine;
-  const currentAccountAddress = props.currentAccountAddress.toLowerCase();
+  const currentAccountAddress = props.currentAccountAddress;
   if (currentAccountAddress) {
     observable = combineLatest(
       arc.GENToken().balanceOf(currentAccountAddress),
