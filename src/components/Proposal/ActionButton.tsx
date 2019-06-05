@@ -14,6 +14,7 @@ import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import { Observable, of} from "rxjs";
 import { isRedeemPending } from "selectors/operations";
 import RedemptionsString from "./RedemptionsString";
 import RedemptionsTip from "./RedemptionsTip";
@@ -26,7 +27,7 @@ interface IStateProps {
 }
 
 interface IContainerProps {
-  currentAccountAddress: Address;
+  currentAccountAddress?: Address;
   dao: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
@@ -207,7 +208,7 @@ class ActionButton extends React.Component<IProps, IState> {
 const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
 
 interface IMyProps {
-  currentAccountAddress: Address;
+  currentAccountAddress?: Address;
   dao: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
@@ -219,36 +220,48 @@ export default (props: IMyProps) => {
 
   const arc = getArc();
   const proposal = props.proposal;
-  const query = gql`       {
-    gprewards (where: {
-      beneficiary: "${props.currentAccountAddress}"
-      proposal: "${proposal.id}"
-    }) {
-      id
-      tokensForStaker
-      daoBountyForStaker
-      reputationForVoter
-      reputationForProposer
-      beneficiary
-    }
-  }`;
-  return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
+  let observable: Observable<any[]>;
+  if (props.currentAccountAddress) {
+    const query = gql`       {
+      gprewards (where: {
+        beneficiary: "${props.currentAccountAddress}"
+        proposal: "${proposal.id}"
+      }) {
+        id
+        tokensForStaker
+        daoBountyForStaker
+        reputationForVoter
+        reputationForProposer
+        beneficiary
+      }
+    }`;
+    observable = arc.getObservable(query);
+  } else {
+    observable = of([[]]);
+  }
+
+  return <Subscribe observable={observable}>{(state: IObservableState<any>) => {
       if (state.isLoading) {
         return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const rewardsFromGraphQl = state.data.data.gprewards;
-        const rewardsForCurrentUser = rewardsFromGraphQl.map((obj: any) => {
-          return {
-            id: obj.id,
-            tokensForStaker: new BN(obj.tokensForStaker),
-            daoBountyForStaker: new BN(obj.daoBountyForStaker),
-            reputationForVoter: new BN(obj.reputationForVoter),
-            reputationForProposer: new BN(obj.reputationForProposer),
-            beneficiary: obj.beneficiary
-          };
-        });
+        let rewardsForCurrentUser: any[];
+        if (props.currentAccountAddress) {
+          const rewardsFromGraphQl = state.data.data.gprewards;
+          rewardsForCurrentUser = rewardsFromGraphQl.map((obj: any) => {
+            return {
+              id: obj.id,
+              tokensForStaker: new BN(obj.tokensForStaker),
+              daoBountyForStaker: new BN(obj.daoBountyForStaker),
+              reputationForVoter: new BN(obj.reputationForVoter),
+              reputationForProposer: new BN(obj.reputationForProposer),
+              beneficiary: obj.beneficiary
+            };
+          });
+        } else {
+          rewardsForCurrentUser = [];
+        }
         return <ConnectedActionButton { ...props} rewardsForCurrentUser={rewardsForCurrentUser} />;
       }
     }

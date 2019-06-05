@@ -108,7 +108,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
 }
 
-export default (props: { dao: IDAOState, currentAccountAddress: Address } & RouteComponentProps<any>) => {
+export default (props: { dao: IDAOState, currentAccountAddress?: Address } & RouteComponentProps<any>) => {
   if (!props.currentAccountAddress) {
     return <div>Please log in to see your rewards</div>;
   }
@@ -143,7 +143,7 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
       if (state.error) {
         return <div>{ state.error.message }</div>;
       } else if (state.data) {
-        return <DaoRedemptionsContainer {...props} dao={props.dao} proposals={state.data.data.proposals}/>;
+        return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }
