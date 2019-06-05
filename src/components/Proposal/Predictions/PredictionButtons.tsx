@@ -219,7 +219,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal}>Enable Predicting</button>
+            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predicting</button>
           </div>
         </div>
       );

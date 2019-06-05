@@ -68,6 +68,11 @@ describe("Proposals", () => {
       const youVotedFor = await proposal.$(`span[data-test-id="youVotedFor"`);
       await youVotedFor.waitForDisplayed();
 
+      const enablePredictionsButton = await proposal.$(`[data-test-id="button-enable-predicting"]`);
+      if (await enablePredictionsButton.isExisting()) {
+        await enablePredictionsButton.click();
+      }
+
       const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);
       await stakeButton.click();
       launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
