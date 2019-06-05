@@ -156,12 +156,13 @@ class ActionButton extends React.Component<IProps, IState> {
         { proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.lte(new BN(0)) ?
             <button className={css.preboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
-              <span>Pre-Boost</span>
+              { /* space after <span> is there on purpose */ }
+              <span> Pre-Boost</span>
             </button> :
           proposal.stage === IProposalStage.PreBoosted && expired && proposal.downStakeNeededToQueue.lte(new BN(0)) ?
             <button className={css.unboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
-              <span>Un-Boost</span>
+              <span> Un-Boost</span>
             </button> :
           proposal.stage === IProposalStage.PreBoosted && expired ?
             <button className={css.boostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
@@ -171,7 +172,8 @@ class ActionButton extends React.Component<IProps, IState> {
           (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && expired ?
             <button className={css.executeButton} onClick={this.handleClickExecute.bind(this)}>
               <img src="/assets/images/Icon/execute.svg"/>
-              <span>Execute</span>
+              { /* space after <span> is there on purpose */ }
+              <span> Execute</span>
             </button>
           : redeemable ?
             <div>

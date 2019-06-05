@@ -2,7 +2,6 @@ import { DAO, IDAOState,
   IProposalStage,
   Proposal
   } from "@daostack/client";
-// import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
 import * as React from "react";
@@ -16,7 +15,6 @@ interface IProps {
 
 const DaoContainer = (props: IProps) => {
   // const { address } = props;
-  // const arc = getArc();
   const dao = props.dao;
   const observable = combineLatest(
     dao.proposals({

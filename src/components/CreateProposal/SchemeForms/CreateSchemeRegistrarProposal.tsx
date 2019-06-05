@@ -171,7 +171,6 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 upgradeController: false,
                 genericCall: false
               },
-              // schemeToAdd: unregisteredSchemes.length > 0 ? unregisteredSchemes[0].address : "Other",
               title: "",
               url: ""
             } as FormValues}
