@@ -24,6 +24,7 @@ interface IStateProps {
   networkId: number;
 }
 
+
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = ownProps.dao;
   return {
@@ -49,7 +50,6 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
-
     this.copyAddress = this.copyAddress.bind(this);
   }
 

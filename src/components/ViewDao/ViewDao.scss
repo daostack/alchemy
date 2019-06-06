@@ -1158,14 +1158,6 @@ a.navItem:hover {
     flex-grow: unset;
     z-index: 100000;
 
-    &:hover {
-      z-index: 100000;
-
-      .daoNavigation {
-        height: 520px;
-      }
-    }
-
     .daoNavigation {
       height: 0px;
       min-height: auto;
@@ -1187,6 +1179,22 @@ a.navItem:hover {
       }
     }
   }
+
+  .daoSidebar.openMenu {
+      z-index: 100000;
+
+      .daoNavigation {
+        height: 520px;
+      }
+
+      .menuClosed {
+        display: none;
+      }
+
+      .menuOpen {
+        display: block;
+      }
+    }
 
   .menuWrapper {
     position: relative;
@@ -1239,16 +1247,6 @@ a.navItem:hover {
 
     .menuOpen {
       display: none;
-    }
-
-    &:hover {
-      .menuClosed {
-        display: none;
-      }
-
-      .menuOpen {
-        display: block;
-      }
     }
   }
 }
