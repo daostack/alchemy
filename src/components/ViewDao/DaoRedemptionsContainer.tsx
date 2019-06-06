@@ -114,7 +114,7 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
     proposals(where: {
       accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
       dao: "${props.dao.address}"
-      stage_in: ["Boosted", "QuietEndingPeriod", "Executed"]
+      stage_in: ["Executed"]
     }) {
       id
       dao {
