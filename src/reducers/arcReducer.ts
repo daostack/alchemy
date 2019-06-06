@@ -189,13 +189,13 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
   switch (proposal.stage) {
     case IProposalStage.ExpiredInQueue:
     case IProposalStage.Queued:
-      return moment((proposal.createdAt + proposal.queuedVotePeriodLimit) * 1000);
+      return moment((proposal.createdAt + proposal.genesisProtocolParams.queuedVotePeriodLimit) * 1000);
     case IProposalStage.PreBoosted:
-      return moment((proposal.preBoostedAt + proposal.preBoostedVotePeriodLimit) * 1000);
+      return moment((proposal.preBoostedAt + proposal.genesisProtocolParams.preBoostedVotePeriodLimit) * 1000);
     case IProposalStage.Boosted:
-      return moment((proposal.boostedAt + proposal.boostedVotePeriodLimit) * 1000);
+      return moment((proposal.boostedAt + proposal.genesisProtocolParams.boostedVotePeriodLimit) * 1000);
     case IProposalStage.QuietEndingPeriod:
-      return moment((proposal.quietEndingPeriodBeganAt + proposal.quietEndingPeriod) * 1000);
+      return moment((proposal.quietEndingPeriodBeganAt + proposal.genesisProtocolParams.quietEndingPeriod) * 1000);
     case IProposalStage.Executed:
       return moment(proposal.executedAt * 1000);
   }

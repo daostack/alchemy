@@ -6,7 +6,7 @@ import ReputationView from "components/Account/ReputationView";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Util from "lib/util";
-import { humanProposalTitle } from "lib/util";
+import { getExchangesList, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -293,30 +293,18 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           Buy GEN &gt;
                           <ul>
                             <div className={css.diamond}></div>
-                            <li>
-                              <a href="https://www.bitfinex.com/" target="_blank">
-                                <b><img src="/assets/images/Exchanges/bitfinex.png"/></b>
-                                <span>Bitfinex</span>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="https://www.ethfinex.com/" target="_blank">
-                                <b><img src="/assets/images/Exchanges/ethfinex.svg"/></b>
-                                <span>Ethfinex</span>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="https://idex.market/eth/gen" target="_blank">
-                                <b><img src="/assets/images/Exchanges/idex.png"/></b>
-                                <span>IDEX</span>
-                              </a>
-                            </li>
-                            <li>
-                              <a href="https://slow.trade" target="_blank">
-                                <b><img src="https://slow.trade/favicon-32x32.png"/></b>
-                                <span>Slow Trade</span>
-                              </a>
-                            </li>
+                            {
+                              getExchangesList().map((item: any) => {
+                                return(
+                                  <li key={item.name}>
+                                    <a href={item.url} target="_blank">
+                                      <b><img src={item.logo}/></b>
+                                      <span>{item.name}</span>
+                                    </a>
+                                  </li>
+                                );
+                              })
+                            }
                           </ul>
                         </div>
                       </div>

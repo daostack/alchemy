@@ -1,15 +1,15 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IProposalType } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalType, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import { combineLatest } from "rxjs";
-import ProposalHistoryRow from "../Proposal/ProposalHistoryRowContainer";
+import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./ViewDao.scss";
 
 interface IProps {
-  proposals: IProposalState[];
+  proposals: Proposal[];
   dao: IDAOState;
   currentAccountAddress: Address;
 }
@@ -19,8 +19,8 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
   public render() {
     const { proposals, dao, currentAccountAddress } = this.props;
 
-    const proposalsHTML = proposals.map((proposal: IProposalState) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+    const proposalsHTML = proposals.map((proposal: Proposal) => {
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     return(
@@ -66,7 +66,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
     dao.state()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState[], IProposalState[], IProposalState[], IProposalState[], IProposalState[], IProposalState[], IDAOState]>): any => {
+    (state: IObservableState<[Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
       if (state.isLoading) {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       } else if (state.error) {
