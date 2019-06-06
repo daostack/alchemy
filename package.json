@@ -37,6 +37,7 @@
       "^actions(.*)$": "<rootDir>/src/actions$1",
       "^components(.*)$": "<rootDir>/src/components$1",
       "^constants(.*)$": "<rootDir>/src/constants$1",
+      "^data(.*)$": "<rootDir>/data$1",
       "^layouts(.*)$": "<rootDir>/src/layouts$1",
       "^lib(.*)$": "<rootDir>/src/lib$1",
       "^reducers(.*)$": "<rootDir>/src/reducers$1",
