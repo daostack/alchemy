@@ -2,6 +2,9 @@ import { Address, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import { getArc } from "../arc";
 
+const tokens = require("data/tokens.json");
+const exchangesList = require("data/exchangesList.json");
+
 export default class Util {
   public static fromWei(amount: BN): number {
     try {
@@ -60,9 +63,24 @@ export function humanProposalTitle(proposal: IProposalState) {
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }
 
-export function formatTokens(amountWei: BN, symbol?: string): string {
+export function supportedTokens() {
+  tokens[getArc().GENToken().address] = {
+    decimals: 18,
+    name: "DAOstack GEN",
+    symbol: "GEN"
+  };
+
+  return tokens;
+}
+
+export function getExchangesList() {
+  return exchangesList;
+}
+
+export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
   const negative = amountWei.lt(new BN(0));
-  const amount = Math.abs(Util.fromWei(amountWei));
+  const amount = Math.abs(decimals === 18 ? Util.fromWei(amountWei) : amountWei.div(new BN(10).pow(new BN(decimals))).toNumber());
+
   let returnString;
   if (amount === 0) {
     returnString = "0";
@@ -81,8 +99,8 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
 }
 
 export function tokenSymbol(tokenAddress: string) {
-  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token].toLowerCase() === tokenAddress.toLowerCase());
-  return symbol || "?";
+  const token = supportedTokens()[tokenAddress.toLowerCase()];
+  return token ? token["symbol"] : "?";
 }
 
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
