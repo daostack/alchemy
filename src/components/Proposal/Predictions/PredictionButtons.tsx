@@ -30,7 +30,7 @@ interface IState {
 interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
-  currentAccountAddress: Address;
+  currentAccountAddress?: Address;
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
@@ -157,7 +157,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
-                <button onClick={this.handleClickPreApprove}>Preapprove</button>
+                <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
           </div>
@@ -219,7 +219,7 @@ class PredictionBox extends React.Component<IProps, IState> {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal}>Enable Predicting</button>
+            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predicting</button>
           </div>
         </div>
       );
@@ -275,7 +275,7 @@ export default (props: IContainerProps) => {
   let observable;
 
   const spender = props.proposal.votingMachine;
-  const currentAccountAddress = props.currentAccountAddress.toLowerCase();
+  const currentAccountAddress = props.currentAccountAddress;
   if (currentAccountAddress) {
     observable = combineLatest(
       arc.GENToken().balanceOf(currentAccountAddress),

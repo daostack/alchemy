@@ -208,7 +208,6 @@ export async function initializeArc(): Promise<Arc> {
 
   const arc: Arc = new Arc(arcSettings);
   await arc.initialize();
-  console.log(arc.contractAddresses);
   // save the object on a global window object (I know, not nice, but it works..)
   (<any> window).arc = arc;
   return arc;
