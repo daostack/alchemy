@@ -30,6 +30,10 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
 
     return (
       <div className={css.daoSidebar + " clearfix"}>
+        <div className={css.menuToggle}>
+          <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
+          <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
+        </div>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address}>

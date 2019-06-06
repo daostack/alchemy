@@ -475,6 +475,9 @@ button:hover {
 
 
 
+.menuToggle {
+  display: none;
+}
 
 .loading img {
   margin: 0 auto;
@@ -1138,6 +1141,114 @@ a.navItem:hover {
   .tourModal {
     .accessTour {
       top: 47px;
+    }
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .outer {
+    display: block;
+    position: relative;
+  }
+
+  .daoSidebar {
+    min-width: auto;
+    max-width: 100%;
+    height: auto;
+    flex-grow: unset;
+    z-index: 100000;
+
+    &:hover {
+      z-index: 100000;
+
+      .daoNavigation {
+        height: 520px;
+      }
+    }
+
+    .daoNavigation {
+      height: 0px;
+      min-height: auto;
+      overflow: hidden;
+      transition: all .25s ease;
+
+      .daoName a span {
+        position: absolute;
+        padding-left: 0;
+        top: -5px;
+        left: 64px;
+        margin-top: -3px;
+        transform: translateY(0);
+        font-size: 13px;
+      }
+
+      .navigation li a {
+        padding: 4px 23px 4px 8px;
+      }
+    }
+  }
+
+  .menuWrapper {
+    position: relative;
+    height: auto;
+    padding-bottom: 20px;
+  
+    ul li {
+      height: auto;
+    
+      a {
+        padding: 3px 0 3px 30px;
+      }
+    }
+
+    ul li:hover ul {
+      left: 40px;
+      top: -20px;
+    }
+
+    ul li ul {
+      position: absolute;
+    }
+  }
+
+  .daoDescription {
+    position: absolute;
+    top: 35px;
+    left: 64px;
+    font-size: 12px;
+  }
+
+  .navHeading {
+    margin-top: -40px;
+  }
+  
+  .daoHoldings ul li {
+    display: inline-block;
+  }
+
+  .menuToggle {
+    display: block;
+    position: absolute;
+    top: -30px;
+    top: -34px;
+    left: 12px;
+
+    .menuClosed {
+      display: block;
+    }
+
+    .menuOpen {
+      display: none;
+    }
+
+    &:hover {
+      .menuClosed {
+        display: none;
+      }
+
+      .menuOpen {
+        display: block;
+      }
     }
   }
 }
