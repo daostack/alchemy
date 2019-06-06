@@ -2,9 +2,7 @@ import { IDAOState, IProposalType } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { default as Util } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -36,20 +34,14 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface FormValues {
-  beneficiary: string;
   description: string;
-  ethReward: number;
-  externalTokenAddress: string;
-  externalTokenReward: number;
-  nativeTokenReward: number;
-  reputationReward: number;
+  callData: string;
   title: string;
   url: string;
-
-  [key: string]: any;
+  value: number;
 }
 
-class CreateContributionReward extends React.Component<IProps, null> {
+class CreateGenericScheme extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
@@ -60,14 +52,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
 
-    if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
-
     const proposalValues = {...values,
-      type: IProposalType.ContributionReward,
-      ethReward: Util.toWei(Number(values.ethReward)),
-      externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
-      nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
-      reputationReward: Util.toWei(Number(values.reputationReward))
+      type: IProposalType.GenericScheme
     };
 
     setSubmitting(false);
@@ -82,8 +68,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
-          const dao: IDAOState = state.data;
-
           // TODO: this is used to check uniqueness of proposalDescriptions,
           // it is disabled at this moment, but should be restored
           // const proposalDescriptions = (dao.proposals as IProposalState[])
@@ -95,15 +79,10 @@ class CreateContributionReward extends React.Component<IProps, null> {
             <div className={css.contributionReward}>
               <Formik
                 initialValues={{
-                  beneficiary: "",
-                  description: "",
-                  ethReward: 0,
-                  externalTokenAddress: TOKENS["GEN"],
-                  externalTokenReward: 0,
-                  nativeTokenReward: 0,
-                  reputationReward: 0,
+                  callData: "",
                   title: "",
-                  url: ""
+                  url: "",
+                  value: 0
                 } as FormValues}
                 validate={(values: FormValues) => {
                   const errors: any = {};
@@ -114,9 +93,15 @@ class CreateContributionReward extends React.Component<IProps, null> {
                     }
                   };
 
+                  const nonEmpty = (name: string) => {
+                    if (!(values as any)[name].toString()) {
+                      errors[name] = "Required";
+                    }
+                  };
+
                   const nonNegative = (name: string) => {
                     if ((values as any)[name] < 0) {
-                      errors[name] = "Please enter a non-negative reward";
+                      errors[name] = "Please enter a non-negative value";
                     }
                   };
 
@@ -129,26 +114,19 @@ class CreateContributionReward extends React.Component<IProps, null> {
                     errors.description = "Must be unique";
                   }
 
-                  if (!arc.web3.utils.isAddress(values.beneficiary)) {
-                    errors.beneficiary = "Invalid address";
-                  }
-
                   const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
                   if (values.url && !pattern.test(values.url)) {
                     errors.url = "Invalid URL";
                   }
 
-                  nonNegative("ethReward");
-                  nonNegative("externalTokenReward");
-                  nonNegative("nativeTokenReward");
-
-                  require("description");
-                  require("title");
-                  require("beneficiary");
-
-                  if (!values.ethReward && !values.reputationReward && !values.externalTokenReward && !values.nativeTokenReward) {
-                    errors.rewards = "Please select at least some reward";
+                  const bytesPattern = new RegExp("0x[0-9a-e]+", "i");
+                  if (values.callData && !bytesPattern.test(values.callData)) {
+                    errors.callData = "Invalid encoded function call data";
                   }
+
+                  require("callData");
+                  nonEmpty("value");
+                  nonNegative("value");
 
                   return errors;
                 }}
@@ -162,7 +140,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   setFieldValue
                 }: FormikProps<FormValues>) =>
                   <Form noValidate>
-
                     <label htmlFor="titleInput">
                       Title
                       <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -205,97 +182,40 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       className={touched.url && errors.url ? css.error : null}
                     />
 
-                    <div className={css.clearfix}>
+                    <div>
                       <div>
-                        <label htmlFor="beneficiary">
-                          Recipient
-                          <ErrorMessage name="beneficiary">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                        <label htmlFor="callData">
+                          Encoded function call data
+                          <ErrorMessage name="callData">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           <div className={css.requiredMarker}>*</div>
                         </label>
-                        <UserSearchField
-                          daoAvatarAddress={daoAvatarAddress}
-                          name="beneficiary"
-                          onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
-                          onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                         <Field
+                          id="callDataInput"
+                          component="textarea"
+                          placeholder="The encoded function call data of the contract function call"
+                          name="callData"
+                          className={touched.callData && errors.callData ? css.error : null}
                         />
                       </div>
 
-                      <div className={css.reward}>
-                        <label htmlFor="ethRewardInput">
-                          ETH Reward
-                          <ErrorMessage name="ethReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                      <div>
+                        <label htmlFor="value">
+                          ETH Value
+                          <ErrorMessage name="value">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                          <div className={css.requiredMarker}>*</div>
                         </label>
                         <Field
-                          id="ethRewardInput"
-                          placeholder="How much ETH to reward"
-                          name="ethReward"
+                          id="valueInput"
+                          placeholder="How much ETH to transfer with the call"
+                          name="value"
                           type="number"
-                          className={touched.ethReward && errors.ethReward ? css.error : null}
+                          className={touched.value && errors.value ? css.error : null}
                           min={0}
                           step={0.1}
                         />
                       </div>
-
-                      <div className={css.reward}>
-                        <label htmlFor="reputationRewardInput">
-                          Reputation Reward
-                          <ErrorMessage name="reputationReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="reputationRewardInput"
-                          placeholder="How much reputation to reward"
-                          name="reputationReward"
-                          type="number"
-                          className={touched.reputationReward && errors.reputationReward ? css.error : null}
-                          step={0.1}
-                        />
-                      </div>
-
-                      <div className={css.reward}>
-                        <img src="/assets/images/Icon/down.svg" className={css.downV}/>
-                        <label htmlFor="externalRewardInput">
-                          External Token Reward
-                          <ErrorMessage name="externalTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="externalTokenRewardInput"
-                          placeholder={`How many tokens to reward`}
-                          name="externalTokenReward"
-                          type="number"
-                          className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
-                          min={0}
-                          step={0.1}
-                        />
-                        <Field
-                          id="externalTokenInput"
-                          name="externalTokenAddress"
-                          component="select"
-                          className={css.externalTokenSelect}
-                        >
-                          { Object.keys(TOKENS).map((token) => <option key={token} value={TOKENS[token]}>{token}</option>) }
-                        </Field>
-                      </div>
-
-                      <div className={css.reward}>
-                        <label htmlFor="nativeTokenRewardInput">
-                          DAO token ({dao.tokenSymbol}) Reward
-                          <ErrorMessage name="nativeTokenReward">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                        </label>
-                        <Field
-                          id="nativeTokenRewardInput"
-                          maxLength={10}
-                          placeholder="How many tokens to reward"
-                          name="nativeTokenReward"
-                          type="number"
-                          className={touched.nativeTokenReward && errors.nativeTokenReward ? css.error : null}
-                        />
-                      </div>
-
-                      {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
-                          && touched.reputationReward && errors.rewards &&
-                        <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
-                      }
                     </div>
+
                     <div className={css.createProposalActions}>
                       <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                         Cancel
@@ -317,4 +237,4 @@ class CreateContributionReward extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateContributionReward);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateGenericScheme);

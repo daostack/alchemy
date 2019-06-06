@@ -23,7 +23,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
-import TransferDetails from "./TransferDetails";
+import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
@@ -124,7 +124,8 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposals/" + proposal.queue.name}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
 
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
@@ -174,7 +175,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               : " "
             }
 
-            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true}/>
+            <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true}/>
 
             <div className={css.voteButtonsBottom}>
                <span className={css.voteLabel}>Vote:</span>
@@ -207,7 +208,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
               <div className={css.voteStatus + " clearfix"}>
                 <div className={css.voteGraph}>
-                  <VoteGraph size={90} dao={dao} proposal={proposal }/>
+                  <VoteGraph size={90} dao={dao} proposal={proposal} />
                 </div>
 
                 <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} detailView={true} />

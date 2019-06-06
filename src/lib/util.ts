@@ -46,8 +46,8 @@ export default class Util {
   public static getWeb3() {
     return getArc().web3;
   }
-  public static getNetworkId() {
-    return getArc().web3.eth.net.getId();
+  public static async getNetworkId() {
+    return await getArc().web3.eth.net.getId();
   }
 
   public static defaultAccount() {
@@ -94,7 +94,30 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
   });
 }
 
-export function getNetworkName(id: string): string {
+export function knownSchemes() {
+  const arc = getArc();
+
+  return {
+    [arc.contractAddresses.ContributionReward.toLowerCase()]: "Contribution Reward",
+    [arc.contractAddresses.SchemeRegistrar.toLowerCase()]: "Scheme Registrar",
+    [arc.contractAddresses.GenericScheme.toLowerCase()]: "Generic Scheme",
+  };
+}
+
+export function schemeName(address: string) {
+  const contracts = knownSchemes();
+  if (address.toLowerCase() in contracts) {
+    return contracts[address.toLowerCase()];
+  }
+
+  return address.slice(0, 4) + "..." + address.slice(-4);
+}
+
+export async function getNetworkName(id?: string): Promise<string> {
+  if (!id) {
+    id = (await Util.getNetworkId()).toString();
+  }
+
   switch (id) {
     case "main":
     case "1":
@@ -117,4 +140,13 @@ export function getNetworkName(id: string): string {
     default:
       return `unknown (${id})`;
   }
+}
+
+export function linkToEtherScan(address: Address) {
+  let prefix = "";
+  const arc = getArc();
+  if (arc.web3.currentProvider.networkVersion === "4") {
+    prefix = "rinkeby.";
+  }
+  return `https://${prefix}etherscan.io/address/${address}`;
 }

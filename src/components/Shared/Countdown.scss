@@ -24,7 +24,12 @@
 
   strong {
   	font-weight: normal;
+  	font-family: $body-font;
   }
+}
+
+.schemeView .timeSection strong {
+	color: rgba(154, 169, 181, 1.000);
 }
 
 .overTime {

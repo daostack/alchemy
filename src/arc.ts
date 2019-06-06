@@ -47,6 +47,18 @@ const settings = {
 export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
   const deployedContractAddresses = require("@daostack/migration/migration.json");
 
+  // TODO: a quick hack for the dxDAO test: we need to get the address fromt he subgraph
+  // THIS WILL NEED TO GO!!
+  if (key === "rinkeby") {
+    return {
+        Redeemer: "0x48763e6a4e6b25ecefc6d697ff6bf55d95b7a1c9",
+        GenesisProtocol: "0xe3692ad4ed2d2817bea59aed435ce17d28e884eb",
+        ContributionReward: "0x88fba19bf273cf75945ded8986745da140a99145",
+        GenericScheme: "0x5663ca36e790f1f55198404f35ba3afb64949150",
+        SchemeRegistrar: "0x5c946957903a173cde9da121aec73d549d6200cc",
+        GEN: "0x543Ff227F64Aa17eA132Bf9886cAb5DB55DCAddf"
+    };
+  }
   const addresses = {
       ...deployedContractAddresses[key]
    };
@@ -65,7 +77,7 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
  */
 export async function checkMetaMaskAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    const metamask = checkMetaMask();
+    const metamask = await checkMetaMask();
     await metamask.enable();
     return metamask;
   } catch (err) {
@@ -88,7 +100,7 @@ export async function checkMetaMaskAndWarn(showNotification?: any): Promise<bool
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export function checkMetaMask() {
+export async function checkMetaMask(metamask?: any) {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -108,13 +120,18 @@ export function checkMetaMask() {
     }
   }
 
-  const web3Provider = getMetaMask();
+  let web3Provider: any;
+  if (metamask) {
+    web3Provider = metamask;
+  } else {
+    web3Provider = getMetaMask();
+  }
   if (!web3Provider) {
     const msg = `Please install or enable metamask`;
     throw Error(msg);
   }
-  const networkId = web3Provider.networkVersion;
-  const networkName = getNetworkName(networkId);
+
+  const networkName = await getNetworkName(web3Provider.networkVersion);
   if (networkName === expectedNetworkName) {
     return web3Provider;
   } else {
@@ -199,17 +216,17 @@ export async function initializeArc(): Promise<Arc> {
       console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
     } catch (err) {
       if (err.message.match(/timed out/)) {
-        throw Error("Could not connect to Metamask (time out)");
+        console.log("Error: Could not connect to Metamask (time out)");
       }
-      throw err;
+      console.log(err);
     }
   }
 
   try {
-    arcSettings.web3Provider = checkMetaMask();
+    arcSettings.web3Provider = await checkMetaMask(metamask);
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
-    console.log(err.message);
+    console.log(err);
   }
 
   // log some useful info

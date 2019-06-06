@@ -14,7 +14,12 @@ interface IProps {
 export default class ReputationView extends React.Component<IProps, null> {
   public render() {
     const { daoName, hideSymbol, reputation, totalReputation } = this.props;
-
+    const PRECISION  = 2; // how many digits behind
+    let percentage: number = 0;
+    if (totalReputation.gt(new BN(0))) {
+      percentage = new BN(100 * 10 ** PRECISION).mul(reputation).div(totalReputation).toNumber() / (10 ** PRECISION);
+    }
+    const percentageString = percentage.toLocaleString(undefined, {minimumFractionDigits: PRECISION, maximumFractionDigits: PRECISION});
     return (
       <Tooltip placement="bottom" overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}>
         <span data-test-id="reputation">

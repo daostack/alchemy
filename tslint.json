@@ -21,6 +21,7 @@
         "jsx-wrap-multiline": false,
         "jsx-no-lambda": false,
         "jsx-curly-spacing": false,
+        "no-bitwise": false,
         "no-shadowed-variable": false,
         "no-var-requires": false,
         "no-empty": false,
