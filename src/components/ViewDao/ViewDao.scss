@@ -1249,4 +1249,24 @@ a.navItem:hover {
       display: none;
     }
   }
+
+  .wrapper {
+    padding: 50px 0 100px 0 ;
+  }
+
+  .noticeWrapper {
+    height: 86px;
+    
+    .noticeBuffer {
+      display: none;
+    }
+
+    .notice {
+      padding-right: 40px;
+
+      .closeNotice {
+        background-color: transparent;
+      }
+    }
+  }
 }
