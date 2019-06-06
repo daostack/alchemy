@@ -1,4 +1,6 @@
-/*
+// tslint:disable:max-classes-per-file
+
+/* eslint-disable no-console *//*
  * TODO: This logic will move to the client library, where it willb e properly tested
  */
 const Web3 = require("web3");
