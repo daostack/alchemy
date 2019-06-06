@@ -114,6 +114,7 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
     proposals(where: {
       accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
       dao: "${props.dao.address}"
+      # TODO: when we upgrade the the new version of the subgraph, this line will be unecessary : daostack/subgraph#252
       stage_in: ["Executed"]
     }) {
       id
@@ -136,7 +137,6 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
     }
   }
   `;
-  console.log(query.loc.source.body);
   return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
       if (state.error) {
         return <div>{ state.error.message }</div>;
