@@ -50,7 +50,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps;
 
 interface IState {
-  error: string;
+  error: Error;
   sentryEventId: string;
   notificationsMinimized: boolean;
 }
@@ -67,21 +67,18 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public componentDidCatch(error: Error, errorInfo: any) {
-    this.setState({ error: error.toString() });
+    this.setState({ error });
 
-    Sentry.withScope((scope) => {
-      scope.setExtras(errorInfo);
-      const sentryEventId = Sentry.captureException(error);
-      this.setState({ sentryEventId });
-    });
+    if (process.env.NODE_ENV === "PRODUCTION") {
+      Sentry.withScope((scope) => {
+        scope.setExtras(errorInfo);
+        const sentryEventId = Sentry.captureException(error);
+        this.setState({ sentryEventId });
+      });
+    }
   }
 
   public async componentWillMount() {
-    // we initialize Arc
-    // const initializeArc = async () => {};
-    // initializeArc();
-      // .then(async () => {
-        // if Metamask is available, we wathc for any account changes
     let metamask: any;
     const currentAddress = await getCurrentAccountAddress();
     if (currentAddress)  {
@@ -131,9 +128,10 @@ class AppContainer extends React.Component<IProps, IState> {
     if (this.state.error) {
       // Render error fallback UI
       // TODO: style this!
+      console.log(this.state.error);
       return <div>
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
-        <pre>{ this.state.error }</pre>
+        <pre>{ this.state.error.toString() }</pre>
       </div>;
     } else {
       return (

@@ -11,12 +11,12 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-export function createProposal(daoAvatarAddress: string, proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
+export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     try {
       const arc = getArc();
 
-      const dao = new DAO(daoAvatarAddress, arc);
+      const dao = new DAO(proposalOptions.dao, arc);
 
       // TODO: use the Option stages of the client lib to communicate about the progress
       const observer = operationNotifierObserver(dispatch, "Create proposal");
@@ -34,7 +34,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
     const arc = getArc();
     // TODO: the subscription should defined in a separate contant so it can be reuse
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
-    const proposalObj = arc.dao(avatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
 
     // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
@@ -58,7 +58,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
-    const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");
     // @ts-ignore
     await proposalObj.vote(voteOption).subscribe(...observer);
@@ -79,7 +79,7 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any>, ) => {
     const arc = getArc();
-    const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
     // @ts-ignore
     await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subscribe(...observer);
@@ -102,7 +102,7 @@ export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
 export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>) => {
     const arc = getArc();
-    const proposalObj = arc.dao(daoAvatarAddress).proposal(proposalId);
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");
     // @ts-ignore
     await proposalObj.claimRewards(accountAddress).subscribe(...observer);

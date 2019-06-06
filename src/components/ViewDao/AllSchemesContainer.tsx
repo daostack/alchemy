@@ -1,4 +1,4 @@
-import { IDAOState, Queue } from "@daostack/client";
+import { IDAOState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -26,17 +26,17 @@ const Fade = ({ children, ...props }: any) => (
 
 interface IProps {
   dao: IDAOState;
-  queues: Queue[];
+  schemes: Scheme[];
 }
 
 const AllSchemesContainer = (props: IProps) => {
-  const { dao, queues } = props;
+  const { dao, schemes } = props;
 
   const schemeCardsHTML = (
     <TransitionGroup>
-      { queues.map((queue: Queue) => (
-        <Fade key={"scheme " + queue.id}>
-          <SchemeCardContainer dao={dao} scheme={queue} />
+      { schemes.map((scheme: Scheme) => (
+        <Fade key={"scheme " + scheme.id}>
+          <SchemeCardContainer dao={dao} scheme={scheme} />
         </Fade>
       ))}
     </TransitionGroup>
@@ -47,7 +47,7 @@ const AllSchemesContainer = (props: IProps) => {
       <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
       <h1>All Schemes</h1>
-      { queues.length === 0
+      { schemes.length === 0
         ? <div>
             <img src="/assets/images/meditate.svg"/>
             <div>
@@ -69,16 +69,16 @@ export default(props: { } & RouteComponentProps<any>) => {
 
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).state(), // DAO state
-    arc.dao(daoAvatarAddress).queues()
+    arc.dao(daoAvatarAddress).schemes()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IDAOState, Queue[]]>): any => {
+    (state: IObservableState<[IDAOState, Scheme[]]>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
-        return <AllSchemesContainer dao={state.data[0]} queues={state.data[1]} />;
+        return <AllSchemesContainer dao={state.data[0]} schemes={state.data[1]} />;
       }
     }
   }</Subscribe>;

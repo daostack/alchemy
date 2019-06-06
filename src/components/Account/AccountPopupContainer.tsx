@@ -25,7 +25,6 @@ interface IStateProps {
   historyView?: boolean;
   profile: IProfileState;
   reputation: BN;
-  tokens: BN;
 }
 
 interface IOwnProps {
@@ -44,7 +43,6 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     dao,
     profile: state.profiles[account.address],
     reputation: account ? account.reputation : new BN(0),
-    tokens: account ? account.tokens : new BN(0),
   };
 };
 

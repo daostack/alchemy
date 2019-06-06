@@ -1,4 +1,4 @@
-import { IDAOState, IProposalType } from "@daostack/client";
+import { IDAOState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -8,6 +8,10 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
+
+interface IContainerProps {
+  scheme: Scheme;
+}
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -31,7 +35,7 @@ const mapDispatchToProps = {
   showNotification
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IContainerProps & IStateProps & IDispatchProps;
 
 interface FormValues {
   description: string;
@@ -51,13 +55,13 @@ class CreateGenericScheme extends React.Component<IProps, null> {
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
-
     const proposalValues = {...values,
-      type: IProposalType.GenericScheme
+      scheme: this.props.scheme.address,
+      dao: this.props.daoAvatarAddress
     };
 
     setSubmitting(false);
-    await this.props.createProposal(this.props.daoAvatarAddress, proposalValues);
+    await this.props.createProposal(proposalValues);
     this.props.handleClose();
   }
 
@@ -68,13 +72,6 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
       (state: IObservableState<IDAOState>) => {
         if ( state.data !== null ) {
-          // TODO: this is used to check uniqueness of proposalDescriptions,
-          // it is disabled at this moment, but should be restored
-          // const proposalDescriptions = (dao.proposals as IProposalState[])
-          //   .filter((proposal) => !proposalEnded(proposal))
-          //   .map((proposal) => proposal.description);
-          const proposalDescriptions: string[] = [];
-
           return (
             <div className={css.contributionReward}>
               <Formik
@@ -107,11 +104,6 @@ class CreateGenericScheme extends React.Component<IProps, null> {
 
                   if (values.title.length > 120) {
                     errors.title = "Title is too long (max 120 characters)";
-                  }
-
-                  // TODO: do we want this uniqueness check still?
-                  if (proposalDescriptions.indexOf(values.description) !== -1) {
-                    errors.description = "Must be unique";
                   }
 
                   const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
