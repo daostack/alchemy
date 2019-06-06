@@ -69,10 +69,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
             : schemeName === "SchemeRegistrar" ?
               <CreateSchemeRegistrarProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme}   />
             : schemeName === "GenericScheme" ?
-              <CreateDutchXProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} />
-{/*            : <CreateGenericSchemeProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
-*/}
-            : ""
+              <CreateDutchXProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
+            : <CreateGenericSchemeProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
           }
         </div>;
       }

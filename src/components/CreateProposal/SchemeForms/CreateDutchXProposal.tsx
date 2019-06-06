@@ -1,9 +1,8 @@
 // const BN = require("bn.js");
-import { IProposalType, Queue } from "@daostack/client";
+import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { checkMetaMaskAndWarn } from "arc";
 import * as classNames from "classnames";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -15,6 +14,7 @@ import * as css from "../CreateProposal.scss";
 interface IStateProps {
   daoAvatarAddress: string;
   handleClose: () => any;
+  scheme: Scheme;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
@@ -84,18 +84,17 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     }
     setSubmitting(false);
 
+    const proposalValues = {
+      ...values,
+      callData,
+      dao: this.props.daoAvatarAddress,
+      scheme: this.props.scheme.address,
+      type: IProposalType.GenericScheme,
+      value: 0, // amount of eth to send with the call
+    };
+
     try {
-      await this.props.createProposal(
-        this.props.daoAvatarAddress,
-        {
-          title: values.title,
-          description: values.description,
-          url: values.url,
-          type: IProposalType.GenericScheme,
-          value: 0, // amount of eth to send with the call
-          callData
-        }
-      );
+      await this.props.createProposal(proposalValues);
     } catch (err) {
       alert(err.message);
       throw err;
@@ -341,21 +340,4 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedCreateDutchXProposalContainer = connect(mapStateToProps, mapDispatchToProps)(CreateDutchXProposalContainer);
-
-export default(props: IStateProps) => {
-  const arc = getArc();
-  //TODO: dont need this
-  const observable = arc.dao(props.daoAvatarAddress).queues();
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<Queue[]>): any => {
-      if (state.isLoading) {
-        return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
-      } else if (state.error) {
-        throw state.error;
-      } else {
-        return <ConnectedCreateDutchXProposalContainer {...props} />;
-      }
-    }
-  }</Subscribe>;
-};
+export default connect(mapStateToProps, mapDispatchToProps)(CreateDutchXProposalContainer);
