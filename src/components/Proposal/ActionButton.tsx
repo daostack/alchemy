@@ -13,7 +13,7 @@ import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Observable, of} from "rxjs";
-import RedemptionsString from "./RedemptionsString";
+/* import RedemptionsString from "./RedemptionsString"; */
 import RedemptionsTip from "./RedemptionsTip";
 
 import * as css from "./ActionButton.scss";
@@ -168,10 +168,10 @@ class ActionButton extends React.Component<IProps, IState> {
             </button>
           : redeemable ?
             <div>
-              { !detailView ?
+              {/* !detailView ?
                   <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposalState} rewards={rewardsForCurrentUser} />
                   : ""
-              }
+              */}
               <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                 <button
                   style={{ whiteSpace: "nowrap" }}
