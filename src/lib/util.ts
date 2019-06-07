@@ -193,17 +193,17 @@ export function linkToEtherScan(address: Address) {
 
 export function getClaimableRewards(reward: IRewardState) {
   const result: {[key: string]: BN} = {};
-  if (reward.reputationForProposer.gt(new BN(0)) && new BN(reward.reputationForProposerRedeemedAt) === new BN(0)) {
+  if (reward.reputationForProposer.gt(new BN(0)) && new BN(reward.reputationForProposerRedeemedAt).isZero()) {
     result.reputationForProposer = reward.reputationForProposer;
   }
-  if (reward.reputationForVoter.gt(new BN(0)) && new BN(reward.reputationForVoterRedeemedAt) === new BN(0)) {
+  if (reward.reputationForVoter.gt(new BN(0)) && new BN(reward.reputationForVoterRedeemedAt).isZero()) {
     result.reputationForVoter = reward.reputationForVoter;
   }
 
-  if (reward.tokensForStaker.gt(new BN(0)) && new BN(reward.tokensForStakerRedeemedAt) === new BN(0)) {
+  if (reward.tokensForStaker.gt(new BN(0)) && new BN(reward.tokensForStakerRedeemedAt).isZero()) {
     result.tokensForStaker = reward.tokensForStaker;
   }
-  if (reward.daoBountyForStaker.gt(new BN(0)) && new BN(reward.daoBountyForStakerRedeemedAt) === new BN(0)) {
+  if (reward.daoBountyForStaker.gt(new BN(0)) && new BN(reward.daoBountyForStakerRedeemedAt).isZero()) {
     result.daoBountyForStaker = reward.daoBountyForStaker;
   }
   return result;
