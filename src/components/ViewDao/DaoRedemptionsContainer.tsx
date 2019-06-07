@@ -132,6 +132,7 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
         id
         address
       }
+      votingMachine
       # next line does not work anymore, apparently...
       # gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
       gpRewards {
@@ -145,7 +146,6 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
         reputationForVoterRedeemedAt
         reputationForProposer
         reputationForProposerRedeemedAt
-        votingMachine
       }
     }
   }
