@@ -40,6 +40,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     // TODO: move all the next logic to the client library
     // calculate the total rewards from the genesisprotocol
     const genReward = new BN("0");
+    const ethReward = new BN("0");
     const reputationReward = new BN(0);
     // , externalTokenReward = 0;
     proposals.forEach((proposal) => {
@@ -60,15 +61,20 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
           }
         }
       });
+      const contributionReward = proposal.contributionReward;
+      if (contributionReward && contributionReward.beneficiary === currentAccountAddress.toLowerCase()) {
+         ethReward.iadd(contributionReward.ethReward);
+      }
+
     });
 
-        // if (ethReward) {
-    //   totalRewards.push(formatTokens(ethReward, "ETH"));
-    // }
+    const totalRewards: any[] = [];
+    if (ethReward.gt(new BN(0))) {
+      totalRewards.push(formatTokens(ethReward, "ETH"));
+    }
     // if (externalTokenReward) {
     //   totalRewards.push(formatTokens(externalTokenReward, dao.externalTokenSymbol));
     // }
-    const totalRewards: any[] = [];
     if (genReward) {
       totalRewards.push(formatTokens(genReward, "GEN"));
     }
@@ -146,6 +152,21 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
         reputationForVoterRedeemedAt
         reputationForProposer
         reputationForProposerRedeemedAt
+      }
+      contributionReward {
+        id
+        beneficiary
+        ethReward
+        externalToken
+        externalTokenReward
+        externalToken
+        nativeTokenReward
+        periods
+        periodLength
+        reputationReward
+        alreadyRedeemedReputationPeriods
+        alreadyRedeemedExternalTokenPeriods
+        alreadyRedeemedEthPeriods
       }
     }
   }
