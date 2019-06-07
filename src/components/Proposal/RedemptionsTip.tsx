@@ -69,8 +69,9 @@ export default (props: IProps) => {
     {(beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
-          {(currentAccountAddress === contributionReward.beneficiary) ?
-              "As the" : "The"} beneficiary of the proposal {currentAccountAddress === contributionReward.beneficiary ? "you " : ""}will receive:
+          {(currentAccountAddress.toLowerCase() === contributionReward.beneficiary.toLowerCase()) ?
+              "As the beneficiary of the proposal you will recieve" :
+              "The beneficiary of the proposal will receive"}
         </strong>
         <ul>
           {hasEthReward ?
