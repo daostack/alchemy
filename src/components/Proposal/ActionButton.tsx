@@ -1,10 +1,11 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkMetaMaskAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import { hasClaimableRewards } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -13,10 +14,10 @@ import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Observable, of} from "rxjs";
+import { map, mergeMap } from "rxjs/operators";
+import * as css from "./ActionButton.scss";
 /* import RedemptionsString from "./RedemptionsString"; */
 import RedemptionsTip from "./RedemptionsTip";
-
-import * as css from "./ActionButton.scss";
 
 interface IStateProps {
   beneficiaryProfile: IProfileState;
@@ -29,7 +30,7 @@ interface IContainerProps {
   detailView?: boolean;
   expired: boolean;
   proposalState: IProposalState;
-  rewardsForCurrentUser: IRewardState[];
+  rewardsForCurrentUser: IRewardState;
 }
 
 interface IDispatchProps {
@@ -109,7 +110,7 @@ class ActionButton extends React.Component<IProps, IState> {
         (contributionReward.externalTokenReward.gt(new BN(0))) // && externalTokenBalance.gte(contributionReward.externalTokenReward))
       ) as boolean;
 
-      accountHasRewards = rewardsForCurrentUser.length !== 0;
+      accountHasRewards = hasClaimableRewards(rewardsForCurrentUser);
       redeemable = proposalState.executedAt && (accountHasRewards || beneficiaryHasRewards);
 
       redemptionsTip = RedemptionsTip({
@@ -196,8 +197,6 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
-
 interface IMyProps {
   currentAccountAddress?: Address;
   dao: IDAOState;
@@ -207,14 +206,18 @@ interface IMyProps {
   proposalState: IProposalState;
 }
 
+const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
+
 export default (props: IMyProps) => {
 
   const proposalState = props.proposalState;
-  let observable: Observable<any[]>;
+  let observable: Observable<IRewardState>;
   if (props.currentAccountAddress) {
-    observable = proposalState.proposal.rewards({beneficiary: props.currentAccountAddress});
+    observable = proposalState.proposal.rewards({beneficiary: props.currentAccountAddress})
+      .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
+      .pipe(mergeMap(((reward) => reward.state())));
   } else {
-    observable = of([[]]);
+    observable = of(null);
   }
 
   return <Subscribe observable={observable}>{(state: IObservableState<any>) => {

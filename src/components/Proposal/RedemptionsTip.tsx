@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
-import Util, { formatTokens, tokenSymbol } from "lib/util";
+import Util, { formatTokens, getClaimableRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
@@ -9,7 +9,7 @@ interface IProps {
   currentAccountAddress: Address;
   dao: IDAOState;
   proposal: IProposalState;
-  rewardsForCurrentUser: IRewardState[];
+  rewardsForCurrentUser: IRewardState;
 }
 
 export default (props: IProps) => {
@@ -17,49 +17,47 @@ export default (props: IProps) => {
 
   const rewardComponents = [];
   // rewards of current user
-  for (const reward of rewardsForCurrentUser) {
-    let c = null;
-    if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt !== 0) {
-      c = <div key={reward.id}>
-          <strong>For creating the proposal you will receive:</strong>
-          <ul>
-            <li><ReputationView reputation={reward.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-          </ul>
-        </div>;
-      rewardComponents.push(c);
-    }
-    if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt !== 0) {
-      c = <div key={reward.id}>
-          <strong>For voting on the proposal you will receive:</strong>
-          <ul>
-            <li><ReputationView reputation={reward.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-          </ul>
-        </div>;
-      rewardComponents.push(c);
-    }
-    if (reward.tokensForStaker.gt(new BN(0)) && reward.tokensForStakerRedeemedAt !== 0) {
-      c = <div key={reward.id}>
-        <strong>For staking on the proposal you will receive:</strong>
+  const claimableRewards = getClaimableRewards(rewardsForCurrentUser);
+  let c = null;
+  if (claimableRewards.reputationForProposer) {
+    c = <div key={rewardsForCurrentUser.id}>
+        <strong>For creating the proposal you will receive:</strong>
         <ul>
-          <li>{Util.fromWei(reward.tokensForStaker)} GEN</li>
+          <li><ReputationView reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
         </ul>
       </div>;
-      rewardComponents.push(c);
-    }
-    if (reward.daoBountyForStaker.gt(new BN(0)) && reward.daoBountyForStakerRedeemedAt !== 0) {
-      c = <div key={reward.id}>
-        <strong>For staking on the proposal you will receive:</strong>
+    rewardComponents.push(c);
+  }
+  if (claimableRewards.reputationForVoter) {
+    c = <div key={rewardsForCurrentUser.id}>
+        <strong>For voting on the proposal you will receive:</strong>
         <ul>
-          <li>{Util.fromWei(reward.daoBountyForStaker)} GEN bounty
-          { /*
-            // TODO: subscribe to tokenBalance
-            dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : "" */}
-          </li>
+          <li><ReputationView reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
         </ul>
-      </div >;
-      rewardComponents.push(c);
-    }
-
+      </div>;
+    rewardComponents.push(c);
+  }
+  if (claimableRewards.tokensForStaker) {
+    c = <div key={rewardsForCurrentUser.id}>
+      <strong>For staking on the proposal you will receive:</strong>
+      <ul>
+        <li>{Util.fromWei(claimableRewards.tokensForStaker)} GEN</li>
+      </ul>
+    </div>;
+    rewardComponents.push(c);
+  }
+  if (claimableRewards.daoBountyForStaker) {
+    c = <div key={rewardsForCurrentUser.id}>
+      <strong>For staking on the proposal you will receive:</strong>
+      <ul>
+        <li>{Util.fromWei(claimableRewards.daoBountyForStaker)} GEN bounty
+        { /*
+          // TODO: subscribe to tokenBalance
+          dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : "" */}
+        </li>
+      </ul>
+    </div >;
+    rewardComponents.push(c);
   }
 
   const contributionReward = proposal.contributionReward;

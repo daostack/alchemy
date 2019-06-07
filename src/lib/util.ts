@@ -1,4 +1,4 @@
-import { Address, IProposalState } from "@daostack/client";
+import { Address, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import { getArc } from "../arc";
 
@@ -189,4 +189,32 @@ export function linkToEtherScan(address: Address) {
     prefix = "rinkeby.";
   }
   return `https://${prefix}etherscan.io/address/${address}`;
+}
+
+export function getClaimableRewards(reward: IRewardState) {
+  const result: {[key: string]: BN} = {};
+  if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt !== 0) {
+    result.reputationForProposer = reward.reputationForProposer;
+  }
+  if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt !== 0) {
+    result.reputationForVoter = reward.reputationForVoter;
+  }
+
+  if (reward.tokensForStaker.gt(new BN(0)) && reward.tokensForStakerRedeemedAt !== 0) {
+    result.tokensForStaker = reward.tokensForStaker;
+  }
+  if (reward.daoBountyForStaker.gt(new BN(0)) && reward.daoBountyForStakerRedeemedAt !== 0) {
+    result.daoBountyForStaker = reward.daoBountyForStaker;
+  }
+  return result;
+}
+
+// TOOD: move this function to the client library!
+export function hasClaimableRewards(reward: IRewardState) {
+  const claimableRewards = getClaimableRewards(reward);
+  for (let key of Object.keys(claimableRewards)) {
+    if (claimableRewards[key].gt(new BN(0))) {
+      return true;
+    }
+  }
 }
