@@ -66,6 +66,10 @@ export default (props: IProps) => {
   const hasReputationReward = !contributionReward.reputationReward.isZero();
 
   return <div>
+    <React.Fragment>
+      { rewardComponents }
+    </React.Fragment>
+
     {(beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
       <div>
         <strong>
@@ -92,9 +96,6 @@ export default (props: IProps) => {
         </ul>
       </div> : ""
     }
-    <React.Fragment>
-      { rewardComponents }
-    </React.Fragment>
 
   </div>;
 };

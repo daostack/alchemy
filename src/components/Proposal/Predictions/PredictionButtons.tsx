@@ -214,8 +214,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     );
 
     // If don't have any staking allowance, replace with button to pre-approve
-
-    if (currentAccountGenStakingAllowance.eq(new BN(0))) {
+    if (stakingEnabled && currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
@@ -258,7 +257,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               }
             </span>
             : <span className={css.disabledPredictions}>
-               Predictions are disabled
+                { /* Predictions are disabled */ }
             </span>
           }
         </div>
