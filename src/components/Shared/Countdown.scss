@@ -1,13 +1,22 @@
 .container {
   width: 100%;
+  white-space: nowrap;
 }
 
 .detailView {
 	text-align: right;
 
-	.timeSection strong {
-		font-weight: bold;
-	    margin-right: 8px;
+  .label {
+    margin-right: 8px;
+		color: $black-halftone;
+  }
+
+	.timeSection {
+
+    strong {
+      font-weight: bold;
+      display: inline-block;
+    }
 	}
 }
 
@@ -25,6 +34,12 @@
   strong {
   	font-weight: normal;
   	font-family: $body-font;
+  }
+
+  .colon {
+    display: inline-block;
+    margin-left: 6px;
+    margin-right: 6px;
   }
 }
 
