@@ -196,7 +196,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
             </div>
           </div>
         </div>
-      </div >
+      </div>
     );
   }
 }
