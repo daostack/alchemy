@@ -83,7 +83,7 @@
       }
     },
     {
-      "id": "addOrRemoveTokens",
+      "id": "updateApprovalOfToken",
       "label": "Add/Remove Tokens",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/TokenWhitelist.sol#L28",
       "fields": [
@@ -92,8 +92,11 @@
           "name": "token"
         },
         {
-          "label": "Add?",
-          "name": "approved"
+          "name": "approved",
+          "defaultValue": 1,
+          "label": "Choose whether to add or remove tokens from the whitelist",
+          "labelTrue": "Add tokens",
+          "labelFalse": "Remove tokens"
         }
       ],
       "abi": {

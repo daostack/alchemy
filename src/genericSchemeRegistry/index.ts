@@ -15,6 +15,17 @@ interface IABISpec {
   stateMutability: string;
   type: string;
 }
+
+export interface IFieldSpec {
+  decimals?: number;
+  defaultValue?: any;
+  name: string;
+  label?: string;
+  labelTrue?: string;
+  labelFalse?: string;
+  type?: string;
+}
+
 export interface IActionSpec {
   id: string;
   label: string;
@@ -52,7 +63,7 @@ export class Action implements IActionSpec {
       result.push({
         name: this.abi.inputs[i].name,
         type: this.abi.inputs[i].type,
-        label: this.fields && this.fields[i].label
+        ...this.fields[i]
       });
     }
     return result;

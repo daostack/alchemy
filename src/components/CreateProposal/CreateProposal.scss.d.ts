@@ -47,3 +47,4 @@ export const schemeSelect: string;
 export const parametersHash: string;
 export const permissions: string;
 export const permissionsLabel: string;
+export const radioButtons: string;

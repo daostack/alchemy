@@ -8,7 +8,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { Action, GenericSchemeInfo, GenericSchemeRegistry} from "../../../genericSchemeRegistry";
+import { Action, IFieldSpec, GenericSchemeInfo, GenericSchemeRegistry} from "../../../genericSchemeRegistry";
 import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
@@ -69,8 +69,11 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     const currentAction = this.state.currentAction;
 
     const callValues = [];
-    for (let input of currentAction.abi.inputs) {
-      callValues.push(values[input.name]);
+    for (let field of currentAction.getFields()) {
+      if (field.type == "bool") {
+        values[field.name] = parseInt(values[field.name]) === 1;
+      }
+      callValues.push(values[field.name]);
     }
     let callData: string = "";
     try {
@@ -106,14 +109,36 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     this.setState({ currentAction: this.state.genericSchemeInfo.action(tab) });
   }
 
-  public renderField(field: { name: string, type: string, label: string}, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
+  public renderField(field: IFieldSpec, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
     let type = "string";
     switch (field.type) {
       case "uint256":
         type = "number";
         break;
       case "bool":
-        type = "checkbox";
+        return <div className={css.radioButtons}>
+            <Field
+              id={field.name + "_true"}
+              name={field.name}
+              checked={parseInt(values[field.name]) === 1}
+              type="radio"
+              value={1}
+            />
+            <label htmlFor={field.name + "_true"}>
+              {field.labelTrue}
+            </label>
+
+            <Field
+              id={field.name + "_false"}
+              name={field.name}
+              checked={parseInt(values[field.name]) === 0}
+              type="radio"
+              value={0}
+            />
+            <label htmlFor={field.name + "_false"}>
+              {field.labelFalse}
+            </label>
+          </div>
         break;
       default:
         if (field.type.includes("[]")) {
@@ -133,7 +158,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                     <button
                       className={css.addSubtract}
                       type="button"
-                      onClick={() => arrayHelpers.insert(index, "")} // insert an empty string at a position
+                      onClick={() => arrayHelpers.insert(index + 1, "")} // insert an empty string at a position
                     >
                       +
                     </button>
@@ -174,21 +199,25 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
       url: ""
     };
 
-    actions.forEach((action) => action.abi.inputs.forEach((input: any) => {
-      switch (input.type) {
-        case "uint256":
-          initialFormValues[input.name] = "";
-          break;
-        case "address":
-        case "string":
-          initialFormValues[input.name] = "";
-          break;
-        case "bool":
-          initialFormValues[input.name] = false;
-          break;
-        case "address[]":
-          initialFormValues[input.name] = [];
-          break;
+    actions.forEach((action) => action.getFields().forEach((field: IFieldSpec) => {
+      if (typeof(field.defaultValue) !== "undefined") {
+        initialFormValues[field.name] = field.defaultValue;
+      } else {
+        switch (field.type) {
+          case "uint256":
+            initialFormValues[field.name] = "";
+            break;
+          case "address":
+          case "string":
+            initialFormValues[field.name] = "";
+            break;
+          case "bool":
+            initialFormValues[field.name] = 0;
+            break;
+          case "address[]":
+            initialFormValues[field.name] = [];
+            break;
+        }
       }
     }));
 
@@ -304,15 +333,13 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
                     }
                   >
                     {
-                      currentAction.getFields().map((field: { name: string, type: string, label: string}) => {
-                        // TODO: show different field depending on field.type
-
+                      currentAction.getFields().map((field: IFieldSpec) => {
                         return (
                           <div key={field.name}>
                             <label htmlFor={field.name}>
                               { field.label }
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                              <div className={css.requiredMarker}>*</div>
+                              {field.type !== "bool" ? <div className={css.requiredMarker}>*</div> : ""}
                             </label>
 
                             {this.renderField(field, values, touched, errors)}

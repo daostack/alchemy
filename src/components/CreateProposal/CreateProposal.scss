@@ -392,7 +392,7 @@
 
     .addToken {
       margin-top: 3px;
-      
+
       .tokenField {
         margin-bottom: 15px;
       }
@@ -509,5 +509,28 @@
         z-index: 1000;
       }
     }
+  }
+}
+
+form .radioButtons {
+  input {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+    margin: 0 5px;
+    padding: 0px;
+  }
+
+  label {
+    display: inline-block;
+    width: auto;
+    font-weight: normal;
+    vertical-align: middle;
+    padding: 0;
+
+    .requiredMarker {
+      display: none;
+    }
+
   }
 }
