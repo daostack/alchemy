@@ -309,18 +309,22 @@
   font-size: 14px;
   line-height: 24px;
 
+  p {
+    padding: 0 10px
+  }
+
   button {
     width: 100px;
     margin: 0 auto;
-      border: none;
+    border: none;
     cursor: pointer;
-      height: 30px;
-      line-height: 30px;
-      font-size: 13px;
-      color: white;
-      background-color: #0376ff;
-      border-radius: 15px;
-      display: block;
-      padding: 0 15px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 13px;
+    color: white;
+    background-color: #0376ff;
+    border-radius: 15px;
+    display: block;
+    padding: 0 15px;
   }
 }
