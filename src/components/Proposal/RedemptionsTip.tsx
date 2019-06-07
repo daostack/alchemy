@@ -62,17 +62,13 @@ export default (props: IProps) => {
 
   const contributionReward = proposal.contributionReward;
 
-  const hasEthReward = contributionReward.ethReward.gt(new BN(0));
-  const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
-  const hasReputationReward = !contributionReward.reputationReward.isZero();
-
-  return <div>
-    <React.Fragment>
-      { rewardComponents }
-    </React.Fragment>
-
-    {(beneficiaryHasRewards || hasEthReward || hasExternalReward) ?
-      <div>
+  let ContributionRewardDiv = <div />;
+  if (contributionReward) {
+    const hasEthReward = contributionReward.ethReward.gt(new BN(0));
+    const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
+    const hasReputationReward = !contributionReward.reputationReward.isZero();
+    if (beneficiaryHasRewards || hasEthReward || hasExternalReward) {
+      ContributionRewardDiv = <div>
         <strong>
           {(currentAccountAddress.toLowerCase() === contributionReward.beneficiary.toLowerCase()) ?
               "As the beneficiary of the proposal you will recieve" :
@@ -95,8 +91,15 @@ export default (props: IProps) => {
           }
           {hasReputationReward ? <li><ReputationView reputation={contributionReward.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
         </ul>
-      </div> : ""
+      </div>;
     }
 
+  }
+
+  return <div>
+    <React.Fragment>
+      { rewardComponents }
+    </React.Fragment>
+    { ContributionRewardDiv }
   </div>;
 };

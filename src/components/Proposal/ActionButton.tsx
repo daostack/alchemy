@@ -96,7 +96,9 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
 
-    let accountHasRewards, beneficiaryHasRewards, redeemable = false, redemptionsTip, redeemButtonClass;
+    let beneficiaryHasRewards, redeemable = false, redemptionsTip, redeemButtonClass;
+
+    const accountHasGPRewards = hasClaimableRewards(rewardsForCurrentUser);
     if (proposalState.contributionReward) {
       const contributionReward = proposalState.contributionReward;
 
@@ -109,11 +111,13 @@ class ActionButton extends React.Component<IProps, IState> {
         (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
         (contributionReward.externalTokenReward.gt(new BN(0))) // && externalTokenBalance.gte(contributionReward.externalTokenReward))
       ) as boolean;
+    } else {
+      beneficiaryHasRewards = false;
+    }
 
-      accountHasRewards = hasClaimableRewards(rewardsForCurrentUser);
-      redeemable = proposalState.executedAt && (accountHasRewards || beneficiaryHasRewards);
+    redeemable = proposalState.executedAt && (accountHasGPRewards || beneficiaryHasRewards);
 
-      redemptionsTip = RedemptionsTip({
+    redemptionsTip = RedemptionsTip({
         beneficiaryHasRewards,
         currentAccountAddress,
         dao,
@@ -121,10 +125,9 @@ class ActionButton extends React.Component<IProps, IState> {
         rewardsForCurrentUser
       });
 
-      redeemButtonClass = classNames({
+    redeemButtonClass = classNames({
         [css.redeemButton]: true,
       });
-    }
 
     const wrapperClass = classNames({
       [css.wrapper]: true,
@@ -183,7 +186,7 @@ class ActionButton extends React.Component<IProps, IState> {
                 >
                   <img src="/assets/images/Icon/redeem.svg" />
                   {
-                      beneficiaryHasRewards && !accountHasRewards ?
+                      beneficiaryHasRewards && !accountHasGPRewards ?
                         " Redeem for beneficiary" :
                         " Redeem"
                   }
