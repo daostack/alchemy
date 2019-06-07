@@ -96,7 +96,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         <div className={css.redemptionsHeader}>
           Redemptions
           {proposals.length > 0 ?
-              <span>Pending Rewards:&nbsp;{totalRewardsString}</span>
+              <span>Pending Protocol Rewards:&nbsp;{totalRewardsString}</span>
             : ""
           }
         </div>
