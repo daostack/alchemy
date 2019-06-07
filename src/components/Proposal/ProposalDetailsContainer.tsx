@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -17,7 +17,8 @@ import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, of } from "rxjs";
+import { combineLatest, concat, from, of } from "rxjs";
+import { concatMap } from "rxjs/operators";
 import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
@@ -42,7 +43,6 @@ interface IContainerProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoEthBalance: BN;
   proposal: IProposalState;
-  rewardsForCurrentUser: IRewardState[];
   votesOfCurrentUser: IVote[];
 }
 
@@ -87,7 +87,6 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
       proposal,
       isVotingNo,
       isVotingYes,
-      rewardsForCurrentUser,
       votesOfCurrentUser
     } = this.props;
 
@@ -137,7 +136,6 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 detailView={true}
                 expired={expired}
                 proposal={proposal}
-                rewardsForCurrentUser={rewardsForCurrentUser}
               />
             </div>
             <h3 className={css.proposalTitleTop}>
@@ -258,29 +256,25 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
   const dao = arc.dao(props.dao.address);
   const proposalId = props.match.params.proposalId;
 
-  const observable = combineLatest(
-    dao.proposal(proposalId).state(), // state of the current proposal
-    props.currentAccountAddress ? dao.proposal(proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
-    props.currentAccountAddress ? dao.proposal(proposalId).votes({ voter: props.currentAccountAddress }) : of([]), //3
+  const observable = from(dao.proposal(proposalId)).pipe(concatMap((proposal: Proposal) => combineLatest(
+    proposal.state(), // state of the current proposal
+    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
+  ))
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IRewardState[], IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, IVote[], BN]>): any => {
       if (state.isLoading) {
         return <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const proposal = state.data[0];
-        const rewards = state.data[1];
-        const votes = state.data[2];
-        const daoEthBalance = state.data[3];
+        const [proposal, votes, daoEthBalance] = state.data;
         return <ConnectedProposalDetailsContainer
           {...props}
           daoEthBalance={daoEthBalance}
           proposal={proposal}
           dao={props.dao}
-          rewardsForCurrentUser={rewards}
           votesOfCurrentUser={votes}
         />;
       }

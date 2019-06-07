@@ -1,27 +1,27 @@
-import { IDAOState, IProposalStage, Proposal } from "@daostack/client";
-import { getArc } from "arc";
+import { DAO, IDAOState,
+  IProposalStage,
+  Proposal
+  } from "@daostack/client";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { combineLatest } from "rxjs";
-
 import * as css from "./DaoList.scss";
 
 interface IProps {
-  address: string;
+  dao: DAO;
 }
 
 const DaoContainer = (props: IProps) => {
-  const { address } = props;
-  const arc = getArc();
-  const dao = arc.dao(address);
+  // const { address } = props;
+  const dao = props.dao;
   const observable = combineLatest(
     dao.proposals({
-      stage: IProposalStage.Queued,
+      stage_in: [IProposalStage.Queued, IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod],
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
-    }), // the list of queued proposals
-    dao.state() // DAO state
+    }),
+    dao.state()
   );
 
   return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], IDAOState]>) => {
@@ -30,8 +30,8 @@ const DaoContainer = (props: IProps) => {
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const dao = state.data[1];
-        const bgPattern = GeoPattern.generate(dao.address + dao.name);
+        const [proposals, daoState] = state.data;
+        const bgPattern = GeoPattern.generate(dao.address + daoState.name);
 
         return <Link
           className={css.daoLink}
@@ -40,7 +40,7 @@ const DaoContainer = (props: IProps) => {
           data-test-id="dao-link"
         >
           <div className={css.dao}>
-            <h3 className={css.daoName} style={{backgroundImage: bgPattern.toDataUrl()}}>{dao.name}</h3>
+            <h3 className={css.daoName} style={{backgroundImage: bgPattern.toDataUrl()}}>{daoState.name}</h3>
 
             <div className={"clearfix " + css.daoInfoContainer}>
               <div className={css.daoInfoTitle}>
@@ -48,12 +48,12 @@ const DaoContainer = (props: IProps) => {
               </div>
 
               <div className={css.daoInfo}>
-                <b>{dao.memberCount}</b>
+                <b>{daoState.memberCount || "?"}</b>
                 <span>Reputation Holders</span>
                </div>
 
               <div className={css.daoInfo}>
-                <b>{state.data[0].length}</b>
+                <b>{proposals.length}</b>
                 <span>Open Proposals</span>
                </div>
 

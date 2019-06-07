@@ -124,6 +124,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               </div>
             ||
               <div className={css.accountInfo}>
+                {/* TODO: remove this, as we never should see it */}
                 <button className={css.metaMaskLogin} onClick={this.handleClickLogin}>
                   <img src="/assets/images/metamask.png"/>
                   Please log in!

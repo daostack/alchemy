@@ -22,8 +22,15 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
   public render() {
     const { dao, proposals, currentAccountAddress } = this.props;
 
-    const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalCardContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+    const arc = getArc();
+    const proposalsHTML = proposals.map((proposalData: any) => {
+      const proposal = new Proposal(proposalData.id, dao.address, proposalData.scheme.address, proposalData.votingMachine, arc);
+
+      return <ProposalCardContainer
+        key={"proposal_" + proposal.id}
+        proposal={proposal} dao={dao}
+        currentAccountAddress={currentAccountAddress}
+      />;
     });
 
     // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,
@@ -105,7 +112,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
 }
 
-export default (props: { dao: IDAOState, currentAccountAddress: Address } & RouteComponentProps<any>) => {
+export default (props: { dao: IDAOState, currentAccountAddress?: Address } & RouteComponentProps<any>) => {
   if (!props.currentAccountAddress) {
     return <div>Please log in to see your rewards</div>;
   }
@@ -121,9 +128,15 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
       dao {
         id
       }
+      scheme {
+        id
+        address
+      }
       # next line does not work anymore, apparently...
       # gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
       gpRewards {
+        id
+        beneficiary
         tokensForStaker
         tokensForStakerRedeemedAt
         daoBountyForStaker
@@ -132,7 +145,7 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
         reputationForVoterRedeemedAt
         reputationForProposer
         reputationForProposerRedeemedAt
-        beneficiary
+        votingMachine
       }
     }
   }
@@ -141,7 +154,7 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
       if (state.error) {
         return <div>{ state.error.message }</div>;
       } else if (state.data) {
-        return <DaoRedemptionsContainer {...props} dao={props.dao} proposals={state.data.data.proposals}/>;
+        return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }

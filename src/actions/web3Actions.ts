@@ -1,3 +1,4 @@
+import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";
@@ -24,9 +25,11 @@ export function setCurrentAccount(accountAddress: string) {
     };
     dispatch(action);
 
-    Sentry.configureScope((scope) => {
-      scope.setUser({ id: accountAddress || "" });
-    });
+    if (process.env.NODE_ENV === "PRODUCTION") {
+      Sentry.configureScope((scope) => {
+        scope.setUser({ id: accountAddress || "" });
+      });
+    }
 
     // if the accountAddress is undefined, we are done
     if (accountAddress === undefined) {
@@ -44,7 +47,7 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
 }>;
 
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
-export function approveStakingGens(daoAvatarAddress: string) {
+export function approveStakingGens(spender: Address) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     const arc = getArc();
     const currentAccountAddress: string = getState().web3.currentAccountAddress;
@@ -62,7 +65,7 @@ export function approveStakingGens(daoAvatarAddress: string) {
     } as ApproveAction);
 
     try {
-      await arc.approveForStaking(Util.toWei(100000)).send();
+      await arc.approveForStaking(spender, Util.toWei(100000)).send();
     } catch (err) {
       console.error(err);
       dispatch({

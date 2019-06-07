@@ -1,9 +1,12 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkMetaMaskAndWarn } from "arc";
+import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import gql from "graphql-tag";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -11,6 +14,7 @@ import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import { Observable, of} from "rxjs";
 import RedemptionsString from "./RedemptionsString";
 import RedemptionsTip from "./RedemptionsTip";
 
@@ -21,7 +25,7 @@ interface IStateProps {
 }
 
 interface IContainerProps {
-  currentAccountAddress: Address;
+  currentAccountAddress?: Address;
   dao: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
@@ -110,7 +114,13 @@ class ActionButton extends React.Component<IProps, IState> {
       accountHasRewards = rewardsForCurrentUser.length !== 0;
       redeemable = proposal.executedAt && (accountHasRewards || beneficiaryHasRewards);
 
-      redemptionsTip = RedemptionsTip({ beneficiaryHasRewards, currentAccountAddress, dao, proposal, rewardsForCurrentUser });
+      redemptionsTip = RedemptionsTip({
+        beneficiaryHasRewards,
+        currentAccountAddress,
+        dao,
+        proposal,
+        rewardsForCurrentUser
+      });
 
       redeemButtonClass = classNames({
         [css.redeemButton]: true,
@@ -139,12 +149,13 @@ class ActionButton extends React.Component<IProps, IState> {
         { proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.lte(new BN(0)) ?
             <button className={css.preboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
+              { /* space after <span> is there on purpose */ }
               <span> Pre-Boost</span>
             </button> :
           proposal.stage === IProposalStage.PreBoosted && expired && proposal.downStakeNeededToQueue.lte(new BN(0)) ?
             <button className={css.unboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
-              <span>Un-Boost</span>
+              <span> Un-Boost</span>
             </button> :
           proposal.stage === IProposalStage.PreBoosted && expired ?
             <button className={css.boostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
@@ -154,6 +165,7 @@ class ActionButton extends React.Component<IProps, IState> {
           (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && expired ?
             <button className={css.executeButton} onClick={this.handleClickExecute.bind(this)}>
               <img src="/assets/images/Icon/execute.svg"/>
+              { /* space after <span> is there on purpose */ }
               <span> Execute</span>
             </button>
           : redeemable ?
@@ -168,6 +180,7 @@ class ActionButton extends React.Component<IProps, IState> {
                   disabled={false}
                   className={redeemButtonClass}
                   onClick={this.handleClickRedeem.bind(this)}
+                  data-test-id="button-redeem"
                 >
                   <img src="/assets/images/Icon/redeem.svg" />
                   {
@@ -185,4 +198,65 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActionButton);
+const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
+
+interface IMyProps {
+  currentAccountAddress?: Address;
+  dao: IDAOState;
+  daoEthBalance: BN;
+  detailView?: boolean;
+  expired: boolean;
+  proposal: IProposalState;
+}
+
+export default (props: IMyProps) => {
+
+  const arc = getArc();
+  const proposal = props.proposal;
+  let observable: Observable<any[]>;
+  if (props.currentAccountAddress) {
+    const query = gql`       {
+      gprewards (where: {
+        beneficiary: "${props.currentAccountAddress}"
+        proposal: "${proposal.id}"
+      }) {
+        id
+        tokensForStaker
+        daoBountyForStaker
+        reputationForVoter
+        reputationForProposer
+        beneficiary
+      }
+    }`;
+    observable = arc.getObservable(query);
+  } else {
+    observable = of([[]]);
+  }
+
+  return <Subscribe observable={observable}>{(state: IObservableState<any>) => {
+      if (state.isLoading) {
+        return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
+      } else if (state.error) {
+        return <div>{ state.error.message }</div>;
+      } else {
+        let rewardsForCurrentUser: any[];
+        if (props.currentAccountAddress) {
+          const rewardsFromGraphQl = state.data.data.gprewards;
+          rewardsForCurrentUser = rewardsFromGraphQl.map((obj: any) => {
+            return {
+              id: obj.id,
+              tokensForStaker: new BN(obj.tokensForStaker),
+              daoBountyForStaker: new BN(obj.daoBountyForStaker),
+              reputationForVoter: new BN(obj.reputationForVoter),
+              reputationForProposer: new BN(obj.reputationForProposer),
+              beneficiary: obj.beneficiary
+            };
+          });
+        } else {
+          rewardsForCurrentUser = [];
+        }
+        return <ConnectedActionButton { ...props} rewardsForCurrentUser={rewardsForCurrentUser} />;
+      }
+    }
+  }</Subscribe>;
+};

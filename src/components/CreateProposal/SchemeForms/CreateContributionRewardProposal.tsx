@@ -1,4 +1,4 @@
-import { IDAOState, IProposalType } from "@daostack/client";
+import { IDAOState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -10,6 +10,10 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
+
+interface IContainerProps {
+  scheme: Scheme;
+}
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -33,7 +37,7 @@ const mapDispatchToProps = {
   showNotification
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IContainerProps & IStateProps & IDispatchProps;
 
 interface FormValues {
   beneficiary: string;
@@ -53,7 +57,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
-
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -63,7 +66,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
     const proposalValues = {...values,
-      type: IProposalType.ContributionReward,
+      scheme: this.props.scheme.address,
+      dao: this.props.daoAvatarAddress,
       ethReward: Util.toWei(Number(values.ethReward)),
       externalTokenReward: Util.toWei(Number(values.externalTokenReward)),
       nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
@@ -71,7 +75,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
     };
 
     setSubmitting(false);
-    await this.props.createProposal(this.props.daoAvatarAddress, proposalValues);
+    await this.props.createProposal(proposalValues);
     this.props.handleClose();
   }
 
