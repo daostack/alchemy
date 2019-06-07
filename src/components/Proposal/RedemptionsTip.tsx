@@ -19,7 +19,7 @@ export default (props: IProps) => {
   // rewards of current user
   for (const reward of rewardsForCurrentUser) {
     let c = null;
-    if (reward.reputationForProposer.gt(new BN(0))) {
+    if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt !== 0) {
       c = <div key={reward.id}>
           <strong>For creating the proposal you will receive:</strong>
           <ul>
@@ -27,7 +27,8 @@ export default (props: IProps) => {
           </ul>
         </div>;
       rewardComponents.push(c);
-    } else if (reward.reputationForVoter.gt(new BN(0))) {
+    }
+    if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt !== 0) {
       c = <div key={reward.id}>
           <strong>For voting on the proposal you will receive:</strong>
           <ul>
@@ -35,7 +36,8 @@ export default (props: IProps) => {
           </ul>
         </div>;
       rewardComponents.push(c);
-    }  else if (reward.tokensForStaker.gt(new BN(0))) {
+    }
+    if (reward.tokensForStaker.gt(new BN(0)) && reward.tokensForStakerRedeemedAt !== 0) {
       c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
@@ -43,7 +45,8 @@ export default (props: IProps) => {
         </ul>
       </div>;
       rewardComponents.push(c);
-    }  else if (reward.daoBountyForStaker.gt(new BN(0))) {
+    }
+    if (reward.daoBountyForStaker.gt(new BN(0)) && reward.daoBountyForStakerRedeemedAt !== 0) {
       c = <div key={reward.id}>
         <strong>For staking on the proposal you will receive:</strong>
         <ul>
