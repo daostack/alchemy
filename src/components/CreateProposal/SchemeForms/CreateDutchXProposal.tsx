@@ -2,6 +2,7 @@
 import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn } from "arc";
+import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import * as React from "react";
@@ -72,6 +73,9 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     for (let field of currentAction.getFields()) {
       if (field.type === "bool") {
         values[field.name] = parseInt(values[field.name], 10) === 1;
+      }
+      if (field.decimals) {
+        values[field.name] = (new BN(values[field.name]).mul(new BN(10).pow(new BN(field.decimals)))).toString();
       }
       callValues.push(values[field.name]);
     }

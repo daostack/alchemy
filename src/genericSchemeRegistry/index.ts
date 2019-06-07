@@ -58,7 +58,7 @@ export class Action implements IActionSpec {
   }
 
   public getFields() {
-    const result: any[] = [];
+    const result: IFieldSpec[] = [];
     for (let i = 0; i <  this.abi.inputs.length; i++) {
       result.push({
         name: this.abi.inputs[i].name,

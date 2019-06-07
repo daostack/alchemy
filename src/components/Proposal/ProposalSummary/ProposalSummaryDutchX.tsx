@@ -1,4 +1,5 @@
-import { linkToEtherScan } from "lib/util";
+import BN = require("bn.js");
+import { formatTokens, linkToEtherScan } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 
@@ -78,7 +79,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Set new token pair threshold to ${callData.values[0]}
+              Set new token pair threshold to ${formatTokens(new BN(callData.values[0]))}
             </span>
           </div>
         );
@@ -87,7 +88,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Set new auction threshold to ${callData.values[0]}
+              Set new auction threshold to ${formatTokens(new BN(callData.values[0]))}
             </span>
           </div>
         );
