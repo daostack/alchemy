@@ -128,3 +128,14 @@
     color: rgba(154, 169, 181, 1.000);
   }
 }
+
+
+@media only screen and (max-width: 425px) {
+  .wrapper {
+    display: block;
+
+    div {
+      display: inline-block;
+    }
+  }
+}

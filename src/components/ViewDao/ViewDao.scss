@@ -1284,4 +1284,33 @@ a.navItem:hover {
     padding-top: 10px;
     padding-bottom: 0px;
   }
+
+  .address {
+    font-size: 10px;
+    opacity: .7;
+  }
+
+  .reputationAmounts {
+    position: absolute;
+    right: 10px;
+    top: 21px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+
+  a:visited {
+    color: rgba(0, 28, 53, 1.000);
+  }
+
+  .noProfile {
+    opacity: .4;
+  }
+
+  .member {
+    position: relative;
+  }
+
+  .membersContainer h2 {
+    padding-left: 10px;
+  }
 }

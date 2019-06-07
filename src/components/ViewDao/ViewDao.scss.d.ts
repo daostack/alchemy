@@ -92,3 +92,6 @@ export const startButton: string;
 export const openMenu: string;
 export const menuClosed: string;
 export const menuOpen: string;
+export const address: string;
+export const reputationAmounts: string;
+export const noProfile: string;
