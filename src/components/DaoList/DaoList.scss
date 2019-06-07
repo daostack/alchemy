@@ -105,3 +105,40 @@ a.daoLink {
 		vertical-align: middle;
 	}
 }
+
+
+@media only screen and (max-width: 425px) {
+	.wrapper {
+		width: auto;
+		padding: 0;
+	}
+
+	.dao {
+		width: auto;
+		border-radius: 0;
+		margin: 0 0 15px 0;
+		left: 0;
+	}
+
+	a.daoLink .daoName {
+		border-radius: 0 0 0 0;
+	}
+
+	a.daoLink .daoInfo b {
+		font-size: 20px;
+	}
+
+	.daoLink .daoInfo {
+
+
+		span {
+			font-size: 13px;
+			font-weight: normal;
+			font-family: "Open Sans";
+		}
+	}
+
+	.daoListHeader h2 {
+		text-align: center;
+	}
+}

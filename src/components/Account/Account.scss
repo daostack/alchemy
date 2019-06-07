@@ -400,3 +400,47 @@ input {
   text-align: center;
   margin-top: 30px;
 }
+
+
+@media only screen and (max-width: 425px) {
+  .profileWrapper {
+    display: block;
+  }
+
+  .profileContainer {
+    width: auto;
+    padding: 0;
+
+    form {
+      border-radius: 0;
+      padding: 15px;
+    }
+
+    input,textarea {
+      width: 88%;
+    }
+
+    .socialButton button {
+      background-color: transparent;
+    }
+
+    .profileDataContainer {
+      display: block;
+    }
+  }
+
+  .setupProfile {
+    padding: 15px;
+  }
+
+  .submitButton {
+    margin-right: 0;
+    margin-top: 15px;
+  }
+
+  .socialProof {
+    left: 70px;
+    opacity: .6;
+    width: 77%;
+  }
+}
