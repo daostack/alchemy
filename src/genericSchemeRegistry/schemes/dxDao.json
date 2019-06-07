@@ -124,6 +124,7 @@
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L248",
       "fields": [
         {
+          "decimals": 18,
           "label": "New Threshold",
           "name": "_thresholdNewTokenPair"
         }
@@ -149,6 +150,7 @@
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L252",
       "fields": [
         {
+          "decimals": 18,
           "label": "New Threshold",
           "name": "_thresholdNewAuction"
         }

@@ -8,7 +8,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { Action, IFieldSpec, GenericSchemeInfo, GenericSchemeRegistry} from "../../../genericSchemeRegistry";
+import { Action, GenericSchemeInfo, GenericSchemeRegistry, IFieldSpec} from "../../../genericSchemeRegistry";
 import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
@@ -70,8 +70,8 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
 
     const callValues = [];
     for (let field of currentAction.getFields()) {
-      if (field.type == "bool") {
-        values[field.name] = parseInt(values[field.name]) === 1;
+      if (field.type === "bool") {
+        values[field.name] = parseInt(values[field.name], 10) === 1;
       }
       callValues.push(values[field.name]);
     }
@@ -120,7 +120,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
             <Field
               id={field.name + "_true"}
               name={field.name}
-              checked={parseInt(values[field.name]) === 1}
+              checked={parseInt(values[field.name], 10) === 1}
               type="radio"
               value={1}
             />
@@ -131,14 +131,14 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
             <Field
               id={field.name + "_false"}
               name={field.name}
-              checked={parseInt(values[field.name]) === 0}
+              checked={parseInt(values[field.name], 10) === 0}
               type="radio"
               value={0}
             />
             <label htmlFor={field.name + "_false"}>
               {field.labelFalse}
             </label>
-          </div>
+          </div>;
         break;
       default:
         if (field.type.includes("[]")) {
