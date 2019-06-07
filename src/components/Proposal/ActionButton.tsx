@@ -1,12 +1,10 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkMetaMaskAndWarn } from "arc";
-import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import gql from "graphql-tag";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -30,7 +28,7 @@ interface IContainerProps {
   daoEthBalance: BN;
   detailView?: boolean;
   expired: boolean;
-  proposal: IProposalState;
+  proposalState: IProposalState;
   rewardsForCurrentUser: IRewardState[];
 }
 
@@ -41,10 +39,10 @@ interface IDispatchProps {
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps & IContainerProps => {
-  const proposal = ownProps.proposal;
+  const proposalState = ownProps.proposalState;
 
   return {...ownProps,
-    beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
+    beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
   };
 };
 
@@ -71,7 +69,7 @@ class ActionButton extends React.Component<IProps, IState> {
 
   public async handleClickExecute(event: any) {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
-    await this.props.executeProposal(this.props.dao.address, this.props.proposal.id, this.props.currentAccountAddress);
+    await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
   public handleClickRedeem(event: any) {
@@ -90,16 +88,16 @@ class ActionButton extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       expired,
-      proposal,
+      proposalState,
       redeemProposal,
       rewardsForCurrentUser
     } = this.props;
 
-    const executable = proposalEnded(proposal) && !proposal.executedAt;
+    const executable = proposalEnded(proposalState) && !proposalState.executedAt;
 
     let accountHasRewards, beneficiaryHasRewards, redeemable = false, redemptionsTip, redeemButtonClass;
-    if (proposal.contributionReward) {
-      const contributionReward = proposal.contributionReward;
+    if (proposalState.contributionReward) {
+      const contributionReward = proposalState.contributionReward;
 
       // TODO: should be the DAO balance of the proposal.externalToken
       //const externalTokenBalance = dao.externalTokenBalance || new BN(0);
@@ -112,13 +110,13 @@ class ActionButton extends React.Component<IProps, IState> {
       ) as boolean;
 
       accountHasRewards = rewardsForCurrentUser.length !== 0;
-      redeemable = proposal.executedAt && (accountHasRewards || beneficiaryHasRewards);
+      redeemable = proposalState.executedAt && (accountHasRewards || beneficiaryHasRewards);
 
       redemptionsTip = RedemptionsTip({
         beneficiaryHasRewards,
         currentAccountAddress,
         dao,
-        proposal,
+        proposal: proposalState,
         rewardsForCurrentUser
       });
 
@@ -137,32 +135,32 @@ class ActionButton extends React.Component<IProps, IState> {
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
             actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-            action={redeemProposal.bind(null, dao.address, proposal.id, proposal.contributionReward.beneficiary)}
+            action={redeemProposal.bind(null, dao.address, proposalState.id, proposalState.contributionReward.beneficiary)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
             dao={dao}
             effectText={redemptionsTip}
-            proposal={proposal}
+            proposal={proposalState}
           /> : ""
         }
 
-        { proposal.stage === IProposalStage.Queued && proposal.upstakeNeededToPreBoost.lte(new BN(0)) ?
+        { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.lte(new BN(0)) ?
             <button className={css.preboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               { /* space after <span> is there on purpose */ }
               <span> Pre-Boost</span>
             </button> :
-          proposal.stage === IProposalStage.PreBoosted && expired && proposal.downStakeNeededToQueue.lte(new BN(0)) ?
+          proposalState.stage === IProposalStage.PreBoosted && expired && proposalState.downStakeNeededToQueue.lte(new BN(0)) ?
             <button className={css.unboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               <span> Un-Boost</span>
             </button> :
-          proposal.stage === IProposalStage.PreBoosted && expired ?
+          proposalState.stage === IProposalStage.PreBoosted && expired ?
             <button className={css.boostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               <span> Boost</span>
             </button> :
-          (proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod) && expired ?
+          (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && expired ?
             <button className={css.executeButton} onClick={this.handleClickExecute.bind(this)}>
               <img src="/assets/images/Icon/execute.svg"/>
               { /* space after <span> is there on purpose */ }
@@ -171,7 +169,7 @@ class ActionButton extends React.Component<IProps, IState> {
           : redeemable ?
             <div>
               { !detailView ?
-                  <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposal} rewards={rewardsForCurrentUser} />
+                  <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposalState} rewards={rewardsForCurrentUser} />
                   : ""
               }
               <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
@@ -206,55 +204,26 @@ interface IMyProps {
   daoEthBalance: BN;
   detailView?: boolean;
   expired: boolean;
-  proposal: IProposalState;
+  proposalState: IProposalState;
 }
 
 export default (props: IMyProps) => {
 
-  const arc = getArc();
-  const proposal = props.proposal;
+  const proposalState = props.proposalState;
   let observable: Observable<any[]>;
   if (props.currentAccountAddress) {
-    const query = gql`       {
-      gprewards (where: {
-        beneficiary: "${props.currentAccountAddress}"
-        proposal: "${proposal.id}"
-      }) {
-        id
-        tokensForStaker
-        daoBountyForStaker
-        reputationForVoter
-        reputationForProposer
-        beneficiary
-      }
-    }`;
-    observable = arc.getObservable(query);
+    observable = proposalState.proposal.rewards({beneficiary: props.currentAccountAddress});
   } else {
     observable = of([[]]);
   }
 
   return <Subscribe observable={observable}>{(state: IObservableState<any>) => {
       if (state.isLoading) {
-        return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
+        return <div>Loading proposal {props.proposalState.id.substr(0, 6)} ...</div>;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        let rewardsForCurrentUser: any[];
-        if (props.currentAccountAddress) {
-          const rewardsFromGraphQl = state.data.data.gprewards;
-          rewardsForCurrentUser = rewardsFromGraphQl.map((obj: any) => {
-            return {
-              id: obj.id,
-              tokensForStaker: new BN(obj.tokensForStaker),
-              daoBountyForStaker: new BN(obj.daoBountyForStaker),
-              reputationForVoter: new BN(obj.reputationForVoter),
-              reputationForProposer: new BN(obj.reputationForProposer),
-              beneficiary: obj.beneficiary
-            };
-          });
-        } else {
-          rewardsForCurrentUser = [];
-        }
+        const rewardsForCurrentUser = state.data;
         return <ConnectedActionButton { ...props} rewardsForCurrentUser={rewardsForCurrentUser} />;
       }
     }
