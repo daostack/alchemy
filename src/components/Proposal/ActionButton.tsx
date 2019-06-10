@@ -105,12 +105,12 @@ class ActionButton extends React.Component<IProps, IState> {
       // TODO: should be the DAO balance of the proposal.externalToken
       //const externalTokenBalance = dao.externalTokenBalance || new BN(0);
 
-      beneficiaryHasRewards = proposalState.winningOutcome == IProposalOutcome.Pass && (
+      beneficiaryHasRewards = (proposalState.winningOutcome === IProposalOutcome.Pass && (
         !contributionReward.reputationReward.isZero() ||
         contributionReward.nativeTokenReward.gt(new BN(0)) ||
         (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
         (contributionReward.externalTokenReward.gt(new BN(0))) // && externalTokenBalance.gte(contributionReward.externalTokenReward))
-      ) as boolean;
+      )) as boolean;
     } else {
       beneficiaryHasRewards = false;
     }
