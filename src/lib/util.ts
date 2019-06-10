@@ -85,7 +85,7 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
   if (amount === 0) {
     returnString = "0";
   } else if (amount < 0.01) {
-    returnString = ">0";
+    returnString = "+0";
   } else if (amount < 1000) {
     returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
   } else if (amount < 1000000) {
