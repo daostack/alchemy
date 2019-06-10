@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkMetaMaskAndWarn } from "arc";
 import BN = require("bn.js");
@@ -6,10 +6,12 @@ import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { hasClaimableRewards } from "lib/util";
+import * as moment from "moment";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
+import { closingTime } from "reducers/arcReducer";
 import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -28,7 +30,6 @@ interface IContainerProps {
   dao: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
-  expired: boolean;
   proposalState: IProposalState;
   rewardsForCurrentUser: IRewardState;
 }
@@ -41,7 +42,6 @@ interface IDispatchProps {
 
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps & IContainerProps => {
   const proposalState = ownProps.proposalState;
-
   return {...ownProps,
     beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
   };
@@ -88,13 +88,13 @@ class ActionButton extends React.Component<IProps, IState> {
       dao,
       daoEthBalance,
       detailView,
-      expired,
       proposalState,
       redeemProposal,
       rewardsForCurrentUser
     } = this.props;
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
+    const expired = closingTime(proposalState).isSameOrBefore(moment());
 
     let beneficiaryHasRewards, redeemable = false, redemptionsTip, redeemButtonClass;
 
@@ -105,7 +105,7 @@ class ActionButton extends React.Component<IProps, IState> {
       // TODO: should be the DAO balance of the proposal.externalToken
       //const externalTokenBalance = dao.externalTokenBalance || new BN(0);
 
-      beneficiaryHasRewards = (
+      beneficiaryHasRewards = proposalState.winningOutcome == IProposalOutcome.Pass && (
         !contributionReward.reputationReward.isZero() ||
         contributionReward.nativeTokenReward.gt(new BN(0)) ||
         (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
@@ -205,7 +205,6 @@ interface IMyProps {
   dao: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
-  expired: boolean;
   proposalState: IProposalState;
 }
 

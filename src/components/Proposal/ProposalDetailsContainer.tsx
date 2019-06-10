@@ -135,7 +135,6 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 dao={dao}
                 daoEthBalance={daoEthBalance}
                 detailView={true}
-                expired={expired}
                 proposalState={proposal}
               />
             </div>
