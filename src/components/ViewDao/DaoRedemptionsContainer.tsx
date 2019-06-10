@@ -63,7 +63,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       });
       const contributionReward = proposal.contributionReward;
       if (contributionReward && contributionReward.beneficiary === currentAccountAddress.toLowerCase()) {
-         ethReward.iadd(contributionReward.ethReward);
+         ethReward.iadd(new BN(contributionReward.ethReward));
       }
 
     });
