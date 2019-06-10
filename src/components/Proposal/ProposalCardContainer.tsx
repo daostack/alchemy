@@ -48,7 +48,8 @@ type IProps = IStateProps & IContainerProps;
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps => {
   const proposalState = ownProps.proposalState;
 
-  return {...ownProps,
+  return {
+    ...ownProps,
     beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposalState.proposer],
     isVotingYes: isVotePending(proposalState.id, VoteOptions.Yes)(state),
@@ -105,9 +106,9 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
     });
 
     const voteWrapperClass = classNames({
-      [css.voteBox] : true,
-      clearfix : true,
-      [css.unconfirmedVote] : isVoting
+      [css.voteBox]: true,
+      clearfix: true,
+      [css.unconfirmedVote]: isVoting
     });
 
     const voteControls = classNames({
@@ -120,15 +121,18 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           <div className={css.cardTop + " clearfix"}>
             <div className={css.timer}>
               {!proposalEnded(proposalState) ?
-                  !this.state.expired ?
+                <span className={css.content}>
+                  {!this.state.expired ?
                     <Countdown toDate={closingTime(proposalState)} detailView={false} onEnd={this.countdownEnded.bind(this)} overTime={proposalState.stage === IProposalStage.QuietEndingPeriod && !this.state.expired} /> :
                     <span className={css.closedTime}>
                       {proposalState.stage === IProposalStage.Queued ? "Expired" :
-                       proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
-                       "Closed"}&nbsp;
+                        proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
+                          "Closed"}&nbsp;
                        {closingTime(proposalState).format("MMM D, YYYY")}
                     </span>
-                  : " "
+                  }
+                </span>
+                : " "
               }
             </div>
 
@@ -143,8 +147,8 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.createdBy}>
-            <AccountPopupContainer accountAddress={proposalState.proposer} dao={dao} detailView={false}/>
-            <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false}/>
+            <AccountPopupContainer accountAddress={proposalState.proposer} dao={dao} detailView={false} />
+            <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false} />
           </div>
           <div className={css.description}>
             {proposalState.description}
@@ -153,10 +157,10 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           <h3>
             <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposalState.id} data-test-id="proposal-title">
               <span>{humanProposalTitle(proposalState)}</span>
-              <img src="/assets/images/Icon/Open.svg"/>
+              <img src="/assets/images/Icon/Open.svg" />
             </Link>
           </h3>
-          <ProposalSummary proposal={proposalState} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false}/>
+          <ProposalSummary proposal={proposalState} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false} />
 
         </div>
 
@@ -176,7 +180,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.predictions}>
-             <PredictionGraph
+            <PredictionGraph
               proposal={proposalState}
             />
             <BoostAmount proposal={proposalState} />
@@ -221,7 +225,7 @@ export default (props: IExternalProps) => {
       if (state.isLoading) {
         return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
       } else if (state.error) {
-        return <div>{ state.error.message }</div>;
+        return <div>{state.error.message}</div>;
       } else {
         const [proposalState, votes, daoEthBalance] = state.data;
         return <ConnectedProposalCardContainer
@@ -230,7 +234,7 @@ export default (props: IExternalProps) => {
           proposalState={proposalState}
           dao={props.dao}
           votesOfCurrentUser={votes}
-          />;
+        />;
       }
     }
   }</Subscribe>;
