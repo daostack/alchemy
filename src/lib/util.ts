@@ -119,7 +119,16 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
  */
 export function isKnownScheme(address: Address) {
   const arc = getArc();
-  const contractInfo = arc.getContractInfo(address);
+  let contractInfo;
+  try {
+    contractInfo = arc.getContractInfo(address);
+  } catch (err) {
+    if (err.message.match(/no contract/i)) {
+      return false;
+    }
+    throw err;
+  }
+
   if (["ContributionReward", "SchemeRegistrar", "GenericScheme"].includes(contractInfo.name)) {
     return true;
   } else {
