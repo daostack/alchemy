@@ -201,7 +201,9 @@ export function linkToEtherScan(address: Address) {
 }
 
 export function getClaimableRewards(reward: IRewardState) {
-  if (!reward) return {};
+  if (!reward) {
+    return {};
+  }
 
   const result: {[key: string]: BN} = {};
   if (reward.reputationForProposer.gt(new BN(0)) && new BN(reward.reputationForProposerRedeemedAt).isZero()) {
