@@ -98,6 +98,10 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
 }
 
+export function tokenDetails(tokenAddress: string) {
+  return supportedTokens()[tokenAddress.toLowerCase()];
+}
+
 export function tokenSymbol(tokenAddress: string) {
   const token = supportedTokens()[tokenAddress.toLowerCase()];
   return token ? token["symbol"] : "?";
