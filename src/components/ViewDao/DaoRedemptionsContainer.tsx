@@ -61,10 +61,11 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
           }
         }
       });
-      const contributionReward = proposal.contributionReward;
-      if (contributionReward && contributionReward.beneficiary === currentAccountAddress.toLowerCase()) {
-         ethReward.iadd(new BN(contributionReward.ethReward));
-      }
+      //
+      // const contributionReward = proposal.contributionReward;
+      // if (contributionReward && contributionReward.beneficiary === currentAccountAddress.toLowerCase()) {
+      //    ethReward.iadd(new BN(contributionReward.ethReward));
+      // }
 
     });
 
@@ -75,10 +76,10 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     // if (externalTokenReward) {
     //   totalRewards.push(formatTokens(externalTokenReward, dao.externalTokenSymbol));
     // }
-    if (genReward) {
+    if (!genReward.isZero()) {
       totalRewards.push(formatTokens(genReward, "GEN"));
     }
-    if (reputationReward) {
+    if (!reputationReward.isZero()) {
       totalRewards.push(
         <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
       );
