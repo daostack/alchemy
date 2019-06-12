@@ -1,3 +1,4 @@
+import Util from "lib/util";
 import { DAO, IDAOState, IMemberState, Member } from "@daostack/client";
 import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
@@ -64,6 +65,8 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                 }
                 <div>{memberState.address}</div>
               </div>
+
+              <span className={css.reputationAmount}>{Util.fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
               <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>
 
             </div>
