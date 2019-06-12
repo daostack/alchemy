@@ -59,7 +59,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             }
           </div>
         );
-      case "addOrRemoveTokens":
+      case "updateApprovalOfToken":
         return (
           <div>
             <span className={css.summaryTitle}>

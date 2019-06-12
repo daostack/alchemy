@@ -1,5 +1,5 @@
 {
-  "name": "dxDao",
+  "name": "DutchX",
   "addresses": {
     "main": [],
     "rinkeby": [],
@@ -12,7 +12,7 @@
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
       "fields": [
         {
-          "label": "New Contract Address",
+          "label": "New master copy address",
           "name": "_masterCopy"
         }
       ],
@@ -33,11 +33,11 @@
     },
     {
       "id": "changeETHUSDOracle",
-      "label": "Change ETH:USD Oracle",
+      "label": "Change ETH:USD oracle",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
       "fields": [
         {
-          "label": "New Contract Address",
+          "label": "New ETH:USD oracle adddress",
           "name": "_ethUSDOracle"
         }
       ],
@@ -45,7 +45,6 @@
         "constant": false,
         "inputs": [
           {
-            "label": "New Contract Address",
             "name": "_ethUSDOracle",
             "type": "address"
           }
@@ -59,11 +58,11 @@
     },
     {
       "id": "updateAuctioneer",
-      "label": "Change DutchX Owner",
+      "label": "Change DutchX owner",
       "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
       "fields": [
         {
-          "label": "New Owner Address",
+          "label": "New DutchX owner address",
           "name": "_auctioneer"
         }
       ],
@@ -94,7 +93,7 @@
         {
           "name": "approved",
           "defaultValue": 1,
-          "label": "Choose whether to add or remove tokens from the whitelist",
+          "label": "Add or remove tokens from the whitelist",
           "labelTrue": "Add tokens",
           "labelFalse": "Remove tokens"
         }
@@ -125,7 +124,7 @@
       "fields": [
         {
           "decimals": 18,
-          "label": "New Threshold",
+          "label": "New token pair threshold",
           "name": "_thresholdNewTokenPair"
         }
       ],
@@ -146,12 +145,12 @@
     },
     {
       "id": "updateThresholdNewAuction",
-      "label": "Update Action Threshold",
+      "label": "Update Auction Threshold",
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L252",
       "fields": [
         {
           "decimals": 18,
-          "label": "New Threshold",
+          "label": "New auction threshold",
           "name": "_thresholdNewAuction"
         }
       ],

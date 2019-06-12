@@ -51,10 +51,16 @@ class CreateProposalContainer extends React.Component<IProps, null> {
         throw state.error;
       } else {
         const scheme = state.data;
-        const schemeName = arc.getContractInfo(scheme.address).name;
+        let schemeName = arc.getContractInfo(scheme.address).name;
         if (!schemeName) {
           throw Error(`Unknown Scheme: ${scheme}`);
         }
+
+        // TODO: and DAO is dxDAO, should actually lookup dao in the registry and use the name from the JSON file
+        if (schemeName === "GenericScheme") {
+          schemeName = "DutchX";
+        }
+
         return <div className={css.createProposalWrapper}>
 
           <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}`}>{schemeName.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
@@ -68,9 +74,11 @@ class CreateProposalContainer extends React.Component<IProps, null> {
               <CreateContributionRewardProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme}  />
             : schemeName === "SchemeRegistrar" ?
               <CreateSchemeRegistrarProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme}   />
-            : schemeName === "GenericScheme" ?
+            : schemeName === "DutchX" ?
               <CreateDutchXProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
-            : <CreateGenericSchemeProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
+            : schemeName === "GenericScheme" ?
+              <CreateGenericSchemeProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
+            : ""
           }
         </div>;
       }

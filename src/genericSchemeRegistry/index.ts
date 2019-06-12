@@ -4,7 +4,7 @@
  * TODO: This logic will move to the client library, where it willb e properly tested
  */
 const Web3 = require("web3");
-const dxDAOInfo = require("./schemes/dxDao.json");
+const dutchXInfo = require("./schemes/DutchX.json");
 
 interface IABISpec {
   constant: boolean;
@@ -140,8 +140,8 @@ export class GenericSchemeRegistry {
    * @return an object [specs to be written..]
    */
   public genericSchemeInfo(name: string): GenericSchemeInfo {
-    if (name === "dxDAO") {
-      return new GenericSchemeInfo(dxDAOInfo);
+    if (name === "DutchX") {
+      return new GenericSchemeInfo(dutchXInfo);
     }
     throw Error(`We could not find any information about the genericScheme "${name}"`);
   }

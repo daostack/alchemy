@@ -25,7 +25,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     super(props);
     const genericSchemeRegistry = new GenericSchemeRegistry();
     // // TODO: make this generic (NOT specific to the dxDAO)
-    const genericSchemeInfo = genericSchemeRegistry.genericSchemeInfo("dxDAO");
+    const genericSchemeInfo = genericSchemeRegistry.genericSchemeInfo("DutchX");
 
     this.state = {
       genericSchemeInfo

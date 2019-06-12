@@ -390,20 +390,26 @@
       display: block;
     }
 
-    .addToken {
+    .arrayFieldContainer {
       margin-top: 3px;
 
-      .tokenField {
+      input {
+        width: 398px;
+        display: inline-block;
+      }
+
+      .arrayField {
         margin-bottom: 15px;
       }
 
-      .addSubtract {
+      .removeItemButton {
         height: 30px;
         padding: 0;
+        margin: 0 0 0 10px;
         width: 30px;
       }
 
-      .addTokenButton {
+      .addItemButton {
         margin-bottom: 15px;
       }
 

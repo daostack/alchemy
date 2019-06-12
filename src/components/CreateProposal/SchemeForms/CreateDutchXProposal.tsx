@@ -55,7 +55,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
 
     const genericSchemeRegistry = new GenericSchemeRegistry();
-    const genericSchemeInfo = genericSchemeRegistry.genericSchemeInfo("dxDAO");
+    const genericSchemeInfo = genericSchemeRegistry.genericSchemeInfo("DutchX");
     const actions = genericSchemeInfo.actions();
     this.state = {
       actions,
@@ -147,33 +147,24 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
       default:
         if (field.type.includes("[]")) {
           return <FieldArray name={field.name} render={(arrayHelpers) => (
-            <div className={css.addToken}>
+            <div className={css.arrayFieldContainer}>
               {values[field.name] && values[field.name].length > 0 ? (
                 values[field.name].map((value: any, index: number) => (
-                  <div key={field.name + "_" + index} className={css.tokenField}>
+                  <div key={field.name + "_" + index} className={css.arrayField}>
                     {this.renderField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: ""}, values, touched, errors)}
                     <button
-                      className={css.addSubtract}
+                      className={css.removeItemButton}
                       type="button"
                       onClick={() => arrayHelpers.remove(index)} // remove an item from the list
                     >
                       -
                     </button>
-                    <button
-                      className={css.addSubtract}
-                      type="button"
-                      onClick={() => arrayHelpers.insert(index + 1, "")} // insert an empty string at a position
-                    >
-                      +
-                    </button>
                   </div>
                 ))
-              ) : (
-                <button className={css.addTokenButton} type="button" onClick={() => arrayHelpers.push("")}>
-                  {/* show this when user has removed all items from the list */}
-                  Add {field.label}
-                </button>
-              )}
+              ) : ""}
+              <button className={css.addItemButton} type="button" onClick={() => arrayHelpers.push("")}>
+                Add {field.label}
+              </button>
             </div>
             )}
           />;
@@ -184,7 +175,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     return <Field
       id={field.name}
       data-test-id={field.name}
-      placeholder={`${field.name} --- type is: ${field.type}`}
+      placeholder=""
       name={field.name}
       type={type}
       className={touched[field.name] && errors[field.name] ? css.error : null}
