@@ -1,7 +1,6 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
-import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
-import Util, { formatTokens, getClaimableRewards, tokenSymbol } from "lib/util";
+import Util, { claimableContributionRewards, formatTokens, getClaimableRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
@@ -13,7 +12,7 @@ interface IProps {
 }
 
 export default (props: IProps) => {
-  const { beneficiaryHasRewards, currentAccountAddress, dao, proposal, rewardsForCurrentUser } = props;
+  const { currentAccountAddress, dao, proposal, rewardsForCurrentUser } = props;
 
   const rewardComponents = [];
   // rewards of current user
@@ -50,7 +49,7 @@ export default (props: IProps) => {
     c = <div key={rewardsForCurrentUser.id}>
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
-        <li>{Util.fromWei(claimableRewards.daoBountyForStaker)} GEN bounty
+        <li>{Util.fromWei(claimableRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
         { /*
           // TODO: subscribe to tokenBalance
           dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : "" */}
@@ -63,11 +62,12 @@ export default (props: IProps) => {
   const contributionReward = proposal.contributionReward;
 
   let ContributionRewardDiv = <div />;
-  if (contributionReward) {
-    const hasEthReward = contributionReward.ethReward.gt(new BN(0));
-    const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
-    const hasReputationReward = !contributionReward.reputationReward.isZero();
-    if (beneficiaryHasRewards || hasEthReward || hasExternalReward) {
+  if (proposal.contributionReward) {
+    const contributionRewards = claimableContributionRewards(contributionReward);
+    // const hasEthReward = contributionReward.ethReward.gt(new BN(0));
+    // const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
+    // const hasReputationReward = !contributionReward.reputationReward.isZero();
+    if (Object.keys(contributionRewards).length > 0) {
       ContributionRewardDiv = <div>
         <strong>
           {(currentAccountAddress.toLowerCase() === contributionReward.beneficiary.toLowerCase()) ?
@@ -75,21 +75,24 @@ export default (props: IProps) => {
               "The beneficiary of the proposal will receive"}
         </strong>
         <ul>
-          {hasEthReward ?
+          {contributionRewards["eth"]  ?
             <li>
               {formatTokens(contributionReward.ethReward, "ETH")}
               {/*TODO: subscribe to ethBalance, {dao.ethBalance < contributionReward.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
             </li> : ""
           }
-          {hasExternalReward ?
+          {contributionRewards["externalToken"] ?
             <li>
-              {formatTokens(contributionReward.externalTokenReward, tokenSymbol(contributionReward.externalToken))}
+              {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
               {/* TODO: should be looking at the DAO balance of proposal.externalToken
                 {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
               */}
             </li> : ""
           }
-          {hasReputationReward ? <li><ReputationView reputation={contributionReward.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
+          {contributionRewards["rep"] ? <li><ReputationView reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
+          { /*
+            TOOD: add native token
+          */ }
         </ul>
       </div>;
     }

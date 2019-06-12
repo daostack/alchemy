@@ -1,11 +1,11 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkMetaMaskAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { hasClaimableRewards } from "lib/util";
+import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
 import * as moment from "moment";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -100,19 +100,16 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const accountHasGPRewards = hasClaimableRewards(rewardsForCurrentUser);
     if (proposalState.contributionReward) {
-      const contributionReward = proposalState.contributionReward;
+      const daoBalances: {[key: string]: BN} = {
+        eth: daoEthBalance,
+        // TODO: add the other balances as well
+        nativeToken: undefined,
+        rep: undefined,
+        externalToken: undefined
+      };
+      const contributionRewards = claimableContributionRewards(proposalState.contributionReward, daoBalances);
 
-      // TODO: should be the DAO balance of the proposal.externalToken
-      //const externalTokenBalance = dao.externalTokenBalance || new BN(0);
-
-      beneficiaryHasRewards = (proposalState.winningOutcome === IProposalOutcome.Pass && (
-        !contributionReward.reputationReward.isZero() ||
-        contributionReward.nativeTokenReward.gt(new BN(0)) ||
-        (contributionReward.ethReward.gt(new BN(0)) && daoEthBalance.gte(contributionReward.ethReward)) ||
-        (contributionReward.externalTokenReward.gt(new BN(0))) // && externalTokenBalance.gte(contributionReward.externalTokenReward))
-      )) as boolean;
-    } else {
-      beneficiaryHasRewards = false;
+      beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
     }
 
     redeemable = proposalState.executedAt && (accountHasGPRewards || beneficiaryHasRewards);
