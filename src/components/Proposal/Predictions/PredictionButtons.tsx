@@ -257,7 +257,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               }
             </span>
             : <span className={css.disabledPredictions}>
-                { /* Predictions are disabled */ }
+                Predictions are disabled
             </span>
           }
         </div>
