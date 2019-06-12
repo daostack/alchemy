@@ -1,9 +1,9 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
-import { formatTokens } from "lib/util";
+import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -20,6 +20,8 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
 
     const arc = getArc();
 
+    const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
+
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
     return (
@@ -30,7 +32,17 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               <b className={css.daoIcon} style={{backgroundImage: bgPattern.toDataUrl()}}></b>
               <span>{dao.name}</span>
             </Link>
-            <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
+          </div>
+          <div className={css.daoDescription}>
+            { dao.name === "Meme" ?
+                <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank">Learn how to MemeDAO</a></p>
+              : dao.name === "Identity" ?
+                <p>
+                  A curated registry of identities on the Ethereum blockchain.&nbsp;
+                  <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank">How to register.</a>
+                </p>
+              : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
+            }
           </div>
           <div className={css.navigation}>
             <span className={css.navHeading}><b>Menu</b></span>
@@ -66,65 +78,64 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
             </ul>
           </div>
           <div className={css.daoHoldings}>
-            <span className={css.navHeading}><b>DAO Holdings</b></span>
+            <span className={css.navHeading}>
+              <b>DAO Holdings</b>
+              <a href={daoHoldingsAddress}>
+                <img src="/assets/images/Icon/link-white.svg"/>
+              </a>
+             </span>
             <ul>
               <Subscribe observable={arc.dao(dao.address).ethBalance()}>{
                 (state: IObservableState<BN>) => {
                   if (state.isLoading) {
-                    return <li>... ETH</li>;
+                    return <li key="ETH">... ETH</li>;
                   } else if ( state.error) {
-                    return <li>{ state.error.message}</li>;
+                    return "";
                   } else {
-                    return <li><strong>{ formatTokens(new BN(state.data)) }</strong> ETH</li>;
+                    return <li key="ETH"><strong>{ formatTokens(new BN(state.data)) }</strong> ETH</li>;
                   }
                 }
               }</Subscribe>
-              <Subscribe observable={arc.GENToken().balanceOf(dao.address)}>{
-                (state: IObservableState<BN>) => {
-                  if (state.isLoading) {
-                    return <li>... GEN</li>;
-                  } else if ( state.error) {
-                    return <li>{ state.error.message}</li>;
-                  } else {
-                    return <li><strong>{ formatTokens(state.data) }</strong> GEN</li>;
+
+              {Object.keys(supportedTokens()).map((tokenAddress) => {
+                const token = new Token(tokenAddress, arc);
+                const tokenData = supportedTokens()[tokenAddress];
+                return <Subscribe key={tokenAddress} observable={token.balanceOf(dao.address)}>{
+                  (state: IObservableState<BN>) => {
+                    if (state.isLoading || state.error || state.data.isZero()) {
+                      return "";
+                    } else {
+                      return (
+                        <li key={tokenAddress}>
+                          <strong>{ formatTokens(state.data, tokenData["symbol"], tokenData["decimals"]) }</strong>
+                        </li>
+                      );
+                    }
                   }
-                }
-              }</Subscribe>
+                }</Subscribe>;
+              })}
             </ul>
           </div>
           <div className={css.menuWrapper}>
               <ul>
                 <li><Link to="/">Home</Link></li>
-                <li><Link to="/daos">View DAOs</Link></li>
                 <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
                 <li>
                   <a>Buy GEN</a>
                   <ul>
                     <div className={css.diamond}></div>
-                    <li>
-                      <a href="https://www.bitfinex.com/" target="_blank">
-                        <b><img src="/assets/images/Exchanges/bitfinex.png"/></b>
-                        <span>Bitfinex</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://www.ethfinex.com/" target="_blank">
-                        <b><img src="/assets/images/Exchanges/ethfinex.svg"/></b>
-                        <span>Ethfinex</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://idex.market/eth/gen" target="_blank">
-                        <b><img src="/assets/images/Exchanges/idex.png"/></b>
-                        <span>IDEX</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://slow.trade" target="_blank">
-                        <b><img src="https://slow.trade/favicon-32x32.png"/></b>
-                        <span>Slow Trade</span>
-                      </a>
-                    </li>
+                    {
+                      getExchangesList().map((item: any) => {
+                        return(
+                          <li key={item.name}>
+                            <a href={item.url} target="_blank">
+                              <b><img src={item.logo}/></b>
+                              <span>{item.name}</span>
+                            </a>
+                          </li>
+                        );
+                      })
+                    }
                   </ul>
                 </li>
                 <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>

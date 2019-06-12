@@ -1,6 +1,9 @@
-import { Address, IProposalState } from "@daostack/client";
+import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import { getArc } from "../arc";
+
+const tokens = require("data/tokens.json");
+const exchangesList = require("data/exchangesList.json");
 
 export default class Util {
   public static fromWei(amount: BN): number {
@@ -46,8 +49,8 @@ export default class Util {
   public static getWeb3() {
     return getArc().web3;
   }
-  public static getNetworkId() {
-    return getArc().web3.eth.net.getId();
+  public static async getNetworkId() {
+    return await getArc().web3.eth.net.getId();
   }
 
   public static defaultAccount() {
@@ -60,9 +63,24 @@ export function humanProposalTitle(proposal: IProposalState) {
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }
 
-export function formatTokens(amountWei: BN, symbol?: string): string {
+export function supportedTokens() {
+  tokens[getArc().GENToken().address] = {
+    decimals: 18,
+    name: "DAOstack GEN",
+    symbol: "GEN"
+  };
+
+  return tokens;
+}
+
+export function getExchangesList() {
+  return exchangesList;
+}
+
+export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
   const negative = amountWei.lt(new BN(0));
-  const amount = Math.abs(Util.fromWei(amountWei));
+  const amount = Math.abs(decimals === 18 ? Util.fromWei(amountWei) : amountWei.div(new BN(10).pow(new BN(decimals))).toNumber());
+
   let returnString;
   if (amount === 0) {
     returnString = "0";
@@ -81,8 +99,8 @@ export function formatTokens(amountWei: BN, symbol?: string): string {
 }
 
 export function tokenSymbol(tokenAddress: string) {
-  let symbol = Object.keys(TOKENS).find((token) => TOKENS[token].toLowerCase() === tokenAddress.toLowerCase());
-  return symbol || "?";
+  const token = supportedTokens()[tokenAddress.toLowerCase()];
+  return token ? token["symbol"] : "?";
 }
 
 export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
@@ -94,7 +112,61 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
   });
 }
 
-export function getNetworkName(id: string): string {
+/**
+ * return true if the address is the address of a known scheme (which we know how to represent)
+ * @param  address [description]
+ * @return         [description]
+ */
+export function isKnownScheme(address: Address) {
+  const arc = getArc();
+  let contractInfo;
+  try {
+    contractInfo = arc.getContractInfo(address);
+  } catch (err) {
+    if (err.message.match(/no contract/i)) {
+      return false;
+    }
+    throw err;
+  }
+
+  if (["ContributionReward", "SchemeRegistrar", "GenericScheme"].includes(contractInfo.name)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function schemeName(address: string) {
+  const arc = getArc();
+  try {
+    const contractInfo = arc.getContractInfo(address);
+
+    const NAMES: {[key: string]: string; }  = {
+      ContributionReward: "Contribution Reward",
+      SchemeRegistrar : "Scheme Registrar",
+      GenericScheme : "Generic Scheme"
+    };
+
+    if (NAMES[contractInfo.name]) {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${NAMES[contractInfo.name]})`;
+    }  else if (contractInfo.name) {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${contractInfo.name})`;
+    } else {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+
+    }
+  } catch (err) {
+    if (err.message.match(/No contract/)) {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+    }
+  }
+}
+
+export async function getNetworkName(id?: string): Promise<string> {
+  if (!id) {
+    id = (await Util.getNetworkId()).toString();
+  }
+
   switch (id) {
     case "main":
     case "1":
@@ -117,4 +189,88 @@ export function getNetworkName(id: string): string {
     default:
       return `unknown (${id})`;
   }
+}
+
+export function linkToEtherScan(address: Address) {
+  let prefix = "";
+  const arc = getArc();
+  if (arc.web3.currentProvider.networkVersion === "4") {
+    prefix = "rinkeby.";
+  }
+  return `https://${prefix}etherscan.io/address/${address}`;
+}
+
+export function getClaimableRewards(reward: IRewardState) {
+  if (!reward) {
+    return {};
+  }
+
+  const result: {[key: string]: BN} = {};
+  if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt === 0) {
+    result.reputationForProposer = reward.reputationForProposer;
+  }
+  if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt === 0) {
+    result.reputationForVoter = reward.reputationForVoter;
+  }
+
+  if (reward.tokensForStaker.gt(new BN(0)) && reward.tokensForStakerRedeemedAt === 0) {
+    result.tokensForStaker = reward.tokensForStaker;
+  }
+  if (reward.daoBountyForStaker.gt(new BN(0)) && reward.daoBountyForStakerRedeemedAt === 0) {
+    result.daoBountyForStaker = reward.daoBountyForStaker;
+  }
+  return result;
+}
+
+// TOOD: move this function to the client library!
+export function hasClaimableRewards(reward: IRewardState) {
+  const claimableRewards = getClaimableRewards(reward);
+  for (let key of Object.keys(claimableRewards)) {
+    if (claimableRewards[key].gt(new BN(0))) {
+      return true;
+    }
+  }
+}
+
+/**
+ * given an IContributionReward, return an array with the amounts that are stil to be claimbed
+ * by the beneficiary of the proposal
+ * @param  reward an object that immplements IContributionReward
+ * @return  an array mapping strings to BN
+ */
+// TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
+export function claimableContributionRewards(reward: IContributionReward, daoBalances: {[key: string]: BN} = {}) {
+  const result: {[key: string]: BN } = {};
+  if (
+    !reward.ethReward.isZero()
+    && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
+    && reward.alreadyRedeemedEthPeriods < reward.periods
+  ) {
+    result["eth"] = reward.ethReward;
+  }
+
+  if (
+    !reward.reputationReward.isZero()
+    && (daoBalances["rep"] === undefined || daoBalances["rep"].gte(reward.reputationReward))
+    && Number(reward.alreadyRedeemedReputationPeriods) < Number(reward.periods)
+  ) {
+    result["rep"] = reward.reputationReward;
+  }
+
+  if (
+    !reward.nativeTokenReward.isZero()
+    && (daoBalances["nativeToken"] === undefined || daoBalances["nativeToken"].gte(reward.nativeTokenReward))
+    && Number(reward.alreadyRedeemedNativeTokenPeriods) < Number(reward.periods)
+  ) {
+    result["nativeToken"] = reward.nativeTokenReward;
+  }
+
+  if (
+    !reward.externalTokenReward.isZero()
+    && (daoBalances["externalToken"] === undefined || daoBalances["externalToken"].gte(reward.externalTokenReward))
+    && Number(reward.alreadyRedeemedExternalTokenPeriods) < Number(reward.periods)
+  ) {
+    result["externalToken"] = reward.externalTokenReward;
+  }
+  return result;
 }

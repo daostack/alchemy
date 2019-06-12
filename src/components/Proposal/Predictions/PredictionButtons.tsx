@@ -30,7 +30,7 @@ interface IState {
 interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
-  currentAccountAddress: Address;
+  currentAccountAddress?: Address;
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
@@ -100,7 +100,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   public handleClickPreApprove = async (event: any) => {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
-    approveStakingGens(this.props.dao.address);
+    approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
   }
 
@@ -157,7 +157,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
-                <button onClick={this.handleClickPreApprove}>Preapprove</button>
+                <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
           </div>
@@ -214,12 +214,11 @@ class PredictionBox extends React.Component<IProps, IState> {
     );
 
     // If don't have any staking allowance, replace with button to pre-approve
-
-    if (currentAccountGenStakingAllowance.eq(new BN(0))) {
+    if (stakingEnabled && currentAccountGenStakingAllowance.eq(new BN(0))) {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal}>Enable Predicting</button>
+            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predicting</button>
           </div>
         </div>
       );
@@ -236,7 +235,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}
-            secondaryHeader={formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
+            secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
           /> : ""
         }
 
@@ -258,7 +257,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               }
             </span>
             : <span className={css.disabledPredictions}>
-               Predictions are disabled
+                Predictions are disabled
             </span>
           }
         </div>
@@ -272,13 +271,15 @@ const ConnectedPredictionBox = connect(mapStateToProps, mapDispatchToProps)(Pred
 export default (props: IContainerProps) => {
 
   const arc = getArc();
-  const dao = arc.dao(props.dao.address);
   let observable;
-  if (props.currentAccountAddress) {
+
+  const spender = props.proposal.votingMachine;
+  const currentAccountAddress = props.currentAccountAddress;
+  if (currentAccountAddress) {
     observable = combineLatest(
-      arc.GENToken().balanceOf(props.currentAccountAddress),
-      arc.allowance(props.currentAccountAddress),
-      dao.proposal(props.proposal.id).stakes({ staker: props.currentAccountAddress})
+      arc.GENToken().balanceOf(currentAccountAddress),
+      arc.allowance(currentAccountAddress, spender),
+      props.proposal.proposal.stakes({ staker: currentAccountAddress})
     );
   } else {
     observable = combineLatest(
@@ -301,7 +302,7 @@ export default (props: IContainerProps) => {
           currentAccountGens={currentAccountGens}
           currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
           stakesOfCurrentUser={stakes}
-          />;
+        />;
       }
     }
   }</Subscribe>;

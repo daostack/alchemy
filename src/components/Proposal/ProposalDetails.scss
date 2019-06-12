@@ -78,12 +78,12 @@ button.disabled {
 		font-weight: $normal;
 		font-size: 11px;
 		color: $black-halftone;
-		margin: 6px 0 0 12px;
 	}
 }
 
 .description {
 	margin-bottom: 30px;
+	white-space: pre-wrap;
 }
 
 .statusTitle {
@@ -143,6 +143,7 @@ button.disabled {
     text-align: left;
     display: inline-block;
     right: 40px;
+    top: 12px;
     position: relative;
   }
 }
@@ -174,9 +175,10 @@ button.disabled {
 	font-size: 12px;
 	border-top: 1px solid rgba(200, 210, 219, 1.000);
 
-	span {
+	.content {
 		display: inline-block;
-		margin: 6px 0 0 12px;
+    margin: 6px 0 0 12px;
+    padding-right: 6px;
 		opacity: .6;
 		color: rgba(104, 155, 214, 1.000);
 		font-weight: bold;

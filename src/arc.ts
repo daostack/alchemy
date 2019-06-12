@@ -10,11 +10,10 @@ const settings = {
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     web3Provider: "ws://127.0.0.1:8545",
     ipfsProvider: "localhost",
-    contractAddresses: getContractAddresses("private")
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v17",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v17",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v20",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v20",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
@@ -22,11 +21,10 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: getContractAddresses("rinkeby")
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v17",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v17",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v20",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v20",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "subgraph.daostack.io",
@@ -34,27 +32,8 @@ const settings = {
       "protocol": "https",
       "api-path": "/ipfs/api/v0/"
     },
-    contractAddresses: getContractAddresses("mainnet")
   }
 };
-
-/**
- * get the contract address from the @daostack/migration repository.
- * These may be out of date: consider using getContractAddressesFromSubgraph instead
- * @param  key the network where the contracts are deployed: one of private, rinkeby, mainnet
- * @return   an Array mapping contract names to addresses
- */
-export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
-  const deployedContractAddresses = require("@daostack/migration/migration.json");
-
-  const addresses = {
-      ...deployedContractAddresses[key]
-   };
-  if (!addresses || addresses === {}) {
-    throw Error(`No addresses found, does the file at "@daostack/migration/migration.json" exist?`);
-  }
-  return addresses.base;
-}
 
 /**
  * check if the web3 connection is ready to send transactions, and warn the user if it is not
@@ -65,7 +44,7 @@ export function getContractAddresses(key: "private"|"rinkeby"|"mainnet") {
  */
 export async function checkMetaMaskAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    const metamask = checkMetaMask();
+    const metamask = await checkMetaMask();
     await metamask.enable();
     return metamask;
   } catch (err) {
@@ -88,7 +67,7 @@ export async function checkMetaMaskAndWarn(showNotification?: any): Promise<bool
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export function checkMetaMask() {
+export async function checkMetaMask(metamask?: any) {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -108,13 +87,18 @@ export function checkMetaMask() {
     }
   }
 
-  const web3Provider = getMetaMask();
+  let web3Provider: any;
+  if (metamask) {
+    web3Provider = metamask;
+  } else {
+    web3Provider = getMetaMask();
+  }
   if (!web3Provider) {
     const msg = `Please install or enable metamask`;
     throw Error(msg);
   }
-  const networkId = web3Provider.networkVersion;
-  const networkName = getNetworkName(networkId);
+
+  const networkName = await getNetworkName(web3Provider.networkVersion);
   if (networkName === expectedNetworkName) {
     return web3Provider;
   } else {
@@ -199,17 +183,17 @@ export async function initializeArc(): Promise<Arc> {
       console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
     } catch (err) {
       if (err.message.match(/timed out/)) {
-        throw Error("Could not connect to Metamask (time out)");
+        console.log("Error: Could not connect to Metamask (time out)");
       }
-      throw err;
+      console.log(err);
     }
   }
 
   try {
-    arcSettings.web3Provider = checkMetaMask();
+    arcSettings.web3Provider = await checkMetaMask(metamask);
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
-    console.log(err.message);
+    console.log(err);
   }
 
   // log some useful info
@@ -223,6 +207,7 @@ export async function initializeArc(): Promise<Arc> {
   }
 
   const arc: Arc = new Arc(arcSettings);
+  await arc.initialize();
   // save the object on a global window object (I know, not nice, but it works..)
   (<any> window).arc = arc;
   return arc;

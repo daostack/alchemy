@@ -20,6 +20,7 @@ export const predictions: string;
 export const predictionButtons: string;
 export const cardTop: string;
 export const timer: string;
+export const content: string;
 export const actionButton: string;
 export const createdBy: string;
 export const targetAccount: string;

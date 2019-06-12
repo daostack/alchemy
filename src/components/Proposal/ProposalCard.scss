@@ -74,7 +74,6 @@
     font-weight: $normal;
     font-size: 11px;
     color: $black-halftone;
-    margin: 6px 0 0 12px;
   }
 }
 
@@ -141,6 +140,8 @@
     width: 40%;
     float: left;
     text-align: right;
+    padding-top: 12px;
+    margin-right: 5px;
   }
 }
 
@@ -164,10 +165,10 @@
     text-align: left;
     font-size: 11px;
 
-    span {
+    .content {
       font-family: "Open Sans";
       display: inline-block;
-      margin: 6px 0 0 6px;
+      margin: 12px 0 0 18px;
       opacity: .6;
       color: rgba(104, 155, 214, 1.000);
     }

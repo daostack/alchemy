@@ -22,72 +22,89 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
   public render() {
     const { dao, proposals, currentAccountAddress } = this.props;
 
-    const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalCardContainer key={"proposal_" + proposal.id} proposalId={proposal.id} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+    const arc = getArc();
+    const proposalsHTML = proposals.map((proposalData: any) => {
+      const proposal = new Proposal(proposalData.id, dao.address, proposalData.scheme.address, proposalData.votingMachine, arc);
+
+      return <ProposalCardContainer
+        key={"proposal_" + proposal.id}
+        proposal={proposal} dao={dao}
+        currentAccountAddress={currentAccountAddress}
+      />;
     });
 
     // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,
     // the original code also considers ethREward and externalTokenRewards
     // let ethReward = 0
+
+    // TODO: move all the next logic to the client library
+    // calculate the total rewards from the genesisprotocol
     const genReward = new BN("0");
+    const ethReward = new BN("0");
     const reputationReward = new BN(0);
     // , externalTokenReward = 0;
     proposals.forEach((proposal) => {
       // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
-      const reward = proposal.gpRewards[0];
-      if (reward) {
-        // ethReward += Util.fromWei(reward.amount);
-      //   externalTokenReward += Util.fromWei(reward.amount);
-        if (reward.tokensForStaker) {
-          genReward.iadd(new BN(reward.tokensForStaker));
-        }
-        if (reward.daoBountyForStaker) {
-          genReward.iadd(new BN(reward.daoBountyForStaker));
-        }
-        if (reward.reputationForVoter) {
-          reputationReward.iadd(new BN(reward.reputationForVoter));
+      proposal.gpRewards.forEach((reward: any) => {
+        if (reward.beneficiary === currentAccountAddress.toLowerCase()) {
+          if (reward.tokensForStaker && Number(reward.tokensForStakerRedeemedAt) === 0) {
+            genReward.iadd(new BN(reward.tokensForStaker));
           }
-        if (reward.reputationForProposer) {
-          reputationReward.iadd(new BN(reward.reputationForProposer));
+          if (reward.daoBountyForStaker && Number(reward.daoBountyForStakerRedeemedAt) === 0) {
+            genReward.iadd(new BN(reward.daoBountyForStaker));
+          }
+          if (reward.reputationForVoter && Number(reward.reputationForVoterRedeemedAt) === 0) {
+            reputationReward.iadd(new BN(reward.reputationForVoter));
+          }
+          if (reward.reputationForProposer && Number(reward.reputationForProposerRedeemedAt) === 0) {
+            reputationReward.iadd(new BN(reward.reputationForProposer));
+          }
         }
-      }
+      });
+      //
+      // const contributionReward = proposal.contributionReward;
+      // if (contributionReward && contributionReward.beneficiary === currentAccountAddress.toLowerCase()) {
+      //    ethReward.iadd(new BN(contributionReward.ethReward));
+      // }
+
     });
 
-    const totalRewards = [];
-    // if (ethReward) {
-    //   totalRewards.push(formatTokens(ethReward, "ETH"));
-    // }
+    const totalRewards: any[] = [];
+    if (ethReward.gt(new BN(0))) {
+      totalRewards.push(formatTokens(ethReward, "ETH"));
+    }
     // if (externalTokenReward) {
     //   totalRewards.push(formatTokens(externalTokenReward, dao.externalTokenSymbol));
     // }
-    if (genReward) {
+    if (!genReward.isZero()) {
       totalRewards.push(formatTokens(genReward, "GEN"));
     }
-    if (reputationReward) {
+    if (!reputationReward.isZero()) {
       totalRewards.push(
         <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
       );
     }
+
     const totalRewardsString = <strong>
         {totalRewards.reduce((acc, v) => {
           return acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>;
         }, null)}
       </strong>;
 
-    return(
+    return (
       <div>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
         <div className={css.redemptionsHeader}>
           Redemptions
           {proposals.length > 0 ?
-              <span>Pending Rewards:&nbsp;{totalRewardsString}</span>
+              <span>Pending Protocol Rewards:&nbsp;{totalRewardsString}</span>
             : ""
           }
         </div>
+
         <div className={css.proposalsContainer}>
-          <div className={css.proposalsContainer}>
           {proposals.length > 0 ?
-            {proposalsHTML}
+            <div>{proposalsHTML}</div>
           :
             <div className={css.emptyRedemptions}>
               <img src="/assets/images/empty-redemptions.svg"/>
@@ -95,7 +112,6 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
               <p>Get more rewards by proposing a proposal that the DAO accepts, and by voting / staking in alignment with the DAO.</p>
             </div>
           }
-          </div>
         </div>
       </div>
     );
@@ -103,7 +119,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
 }
 
-export default (props: { dao: IDAOState, currentAccountAddress: Address } & RouteComponentProps<any>) => {
+export default (props: { dao: IDAOState, currentAccountAddress?: Address } & RouteComponentProps<any>) => {
   if (!props.currentAccountAddress) {
     return <div>Please log in to see your rewards</div>;
   }
@@ -112,18 +128,46 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
     proposals(where: {
       accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
       dao: "${props.dao.address}"
-      contributionReward_not: null
+      # TODO: when we upgrade the the new version of the subgraph, this line will be unecessary : daostack/subgraph#252
+      stage_in: ["Executed"]
     }) {
       id
       dao {
         id
       }
-      gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
-        tokensForStaker
-        daoBountyForStaker
-        reputationForVoter
-        reputationForProposer
+      scheme {
+        id
+        address
+      }
+      votingMachine
+      # next line does not work anymore, apparently...
+      # gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
+      gpRewards {
+        id
         beneficiary
+        tokensForStaker
+        tokensForStakerRedeemedAt
+        daoBountyForStaker
+        daoBountyForStakerRedeemedAt
+        reputationForVoter
+        reputationForVoterRedeemedAt
+        reputationForProposer
+        reputationForProposerRedeemedAt
+      }
+      contributionReward {
+        id
+        beneficiary
+        ethReward
+        externalToken
+        externalTokenReward
+        externalToken
+        nativeTokenReward
+        periods
+        periodLength
+        reputationReward
+        alreadyRedeemedReputationPeriods
+        alreadyRedeemedExternalTokenPeriods
+        alreadyRedeemedEthPeriods
       }
     }
   }
@@ -132,7 +176,7 @@ export default (props: { dao: IDAOState, currentAccountAddress: Address } & Rout
       if (state.error) {
         return <div>{ state.error.message }</div>;
       } else if (state.data) {
-        return <DaoRedemptionsContainer {...props} dao={props.dao} proposals={state.data.data.proposals}/>;
+        return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
       } else {
         return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
       }

@@ -1,4 +1,4 @@
-import { IDAOState } from "@daostack/client";
+import { DAO } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -6,16 +6,16 @@ import DaoContainer from "./DaoContainer";
 import * as css from "./DaoList.scss";
 
 interface IProps {
-  daos: IDAOState[];
+  daos: DAO[];
 }
 
 class DaoListContainer extends React.Component<IProps, null> {
 
   public render() {
     const { daos } = this.props;
-    const daoNodes = daos.map((dao: IDAOState) => {
+    const daoNodes = daos.map((dao: DAO) => {
       return (
-        <DaoContainer key={dao.address}  address={dao.address}/>
+        <DaoContainer key={dao.address}  dao={dao}/>
       );
     });
     return (
@@ -31,7 +31,8 @@ class DaoListContainer extends React.Component<IProps, null> {
 
 export default () => {
   const arc = getArc();
-  return <Subscribe observable={arc.daos()}>{(state: IObservableState<IDAOState[]>) => {
+  const observable = arc.daos();
+  return <Subscribe observable={observable}>{(state: IObservableState<DAO[]>) => {
       if (state.isLoading) {
         return (
           <div className={css.wrapper}>

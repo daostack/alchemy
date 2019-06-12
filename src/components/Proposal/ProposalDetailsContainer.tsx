@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, IVote } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -17,13 +17,14 @@ import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, of } from "rxjs";
+import { combineLatest, concat, from, of } from "rxjs";
+import { concatMap } from "rxjs/operators";
 import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
-import TransferDetails from "./TransferDetails";
+import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
@@ -42,7 +43,6 @@ interface IContainerProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoEthBalance: BN;
   proposal: IProposalState;
-  rewardsForCurrentUser: IRewardState[];
   votesOfCurrentUser: IVote[];
 }
 
@@ -51,7 +51,8 @@ type IProps = IStateProps & IContainerProps;
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps => {
   const proposal = ownProps.proposal;
 
-  return {...ownProps,
+  return {
+    ...ownProps,
     beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposal.proposer],
     isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
@@ -87,7 +88,6 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
       proposal,
       isVotingNo,
       isVotingYes,
-      rewardsForCurrentUser,
       votesOfCurrentUser
     } = this.props;
 
@@ -111,9 +111,9 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
     const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
 
     const voteWrapperClass = classNames({
-      [css.voteBox] : true,
-      clearfix : true,
-      [css.unconfirmedVote] : isVoting
+      [css.voteBox]: true,
+      clearfix: true,
+      [css.unconfirmedVote]: isVoting
     });
 
     const disqusConfig = {
@@ -124,19 +124,18 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{proposal.title}</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposals/" + proposal.queue.name}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
 
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
-           <div>
-             <ActionButton
+            <div>
+              <ActionButton
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 daoEthBalance={daoEthBalance}
                 detailView={true}
-                expired={expired}
-                proposal={proposal}
-                rewardsForCurrentUser={rewardsForCurrentUser}
+                proposalState={proposal}
               />
             </div>
             <h3 className={css.proposalTitleTop}>
@@ -145,21 +144,24 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
             <div className={css.timer + " clearfix"}>
               {!proposalEnded(proposal) ?
-                  !expired ?
+                <span className={css.content}>
+                  {!expired ?
                     <Countdown toDate={closingTime(proposal)} detailView={true} onEnd={this.countdownEnded.bind(this)} /> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
-                       proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
-                       "Closed"}&nbsp;
+                        proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
+                          "Closed"}&nbsp;
                        {closingTime(proposal).format("MMM D, YYYY")}
                     </span>
-                  : " "
+                  }
+                </span>
+                : " "
               }
             </div>
 
             <div className={css.createdBy}>
-              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={true}/>
-              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={true}/>
+              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView={true} />
+              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={true} />
             </div>
 
             <div className={css.description}>
@@ -168,17 +170,17 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
             {url ?
               <a href={url} className={css.attachmentLink} target="_blank">
-                <img src="/assets/images/Icon/Attachment.svg"/>
+                <img src="/assets/images/Icon/Attachment.svg" />
                 Attachment &gt;
               </a>
               : " "
             }
 
-            <TransferDetails proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true}/>
+            <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={true} />
 
             <div className={css.voteButtonsBottom}>
-               <span className={css.voteLabel}>Vote:</span>
-               <VoteButtons
+              <span className={css.voteLabel}>Vote:</span>
+              <VoteButtons
                 altStyle={true}
                 currentAccountAddress={currentAccountAddress}
                 currentVote={currentAccountVote}
@@ -207,7 +209,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
               <div className={css.voteStatus + " clearfix"}>
                 <div className={css.voteGraph}>
-                  <VoteGraph size={90} dao={dao} proposal={proposal }/>
+                  <VoteGraph size={90} dao={dao} proposal={proposal} />
                 </div>
 
                 <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} detailView={true} />
@@ -251,35 +253,31 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
 export const ConnectedProposalDetailsContainer = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalDetailsContainer);
 
-export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address, detailView?: boolean} & RouteComponentProps<any> ) => {
+export default (props: { proposalId: string, dao: IDAOState, currentAccountAddress: Address, detailView?: boolean } & RouteComponentProps<any>) => {
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
   const proposalId = props.match.params.proposalId;
 
-  const observable = combineLatest(
-    dao.proposal(proposalId).state(), // state of the current proposal
-    props.currentAccountAddress ? dao.proposal(proposalId).rewards({ beneficiary: props.currentAccountAddress}) : of([]), //1
-    props.currentAccountAddress ? dao.proposal(proposalId).votes({ voter: props.currentAccountAddress }) : of([]), //3
+  const observable = from(dao.proposal(proposalId)).pipe(concatMap((proposal: Proposal) => combineLatest(
+    proposal.state(), // state of the current proposal
+    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
+  ))
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IRewardState[], IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, IVote[], BN]>): any => {
       if (state.isLoading) {
         return <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {
-        return <div>{ state.error.message }</div>;
+        return <div>{state.error.message}</div>;
       } else {
-        const proposal = state.data[0];
-        const rewards = state.data[1];
-        const votes = state.data[2];
-        const daoEthBalance = state.data[3];
+        const [proposal, votes, daoEthBalance] = state.data;
         return <ConnectedProposalDetailsContainer
           {...props}
           daoEthBalance={daoEthBalance}
           proposal={proposal}
           dao={props.dao}
-          rewardsForCurrentUser={rewards}
           votesOfCurrentUser={votes}
         />;
       }
