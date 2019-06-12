@@ -6,13 +6,14 @@ import * as React from "react";
 interface IProps {
   daoName?: string;
   hideSymbol?: boolean;
+  hideTooltip?: boolean;
   reputation: BN;
   totalReputation: BN;
 }
 
 export default class ReputationView extends React.Component<IProps, null> {
   public render() {
-    const { daoName, hideSymbol, reputation, totalReputation } = this.props;
+    const { daoName, hideSymbol, hideTooltip, reputation, totalReputation } = this.props;
     const PRECISION  = 2; // how many digits behind
     let percentage: number = 0;
     if (totalReputation.gt(new BN(0))) {
@@ -20,7 +21,11 @@ export default class ReputationView extends React.Component<IProps, null> {
     }
     const percentageString = percentage.toLocaleString(undefined, {minimumFractionDigits: PRECISION, maximumFractionDigits: PRECISION});
     return (
-      <Tooltip placement="bottom" overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}>
+      <Tooltip
+        placement="bottom"
+        overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}
+        trigger={hideTooltip ? [] : ["hover"]}
+      >
         <span data-test-id="reputation">{ percentageString}  % {hideSymbol ? "" : "Rep."}</span>
       </Tooltip>
     );
