@@ -235,7 +235,7 @@ class PredictionBox extends React.Component<IProps, IState> {
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}
-            secondaryHeader={formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
+            secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
           /> : ""
         }
 

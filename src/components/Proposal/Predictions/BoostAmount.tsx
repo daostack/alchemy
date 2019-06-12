@@ -29,11 +29,11 @@ export default class BoostAmount extends React.Component<IProps, null> {
     return (
       <div className={wrapperClass}>
         {
-          proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gt(new BN(0)) ?
+          proposal.stage === IProposalStage.Queued && !expired && proposal.upstakeNeededToPreBoost.gte(new BN(0)) ?
             <span className={css.boostedAmount}>
               <b>
                 {detailView ? <img src="/assets/images/Icon/Boost-slate.svg" /> : ""}
-                {formatTokens(proposal.upstakeNeededToPreBoost, "GEN")} to boost
+                > {formatTokens(proposal.upstakeNeededToPreBoost, "GEN")} to boost
               </b>
             </span>
           : proposal.stage === IProposalStage.PreBoosted && proposal.downStakeNeededToQueue.lte(new BN(0)) ?

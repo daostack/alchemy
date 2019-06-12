@@ -145,7 +145,7 @@ class ActionButton extends React.Component<IProps, IState> {
           /> : ""
         }
 
-        { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.lte(new BN(0)) ?
+        { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.lt(new BN(0)) ?
             <button className={css.preboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               { /* space after <span> is there on purpose */ }
