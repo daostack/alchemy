@@ -17,6 +17,11 @@
     {
       "name": "Slow Trade",
       "url": "https://slow.trade",
-      "logo": "https://slow.trade/favicon-32x32.png"
+      "logo": "/assets/images/Exchanges/slow-trade.png"
+    },
+    {
+      "name": "Uniswap",
+      "url": "https://uniswap.exchange/swap",
+      "logo": "/assets/images/Exchanges/uniswap.png"
     }
 ]

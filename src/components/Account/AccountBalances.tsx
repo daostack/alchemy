@@ -67,7 +67,7 @@ export default (props: { dao: IDAOState, address: Address}) => {
         if (state.isLoading) {
           return <div>loading..</div>;
         } else if (state.error) {
-          return <div>{state.error}</div>;
+          return <div>{state.error.message}</div>;
         } else {
           const [currentAccountState,  ethBalance, genBalance] = state.data ;
           return <AccountBalances

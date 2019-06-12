@@ -16,6 +16,7 @@ export const predictions: string;
 export const predictionStatus: string;
 export const stakeButtons: string;
 export const timer: string;
+export const content: string;
 export const voteButtonsBottom: string;
 export const voteLabel: string;
 export const proposalTitleTop: string;

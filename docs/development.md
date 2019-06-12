@@ -66,3 +66,9 @@ npm run build:watch
 - `npm run service-status` will check quickly if all services are responding as expected.
 - `docker-compose logs graph-node` will show the logs of the graph-node docker container (check the `docker-compose.yml` file for the names of the other containers)
 - On Travis, there is a `Debug Info` section that is logged that contains some useful information
+- if `docker build` or `docker-compose` are failing for some unfathomable reason, you can kill and clear out all existing containers and associated data, to force docker to start from scratch (**WARNING** this will operate on **all** containers and associated data, not just those used by Alchemy).  These are linux commands:
+    ```sh
+    docker kill $(docker ps -a -q)
+    docker rm $(docker ps -a -q)
+    docker rmi $(docker images -a -q)
+    ```
