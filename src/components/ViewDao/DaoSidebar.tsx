@@ -1,14 +1,14 @@
-import { IDAOState, Token, Address } from "@daostack/client";
+import { Address, IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
+import gql from "graphql-tag";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import * as css from "./ViewDao.scss";
-import gql from 'graphql-tag';
 
 interface IProps {
   dao: IDAOState;
@@ -166,8 +166,7 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address }) => {
 
   if (!daoState) {
     return null;
-  }
-  else if (!props.currentAccountAddress) {
+  } else if (!props.currentAccountAddress) {
     return <DaoSidebarComponent dao={daoState} proposals={[]} />;
   } else {
     const query = gql`       {
