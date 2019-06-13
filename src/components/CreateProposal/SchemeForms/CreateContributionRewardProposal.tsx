@@ -72,7 +72,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
     // If we know the decimals for the token then multiply by that
     if (externalTokenDetails) {
       externalTokenReward = new BN(values.externalTokenReward).mul(new BN(10).pow(new BN(externalTokenDetails.decimals)));
-      console.log(externalTokenDetails, externalTokenReward);
     // Otherwise just convert to Wei and hope for the best
     } else {
       externalTokenReward = Util.toWei(Number(values.externalTokenReward));
