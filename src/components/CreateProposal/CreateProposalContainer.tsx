@@ -3,6 +3,7 @@ import { getArc } from "arc";
 import CreateContributionRewardProposal from "components/CreateProposal/SchemeForms/CreateContributionRewardProposal";
 import CreateGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
+import Loading from "components/shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as H from "history";
 import * as React from "react";
@@ -45,7 +46,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     const observable = from(arc.scheme(schemeId));
     return <Subscribe observable={observable}>{(state: IObservableState<Scheme>) => {
       if (state.isLoading) {
-        return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return  <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {

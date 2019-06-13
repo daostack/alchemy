@@ -2,6 +2,7 @@ import { IDAOState, IProposalStage, IProposalState,  Proposal, Scheme } from "@d
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
+import Loading from "components/shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { humanProposalTitle, isKnownScheme, linkToEtherScan } from "lib/util";
 import * as React from "react";
@@ -136,7 +137,7 @@ export default (props: IExternalProps) => {
   return <Subscribe observable={observable}>{
     (state: IObservableState<[Proposal[], Proposal[], Proposal[]]>): any => {
       if (state.isLoading) {
-        return  <div><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return  <div><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {

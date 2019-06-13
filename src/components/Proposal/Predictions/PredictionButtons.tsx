@@ -4,6 +4,7 @@ import * as web3Actions from "actions/web3Actions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import Loading from "components/shared/Loading";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { formatTokens } from "lib/util";
@@ -202,14 +203,14 @@ class PredictionBox extends React.Component<IProps, IState> {
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)} data-test-id="stakePass">
         <img className={css.stakeIcon} src="/assets/images/Icon/v.svg"/> Pass
-        <img src="/assets/images/Icon/Loading-black.svg"/>
+        <Loading/>
       </button>
     );
 
     const failButton = (
       <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
         <img className={css.stakeIcon} src="/assets/images/Icon/x.svg"/> Fail
-        <img src="/assets/images/Icon/Loading-black.svg"/>
+        <Loading/>
       </button>
     );
 

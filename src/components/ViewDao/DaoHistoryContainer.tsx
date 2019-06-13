@@ -1,5 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalType, Proposal } from "@daostack/client";
 import { getArc } from "arc";
+import Loading from "components/shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -68,7 +69,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   return <Subscribe observable={observable}>{
     (state: IObservableState<[Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
       if (state.isLoading) {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+        return (<div className={css.loading}><Loading/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else  {

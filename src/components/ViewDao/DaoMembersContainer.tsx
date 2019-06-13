@@ -4,6 +4,7 @@ import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
+import Loading from "components/shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -92,7 +93,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const dao = new DAO(props.dao.address, arc);
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+        return (<div className={css.loading}><Loading/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
