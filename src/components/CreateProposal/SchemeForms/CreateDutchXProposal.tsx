@@ -1,7 +1,7 @@
 // const BN = require("bn.js");
 import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkMetaMaskAndWarn } from "arc";
+import { checkMetaMaskAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
@@ -184,6 +184,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
 
   public render() {
     const { handleClose } = this.props;
+    const arc = getArc();
 
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
@@ -210,7 +211,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
             initialFormValues[field.name] = 0;
             break;
           case "address[]":
-            initialFormValues[field.name] = [];
+            initialFormValues[field.name] = [""];
             break;
         }
       }
@@ -261,6 +262,14 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
               for (let input of this.state.currentAction.abi.inputs) {
                 if (input.type !== "bool") {
                   valueIsRequired(input.name);
+                }
+
+                if (input.type === "address[]") {
+                  for (let value of values[input.name]) {
+                    if (!arc.web3.utils.isAddress(value)) {
+                      errors[input.name] = "Invalid address";
+                    }
+                  }
                 }
               }
 
