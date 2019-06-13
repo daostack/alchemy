@@ -37,7 +37,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     currentAccountAddress: state.web3.currentAccountAddress,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     dao: ownProps.dao,
-    daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
+    daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
   };
 };
 
@@ -85,13 +85,13 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
-        <DaoSidebar address={dao.address} />
+        <DaoSidebar {...this.props} dao={dao} />
         <div className={css.wrapper}>
           <div className={css.noticeWrapper}>
             <div className={css.noticeBuffer}></div>
             <div className={css.notice}>
               <div>
-                <img src="/assets/images/Icon/notice.svg"/>
+                <img src="/assets/images/Icon/notice.svg" />
                 Alchemy and Arc are in Alpha. There will be BUGS! We don't guarantee complete security. *Play at your own risk*
               </div>
             </div>
@@ -116,7 +116,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
                 />
               }
             />
-            <Route path="/dao/:daoAvatarAddress/proposals/:scheme" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} /> } />
+            <Route path="/dao/:daoAvatarAddress/proposals/:scheme" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
             <Route path="/dao/:daoAvatarAddress" render={(props) => <AllSchemesContainer {...props} />} />
           </Switch>
 
@@ -139,13 +139,13 @@ export default (props: RouteComponentProps<any>) => {
   const arc = getArc();
   const dao = arc.dao(daoAddress);
   return <Subscribe observable={dao.state()}>{(state: IObservableState<IDAOState>) => {
-      if (state.error) {
-        return <div>{ state.error.message }</div>;
-      } else if (state.data) {
-        return <ConnectedViewDaoContainer {...props} dao={state.data} />;
-      } else {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
-      }
+    if (state.error) {
+      return <div>{state.error.message}</div>;
+    } else if (state.data) {
+      return <ConnectedViewDaoContainer {...props} dao={state.data} />;
+    } else {
+      return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>);
     }
+  }
   }</Subscribe>;
 };

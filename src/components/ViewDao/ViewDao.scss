@@ -6,6 +6,18 @@
   transform: translate(-50%,-50%)
 }
 
+.menu_dot {
+    height: 8px;
+    width: 8px;
+    margin-left: 4px;
+    display: inline-block;
+
+  &.red {
+    background-color: #f65050;
+    border-radius: 50%;
+  }
+}
+
 button:hover {
   cursor: pointer;
 }
@@ -390,7 +402,7 @@ button:hover {
       padding: 0;
 
       .notification {
-        width: 8px;
+        width: 4px;
         height: 8px;
         border-radius: 8px;
         position: relative;
