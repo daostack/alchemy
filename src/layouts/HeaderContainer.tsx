@@ -24,7 +24,6 @@ interface IStateProps {
   networkId: number;
 }
 
-
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   const dao = ownProps.dao;
   return {
