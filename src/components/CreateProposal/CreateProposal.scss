@@ -365,13 +365,13 @@
       background-color: rgba(233, 238, 244, 1.000);
 
       span {
-        width: 23px;
-        height: 18px;
+        width: 25px;
+        height: 19px;
         position: absolute;
-        right: -13px;
-        transform: rotate(63deg) skew(35deg);
+        right: -8px;
+        transform: rotate(63deg) skew(35deg) translateY(-50%);
         display: block;
-        top: 13px;
+        top: 50%;
         background-color: #e9eef4;
       }
     }
