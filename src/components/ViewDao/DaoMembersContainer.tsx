@@ -1,4 +1,3 @@
-import Util from "lib/util";
 import { DAO, IDAOState, IMemberState, Member } from "@daostack/client";
 import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
@@ -6,6 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Util from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
