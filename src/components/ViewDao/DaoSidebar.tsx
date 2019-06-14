@@ -52,7 +52,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
             <ul>
               <li>
                 <Link to={"/dao/" + dao.address}>
-                  <span className={css.menu_dot} />
+                  <span className={css.menuDot} />
                   <span className={css.notification + " " + css.homeNotification}></span>
                   <img src="/assets/images/Icon/menu/home.svg" />
                   Home
@@ -60,7 +60,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               </li>
               <li>
                 <Link to={"/dao/" + dao.address + "/members/"}>
-                  <span className={css.menu_dot} />
+                  <span className={css.menuDot} />
                   <span className={css.notification + " " + css.holdersNotification}></span>
                   <img src="/assets/images/Icon/menu/holders.svg" />
                   Reputation Holders
@@ -68,7 +68,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               </li>
               <li>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>
-                  <span className={css.menu_dot} />
+                  <span className={css.menuDot} />
                   <span className={css.notification + " " + css.historyNotification}></span>
                   <img src="/assets/images/Icon/menu/history.svg" />
                   History
@@ -76,7 +76,7 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               </li>
               <li>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
-                  <span className={css.menu_dot + (proposalCount ? " " + css.red : "")} />
+                  <span className={css.menuDot + (proposalCount ? " " + css.red : "")} />
                   <span className={css.notification + " " + css.redemptionNotification}></span>
                   <img src="/assets/images/Icon/menu/redemption.svg" />
                   Redemptions ({proposalCount})
