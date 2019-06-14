@@ -23,5 +23,10 @@
       "name": "Uniswap",
       "url": "https://uniswap.exchange/swap",
       "logo": "/assets/images/Exchanges/uniswap.png"
+    },
+    {
+      "name": "Kyber Network",
+      "url": "https://kyberswap.com/swap/eth-gen",
+      "logo": "/assets/images/Exchanges/kyber.png"
     }
 ]
