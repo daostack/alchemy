@@ -52,7 +52,10 @@ button:hover {
     margin: 0 auto;
   }
 }
-
+.reputationAmount {
+  display: inline-block;
+  margin-right: 5px;
+}
 .closedProposalsHeader {
   display: block;
   width: 100%;
