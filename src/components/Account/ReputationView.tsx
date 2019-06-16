@@ -29,7 +29,9 @@ export default class ReputationView extends React.Component<IProps, null> {
         overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}
         trigger={hideTooltip ? [] : ["hover"]}
       >
-        <span data-test-id="reputation">{ percentageString}  % {hideSymbol ? "" : "Rep."}</span>
+        <span data-test-id="reputation">
+          { percentageString}  % {hideSymbol ? "" : "Rep."}
+        </span>
       </Tooltip>
     );
   }

@@ -124,8 +124,8 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposals/" + proposal.queue.name}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
-        <BreadcrumbsItem to={"/dao/" + dao.address + "/proposal" + proposal.id}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${proposal.scheme.id}/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
 
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
