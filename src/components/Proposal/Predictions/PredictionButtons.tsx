@@ -141,9 +141,8 @@ class PredictionBox extends React.Component<IProps, IState> {
       return (
         <Modal onBackdropClick={this.closeApprovalModal}>
           <div className={css.preApproval}>
-            <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal}></div>
             <div className={css.preapproveWrapper}>
-            <h3>Activate predictions</h3>
+              <h3>Activate predictions</h3>
               <p>
                 In order to activate predictions, you must authorize our smart
                 contract to receive GENs from you. Upon activation, the smart contract

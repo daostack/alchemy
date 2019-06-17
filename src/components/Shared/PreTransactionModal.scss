@@ -212,23 +212,6 @@ input[type=number] {
 }
 
 .metaMaskModal {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  overflow: scroll;
-  top: 0;
-  z-index: 1000000000000000;
-  left: 0;
-
-  .bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(2, 0, 22, .4);
-    z-index: 0;
-  }
 
   .decisionGraph {
     position: relative;
@@ -696,7 +679,7 @@ input[type=number] {
           transition: all .25s ease;
           background-color: rgba(255,255,255,1);
           border-radius: 0 10px 10px 0;
-          
+
           .diamond {
             width: 10px;
             height: 10px;
@@ -719,7 +702,7 @@ input[type=number] {
             display: block;
             padding: 5px 10px;
 
-            b {         
+            b {
               display: inline-block;
               width: 30px;
               text-align: left;
