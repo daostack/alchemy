@@ -22,20 +22,21 @@ const UnknownSchemeCardContainer = (props: IInternalProps) => {
           <h2>{schemes.length} Unsupported Schemes</h2>
         </div>
         <table><tbody>
-          {schemes.map((scheme: Scheme) => {
-            return (
-              <tr>
-                <td className={css.left}>&nbsp;</td>
-                <td>
-                  <img className={css.attention} src="/assets/images/Icon/Alert-yellow.svg" />
-                  {scheme.name ?
-                    <a href={linkToEtherScan(scheme.address)} target="_blank">{splitByCamelCase(scheme.name)}</a> :
-                    <a className={css.address} target="_blank" href={linkToEtherScan(scheme.address)}>{scheme.address}</a>
-                  }
-                </td>
-                {/* <td className={css.creationDate}>MMM dd, yyyy</td> */}
-              </tr>)
-          })
+          {
+            schemes.map((scheme: Scheme) => {
+              return (
+                <tr key={scheme.address}>
+                  <td className={css.left}>&nbsp;</td>
+                  <td>
+                    <img className={css.attention} src="/assets/images/Icon/Alert-yellow.svg" />
+                    {scheme.name ?
+                      <a href={linkToEtherScan(scheme.address)} target="_blank">{splitByCamelCase(scheme.name)}</a> :
+                      <a className={css.address} target="_blank" href={linkToEtherScan(scheme.address)}>{scheme.address}</a>
+                    }
+                  </td>
+                  {/* <td className={css.creationDate}>MMM dd, yyyy</td> */}
+                </tr>);
+            })
           }
         </tbody></table>
       </div>
