@@ -56,9 +56,10 @@ module.exports = merge(baseConfig, {
             loader: 'typings-for-css-modules-loader',
             options: {
               camelCase: true,
-              modules: true,
+              modules: {
+                localIdentName: '[name]__[local]___[hash:base64:5]'
+              },
               namedExport: true,
-              localIdentName: '[name]__[local]___[hash:base64:5]',
               importLoaders: 2,
               sourceMap: true
             }
