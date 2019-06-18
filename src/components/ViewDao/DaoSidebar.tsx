@@ -9,6 +9,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import * as css from "./ViewDao.scss";
+import * as classNames from "classnames";
 
 interface IProps {
   dao: IDAOState;
@@ -53,7 +54,12 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               <li>
                 <Link to={"/dao/" + dao.address}>
                   <span className={css.menuDot} />
-                  <span className={css.notification + " " + css.homeNotification}></span>
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.homeNotification]: true
+                    })
+                  }></span>
                   <img src="/assets/images/Icon/menu/home.svg" />
                   Home
                 </Link>
@@ -61,7 +67,12 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               <li>
                 <Link to={"/dao/" + dao.address + "/members/"}>
                   <span className={css.menuDot} />
-                  <span className={css.notification + " " + css.holdersNotification}></span>
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.holdersNotification]: true
+                    })
+                  }></span>
                   <img src="/assets/images/Icon/menu/holders.svg" />
                   Reputation Holders
                  </Link>
@@ -69,15 +80,30 @@ class DaoSidebarComponent extends React.Component<IProps, null> {
               <li>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>
                   <span className={css.menuDot} />
-                  <span className={css.notification + " " + css.historyNotification}></span>
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.historyNotification]: true
+                    })
+                  }></span>
                   <img src="/assets/images/Icon/menu/history.svg" />
                   History
                   </NavLink>
               </li>
               <li>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
-                  <span className={css.menuDot + (proposalCount ? " " + css.red : "")} />
-                  <span className={css.notification + " " + css.redemptionNotification}></span>
+                  <span className={
+                    classNames({
+                      [css.menuDot]: true,
+                      [css.red]: !!proposalCount
+                    })
+                  } />
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.redemptionNotification]: true
+                    })
+                  }></span>
                   <img src="/assets/images/Icon/menu/redemption.svg" />
                   Redemptions ({proposalCount})
                  </NavLink>

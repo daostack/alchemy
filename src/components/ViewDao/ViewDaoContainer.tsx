@@ -85,7 +85,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
-        <DaoSidebar {...this.props} dao={dao} />
+        <DaoSidebar currentAccountAddress={this.props.currentAccountAddress} dao={dao} />
         <div className={css.wrapper}>
           <div className={css.noticeWrapper}>
             <div className={css.noticeBuffer}></div>
