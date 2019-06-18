@@ -1,0 +1,95 @@
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(2, 0, 22, .4);
+  z-index: 0;
+}
+
+.modalWindow {
+  width: 500px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  transition: all .25s ease;
+  border-radius: 15px 15px 0 0;
+  z-index: 99999999999999999;
+}
+
+.header {
+  background-color: rgba(18, 46, 91, 1.000);
+  padding: 12px 20px;
+  color: $white;
+  z-index: 100000;
+  position: relative;
+  border-radius: 15px 15px 0 0;
+}
+
+.content {
+  height: 100%;
+  background-color: white;
+}
+
+.voteBreakdown {
+  position: relative;
+  display: inline-block;
+}
+
+.voteUp {
+  position: relative;
+}
+
+.voteDown {
+  position: relative;
+}
+
+.upvoted, .downvoted {
+  display: none;
+}
+
+.votedFor .upvote, .votedAgainst .downvote  {
+  display: none;
+}
+
+.votedFor .upvoted, .votedAgainst .downvoted {
+  display: inline;
+}
+
+.reputation {
+  position: relative;
+}
+
+.voters {
+  padding-top: 10px;
+
+  > div {
+    display: inline-block;
+    width: 50%;
+    vertical-align: top;
+  }
+}
+
+.voteRow {
+  width: 100%;
+}
+
+.footer {
+  border-top: 1px solid gray;
+  padding: 10px;
+  background-color: white;
+
+  button {
+    border-radius: 15px;
+    height: 30px;
+    background-color: rgba(225, 235, 247, 1.000);
+    border: 0;
+    outline: none;
+    margin-right: 10px;
+    line-height: 30px;
+    padding: 0 15px;
+    color: rgba(0, 113, 255, 1.000);
+  }
+}

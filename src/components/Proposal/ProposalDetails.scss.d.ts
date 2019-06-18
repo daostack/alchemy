@@ -1,6 +1,7 @@
 export const disabled: string;
 export const loading: string;
 export const wrapper: string;
+export const clickable: string;
 export const proposal: string;
 export const proposalInfo: string;
 export const attachmentLink: string;
