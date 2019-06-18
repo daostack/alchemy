@@ -28,7 +28,7 @@ const UnknownSchemeCardContainer = (props: IInternalProps) => {
                 <tr key={scheme.address}>
                   <td className={css.left}>&nbsp;</td>
                   <td>
-                    <img className={css.attention} src="/assets/images/Icon/Alert-yellow.svg" />
+                    <img className={css.attention} src="/assets/images/Icon/Alert-red.svg" />
                     {scheme.name ?
                       <a href={linkToEtherScan(scheme.address)} target="_blank">{splitByCamelCase(scheme.name)}</a> :
                       <a className={css.address} target="_blank" href={linkToEtherScan(scheme.address)}>{scheme.address}</a>
