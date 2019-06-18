@@ -39,6 +39,8 @@
       padding-right:4px;
       width: 16px;
       height: 16px;
+      position: relative;
+      bottom: -1px;
     }
 
 
@@ -54,9 +56,33 @@
 
     a {
       color: rgba(154, 169, 181, 1.000);
-      text-decoration: underline;
       position: relative;
       bottom: 3px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media only screen and (max-width: 975px) {
+      td a.address {
+        width:12rem;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        bottom: 0;
+      }
+    }
+
+    @media only screen and (max-width: 815px) {
+      td a.address {
+        width:7rem;
+      }
+    }
+
+    @media only screen and (max-width: 715px) {
+      td a.address {
+        width:6rem;
+      }
     }
   }
 }
