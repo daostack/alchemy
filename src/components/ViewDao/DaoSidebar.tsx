@@ -1,6 +1,7 @@
 import { Address, IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
+import * as classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
 import gql from "graphql-tag";
@@ -9,7 +10,6 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import * as css from "./ViewDao.scss";
-import * as classNames from "classnames";
 
 interface IProps {
   dao: IDAOState;
