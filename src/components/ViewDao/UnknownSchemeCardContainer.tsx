@@ -34,7 +34,6 @@ const UnknownSchemeCardContainer = (props: IInternalProps) => {
                       <a className={css.address} target="_blank" href={linkToEtherScan(scheme.address)}>{scheme.address}</a>
                     }
                   </td>
-                  {/* <td className={css.creationDate}>MMM dd, yyyy</td> */}
                 </tr>);
             })
           }
