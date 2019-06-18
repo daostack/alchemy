@@ -1,4 +1,4 @@
-import { Address, IProposalState } from "@daostack/client";
+import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import { getArc } from "../arc";
 
@@ -96,6 +96,10 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
       .toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
   }
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
+}
+
+export function tokenDetails(tokenAddress: string) {
+  return supportedTokens()[tokenAddress.toLowerCase()];
 }
 
 export function tokenSymbol(tokenAddress: string) {
@@ -198,4 +202,79 @@ export function linkToEtherScan(address: Address) {
     prefix = "rinkeby.";
   }
   return `https://${prefix}etherscan.io/address/${address}`;
+}
+
+export function getClaimableRewards(reward: IRewardState) {
+  if (!reward) {
+    return {};
+  }
+
+  const result: {[key: string]: BN} = {};
+  if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt === 0) {
+    result.reputationForProposer = reward.reputationForProposer;
+  }
+  if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt === 0) {
+    result.reputationForVoter = reward.reputationForVoter;
+  }
+
+  if (reward.tokensForStaker.gt(new BN(0)) && reward.tokensForStakerRedeemedAt === 0) {
+    result.tokensForStaker = reward.tokensForStaker;
+  }
+  if (reward.daoBountyForStaker.gt(new BN(0)) && reward.daoBountyForStakerRedeemedAt === 0) {
+    result.daoBountyForStaker = reward.daoBountyForStaker;
+  }
+  return result;
+}
+
+// TOOD: move this function to the client library!
+export function hasClaimableRewards(reward: IRewardState) {
+  const claimableRewards = getClaimableRewards(reward);
+  for (let key of Object.keys(claimableRewards)) {
+    if (claimableRewards[key].gt(new BN(0))) {
+      return true;
+    }
+  }
+}
+
+/**
+ * given an IContributionReward, return an array with the amounts that are stil to be claimbed
+ * by the beneficiary of the proposal
+ * @param  reward an object that immplements IContributionReward
+ * @return  an array mapping strings to BN
+ */
+// TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
+export function claimableContributionRewards(reward: IContributionReward, daoBalances: {[key: string]: BN} = {}) {
+  const result: {[key: string]: BN } = {};
+  if (
+    !reward.ethReward.isZero()
+    && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
+    && reward.alreadyRedeemedEthPeriods < reward.periods
+  ) {
+    result["eth"] = reward.ethReward;
+  }
+
+  if (
+    !reward.reputationReward.isZero()
+    && (daoBalances["rep"] === undefined || daoBalances["rep"].gte(reward.reputationReward))
+    && Number(reward.alreadyRedeemedReputationPeriods) < Number(reward.periods)
+  ) {
+    result["rep"] = reward.reputationReward;
+  }
+
+  if (
+    !reward.nativeTokenReward.isZero()
+    && (daoBalances["nativeToken"] === undefined || daoBalances["nativeToken"].gte(reward.nativeTokenReward))
+    && Number(reward.alreadyRedeemedNativeTokenPeriods) < Number(reward.periods)
+  ) {
+    result["nativeToken"] = reward.nativeTokenReward;
+  }
+
+  if (
+    !reward.externalTokenReward.isZero()
+    && (daoBalances["externalToken"] === undefined || daoBalances["externalToken"].gte(reward.externalTokenReward))
+    && Number(reward.alreadyRedeemedExternalTokenPeriods) < Number(reward.periods)
+  ) {
+    result["externalToken"] = reward.externalTokenReward;
+  }
+  return result;
 }

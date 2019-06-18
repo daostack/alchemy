@@ -19,6 +19,7 @@ const DaoContainer = (props: IProps) => {
   const observable = combineLatest(
     dao.proposals({
       stage_in: [IProposalStage.Queued, IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod],
+      // next line only is for queued proposals...
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
     }),
     dao.state()

@@ -141,8 +141,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 daoEthBalance={daoEthBalance}
-                expired={expired}
-                proposal={proposalState}
+                proposalState={proposalState}
               />
             </div>
           </div>
