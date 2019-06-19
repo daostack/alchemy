@@ -6,6 +6,25 @@
 const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 
+const KNOWNSCHEMES = [
+  dutchXInfo
+];
+
+const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
+  main: {},
+  rinkeby: {},
+  private: {}
+};
+
+for (let schemeInfo of KNOWNSCHEMES) {
+  console.log(schemeInfo.addresses);
+  for (let network of Object.keys(SCHEMEADDRESSES)) {
+    for (let address of schemeInfo.addresses[network]) {
+        SCHEMEADDRESSES[network][address] = schemeInfo;
+    }
+  }
+}
+
 interface IABISpec {
   constant: boolean;
   name: string;
@@ -69,6 +88,11 @@ export class Action implements IActionSpec {
     return result;
   }
 }
+
+/**
+ * represents information we have about a generic scheme and the actions it can call
+ * @param info [description]
+ */
 export class GenericSchemeInfo {
   public specs: IGenericSchemeJSON;
 
@@ -139,10 +163,26 @@ export class GenericSchemeRegistry {
    * @param  address an ethereum address
    * @return an object [specs to be written..]
    */
-  public genericSchemeInfo(name: string): GenericSchemeInfo {
-    if (name === "DutchX") {
-      return new GenericSchemeInfo(dutchXInfo);
+  public getSchemeInfo(address: string, network?: "main"|"rinkeby"|"private"|undefined): GenericSchemeInfo {
+    if (!network) {
+      switch (process.env.NODE_ENV) {
+        case "production":
+          network = "main";
+          break;
+        case "staging":
+          network = "rinkeby";
+          break;
+        case "test":
+          network = "private";
+          break;
+        default:
+          network = "main";
+        }
     }
-    throw Error(`We could not find any information about the genericScheme "${name}"`);
+    const spec = SCHEMEADDRESSES[network][address];
+    if (spec) {
+      return new GenericSchemeInfo(spec);
+    }
   }
+
 }

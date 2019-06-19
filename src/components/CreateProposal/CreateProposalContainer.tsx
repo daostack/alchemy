@@ -1,9 +1,9 @@
 import { Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import CreateContributionRewardProposal from "components/CreateProposal/SchemeForms/CreateContributionRewardProposal";
-import CreateDutchXProposal from "components/CreateProposal/SchemeForms/CreateDutchXProposal";
-import CreateGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateGenericSchemeProposal";
+import CreateKnownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
+import CreateUnknownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateUnknownGenericSchemeProposal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as H from "history";
 import * as React from "react";
@@ -11,6 +11,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { from } from "rxjs";
+import { GenericSchemeRegistry } from "../../genericSchemeRegistry";
 import * as css from "./CreateProposal.scss";
 
 interface IProps {
@@ -56,31 +57,35 @@ class CreateProposalContainer extends React.Component<IProps, null> {
           throw Error(`Unknown Scheme: ${scheme}`);
         }
 
-        // TODO: and DAO is dxDAO, should actually lookup dao in the registry and use the name from the JSON file
-        if (schemeName === "GenericScheme") {
-          schemeName = "DutchX";
+        let createSchemeComponent = <div />;
+        const props = {
+          daoAvatarAddress,
+          handleClose: this.goBack.bind(this),
+          scheme
+        };
+
+        if (schemeName === "ContributionReward") {
+          createSchemeComponent = <CreateContributionRewardProposal {...props}  />;
+        } else if (schemeName === "SchemeRegistrar") {
+          createSchemeComponent = <CreateSchemeRegistrarProposal { ...props} />;
+        } else if (schemeName === "GenericScheme") {
+          const genericSchemeRegistry = new GenericSchemeRegistry();
+          const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.address);
+          if (genericSchemeInfo) {
+            createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
+          } else {
+            createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
+          }
         }
 
         return <div className={css.createProposalWrapper}>
-
           <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}`}>{schemeName.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
           <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
-
           <h2>
             <span>+ New proposal <b>| {schemeName}</b></span>
           </h2>
-
-          { schemeName === "ContributionReward" ?
-              <CreateContributionRewardProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme}  />
-            : schemeName === "SchemeRegistrar" ?
-              <CreateSchemeRegistrarProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme}   />
-            : schemeName === "DutchX" ?
-              <CreateDutchXProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
-            : schemeName === "GenericScheme" ?
-              <CreateGenericSchemeProposal daoAvatarAddress={daoAvatarAddress} handleClose={this.goBack.bind(this)} scheme={scheme} />
-            : ""
-          }
-        </div>;
+          { createSchemeComponent }
+      </div>;
       }
     }}
     </Subscribe>;

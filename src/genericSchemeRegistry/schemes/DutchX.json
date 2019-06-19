@@ -1,8 +1,13 @@
 {
   "name": "DutchX",
   "addresses": {
-    "main": [],
-    "rinkeby": [],
+    "main": [
+      "0xb9812e2fa995ec53b5b6df34d21f9304762c5497"
+    ],
+    "rinkeby": [
+      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b",
+      "0x5663ca36e790f1f55198404f35ba3afb64949150"
+    ],
     "private": []
   },
   "actions": [

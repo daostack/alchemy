@@ -9,11 +9,12 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { Action, GenericSchemeInfo, GenericSchemeRegistry, IFieldSpec} from "../../../genericSchemeRegistry";
+import { Action, GenericSchemeInfo, IFieldSpec } from "../../../genericSchemeRegistry";
 import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
   daoAvatarAddress: string;
+  genericSchemeInfo: GenericSchemeInfo;
   handleClose: () => any;
   scheme: Scheme;
 }
@@ -44,23 +45,23 @@ interface FormValues {
 interface IState {
   actions: Action[];
   currentAction: Action;
-  genericSchemeInfo: GenericSchemeInfo;
 }
 
-class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
+class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    const genericSchemeRegistry = new GenericSchemeRegistry();
-    const genericSchemeInfo = genericSchemeRegistry.genericSchemeInfo("DutchX");
-    const actions = genericSchemeInfo.actions();
+    if (!props.genericSchemeInfo) {
+      throw Error("GenericSchemeInfo should be provided");
+    }
+
+    const actions = props.genericSchemeInfo.actions();
     this.state = {
       actions,
-      currentAction:  actions[0],
-      genericSchemeInfo
+      currentAction:  actions[0]
     };
   }
 
@@ -81,7 +82,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
     }
     let callData: string = "";
     try {
-      callData = this.state.genericSchemeInfo.encodeABI(currentAction, callValues);
+      callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
       // TODO: show notification, not an alert, and close the form
       alert(err.message);
@@ -110,7 +111,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
   }
 
   public handleTabClick = (tab: string) => (e: any) => {
-    this.setState({ currentAction: this.state.genericSchemeInfo.action(tab) });
+    this.setState({ currentAction: this.props.genericSchemeInfo.action(tab) });
   }
 
   public renderField(field: IFieldSpec, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
@@ -279,10 +280,7 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
             render={({
               errors,
               touched,
-              handleSubmit,
               isSubmitting,
-              setFieldTouched,
-              setFieldValue,
               values
             }: FormikProps<FormValues>) => {
               return (
@@ -371,4 +369,4 @@ class CreateDutchXProposalContainer extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateDutchXProposalContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateKnownSchemeProposalContainer);
