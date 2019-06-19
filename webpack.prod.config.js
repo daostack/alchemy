@@ -63,9 +63,10 @@ const config = merge(baseConfig, {
           {
             loader: "css-loader",
             options: {
-              modules: true,
-              importLoaders: 2,
-              localIdentName: "[name]--[local]--[hash:base64:5]"
+              modules: {
+                localIdentName: "[name]--[local]--[hash:base64:5]"
+              },
+              importLoaders: 2
             }
           },
           'sass-loader',
