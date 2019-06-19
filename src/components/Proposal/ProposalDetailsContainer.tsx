@@ -24,6 +24,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
+import ProposalStatus from "./ProposalStatus";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
@@ -143,6 +144,15 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div>
+              <div className={css.statusContainer}>
+                <ProposalStatus
+                  currentAccountAddress={currentAccountAddress}
+                  dao={dao}
+                  daoEthBalance={daoEthBalance}
+                  detailView={true}
+                  proposalState={proposal}
+                />
+              </div>
               <ActionButton
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}

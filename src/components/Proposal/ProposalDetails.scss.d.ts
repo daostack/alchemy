@@ -26,3 +26,4 @@ export const createdBy: string;
 export const targetAccount: string;
 export const discussionTitle: string;
 export const disqus: string;
+export const statusContainer: string;
