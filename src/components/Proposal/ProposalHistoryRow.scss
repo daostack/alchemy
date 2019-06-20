@@ -16,7 +16,7 @@
 
 .endDate {
   width: 60px;
-  color: rgba(154, 169, 181, 1.000);
+  color: $gray-1;
   padding-top: 15px;
   padding-right: 10px;
   text-align: left;
@@ -24,7 +24,7 @@
 
 .scheme {
   width: 80px;
-  color: rgba(154, 169, 181, 1.000);
+  color: $gray-1;
   padding-top: 15px;
   text-align: left;
 }
@@ -73,7 +73,7 @@
   }
 
   .decisionReason {
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
     padding-top: 4px;
   }
 }
@@ -120,15 +120,14 @@
 
   button span {
     font-weight: normal;
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
   }
 
   span {
     font-weight: normal;
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
   }
 }
-
 
 @media only screen and (max-width: 425px) {
   .wrapper {

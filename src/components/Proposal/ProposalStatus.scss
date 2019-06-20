@@ -19,14 +19,16 @@
   height: 30px;
   border-radius: 3px;
   background-color: transparent;
-  border: 1px solid #bfcbd5;
+  border: $gray-border-2;
   line-height: 30px;
   padding: 0 15px;
   margin-top: 0;
   margin-bottom: 15px;
   font-size: 13px;
   font-weight: $bold;
-  color: #9aa9b5;
+  color: $gray-1;
+  // to be consisent with the Action button
+  font-family: "Arial";
 
   img {
     margin-right: 8px;

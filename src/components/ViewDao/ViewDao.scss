@@ -55,7 +55,7 @@ button:hover {
   }
 
   p {
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
     font-size: 21px;
     padding-top: 0;
     margin-top: 0;
@@ -889,8 +889,8 @@ a.navItem:hover {
   text-align: center;
   padding-top: 20px;
   padding-bottom: 20px;
-  border-top: 1px solid rgba(191, 203, 213, 1.000);
-  color: rgba(154, 169, 181, 1.000);
+  border-top: $gray-border-2;
+  color: $gray-1;
   font-weight: $bold;
 
   img {
