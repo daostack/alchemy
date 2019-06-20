@@ -65,16 +65,20 @@ button:hover {
   font-weight: bold;
   text-align: left;
 
-  .votes, .predictions {
+  .votes {
     width: 103px;
   }
 
+  .predictions {
+    width: 110px;
+  }
+
   .proposalCreator {
-    width: 170px;
+    width: 180px;
   }
 
   .endDate {
-    width: 50px;
+    width: 60px;
     padding-right: 10px;
   }
 
