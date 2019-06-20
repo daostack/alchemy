@@ -94,7 +94,11 @@ class PredictionBox extends React.Component<IProps, IState> {
   }
 
   public showPreStakeModal = (prediction: number) => (event: any) => {
-    this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
+    if (!this.props.currentAccountAddress) {
+      checkMetaMaskAndWarn(this.props.showNotification.bind(this));
+    } else {
+      this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
+    }
   }
 
   public handleClickPreApprove = async (event: any) => {
@@ -165,18 +169,19 @@ class PredictionBox extends React.Component<IProps, IState> {
     }
 
     const wrapperClass = classNames({
-      [css.predictions] : true,
-      [css.detailView] : detailView,
-      [css.historyView] : historyView,
-      [css.unconfirmedPrediction] : isPredicting,
+      [css.predictions]: true,
+      [css.detailView]: detailView,
+      [css.historyView]: historyView,
+      [css.unconfirmedPrediction]: isPredicting,
     });
 
     const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
-                            (proposal.stage === IProposalStage.PreBoosted);
+      (proposal.stage === IProposalStage.PreBoosted);
 
     const hasGens = currentAccountGens.gt(new BN(0));
-    const disableStakePass = !hasGens || currentAccountPrediction === VoteOptions.No;
-    const disableStakeFail = !hasGens || currentAccountPrediction === VoteOptions.Yes;
+    // show staking buttons when !this.props.currentAccountAddress, even if no GENs
+    const disableStakePass = (this.props.currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
+    const disableStakeFail = (this.props.currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
 
     const passButtonClass = classNames({
       [css.pendingPrediction]: isPredictingPass,
@@ -191,29 +196,30 @@ class PredictionBox extends React.Component<IProps, IState> {
     const tip = (prediction: VoteOptions) =>
       !hasGens ?
         "Insufficient GENs" :
-      currentAccountPrediction === prediction ?
-        "Can't change prediction" :
-      isPredicting ?
-        "Warning: Staking on this proposal is already in progress" :
-        ""
-    ;
+        currentAccountPrediction === prediction ?
+          "Can't change prediction" :
+          isPredicting ?
+            "Warning: Staking on this proposal is already in progress" :
+            ""
+      ;
 
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)} data-test-id="stakePass">
-        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg"/> Pass
-        <img src="/assets/images/Icon/Loading-black.svg"/>
+        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg" /> Pass
+        <img src="/assets/images/Icon/Loading-black.svg" />
       </button>
     );
 
     const failButton = (
       <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
-        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg"/> Fail
-        <img src="/assets/images/Icon/Loading-black.svg"/>
+        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg" /> Fail
+        <img src="/assets/images/Icon/Loading-black.svg" />
       </button>
     );
 
     // If don't have any staking allowance, replace with button to pre-approve
-    if (stakingEnabled && currentAccountGenStakingAllowance.eq(new BN(0))) {
+    // show staking buttons when !this.props.currentAccountAddress, even if no allowance
+    if (stakingEnabled && (this.props.currentAccountAddress && currentAccountGenStakingAllowance.eq(new BN(0)))) {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
@@ -239,16 +245,17 @@ class PredictionBox extends React.Component<IProps, IState> {
         }
 
         <div className={css.stakeControls}>
-          { stakingEnabled
+          {stakingEnabled
             ? <span>
               {
-              tip(VoteOptions.No) !== "" ?
-                <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                  {passButton}
-                </Tooltip> :
-                passButton
+                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
+                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                    {passButton}
+                  </Tooltip> :
+                  passButton
               }
-              {tip(VoteOptions.Yes) !== "" ?
+              {
+                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
                     {failButton}
                   </Tooltip> :
@@ -256,7 +263,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               }
             </span>
             : <span className={css.disabledPredictions}>
-                Predictions are disabled
+              Predictions are disabled
             </span>
           }
         </div>
@@ -278,7 +285,7 @@ export default (props: IContainerProps) => {
     observable = combineLatest(
       arc.GENToken().balanceOf(currentAccountAddress),
       arc.allowance(currentAccountAddress, spender),
-      props.proposal.proposal.stakes({ staker: currentAccountAddress})
+      props.proposal.proposal.stakes({ staker: currentAccountAddress })
     );
   } else {
     observable = combineLatest(
@@ -292,12 +299,12 @@ export default (props: IContainerProps) => {
       if (state.isLoading) {
         return <div>Loading PredictionBox</div>;
       } else if (state.error) {
-        return <div>{ state.error.message }</div>;
+        return <div>{state.error.message}</div>;
       } else {
         const currentAccountGens = state.data[0] || new BN(0);
         const currentAccountGenStakingAllowance = new BN(state.data[1]);
         const stakes = state.data[2];
-        return <ConnectedPredictionBox {...props }
+        return <ConnectedPredictionBox {...props}
           currentAccountGens={currentAccountGens}
           currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
           stakesOfCurrentUser={stakes}

@@ -1,6 +1,8 @@
 import { IDAOState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import UnknownSchemeCardContainer from "components/ViewDao/UnknownSchemeCardContainer";
+import { isKnownScheme } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -14,10 +16,10 @@ const Fade = ({ children, ...props }: any) => (
     {...props}
     timeout={1000}
     classNames={{
-     enter: css.fadeEnter,
-     enterActive: css.fadeEnterActive,
-     exit: css.fadeExit,
-     exitActive: css.fadeExitActive,
+      enter: css.fadeEnter,
+      enterActive: css.fadeEnterActive,
+      exit: css.fadeExit,
+      exitActive: css.fadeExitActive,
     }}
   >
     {children}
@@ -31,14 +33,22 @@ interface IProps {
 
 const AllSchemesContainer = (props: IProps) => {
   const { dao, schemes } = props;
-
+  const knownSchemes = schemes.filter((scheme: Scheme) => isKnownScheme(scheme.address));
+  const unknownSchemes = schemes.filter((scheme: Scheme) => !isKnownScheme(scheme.address));
   const schemeCardsHTML = (
     <TransitionGroup>
-      { schemes.map((scheme: Scheme) => (
+      {knownSchemes.map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.id}>
           <SchemeCardContainer dao={dao} scheme={scheme} />
         </Fade>
-      ))}
+      ))
+      }
+
+      {!unknownSchemes ? "" :
+        <Fade key={"schemes unknown"}>
+          <UnknownSchemeCardContainer schemes={unknownSchemes} />
+        </Fade>
+      }
     </TransitionGroup>
   );
 
@@ -47,13 +57,13 @@ const AllSchemesContainer = (props: IProps) => {
       <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
       <h1>All Schemes</h1>
-      { schemes.length === 0
+      {schemes.length === 0
         ? <div>
-            <img src="/assets/images/meditate.svg"/>
-            <div>
-              No schemes registered
+          <img src="/assets/images/meditate.svg" />
+          <div>
+            No schemes registered
             </div>
-          </div>
+        </div>
         :
         <div>
           {schemeCardsHTML}
@@ -63,7 +73,7 @@ const AllSchemesContainer = (props: IProps) => {
   );
 };
 
-export default(props: { } & RouteComponentProps<any>) => {
+export default (props: {} & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
   const arc = getArc();
 
@@ -74,7 +84,7 @@ export default(props: { } & RouteComponentProps<any>) => {
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IDAOState, Scheme[]]>): any => {
       if (state.isLoading) {
-        return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>;
       } else if (state.error) {
         throw state.error;
       } else {
