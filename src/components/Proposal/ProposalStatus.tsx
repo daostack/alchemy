@@ -9,7 +9,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { closingTime } from "reducers/arcReducer";
-import { proposalFailed, proposalPassed, proposalEnded } from "reducers/arcReducer";
+import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Observable, of } from "rxjs";
