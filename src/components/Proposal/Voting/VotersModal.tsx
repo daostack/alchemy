@@ -35,9 +35,18 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
 
     return (
       <div className={css.voteRow}>
-        <AccountImage accountAddress={vote.voter} />
-        <AccountProfileName accountAddress={vote.voter} accountProfile={null} daoAvatarAddress={dao.address} />
-        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={vote.amount} hideSymbol={true} />
+        <div className={css.voteRowContainer}>
+          <div className={css.account}>
+            <AccountImage accountAddress={vote.voter} />
+            <span className={css.accountAddress}>
+              <AccountProfileName accountAddress={vote.voter} accountProfile={null} daoAvatarAddress={dao.address} />
+            </span>
+          </div>
+          <div className={css.reputationAmount}>
+            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={vote.amount} hideSymbol={true} />
+          </div>
+          <div className={css.reputationLine}></div>
+        </div>
       </div>
     );
   }
@@ -80,33 +89,28 @@ class VotersModal extends React.Component<IProps, null> {
             {votes.length} Votes
           </div>
           <div className={css.content}>
-            <div>
+            <div className={css.summary}>
               <div className={voteUpClass}>
-                <img className={css.upvote} src="/assets/images/Icon/vote/for-gray.svg"/>
-                <img className={css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
-
                 <span className={css.reputation}>
-                  <span>For</span>
+                  <img className={css.upvote} src="/assets/images/Icon/vote/for-gray.svg"/>
+                  <img className={css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
+                  <span className={css.reputationTitle}>For</span>
                   <br/>
-                  <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposalState.votesFor} hideSymbol={true} />
-                  <b > Rep</b>
+                  <p><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposalState.votesFor} hideSymbol={true} /> Rep</p>
                 </span>
               </div>
-
-              <VoteGraph size={90} dao={dao} proposal={proposalState} />
-
+              <div className={css.graphContainer}>
+                <VoteGraph size={90} dao={dao} proposal={proposalState} />
+              </div>
               <div className={voteDownClass}>
-                <img className={css.downvote} src="/assets/images/Icon/vote/against-gray.svg"/>
-                <img className={css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
-
                 <span className={css.reputation}>
-                  <span>Against</span>
+                  <img className={css.downvote} src="/assets/images/Icon/vote/against-gray.svg"/>
+                  <img className={css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
+                  <span className={css.reputationTitle}>Against</span>
                   <br />
-                  <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposalState.votesAgainst} hideSymbol={true} />
-                  <b > Rep</b>
+                  <p><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposalState.votesAgainst} hideSymbol={true} /> Rep</p>
                 </span>
               </div>
-
             </div>
 
             <div className={css.voters}>
