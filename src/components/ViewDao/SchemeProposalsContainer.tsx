@@ -79,12 +79,16 @@ const SchemeProposalsContainer = (props: IProps) => {
 
       { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
         ? <div className={css.noDecisions}>
-            <img className={css.relax} src="/assets/images/meditate.svg"/>
+            <img className={css.relax} src="/assets/images/yogaman.svg"/>
             <div className={css.proposalsHeader}>
               No upcoming proposals
             </div>
+            <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
             <div className={css.cta}>
-              <Link to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">Create a proposal</Link>
+              <Link to={"/dao/" + dao.address}>
+                <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+              </Link>
+              <Link to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
             </div>
           </div>
         :
