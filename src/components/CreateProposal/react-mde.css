@@ -205,6 +205,7 @@
     vertical-align: top;
     resize: none;
     overflow-y: auto;
+    font-size:  13px;
   }
 
   .mde-preview .mde-preview-content {

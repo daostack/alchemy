@@ -1,6 +1,6 @@
 import { FieldProps } from "formik";
 import * as React from "react";
-import ReactMde from "react-mde";
+import ReactMde, { commands } from "react-mde";
 const ReactMarkdown = require("react-markdown");
 
 interface IProps {
@@ -26,16 +26,30 @@ export default class MarkdownField extends React.Component<Props, IState> {
   public render() {
     const { field, onChange } = this.props;
 
+    // Hacky way to turn off tab selection of buttons in the toolbar
+    const defaultCommands = commands.getDefaultCommands();
+    const usedCommands = defaultCommands;
+    defaultCommands.forEach((commandGroup, i) => {
+      commandGroup.commands.forEach((command, j) => {
+        const noTabCommand = defaultCommands[i].commands[j];
+        noTabCommand.buttonProps["tabIndex"] = -1;
+        usedCommands[i].commands[j] = noTabCommand;
+      })
+    });
+
     return (
       <div>
         <ReactMde
-          onChange={onChange}
-          onTabChange={(tab) => { this.setState({ selectedTab: tab}); }}
-          value={field.value}
+          commands={usedCommands}
           generateMarkdownPreview={(markdown) =>
             Promise.resolve(<ReactMarkdown source={markdown} />)
           }
+          maxEditorHeight={84}
+          minEditorHeight={84}
+          onChange={onChange}
+          onTabChange={(tab) => { this.setState({ selectedTab: tab}); }}
           selectedTab={this.state.selectedTab}
+          value={field.value}
         />
       </div>
     );
