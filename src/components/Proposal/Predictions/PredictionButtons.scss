@@ -163,11 +163,16 @@
   button {
     width: 120px;
     display: block;
-    margin: 0 auto;
+    margin-left: 16px;
+    margin-right: 2px;
     border-radius: 3px;
     opacity: .5;
     position: relative;
-    top: -5px;
+    top: 3px;
+    height: 16px;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 11px;
   }
 
   span {
@@ -211,8 +216,8 @@
     display: block;
     width: 120px;
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: 3px;
+    right: 18px;
     text-align: right;
 
     button {
