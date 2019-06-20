@@ -21,6 +21,7 @@ module.exports = {
       components: path.resolve(basePath, 'src/components'),
       constants: path.resolve(basePath, 'src/constants'),
       data: path.resolve(basePath, 'data'),
+      genericSchemeRegistry: path.resolve(basePath, 'src/genericSchemeRegistry'),
       layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
       reducers: path.resolve(basePath, 'src/reducers'),

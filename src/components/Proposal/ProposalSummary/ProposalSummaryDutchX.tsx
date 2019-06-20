@@ -1,19 +1,22 @@
+import { IProposalState } from "@daostack/client";
 import BN = require("bn.js");
+import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { formatTokens, linkToEtherScan } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 
 interface IProps {
-  callData: any;
+  genericSchemeInfo: GenericSchemeInfo;
   detailView?: boolean;
+  proposal: IProposalState;
 }
 
 export default class ProposalSummaryDutchX extends React.Component<IProps, null> {
 
   public render() {
-    const { callData, detailView } = this.props;
-
-    switch (callData.action.id) {
+    const { proposal, detailView, genericSchemeInfo } = this.props;
+    const decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
+    switch (decodedCallData.action.id) {
       case "updateMasterCopy":
         return (
           <div>
@@ -23,7 +26,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                New master copy address: <a href={linkToEtherScan(callData.values[0])} target="_blank">{callData.values[0]}</a>
+                New master copy address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -38,7 +41,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                New oracle address: <a href={linkToEtherScan(callData.values[0])} target="_blank">{callData.values[0]}</a>
+                New oracle address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -53,7 +56,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                New owner address: <a href={linkToEtherScan(callData.values[0])} target="_blank">{callData.values[0]}</a>
+                New owner address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -63,12 +66,12 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div>
             <span className={css.summaryTitle}>
-              {callData.values[1] ? "+" : "-"}&nbsp;
-              {callData.values[1] ? "Whitelist" : "Delist"} {callData.values[0].length} token{callData.values[0].length !== 1 ? "s" : ""}
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
             </span>
             { detailView ?
               <ul className={css.summaryDetails}>
-                {callData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank">{token}</a></li>)}
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank">{token}</a></li>)}
               </ul>
               : ""
             }
@@ -79,7 +82,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Set new token pair threshold to ${formatTokens(new BN(callData.values[0]))}
+              Set new token pair threshold to ${formatTokens(new BN(decodedCallData.values[0]))}
             </span>
           </div>
         );
@@ -88,7 +91,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Set new auction threshold to ${formatTokens(new BN(callData.values[0]))}
+              Set new auction threshold to ${formatTokens(new BN(decodedCallData.values[0]))}
             </span>
           </div>
         );

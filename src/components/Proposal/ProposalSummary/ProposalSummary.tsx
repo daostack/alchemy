@@ -1,12 +1,13 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as classNames from "classnames";
-// import { getNetworkName } from "lib/util";
+import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
 import ProposalSummaryContributionReward from "./ProposalSummaryContributionReward";
-import ProposalSummaryGenericScheme from "./ProposalSummaryGenericScheme";
+import ProposalSummaryKnownGenericScheme from "./ProposalSummaryKnownGenericScheme";
 import ProposalSummarySchemeRegistrar from "./ProposalSummarySchemeRegistrar";
+import ProposalSummaryUnknownGenericScheme from "./ProposalSummaryUnknownGenericScheme";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -33,7 +34,14 @@ export default class ProposalSummary extends React.Component<IProps> {
     } else if (proposal.schemeRegistrar) {
       return <ProposalSummarySchemeRegistrar {...this.props} />;
     } else if (proposal.type === IProposalType.GenericScheme) {
-      return <ProposalSummaryGenericScheme {...this.props} />;
+      const genericSchemeRegistry = new GenericSchemeRegistry();
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(proposal.scheme.address);
+      if (genericSchemeInfo) {
+        return <ProposalSummaryKnownGenericScheme  {...this.props} genericSchemeInfo={genericSchemeInfo} />;
+      } else {
+        return <ProposalSummaryUnknownGenericScheme {...this.props} />;
+      }
+
     } else {
       return <div className={proposalSummaryClass}>Unknown proposal type</div>;
     }

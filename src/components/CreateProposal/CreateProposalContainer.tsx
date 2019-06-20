@@ -5,13 +5,13 @@ import CreateKnownGenericSchemeProposal from "components/CreateProposal/SchemeFo
 import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateUnknownGenericSchemeProposal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as H from "history";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { from } from "rxjs";
-import { GenericSchemeRegistry } from "../../genericSchemeRegistry";
 import * as css from "./CreateProposal.scss";
 
 interface IProps {

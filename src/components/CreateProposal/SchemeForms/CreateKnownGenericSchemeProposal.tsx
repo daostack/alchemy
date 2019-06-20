@@ -5,11 +5,11 @@ import { checkMetaMaskAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
+import { Action, GenericSchemeInfo, IFieldSpec } from "genericSchemeRegistry";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { Action, GenericSchemeInfo, IFieldSpec } from "../../../genericSchemeRegistry";
 import * as css from "../CreateProposal.scss";
 
 interface IStateProps {
