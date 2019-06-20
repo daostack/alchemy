@@ -145,13 +145,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
           <div className={css.proposalInfo}>
             <div>
               <div className={css.statusContainer}>
-                <ProposalStatus
-                  currentAccountAddress={currentAccountAddress}
-                  dao={dao}
-                  daoEthBalance={daoEthBalance}
-                  detailView={true}
-                  proposalState={proposal}
-                />
+                <ProposalStatus proposalState={proposal} />
               </div>
               <ActionButton
                 currentAccountAddress={currentAccountAddress}
