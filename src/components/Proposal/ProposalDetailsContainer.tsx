@@ -11,6 +11,7 @@ import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+const ReactMarkdown = require("react-markdown");
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -165,7 +166,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.description}>
-              {proposal.description}
+              <ReactMarkdown source={proposal.description} />
             </div>
 
             {url ?
