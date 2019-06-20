@@ -30,7 +30,7 @@
   height: 20px;
   border-radius: 20px;
   text-align: center;
-  background-color: rgba(246, 80, 80, 1.000);
+  background-color: $accent-2;
   margin-right: 10px;
 
   img {
@@ -43,7 +43,7 @@
 }
 
 .metaMaskModal .modalWindow .transactionHeader.stakePass .transactionIcon {
-  background-color: rgba(0, 190, 144, 1.000);
+  background-color: $accent-3;
 
   img {
     left: 0;
@@ -203,7 +203,7 @@ input[type=number] {
     display: block;
     margin: 0 25px 25px 25px;
     padding-left: 10px;
-    border-left: 2px solid rgba(246, 80, 80, 1.000);
+    border-left: 2px solid $accent-2;
   }
 }
 
@@ -535,15 +535,15 @@ input[type=number] {
           font-size: 21px;
 
           .passVote {
-            color: rgba(0, 190, 144, 1.000);
+            color: $accent-3;
           }
 
           .failVote {
-            color: rgba(246, 80, 80, 1.000);
+            color: $accent-2;
           }
 
           .redeem {
-            color: rgba(0, 190, 144, 1.000);
+            color: $accent-3;
           }
         }
 

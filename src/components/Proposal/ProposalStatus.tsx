@@ -9,7 +9,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { closingTime } from "reducers/arcReducer";
-// import { proposalEnded } from "reducers/arcReducer";
+import { proposalFailed, proposalPassed, proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Observable, of } from "rxjs";
@@ -61,9 +61,6 @@ class ProposalStatus extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = {
-      preRedeemModalOpen: false
-    };
   }
 
   public async handleClickExecute(event: any) {
@@ -71,25 +68,17 @@ class ProposalStatus extends React.Component<IProps, IState> {
     await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  public handleClickRedeem(event: any) {
-    this.setState({ preRedeemModalOpen: true });
-  }
-
-  public closePreRedeemModal(event: any) {
-    this.setState({ preRedeemModalOpen: false });
-  }
-
   public render() {
     const {
-      // beneficiaryProfile,
       // currentAccountAddress,
-      // dao,
-      // detailView,
       proposalState,
     } = this.props;
 
     // const executable = proposalEnded(proposalState) && !proposalState.executedAt;
-    const expired = closingTime(proposalState).isSameOrBefore(moment());
+    const ended = proposalEnded(proposalState);
+    const expired = !ended && closingTime(proposalState).isSameOrBefore(moment());
+    const passed = ended && proposalPassed(proposalState);
+    const failed = ended && proposalFailed(proposalState);
 
     const wrapperClass = classNames({
       [css.wrapper]: true
@@ -113,12 +102,25 @@ class ProposalStatus extends React.Component<IProps, IState> {
                 [css.status]: true,
                 [css.boosted]: true
               })}><img src="/assets/images/Icon/boosted.svg" />Boosted</div> :
-              (expired) ?
+              (passed) ?
                 <div className={classNames({
                   [css.status]: true,
-                  [css.expired]: true
-                })}>Expired</div> :
-                ""
+                  [css.boosted]: true
+                })}><img src="/assets/images/Icon/boosted.svg" />Passed</div> :
+                (failed) ?
+                  <div className={classNames({
+                    [css.status]: true,
+                    [css.boosted]: true
+                  })}><img src="/assets/images/Icon/boosted.svg" />Failed</div> :
+                  (ended) ?
+                    <div className={classNames({
+                      [css.status]: true,
+                      [css.expired]: true
+                    })}>Expired</div> :
+                    <div className={classNames({
+                      [css.status]: true,
+                      [css.expired]: true
+                    })}>???</div>
         }
       </div>
     );

@@ -8,7 +8,7 @@
 }
 
 .pending, .regular, .expired {
-  color: #bfcbd5;
+  color: $gray-1;
 }
 
 .failed {
@@ -26,11 +26,11 @@
   margin-bottom: 15px;
   font-size: 13px;
   font-weight: $bold;
-  color: $gray-1;
-  // to be consisent with the Action button
-  font-family: "Arial";
 
   img {
-    margin-right: 8px;
+    height: 13px;
+    margin-right: 6px;
+    position: relative;
+    bottom: -2px;
   }
 }

@@ -18,11 +18,11 @@
   padding: 0 5px;
 
   .castVoteFor {
-    color: rgba(0, 190, 144, 1.000);
+    color: $accent-3;
   }
 
   .castVoteAgainst {
-    color: rgba(246, 80, 80, 1.000);
+    color: $accent-2;
   }
 }
 
