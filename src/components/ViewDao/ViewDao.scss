@@ -9,7 +9,7 @@
 .menuDot {
     height: 8px;
     width: 8px;
-    margin-left: 4px;
+    margin-left: 0;
     display: inline-block;
 
   &.red {
@@ -413,7 +413,7 @@ button:hover {
       }
 
       img {
-        margin-left: 4px;
+        margin-left: 2px;
         position: relative;
         top: 2px;
         margin-right: 8px;
