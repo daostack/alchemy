@@ -7,7 +7,7 @@ describe("Proposals", () => {
 
     before(() => {
       addresses = getContractAddresses();
-      daoAddress = addresses.test.Avatar.toLowerCase();
+      daoAddress = addresses.Avatar.toLowerCase();
     });
 
     it("Create a Generic Scheme proposal, vote for it, stake on it", async () => {

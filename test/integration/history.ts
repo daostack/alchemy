@@ -7,7 +7,7 @@ describe("History page", () => {
 
     before(async () => {
       addresses = getContractAddresses();
-      daoAddress = addresses.dao.Avatar.toLowerCase();
+      daoAddress = addresses.Avatar.toLowerCase();
     });
 
     it("should exist", async () => {
