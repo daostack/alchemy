@@ -1,6 +1,7 @@
 import { Address, IDAOState, IProposalStage, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import { schemeName} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -69,13 +70,13 @@ const SchemeProposalsContainer = (props: IProps) => {
 
   return (
     <div className={css.daoProposalsContainer}>
-      <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address}</BreadcrumbsItem>
+      <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
       <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">
         + New proposal
       </Link>
 
-      <h2 className={css.queueType}>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address}</h2>
+      <h2 className={css.queueType}>{schemeName(scheme, scheme.address)}</h2>
 
       { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
         ? <div className={css.noDecisions}>
@@ -152,9 +153,9 @@ export default(props: IExternalProps & RouteComponentProps<any>) => {
   const arc = getArc();
   const observable = combineLatest(
     from(arc.scheme(schemeId)),
-    arc.dao(daoAvatarAddress).proposals({ scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
-    arc.dao(daoAvatarAddress).proposals({ scheme: schemeId, stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
-    arc.dao(daoAvatarAddress).proposals({ scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
+    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
+    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state() // DAO state
   );
 

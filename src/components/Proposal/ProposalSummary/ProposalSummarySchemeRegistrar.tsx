@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as classNames from "classnames";
-import { default as Util, getNetworkName, linkToEtherScan, schemeName } from "lib/util";
+import { default as Util, getNetworkName, linkToEtherScan, schemeNameAndAddress } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -52,7 +52,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                 <span className={css.summaryTitle}>
                   <img src="/assets/images/Icon/delete.svg"/>&nbsp;
                   Remove Scheme&nbsp;
-                  <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">{schemeName(schemeRegistrar.schemeToRemove)}</a>
+                  <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">{schemeNameAndAddress(schemeRegistrar.schemeToRemove)}</a>
                 </span>
                 { detailView ?
                   <div className={css.summaryDetails}>
@@ -76,7 +76,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                 <span className={css.summaryTitle}>
                   <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                   {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
-                  <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
+                  <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeNameAndAddress(schemeRegistrar.schemeToRegister)}</a>
                 </span>
                 { detailView ?
                   <div className={css.summaryDetails}>

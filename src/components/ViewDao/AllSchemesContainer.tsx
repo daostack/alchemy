@@ -32,16 +32,6 @@ interface IProps {
 const AllSchemesContainer = (props: IProps) => {
   const { dao, schemes } = props;
 
-  const schemeCardsHTML = (
-    <TransitionGroup>
-      { schemes.map((scheme: Scheme) => (
-        <Fade key={"scheme " + scheme.id}>
-          <SchemeCardContainer dao={dao} scheme={scheme} />
-        </Fade>
-      ))}
-    </TransitionGroup>
-  );
-
   return (
     <div className={css.wrapper}>
       <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
@@ -56,7 +46,13 @@ const AllSchemesContainer = (props: IProps) => {
           </div>
         :
         <div>
-          {schemeCardsHTML}
+          <TransitionGroup>
+            { schemes.map((scheme: Scheme) => (
+              <Fade key={"scheme " + scheme.id}>
+                <SchemeCardContainer dao={dao} scheme={scheme} />
+              </Fade>
+            ))}
+          </TransitionGroup>
         </div>
       }
     </div>

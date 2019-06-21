@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, isKnownScheme, linkToEtherScan } from "lib/util";
+import { humanProposalTitle, isKnownScheme, linkToEtherScan, schemeName } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
@@ -61,11 +61,10 @@ const SchemeCardContainer = (props: IInternalProps) => {
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <ProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
-
   return (
       <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
         <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.id}`}>
-          <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || "[unknown]"}</h2>
+          <h2>{schemeName(scheme, "[Unknown]")}</h2>
           <div>
             <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
           </div>
