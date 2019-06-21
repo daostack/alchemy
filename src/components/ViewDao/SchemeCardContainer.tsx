@@ -1,16 +1,16 @@
-import { IDAOState, IProposalStage, IProposalState,  Proposal, Scheme } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, isKnownScheme, linkToEtherScan, schemeName } from "lib/util";
+import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
 import { combineLatest } from "rxjs";
 import * as css from "./SchemeCard.scss";
 
-const ProposalDetail =  (props: { proposal: Proposal, dao: IDAOState }) => {
+const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
   const { proposal, dao } = props;
   return <Subscribe key={proposal.id} observable={proposal.state()}>{
     (state: IObservableState<IProposalState>): any => {
@@ -30,7 +30,7 @@ const ProposalDetail =  (props: { proposal: Proposal, dao: IDAOState }) => {
             </span>
             <b>
               {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
-              <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView={true}/>
+              <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView={true} />
             </b>
           </Link>
         );
@@ -62,54 +62,34 @@ const SchemeCardContainer = (props: IInternalProps) => {
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <ProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
   return (
-      <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
-        <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.id}`}>
-          <h2>{schemeName(scheme, "[Unknown]")}</h2>
-          <div>
-            <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
-          </div>
-          {proposals.length === 0 ?
-            <div className={css.loading}>
-                <img src="/assets/images/meditate.svg"/>
-                <div>
-                  No upcoming proposals
+    <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
+      <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.id}`}>
+        <h2>{schemeName(scheme, "[Unknown]")}</h2>
+        <div>
+          <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
+        </div>
+        {proposals.length === 0 ?
+          <div className={css.loading}>
+            <img src="/assets/images/meditate.svg" />
+            <div>
+              No upcoming proposals
                 </div>
-            </div>
-            : " "
-          }
-        </Link>
-        {proposals.length > 0 ?
-          <div>
-            {proposalsHTML}
-            <div className={css.numProposals}>
-              <Link to={`/dao/${dao.address}/proposals/${scheme.id}`}>View all {numProposals} &gt;</Link>
-            </div>
           </div>
           : " "
         }
-      </div>
-    );
-
-};
-
-const UnknownSchemeCardContainer = (props: IInternalProps) => {
-
-  const { scheme, boostedProposals, preBoostedProposals, queuedProposals } = props;
-
-  const numProposals = boostedProposals.length + preBoostedProposals.length + queuedProposals.length;
-
-  return (
-      <div className={css.wrapper + " " + css.unsupportedScheme}>
-        <h2>{scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || ""}</h2>
-        <div>Unsupported Scheme at</div>
+      </Link>
+      {proposals.length > 0 ?
         <div>
-          <a href={linkToEtherScan(scheme.address)}>{scheme.address}</a>
+          {proposalsHTML}
+          <div className={css.numProposals}>
+            <Link to={`/dao/${dao.address}/proposals/${scheme.id}`}>View all {numProposals} &gt;</Link>
+          </div>
         </div>
-        <div>
-          {numProposals} proposals
-        </div>
-      </div>
-    );
+        : " "
+      }
+    </div>
+  );
+
 };
 
 export default (props: IExternalProps) => {
@@ -118,16 +98,16 @@ export default (props: IExternalProps) => {
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
     dao.proposals({
-      scheme: props.scheme.id,
+      scheme:  props.scheme.id,
       stage: IProposalStage.Queued,
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
     }), // the list of queued proposals
     dao.proposals({
-      scheme: props.scheme.id,
+      scheme:  props.scheme.id,
       stage: IProposalStage.PreBoosted
     }), // the list of preboosted proposals
     dao.proposals({
-      scheme: props.scheme.id,
+      scheme:  props.scheme.id,
       stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
     }) // the list of boosted proposals
   );
@@ -135,15 +115,11 @@ export default (props: IExternalProps) => {
   return <Subscribe observable={observable}>{
     (state: IObservableState<[Proposal[], Proposal[], Proposal[]]>): any => {
       if (state.isLoading) {
-        return  <div><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return <div><img src="/assets/images/Icon/Loading-black.svg" /></div>;
       } else if (state.error) {
         throw state.error;
       } else {
-        if (isKnownScheme(props.scheme.address)) {
-          return <SchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
-        } else {
-          return <UnknownSchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
-        }
+        return <SchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
       }
     }
   }</Subscribe>;

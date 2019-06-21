@@ -18,20 +18,22 @@ const DaoContainer = (props: IProps) => {
   const dao = props.dao;
   const observable = combineLatest(
     dao.proposals({
-      stage_in: [IProposalStage.Queued, IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod],
-      // next line only is for queued proposals...
+      stage_in: [IProposalStage.Queued],
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
+    }),
+    dao.proposals({
+      stage_in: [IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod]
     }),
     dao.state()
   );
 
-  return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], IDAOState]>) => {
+  return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], Proposal[], IDAOState]>) => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const [proposals, daoState] = state.data;
+        const [regularProposals, boostedProposals, daoState] = state.data;
         const bgPattern = GeoPattern.generate(dao.address + daoState.name);
 
         return <Link
@@ -54,7 +56,7 @@ const DaoContainer = (props: IProps) => {
                </div>
 
               <div className={css.daoInfo}>
-                <b>{proposals.length}</b>
+                <b>{regularProposals.length + boostedProposals.length}</b>
                 <span>Open Proposals</span>
                </div>
 
