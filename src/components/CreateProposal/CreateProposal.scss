@@ -149,10 +149,12 @@
     }
 
     .errorMessage {
+      font-weight: normal;
       position: relative;
       left: 10px;
       color: rgba(246, 80, 80, 1.000);
-      font-size: 13px;
+      font-size: 11px;
+      font-weight: 300;
     }
 
     .errorMessage.someReward {
@@ -162,6 +164,7 @@
       left: 0;
       font-size: $small;
       z-index: -10;
+      font-weight: 300;
     }
 
   }

@@ -61,7 +61,7 @@
     outline: none;
     margin-right: 10px;
     line-height: 30px;
-    padding: 0 15px;
+    padding: 0 25px;
     color: rgba(0, 113, 255, 1.000);
   }
 }
@@ -128,7 +128,7 @@
   border: 0;
   outline: none;
   line-height: 30px;
-  padding: 0 15px;
+  padding: 0 25px;
   margin: 0 20px 20px 0;
   display: inline-block;
   float: right;
@@ -153,7 +153,7 @@
 }
 
 .preTransactionBottom {
-  padding: 20px 30px;
+  padding: 20px 0;
   border-top: 1px solid rgba(191, 203, 213, 1.000);
   text-align: right;
 }
@@ -260,7 +260,7 @@ input[type=number] {
     .graphInfo{
       float: left;
       width: 50%;
-      padding: 48px 0 10px 0;
+      padding: 33px 0 10px 0;
 
       div {
         padding-bottom: 15px;
@@ -696,7 +696,7 @@ input[type=number] {
           transition: all .25s ease;
           background-color: rgba(255,255,255,1);
           border-radius: 0 10px 10px 0;
-          
+
           .diamond {
             width: 10px;
             height: 10px;
@@ -719,7 +719,7 @@ input[type=number] {
             display: block;
             padding: 5px 10px;
 
-            b {         
+            b {
               display: inline-block;
               width: 30px;
               text-align: left;
