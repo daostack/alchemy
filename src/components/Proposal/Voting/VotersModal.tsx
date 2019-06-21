@@ -1,3 +1,5 @@
+/* tslint:disable:max-classes-per-file */
+
 import { Address, IDAOState, IProposalOutcome, IProposalState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import * as classNames from "classnames";
@@ -5,12 +7,12 @@ import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import VoteGraph from "./VoteGraph";
 import * as React from "react";
 //@ts-ignore
 import { Modal } from "react-router-modal";
 import { combineLatest, from } from "rxjs";
 import { concatMap } from "rxjs/operators";
+import VoteGraph from "./VoteGraph";
 
 import * as css from "./VotersModal.scss";
 
@@ -115,10 +117,10 @@ class VotersModal extends React.Component<IProps, null> {
 
             <div className={css.voters}>
               <div>
-                <div>{yesVotes.map(vote => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{yesVotes.map((vote) => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
               <div>
-                <div>{noVotes.map(vote => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{noVotes.map((vote) => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
             </div>
           </div>
