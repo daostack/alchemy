@@ -49,22 +49,22 @@ export default class ProposalStatus extends React.Component<IProps, null> {
               (passed) ?
                 <div className={classNames({
                   [css.status]: true,
-                  [css.boosted]: true
+                  [css.passed]: true
                 })}><img src="/assets/images/Icon/vote/for-fill-green.svg" />Passed</div> :
                 (failed) ?
                   <div className={classNames({
                     [css.status]: true,
-                    [css.passed]: true
+                    [css.failed]: true
                   })}><img src="/assets/images/Icon/vote/against.svg" />Failed</div> :
                   (expired || ended) ?
                     <div className={classNames({
                       [css.status]: true,
-                      [css.failed]: true
+                      [css.expired]: true
                     })}>Expired</div> :
                     <div className={classNames({
                       [css.status]: true,
                       [css.expired]: true
-                    })}>???</div>
+                    })}>[unknown status]</div>
         }
       </div>
     );
