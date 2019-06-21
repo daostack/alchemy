@@ -115,10 +115,10 @@ class VotersModal extends React.Component<IProps, null> {
 
             <div className={css.voters}>
               <div>
-                {yesVotes.map(vote => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}
+                <div>{yesVotes.map(vote => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
               <div>
-                {noVotes.map(vote => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}
+                <div>{noVotes.map(vote => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
             </div>
           </div>

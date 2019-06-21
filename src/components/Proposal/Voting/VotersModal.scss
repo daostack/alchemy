@@ -151,16 +151,26 @@
   border-top: 1px solid rgba(244, 246, 249, 1.000);
   border-bottom: 1px solid rgba(244, 246, 249, 1.000);
   font-family: "Open Sans", sans-serif;
+  height: 250px;
 
-  .voteRow {
-    display: inline-block;
-    width: 49%;
-    position: relative;
-    vertical-align: top;
+  > div:first-of-type {
+    border-right: 1px solid rgba(244, 246, 249, 1.000);
   }
 
-  .voteRow:nth-child(odd) {
-    border-right: 1px solid rgba(244, 246, 249, 1.000);
+  > div {
+    height: 100%;
+    display: inline-block;
+    width: 49%;
+    overflow-y: scroll;
+
+    > div {
+      padding: 24px 24px 0 24px;
+    }
+  }
+
+  .voteRow {
+    position: relative;
+    vertical-align: top;
   }
 
   .voteRowContainer {
