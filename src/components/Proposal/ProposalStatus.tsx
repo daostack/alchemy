@@ -14,11 +14,9 @@ export default class ProposalStatus extends React.Component<IProps, null> {
 
   public render() {
     const {
-      // currentAccountAddress,
       proposalState,
     } = this.props;
 
-    // const executable = proposalEnded(proposalState) && !proposalState.executedAt;
     const ended = proposalEnded(proposalState);
     const expired = closingTime(proposalState).isSameOrBefore(moment());
     const passed = ended && proposalPassed(proposalState);
@@ -26,7 +24,6 @@ export default class ProposalStatus extends React.Component<IProps, null> {
 
     const wrapperClass = classNames({
       [css.wrapper]: true
-      //, [css.detailView]: detailView
     });
 
     return (
@@ -72,11 +69,5 @@ export default class ProposalStatus extends React.Component<IProps, null> {
 }
 
 interface IProps {
-  // currentAccountAddress?: Address;
-  // dao: IDAOState;
   proposalState: IProposalState;
 }
-
-// export default (props: IProps) => {
-//   return <ProposalStatus {...props} />;
-// }
