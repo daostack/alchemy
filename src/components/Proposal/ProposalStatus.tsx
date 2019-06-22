@@ -55,7 +55,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
                   <div className={classNames({
                     [css.status]: true,
                     [css.failed]: true
-                  })}><img src="/assets/images/Icon/vote/against.svg" />Failed</div> :
+                  })}><img src="/assets/images/Icon/vote/against-btn-fill-red.svg" />Failed</div> :
                   (expired || ended) ?
                     <div className={classNames({
                       [css.status]: true,
