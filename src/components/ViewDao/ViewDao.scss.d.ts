@@ -1,4 +1,6 @@
 export const loading: string;
+export const menuDot: string;
+export const red: string;
 export const wrapper: string;
 export const proposalHistory: string;
 export const outer: string;
