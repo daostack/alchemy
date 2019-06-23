@@ -34,7 +34,7 @@ export default class MarkdownField extends React.Component<Props, IState> {
         const noTabCommand = defaultCommands[i].commands[j];
         noTabCommand.buttonProps["tabIndex"] = -1;
         usedCommands[i].commands[j] = noTabCommand;
-      })
+      });
     });
 
     return (
