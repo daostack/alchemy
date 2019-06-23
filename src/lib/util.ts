@@ -87,15 +87,19 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
   } else if (amount < 0.01) {
     returnString = "+0";
   } else if (amount < 1000) {
-    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+    returnString = amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
   } else if (amount < 1000000) {
     returnString = (amount / 1000)
-      .toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "k";
+      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "k";
   } else {
     returnString = (amount / 1000000)
-      .toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
+      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "M";
   }
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
+}
+
+export function tokenDetails(tokenAddress: string) {
+  return supportedTokens()[tokenAddress.toLowerCase()];
 }
 
 export function tokenSymbol(tokenAddress: string) {
@@ -141,15 +145,15 @@ export function schemeName(address: string) {
   try {
     const contractInfo = arc.getContractInfo(address);
 
-    const NAMES: {[key: string]: string; }  = {
+    const NAMES: { [key: string]: string; } = {
       ContributionReward: "Contribution Reward",
-      SchemeRegistrar : "Scheme Registrar",
-      GenericScheme : "Generic Scheme"
+      SchemeRegistrar: "Scheme Registrar",
+      GenericScheme: "Generic Scheme"
     };
 
     if (NAMES[contractInfo.name]) {
       return `${address.slice(0, 4)}...${address.slice(-4)} (${NAMES[contractInfo.name]})`;
-    }  else if (contractInfo.name) {
+    } else if (contractInfo.name) {
       return `${address.slice(0, 4)}...${address.slice(-4)} (${contractInfo.name})`;
     } else {
       return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -205,7 +209,7 @@ export function getClaimableRewards(reward: IRewardState) {
     return {};
   }
 
-  const result: {[key: string]: BN} = {};
+  const result: { [key: string]: BN } = {};
   if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt === 0) {
     result.reputationForProposer = reward.reputationForProposer;
   }
@@ -239,8 +243,8 @@ export function hasClaimableRewards(reward: IRewardState) {
  * @return  an array mapping strings to BN
  */
 // TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
-export function claimableContributionRewards(reward: IContributionReward, daoBalances: {[key: string]: BN} = {}) {
-  const result: {[key: string]: BN } = {};
+export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
+  const result: { [key: string]: BN } = {};
   if (
     !reward.ethReward.isZero()
     && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
@@ -273,4 +277,8 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
     result["externalToken"] = reward.externalTokenReward;
   }
   return result;
+}
+
+export function splitByCamelCase(str: string) {
+  return str.replace(/([A-Z])/g, " $1");
 }
