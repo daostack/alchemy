@@ -61,7 +61,7 @@
       font-family: $body-font;
 
       &.error {
-        border: 1px solid rgba(255, 8, 96, 1.000);
+        border: 1px solid rgba(246, 80, 80, 1.000);
       }
       &:focus {
         outline: none;
@@ -73,6 +73,10 @@
       padding: 0 15px;
       height: 35px;
       line-height: 35px;
+    }
+
+    input::placeholder, textarea::placeholder {
+        color: rgba(154, 169, 181, 1.000);
     }
 
     .contributionReward {
@@ -145,10 +149,12 @@
     }
 
     .errorMessage {
+      font-weight: normal;
       position: relative;
       left: 10px;
-      color: red;
-      font-size: 13px;
+      color: rgba(246, 80, 80, 1.000);
+      font-size: 11px;
+      font-weight: 300;
     }
 
     .errorMessage.someReward {
@@ -158,6 +164,7 @@
       left: 0;
       font-size: $small;
       z-index: -10;
+      font-weight: 300;
     }
 
   }
@@ -235,8 +242,8 @@
     display: inline-block;
     margin: 0 5px;
     font-weight: normal;
-    font-size: $body;
-    padding: 0 15px 2px 15px;
+    font-size: 13px;
+    padding: 0 25px 2px 25px;
     font-family: $body-font;
     transition: all .25s ease;
     border: none;
@@ -251,9 +258,10 @@
     display: inline-block;
     margin: 0 5px;
     font-weight: normal;
-    font-size: $body;
-    padding: 0 15px 2px 15px;
+    font-size: 13px;
+    padding: 0 25px 2px 25px;
     font-family: $body-font;
+    font-weight: bold;
     transition: all .25s ease;
     background-color: rgba(0, 113, 255, 1.000);
     border-radius: 15px;
