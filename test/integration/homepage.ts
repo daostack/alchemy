@@ -1,4 +1,6 @@
-import { chai, getContractAddresses, userAddresses } from "./utils";
+const chai = require("chai");
+global.expect = chai.expect;
+chai.Should();
 
 describe("Home page", () => {
   before(() => {
