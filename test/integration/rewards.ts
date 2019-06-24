@@ -2,7 +2,7 @@ import { Address } from "@daostack/client";
 import { getContractAddresses } from "./utils";
 
 describe("Redemptions page", () => {
-    let testAddresses: Address[];
+    let testAddresses;
     let daoAddress: Address;
 
     before(async () => {
@@ -16,7 +16,7 @@ describe("Redemptions page", () => {
       pageTitle.should.be.equal("Alchemy | DAOstack");
 
       // we expect the
-      const proposalId = testAddresses.executedProposalId;
+      const proposalId = testAddresses.test.executedProposalId;
       let proposalCard = await $(`[data-test-id=\"proposal-${proposalId}\"]`);
       await proposalCard.waitForExist();
 
