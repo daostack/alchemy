@@ -18,5 +18,4 @@ export const detailView: string;
 export const historyView: string;
 export const stakeControls: string;
 export const preApproval: string;
-export const preapproveBackdrop: string;
 export const preapproveWrapper: string;

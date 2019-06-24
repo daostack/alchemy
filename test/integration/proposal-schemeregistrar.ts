@@ -7,7 +7,7 @@ describe("SchemeRegistrar Proposals", () => {
 
     before(() => {
       addresses = getContractAddresses();
-      daoAddress = addresses.Avatar.toLowerCase();
+      daoAddress = addresses.test.Avatar.toLowerCase();
     });
 
     it("Create a proposal to add a scheme", async () => {

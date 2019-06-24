@@ -1,5 +1,6 @@
 import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
+import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { getArc } from "../arc";
 
 const tokens = require("data/tokens.json");
@@ -87,13 +88,13 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
   } else if (amount < 0.01) {
     returnString = "+0";
   } else if (amount < 1000) {
-    returnString = amount.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+    returnString = amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
   } else if (amount < 1000000) {
     returnString = (amount / 1000)
-      .toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "k";
+      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "k";
   } else {
     returnString = (amount / 1000000)
-      .toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + "M";
+      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "M";
   }
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
 }
@@ -140,30 +141,46 @@ export function isKnownScheme(address: Address) {
   }
 }
 
-export function schemeName(address: string) {
+/**
+ * given the address (of a scheme), return  a friendly string represeting the scheme's address and it'sname
+ * @param  address [description]
+ * @return         [description]
+ */
+export function schemeNameAndAddress(address: string) {
   const arc = getArc();
   try {
     const contractInfo = arc.getContractInfo(address);
+    const name = schemeName(contractInfo);
 
-    const NAMES: {[key: string]: string; }  = {
-      ContributionReward: "Contribution Reward",
-      SchemeRegistrar : "Scheme Registrar",
-      GenericScheme : "Generic Scheme"
-    };
-
-    if (NAMES[contractInfo.name]) {
-      return `${address.slice(0, 4)}...${address.slice(-4)} (${NAMES[contractInfo.name]})`;
-    }  else if (contractInfo.name) {
-      return `${address.slice(0, 4)}...${address.slice(-4)} (${contractInfo.name})`;
+    if (name) {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
     } else {
       return `${address.slice(0, 4)}...${address.slice(-4)}`;
-
     }
   } catch (err) {
     if (err.message.match(/No contract/)) {
       return `${address.slice(0, 4)}...${address.slice(-4)}`;
     }
   }
+}
+
+export function schemeName(scheme: any, fallback?: string) {
+  let name: string;
+  if (scheme.name === "GenericScheme") {
+    const genericSchemeRegistry = new GenericSchemeRegistry();
+    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.address);
+    if (genericSchemeInfo) {
+      name = genericSchemeInfo.specs.name;
+    } else {
+      name = "Generic Scheme";
+    }
+  } else if (scheme.name) {
+    // add spaces before capital letters to approximate a human-readable title
+    name = scheme.name.replace(/([A-Z])/g, " $1");
+  } else {
+    name =  fallback;
+  }
+  return name;
 }
 
 export async function getNetworkName(id?: string): Promise<string> {
@@ -209,7 +226,7 @@ export function getClaimableRewards(reward: IRewardState) {
     return {};
   }
 
-  const result: {[key: string]: BN} = {};
+  const result: { [key: string]: BN } = {};
   if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt === 0) {
     result.reputationForProposer = reward.reputationForProposer;
   }
@@ -243,8 +260,8 @@ export function hasClaimableRewards(reward: IRewardState) {
  * @return  an array mapping strings to BN
  */
 // TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
-export function claimableContributionRewards(reward: IContributionReward, daoBalances: {[key: string]: BN} = {}) {
-  const result: {[key: string]: BN } = {};
+export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
+  const result: { [key: string]: BN } = {};
   if (
     !reward.ethReward.isZero()
     && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
@@ -277,4 +294,8 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
     result["externalToken"] = reward.externalTokenReward;
   }
   return result;
+}
+
+export function splitByCamelCase(str: string) {
+  return str.replace(/([A-Z])/g, " $1");
 }

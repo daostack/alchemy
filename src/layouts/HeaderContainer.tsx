@@ -94,6 +94,7 @@ class HeaderContainer extends React.Component<IProps, null> {
               separator={<b> >   </b>}
               item={ NavLink }
               finalItem={"b"}
+              compare={(a: any, b: any) => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
           <div className={css.headerRight}>

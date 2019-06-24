@@ -11,11 +11,11 @@
 }
 
 .proposalCreator {
-  width: 170px;
+  width: 180px;
 }
 
 .endDate {
-  width: 50px;
+  width: 60px;
   color: rgba(154, 169, 181, 1.000);
   padding-top: 15px;
   padding-right: 10px;
@@ -74,7 +74,7 @@
 
   .decisionReason {
     color: rgba(154, 169, 181, 1.000);
-    padding-top: 3px;
+    padding-top: 4px;
   }
 }
 
@@ -88,6 +88,10 @@
   .myVote, .myStake, .passVote, .failVote, .forStake, .againstStake {
     display: none;
   }
+}
+
+.predictions {
+    width: 110px;
 }
 
 .myActions.iVoted .myVote, .myActions.iStaked .myStake {
@@ -111,6 +115,9 @@
 }
 
 .voteControls {
+  position: relative;
+  top: 4px;
+
   button span {
     font-weight: normal;
     color: rgba(154, 169, 181, 1.000);

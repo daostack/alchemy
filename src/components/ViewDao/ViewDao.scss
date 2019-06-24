@@ -6,6 +6,18 @@
   transform: translate(-50%,-50%)
 }
 
+.menuDot {
+    height: 8px;
+    width: 8px;
+    margin-left: 0;
+    display: inline-block;
+
+  &.red {
+    background-color: #f65050;
+    border-radius: 50%;
+  }
+}
+
 button:hover {
   cursor: pointer;
 }
@@ -65,16 +77,20 @@ button:hover {
   font-weight: bold;
   text-align: left;
 
-  .votes, .predictions {
+  .votes {
     width: 103px;
   }
 
+  .predictions {
+    width: 110px;
+  }
+
   .proposalCreator {
-    width: 170px;
+    width: 180px;
   }
 
   .endDate {
-    width: 50px;
+    width: 60px;
     padding-right: 10px;
   }
 
@@ -390,7 +406,7 @@ button:hover {
       padding: 0;
 
       .notification {
-        width: 8px;
+        width: 4px;
         height: 8px;
         border-radius: 8px;
         position: relative;
@@ -401,7 +417,7 @@ button:hover {
       }
 
       img {
-        margin-left: 8px;
+        margin-left: 2px;
         position: relative;
         top: 2px;
         margin-right: 8px;
@@ -821,6 +837,8 @@ a.navItem:hover {
   bottom: -10px;
   color: rgba(104, 155, 214, 1.000);
   z-index: 0;
+  border-bottom: 1px solid rgba(212,220,228,1);
+  padding-bottom: 2px;
 }
 
 .daoHistoryHeader {
@@ -858,6 +876,10 @@ a.navItem:hover {
 
 }
 
+.boostedContainer .proposalsHeader {
+  border-top: none;
+}
+
 .proposalsHeader {
   font-size: 16px;
   position: relative;
@@ -885,27 +907,31 @@ a.navItem:hover {
 }
 
 .noDecisions {
+  padding: 50px;
+  text-align: center;
+  margin-top: 80px;
 
-    padding: 50px;
+  p {
+    color: rgba(154, 169, 181, 1.000);
+    font-size: 21px;
+    font-family: "AccordBold", sans-serif;
+    margin: 0 auto;
+    max-width: 450px;
     text-align: center;
-    background-color: white;
-    border-radius: 15px 15px 15px 0;
-    margin-top: 80px;
-    box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
+  }
 
   .relax {
-    width: 100px;
+    width: 64px;
     display: block;
     margin: 0 auto;
-    opacity: .3;
   }
 
   .proposalsHeader {
-    font-size: $jumbo;
+    font-size: 45px;
     padding-top: 30px;
     border-top: none;
     max-width: 100%;
-    color: rgba(27, 53, 96, 1.000);
+    color: rgba(104, 154, 214, 1.000);
   }
 
   .subheader {
@@ -917,17 +943,32 @@ a.navItem:hover {
     padding-top: 50px;
 
     a {
-      height: 60px;
-      line-height: 60px;
-      font-size: 22px;
+      color: rgba(6, 118, 255, 1.000);
+      font-size: 11px;
+      font-family: "Open Sans";
+      display: inline-block;
+      margin-right: 20px;
+
+      img {
+        height: 8px;
+        display: inline-block;
+        width: 8px;
+      }
+    }
+
+    a.blueButton {
+      height: 30px;
+      line-height: 30px;
+      font-size: 13px;
       color: white;
-      background-color: #0376ff;
+      background-color: rgba(5, 118, 255, 1.000);
+      transition: all .25s ease;
       border-radius: 15px;
       display: inline-block;
       padding: 0 30px;
 
       &:hover {
-        background-color: $accent-4;
+        background-color: rgba(19, 46, 91, 1.000);
         color: $white;
       }
     }
