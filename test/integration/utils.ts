@@ -30,10 +30,10 @@
   }
 
   for (const name of Object.keys(migration.base[VERSION_FOR_DUTCHX_TEST])) {
-    contracts.base[name] = migration.base[VERSION_FOR_DUTCHX_TEST][name];
+    contracts.dutchx[name] = migration.base[VERSION_FOR_DUTCHX_TEST][name];
   }
   for (const name of Object.keys(migration.test[VERSION_FOR_DUTCHX_TEST])) {
-    contracts.base[name] = migration.test[VERSION_FOR_DUTCHX_TEST][name];
+    contracts.dutchx[name] = migration.test[VERSION_FOR_DUTCHX_TEST][name];
   }
 
   return contracts;
