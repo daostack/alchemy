@@ -1,18 +1,17 @@
-import { chai, getContractAddresses, userAddresses } from './utils'
-import * as uuid from 'uuid'
+import { chai, getContractAddresses, userAddresses } from "./utils";
 
-describe('Home page', () => {
+describe("Home page", () => {
   before(() => {
     chai.Should();
-  })
+  });
 
-  it('Works', async () => {
-    await browser.url('http://127.0.0.1:3000/')
+  it("Works", async () => {
+    await browser.url("http://127.0.0.1:3000/");
     const title = await browser.getTitle();
-    title.should.be.equal('Alchemy | DAOstack');
-    const daosHeader = await $('*[data-test-id="header-all-daos"]');
-    await daosHeader.waitForExist()
-    const daoLink = await $('*[data-test-id="dao-link"]');
+    title.should.be.equal("Alchemy | DAOstack");
+    const daosHeader = await $("*[data-test-id=\"header-all-daos\"]");
+    await daosHeader.waitForExist();
+    const daoLink = await $("*[data-test-id=\"dao-link\"]");
     await daoLink.click();
-  })
-})
+  });
+});

@@ -7,13 +7,20 @@ export const LATEST_ARC_VERSION = "0.0.1-rc.19";
 export function getContractAddresses() {
   // contract addresses for testing...
   const migration = require("@daostack/migration/migration.json")["private"];
-  const contracts: { [address: string]: string } = {};
+  const contracts: {
+    base: {[address: string]: string},
+    dao: {[address: string]: string},
+    test: {[address: string]: string},
+  } = { base: {}, dao: {}, test: {}};
   const version = LATEST_ARC_VERSION;
   for (const name of Object.keys(migration.base[version])) {
-    contracts[name] = migration.base[version][name];
+    contracts.base[name] = migration.base[version][name];
   }
   for (const name of Object.keys(migration.test[version])) {
-    contracts[name] = migration.test[version][name];
+    contracts.test[name] = migration.test[version][name];
+  }
+  for (const name of Object.keys(migration.dao[version])) {
+    contracts.dao[name] = migration.dao[version][name];
   }
 
   return contracts;

@@ -2,8 +2,7 @@ import { getContractAddresses, userAddresses } from "./utils";
 
 describe("History page", () => {
     let addresses;
-    let daoAddress;
-    const userAddress = userAddresses[0];
+    let daoAddress: string;
 
     before(async () => {
       addresses = getContractAddresses();

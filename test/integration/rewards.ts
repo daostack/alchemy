@@ -1,13 +1,13 @@
-import { Address, DAO } from "@daostack/client";
-import { chai, getContractAddresses, userAddresses } from "./utils";
+import { Address } from "@daostack/client";
+import { getContractAddresses } from "./utils";
 
 describe("Redemptions page", () => {
-    let testAddresses;
+    let testAddresses: Address[];
     let daoAddress: Address;
 
     before(async () => {
       testAddresses = getContractAddresses();
-      daoAddress = testAddresses.Avatar.toLowerCase();
+      daoAddress = testAddresses.test.Avatar.toLowerCase();
     });
 
     it("should exist", async () => {
