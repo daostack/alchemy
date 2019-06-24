@@ -320,35 +320,19 @@
   display: table;
 }
 
-.schemeRegistrar {
+.createWrapperWithSidebar {
   width: 730px;
   content: "";
   clear: both;
   display: table;
 
-  .schemeRegistrarSidebar {
+  .sidebar {
     width: 199px;
     float: left;
-
-    .schemeItem {
-      position: relative;
-      border-top: 1px solid rgba(233, 238, 244, 1.000);
-      padding: 15px 0;
-
-      .schemeTitle {
-        font-size: 11px;
-        display: block;
-        padding: 8px;
-        background-color: $white;
-        top: -17px;
-        position: absolute;
-        left: 22px;
-      }
-    }
+    padding-top: 30px;
 
     .addSchemeButton {
       display: block;
-      margin: 30px 0 0 0;
     }
 
     button {
@@ -373,22 +357,68 @@
       background-color: rgba(233, 238, 244, 1.000);
 
       span {
-        width: 23px;
-        height: 18px;
+        width: 25px;
+        height: 19px;
         position: absolute;
-        right: -13px;
-        transform: rotate(63deg) skew(35deg);
+        right: -8px;
+        transform: rotate(63deg) skew(35deg) translateY(-50%);
         display: block;
-        top: 13px;
+        top: 50%;
         background-color: #e9eef4;
       }
     }
   }
 
-  .schemeRegistrarForm {
+  .formWrapper {
     width: 530px;
     float: left;
     border-left: 1px solid #e9eef4;
+
+    .tab {
+      display: none;
+    }
+
+    .tab.selected {
+      display: block;
+    }
+
+    .arrayFieldContainer {
+      margin-top: 3px;
+
+      input {
+        width: 398px;
+        display: inline-block;
+      }
+
+      .arrayField {
+        margin-bottom: 15px;
+      }
+
+      .removeItemButton {
+        height: 30px;
+        padding: 0;
+        margin: 0 0 0 10px;
+        width: 30px;
+      }
+
+      .addItemButton {
+        margin-bottom: 15px;
+      }
+
+      button {
+        border: none;
+        background-color: rgba(245, 247, 250, 1.000);
+        height: 30px;
+        line-height: 30px;
+        padding: 0 15px;
+        margin-right: 8px;
+        border-radius: 3px;
+        outline: none;
+        color: rgba(104, 155, 214, 1.000);
+        font-weight: bold;
+        text-align: center;
+      }
+    }
   }
 
   .addEditSchemeFields, .removeSchemeFields, .addSchemeSelectContainer, .editSchemeSelectContainer {
@@ -477,5 +507,28 @@
         z-index: 1000;
       }
     }
+  }
+}
+
+form .radioButtons {
+  input {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+    margin: 0 5px;
+    padding: 0px;
+  }
+
+  label {
+    display: inline-block;
+    width: auto;
+    font-weight: normal;
+    vertical-align: middle;
+    padding: 0;
+
+    .requiredMarker {
+      display: none;
+    }
+
   }
 }
