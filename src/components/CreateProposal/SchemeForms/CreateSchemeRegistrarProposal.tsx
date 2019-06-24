@@ -4,7 +4,7 @@ import { checkMetaMaskAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeName } from "lib/util";
+import { schemeNameAndAddress } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -137,15 +137,15 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
     });
 
     const schemeRegistrarFormClass = classNames({
-      [css.schemeRegistrarForm]: true,
+      [css.formWrapper]: true,
       [css.addScheme]: currentTab === "addScheme",
       [css.removeScheme]: currentTab === "removeScheme",
       [css.editScheme]: currentTab === "editScheme"
     });
 
     return (
-      <div className={css.schemeRegistrar}>
-        <div className={css.schemeRegistrarSidebar}>
+      <div className={css.createWrapperWithSidebar}>
+        <div className={css.sidebar}>
           <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
             <span></span>
             Add Scheme
@@ -298,7 +298,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, i) => {
-                          return <option key={`edit_scheme_${scheme.address}`} value={scheme.address}>{schemeName(scheme.address)}</option>;
+                          return <option key={`edit_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
                         })}
                       </Field>
                     </div>
@@ -366,7 +366,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, i) => {
-                          return <option key={`remove_scheme_${scheme.address}`} value={scheme.address}>{schemeName(scheme.address)}</option>;
+                          return <option key={`remove_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
                         })}
                       </Field>
                     </div>
