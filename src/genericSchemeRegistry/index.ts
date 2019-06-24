@@ -172,7 +172,7 @@ export class GenericSchemeRegistry {
         case "staging":
           network = "rinkeby";
           break;
-        case "test":
+        case "development":
           network = "private";
           break;
         default:

@@ -33,8 +33,11 @@ describe("Proposals", () => {
       const descriptionInput = await $("#descriptionInput");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
-      const masterCopyInput = await $("*[data-test-id=\"_masterCopy\"]");
-      await masterCopyInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+      const callDataInput = await $("*[id=\"callDataInput\"]");
+      await callDataInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+
+      const valueInput = await $("*[id=\"valueInput\"]");
+      await valueInput.setValue("0");
 
       const createProposalSubmitButton = await $("*[type=\"submit\"]");
       await createProposalSubmitButton.click();
