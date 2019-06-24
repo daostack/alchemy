@@ -28,6 +28,7 @@ import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
+import VotersModal from "./Voting/VotersModal";
 
 import * as css from "./ProposalDetails.scss";
 
@@ -62,16 +63,29 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
 
 interface IState {
   expired: boolean;
+  showVotersModal: boolean;
 }
 
 class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
+
     this.state = {
-      expired: closingTime(props.proposal).isSameOrBefore(moment())
+      expired: closingTime(props.proposal).isSameOrBefore(moment()),
+      showVotersModal: false
     };
 
+  }
+
+  public showVotersModal(event: any) {
+    if (this.props.proposal.votesCount > 0) {
+      this.setState({ showVotersModal: true });
+    }
+  }
+
+  public closeVotersModal(event: any) {
+    this.setState({ showVotersModal: false });
   }
 
   public countdownEnded() {
@@ -198,7 +212,9 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               <div>
                 <div className={css.statusTitle}>
                   <h3>Votes</h3>
-                  <span>{proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"}</span>
+                  <span onClick={this.showVotersModal.bind(this)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
+                    {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} >
+                  </span>
                 </div>
 
                 <div className={css.voteButtons}>
@@ -245,6 +261,15 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
         <h3 className={css.discussionTitle}>Discussion</h3>
         <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
+
+        {this.state.showVotersModal ?
+          <VotersModal
+            closeAction={this.closeVotersModal.bind(this)}
+            currentAccountAddress={this.props.currentAccountAddress}
+            dao={dao}
+            proposal={proposal}
+          /> : ""
+        }
       </div>
     );
   }

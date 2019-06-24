@@ -212,23 +212,6 @@ input[type=number] {
 }
 
 .metaMaskModal {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  overflow: scroll;
-  top: 0;
-  z-index: 1000000000000000;
-  left: 0;
-
-  .bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(2, 0, 22, .4);
-    z-index: 0;
-  }
 
   .decisionGraph {
     position: relative;
