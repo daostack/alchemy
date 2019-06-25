@@ -128,3 +128,15 @@ a.proposalTitle {
 	}
 }
 
+
+
+@media only screen and (max-width: 425px) {
+	.wrapper {
+		border-radius: 0;
+		width: 100%;
+	}
+
+	.numProposals {
+		padding-left: 10px;
+	}
+}

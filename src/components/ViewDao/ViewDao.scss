@@ -475,6 +475,9 @@ button:hover {
 
 
 
+.menuToggle {
+  display: none;
+}
 
 .loading img {
   margin: 0 auto;
@@ -1140,4 +1143,182 @@ a.navItem:hover {
       top: 47px;
     }
   }
+}
+
+@media only screen and (max-width: 425px) {
+  .outer {
+    display: block;
+    position: relative;
+  }
+
+  .daoSidebar {
+    min-width: auto;
+    max-width: 100%;
+    height: auto;
+    flex-grow: unset;
+    z-index: 100000;
+
+    .daoNavigation {
+      height: 0px;
+      min-height: auto;
+      overflow: hidden;
+      transition: all .25s ease;
+
+      .daoName a span {
+        position: absolute;
+        padding-left: 0;
+        top: -5px;
+        left: 64px;
+        margin-top: -3px;
+        transform: translateY(0);
+        font-size: 13px;
+      }
+
+      .navigation li a {
+        padding: 4px 23px 4px 8px;
+      }
+    }
+  }
+
+  .daoSidebar.openMenu {
+      z-index: 100000;
+
+      .daoNavigation {
+        height: 520px;
+      }
+
+      .menuClosed {
+        display: none;
+      }
+
+      .menuOpen {
+        display: block;
+      }
+    }
+
+  .menuWrapper {
+    position: relative;
+    height: auto;
+    padding-bottom: 20px;
+  
+    ul li {
+      height: auto;
+    
+      a {
+        padding: 3px 0 3px 30px;
+      }
+    }
+
+    ul li:hover ul {
+      left: 40px;
+      top: -20px;
+    }
+
+    ul li ul {
+      position: absolute;
+    }
+  }
+
+  .daoDescription {
+    position: absolute;
+    top: 35px;
+    left: 64px;
+    font-size: 12px;
+  }
+
+  .navHeading {
+    margin-top: -40px;
+  }
+  
+  .daoHoldings ul li {
+    display: inline-block;
+  }
+
+  .menuToggle {
+    display: block;
+    position: absolute;
+    top: -30px;
+    top: -34px;
+    left: 12px;
+
+    .menuClosed {
+      display: block;
+    }
+
+    .menuOpen {
+      display: none;
+    }
+  }
+
+  .wrapper {
+    padding: 50px 0 100px 0 ;
+  }
+
+  .noticeWrapper {
+    height: 86px;
+    
+    .noticeBuffer {
+      display: none;
+    }
+
+    .notice {
+      padding-right: 40px;
+
+      .closeNotice {
+        background-color: transparent;
+      }
+    }
+  }
+  
+  .queueType {
+    font-size: 18px;
+    padding-left: 15px;
+  }
+
+  .createProposal {
+    top: 5px;
+    right: 15px;
+  }
+
+  .proposalsHeader {
+    padding-top: 10px;
+    padding-bottom: 0px;
+  }
+
+  .address {
+    font-size: 10px;
+    opacity: .7;
+  }
+
+  .reputationAmounts {
+    position: absolute;
+    right: 10px;
+    top: 21px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+
+  a:visited {
+    color: rgba(0, 28, 53, 1.000);
+  }
+
+  .noProfile {
+    opacity: .4;
+  }
+
+  .member {
+    position: relative;
+  }
+
+  .membersContainer h2 {
+    padding-left: 10px;
+  }
+
+    .daoHistoryHeader {
+      padding-left: 10px;
+    }
+
+    .closedProposalsHeader {
+      display: none;
+    }
 }

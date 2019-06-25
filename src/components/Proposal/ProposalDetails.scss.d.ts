@@ -25,3 +25,4 @@ export const proposalActions: string;
 export const createdBy: string;
 export const targetAccount: string;
 export const discussionTitle: string;
+export const disqus: string;

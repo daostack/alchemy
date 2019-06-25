@@ -532,3 +532,63 @@ form .radioButtons {
 
   }
 }
+
+
+@media only screen and (max-width: 425px) {
+  .createProposalWrapper {
+    top: 0;
+    left: 0;
+    transform: translate(0,0);
+
+    form {
+      padding: 15px 15px 15px 15px;
+
+      input, textarea, label {
+        width: 255px;
+      }
+    }
+  }
+
+  .contributionReward {
+    width: auto;
+  }
+
+  .schemeRegistrar {
+    width: auto;
+
+    .permissions .permissionCheckbox {
+      width: auto;
+    }
+
+    .schemeRegistrarForm {
+      width: auto;
+    }
+  }
+
+  .schemeRegistrar .schemeRegistrarSidebar {
+    width: auto;
+    float: none;
+
+    button {
+      font-size: 12px;
+      padding: 10px 11px;
+      display: inline-block;
+      width: auto;
+    }
+
+    .addSchemeButton {
+      display: inline-block;
+      margin: 0 0 0 0;
+    }
+
+    button.selected span {
+      width: 24px;
+      left: 50%;
+      right: auto;
+      transform: rotate(153deg) skew(35deg);
+      top: 25px;
+      background-color: #e9eef4;
+      margin-left: -12px;
+    }
+  }
+}

@@ -30,3 +30,4 @@ export const submitButton: string;
 export const loading: string;
 export const sendIcon: string;
 export const alignCenter: string;
+export const setupProfile: string;

@@ -151,3 +151,10 @@
     border-top: 1px solid gray;
   }
 }
+
+
+@media only screen and (max-width: 425px) {
+  .detailView.proposalSummary, .transactionModal.proposalSummary {
+    width: auto;
+  }
+}
