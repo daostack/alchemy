@@ -21,7 +21,7 @@ describe("Profile page", () => {
       const nameInput = await $("*[id=\"nameInput\"]");
       await nameInput.waitForExist();
       await nameInput.setValue("Buster Scruggs");
-      const descriptionInput = await $("*[id=\"descriptionInput\"]");
+      const descriptionInput = await $("#descriptionInput");
       await descriptionInput.setValue("The ballad");
       const submitButton = await $("*[type=\"submit\"]");
       await submitButton.click();
