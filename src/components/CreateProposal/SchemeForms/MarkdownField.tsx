@@ -46,6 +46,7 @@ export default class MarkdownField extends React.Component<Props, IState> {
           }
           maxEditorHeight={84}
           minEditorHeight={84}
+          minPreviewHeight={74}
           onChange={onChange}
           onTabChange={(tab) => { this.setState({ selectedTab: tab}); }}
           selectedTab={this.state.selectedTab}

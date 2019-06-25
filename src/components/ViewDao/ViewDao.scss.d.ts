@@ -1,4 +1,6 @@
 export const loading: string;
+export const menuDot: string;
+export const red: string;
 export const wrapper: string;
 export const proposalHistory: string;
 export const outer: string;
@@ -74,6 +76,7 @@ export const noDecisions: string;
 export const relax: string;
 export const subheader: string;
 export const cta: string;
+export const blueButton: string;
 export const fadeEnter: string;
 export const fadeEnterActive: string;
 export const fadeExit: string;

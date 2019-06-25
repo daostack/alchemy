@@ -208,8 +208,17 @@
     font-size:  13px;
   }
 
+  /* XXX: custom */
+  .mde-preview {
+    overflow-y: scroll;
+    height:  84px;
+  }
+
   .mde-preview .mde-preview-content {
     padding: 10px;
+
+    /* XXX: custom */
+    height:  84px;
   }
   .mde-preview .mde-preview-content p, .mde-preview .mde-preview-content blockquote, .mde-preview .mde-preview-content ul, .mde-preview .mde-preview-content ol, .mde-preview .mde-preview-content dl, .mde-preview .mde-preview-content table, .mde-preview .mde-preview-content pre {
     margin-top: 0;
@@ -335,6 +344,9 @@
     height: 10px;
     color: black;
     cursor: s-resize;
+
+    /* XXX: custom */
+    display: none;
   }
   .react-mde .grip .icon {
     height: 10px;
