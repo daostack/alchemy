@@ -65,9 +65,7 @@ const AllSchemesContainer = (props: IProps) => {
             </div>
         </div>
         :
-        <div>
-          {schemeCardsHTML}
-        </div>
+        <div>{schemeCardsHTML}</div>
       }
     </div>
   );

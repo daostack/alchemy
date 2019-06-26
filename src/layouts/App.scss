@@ -13,7 +13,7 @@ $header-height: 100px;
 
 body {
   font-family: "AccordBold", sans-serif;
-  font-weight: 400;
+  font-weight: 300;
 
   p {
     font-family: "Open Sans";
@@ -361,15 +361,14 @@ body {
   text-align: left;
 }
 
-.modal {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-}
-
 .modalContainer {
   position: fixed;
   z-index: 100000;
+  overflow: scroll;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .backdrop {
@@ -379,6 +378,13 @@ body {
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,.4);
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .modalBody {
@@ -431,3 +437,51 @@ body {
   }
 }
 /* EO Header */
+
+@media only screen and (max-width: 425px) {
+
+  .headerContainer {
+    z-index: 0;
+  }
+
+  .outer {
+    z-index: 1000000;
+  }
+
+  .headerContainer:hover {
+    z-index: 1000;
+  }
+
+  .topInfo {
+    display: block;
+    position: absolute;
+    color: rgba(0, 28, 52, 1);
+    top: 50px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+    padding: 8px 0;
+    font-family: "Open Sans";
+    font-weight: normal;
+    opacity: .5;
+    font-size: 11px;
+
+    b {
+      font-weight: normal;
+    }
+
+    a:visited {
+      color: rgba(0, 28, 52, 1);
+    }
+  }
+
+  .header .menu {
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .topInfo a, .topInfo a:visited {
+    color: #001c34;
+  }
+
+}

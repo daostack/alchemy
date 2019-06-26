@@ -1,5 +1,5 @@
-import { Address, DAO } from "@daostack/client";
-import { chai, getContractAddresses, userAddresses } from "./utils";
+import { Address } from "@daostack/client";
+import { getContractAddresses } from "./utils";
 
 describe("Redemptions page", () => {
     let testAddresses;
@@ -7,7 +7,7 @@ describe("Redemptions page", () => {
 
     before(async () => {
       testAddresses = getContractAddresses();
-      daoAddress = testAddresses.Avatar.toLowerCase();
+      daoAddress = testAddresses.test.Avatar.toLowerCase();
     });
 
     it("should exist", async () => {
@@ -16,7 +16,7 @@ describe("Redemptions page", () => {
       pageTitle.should.be.equal("Alchemy | DAOstack");
 
       // we expect the
-      const proposalId = testAddresses.executedProposalId;
+      const proposalId = testAddresses.test.executedProposalId;
       let proposalCard = await $(`[data-test-id=\"proposal-${proposalId}\"]`);
       await proposalCard.waitForExist();
 

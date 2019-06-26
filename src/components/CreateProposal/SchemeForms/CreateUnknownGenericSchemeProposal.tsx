@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
+import MarkdownField from "./MarkdownField";
 
 interface IContainerProps {
   scheme: Scheme;
@@ -154,7 +155,8 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                       <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
-                      component="textarea"
+                      component={MarkdownField}
+                      onChange={(value: any) => { setFieldValue("description", value); }}
                       id="descriptionInput"
                       placeholder="Describe your proposal in greater detail"
                       name="description"

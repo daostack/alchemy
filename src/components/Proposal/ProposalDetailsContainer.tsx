@@ -11,6 +11,7 @@ import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+const ReactMarkdown = require("react-markdown");
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -24,10 +25,12 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
+import ProposalStatus from "./ProposalStatus";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
+import VotersModal from "./Voting/VotersModal";
 
 import * as css from "./ProposalDetails.scss";
 
@@ -62,16 +65,29 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
 
 interface IState {
   expired: boolean;
+  showVotersModal: boolean;
 }
 
 class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
+
     this.state = {
-      expired: closingTime(props.proposal).isSameOrBefore(moment())
+      expired: closingTime(props.proposal).isSameOrBefore(moment()),
+      showVotersModal: false
     };
 
+  }
+
+  public showVotersModal(event: any) {
+    if (this.props.proposal.votesCount > 0) {
+      this.setState({ showVotersModal: true });
+    }
+  }
+
+  public closeVotersModal(event: any) {
+    this.setState({ showVotersModal: false });
   }
 
   public countdownEnded() {
@@ -124,12 +140,14 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
-        <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${proposal.scheme.id}/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
-
+        <BreadcrumbsItem weight={1} to={`/dao/${dao.address}/proposals/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+        <BreadcrumbsItem weight={2} to={`/dao/${dao.address}/proposals/${proposal.scheme.id}/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div>
+              <div className={css.statusContainer}>
+                <ProposalStatus proposalState={proposal} />
+              </div>
               <ActionButton
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
@@ -165,7 +183,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.description}>
-              {proposal.description}
+              <ReactMarkdown source={proposal.description} />
             </div>
 
             {url ?
@@ -199,7 +217,9 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               <div>
                 <div className={css.statusTitle}>
                   <h3>Votes</h3>
-                  <span>{proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"}</span>
+                  <span onClick={this.showVotersModal.bind(this)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
+                    {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} >
+                  </span>
                 </div>
 
                 <div className={css.voteButtons}>
@@ -245,7 +265,18 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
         </div>
 
         <h3 className={css.discussionTitle}>Discussion</h3>
-        <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
+        <div className={css.disqus}>
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig}/>
+        </div>
+
+        {this.state.showVotersModal ?
+          <VotersModal
+            closeAction={this.closeVotersModal.bind(this)}
+            currentAccountAddress={this.props.currentAccountAddress}
+            dao={dao}
+            proposal={proposal}
+          /> : ""
+        }
       </div>
     );
   }

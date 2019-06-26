@@ -1,6 +1,7 @@
 export const disabled: string;
 export const loading: string;
 export const wrapper: string;
+export const clickable: string;
 export const proposal: string;
 export const proposalInfo: string;
 export const attachmentLink: string;
@@ -24,3 +25,5 @@ export const proposalActions: string;
 export const createdBy: string;
 export const targetAccount: string;
 export const discussionTitle: string;
+export const disqus: string;
+export const statusContainer: string;

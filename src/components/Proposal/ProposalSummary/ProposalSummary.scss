@@ -14,6 +14,10 @@
   strong {
     font-weight: normal;
   }
+
+  a {
+    color: rgba(104, 154, 214, 1.000);
+  }
 }
 
 .proposalSummary.detailView em {
@@ -28,15 +32,10 @@
   font-weight: bold;
 }
 
-.proposalSummary.schemeRegistrar {
-  display: inline-block;
+.proposalSummary.withDetails {
   margin: 0 11px;
   font-size: 14px;
   padding: 6px 15px;
-
-  a {
-    color: rgba(104, 154, 214, 1.000);
-  }
 }
 
 .detailView.proposalSummary, .transactionModal.proposalSummary {
@@ -49,13 +48,9 @@
 }
 
 
-.detailView.proposalSummary.schemeRegistrar {
-  box-shadow: 0 1px 12px 0 rgba(26, 60, 88, 0.09);
-  background-color: $white;
+.detailView.proposalSummary.withDetails {
   font-size: 13px;
   padding: 0;
-  margin: 0 0 0 0;
-  width: 100%;
 
   .summaryTitle {
     padding: 20px;
@@ -76,6 +71,7 @@
 
   .summaryDetails {
     padding: 20px;
+    margin: 0;
 
     th {
       color: rgba(78, 97, 118, 1.000);
@@ -90,7 +86,7 @@
     }
 
     td {
-      color: rgba(154, 169, 181, 1.000);
+      color: $gray-1;
 
       span {
         display: inline-block;
@@ -109,12 +105,14 @@
     }
   }
 
+  ul.summaryDetails {
+    padding-left: 40px;
+  }
+
   table {
     border-top: none;
   }
 }
-
-
 
 .transactionModal.proposalSummary {
   max-width: 400px;
@@ -151,5 +149,11 @@
   table {
     font-size: 13px;
     border-top: 1px solid gray;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .detailView.proposalSummary, .transactionModal.proposalSummary {
+    width: auto;
   }
 }

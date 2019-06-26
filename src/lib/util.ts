@@ -1,5 +1,6 @@
 import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
+import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { getArc } from "../arc";
 
 const tokens = require("data/tokens.json");
@@ -140,30 +141,46 @@ export function isKnownScheme(address: Address) {
   }
 }
 
-export function schemeName(address: string) {
+/**
+ * given the address (of a scheme), return  a friendly string represeting the scheme's address and it'sname
+ * @param  address [description]
+ * @return         [description]
+ */
+export function schemeNameAndAddress(address: string) {
   const arc = getArc();
   try {
     const contractInfo = arc.getContractInfo(address);
+    const name = schemeName(contractInfo);
 
-    const NAMES: { [key: string]: string; } = {
-      ContributionReward: "Contribution Reward",
-      SchemeRegistrar: "Scheme Registrar",
-      GenericScheme: "Generic Scheme"
-    };
-
-    if (NAMES[contractInfo.name]) {
-      return `${address.slice(0, 4)}...${address.slice(-4)} (${NAMES[contractInfo.name]})`;
-    } else if (contractInfo.name) {
-      return `${address.slice(0, 4)}...${address.slice(-4)} (${contractInfo.name})`;
+    if (name) {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
     } else {
       return `${address.slice(0, 4)}...${address.slice(-4)}`;
-
     }
   } catch (err) {
     if (err.message.match(/No contract/)) {
       return `${address.slice(0, 4)}...${address.slice(-4)}`;
     }
   }
+}
+
+export function schemeName(scheme: any, fallback?: string) {
+  let name: string;
+  if (scheme.name === "GenericScheme") {
+    const genericSchemeRegistry = new GenericSchemeRegistry();
+    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.address);
+    if (genericSchemeInfo) {
+      name = genericSchemeInfo.specs.name;
+    } else {
+      name = "Generic Scheme";
+    }
+  } else if (scheme.name) {
+    // add spaces before capital letters to approximate a human-readable title
+    name = scheme.name.replace(/([A-Z])/g, " $1");
+  } else {
+    name =  fallback;
+  }
+  return name;
 }
 
 export async function getNetworkName(id?: string): Promise<string> {

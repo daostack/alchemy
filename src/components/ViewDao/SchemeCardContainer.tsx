@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { humanProposalTitle, splitByCamelCase } from "lib/util";
+import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
@@ -61,11 +61,10 @@ const SchemeCardContainer = (props: IInternalProps) => {
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <ProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
-
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.id}`}>
-        <h2>{scheme.name && splitByCamelCase(scheme.name) || "[unknown]"}</h2>
+        <h2>{schemeName(scheme, "[Unknown]")}</h2>
         <div>
           <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
         </div>
@@ -99,16 +98,16 @@ export default (props: IExternalProps) => {
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
     dao.proposals({
-      scheme: props.scheme.id,
+      scheme:  props.scheme.id,
       stage: IProposalStage.Queued,
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
     }), // the list of queued proposals
     dao.proposals({
-      scheme: props.scheme.id,
+      scheme:  props.scheme.id,
       stage: IProposalStage.PreBoosted
     }), // the list of preboosted proposals
     dao.proposals({
-      scheme: props.scheme.id,
+      scheme:  props.scheme.id,
       stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
     }) // the list of boosted proposals
   );

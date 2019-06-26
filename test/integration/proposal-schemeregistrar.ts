@@ -7,7 +7,7 @@ describe("SchemeRegistrar Proposals", () => {
 
     before(() => {
       addresses = getContractAddresses();
-      daoAddress = addresses.Avatar.toLowerCase();
+      daoAddress = addresses.test.Avatar.toLowerCase();
     });
 
     it("Create a proposal to add a scheme", async () => {
@@ -30,7 +30,7 @@ describe("SchemeRegistrar Proposals", () => {
       const title = uuid();
       await titleInput.setValue(title);
 
-      const descriptionInput = await $("*[id=\"descriptionInput\"]");
+      const descriptionInput = await $(".mde-text");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
       const schemeToAddInput = await $("*[id=\"schemeToAddInput\"]");
@@ -70,7 +70,7 @@ describe("SchemeRegistrar Proposals", () => {
       const title = uuid();
       await titleInput.setValue(title);
 
-      const descriptionInput = await $("*[id=\"descriptionInput\"]");
+      const descriptionInput = await $(".mde-text");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
       const schemeToEditInput = await $("select[id=\"schemeToEditInput\"]");
@@ -106,7 +106,7 @@ describe("SchemeRegistrar Proposals", () => {
       const title = uuid();
       await titleInput.setValue(title);
 
-      const descriptionInput = await $("*[id=\"descriptionInput\"]");
+      const descriptionInput = await $(".mde-text");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
       const schemeToEditInput = await $("select[id=\"schemeToRemoveInput\"]");

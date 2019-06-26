@@ -48,7 +48,7 @@ class Countdown extends React.Component<IProps, IState> {
           this.props.onEnd();
         }
       }
-    }, 5000);
+    }, 1000);
   }
 
   public componentWillUnmount() {

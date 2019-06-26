@@ -1,0 +1,36 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.boosted, .passed {
+  color: $accent-3;
+}
+
+.pending, .regular, .expired {
+  color: $gray-1;
+}
+
+.failed {
+  color: $accent-2;
+}
+
+.status {
+  height: 30px;
+  border-radius: 3px;
+  background-color: transparent;
+  border: $gray-border-2;
+  line-height: 30px;
+  padding: 0 15px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 13px;
+  font-weight: $bold;
+
+  img {
+    height: 13px;
+    margin-right: 6px;
+    position: relative;
+    bottom: -2px;
+  }
+}

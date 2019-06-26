@@ -1,12 +1,9 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as classNames from "classnames";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
-import AccountProfileName from "components/Account/AccountProfileName";
-import { default as Util, getNetworkName, linkToEtherScan, schemeName } from "lib/util";
+import { default as Util, getNetworkName, linkToEtherScan, schemeNameAndAddress } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
-import RewardsString from "./RewardsString";
 
 interface IProps {
   beneficiaryProfile?: IProfileState;
@@ -18,13 +15,17 @@ interface IProps {
 
 interface IState {
   network: string;
+
 }
 
 export default class ProposalSummary extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { network: "" };
+    this.state = {
+      network: ""
+    };
+
   }
 
   public async componentWillMount() {
@@ -32,41 +33,26 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
   }
 
   public render() {
-
-    const { beneficiaryProfile, dao, proposal, detailView, transactionModal } = this.props;
+    const { proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
+      [css.withDetails]: true
     });
 
-    if (proposal.contributionReward) {
-      return (
+    const schemeRegistrar = proposal.schemeRegistrar;
+    const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission, 16);
+
+    return (
         <div className={proposalSummaryClass}>
-          <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
-          <strong className={css.transferAmount}></strong>
-          <img src="/assets/images/Icon/Transfer.svg" />
-          <AccountPopupContainer accountAddress={proposal.contributionReward.beneficiary} dao={dao} />
-          <strong>
-            <AccountProfileName accountAddress={proposal.contributionReward.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address}/>
-          </strong>
-        </div>
-      );
-    } else if (proposal.schemeRegistrar) {
-      const schemeRegistrar = proposal.schemeRegistrar;
-      const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission, 16);
-
-      // TODO: how to best figure out of this is an add or edit scheme proposal?
-
-      return (
-        <div className={proposalSummaryClass + " " + css.schemeRegistrar}>
           { schemeRegistrar.schemeToRemove  ?
               <div>
                 <span className={css.summaryTitle}>
                   <img src="/assets/images/Icon/delete.svg"/>&nbsp;
                   Remove Scheme&nbsp;
-                  <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">{schemeName(schemeRegistrar.schemeToRemove)}</a>
+                  <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">{schemeNameAndAddress(schemeRegistrar.schemeToRemove)}</a>
                 </span>
                 { detailView ?
                   <div className={css.summaryDetails}>
@@ -90,7 +76,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                 <span className={css.summaryTitle}>
                   <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
                   {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
-                  <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeName(schemeRegistrar.schemeToRegister)}</a>
+                  <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeNameAndAddress(schemeRegistrar.schemeToRegister)}</a>
                 </span>
                 { detailView ?
                   <div className={css.summaryDetails}>
@@ -135,15 +121,15 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
           }
         </div>
       );
-    } else if (proposal.genericScheme) {
-      return (
-        <div className={proposalSummaryClass}>Unknown function call
-        to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
-        with callData: <em>{proposal.genericScheme.callData}</em>
-        </div>
-      );
-    } else {
-      return <div> Unknown scheme...</div>;
-    }
+    // } else if (proposal.genericScheme) {
+    //   return (
+    //     <div className={proposalSummaryClass}>Unknown function call
+    //     to contract at <a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall.substr(0, 8)}...</a>
+    //     with callData: <em>{proposal.genericScheme.callData}</em>
+    //     </div>
+    //   );
+    // } else {
+    //   return <div> Unknown scheme...</div>;
+    // }
   }
 }

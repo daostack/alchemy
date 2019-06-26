@@ -145,7 +145,6 @@ class PredictionBox extends React.Component<IProps, IState> {
       return (
         <Modal onBackdropClick={this.closeApprovalModal}>
           <div className={css.preApproval}>
-            <div className={css.preapproveBackdrop} onClick={this.closeApprovalModal}></div>
             <div className={css.preapproveWrapper}>
               <h3>Activate predictions</h3>
               <p>

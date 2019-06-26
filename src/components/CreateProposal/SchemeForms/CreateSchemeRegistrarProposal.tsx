@@ -4,12 +4,13 @@ import { checkMetaMaskAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeName } from "lib/util";
+import { schemeNameAndAddress } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
+import MarkdownField from "./MarkdownField";
 
 interface IContainerProps {
   scheme: Scheme;
@@ -136,15 +137,15 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
     });
 
     const schemeRegistrarFormClass = classNames({
-      [css.schemeRegistrarForm]: true,
+      [css.formWrapper]: true,
       [css.addScheme]: currentTab === "addScheme",
       [css.removeScheme]: currentTab === "removeScheme",
       [css.editScheme]: currentTab === "editScheme"
     });
 
     return (
-      <div className={css.schemeRegistrar}>
-        <div className={css.schemeRegistrarSidebar}>
+      <div className={css.createWrapperWithSidebar}>
+        <div className={css.sidebar}>
           <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
             <span></span>
             Add Scheme
@@ -221,6 +222,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
               errors,
               touched,
               isSubmitting,
+              setFieldValue
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
@@ -246,7 +248,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    component="textarea"
+                    component={MarkdownField}
+                    onChange={(value: any) => { setFieldValue("description", value); }}
                     id="descriptionInput"
                     placeholder="Describe your proposal in greater detail"
                     name="description"
@@ -295,7 +298,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, i) => {
-                          return <option key={`edit_scheme_${scheme.address}`} value={scheme.address}>{schemeName(scheme.address)}</option>;
+                          return <option key={`edit_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
                         })}
                       </Field>
                     </div>
@@ -363,7 +366,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, i) => {
-                          return <option key={`remove_scheme_${scheme.address}`} value={scheme.address}>{schemeName(scheme.address)}</option>;
+                          return <option key={`remove_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
                         })}
                       </Field>
                     </div>

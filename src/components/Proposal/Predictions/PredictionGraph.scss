@@ -42,7 +42,7 @@
       font-weight: normal;
       font-size: 10px;
       display: inline-block;
-      color: rgba(154, 169, 181, 1.000);
+      color: $gray-1;
       font-family: "Open Sans";
       position: relative;
       top: 2px;
@@ -77,7 +77,7 @@
      display: block;
      padding-top: 4px;
      font-size: 13px;
-     color: rgba(154, 169, 181, 1.000);
+     color: $gray-1;
    }
 
    .detailIcon {
@@ -111,7 +111,7 @@
      width: auto;
 
      b {
-       color: rgba(154, 169, 181, 1.000);
+       color: $gray-1;
        font-size: 13px;
        position: relative;
        top: -4px;
@@ -129,10 +129,10 @@
 }
 
 .historyView.wrapper {
-  top: 15px;
+  top: 12px;
 
   .stakesAgainst, .stakesFor {
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
     font-weight: normal;
   }
 
@@ -143,12 +143,12 @@
 
 .isPassing .forBar {
   span {
-    background-color: rgba(0, 190, 144, 1.000);
+    background-color: $accent-3;
   }
 }
 
 .isFailing .againstBar {
   span {
-    background-color: rgba(246, 80, 80, 1.000);
+    background-color: $accent-2;
   }
 }
