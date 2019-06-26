@@ -1,5 +1,6 @@
 export const hidden: string;
 export const createProposalWrapper: string;
+export const header: string;
 export const editIcon: string;
 export const error: string;
 export const contributionReward: string;

@@ -1,3 +1,5 @@
+@import "./react-mde.css";
+
 .hidden {
   display: none !important;
 }
@@ -11,7 +13,7 @@
   transform: translate(-50%,-50%);
   box-shadow: $shadow-3;
 
-  h2 {
+  .header {
     background-color: $navy;
     border-radius: 15px 15px 0 0;
     position: relative;
@@ -44,11 +46,7 @@
   form {
     padding: 20px 30px 30px 30px;
 
-    textarea {
-      height: 50px;
-    }
-
-    input, textarea {
+    input {
       margin-top: 3px;
       margin-bottom: 5px;
       width: 445px;
@@ -321,7 +319,7 @@
 }
 
 .createWrapperWithSidebar {
-  width: 730px;
+  width: 735px;
   content: "";
   clear: both;
   display: table;
@@ -370,7 +368,7 @@
   }
 
   .formWrapper {
-    width: 530px;
+    width: 535px;
     float: left;
     border-left: 1px solid #e9eef4;
 
