@@ -20,7 +20,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
     const ended = proposalEnded(proposalState);
     const expired = closingTime(proposalState).isSameOrBefore(moment());
     const passed = ended && proposalPassed(proposalState);
-    const failed = ended && proposalFailed(proposalState);
+    const failed = ended && !expired && proposalFailed(proposalState);
 
     const wrapperClass = classNames({
       [css.wrapper]: true
