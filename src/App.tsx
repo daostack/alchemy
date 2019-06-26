@@ -32,7 +32,19 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
         console.log(err);
       });
 
-    ReactGA.initialize("UA-142546205-2");
+    let GOOGLE_ANALYTICS_ID: string;
+    switch (process.env.NODE_ENV) {
+      case "production": {
+        // the "real" id
+        GOOGLE_ANALYTICS_ID = "UA-142546205-1";
+        break;
+      }
+      default: {
+        // the "test" id
+        GOOGLE_ANALYTICS_ID = "UA-142546205-2";
+      }
+    }
+    ReactGA.initialize(GOOGLE_ANALYTICS_ID);
     history.listen((location: any) => {
       ReactGA.pageview(location.pathname + location.search);
     });
