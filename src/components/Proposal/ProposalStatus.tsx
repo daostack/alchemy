@@ -15,7 +15,6 @@ export default class ProposalStatus extends React.Component<IProps, null> {
       proposalState,
     } = this.props;
 
-    // const ended = proposalEnded(proposalState); // executed or expired in queue
     const expiredInQueue = proposalExpired(proposalState); // expired in queue
     const passed = proposalPassed(proposalState);
     const failedByVote = !expiredInQueue && proposalFailed(proposalState);
