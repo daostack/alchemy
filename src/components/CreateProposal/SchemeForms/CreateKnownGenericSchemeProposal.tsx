@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
+import MarkdownField from "./MarkdownField";
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -281,6 +282,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
               errors,
               touched,
               isSubmitting,
+              setFieldValue,
               values
             }: FormikProps<FormValues>) => {
               return (
@@ -307,7 +309,8 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    component="textarea"
+                    component={MarkdownField}
+                    onChange={(value: any) => { setFieldValue("description", value); }}
                     id="descriptionInput"
                     placeholder="Describe your proposal in greater detail"
                     name="description"
