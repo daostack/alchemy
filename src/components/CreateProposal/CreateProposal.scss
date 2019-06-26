@@ -55,7 +55,7 @@
       display: block;
       border: none;
       background-color: transparent;
-      border: 1px solid rgba(191, 203, 213, 1.000);
+      border: $gray-border-2;
       font-size: 13px;
       padding: 12px 12px;
       font-family: $body-font;
@@ -96,7 +96,7 @@
       .externalTokenSelect {
         display: block;
         font-size: 13PX;
-        color: rgba(154, 169, 181, 1.000);
+        color: $gray-1;
         margin: 0;
         border: 1px solid #aaa;
         border-radius: 0;

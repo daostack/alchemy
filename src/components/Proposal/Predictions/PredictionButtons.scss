@@ -23,7 +23,7 @@
 
   .disabledPredictions {
     font-size: 11px;
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
   }
 
   button {
@@ -231,7 +231,7 @@
 .historyView.predictions {
   span {
     font-size: 13px;
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
     display: inline-block;
   }
 }

@@ -86,7 +86,7 @@
     }
 
     td {
-      color: rgba(154, 169, 181, 1.000);
+      color: $gray-1;
 
       span {
         display: inline-block;
@@ -151,7 +151,6 @@
     border-top: 1px solid gray;
   }
 }
-
 
 @media only screen and (max-width: 425px) {
   .detailView.proposalSummary, .transactionModal.proposalSummary {

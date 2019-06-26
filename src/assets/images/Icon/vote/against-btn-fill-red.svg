@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="18px" viewBox="0 0 15 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>vote/against-btn-selected</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="vote/against-btn-selected" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M1,17 L3.5,17 L3.5,9.96826726 L1,9.96826726 L1,17 Z M15,10.3607143 C15,9.69376786 14.4400823,9.15357143 13.7487873,9.15357143 L9.79808334,9.15357143 L9.41244172,5.46667857 C9.42495385,5.40632143 9.43433794,5.34294643 9.43433794,5.27655357 C9.43433794,5.02607143 9.32798487,4.79973214 9.15907116,4.63676786 L8.49280041,4 L5.35627838,8.90308929 C5.1310601,9.12339286 4.99029867,9.42517857 4.99029867,9.75714286 L4.99029867,15.7928571 C4.99029867,16.4598036 5.55021634,17 6.24151134,17 L11.8719683,17 C12.3912216,17 12.8354021,16.6951964 13.023084,16.2636429 L14.9092871,12.0084643 C14.9655917,11.8696429 15,11.7217679 15,11.5678571 L15,10.4120179 L15,10.3607143 Z" id="Shape-Copy" fill="#F65050" fill-rule="nonzero" transform="translate(8.000000, 10.500000) scale(1, -1) translate(-8.000000, -10.500000) "></path>
+    </g>
+</svg>
