@@ -69,7 +69,7 @@ class AppContainer extends React.Component<IProps, IState> {
   public componentDidCatch(error: Error, errorInfo: any) {
     this.setState({ error });
 
-    if (process.env.NODE_ENV === "PRODUCTION") {
+    if (process.env.NODE_ENV === "production") {
       Sentry.withScope((scope) => {
         scope.setExtras(errorInfo);
         const sentryEventId = Sentry.captureException(error);
