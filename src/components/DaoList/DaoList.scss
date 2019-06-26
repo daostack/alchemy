@@ -40,15 +40,43 @@ a.daoLink {
 	color: $white;
 	text-align: left;
 
-	.daoName {
+	.daoTitle {
 		border-radius: 15px 15px 0 0;
-		font-size: 28px;
-		font-weight: bold;
-		padding: 30px;
+    padding-top: 38px;
+    padding-bottom:38px;
+		padding-left: 30px;
+		padding-right: 12px;
 		margin: 0;
 		margin-bottom: 10px;
 		color: $white;
 		background-repeat: repeat;
+
+    .daoName {
+      font-size: 28px;
+      font-weight: bold;
+      display: inline-block;
+      overflow-x: hidden;
+    }
+
+    .inactiveFeedback {
+      float: right;
+      position: relative;
+      bottom: 26px;
+
+      .time {
+        display: inline-block;
+        position: relative;
+        bottom: 14px;
+        right: 16px;
+        font-size: 20px;
+      }
+    }
+
+    &.daoInactive {
+      .daoName {
+        opacity: .5;
+      }
+    }
 	}
 
 	.daoInfo {
@@ -72,7 +100,6 @@ a.daoLink {
 			color: $gray-1;
 		}
 	}
-
 }
 
 .daoListHeader {

@@ -2,6 +2,7 @@ import { DAO, IDAOState,
   IProposalStage,
   Proposal
   } from "@daostack/client";
+import classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
 import * as React from "react";
@@ -35,15 +36,26 @@ const DaoContainer = (props: IProps) => {
       } else {
         const [regularProposals, boostedProposals, daoState] = state.data;
         const bgPattern = GeoPattern.generate(dao.address + daoState.name);
+        const inActive = daoState.name === "dxDAO";
 
         return <Link
           className={css.daoLink}
           to={"/dao/" + dao.address}
           key={"dao_" + dao.address}
           data-test-id="dao-link"
+          onClick={ (e) => { if (inActive) { e.preventDefault(); } } }
         >
           <div className={css.dao}>
-            <h3 className={css.daoName} style={{backgroundImage: bgPattern.toDataUrl()}}>{daoState.name}</h3>
+            <div className={classNames({
+              [css.daoTitle]: true,
+              [css.daoInactive]: inActive})}
+              style={{backgroundImage: bgPattern.toDataUrl()}}>
+
+              <div className={css.daoName}>{daoState.name}</div>
+
+              {inActive ? <div className={css.inactiveFeedback} ><div className={css.time}>24.7.12</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
+
+            </div>
 
             <div className={"clearfix " + css.daoInfoContainer}>
               <div className={css.daoInfoTitle}>
