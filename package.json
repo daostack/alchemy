@@ -95,6 +95,7 @@
     "react-breadcrumbs-dynamic": "^1.2.0",
     "react-cookie": "^2.1.4",
     "react-dom": "^16.7.0",
+    "react-ga": "^2.6.0",
     "react-icons": "^3.2.2",
     "react-joyride": "^2.0.0",
     "react-linkify": "^0.2.2",

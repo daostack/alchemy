@@ -2,6 +2,7 @@ import { initializeArc } from "arc";
 import AppContainer from "layouts/AppContainer";
 import * as React from "react";
 import { CookiesProvider } from "react-cookie";
+import ReactGA from "react-ga";
 import { Provider } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
@@ -30,6 +31,9 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
       .catch ((err) => {
         console.log(err);
       });
+
+    ReactGA.initialize("UA-142546205-2");
+    ReactGA.pageview("home");
   }
 
   public render() {
