@@ -6,6 +6,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -105,6 +106,9 @@ class PredictionBox extends React.Component<IProps, IState> {
     if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
+
+    Analytics.track("Enable predictions");
+
     this.setState({ showApproveModal: false });
   }
 

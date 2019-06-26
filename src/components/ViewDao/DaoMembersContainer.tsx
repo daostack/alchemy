@@ -5,6 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Analytics from "lib/analytics";
 import Util from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -29,6 +30,14 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 };
 
 class DaoMembersContainer extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": "DAO Reputation Holders",
+      "DAO Address": this.props.dao.address,
+      "DAO Name": this.props.dao.name,
+    });
+  }
 
   public render() {
     const { dao, members, profiles } = this.props;

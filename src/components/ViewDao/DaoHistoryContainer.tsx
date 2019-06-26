@@ -1,6 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalType, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Analytics from "lib/analytics";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -15,6 +16,14 @@ interface IProps {
 }
 
 class DaoHistoryContainer extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": "DAO History",
+      "DAO Address": this.props.dao.address,
+      "DAO Name": this.props.dao.name
+    });
+  }
 
   public render() {
     const { proposals, dao, currentAccountAddress } = this.props;

@@ -2,6 +2,7 @@ import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";
+import Analytics from "lib/analytics";
 import Util from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
@@ -33,10 +34,22 @@ export function setCurrentAccount(accountAddress: string) {
 
     // if the accountAddress is undefined, we are done
     if (accountAddress === undefined) {
+      Analytics.reset();
       return;
     }
 
-    dispatch(getProfile(accountAddress));
+    // TODO: call alias? https://help.mixpanel.com/hc/en-us/articles/115004497803#avoid-calling-mixpanelalias-on-a-user-more-than-once
+    Analytics.identify(accountAddress);
+    Analytics.register({
+      'address': accountAddress,
+      'wallet': "MetaMask",
+    });
+    Analytics.people.set({
+      'address': accountAddress,
+      'wallet': "MetaMask",
+    });
+
+    dispatch(getProfile(accountAddress, true));
   };
 }
 

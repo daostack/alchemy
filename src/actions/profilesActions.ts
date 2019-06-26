@@ -1,5 +1,6 @@
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import axios from "axios";
+import Analytics from "lib/analytics";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, IProfileState, newProfile, profileDbToRedux } from "reducers/profilesReducer";
@@ -32,7 +33,7 @@ export function getProfilesForAllAccounts() {
   };
 }
 
-export function getProfile(accountAddress: string) {
+export function getProfile(accountAddress: string, currentAccount = false) {
   return async (dispatch: any) => {
     const url = process.env.API_URL + "/api/accounts?filter={\"where\":{\"ethereumAccountAddress\":\"" + accountAddress + "\"}}";
     try {
@@ -45,6 +46,14 @@ export function getProfile(accountAddress: string) {
           sequence: AsyncActionSequence.Success,
           payload: { profiles: response.data }
         });
+
+        if (currentAccount) {
+          // If getting profile for the current account then update our analytics services with the profile data
+          Analytics.people.set({
+            'name': response.data.name,
+            'description': response.data.description
+          });
+        }
       } else {
         // Setup blank profile for the account
         dispatch({
@@ -102,6 +111,16 @@ export function updateProfile(accountAddress: string, name: string, description:
       meta: { accountAddress },
       payload: { name, description }
     } as UpdateProfileAction);
+
+    Analytics.track("Update Profile", {
+      "Name": name,
+      "Description": description
+    });
+
+    Analytics.people.set({
+      'Name': name,
+      'Description': description
+    });
 
     dispatch(showNotification(NotificationStatus.Success, `Profile data saved`));
     return true;

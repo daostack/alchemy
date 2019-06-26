@@ -93,6 +93,7 @@ module.exports = merge(baseConfig, {
         'BASE_URL': JSON.stringify(process.env.BASE_URL || "http://127.0.0.1:3000"),
         'DISQUS_SITE': JSON.stringify(process.env.DISQUS_SITE || 'daostack-alchemy'),
         'NODE_ENV': JSON.stringify(process.env.NODE_ENV || "development"),
+        'MIXPANEL_TOKEN': JSON.stringify(process.env.MIXPANEL_TOKEN || "eac39430f2d26472411099a0407ad610")
       }
     })
   ]

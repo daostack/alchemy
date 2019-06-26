@@ -2,6 +2,7 @@ import { IDAOState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UnknownSchemeCardContainer from "components/ViewDao/UnknownSchemeCardContainer";
+import Analytics from "lib/analytics";
 import { isKnownScheme } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -31,44 +32,55 @@ interface IProps {
   schemes: Scheme[];
 }
 
-const AllSchemesContainer = (props: IProps) => {
-  const { dao, schemes } = props;
-  const knownSchemes = schemes.filter((scheme: Scheme) => isKnownScheme(scheme.address));
-  const unknownSchemes = schemes.filter((scheme: Scheme) => !isKnownScheme(scheme.address));
-  const schemeCardsHTML = (
-    <TransitionGroup>
-      {knownSchemes.map((scheme: Scheme) => (
-        <Fade key={"scheme " + scheme.id}>
-          <SchemeCardContainer dao={dao} scheme={scheme} />
-        </Fade>
-      ))
-      }
+class AllSchemesContainer extends React.Component<IProps, null> {
 
-      {!unknownSchemes ? "" :
-        <Fade key={"schemes unknown"}>
-          <UnknownSchemeCardContainer schemes={unknownSchemes} />
-        </Fade>
-      }
-    </TransitionGroup>
-  );
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "DAO Schemes": "Proposal Page",
+      "DAO Address": this.props.dao.address,
+      "DAO Name": this.props.dao.name
+    });
+  }
 
-  return (
-    <div className={css.wrapper}>
-      <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+  public render() {
+    const { dao, schemes } = this.props;
+    const knownSchemes = schemes.filter((scheme: Scheme) => isKnownScheme(scheme.address));
+    const unknownSchemes = schemes.filter((scheme: Scheme) => !isKnownScheme(scheme.address));
+    const schemeCardsHTML = (
+      <TransitionGroup>
+        {knownSchemes.map((scheme: Scheme) => (
+          <Fade key={"scheme " + scheme.id}>
+            <SchemeCardContainer dao={dao} scheme={scheme} />
+          </Fade>
+        ))
+        }
 
-      <h1>All Schemes</h1>
-      {schemes.length === 0
-        ? <div>
-          <img src="/assets/images/meditate.svg" />
-          <div>
-            No schemes registered
-            </div>
-        </div>
-        :
-        <div>{schemeCardsHTML}</div>
-      }
-    </div>
-  );
+        {!unknownSchemes ? "" :
+          <Fade key={"schemes unknown"}>
+            <UnknownSchemeCardContainer schemes={unknownSchemes} />
+          </Fade>
+        }
+      </TransitionGroup>
+    );
+
+    return (
+      <div className={css.wrapper}>
+        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+
+        <h1>All Schemes</h1>
+        {schemes.length === 0
+          ? <div>
+            <img src="/assets/images/meditate.svg" />
+            <div>
+              No schemes registered
+              </div>
+          </div>
+          :
+          <div>{schemeCardsHTML}</div>
+        }
+      </div>
+    );
+  }
 };
 
 export default (props: {} & RouteComponentProps<any>) => {

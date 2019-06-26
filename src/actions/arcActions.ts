@@ -1,6 +1,7 @@
 import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate } from "@daostack/client";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
+import Analytics from "lib/analytics";
 import Util from "lib/util";
 import { IRedemptionState } from "reducers/arcReducer";
 import { IRootState } from "reducers/index";
@@ -22,6 +23,12 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
       const observer = operationNotifierObserver(dispatch, "Create proposal");
       // @ts-ignore
       await dao.createProposal(proposalOptions).subscribe(...observer);
+
+      Analytics.track("Submit Proposal", {
+        "DAO Address": dao.address,
+        "Proposal Title": proposalOptions.title,
+        "Scheme Address": proposalOptions.scheme
+       });
     } catch (err) {
       console.error(err);
       throw err;
@@ -40,6 +47,12 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
     //   pass in null to not redeem any GenesisProtocol rewards
     // @ts-ignore
     await proposalObj.claimRewards(null).subscribe(...observer);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": avatarAddress,
+      "Proposal Hash": proposalId,
+      "Scheme Address": proposalObj.schemeAddress
+     });
   };
 }
 
@@ -62,6 +75,13 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     const observer = operationNotifierObserver(dispatch, "Vote");
     // @ts-ignore
     await proposalObj.vote(voteOption).subscribe(...observer);
+
+    Analytics.track("Vote", {
+      "DAO Address": daoAvatarAddress,
+      "Proposal Hash": proposalId,
+      "Scheme Address": proposalObj.schemeAddress,
+      "Vote Type": voteOption === IProposalOutcome.Fail ? "Fail" : voteOption === IProposalOutcome.Pass ? "Pass": "None",
+     });
   };
 }
 
@@ -76,13 +96,21 @@ export type StakeAction = IAsyncAction<"ARC_STAKE", {
     proposal: any,
   }>;
 
-export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
+export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: IProposalOutcome, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any>, ) => {
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
     // @ts-ignore
     await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subscribe(...observer);
+
+    Analytics.track("Stake", {
+      "DAO Address": daoAvatarAddress,
+      "GEN Staked": stakeAmount,
+      "Proposal Hash": proposalId,
+      "Scheme Address": proposalObj.schemeAddress,
+      "Stake Type": prediction === IProposalOutcome.Fail ? "Fail" : prediction === IProposalOutcome.Pass ? "Pass": "None",
+     });
   };
 }
 
@@ -106,6 +134,12 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
     const observer = operationNotifierObserver(dispatch, "Reward");
     // @ts-ignore
     await proposalObj.claimRewards(accountAddress).subscribe(...observer);
+
+    Analytics.track("Redeem", {
+      "DAO Address": daoAvatarAddress,
+      "Proposal Hash": proposalId,
+      "Scheme Address": proposalObj.schemeAddress
+     });
   };
 }
 

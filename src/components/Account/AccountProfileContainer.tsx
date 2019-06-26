@@ -10,6 +10,7 @@ import DaoSidebar from "components/ViewDao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import { default as Util, formatTokens } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
@@ -82,6 +83,15 @@ class AccountProfileContainer extends React.Component<IProps, null> {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
+  }
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": "Profile",
+      "DAO Address": this.props.dao.address,
+      "DAO Name": this.props.dao.name,
+      "Profile Address": this.props.accountAddress
+     });
   }
 
   public copyAddress = (e: any) => {

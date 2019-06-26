@@ -5,6 +5,7 @@ import * as classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
 import gql from "graphql-tag";
+import Analytics from "lib/analytics";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -27,6 +28,15 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
     this.state = {
       openMenu: false
     };
+  }
+
+  public componentDidMount() {
+    Analytics.track_links('.externalLink', 'Clicked External Link', (link: any) => {
+      return {
+        "Page": link.innerText,
+        "URL": link.attr("href")
+      }
+    });
   }
 
   public handleOpenMenu(event: any) {
@@ -177,7 +187,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
           <div className={css.menuWrapper}>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
+              <li><a className="externalLink" href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
               <li>
                 <a>Buy GEN</a>
                 <ul>
@@ -196,11 +206,11 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                   }
                 </ul>
               </li>
-              <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
-              <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
-              <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
+              <li><a className="externalLink" href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
+              <li><a className="externalLink" href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
+              <li><a className="externalLink" href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
               <li className={css.daoStack}>
-                <a href="http://daostack.io" target="_blank">
+                <a className="externalLink" href="http://daostack.io" target="_blank">
                   <img src="/assets/images/Icon/dao-logo.svg" /> DAOstack
                   </a>
               </li>

@@ -7,6 +7,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { DiscussionEmbed } from "disqus-react";
+import Analytics from "lib/analytics";
 import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
@@ -78,6 +79,18 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
       showVotersModal: false
     };
 
+  }
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": "Proposal Page",
+      "DAO Address": this.props.dao.address,
+      "DAO Name": this.props.dao.name,
+      "Proposal Hash": this.props.proposal.id,
+      "Proposal Title": this.props.proposal.title,
+      "Scheme Address": this.props.proposal.scheme.id,
+      "Scheme Name": this.props.proposal.scheme.name
+    });
   }
 
   public showVotersModal(event: any) {

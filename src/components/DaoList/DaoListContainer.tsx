@@ -1,6 +1,7 @@
 import { DAO } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Analytics from "lib/analytics";
 import * as React from "react";
 import DaoContainer from "./DaoContainer";
 import * as css from "./DaoList.scss";
@@ -10,6 +11,12 @@ interface IProps {
 }
 
 class DaoListContainer extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": "DAO List"
+    });
+  }
 
   public render() {
     const { daos } = this.props;

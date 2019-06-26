@@ -1,6 +1,7 @@
 import { Address, IDAOState, IProposalStage, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Analytics from "lib/analytics";
 import { schemeName} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -34,116 +35,128 @@ interface IProps {
   scheme: Scheme;
 }
 
-const SchemeProposalsContainer = (props: IProps) => {
+class SchemeProposalsContainer extends React.Component<IProps, null> {
 
-  const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted, scheme } = props;
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": "Scheme Page",
+      "DAO Address": this.props.dao.address,
+      "DAO Name": this.props.dao.name,
+      "Scheme Address": this.props.scheme.id,
+      "Scheme Name": this.props.scheme.name
+    });
+  }
 
-  const queuedProposalsHTML = (
-    <TransitionGroup className="queued-proposals-list">
-      { proposalsQueued.map((proposal: Proposal) => (
-        <Fade key={"proposal_" + proposal.id}>
-          <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
-        </Fade>
-      ))}
-    </TransitionGroup>
-  );
+  public render() {
+    const { currentAccountAddress, dao, proposalsQueued, proposalsBoosted, proposalsPreBoosted, scheme } = this.props;
 
-  const preBoostedProposalsHTML = (
-    <TransitionGroup className="boosted-proposals-list">
-      { proposalsPreBoosted.map((proposal: Proposal) => (
-        <Fade key={"proposal_" + proposal.id}>
-          <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
-        </Fade>
-      ))}
-    </TransitionGroup>
-  );
+    const queuedProposalsHTML = (
+      <TransitionGroup className="queued-proposals-list">
+        { proposalsQueued.map((proposal: Proposal) => (
+          <Fade key={"proposal_" + proposal.id}>
+            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+          </Fade>
+        ))}
+      </TransitionGroup>
+    );
 
-  const boostedProposalsHTML = (
-    <TransitionGroup className="boosted-proposals-list">
-      { proposalsBoosted.map((proposal: Proposal) => (
-        <Fade key={"proposal_" + proposal.id}>
-          <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
-        </Fade>
-      ))}
-    </TransitionGroup>
-  );
+    const preBoostedProposalsHTML = (
+      <TransitionGroup className="boosted-proposals-list">
+        { proposalsPreBoosted.map((proposal: Proposal) => (
+          <Fade key={"proposal_" + proposal.id}>
+            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+          </Fade>
+        ))}
+      </TransitionGroup>
+    );
 
-  return (
-    <div className={css.daoProposalsContainer}>
-      <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+    const boostedProposalsHTML = (
+      <TransitionGroup className="boosted-proposals-list">
+        { proposalsBoosted.map((proposal: Proposal) => (
+          <Fade key={"proposal_" + proposal.id}>
+            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+          </Fade>
+        ))}
+      </TransitionGroup>
+    );
 
-      <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">
-        + New proposal
-      </Link>
+    return (
+      <div className={css.daoProposalsContainer}>
+        <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
-      <h2 className={css.queueType}>{schemeName(scheme, scheme.address)}</h2>
+        <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">
+          + New proposal
+        </Link>
 
-      { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
-        ? <div className={css.noDecisions}>
-            <img className={css.relax} src="/assets/images/yogaman.svg"/>
-            <div className={css.proposalsHeader}>
-              No upcoming proposals
+        <h2 className={css.queueType}>{schemeName(scheme, scheme.address)}</h2>
+
+        { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
+          ? <div className={css.noDecisions}>
+              <img className={css.relax} src="/assets/images/yogaman.svg"/>
+              <div className={css.proposalsHeader}>
+                No upcoming proposals
+              </div>
+              <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
+              <div className={css.cta}>
+                <Link to={"/dao/" + dao.address}>
+                  <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+                </Link>
+                <Link to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
+              </div>
             </div>
-            <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
-            <div className={css.cta}>
-              <Link to={"/dao/" + dao.address}>
-                <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
-              </Link>
-              <Link to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
+          :
+          <div>
+            <div className={css.boostedContainer}>
+              <div className={css.proposalsHeader}>
+                Boosted Proposals ({proposalsBoosted.length})
+                {proposalsBoosted.length === 0
+                  ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                  : " "
+                }
+              </div>
+              <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
+                {boostedProposalsHTML}
+              </div>
+            </div>
+
+            <div className={css.regularContainer}>
+              <div className={css.proposalsHeader}>
+                Pending Proposals ({proposalsPreBoosted.length})
+                {proposalsPreBoosted.length === 0
+                  ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                  : " "
+                }
+              </div>
+              <div className={css.proposalsContainer}>
+                {preBoostedProposalsHTML}
+              </div>
+            </div>
+            <div className={css.regularContainer}>
+              <div className={css.proposalsHeader}>
+                Regular Proposals ({proposalsQueued.length})
+                {proposalsQueued.length === 0
+                  ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                  : " "
+                }
+              </div>
+              <div className={css.proposalsContainer}>
+                {queuedProposalsHTML}
+              </div>
             </div>
           </div>
-        :
-        <div>
-          <div className={css.boostedContainer}>
-            <div className={css.proposalsHeader}>
-              Boosted Proposals ({proposalsBoosted.length})
-              {proposalsBoosted.length === 0
-                ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                : " "
-              }
-            </div>
-            <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
-              {boostedProposalsHTML}
-            </div>
-          </div>
-
-          <div className={css.regularContainer}>
-            <div className={css.proposalsHeader}>
-              Pending Proposals ({proposalsPreBoosted.length})
-              {proposalsPreBoosted.length === 0
-                ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                : " "
-              }
-            </div>
-            <div className={css.proposalsContainer}>
-              {preBoostedProposalsHTML}
-            </div>
-          </div>
-          <div className={css.regularContainer}>
-            <div className={css.proposalsHeader}>
-              Regular Proposals ({proposalsQueued.length})
-              {proposalsQueued.length === 0
-                ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                : " "
-              }
-            </div>
-            <div className={css.proposalsContainer}>
-              {queuedProposalsHTML}
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-  );
+        }
+      </div>
+    );
+  }
 };
 
 interface IExternalProps {

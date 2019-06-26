@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames = require("classnames");
+import Analytics from "lib/analytics";
 import * as React from "react";
-
 import { IProfileState } from "reducers/profilesReducer";
 
 import * as css from "./Account.scss";
@@ -38,6 +38,9 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
       socket.on(provider, (account: any) => {
         this.popup.close();
         onSuccess(account);
+        Analytics.track("Add Social Verification", {
+          "Network": provider
+         });
       });
     }
   }

@@ -4,6 +4,7 @@ import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
+import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -18,6 +19,14 @@ interface IProps {
 }
 
 class DaoRedemptionsContainer extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    Analytics.track("Page View", {
+      "Page Name": "DAO Redemptions",
+      "DAO Address": this.props.dao.address,
+      "DAO Name": this.props.dao.name
+    });
+  }
 
   public render() {
     const { dao, proposals, currentAccountAddress } = this.props;

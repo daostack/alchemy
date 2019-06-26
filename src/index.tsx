@@ -1,6 +1,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFacebook, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import * as Sentry from "@sentry/browser";
+import * as Mixpanel from 'mixpanel-browser';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
@@ -19,6 +20,8 @@ async function renderApp() {
       environment: process.env.NODE_ENV
     });
   }
+
+  Mixpanel.init(process.env.MIXPANEL_TOKEN);
 
   ReactDOM.render(
     <AppContainer>
