@@ -12,17 +12,18 @@ import * as History from "history";
 import HeaderContainer from "layouts/HeaderContainer";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Cookies, withCookies } from "react-cookie";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 //@ts-ignore
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
-import { LocalStorageService } from "../lib/localStorageService";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
 interface IStateProps {
+  cookies: Cookies;
   currentAccountAddress: string;
   history: History.History;
   sortedNotifications: INotificationsState;
@@ -79,22 +80,21 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount() {
     let metamask: any;
-    let currentAddress = await getCurrentAccountAddress();
-    const storageKey = "currentAddress";
-
+    const currentAddress = await getCurrentAccountAddress();
     if (currentAddress)  {
       console.log(`using address from web3 connection: ${currentAddress}`);
-      LocalStorageService.setItem(storageKey, currentAddress, false);
+      this.props.cookies.set("currentAddress", currentAddress, { path: "/"});
+      this.props.setCurrentAccount(currentAddress);
     } else {
-      currentAddress = LocalStorageService.getItem(storageKey, false);
-      if (currentAddress) {
-        console.log(`using address from local storage: ${currentAddress}`);
+      const currentAddressFromCookie = this.props.cookies.get("currentAddress");
+      if (currentAddressFromCookie) {
+        console.log(`using address from cookie: ${currentAddressFromCookie}`);
+        this.props.setCurrentAccount(currentAddressFromCookie);
       } else {
-        LocalStorageService.setItem(storageKey, "", false);
+        this.props.cookies.set("currentAddress", "", { path: "/"});
+        this.props.setCurrentAccount(undefined);
       }
     }
-
-    this.props.setCurrentAccount(currentAddress);
 
     try {
       metamask = await checkMetaMask();
@@ -108,7 +108,7 @@ class AppContainer extends React.Component<IProps, IState> {
           if (newAddress && checkMetaMask()) {
             console.log(`new address: ${newAddress}`);
             this.props.setCurrentAccount(newAddress);
-            LocalStorageService.setItem(storageKey, newAddress, false);
+            this.props.cookies.set("currentAddress", newAddress, { path: "/"});
             // TODO: we reload on setting a new account,
             // but it would be more elegant if we did not need to
             window.location.reload();
@@ -192,4 +192,4 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(withCookies(AppContainer));
