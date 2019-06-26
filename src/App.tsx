@@ -33,7 +33,9 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
       });
 
     ReactGA.initialize("UA-142546205-2");
-    ReactGA.pageview("home");
+    history.listen((location: any) => {
+      ReactGA.pageview(location.pathname + location.search);
+    });
   }
 
   public render() {
