@@ -70,7 +70,7 @@ export default (props: IProps) => {
     if (Object.keys(contributionRewards).length > 0) {
       ContributionRewardDiv = <div>
         <strong>
-          {(currentAccountAddress && currentAccountAddress.toLowerCase() === contributionReward.beneficiary.toLowerCase()) ?
+          {(currentAccountAddress && currentAccountAddress === contributionReward.beneficiary.toLowerCase()) ?
               "As the beneficiary of the proposal you will recieve" :
               "The beneficiary of the proposal will receive"}
         </strong>

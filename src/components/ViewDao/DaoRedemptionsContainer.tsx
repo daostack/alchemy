@@ -46,7 +46,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     proposals.forEach((proposal) => {
       // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
       proposal.gpRewards.forEach((reward: any) => {
-        if (reward.beneficiary === currentAccountAddress.toLowerCase()) {
+        if (reward.beneficiary === currentAccountAddress) {
           if (reward.tokensForStaker && Number(reward.tokensForStakerRedeemedAt) === 0) {
             genReward.iadd(new BN(reward.tokensForStaker));
           }
@@ -63,7 +63,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       });
       //
       // const contributionReward = proposal.contributionReward;
-      // if (contributionReward && contributionReward.beneficiary === currentAccountAddress.toLowerCase()) {
+      // if (contributionReward && contributionReward.beneficiary === currentAccountAddress) {
       //    ethReward.iadd(new BN(contributionReward.ethReward));
       // }
 
