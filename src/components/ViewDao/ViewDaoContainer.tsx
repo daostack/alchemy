@@ -6,6 +6,7 @@ import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContain
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { Cookies, withCookies } from "react-cookie";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 //@ts-ignore
@@ -23,6 +24,7 @@ import SchemeProposalsContainer from "./SchemeProposalsContainer";
 import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
+  cookies: Cookies;
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
   dao: IDAOState;
@@ -130,7 +132,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(ViewDaoContainer);
+const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(withCookies(ViewDaoContainer));
 
 export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress;
