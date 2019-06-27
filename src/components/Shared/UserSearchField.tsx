@@ -8,7 +8,7 @@ import { first } from "rxjs/operators";
 
 import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 import * as css from "./UserSearchField.scss";

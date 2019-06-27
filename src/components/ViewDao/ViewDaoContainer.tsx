@@ -3,7 +3,7 @@ import * as profilesActions from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";

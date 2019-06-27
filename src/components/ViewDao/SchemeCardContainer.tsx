@@ -2,7 +2,7 @@ import { IDAOState, IProposalStage, IProposalState, Proposal, Scheme } from "@da
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";

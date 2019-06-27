@@ -4,7 +4,7 @@ import CreateContributionRewardProposal from "components/CreateProposal/SchemeFo
 import CreateKnownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateUnknownGenericSchemeProposal";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as H from "history";

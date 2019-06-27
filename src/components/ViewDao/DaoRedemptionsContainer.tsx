@@ -2,7 +2,7 @@ import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
 import { formatTokens } from "lib/util";

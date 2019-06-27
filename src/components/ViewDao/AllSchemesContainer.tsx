@@ -1,6 +1,6 @@
 import { IDAOState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UnknownSchemeCardContainer from "components/ViewDao/UnknownSchemeCardContainer";
 import { isKnownScheme } from "lib/util";

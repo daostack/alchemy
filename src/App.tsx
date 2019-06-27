@@ -1,5 +1,5 @@
 import { initializeArc } from "arc";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import AppContainer from "layouts/AppContainer";
 import * as React from "react";
 import { CookiesProvider } from "react-cookie";

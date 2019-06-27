@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalStage, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { schemeName} from "lib/util";
 import * as React from "react";

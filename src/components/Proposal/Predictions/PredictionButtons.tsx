@@ -4,7 +4,7 @@ import * as web3Actions from "actions/web3Actions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { formatTokens } from "lib/util";

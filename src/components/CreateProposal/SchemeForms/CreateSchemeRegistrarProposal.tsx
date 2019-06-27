@@ -2,7 +2,7 @@ import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
-import Loading from "components/shared/Loading";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeNameAndAddress } from "lib/util";
