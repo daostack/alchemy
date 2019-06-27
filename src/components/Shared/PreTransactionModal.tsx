@@ -5,7 +5,7 @@ import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
-import Util from "lib/util";
+import { default as Util, formatTokens } from "lib/util";
 import { getExchangesList, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -287,7 +287,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       />
                       <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                       <div className={css.yourBalance}>
-                        <div>Your balance: {accountGens} GEN</div>
+                        <div>Your balance: {formatTokens(accountGens)} GEN</div>
                         <div className={css.exchangeList}>
                           Buy GEN &gt;
                           <ul>

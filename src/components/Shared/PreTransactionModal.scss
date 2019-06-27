@@ -32,22 +32,22 @@
   text-align: center;
   background-color: rgba(246, 80, 80, 1.000);
   margin-right: 10px;
+  position: relative;
+  top: -3px;
 
   img {
     margin: 0;
     padding: 0;
     position: relative;
-    top: -3px;
-    left: -1px;
+    top: -1px;
+    left: 1px;
   }
 }
 
 .metaMaskModal .modalWindow .transactionHeader.stakePass .transactionIcon {
   background-color: rgba(0, 190, 144, 1.000);
-
-  img {
-    left: 0;
-  }
+  position: relative;
+  top: -3px;
 }
 
 .closeTransactionContainer {
@@ -517,7 +517,7 @@ input[type=number] {
 
       .transactionInfo {
         position: relative;
-        top: -2px;
+        top: -1px;
         display: inline;
 
         .transactionEffect {
