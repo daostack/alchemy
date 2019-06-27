@@ -3,7 +3,7 @@ import Lottie from "react-lottie";
 
 const animationData = require("../../assets/animations/Loader.json");
 
-export default class LottieControl extends React.Component {
+export default class Loading extends React.Component {
 
   public render() {
 
