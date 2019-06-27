@@ -1,4 +1,5 @@
 import { initializeArc } from "arc";
+import Loading from "components/Shared/Loading";
 import AppContainer from "layouts/AppContainer";
 import * as React from "react";
 import { CookiesProvider } from "react-cookie";
@@ -52,7 +53,7 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
 
   public render() {
     if (!this.state.arcIsInitialized) {
-      return <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>;
+      return <div className={css.loading}><Loading/></div>;
     } else  {
       return (
         <Provider store={store}>

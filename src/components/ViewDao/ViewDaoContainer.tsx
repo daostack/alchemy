@@ -3,6 +3,7 @@ import * as profilesActions from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -144,7 +145,7 @@ export default (props: RouteComponentProps<any>) => {
     } else if (state.data) {
       return <ConnectedViewDaoContainer {...props} dao={state.data} />;
     } else {
-      return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>);
+      return (<div className={css.loading}><Loading/></div>);
     }
   }
   }</Subscribe>;

@@ -4,6 +4,7 @@ import CreateContributionRewardProposal from "components/CreateProposal/SchemeFo
 import CreateKnownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateUnknownGenericSchemeProposal";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as H from "history";
@@ -47,7 +48,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     const observable = from(arc.scheme(schemeId));
     return <Subscribe observable={observable}>{(state: IObservableState<Scheme>) => {
       if (state.isLoading) {
-        return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return  <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
