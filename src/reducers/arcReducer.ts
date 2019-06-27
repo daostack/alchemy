@@ -203,7 +203,12 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
 
 export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage === IProposalStage.Executed) ||
+    (proposal.stage === IProposalStage.Executed) || proposalExpired(proposal));
+  return res;
+}
+
+export function proposalExpired(proposal: IProposalStateFromDaoStackClient) {
+  const res = (
     (proposal.stage === IProposalStage.ExpiredInQueue) ||
     (proposal.stage === IProposalStage.Queued && closingTime(proposal) <= moment())
   );
@@ -220,8 +225,7 @@ export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
 export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
     (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
-    (proposal.stage === IProposalStage.ExpiredInQueue) ||
-    (proposal.stage === IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
+    proposalExpired(proposal)
   );
   return res;
 }
