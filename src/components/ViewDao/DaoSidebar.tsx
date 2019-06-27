@@ -59,6 +59,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address}>
               <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
+              <em></em>
               <span>{dao.name}</span>
             </Link>
           </div>
