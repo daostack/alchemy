@@ -114,7 +114,7 @@ export async function checkMetaMask(metamask?: any) {
 export async function getCurrentAccountAddress(): Promise<Address> {
   const web3 = getArc().web3;
   const accounts = await web3.eth.getAccounts();
-  return accounts[0];
+  return accounts[0] ? accounts[0].toLowerCase() : null;
 }
 
 /**

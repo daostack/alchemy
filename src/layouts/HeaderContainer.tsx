@@ -49,7 +49,6 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
-
     this.copyAddress = this.copyAddress.bind(this);
   }
 
@@ -84,7 +83,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     const daoAvatarAddress = dao ? dao.address : null;
 
     return(
-      <div>
+      <div className={css.headerContainer}>
         <nav className={css.header}>
           <div className={css.menu}>
             <img src="/assets/images/alchemy-logo-white.svg"/>

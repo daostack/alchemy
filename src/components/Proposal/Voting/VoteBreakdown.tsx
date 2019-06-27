@@ -170,7 +170,7 @@ export default (props: IProps) => {
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
-  const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress.toLowerCase()).state() : of(null);
+  const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
 
   return <Subscribe observable={observable}>{
     (state: IObservableState<IMemberState>): any => {

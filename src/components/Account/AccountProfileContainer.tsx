@@ -44,7 +44,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     accountAddress,
     accountInfo: ownProps.accountInfo,
     accountProfile: state.profiles[accountAddress],
-    currentAccountAddress: state.web3.currentAccountAddress ? state.web3.currentAccountAddress.toLowerCase() : null,
+    currentAccountAddress: state.web3.currentAccountAddress,
     dao: ownProps.dao,
     ethBalance: ownProps.ethBalance,
     genBalance: ownProps.genBalance
@@ -146,8 +146,8 @@ class AccountProfileContainer extends React.Component<IProps, null> {
         {dao ? <DaoSidebar {...this.props} dao={dao} /> : ""}
 
         <div className={css.profileContainer} data-test-id="profile-container">
-          {editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br /><br /></div> : ""}
-          {typeof (accountProfile) === "undefined" ? "Loading..." :
+          { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
+          { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
               enableReinitialize={true}
               initialValues={{

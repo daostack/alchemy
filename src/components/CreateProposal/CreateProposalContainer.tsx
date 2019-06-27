@@ -82,7 +82,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
         return <div className={css.createProposalWrapper}>
           <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}`}>{schemeName.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
           <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
-          <h2>
+          <h2 className={css.header}>
             <span>+ New proposal <b>| {schemeName}</b></span>
           </h2>
           { createSchemeComponent }

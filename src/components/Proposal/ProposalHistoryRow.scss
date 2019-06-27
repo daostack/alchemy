@@ -16,7 +16,7 @@
 
 .endDate {
   width: 60px;
-  color: rgba(154, 169, 181, 1.000);
+  color: $gray-1;
   padding-top: 15px;
   padding-right: 10px;
   text-align: left;
@@ -24,7 +24,7 @@
 
 .scheme {
   width: 80px;
-  color: rgba(154, 169, 181, 1.000);
+  color: $gray-1;
   padding-top: 15px;
   text-align: left;
 }
@@ -73,7 +73,7 @@
   }
 
   .decisionReason {
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
     padding-top: 4px;
   }
 }
@@ -111,7 +111,7 @@
   color: rgba(80, 97, 118, 1.000);
   padding-top: 10px;
   text-align: center;
-  width: 130px;
+  width: 110px;
 }
 
 .voteControls {
@@ -120,11 +120,70 @@
 
   button span {
     font-weight: normal;
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
   }
 
   span {
     font-weight: normal;
-    color: rgba(154, 169, 181, 1.000);
+    color: $gray-1;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .wrapper {
+    height: 130px;
+    padding: 10px;
+    display: block;
+    width: auto;
+
+    div {
+      display: inline-block;
+    }
+    
+    div.scheme {
+      display: none;
+    }
+
+    div.myActions {
+      display: none;
+    }
+  }
+
+  .endDate {
+    width: 70px;
+    padding-top: 8px;
+    text-align: right;
+    font-size: 11px;
+    float: right;
+  }
+
+  .title {
+    padding: 15px 0;
+    font-weight: bold;
+    font-size: 13px;
+  }
+
+  .closeReason {
+    width: 110px;
+    position: absolute;
+    top: 101px;
+    left: 10px;
+    width: 130px;
+  }
+
+  .votes {
+    position: absolute;
+    top: 70px;
+    left: 150px;
+  }
+
+  .predictions {
+    position: absolute;
+    left: 230px;
+    top: 63px;
+  }
+
+  .closeReason .decisionReason {
+    display: block;
   }
 }

@@ -31,7 +31,7 @@ describe("Proposals", () => {
 
       // using uuid value so that the test will pass also if there is already a proposal with this description
       // (which must be unique). TODO: find a way to reset the state
-      const descriptionInput = await $("#descriptionInput");
+      const descriptionInput = await $(".mde-text");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
       const masterCopyInput = await $("*[data-test-id=\"_masterCopy\"]");

@@ -1,3 +1,5 @@
+@import "./react-mde.css";
+
 .hidden {
   display: none !important;
 }
@@ -11,7 +13,7 @@
   transform: translate(-50%,-50%);
   box-shadow: $shadow-3;
 
-  h2 {
+  .header {
     background-color: $navy;
     border-radius: 15px 15px 0 0;
     position: relative;
@@ -44,18 +46,14 @@
   form {
     padding: 20px 30px 30px 30px;
 
-    textarea {
-      height: 50px;
-    }
-
-    input, textarea {
+    input {
       margin-top: 3px;
       margin-bottom: 5px;
       width: 445px;
       display: block;
       border: none;
       background-color: transparent;
-      border: 1px solid rgba(191, 203, 213, 1.000);
+      border: $gray-border-2;
       font-size: 13px;
       padding: 12px 12px;
       font-family: $body-font;
@@ -96,7 +94,7 @@
       .externalTokenSelect {
         display: block;
         font-size: 13PX;
-        color: rgba(154, 169, 181, 1.000);
+        color: $gray-1;
         margin: 0;
         border: 1px solid #aaa;
         border-radius: 0;
@@ -321,7 +319,7 @@
 }
 
 .createWrapperWithSidebar {
-  width: 730px;
+  width: 735px;
   content: "";
   clear: both;
   display: table;
@@ -370,7 +368,7 @@
   }
 
   .formWrapper {
-    width: 530px;
+    width: 535px;
     float: left;
     border-left: 1px solid #e9eef4;
 
@@ -530,5 +528,65 @@ form .radioButtons {
       display: none;
     }
 
+  }
+}
+
+
+@media only screen and (max-width: 425px) {
+  .createProposalWrapper {
+    top: 0;
+    left: 0;
+    transform: translate(0,0);
+
+    form {
+      padding: 15px 15px 15px 15px;
+
+      input, textarea, label {
+        width: 255px;
+      }
+    }
+  }
+
+  .contributionReward {
+    width: auto;
+  }
+
+  .schemeRegistrar {
+    width: auto;
+
+    .permissions .permissionCheckbox {
+      width: auto;
+    }
+
+    .schemeRegistrarForm {
+      width: auto;
+    }
+  }
+
+  .schemeRegistrar .schemeRegistrarSidebar {
+    width: auto;
+    float: none;
+
+    button {
+      font-size: 12px;
+      padding: 10px 11px;
+      display: inline-block;
+      width: auto;
+    }
+
+    .addSchemeButton {
+      display: inline-block;
+      margin: 0 0 0 0;
+    }
+
+    button.selected span {
+      width: 24px;
+      left: 50%;
+      right: auto;
+      transform: rotate(153deg) skew(35deg);
+      top: 25px;
+      background-color: #e9eef4;
+      margin-left: -12px;
+    }
   }
 }

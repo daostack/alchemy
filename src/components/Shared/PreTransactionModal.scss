@@ -30,7 +30,7 @@
   height: 20px;
   border-radius: 20px;
   text-align: center;
-  background-color: rgba(246, 80, 80, 1.000);
+  background-color: $accent-2;
   margin-right: 10px;
 
   img {
@@ -43,7 +43,7 @@
 }
 
 .metaMaskModal .modalWindow .transactionHeader.stakePass .transactionIcon {
-  background-color: rgba(0, 190, 144, 1.000);
+  background-color: $accent-3;
 
   img {
     left: 0;
@@ -154,7 +154,7 @@
 
 .preTransactionBottom {
   padding: 20px 0;
-  border-top: 1px solid rgba(191, 203, 213, 1.000);
+  border-top: $gray-border-2;
   text-align: right;
 }
 
@@ -203,7 +203,7 @@ input[type=number] {
     display: block;
     margin: 0 25px 25px 25px;
     padding-left: 10px;
-    border-left: 2px solid rgba(246, 80, 80, 1.000);
+    border-left: 2px solid $accent-2;
   }
 }
 
@@ -250,7 +250,7 @@ input[type=number] {
         font-size: 16px;
         display: block;
         width: 100%;
-        color: rgba(154, 169, 181, 1.000);
+        color: $gray-1;
 
         img {
           width: 20px;
@@ -305,7 +305,7 @@ input[type=number] {
 
     .notification {
       font-size: 11px;
-      color: rgba(154, 169, 181, 1.000);
+      color: $gray-1;
       padding: 0px 25px 15px 25px;
 
       img {
@@ -340,7 +340,7 @@ input[type=number] {
     top: 0px;
     height: 100%;
     z-index: 10000;
-    border-left: 1px solid rgba(191, 203, 213, 1.000);
+    border-left: $gray-border-2;
 
     .bg {
       width: 100%;
@@ -407,7 +407,7 @@ input[type=number] {
     border-radius: 15px 15px 0 0;
 
     .decisionGraph {
-      border-top: 1px solid rgba(191, 203, 213, 1.000);
+      border-top: $gray-border-2;
       width: 100%;
       float: none;
       left: auto;
@@ -462,8 +462,8 @@ input[type=number] {
     .incentives {
       padding: 30px;
       font-size: 11px;
-      border-top: 1px solid rgba(191, 203, 213, 1.000);
-      border-bottom: 1px solid rgba(191, 203, 213, 1.000);
+      border-top: $gray-border-2;
+      border-bottom: $gray-border-2;
       margin-bottom: 20px;
 
       .passIncentive {
@@ -523,7 +523,7 @@ input[type=number] {
         .transactionEffect {
           font-size: 12px;
           display: inline;
-          color: rgba(154, 169, 181, 1.000);
+          color: $gray-1;
           opacity: .7;
 
           strong {
@@ -535,15 +535,15 @@ input[type=number] {
           font-size: 21px;
 
           .passVote {
-            color: rgba(0, 190, 144, 1.000);
+            color: $accent-3;
           }
 
           .failVote {
-            color: rgba(246, 80, 80, 1.000);
+            color: $accent-2;
           }
 
           .redeem {
-            color: rgba(0, 190, 144, 1.000);
+            color: $accent-3;
           }
         }
 
@@ -585,7 +585,7 @@ input[type=number] {
       .predictionAmount {
         display: inline-block;
         background-color: transparent;
-        border: 1px solid rgba(191, 203, 213, 1.000);
+        border: $gray-border-2;
         width: 154px;
         font-size: $body;
         padding: 10px 13px;

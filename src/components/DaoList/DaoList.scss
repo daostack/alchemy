@@ -69,7 +69,7 @@ a.daoLink {
 			display: block;
 			text-align: center;
 			font-size: 16px;
-			color: rgba(154, 169, 181, 1.000);
+			color: $gray-1;
 		}
 	}
 
@@ -103,5 +103,41 @@ a.daoLink {
 		background-color: $accent-1-transparent;
 		border-radius: $button-border-radius;
 		vertical-align: middle;
+	}
+}
+
+@media only screen and (max-width: 425px) {
+	.wrapper {
+		width: auto;
+		padding: 0;
+	}
+
+	.dao {
+		width: auto;
+		border-radius: 0;
+		margin: 0 0 15px 0;
+		left: 0;
+	}
+
+	a.daoLink .daoName {
+		border-radius: 0 0 0 0;
+	}
+
+	a.daoLink .daoInfo b {
+		font-size: 20px;
+	}
+
+	.daoLink .daoInfo {
+
+
+		span {
+			font-size: 13px;
+			font-weight: normal;
+			font-family: "Open Sans";
+		}
+	}
+
+	.daoListHeader h2 {
+		text-align: center;
 	}
 }
