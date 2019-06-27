@@ -5,6 +5,7 @@ import { DAO, IDAOState,
 import classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
+import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { combineLatest } from "rxjs";
@@ -37,6 +38,7 @@ const DaoContainer = (props: IProps) => {
         const [regularProposals, boostedProposals, daoState] = state.data;
         const bgPattern = GeoPattern.generate(dao.address + daoState.name);
         const inActive = daoState.name === "dxDAO";
+        const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
 
         return <Link
           className={css.daoLink}
@@ -53,8 +55,8 @@ const DaoContainer = (props: IProps) => {
 
               <div className={css.daoName}>{daoState.name}</div>
 
-              {inActive ? <div className={css.inactiveFeedback} ><div className={css.time}>24.7.12</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
-
+              {inActive ? <div className={css.inactiveFeedback} ><div className={css.time}>{ dxDaoActivationDate.format("MMM Do")}&nbsp;
+              {dxDaoActivationDate.format("h:mma z")}</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
             </div>
 
             <div className={"clearfix " + css.daoInfoContainer}>
