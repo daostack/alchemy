@@ -18,7 +18,6 @@ import { Route, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
-import { LocalStorageService } from "../lib/localStorageService";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
@@ -84,13 +83,13 @@ class AppContainer extends React.Component<IProps, IState> {
 
     if (currentAddress)  {
       console.log(`using address from web3 connection: ${currentAddress}`);
-      LocalStorageService.setItem(storageKey, currentAddress, false);
+      localStorage.setItem(storageKey, currentAddress);
     } else {
-      currentAddress = LocalStorageService.getItem(storageKey, false);
+      currentAddress = localStorage.getItem(storageKey);
       if (currentAddress) {
         console.log(`using address from local storage: ${currentAddress}`);
       } else {
-        LocalStorageService.setItem(storageKey, "", false);
+        localStorage.setItem(storageKey, "");
       }
     }
 
@@ -108,7 +107,7 @@ class AppContainer extends React.Component<IProps, IState> {
           if (newAddress && checkMetaMask()) {
             console.log(`new address: ${newAddress}`);
             this.props.setCurrentAccount(newAddress);
-            LocalStorageService.setItem(storageKey, newAddress, false);
+            localStorage.setItem(storageKey, newAddress);
             // TODO: we reload on setting a new account,
             // but it would be more elegant if we did not need to
             window.location.reload();
