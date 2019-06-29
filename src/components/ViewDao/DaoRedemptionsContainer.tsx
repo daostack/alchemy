@@ -2,6 +2,7 @@ import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
 import { formatTokens } from "lib/util";
@@ -46,7 +47,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     proposals.forEach((proposal) => {
       // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
       proposal.gpRewards.forEach((reward: any) => {
-        if (reward.beneficiary === currentAccountAddress.toLowerCase()) {
+        if (reward.beneficiary === currentAccountAddress) {
           if (reward.tokensForStaker && Number(reward.tokensForStakerRedeemedAt) === 0) {
             genReward.iadd(new BN(reward.tokensForStaker));
           }
@@ -63,7 +64,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       });
       //
       // const contributionReward = proposal.contributionReward;
-      // if (contributionReward && contributionReward.beneficiary === currentAccountAddress.toLowerCase()) {
+      // if (contributionReward && contributionReward.beneficiary === currentAccountAddress) {
       //    ethReward.iadd(new BN(contributionReward.ethReward));
       // }
 
@@ -128,8 +129,6 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
     proposals(where: {
       accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
       dao: "${props.dao.address}"
-      # TODO: when we upgrade the the new version of the subgraph, this line will be unecessary : daostack/subgraph#252
-      stage_in: ["Executed"]
     }) {
       id
       dao {
@@ -178,7 +177,7 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
       } else if (state.data) {
         return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
       } else {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+        return (<div className={css.loading}><Loading/></div>);
       }
     }
   }</Subscribe>;

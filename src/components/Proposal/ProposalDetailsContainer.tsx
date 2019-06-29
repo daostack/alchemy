@@ -11,6 +11,7 @@ import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+const ReactMarkdown = require("react-markdown");
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -24,6 +25,7 @@ import ActionButton from "./ActionButton";
 import BoostAmount from "./Predictions/BoostAmount";
 import PredictionButtons from "./Predictions/PredictionButtons";
 import PredictionGraph from "./Predictions/PredictionGraph";
+import ProposalStatus from "./ProposalStatus";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
@@ -143,6 +145,9 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div>
+              <div className={css.statusContainer}>
+                <ProposalStatus proposalState={proposal} />
+              </div>
               <ActionButton
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
@@ -178,7 +183,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.description}>
-              {proposal.description}
+              <ReactMarkdown source={proposal.description} />
             </div>
 
             {url ?
@@ -260,7 +265,9 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
         </div>
 
         <h3 className={css.discussionTitle}>Discussion</h3>
-        <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig} />
+        <div className={css.disqus}>
+          <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig}/>
+        </div>
 
         {this.state.showVotersModal ?
           <VotersModal

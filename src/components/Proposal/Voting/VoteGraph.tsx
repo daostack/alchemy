@@ -30,10 +30,10 @@ export default class VoteGraph extends React.Component<IProps, null> {
     const noWinning = noPercentage > yesPercentage;
 
     const containerClass = classNames({
-      [css.container] : true,
-      [css.noWinning] : noWinning,
-      [css.yesWinning] : yesWinning
-     });
+      [css.container]: true,
+      [css.noWinning]: noWinning,
+      [css.yesWinning]: yesWinning
+    });
 
     const relative = proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod;
     const displayYesPercentage = relative ? yesPercentage / Math.max(1, yesPercentage + noPercentage) * 100 : yesPercentage;
@@ -41,18 +41,18 @@ export default class VoteGraph extends React.Component<IProps, null> {
 
     return (
       <div className={containerClass}>
-        <img className={css.yesWinning} src="/assets/images/Icon/vote/for.svg"/>
-        <img className={css.noWinning} src="/assets/images/Icon/vote/against.svg"/>
+        <img className={css.yesWinning} src="/assets/images/Icon/vote/for.svg" />
+        <img className={css.noWinning} src="/assets/images/Icon/vote/against.svg" />
         <svg className={css.yesVotesCircle} viewBox="0 0 33.83098862 33.83098862" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
           <circle stroke="#efefef" strokeWidth="2" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
-          { displayYesPercentage ?
+          {displayYesPercentage ?
             <circle className={css.circleChartCircle} stroke="rgba(2, 190, 144, 1.000)" strokeWidth="2" strokeDasharray={displayYesPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
             : ""
           }
         </svg>
         <svg className={css.noVotesCircle} viewBox="0 0 33.83098862 33.83098862" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
-          { displayNoPercentage ?
-            <circle className={css.circleChartCircle + " " + css.circleChartCircleNegative} stroke="rgba(246, 80, 80, 1.000)" strokeWidth="2" strokeDasharray={displayNoPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
+          {displayNoPercentage ?
+            <circle className={css.circleChartCircle + " " + css.circleChartCircleNegative} stroke="$accent-2" strokeWidth="2" strokeDasharray={displayNoPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
             : ""
           }
         </svg>

@@ -2,6 +2,7 @@ import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeNameAndAddress } from "lib/util";
@@ -10,6 +11,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
+import MarkdownField from "./MarkdownField";
 
 interface IContainerProps {
   scheme: Scheme;
@@ -221,6 +223,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
               errors,
               touched,
               isSubmitting,
+              setFieldValue
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
@@ -246,7 +249,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field
-                    component="textarea"
+                    component={MarkdownField}
+                    onChange={(value: any) => { setFieldValue("description", value); }}
                     id="descriptionInput"
                     placeholder="Describe your proposal in greater detail"
                     name="description"
@@ -395,7 +399,7 @@ export default(props: IContainerProps & IStateProps) => {
   return <Subscribe observable={observable}>{
     (state: IObservableState<Scheme[]>): any => {
       if (state.isLoading) {
-        return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return  <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {

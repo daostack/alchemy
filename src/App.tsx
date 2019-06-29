@@ -1,7 +1,9 @@
 import { initializeArc } from "arc";
+import Loading from "components/Shared/Loading";
 import AppContainer from "layouts/AppContainer";
 import * as React from "react";
 import { CookiesProvider } from "react-cookie";
+import ReactGA from "react-ga";
 import { Provider } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
@@ -30,11 +32,28 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
       .catch ((err) => {
         console.log(err);
       });
+
+    let GOOGLE_ANALYTICS_ID: string;
+    switch (process.env.NODE_ENV) {
+      case "production": {
+        // the "real" id
+        GOOGLE_ANALYTICS_ID = "UA-142546205-1";
+        break;
+      }
+      default: {
+        // the "test" id
+        GOOGLE_ANALYTICS_ID = "UA-142546205-2";
+      }
+    }
+    ReactGA.initialize(GOOGLE_ANALYTICS_ID);
+    history.listen((location: any) => {
+      ReactGA.pageview(location.pathname + location.search);
+    });
   }
 
   public render() {
     if (!this.state.arcIsInitialized) {
-      return <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>;
+      return <div className={css.loading}><Loading/></div>;
     } else  {
       return (
         <Provider store={store}>

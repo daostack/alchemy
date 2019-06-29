@@ -1,5 +1,6 @@
 export const hidden: string;
 export const createProposalWrapper: string;
+export const header: string;
 export const editIcon: string;
 export const error: string;
 export const contributionReward: string;
@@ -48,3 +49,6 @@ export const parametersHash: string;
 export const permissions: string;
 export const permissionsLabel: string;
 export const radioButtons: string;
+export const schemeRegistrar: string;
+export const schemeRegistrarForm: string;
+export const schemeRegistrarSidebar: string;

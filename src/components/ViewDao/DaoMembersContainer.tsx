@@ -4,6 +4,7 @@ import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util from "lib/util";
 import * as React from "react";
@@ -61,14 +62,14 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                     }
                     <br/>
                   </div>
-                  : ""
+                  : <div className={css.noProfile}>No Profile</div>
                 }
-                <div>{memberState.address}</div>
+                <div className={css.address}>{memberState.address}</div>
               </div>
-
               <span className={css.reputationAmount}>{Util.fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
-              <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>
-
+              <div className={css.reputationAmounts}>
+                <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>
+              </div>
             </div>
           );
         } else {
@@ -95,7 +96,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const dao = new DAO(props.dao.address, arc);
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+        return (<div className={css.loading}><Loading/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {

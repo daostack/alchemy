@@ -4,6 +4,7 @@ import CreateContributionRewardProposal from "components/CreateProposal/SchemeFo
 import CreateKnownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateKnownGenericSchemeProposal";
 import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
 import CreateUnknownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateUnknownGenericSchemeProposal";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as H from "history";
@@ -47,7 +48,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     const observable = from(arc.scheme(schemeId));
     return <Subscribe observable={observable}>{(state: IObservableState<Scheme>) => {
       if (state.isLoading) {
-        return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return  <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
@@ -81,7 +82,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
         return <div className={css.createProposalWrapper}>
           <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}`}>{schemeName.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
           <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
-          <h2>
+          <h2 className={css.header}>
             <span>+ New proposal <b>| {schemeName}</b></span>
           </h2>
           { createSchemeComponent }

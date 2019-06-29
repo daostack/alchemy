@@ -1,5 +1,6 @@
 import { IProposalState } from "@daostack/client";
 import BN = require("bn.js");
+import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { formatTokens, linkToEtherScan } from "lib/util";
 import * as React from "react";
@@ -9,17 +10,26 @@ interface IProps {
   genericSchemeInfo: GenericSchemeInfo;
   detailView?: boolean;
   proposal: IProposalState;
+  transactionModal?: boolean;
 }
 
 export default class ProposalSummaryDutchX extends React.Component<IProps, null> {
 
   public render() {
-    const { proposal, detailView, genericSchemeInfo } = this.props;
+    const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
     const decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
+
+    const proposalSummaryClass = classNames({
+      [css.detailView]: detailView,
+      [css.transactionModal]: transactionModal,
+      [css.proposalSummary]: true,
+      [css.withDetails]: true
+    });
+
     switch (decodedCallData.action.id) {
       case "updateMasterCopy":
         return (
-          <div>
+          <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               Update Mastercopy
@@ -34,7 +44,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         );
       case "changeETHUSDOracle":
         return (
-          <div>
+          <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               Change ETH:USD oracle
@@ -49,7 +59,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         );
       case "updateAuctioneer":
         return (
-          <div>
+          <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               Change DutchX owner
@@ -64,7 +74,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         );
       case "updateApprovalOfToken":
         return (
-          <div>
+          <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               {decodedCallData.values[1] ? "+" : "-"}&nbsp;
               {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
@@ -79,7 +89,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         );
       case "updateThresholdNewTokenPair":
         return (
-          <div>
+          <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               Set new token pair threshold to ${formatTokens(new BN(decodedCallData.values[0]))}
@@ -88,7 +98,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         );
       case "updateThresholdNewAuction":
         return (
-          <div>
+          <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
               Set new auction threshold to ${formatTokens(new BN(decodedCallData.values[0]))}
