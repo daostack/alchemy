@@ -37,7 +37,7 @@ const DaoContainer = (props: IProps) => {
       } else {
         const [regularProposals, boostedProposals, daoState] = state.data;
         const bgPattern = GeoPattern.generate(dao.address + daoState.name);
-        const inActive = daoState.name === "dxDAO";
+        const inActive = daoState.name === "Endemic Limner";
         const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
 
         return <Link
@@ -47,10 +47,10 @@ const DaoContainer = (props: IProps) => {
           data-test-id="dao-link"
           onClick={ (e) => { if (inActive) { e.preventDefault(); } } }
         >
-          <div className={css.dao}>
-            <div className={classNames({
-              [css.daoTitle]: true,
-              [css.daoInactive]: inActive})}
+          <div className={classNames({
+              [css.dao]: true,
+              [css.daoInactive]: inActive})}>
+            <div className={css.daoTitle}
               style={{backgroundImage: bgPattern.toDataUrl()}}>
 
               <div className={css.daoName}>{daoState.name}</div>

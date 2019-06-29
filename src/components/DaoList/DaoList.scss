@@ -40,6 +40,17 @@ a.daoLink {
 	color: $white;
 	text-align: left;
 
+  .daoInactive {
+    opacity: .65;
+
+    .daoName {
+      opacity: .8;
+    }
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
+
 	.daoTitle {
 		border-radius: 15px 15px 0 0;
     padding-top: 38px;
@@ -61,7 +72,7 @@ a.daoLink {
     .inactiveFeedback {
       float: right;
       position: relative;
-      bottom: 26px;
+      bottom: 21px;
 
       .time {
         display: inline-block;
@@ -69,12 +80,6 @@ a.daoLink {
         bottom: 14px;
         right: 16px;
         font-size: 20px;
-      }
-    }
-
-    &.daoInactive {
-      .daoName {
-        opacity: .5;
       }
     }
 	}
