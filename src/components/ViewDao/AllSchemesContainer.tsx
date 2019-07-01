@@ -1,5 +1,6 @@
 import { IDAOState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UnknownSchemeCardContainer from "components/ViewDao/UnknownSchemeCardContainer";
 import Analytics from "lib/analytics";
@@ -94,7 +95,7 @@ export default (props: {} & RouteComponentProps<any>) => {
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IDAOState, Scheme[]]>): any => {
       if (state.isLoading) {
-        return <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>;
+        return <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {

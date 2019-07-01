@@ -1,5 +1,6 @@
 import { DAO } from "@daostack/client";
 import { getArc } from "arc";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Analytics from "lib/analytics";
 import * as React from "react";
@@ -43,7 +44,7 @@ export default () => {
       if (state.isLoading) {
         return (
           <div className={css.wrapper}>
-            <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/>
+            <div className={css.loading}><Loading/>
             </div>
           </div>
         );

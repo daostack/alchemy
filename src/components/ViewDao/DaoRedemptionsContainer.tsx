@@ -2,6 +2,7 @@ import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
@@ -185,7 +186,7 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
       } else if (state.data) {
         return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
       } else {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+        return (<div className={css.loading}><Loading/></div>);
       }
     }
   }</Subscribe>;

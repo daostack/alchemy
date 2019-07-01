@@ -3,10 +3,10 @@ import * as profilesActions from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Cookies, withCookies } from "react-cookie";
 import { connect } from "react-redux";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 //@ts-ignore
@@ -24,7 +24,6 @@ import SchemeProposalsContainer from "./SchemeProposalsContainer";
 import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
-  cookies: Cookies;
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
   dao: IDAOState;
@@ -132,7 +131,7 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(withCookies(ViewDaoContainer));
+const ConnectedViewDaoContainer = connect(mapStateToProps, mapDispatchToProps)(ViewDaoContainer);
 
 export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress;
@@ -144,7 +143,7 @@ export default (props: RouteComponentProps<any>) => {
     } else if (state.data) {
       return <ConnectedViewDaoContainer {...props} dao={state.data} />;
     } else {
-      return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>);
+      return (<div className={css.loading}><Loading/></div>);
     }
   }
   }</Subscribe>;
