@@ -2,7 +2,6 @@ import { initializeArc } from "arc";
 import Loading from "components/Shared/Loading";
 import AppContainer from "layouts/AppContainer";
 import * as React from "react";
-import { CookiesProvider } from "react-cookie";
 import ReactGA from "react-ga";
 import { Provider } from "react-redux";
 import { Route, Switch } from "react-router-dom";
@@ -58,13 +57,11 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
       return (
         <Provider store={store}>
           <ThroughProvider>
-            <CookiesProvider>
               <ConnectedRouter history={history}>
                 <Switch>
                   <Route path="/" component={AppContainer}/>
                 </Switch>
               </ConnectedRouter>
-            </CookiesProvider>
           </ThroughProvider>
         </Provider>
       );
