@@ -286,7 +286,7 @@ export default (props: IContainerProps) => {
     observable = combineLatest(
       arc.GENToken().balanceOf(currentAccountAddress),
       arc.allowance(currentAccountAddress, spender),
-      props.proposal.proposal.stakes({ staker: currentAccountAddress })
+      props.proposal.proposal.stakes({where: { staker: currentAccountAddress }})
     );
   } else {
     observable = combineLatest(

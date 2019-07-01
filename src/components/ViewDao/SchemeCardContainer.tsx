@@ -98,19 +98,19 @@ export default (props: IExternalProps) => {
 
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
-    dao.proposals({
+    dao.proposals({where: {
       scheme:  props.scheme.id,
       stage: IProposalStage.Queued,
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
-    }), // the list of queued proposals
-    dao.proposals({
+    }}), // the list of queued proposals
+    dao.proposals({ where: {
       scheme:  props.scheme.id,
       stage: IProposalStage.PreBoosted
-    }), // the list of preboosted proposals
-    dao.proposals({
+    }}), // the list of preboosted proposals
+    dao.proposals({ where: {
       scheme:  props.scheme.id,
       stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
-    }) // the list of boosted proposals
+    }}) // the list of boosted proposals
   );
 
   return <Subscribe observable={observable}>{

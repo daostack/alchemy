@@ -17,13 +17,13 @@ const DaoContainer = (props: IProps) => {
   // const { address } = props;
   const dao = props.dao;
   const observable = combineLatest(
-    dao.proposals({
+    dao.proposals({ where: {
       stage_in: [IProposalStage.Queued],
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
-    }),
-    dao.proposals({
+    }}),
+    dao.proposals({ where: {
       stage_in: [IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod]
-    }),
+    }}),
     dao.state()
   );
 

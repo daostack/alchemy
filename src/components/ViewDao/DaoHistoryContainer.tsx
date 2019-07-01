@@ -58,12 +58,12 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const dao = arc.dao(daoAvatarAddress);
   const currentAccountAddress = props.currentAccountAddress;
   const observable = combineLatest(
-    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed] }),
-    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000) }),
-    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.GenericScheme }),
-    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.GenericScheme }),
-    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.SchemeRegistrarAdd }),
-    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.SchemeRegistrarAdd }),
+    dao.proposals({where: { stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed] }}),
+    dao.proposals({where:  { stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000) }}),
+    dao.proposals({where: { stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.GenericScheme }}),
+    dao.proposals({where: { stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.GenericScheme }}),
+    dao.proposals({where: { stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.SchemeRegistrarAdd }}),
+    dao.proposals({where: { stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.SchemeRegistrarAdd }}),
     dao.state()
   );
   return <Subscribe observable={observable}>{
