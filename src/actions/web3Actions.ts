@@ -25,7 +25,7 @@ export function setCurrentAccount(accountAddress: string) {
     };
     dispatch(action);
 
-    if (process.env.NODE_ENV === "PRODUCTION") {
+    if (process.env.NODE_ENV === "production") {
       Sentry.configureScope((scope) => {
         scope.setUser({ id: accountAddress || "" });
       });
