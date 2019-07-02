@@ -19,6 +19,7 @@ interface IProps extends RouteComponentProps<any> {
   dao: IDAOState;
   members: Member[];
   profiles: IProfilesState;
+  fetchMore: () => void;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -83,7 +84,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
         <h2>Reputation Holders</h2>
         {membersHTML}
-        <div>LOAD MORE....</div>
+        <button onClick={ () => this.props.fetchMore()}>LOAD MORE....</button>
       </div>
     );
   }
@@ -98,7 +99,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const observable = dao.members({
     orderBy: "balance",
     orderDirection: "desc",
-    first: 5,
+    first: 2,
     skip: 0
   });
   return <Subscribe observable={observable}>{(state: IObservableState<Member[]>) => {
@@ -107,7 +108,18 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        return <ConnectedDaoMembersContainer members={state.data} dao={props.dao} />;
+        return <ConnectedDaoMembersContainer
+          members={state.data}
+          dao={props.dao}
+          fetchMore={ () => {
+            state.fetchMore(dao.members({
+              orderBy: "balance",
+              orderDirection: "desc",
+              first: 2,
+              skip: state.data.length
+            }));
+          } }
+      />;
       }
     }
   }</Subscribe>;
