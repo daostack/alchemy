@@ -31,11 +31,19 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    Analytics.track_links('.externalLink', 'Clicked External Link', (link: any) => {
+    Analytics.track_links(".externalLink", "Clicked External Link", (link: any) => {
+      console.log(link);
       return {
-        "Page": link.innerText,
-        "URL": link.attr("href")
-      }
+        Page: link.innerText,
+        URL: link.getAttribute("href")
+      };
+    });
+
+    Analytics.track_links(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
+      return {
+        Origin: "Side Bar",
+        URL: link.getAttribute("href")
+      };
     });
   }
 
@@ -197,7 +205,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                     getExchangesList().map((item: any) => {
                       return (
                         <li key={item.name}>
-                          <a href={item.url} target="_blank">
+                          <a href={item.url} target="_blank" className="buyGenLink">
                             <b><img src={item.logo} /></b>
                             <span>{item.name}</span>
                           </a>

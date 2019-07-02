@@ -8,6 +8,7 @@ import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Analytics from "lib/analytics";
 import Util from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -34,7 +35,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "DAO Reputation Holders",
+      "Page Name": Page.ReputationHolders,
       "DAO Address": this.props.dao.address,
       "DAO Name": this.props.dao.name,
     });

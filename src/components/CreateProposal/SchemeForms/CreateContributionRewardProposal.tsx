@@ -5,6 +5,7 @@ import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import { default as Util, supportedTokens, tokenDetails } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -89,6 +90,18 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name,
+      "Reputation Requested": values.reputationReward,
+      "ETH Requested": values.ethReward,
+      "External Token Requested": values.externalTokenAddress,
+      "DAO Token Requested": values.externalTokenReward
+    });
+
     this.props.handleClose();
   }
 

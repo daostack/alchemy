@@ -5,8 +5,9 @@ import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
-import Util from "lib/util";
-import { getExchangesList, humanProposalTitle } from "lib/util";
+import Analytics from "lib/analytics";
+import { default as Util, getExchangesList, humanProposalTitle } from "lib/util";
+import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -34,6 +35,7 @@ interface IProps {
   currentAccountGens?: BN;
   dao: IDAOState;
   effectText?: string | JSX.Element;
+  parentPage: Page;
   proposal: IProposalState;
   secondaryHeader?: string;
   showNotification: typeof showNotification;
@@ -61,6 +63,15 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     };
   }
 
+  public componentDidMount() {
+    Analytics.track_links(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
+      return {
+        Origin: "Stake Popup",
+        URL: link.attr("href")
+      };
+    });
+  }
+
   public async handleClickAction() {
     const { actionType } = this.props;
     if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
@@ -78,7 +89,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, proposal, secondaryHeader } = this.props;
+    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, parentPage, proposal, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 
     let icon, transactionType, rulesHeader, rules, actionTypeClass;
@@ -92,6 +103,16 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     if (actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp) {
       reputationFor = proposal.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
       reputationAgainst = proposal.votesAgainst.add(actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
+
+      Analytics.track("Open Vote Popup", {
+        "Origin": parentPage,
+        "DAO Address": dao.address,
+        "DAO Name": dao.name,
+        "Proposal Hash": proposal.id,
+        "Proposal Title": proposal.title,
+        "Scheme Address": proposal.scheme.address,
+        "Scheme Name": proposal.scheme.name
+      });
     }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
@@ -100,6 +121,16 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       buyGensClass = classNames({
         [css.genError]: true,
         [css.hidden]: this.state.stakeAmount <= accountGens
+      });
+
+      Analytics.track("Open Stake Popup", {
+        "Origin": parentPage,
+        "DAO Address": dao.address,
+        "DAO Name": dao.name,
+        "Proposal Hash": proposal.id,
+        "Proposal Title": proposal.title,
+        "Scheme Address": proposal.scheme.address,
+        "Scheme Name": proposal.scheme.name
       });
     }
 
@@ -214,6 +245,16 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       case ActionTypes.Redeem:
         icon = <img src="/assets/images/Tx/Redemption.svg"/>;
         transactionType = <span>Redeem proposal</span>;
+
+        Analytics.track("Open Redeem Popup", {
+          "Origin": parentPage,
+          "DAO Address": dao.address,
+          "DAO Name": dao.name,
+          "Proposal Hash": proposal.id,
+          "Proposal Title": proposal.title,
+          "Scheme Address": proposal.scheme.address,
+          "Scheme Name": proposal.scheme.name
+        });
         break;
       case ActionTypes.Execute:
         icon = <img src="/assets/images/Tx/Redemption.svg"/>;
@@ -296,7 +337,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                               getExchangesList().map((item: any) => {
                                 return(
                                   <li key={item.name}>
-                                    <a href={item.url} target="_blank">
+                                    <a href={item.url} target="_blank" className="buyGenLink">
                                       <b><img src={item.logo}/></b>
                                       <span>{item.name}</span>
                                     </a>

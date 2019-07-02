@@ -3,6 +3,7 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Analytics from "lib/analytics";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -20,7 +21,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "DAO History",
+      "Page Name": Page.DAOHistory,
       "DAO Address": this.props.dao.address,
       "DAO Name": this.props.dao.name
     });

@@ -9,6 +9,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import * as H from "history";
 import Analytics from "lib/analytics";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -34,7 +35,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "Create Proposal",
+      "Page Name": Page.CreateProposal,
       "DAO Address": this.props.daoAvatarAddress,
       "Scheme Address": this.props.schemeId
      });

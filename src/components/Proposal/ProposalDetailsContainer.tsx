@@ -10,6 +10,7 @@ import { DiscussionEmbed } from "disqus-react";
 import Analytics from "lib/analytics";
 import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 const ReactMarkdown = require("react-markdown");
@@ -83,7 +84,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "Proposal Page",
+      "Page Name": Page.ProposalDetails,
       "DAO Address": this.props.dao.address,
       "DAO Name": this.props.dao.name,
       "Proposal Hash": this.props.proposal.id,
@@ -96,6 +97,15 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
   public showVotersModal(event: any) {
     if (this.props.proposal.votesCount > 0) {
       this.setState({ showVotersModal: true });
+
+      Analytics.track("Open Voters Popup", {
+        "DAO Address": this.props.dao.address,
+        "DAO Name": this.props.dao.name,
+        "Proposal Hash": this.props.proposal.id,
+        "Proposal Title": this.props.proposal.title,
+        "Scheme Address": this.props.proposal.scheme.id,
+        "Scheme Name": this.props.proposal.scheme.name
+      });
     }
   }
 
@@ -165,7 +175,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 daoEthBalance={daoEthBalance}
-                detailView={true}
+                parentPage={Page.ProposalDetails}
                 proposalState={proposal}
               />
             </div>
@@ -216,10 +226,10 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 currentVote={currentAccountVote}
                 dao={dao}
-                detailView={true}
                 expired={expired}
                 isVotingNo={isVotingNo}
                 isVotingYes={isVotingYes}
+                parentPage={Page.ProposalDetails}
                 proposal={proposal}
               />
             </div>
@@ -236,7 +246,15 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 </div>
 
                 <div className={css.voteButtons}>
-                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} detailView={true} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
+                  <VoteButtons
+                    currentAccountAddress={currentAccountAddress}
+                    currentVote={currentAccountVote}
+                    dao={dao}
+                    expired={expired}
+                    isVotingNo={isVotingNo}
+                    isVotingYes={isVotingYes}
+                    parentPage={Page.ProposalDetails}
+                    proposal={proposal} />
                 </div>
               </div>
 
@@ -261,7 +279,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                   dao={dao}
                   expired={expired}
                   proposal={proposal}
-                  detailView={true}
+                  parentPage={Page.ProposalDetails}
                 />
               </div>
 

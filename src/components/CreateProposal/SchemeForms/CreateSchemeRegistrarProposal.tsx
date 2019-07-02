@@ -5,6 +5,7 @@ import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import Analytics from "lib/analytics";
 import { schemeNameAndAddress } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -112,6 +113,14 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name
+    });
+
     this.props.handleClose();
   }
 

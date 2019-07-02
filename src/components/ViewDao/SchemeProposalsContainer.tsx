@@ -4,6 +4,7 @@ import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Analytics from "lib/analytics";
 import { schemeName} from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, RouteComponentProps } from "react-router-dom";
@@ -40,7 +41,7 @@ class SchemeProposalsContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "Scheme Page",
+      "Page Name": Page.SchemeQueue,
       "DAO Address": this.props.dao.address,
       "DAO Name": this.props.dao.name,
       "Scheme Address": this.props.scheme.id,
@@ -55,7 +56,7 @@ class SchemeProposalsContainer extends React.Component<IProps, null> {
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: Proposal) => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} parentPage={Page.SchemeQueue} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -65,7 +66,7 @@ class SchemeProposalsContainer extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsPreBoosted.map((proposal: Proposal) => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} parentPage={Page.SchemeQueue} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -75,7 +76,7 @@ class SchemeProposalsContainer extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal) => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} parentPage={Page.SchemeQueue} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -158,7 +159,7 @@ class SchemeProposalsContainer extends React.Component<IProps, null> {
       </div>
     );
   }
-};
+}
 
 interface IExternalProps {
   currentAccountAddress: Address;

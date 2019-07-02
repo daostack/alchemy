@@ -6,6 +6,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { Action, GenericSchemeInfo, IFieldSpec } from "genericSchemeRegistry";
+import Analytics from "lib/analytics";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -108,6 +109,14 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
       alert(err.message);
       throw err;
     }
+
+    Analytics.track("Submit Proposal", {
+      "DAO Address": this.props.daoAvatarAddress,
+      "Proposal Title": values.title,
+      "Scheme Address": this.props.scheme.address,
+      "Scheme Name": this.props.scheme.name
+    });
+
     this.props.handleClose();
   }
 

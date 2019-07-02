@@ -3,6 +3,7 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Analytics from "lib/analytics";
+import { Page } from "pages";
 import * as React from "react";
 import DaoContainer from "./DaoContainer";
 import * as css from "./DaoList.scss";
@@ -15,7 +16,7 @@ class DaoListContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "DAO List"
+      "Page Name": Page.DAOList
     });
   }
 

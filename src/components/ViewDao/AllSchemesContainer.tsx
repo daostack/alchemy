@@ -82,7 +82,7 @@ class AllSchemesContainer extends React.Component<IProps, null> {
       </div>
     );
   }
-};
+}
 
 export default (props: {} & RouteComponentProps<any>) => {
   const daoAvatarAddress = props.match.params.daoAvatarAddress;

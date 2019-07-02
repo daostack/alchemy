@@ -52,12 +52,10 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
 
 interface IDispatchProps {
   redeemProposal: typeof arcActions.redeemProposal;
-  executeProposal: typeof arcActions.executeProposal;
 }
 
 const mapDispatchToProps = {
   redeemProposal: arcActions.redeemProposal,
-  executeProposal: arcActions.executeProposal,
 };
 
 type IProps = IStateProps & IDispatchProps & IContainerProps;

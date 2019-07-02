@@ -40,6 +40,7 @@
       "^data(.*)$": "<rootDir>/data$1",
       "^layouts(.*)$": "<rootDir>/src/layouts$1",
       "^lib(.*)$": "<rootDir>/src/lib$1",
+      "^pages": "<rootDir>/src/pages",
       "^reducers(.*)$": "<rootDir>/src/reducers$1",
       "^selectors(.*)$": "<rootDir>/src/selectors$1",
       "^schemas(.*)$": "<rootDir>/src/schemas$1",

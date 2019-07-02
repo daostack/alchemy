@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IStake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { checkMetaMaskAndWarn, getArc } from "arc";
@@ -9,6 +9,7 @@ import { ActionTypes, default as PreTransactionModal } from "components/Shared/P
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
+import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -34,9 +35,9 @@ interface IContainerProps {
   beneficiaryProfile?: IProfileState;
   currentAccountAddress?: Address;
   dao: IDAOState;
-  detailView?: boolean;
   expired?: boolean;
   historyView?: boolean;
+  parentPage: Page;
 }
 
 interface IDispatchProps {
@@ -119,9 +120,9 @@ class PredictionBox extends React.Component<IProps, IState> {
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
-      detailView,
       expired,
       historyView,
+      parentPage,
       proposal,
       isPredictingFail,
       isPredictingPass,
@@ -175,7 +176,7 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     const wrapperClass = classNames({
       [css.predictions]: true,
-      [css.detailView]: detailView,
+      [css.detailView]: parentPage === Page.ProposalDetails,
       [css.historyView]: historyView,
       [css.unconfirmedPrediction]: isPredicting,
     });
@@ -239,11 +240,23 @@ class PredictionBox extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
+            action={(amount: number) => {
+              stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount);
+              Analytics.track("Stake", {
+                "DAO Address": proposal.dao.address,
+                "GEN Staked": amount,
+                "Proposal Hash": proposal.id,
+                "Proposal TItle": proposal.title,
+                "Scheme Address": proposal.scheme.address,
+                "Scheme Name": proposal.scheme.name,
+                "Stake Type": pendingPrediction === IProposalOutcome.Fail ? "Fail" : pendingPrediction === IProposalOutcome.Pass ? "Pass" : "None",
+              });
+            }}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
             currentAccountGens={currentAccountGens}
             dao={dao}
+            parentPage={parentPage}
             proposal={proposal}
             secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
           /> : ""

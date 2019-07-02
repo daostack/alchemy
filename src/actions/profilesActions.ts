@@ -50,8 +50,8 @@ export function getProfile(accountAddress: string, currentAccount = false) {
         if (currentAccount) {
           // If getting profile for the current account then update our analytics services with the profile data
           Analytics.people.set({
-            'name': response.data.name,
-            'description': response.data.description
+            Name: response.data.name,
+            Description: response.data.description
           });
         }
       } else {
@@ -113,13 +113,13 @@ export function updateProfile(accountAddress: string, name: string, description:
     } as UpdateProfileAction);
 
     Analytics.track("Update Profile", {
-      "Name": name,
-      "Description": description
+      Name: name,
+      Description: description
     });
 
     Analytics.people.set({
-      'Name': name,
-      'Description': description
+      Name: name,
+      Description: description
     });
 
     dispatch(showNotification(NotificationStatus.Success, `Profile data saved`));

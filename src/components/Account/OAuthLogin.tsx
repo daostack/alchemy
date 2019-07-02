@@ -39,7 +39,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
         this.popup.close();
         onSuccess(account);
         Analytics.track("Add Social Verification", {
-          "Network": provider
+          Network: provider
          });
       });
     }

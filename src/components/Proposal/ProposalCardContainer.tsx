@@ -8,6 +8,7 @@ import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
+import { Page } from "pages";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -39,6 +40,7 @@ interface IContainerProps {
   dao: IDAOState;
   currentAccountAddress: Address;
   daoEthBalance: BN;
+  parentPage: Page;
   proposalState: IProposalState;
   votesOfCurrentUser: IVote[];
 }
@@ -81,6 +83,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
       currentAccountAddress,
       dao,
       daoEthBalance,
+      parentPage,
       proposalState,
       isVotingNo,
       isVotingYes,
@@ -141,6 +144,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 daoEthBalance={daoEthBalance}
+                parentPage={parentPage}
                 proposalState={proposalState}
               />
             </div>
@@ -174,7 +178,16 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.voteButtons}>
-              <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposalState} />
+              <VoteButtons
+                currentAccountAddress={currentAccountAddress}
+                currentVote={currentAccountVote}
+                dao={dao}
+                expired={expired}
+                isVotingNo={isVotingNo}
+                isVotingYes={isVotingYes}
+                parentPage={parentPage}
+                proposal={proposalState}
+              />
             </div>
           </div>
 
@@ -190,6 +203,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
                 expired={this.state.expired}
+                parentPage={parentPage}
                 proposal={proposalState}
               />
             </div>
@@ -205,6 +219,7 @@ export const ConnectedProposalCardContainer = connect<IStateProps, IContainerPro
 interface IExternalProps {
   currentAccountAddress: Address;
   dao: IDAOState;
+  parentPage: Page;
   proposal: Proposal;
 }
 
@@ -232,6 +247,7 @@ export default (props: IExternalProps) => {
           daoEthBalance={daoEthBalance}
           proposalState={proposalState}
           dao={props.dao}
+          parentPage={props.parentPage}
           votesOfCurrentUser={votes}
         />;
       }

@@ -221,79 +221,96 @@ export function linkToEtherScan(address: Address) {
   return `https://${prefix}etherscan.io/address/${address}`;
 }
 
-export function getClaimableRewards(reward: IRewardState) {
+/**
+ * given an IRewardState, return an IRewardState with only rewards yet to be claimed
+ * @param reward an object that implements IRewardState
+ * @return IRewardState
+ */
+export function getClaimableRewards(reward: IRewardState): IRewardState | null {
   if (!reward) {
-    return {};
+    return null;
   }
 
-  const result: { [key: string]: BN } = {};
-  if (reward.reputationForProposer.gt(new BN(0)) && reward.reputationForProposerRedeemedAt === 0) {
-    result.reputationForProposer = reward.reputationForProposer;
+  const claimableReward = reward;
+  if (reward.reputationForProposer.lte(new BN(0)) || reward.reputationForProposerRedeemedAt !== 0) {
+    claimableReward.reputationForProposer = 0;
   }
-  if (reward.reputationForVoter.gt(new BN(0)) && reward.reputationForVoterRedeemedAt === 0) {
-    result.reputationForVoter = reward.reputationForVoter;
+  if (reward.reputationForVoter.lte(new BN(0)) || reward.reputationForVoterRedeemedAt !== 0) {
+    claimableReward.reputationForVoter = 0;
   }
-
-  if (reward.tokensForStaker.gt(new BN(0)) && reward.tokensForStakerRedeemedAt === 0) {
-    result.tokensForStaker = reward.tokensForStaker;
+  if (reward.tokensForStaker.lte(new BN(0)) || reward.tokensForStakerRedeemedAt !== 0) {
+    claimableReward.tokensForStaker = 0;
   }
-  if (reward.daoBountyForStaker.gt(new BN(0)) && reward.daoBountyForStakerRedeemedAt === 0) {
-    result.daoBountyForStaker = reward.daoBountyForStaker;
+  if (reward.daoBountyForStaker.lte(new BN(0)) || reward.daoBountyForStakerRedeemedAt !== 0) {
+    claimableReward.daoBountyForStaker = 0;
   }
-  return result;
-}
-
-// TOOD: move this function to the client library!
-export function hasClaimableRewards(reward: IRewardState) {
-  const claimableRewards = getClaimableRewards(reward);
-  for (let key of Object.keys(claimableRewards)) {
-    if (claimableRewards[key].gt(new BN(0))) {
-      return true;
-    }
+  if (!claimableReward.reputationForProposer.isZero() ||
+      !claimableReward.reputationForVoter.isZero() ||
+      !claimableReward.tokensForStaker.isZero() ||
+      !claimableReward.daoBountyForStaker.isZero()) {
+    return claimableReward;
+  } else {
+    return null;
   }
 }
 
 /**
- * given an IContributionReward, return an array with the amounts that are stil to be claimbed
+ * given an IContributionReward, return a IContributionReward with only rewards yet to be claimed
  * by the beneficiary of the proposal
- * @param  reward an object that immplements IContributionReward
- * @return  an array mapping strings to BN
+ * @param reward an object that implements IContributionReward
+ * @param daoBalances an object with the current DAO balances for all the relevant tokens
+ * @return IContributionReward
  */
-// TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
-export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
-  const result: { [key: string]: BN } = {};
+export function getClaimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
+  if (!reward) {
+    return null;
+  }
+
+  const claimableRewards = reward;
   if (
     !reward.ethReward.isZero()
-    && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
-    && reward.alreadyRedeemedEthPeriods < reward.periods
+    && (daoBalances["eth"] === undefined
+        || daoBalances["eth"].lt(reward.ethReward)
+        || Number(reward.alreadyRedeemedEthPeriods) >= Number(reward.periods))
   ) {
-    result["eth"] = reward.ethReward;
+    claimableRewards.ethReward = new BN(0);
   }
 
   if (
     !reward.reputationReward.isZero()
-    && (daoBalances["rep"] === undefined || daoBalances["rep"].gte(reward.reputationReward))
-    && Number(reward.alreadyRedeemedReputationPeriods) < Number(reward.periods)
+    && (daoBalances["rep"] === undefined
+        || daoBalances["rep"].lt(reward.reputationReward)
+        || Number(reward.alreadyRedeemedReputationPeriods) >= Number(reward.periods))
   ) {
-    result["rep"] = reward.reputationReward;
+    claimableRewards.reputationReward = new BN(0);
   }
 
   if (
     !reward.nativeTokenReward.isZero()
-    && (daoBalances["nativeToken"] === undefined || daoBalances["nativeToken"].gte(reward.nativeTokenReward))
-    && Number(reward.alreadyRedeemedNativeTokenPeriods) < Number(reward.periods)
+    && (daoBalances["nativeToken"] === undefined
+        || daoBalances["nativeToken"].lt(reward.nativeTokenReward)
+        || Number(reward.alreadyRedeemedNativeTokenPeriods) >= Number(reward.periods))
   ) {
-    result["nativeToken"] = reward.nativeTokenReward;
+    claimableRewards.nativeTokenReward = new BN(0);
   }
 
   if (
     !reward.externalTokenReward.isZero()
-    && (daoBalances["externalToken"] === undefined || daoBalances["externalToken"].gte(reward.externalTokenReward))
-    && Number(reward.alreadyRedeemedExternalTokenPeriods) < Number(reward.periods)
+    && (daoBalances["externalToken"] === undefined
+        || daoBalances["externalToken"].lt(reward.externalTokenReward)
+        || Number(reward.alreadyRedeemedExternalTokenPeriods) >= Number(reward.periods))
   ) {
-    result["externalToken"] = reward.externalTokenReward;
+    claimableRewards.externalTokenReward = new BN(0);
   }
-  return result;
+
+  if (!claimableRewards.ethReward.isZero() ||
+      !claimableRewards.reputationReward.isZero() ||
+      !claimableRewards.nativeTokenReward.isZero() ||
+      !claimableRewards.externalTokenReward.isZero()) {
+    return claimableRewards;
+  } else {
+    return null;
+  }
 }
 
 export function splitByCamelCase(str: string) {

@@ -12,6 +12,7 @@ import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
 import Analytics from "lib/analytics";
 import { default as Util, formatTokens } from "lib/util";
+import { Page } from "pages";
 import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -87,7 +88,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "Profile",
+      "Page Name": Page.AccountProfile,
       "DAO Address": this.props.dao.address,
       "DAO Name": this.props.dao.name,
       "Profile Address": this.props.accountAddress

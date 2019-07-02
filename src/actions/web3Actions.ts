@@ -41,12 +41,12 @@ export function setCurrentAccount(accountAddress: string) {
     // TODO: call alias? https://help.mixpanel.com/hc/en-us/articles/115004497803#avoid-calling-mixpanelalias-on-a-user-more-than-once
     Analytics.identify(accountAddress);
     Analytics.register({
-      'address': accountAddress,
-      'wallet': "MetaMask",
+      address: accountAddress,
+      wallet: "MetaMask",
     });
     Analytics.people.set({
-      'address': accountAddress,
-      'wallet': "MetaMask",
+      address: accountAddress,
+      wallet: "MetaMask",
     });
 
     dispatch(getProfile(accountAddress, true));

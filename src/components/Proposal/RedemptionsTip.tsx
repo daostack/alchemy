@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import ReputationView from "components/Account/ReputationView";
-import Util, { claimableContributionRewards, formatTokens, getClaimableRewards, tokenSymbol } from "lib/util";
+import Util, { formatTokens, getClaimableContributionRewards, getClaimableRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
@@ -59,44 +59,39 @@ export default (props: IProps) => {
     rewardComponents.push(c);
   }
 
-  const contributionReward = proposal.contributionReward;
-
   let ContributionRewardDiv = <div />;
-  if (proposal.contributionReward) {
-    const contributionRewards = claimableContributionRewards(contributionReward);
-    // const hasEthReward = contributionReward.ethReward.gt(new BN(0));
-    // const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
-    // const hasReputationReward = !contributionReward.reputationReward.isZero();
-    if (Object.keys(contributionRewards).length > 0) {
-      ContributionRewardDiv = <div>
-        <strong>
-          {(currentAccountAddress && currentAccountAddress === contributionReward.beneficiary.toLowerCase()) ?
-              "As the beneficiary of the proposal you will recieve" :
-              "The beneficiary of the proposal will receive"}
-        </strong>
-        <ul>
-          {contributionRewards["eth"]  ?
-            <li>
-              {formatTokens(contributionReward.ethReward, "ETH")}
-              {/*TODO: subscribe to ethBalance, {dao.ethBalance < contributionReward.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
-            </li> : ""
-          }
-          {contributionRewards["externalToken"] ?
-            <li>
-              {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
-              {/* TODO: should be looking at the DAO balance of proposal.externalToken
-                {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
-              */}
-            </li> : ""
-          }
-          {contributionRewards["rep"] ? <li><ReputationView reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
-          { /*
-            TOOD: add native token
-          */ }
-        </ul>
-      </div>;
-    }
-
+  const claimableContributionRewards = getClaimableContributionRewards(proposal.contributionReward);
+  if (claimableContributionRewards) {
+    ContributionRewardDiv = <div>
+      <strong>
+        {(currentAccountAddress && currentAccountAddress === claimableContributionRewards.beneficiary.toLowerCase()) ?
+            "As the beneficiary of the proposal you will recieve" :
+            "The beneficiary of the proposal will receive"}
+      </strong>
+      <ul>
+        {!claimableContributionRewards.ethReward.isZero() ?
+          <li>
+            {formatTokens(claimableContributionRewards.ethReward, "ETH")}
+            {/*TODO: subscribe to ethBalance, {dao.ethBalance < contributionReward.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
+          </li> : ""
+        }
+        {!claimableContributionRewards.externalTokenReward.isZero() ?
+          <li>
+            {formatTokens(claimableContributionRewards.externalTokenReward, tokenSymbol(claimableContributionRewards.externalToken))}
+            {/* TODO: should be looking at the DAO balance of proposal.externalToken
+              {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
+            */}
+          </li> : ""
+        }
+        {!claimableContributionRewards.reputationReward.isZero() ?
+          <li><ReputationView reputation={claimableContributionRewards.reputationReward} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+          : ""
+        }
+        { /*
+          TOOD: add native token
+        */ }
+      </ul>
+    </div>;
   }
 
   return <div>

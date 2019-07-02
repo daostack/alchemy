@@ -10,6 +10,7 @@ import Notification, { NotificationViewStatus } from "components/Notification/No
 import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
 import * as History from "history";
 import HeaderContainer from "layouts/HeaderContainer";
+import Analytics from "lib/analytics";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -54,6 +55,7 @@ interface IState {
 }
 
 class AppContainer extends React.Component<IProps, IState> {
+  public unlisten: any;
 
   constructor(props: IProps) {
     super(props);
@@ -77,6 +79,12 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
+    this.unlisten = this.props.history.listen((location, action) => {
+      Analytics.register({
+        URL: process.env.BASE_URL + location.pathname
+      });
+    });
+
     let metamask: any;
     let currentAddress = await getCurrentAccountAddress();
     const storageKey = "currentAddress";
@@ -114,6 +122,10 @@ class AppContainer extends React.Component<IProps, IState> {
           }
         });
       }
+  }
+
+  public componentWillUnmount() {
+    this.unlisten();
   }
 
   public render() {

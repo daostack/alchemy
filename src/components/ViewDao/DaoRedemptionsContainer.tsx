@@ -7,6 +7,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
 import Analytics from "lib/analytics";
 import { formatTokens } from "lib/util";
+import { Page } from "pages";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -23,7 +24,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
   public componentDidMount() {
     Analytics.track("Page View", {
-      "Page Name": "DAO Redemptions",
+      "Page Name": Page.DAORedemptions,
       "DAO Address": this.props.dao.address,
       "DAO Name": this.props.dao.name
     });
@@ -40,6 +41,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         key={"proposal_" + proposal.id}
         proposal={proposal} dao={dao}
         currentAccountAddress={currentAccountAddress}
+        parentPage={Page.DAORedemptions}
       />;
     });
 

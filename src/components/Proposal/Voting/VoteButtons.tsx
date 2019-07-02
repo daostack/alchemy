@@ -6,6 +6,9 @@ import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import Analytics from "lib/analytics";
+import Util from "lib/util";
+import { Page } from "pages";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -19,8 +22,8 @@ interface IContainerProps {
   currentAccountState: IMemberState|undefined;
   currentVote: number;
   dao: IDAOState;
-  detailView?: boolean;
   expired?: boolean;
+  parentPage: Page;
   proposal: IProposalState;
   voteOnProposal: typeof arcActions.voteOnProposal;
   showNotification: typeof showNotification;
@@ -67,7 +70,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       altStyle,
       currentVote,
       currentAccountState,
-      detailView,
+      parentPage,
       proposal,
       dao,
       expired,
@@ -117,7 +120,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
       [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
-      [css.detailView]: detailView
+      [css.detailView]: parentPage === Page.ProposalDetails
     });
 
     return (
@@ -125,11 +128,25 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
         {this.state.showPreVoteModal ?
           <PreTransactionModal
             actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-            action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
+            action={() => {
+              voteOnProposal(dao.address, proposal.id, this.state.currentVote);
+
+              console.log("voting = ", Util.fromWei(currentAccountState.reputation));
+              Analytics.track("Vote", {
+                "DAO Address": proposal.dao.address,
+                "Proposal Hash": proposal.id,
+                "Proposal Title": proposal.title,
+                "Reputation Voted": Util.fromWei(currentAccountState.reputation),
+                "Scheme Address": proposal.scheme.address,
+                "Scheme Name": proposal.scheme.name,
+                "Vote Type": this.state.currentVote === IProposalOutcome.Fail ? "Fail" : this.state.currentVote === IProposalOutcome.Pass ? "Pass" : "None",
+              });
+            }}
             closeAction={this.closePreVoteModal.bind(this)}
             currentAccount={currentAccountState}
             dao={dao}
             effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
+            parentPage={parentPage}
             proposal={proposal}
           /> : ""
         }
@@ -177,8 +194,8 @@ interface IProps {
   currentAccountAddress: Address;
   currentVote: number;
   dao: IDAOState;
-  detailView?: boolean;
   expired?: boolean;
+  parentPage: Page;
   proposal: IProposalState;
   isVotingNo?: boolean;
   isVotingYes?: boolean;
