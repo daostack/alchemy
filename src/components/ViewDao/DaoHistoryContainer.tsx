@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalType, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -58,22 +58,18 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const dao = arc.dao(daoAvatarAddress);
   const currentAccountAddress = props.currentAccountAddress;
   const observable = combineLatest(
-    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed] }),
-    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000) }),
-    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.GenericScheme }),
-    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.GenericScheme }),
-    dao.proposals({ stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed], type: IProposalType.SchemeRegistrarAdd }),
-    dao.proposals({ stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000), type: IProposalType.SchemeRegistrarAdd }),
+    dao.proposals({where: { stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed] }}),
+    dao.proposals({where:  { stage: IProposalStage.Queued, expiresInQueueAt_lte: Math.floor(new Date().getTime() / 1000) }}),
     dao.state()
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
+    (state: IObservableState<[Proposal[], Proposal[], IDAOState]>): any => {
       if (state.isLoading) {
         return (<div className={css.loading}><Loading/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else  {
-        return <DaoHistoryContainer proposals={state.data[0].concat(state.data[1]).concat(state.data[2]).concat(state.data[3]).concat(state.data[4]).concat(state.data[5])} dao={state.data[6]} currentAccountAddress={currentAccountAddress}/>;
+        return <DaoHistoryContainer proposals={state.data[0].concat(state.data[1])} dao={state.data[2]} currentAccountAddress={currentAccountAddress}/>;
       }
     }
   }</Subscribe>;

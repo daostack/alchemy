@@ -212,7 +212,7 @@ export default (props: IMyProps) => {
   const proposalState = props.proposalState;
   let observable: Observable<IRewardState>;
   if (props.currentAccountAddress) {
-    observable = proposalState.proposal.rewards({beneficiary: props.currentAccountAddress})
+    observable = proposalState.proposal.rewards({ where: {beneficiary: props.currentAccountAddress}})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward) => reward ? reward.state() : of(null))));
   } else {

@@ -216,7 +216,7 @@ export default (props: IExternalProps) => {
 
   const observable = combineLatest(
     proposal.state(), // state of the current proposal
-    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([]), //3
+    props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{

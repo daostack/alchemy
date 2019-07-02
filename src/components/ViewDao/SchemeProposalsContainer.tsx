@@ -158,9 +158,9 @@ export default(props: IExternalProps & RouteComponentProps<any>) => {
   const arc = getArc();
   const observable = combineLatest(
     from(arc.scheme(schemeId)),
-    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
-    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
-    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
+    arc.dao(daoAvatarAddress).proposals({ where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }}), // the list of queued proposals
+    arc.dao(daoAvatarAddress).proposals({ where: { scheme: schemeId, stage: IProposalStage.PreBoosted }}), // the list of preboosted proposals
+    arc.dao(daoAvatarAddress).proposals({ where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }}), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state() // DAO state
   );
 
