@@ -67,7 +67,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     Analytics.track_links(".buyGenLink", "Clicked Buy Gen Link", (link: any) => {
       return {
         Origin: "Stake Popup",
-        URL: link.attr("href")
+        URL: link.getAttribute("href")
       };
     });
   }

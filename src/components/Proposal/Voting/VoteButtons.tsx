@@ -131,7 +131,6 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
             action={() => {
               voteOnProposal(dao.address, proposal.id, this.state.currentVote);
 
-              console.log("voting = ", Util.fromWei(currentAccountState.reputation));
               Analytics.track("Vote", {
                 "DAO Address": proposal.dao.address,
                 "Proposal Hash": proposal.id,

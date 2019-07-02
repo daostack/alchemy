@@ -32,7 +32,6 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
 
   public componentDidMount() {
     Analytics.track_links(".externalLink", "Clicked External Link", (link: any) => {
-      console.log(link);
       return {
         Page: link.innerText,
         URL: link.getAttribute("href")
