@@ -83,6 +83,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
         <h2>Reputation Holders</h2>
         {membersHTML}
+        <div>LOAD MORE....</div>
       </div>
     );
   }
@@ -94,7 +95,13 @@ const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContaine
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const arc = getArc();
   const dao = new DAO(props.dao.address, arc);
-  return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
+  const observable = dao.members({
+    orderBy: "balance",
+    orderDirection: "desc",
+    first: 5,
+    skip: 0
+  });
+  return <Subscribe observable={observable}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
         return (<div className={css.loading}><Loading/></div>);
       } else if (state.error) {
