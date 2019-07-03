@@ -65,13 +65,11 @@ export function humanProposalTitle(proposal: IProposalState) {
 }
 
 export function supportedTokens() {
-  tokens[getArc().GENToken().address] = {
+  return { [getArc().GENToken().address]:  {
     decimals: 18,
     name: "DAOstack GEN",
     symbol: "GEN"
-  };
-
-  return tokens;
+  }, ...tokens};
 }
 
 export function getExchangesList() {

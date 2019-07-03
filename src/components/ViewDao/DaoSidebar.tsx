@@ -2,6 +2,7 @@ import { Address, IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
 import gql from "graphql-tag";
@@ -161,7 +162,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                 const tokenData = supportedTokens()[tokenAddress];
                 return <Subscribe key={tokenAddress} observable={token.balanceOf(dao.address)}>{
                   (state: IObservableState<BN>) => {
-                    if (state.isLoading || state.error || state.data.isZero()) {
+                    if (state.isLoading || state.error || (state.data.isZero() && tokenData.symbol !== "GEN")) {
                       return "";
                     } else {
                       return (
@@ -240,7 +241,7 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address }) => {
       } else if (state.data) {
         return <DaoSidebarComponent dao={daoState} proposals={state.data.data.proposals} />;
       } else {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg" /></div>);
+        return (<div className={css.loading}><Loading /></div>);
       }
     }
     }</Subscribe>;
