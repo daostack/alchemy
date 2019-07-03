@@ -139,10 +139,10 @@ export async function enableWeb3Provider(): Promise<any> {
       portis: {
         id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
         network: "mainnet"
+      },
+      fortmatic: {
+        key: "pk_live_38A2BD2B1D4E9912"
       }
-      // , fortmatic: {
-      //   key: "pk_live_38A2BD2B1D4E9912"
-      // }
     };
   } else if (process.env.NODE_ENV === "staging") {
     providerOptions = {
@@ -150,9 +150,9 @@ export async function enableWeb3Provider(): Promise<any> {
         id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
         network: "rinkeby"
       },
-      // , fortmatic: {
-      //   key: "pk_test_659B5B486EF199E4"
-      // }
+      fortmatic: {
+        key: "pk_test_659B5B486EF199E4"
+      }
     };
   }
 
