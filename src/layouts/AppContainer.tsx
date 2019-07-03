@@ -78,11 +78,11 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount() {
     let currentAddress = await getCurrentAccountAddress();
-    const storageKey = "currentAddress";
-    if (currentAddress)  {
-      console.log(`using address from web3 connection: ${currentAddress}`);
-      localStorage.setItem(storageKey, currentAddress);
-    }
+    // const storageKey = "currentAddress";
+    // if (currentAddress)  {
+    //   console.log(`using address from web3 connection: ${currentAddress}`);
+    //   localStorage.setItem(storageKey, currentAddress);
+    // }
     // else {
     //   currentAddress = localStorage.getItem(storageKey);
     //   if (currentAddress) {
@@ -104,7 +104,7 @@ class AppContainer extends React.Component<IProps, IState> {
       (newAddress: Address) => {
         console.log(`new account: ${newAddress}`);
         this.props.setCurrentAccount(newAddress);
-        localStorage.setItem(storageKey, newAddress);
+        // localStorage.setItem(storageKey, newAddress);
         // TODO: we reload on setting a new account,
         // but it would be more elegant if we did not need to
         // window.location.reload();
