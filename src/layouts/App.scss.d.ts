@@ -41,3 +41,4 @@ export const breadcrumbsContainer: string;
 export const breadcrumb: string;
 export const topInfo: string;
 export const headerContainer: string;
+export const disconnect: string;

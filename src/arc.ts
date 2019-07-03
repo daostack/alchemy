@@ -2,9 +2,11 @@ import { Address, Arc } from "@daostack/client";
 import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-const Web3 = require("web3");
+// const Web3 = require("web3");
 import Web3Connect from "web3connect";
 import { getNetworkName } from "./lib/util";
+
+let selectedPovider: any;
 
 const settings = {
   dev: {
@@ -88,7 +90,7 @@ export async function checkWeb3Provider() {
     }
   }
 
-  const web3Provider = getInjectedWeb3Provider();
+  const web3Provider = getSelectedWeb3Provider();
   if (!web3Provider) {
     const msg = `A wallet is not found`;
     throw Error(msg);
@@ -122,79 +124,76 @@ export async function getCurrentAccountAddress(): Promise<Address> {
  */
 export async function enableWeb3Provider(): Promise<any> {
   /**
-   * get an already-injected provider
+   * get an already-selected provider
    */
-  let provider = getInjectedWeb3Provider();
   /**
    * if no provider then use web3Connect to obtain one
    */
-  if (!provider) {
-    console.log(`****************************** instantiating web3Connect`);
+  console.log(`****************************** instantiating web3Connect`);
 
-    let providerOptions: any = {};
+  let provider: any;
+  let providerOptions: any = {};
 
-    if (process.env.NODE_ENV === "production") {
-      providerOptions = {
-        portis: {
-          id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-          network: "mainnet"
-        }
-        // , fortmatic: {
-        //   key: "pk_live_38A2BD2B1D4E9912"
-        // }
-      };
-    } else if (process.env.NODE_ENV === "staging") {
-      providerOptions = {
-        portis: {
-          id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-          network: "rinkeby"
-        },
-        // , fortmatic: {
-        //   key: "pk_test_659B5B486EF199E4"
-        // }
-      };
-    }
-
-    const web3Connect = new Web3Connect.Core({
-      modal: true,
-      providerOptions
-    });
-
-    let resolveOnClosePromise: () => void;
-
-    const onClosePromise = new Promise(
-      (resolve: () => void) => {
-
-      resolveOnClosePromise = resolve;
-      web3Connect.on("close", () => {
-        resolve();
-      });
-    });
-
-    web3Connect.on("connect", (newProvider: any) => {
-      provider = newProvider;
-      // standard injected location of provider
-      (window as any).ethereum = provider;
-      /**
-       * Because we won't receive the "close" event in this case, even though
-       * the window will have closed
-       */
-      resolveOnClosePromise();
-    });
-
-    console.log(`****************************** fire up modal`);
-
-    web3Connect.toggleModal();
-
-    await onClosePromise;
-
-    console.log(`****************************** provider: ${provider}`);
+  if (process.env.NODE_ENV === "production") {
+    providerOptions = {
+      portis: {
+        id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+        network: "mainnet"
+      }
+      // , fortmatic: {
+      //   key: "pk_live_38A2BD2B1D4E9912"
+      // }
+    };
+  } else if (process.env.NODE_ENV === "staging") {
+    providerOptions = {
+      portis: {
+        id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+        network: "rinkeby"
+      },
+      // , fortmatic: {
+      //   key: "pk_test_659B5B486EF199E4"
+      // }
+    };
   }
+
+  const web3Connect = new Web3Connect.Core({
+    modal: true,
+    providerOptions
+  });
+
+  let resolveOnClosePromise: () => void;
+
+  const onClosePromise = new Promise(
+    (resolve: () => void) => {
+
+    resolveOnClosePromise = resolve;
+    web3Connect.on("close", () => {
+      resolve();
+    });
+  });
+
+  web3Connect.on("connect", (newProvider: any) => {
+    provider = newProvider;
+    /**
+     * Because we won't receive the "close" event in this case, even though
+     * the window will have closed
+     */
+    resolveOnClosePromise();
+  });
+
+  console.log(`****************************** fire up modal`);
+
+  web3Connect.toggleModal();
+
+  await onClosePromise;
+
+  console.log(`****************************** provider: ${provider}`);
 
   if (!provider) {
     const msg = `A wallet is not found`;
     throw Error(msg);
   }
+
   /**
    * now ensure that the user has logged in and enabled access to the account,
    * whatever the provider requires....
@@ -208,15 +207,24 @@ export async function enableWeb3Provider(): Promise<any> {
     throw new Error(ex);
   }
 
-  const web3 = new Web3(provider);
-  // const accounts = await web3.eth.getAccounts();
-  // const defaultAccount = accounts[0] ? accounts[0].toLowerCase() : null;
+  selectedPovider  = provider;
 
-  console.log(`****************************** got web3: ${web3}`);
+  // const web3 = new Web3(provider);
+  // // const accounts = await web3.eth.getAccounts();
+  // // const defaultAccount = accounts[0] ? accounts[0].toLowerCase() : null;
 
-  getArc().web3 = web3;
+  // console.log(`****************************** got web3: ${web3}`);
 
-  console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
+  // getArc().web3 = web3;
+
+  // console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
+
+  return initializeArc(provider);
+}
+
+export async function gotoReadonly(): Promise<any> {
+  selectedPovider = undefined;
+  return initializeArc();
 }
 
 /**
@@ -234,10 +242,9 @@ export async function enableWeb3Provider(): Promise<any> {
  * Does not know about the default read-only providers.
  * @return [description]
  */
-function getInjectedWeb3Provider(): any {
-  // provider Chrome extensions inject this, and
-  // and we inject it when we get a provider from Web3Connect
-  return (window as any).ethereum;
+function getSelectedWeb3Provider(): any {
+  // we set the when we get a provider from Web3Connect
+  return selectedPovider;
 }
 
 /**
@@ -246,12 +253,12 @@ function getInjectedWeb3Provider(): any {
 function getWeb3(): any {
   const arc = (global as any).arc;
   let web3 = arc ? arc.web3 : null;
-  if (!web3) {
-    const provider = getInjectedWeb3Provider();
-    if (provider) {
-      web3 = new Web3(provider);
-    }
-  }
+  // if (!web3) {
+  //   const provider = getInjectedWeb3Provider();
+  //   if (provider) {
+  //     web3 = new Web3(provider);
+  //   }
+  // }
   return web3;
 }
 
@@ -294,38 +301,43 @@ export function getArc(): Arc {
  * Initialize Arc with a web3 provider.  No guarantee at this point that we have
  * account access.  Readonly is OK here.
  */
-export async function initializeArc(): Promise<Arc> {
+export async function initializeArc(web3Provider?: any): Promise<Arc> {
   const arcSettings = getArcSettings();
-  const web3Provider = getInjectedWeb3Provider();
-  if (web3Provider) {
-    console.log("waiting for Web3 Provider to initialize");
+  // const web3Provider = getInjectedWeb3Provider();
+  if (web3Provider && web3Provider.isMetaMask) {
+    console.log("waiting for Metamask to initialize");
     try {
       await waitUntilTrue(() => web3Provider.networkVersion, 1000);
-      console.log(`Web3 Provider is ready, and connected to ${web3Provider.networkVersion}`);
+      console.log(`Metamask is ready, and connected to ${web3Provider.networkVersion}`);
     } catch (err) {
       if (err.message.match(/timed out/)) {
-        console.log("Error: Could not connect to Web3 Provider (time out)");
+        console.log("Error: Could not connect to Metamask (time out)");
       }
       console.log(err);
     }
   }
 
-  try {
-    arcSettings.web3Provider = await checkWeb3Provider();
-  } catch (err) {
-    // web3Provider is not correctly configured or available, so we use the default (read-only) web3 provider
-    console.log(err);
+  // try {
+  //   arcSettings.web3Provider = await checkWeb3Provider();
+  // } catch (err) {
+  //   // web3Provider is not correctly configured or available, so we use the default (read-only) web3 provider
+  //   console.log(err);
+  // }
+
+  if (web3Provider)
+  {
+    arcSettings.web3Provider = web3Provider;
   }
 
   // log some useful info
   console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
   console.log(arcSettings);
   console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
-  if (arcSettings.web3Provider.isMetaMask) {
-    console.log("Using Metamask Web3 provider");
-  } else {
-    console.log("Using default Web3 provider");
-  }
+  // if (web3Provider) {
+  //   console.log("Using injected Web3 provider");
+  // } else {
+  //   console.log("Using default Web3 provider");
+  // }
 
   const arc: Arc = new Arc(arcSettings);
   await arc.initialize();

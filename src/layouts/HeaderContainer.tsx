@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc, gotoReadonly } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -68,6 +68,10 @@ class HeaderContainer extends React.Component<IProps, null> {
     enableWeb3ProviderAndWarn(this.props.showNotification);
   }
 
+  public handleClickLogoff = () => {
+    gotoReadonly();
+  }
+
   public render() {
     const {
       currentAccountProfile,
@@ -113,6 +117,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                       <img src="/assets/images/Icon/Copy-white.svg"/>
                       <div className={css.fade}></div>
                     </div>
+                    <button className={css.disconnect}  onClick={() => this.handleClickLogoff()}>Log Off</button>
                   </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
                 </div>

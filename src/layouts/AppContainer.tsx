@@ -77,42 +77,40 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    let web3Provider: any;
     let currentAddress = await getCurrentAccountAddress();
     const storageKey = "currentAddress";
     if (currentAddress)  {
       console.log(`using address from web3 connection: ${currentAddress}`);
       localStorage.setItem(storageKey, currentAddress);
-    } else {
-      currentAddress = localStorage.getItem(storageKey);
-      if (currentAddress) {
-        console.log(`using address from local storage: ${currentAddress}`);
-      } else {
-        localStorage.setItem(storageKey, "");
-      }
     }
+    // else {
+    //   currentAddress = localStorage.getItem(storageKey);
+    //   if (currentAddress) {
+    //     console.log(`using address from local storage: ${currentAddress}`);
+    //   } else {
+    //     localStorage.setItem(storageKey, "");
+    //   }
+    // }
 
     this.props.setCurrentAccount(currentAddress);
 
     try {
-      web3Provider = await checkWeb3Provider();
+      await checkWeb3Provider();
     } catch (err) {
-      console.log("web3 provider not available or not set correctly: using default web3 provider: ", err.message);
+      console.log("web3 provider not injected or set to wrong network: ", err.message);
     }
 
-    if (web3Provider) {
-      pollForAccountChanges(currentAddress).subscribe(
-        (newAddress: Address) => {
-          if (newAddress && checkWeb3Provider()) {
-            console.log(`new address: ${newAddress}`);
-            this.props.setCurrentAccount(newAddress);
-            localStorage.setItem(storageKey, newAddress);
-            // TODO: we reload on setting a new account,
-            // but it would be more elegant if we did not need to
-            window.location.reload();
-          }
-        });
-      }
+    pollForAccountChanges(currentAddress).subscribe(
+      (newAddress: Address) => {
+        if (newAddress && checkWeb3Provider()) {
+          console.log(`new address: ${newAddress}`);
+          this.props.setCurrentAccount(newAddress);
+          localStorage.setItem(storageKey, newAddress);
+          // TODO: we reload on setting a new account,
+          // but it would be more elegant if we did not need to
+          // window.location.reload();
+        }
+      });
   }
 
   public render() {
