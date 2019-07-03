@@ -64,10 +64,77 @@ button:hover {
     margin: 0 auto;
   }
 }
-.reputationAmount {
-  display: inline-block;
-  margin-right: 5px;
+
+.memberTable, .memberTableHeading {
+  width: 100%;
+
+  tr {
+    width: 100%;
+
+    .memberAvatar {
+      width: 40px;
+    }
+
+    .memberName {
+      font-size: 13px;
+      color: rgba(0, 29, 53, 1.000);
+      text-align: left;
+      width: 200px;
+    }
+
+    .memberAddress {
+      font-size: 11px;
+      color: rgba(78, 97, 118, 1.000);
+      text-align: left;
+      width: 270px;
+    }
+
+    .memberReputation {
+      color: rgba(0, 29, 53, 1.000);
+      text-align: center;
+      width: 200px;
+      font-size: 13px;
+
+      .reputationAmount {
+        display: inline-block;
+        margin-right: 5px;
+      }
+
+      .reputationAmounts {
+        display: inline-block;
+      }
+
+    }
+
+    .memberSocial {
+      text-align: right;
+    }
+  }
 }
+
+.memberTableHeading {
+    font-size: 13px;
+    font-weight: bold;
+    color: rgba(0, 29, 53, 1.000);
+    text-align: center;
+
+  tr {
+    .memberAvatar {
+      width: 80px;
+    }
+
+    .memberName {
+      text-align: center;
+    }
+
+    .memberAddress {
+      font-size: 13px;
+      text-align:center;
+    }
+  }
+
+}
+
 .closedProposalsHeader {
   display: block;
   width: 100%;
@@ -564,10 +631,6 @@ button:hover {
   img {
     flex: none;
     width: 40px;
-  }
-
-  .memberAddress {
-    flex: auto;
   }
 
   .socialButton {
@@ -1299,11 +1362,6 @@ a.navItem:hover {
   .proposalsHeader {
     padding-top: 10px;
     padding-bottom: 0px;
-  }
-
-  .address {
-    font-size: 10px;
-    opacity: .7;
   }
 
   .reputationAmounts {
