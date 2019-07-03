@@ -13,6 +13,7 @@ interface IProps {
   proposals: Proposal[];
   dao: IDAOState;
   currentAccountAddress: Address;
+  fetchMore: () => void;
 }
 
 class DaoHistoryContainer extends React.Component<IProps, null> {
@@ -44,6 +45,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
             </div>
             <div className={css.proposalsContainer + " " + css.proposalHistory}>
               {proposalsHTML}
+              <button onClick={ () => this.props.fetchMore()}>LOAD MORE....</button>
             </div>
           </div>
         </div>
@@ -57,6 +59,7 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
   const daoAvatarAddress = props.match.params.daoAvatarAddress;
   const dao = arc.dao(daoAvatarAddress);
   const currentAccountAddress = props.currentAccountAddress;
+  const PAGE_SIZE = 10;
   const observable = combineLatest(
     dao.proposals({
       where: {
@@ -64,7 +67,9 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
         closingAt_lte: Math.floor(new Date().getTime() / 1000)
       },
       orderBy: "closingAt",
-      orderDirection: "desc"
+      orderDirection: "desc",
+      first: PAGE_SIZE,
+      skip: 0
     }),
     dao.state()
   );
@@ -75,8 +80,27 @@ export default (props: {currentAccountAddress: Address} & RouteComponentProps<an
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else  {
-        return <DaoHistoryContainer proposals={state.data[0]} dao={state.data[1]} currentAccountAddress={currentAccountAddress}/>;
+        return <DaoHistoryContainer
+          proposals={state.data[0]}
+          dao={state.data[1]}
+          currentAccountAddress={currentAccountAddress}
+          fetchMore={ () => {
+            state.fetchMore({
+              observable: dao.proposals({
+                where: {
+                  stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
+                  closingAt_lte: Math.floor(new Date().getTime() / 1000)
+                },
+                orderBy: "closingAt",
+                orderDirection: "desc",
+                first: PAGE_SIZE,
+                skip: state.data[0].length
+              }),
+              combine: (prevState: [Proposal[], IDAOState], newData: Proposal[]) => [prevState[0].concat(newData), prevState[1]]
+            });
+          }}
+        />;
       }
-    }
-  }</Subscribe>;
+    }}
+  </Subscribe>;
 };

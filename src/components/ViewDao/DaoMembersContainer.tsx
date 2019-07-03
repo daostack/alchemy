@@ -97,10 +97,11 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const arc = getArc();
 
   const dao = new DAO(props.dao.address, arc);
+  const PAGE_SIZE = 10;
   const observable = dao.members({
     orderBy: "balance",
     orderDirection: "desc",
-    first: 2,
+    first: PAGE_SIZE,
     skip: 0
   });
   return <Subscribe observable={observable}>{(state: IObservableState<Member[]>) => {
@@ -113,13 +114,15 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
           members={state.data}
           dao={props.dao}
           fetchMore={ () => {
-            state.fetchMore(dao.members({
-              orderBy: "balance",
-              orderDirection: "desc",
-              first: 2,
-              skip: state.data.length
-            }));
-          } }
+            state.fetchMore({
+              observable: dao.members({
+                orderBy: "balance",
+                orderDirection: "desc",
+                first: PAGE_SIZE,
+                skip: state.data.length
+              })
+            });
+          }}
       />;
       }
     }
