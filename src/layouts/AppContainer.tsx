@@ -94,11 +94,11 @@ class AppContainer extends React.Component<IProps, IState> {
 
     this.props.setCurrentAccount(currentAddress);
 
-    try {
-      await checkWeb3Provider();
-    } catch (err) {
-      console.log("web3 provider not injected or set to wrong network: ", err.message);
-    }
+    // try {
+    //   await checkWeb3Provider();
+    // } catch (err) {
+    //   console.log("web3 provider not injected or set to wrong network: ", err.message);
+    // }
 
     pollForAccountChanges(currentAddress).subscribe(
       (newAddress: Address) => {

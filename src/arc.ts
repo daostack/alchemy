@@ -48,7 +48,7 @@ const settings = {
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    return enableWeb3Provider();
+    return !!enableWeb3Provider();
   } catch (err) {
     const msg =  err.message;
     if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
@@ -65,12 +65,30 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise
 }
 
 /**
- * Checks if the web3 provider exists and is set to the required network.
+ * Get the current user from the web3.
+ * @return [description]
+ */
+export async function getCurrentAccountAddress(): Promise<Address> {
+  const web3 = getWeb3();
+  if (!web3) {
+    return null;
+  }
+  const accounts = await web3.eth.getAccounts();
+  return accounts[0] ? accounts[0].toLowerCase() : null;
+}
+
+export async function gotoReadonly(): Promise<any> {
+  selectedPovider = undefined;
+  return initializeArc();
+}
+
+/**
+ * Checks if the web3 provider is set to the required network.
  * Does not ensure we have access to the user's account.
  * throws an Error if no provider or wrong provider
  * @return the web3 provider if is OK
  */
-export async function checkWeb3Provider() {
+async function checkWeb3Provider(web3Provider: any): Promise<string> {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -90,42 +108,22 @@ export async function checkWeb3Provider() {
     }
   }
 
-  const web3Provider = getSelectedWeb3Provider();
-  if (!web3Provider) {
-    const msg = `A wallet is not found`;
-    throw Error(msg);
-  }
-
   const networkName = await getNetworkName(web3Provider.networkVersion);
-  if (networkName === expectedNetworkName) {
-    return web3Provider;
-  } else {
-    const msg = `Please connect to "${expectedNetworkName}"`;
-    throw new Error(msg);
-  }
-}
-
-/**
- * Get the current user from the web3.
- * @return [description]
- */
-export async function getCurrentAccountAddress(): Promise<Address> {
-  const web3 = getWeb3();
-  if (!web3) {
-    return null;
-  }
-  const accounts = await web3.eth.getAccounts();
-  return accounts[0] ? accounts[0].toLowerCase() : null;
+  return networkName === expectedNetworkName ? null : expectedNetworkName;
 }
 
 /**
  * Check if web3Provider account access is enabled, and if not, call the (async) function
  * that will ask the user to enable it
  */
-export async function enableWeb3Provider(): Promise<any> {
+async function enableWeb3Provider(): Promise<boolean> {
   /**
    * get an already-selected provider
    */
+  if (selectedPovider) {
+    return true;
+  }
+
   /**
    * if no provider then use web3Connect to obtain one
    */
@@ -207,7 +205,7 @@ export async function enableWeb3Provider(): Promise<any> {
     throw new Error(ex);
   }
 
-  selectedPovider  = provider;
+  selectedPovider = provider;
 
   // const web3 = new Web3(provider);
   // // const accounts = await web3.eth.getAccounts();
@@ -219,12 +217,7 @@ export async function enableWeb3Provider(): Promise<any> {
 
   // console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
 
-  return initializeArc(provider);
-}
-
-export async function gotoReadonly(): Promise<any> {
-  selectedPovider = undefined;
-  return initializeArc();
+  return !!initializeArc(provider);
 }
 
 /**
@@ -242,10 +235,10 @@ export async function gotoReadonly(): Promise<any> {
  * Does not know about the default read-only providers.
  * @return [description]
  */
-function getSelectedWeb3Provider(): any {
-  // we set the when we get a provider from Web3Connect
-  return selectedPovider;
-}
+// function getSelectedWeb3Provider(): any {
+//   // we set the when we get a provider from Web3Connect
+//   return selectedPovider;
+// }
 
 /**
  * Return a web3 if we already have one.  Create it if needed.
@@ -318,14 +311,12 @@ export async function initializeArc(web3Provider?: any): Promise<Arc> {
     }
   }
 
-  // try {
-  //   arcSettings.web3Provider = await checkWeb3Provider();
-  // } catch (err) {
-  //   // web3Provider is not correctly configured or available, so we use the default (read-only) web3 provider
-  //   console.log(err);
-  // }
-
   if (web3Provider) {
+    const expectedNetworkName = await checkWeb3Provider(web3Provider);
+    if (expectedNetworkName) {
+        const msg = `Please connect to "${expectedNetworkName}"`;
+        throw new Error(msg);
+    }
     arcSettings.web3Provider = web3Provider;
   }
 
