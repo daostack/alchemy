@@ -37,7 +37,7 @@ const DaoContainer = (props: IProps) => {
       } else {
         const [regularProposals, boostedProposals, daoState] = state.data;
         const bgPattern = GeoPattern.generate(dao.address + daoState.name);
-        const inActive = daoState.name === "Endemic Limner";
+        const inActive = daoState.name === "dxDAO";
         const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
 
         return <Link
