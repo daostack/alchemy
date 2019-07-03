@@ -1,7 +1,7 @@
 // const BN = require("bn.js");
 import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
@@ -67,7 +67,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     const currentAction = this.state.currentAction;
 

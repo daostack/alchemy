@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -95,14 +95,14 @@ class PredictionBox extends React.Component<IProps, IState> {
 
   public showPreStakeModal = (prediction: number) => (event: any) => {
     if (!this.props.currentAccountAddress) {
-      checkMetaMaskAndWarn(this.props.showNotification.bind(this));
+      enableWeb3ProviderAndWarn(this.props.showNotification.bind(this));
     } else {
       this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
     }
   }
 
   public handleClickPreApprove = async (event: any) => {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
@@ -152,12 +152,6 @@ class PredictionBox extends React.Component<IProps, IState> {
                 contract to receive GENs from you. Upon activation, the smart contract
                 will be authorized to receive up to 100000 GENs. This transaction will not
                 cost you GEN or commit you in any way to spending your GENs in the future.
-              </p>
-              <p>
-                Once you click the button below, we will pop-up a MetaMask dialogue.
-                It will set a default gas limit and price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank">this calculator</a>
-                &nbsp;to adjust the Gwei price.
               </p>
               <div>
                 <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>

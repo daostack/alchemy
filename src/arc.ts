@@ -2,6 +2,8 @@ import { Address, Arc } from "@daostack/client";
 import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
+const Web3 = require("web3");
+import Web3Connect from "web3connect";
 import { getNetworkName } from "./lib/util";
 
 const settings = {
@@ -42,11 +44,9 @@ const settings = {
  *    it will use `alert()` if no such function is provided
  * @return the web3 connection, if everything is fine
  */
-export async function checkMetaMaskAndWarn(showNotification?: any): Promise<boolean> {
+export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    const metamask = await checkMetaMask();
-    await metamask.enable();
-    return metamask;
+    return enableWeb3Provider();
   } catch (err) {
     const msg =  err.message;
     if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
@@ -63,11 +63,12 @@ export async function checkMetaMaskAndWarn(showNotification?: any): Promise<bool
 }
 
 /**
- * Checks if the web3 Provider is ready to send transactions and configured as expected;
- * throws an Error if something is wrong, returns the web3 connection if that is ok
- * @return
+ * Checks if the web3 provider exists and is set to the required network.
+ * Does not ensure we have access to the user's account.
+ * throws an Error if no provider or wrong provider
+ * @return the web3 provider if is OK
  */
-export async function checkMetaMask(metamask?: any) {
+export async function checkWeb3Provider() {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -87,14 +88,9 @@ export async function checkMetaMask(metamask?: any) {
     }
   }
 
-  let web3Provider: any;
-  if (metamask) {
-    web3Provider = metamask;
-  } else {
-    web3Provider = getMetaMask();
-  }
+  const web3Provider = getInjectedWeb3Provider();
   if (!web3Provider) {
-    const msg = `Please install or enable metamask`;
+    const msg = `A wallet is not found`;
     throw Error(msg);
   }
 
@@ -108,37 +104,161 @@ export async function checkMetaMask(metamask?: any) {
 }
 
 /**
- * get the current user from the web3 Provider
+ * Get the current user from the web3.
  * @return [description]
  */
 export async function getCurrentAccountAddress(): Promise<Address> {
-  const web3 = getArc().web3;
+  const web3 = getWeb3();
+  if (!web3) {
+    return null;
+  }
   const accounts = await web3.eth.getAccounts();
   return accounts[0] ? accounts[0].toLowerCase() : null;
 }
 
 /**
- * check if a metamask instanse is available and an account is unlocked
- * @return [description]
+ * Check if web3Provider account access is enabled, and if not, call the (async) function
+ * that will ask the user to enable it
  */
-export function getMetaMask(): any {
-  const ethereum = (<any> window).ethereum;
-  return ethereum;
-}
+export async function enableWeb3Provider(): Promise<any> {
+  /**
+   * get an already-injected provider
+   */
+  let provider = getInjectedWeb3Provider();
+  /**
+   * if no provider then use web3Connect to obtain one
+   */
+  if (!provider) {
+    console.log(`****************************** instantiating web3Connect`);
 
-export async function enableMetamask(): Promise<any> {
-  // check if Metamask account access is enabled, and if not, call the (async) function
-  // that will ask the user to enable it
-  const ethereum = getMetaMask();
-  if (!ethereum) {
-    const msg = `Please install or enable metamask`;
+    let providerOptions: any = {};
+
+    if (process.env.NODE_ENV === "production") {
+      providerOptions = {
+        portis: {
+          id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+          network: "mainnet"
+        }
+        // , fortmatic: {
+        //   key: "pk_live_38A2BD2B1D4E9912"
+        // }
+      };
+    } else if (process.env.NODE_ENV === "staging") {
+      providerOptions = {
+        portis: {
+          id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+          network: "rinkeby"
+        },
+        fortmatic: {
+          key: "pk_test_714AD88F4B36B7C0" // testnets only
+        }
+        // , fortmatic: {
+        //   key: "pk_test_659B5B486EF199E4"
+        // }
+      };
+    }
+
+    const web3Connect = new Web3Connect.Core({
+      modal: true,
+      providerOptions
+    });
+
+    let resolveOnClosePromise: () => void;
+
+    const onClosePromise = new Promise(
+      (resolve: () => void) => {
+
+      resolveOnClosePromise = resolve;
+      web3Connect.on("close", () => {
+        resolve();
+      });
+    });
+
+    web3Connect.on("connect", (newProvider: any) => {
+      provider = newProvider;
+      // standard injected location of provider
+      (window as any).ethereum = provider;
+      /**
+       * Because we won't receive the "close" event in this case, even though
+       * the window will have closed
+       */
+      resolveOnClosePromise();
+    });
+
+    console.log(`****************************** fire up modal`);
+
+    web3Connect.toggleModal();
+
+    await onClosePromise;
+
+    console.log(`****************************** provider: ${provider}`);
+  }
+
+  if (!provider) {
+    const msg = `A wallet is not found`;
     throw Error(msg);
   }
-  await ethereum.enable();
-  return ethereum;
+  /**
+   * now ensure that the user has logged in and enabled access to the account,
+   * whatever the provider requires....
+   */
+  try {
+    console.log(`****************************** calling enable`);
+    // brings up the provider UI as needed
+    await provider.enable();
+  } catch (ex) {
+    console.log(`failed to enable provider: ${ex.message}`);
+    throw new Error(ex);
+  }
+
+  const web3 = new Web3(provider);
+  // const accounts = await web3.eth.getAccounts();
+  // const defaultAccount = accounts[0] ? accounts[0].toLowerCase() : null;
+
+  console.log(`****************************** got web3: ${web3}`);
+
+  getArc().web3 = web3;
+
+  console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
 }
 
-// get appropriate Arc configuration for the given environment
+/**
+ * Returns if an account is enabled
+ */
+// export async function getAccountIsEnabled(): Promise<boolean> {
+//   const web3 = getWeb3();
+//   const accounts = await web3.eth.getAccounts();
+//   return !!accounts.length;
+// }
+
+/**
+ * Check if an injected web3Provider is available.
+ * Does not imply that an account is unlocked.
+ * Does not know about the default read-only providers.
+ * @return [description]
+ */
+function getInjectedWeb3Provider(): any {
+  // provider Chrome extensions inject this, and
+  // and we inject it when we get a provider from Web3Connect
+  return (window as any).ethereum;
+}
+
+/**
+ * Return a web3 if we already have one.  Create it if needed.
+ */
+function getWeb3(): any {
+  const arc = (global as any).arc;
+  let web3 = arc ? arc.web3 : null;
+  if (!web3) {
+    const provider = getInjectedWeb3Provider();
+    if (provider) {
+      web3 = new Web3(provider);
+    }
+  }
+  return web3;
+}
+
+// returns appropriate Arc configuration for the given environment
 function getArcSettings(): any {
   let arcSettings: any;
   switch (process.env.NODE_ENV || "development") {
@@ -162,37 +282,41 @@ function getArcSettings(): any {
   return arcSettings;
 }
 
+/**
+ * Returns the Arc instance. Throws an exception when Arc hasn't yet been initialized!
+ */
 export function getArc(): Arc {
-  // store the Arc instance in the global namespace on the 'window' object
-  // (this is not best practice)
-  const arc = (<any> window).arc;
+  const arc = (global as any).arc;
   if (!arc) {
-    throw Error("window.arc is not defined - please call initializeArc first");
+    throw Error("global.arc is not defined - please call initializeArc first");
   }
   return arc;
 }
 
+/**
+ * Initialize Arc with a web3 provider.  No guarantee at this point that we have
+ * account access.  Readonly is OK here.
+ */
 export async function initializeArc(): Promise<Arc> {
   const arcSettings = getArcSettings();
-  const metamask = getMetaMask();
-  if (metamask) {
-    console.log("waiting for MetaMask to initialize");
-    //
+  const web3Provider = getInjectedWeb3Provider();
+  if (web3Provider) {
+    console.log("waiting for Web3 Provider to initialize");
     try {
-      await waitUntilTrue(() => metamask.networkVersion, 1000);
-      console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
+      await waitUntilTrue(() => web3Provider.networkVersion, 1000);
+      console.log(`Web3 Provider is ready, and connected to ${web3Provider.networkVersion}`);
     } catch (err) {
       if (err.message.match(/timed out/)) {
-        console.log("Error: Could not connect to Metamask (time out)");
+        console.log("Error: Could not connect to Web3 Provider (time out)");
       }
       console.log(err);
     }
   }
 
   try {
-    arcSettings.web3Provider = await checkMetaMask(metamask);
+    arcSettings.web3Provider = await checkWeb3Provider();
   } catch (err) {
-    // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
+    // web3Provider is not correctly configured or available, so we use the default (read-only) web3 provider
     console.log(err);
   }
 
@@ -208,9 +332,7 @@ export async function initializeArc(): Promise<Arc> {
 
   const arc: Arc = new Arc(arcSettings);
   await arc.initialize();
-  // save the object on a global window object (I know, not nice, but it works..)
-  (<any> window).arc = arc;
-  return arc;
+  return (global as any).arc = arc;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes

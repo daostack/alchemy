@@ -1,6 +1,6 @@
 import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -73,7 +73,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     let permissions = 1;
     if (values.permissions.registerSchemes) {

@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { checkMetaMask, enableMetamask, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -65,12 +65,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 
   public handleClickLogin = () => {
-    try {
-      checkMetaMask();
-    } catch (err) {
-      this.props.showNotification(NotificationStatus.Failure, err.message);
-    }
-    enableMetamask();
+    enableWeb3ProviderAndWarn(this.props.showNotification);
   }
 
   public render() {
@@ -125,7 +120,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             ||
               <div className={css.accountInfo}>
                 {/* TODO: remove this, as we never should see it */}
-                <button className={css.metaMaskLogin} onClick={this.handleClickLogin}>
+                <button className={css.metaMaskLogin} onClick={() => this.handleClickLogin()}>
                   <img src="/assets/images/metamask.png"/>
                   Please log in!
                 </button>

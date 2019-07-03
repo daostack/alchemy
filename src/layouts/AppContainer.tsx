@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { checkMetaMask, getCurrentAccountAddress, pollForAccountChanges } from "arc";
+import { checkWeb3Provider, getCurrentAccountAddress, pollForAccountChanges } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -77,10 +77,9 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    let metamask: any;
+    let web3Provider: any;
     let currentAddress = await getCurrentAccountAddress();
     const storageKey = "currentAddress";
-
     if (currentAddress)  {
       console.log(`using address from web3 connection: ${currentAddress}`);
       localStorage.setItem(storageKey, currentAddress);
@@ -96,15 +95,15 @@ class AppContainer extends React.Component<IProps, IState> {
     this.props.setCurrentAccount(currentAddress);
 
     try {
-      metamask = await checkMetaMask();
+      web3Provider = await checkWeb3Provider();
     } catch (err) {
-      console.log("MM not available or not set correctly: using default web3 provider: ", err.message);
+      console.log("web3 provider not available or not set correctly: using default web3 provider: ", err.message);
     }
 
-    if (metamask) {
+    if (web3Provider) {
       pollForAccountChanges(currentAddress).subscribe(
         (newAddress: Address) => {
-          if (newAddress && checkMetaMask()) {
+          if (newAddress && checkWeb3Provider()) {
             console.log(`new address: ${newAddress}`);
             this.props.setCurrentAccount(newAddress);
             localStorage.setItem(storageKey, newAddress);

@@ -1,6 +1,6 @@
 import { IDAOState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import * as React from "react";
@@ -55,7 +55,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
   }
 
   public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress

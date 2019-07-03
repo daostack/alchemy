@@ -1,6 +1,6 @@
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
@@ -94,7 +94,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any) {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
     const web3 = await Util.getWeb3();
     const timestamp = new Date().getTime().toString();
