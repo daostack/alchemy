@@ -102,14 +102,12 @@ class AppContainer extends React.Component<IProps, IState> {
 
     pollForAccountChanges(currentAddress).subscribe(
       (newAddress: Address) => {
-        if (newAddress && checkWeb3Provider()) {
-          console.log(`new address: ${newAddress}`);
-          this.props.setCurrentAccount(newAddress);
-          localStorage.setItem(storageKey, newAddress);
-          // TODO: we reload on setting a new account,
-          // but it would be more elegant if we did not need to
-          // window.location.reload();
-        }
+        console.log(`new account: ${newAddress}`);
+        this.props.setCurrentAccount(newAddress);
+        localStorage.setItem(storageKey, newAddress);
+        // TODO: we reload on setting a new account,
+        // but it would be more elegant if we did not need to
+        // window.location.reload();
       });
   }
 

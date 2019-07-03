@@ -302,7 +302,8 @@ export function getArc(): Arc {
  * account access.  Readonly is OK here.
  */
 export async function initializeArc(web3Provider?: any): Promise<Arc> {
-  const arcSettings = getArcSettings();
+  // clone because we may write to it
+  const arcSettings = Object.assign({}, getArcSettings());
   // const web3Provider = getInjectedWeb3Provider();
   if (web3Provider && web3Provider.isMetaMask) {
     console.log("waiting for Metamask to initialize");
