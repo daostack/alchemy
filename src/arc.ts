@@ -325,8 +325,7 @@ export async function initializeArc(web3Provider?: any): Promise<Arc> {
   //   console.log(err);
   // }
 
-  if (web3Provider)
-  {
+  if (web3Provider) {
     arcSettings.web3Provider = web3Provider;
   }
 
