@@ -117,7 +117,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                       <img src="/assets/images/Icon/Copy-white.svg"/>
                       <div className={css.fade}></div>
                     </div>
-                    <button className={css.disconnect}  onClick={() => this.handleClickLogoff()}>Log Off</button>
+                    <button className={css.web3ProviderLogoff}  onClick={() => this.handleClickLogoff()}>Log Off</button>
                   </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
                 </div>
@@ -125,7 +125,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             ||
               <div className={css.accountInfo}>
                 {/* TODO: remove this, as we never should see it */}
-                <button className={css.metaMaskLogin} onClick={() => this.handleClickLogin()}>
+                <button className={css.web3ProviderLogin} onClick={() => this.handleClickLogin()}>
                   <img src="/assets/images/metamask.png"/>
                   Please log in!
                 </button>
