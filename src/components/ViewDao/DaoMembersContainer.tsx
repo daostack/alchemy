@@ -9,6 +9,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import * as InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -83,8 +84,20 @@ class DaoMembersContainer extends React.Component<IProps, null> {
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
         <h2>Reputation Holders</h2>
-        {membersHTML}
-        <button onClick={ () => this.props.fetchMore()}>LOAD MORE....</button>
+        <InfiniteScroll
+          dataLength={members.length} //This is important field to render the next data
+          next={this.props.fetchMore}
+          hasMore={members.length < this.props.dao.memberCount}
+          loader={<h4>Loading...</h4>}
+          scrollableTarget="viewDaoWrapper"
+          endMessage={
+            <p style={{textAlign: "center"}}>
+              <b>&mdash;</b>
+            </p>
+          }
+        >
+          {membersHTML}
+        </InfiniteScroll>
       </div>
     );
   }
@@ -97,7 +110,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const arc = getArc();
 
   const dao = new DAO(props.dao.address, arc);
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 20;
   const observable = dao.members({
     orderBy: "balance",
     orderDirection: "desc",
