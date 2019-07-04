@@ -68,7 +68,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     enableWeb3ProviderAndWarn(this.props.showNotification);
   }
 
-  public handleClickLogoff = () => {
+  public handleClickLogout = () => {
     gotoReadonly();
   }
 
@@ -117,7 +117,7 @@ class HeaderContainer extends React.Component<IProps, null> {
                       <img src="/assets/images/Icon/Copy-white.svg"/>
                       <div className={css.fade}></div>
                     </div>
-                    <button className={css.web3ProviderLogout}  onClick={() => this.handleClickLogoff()}>Log Off</button>
+                    <button className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}>Log Off</button>
                   </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
                 </div>
