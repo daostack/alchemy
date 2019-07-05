@@ -117,9 +117,9 @@ class HeaderContainer extends React.Component<IProps, null> {
                       <img src="/assets/images/Icon/Copy-white.svg"/>
                       <div className={css.fade}></div>
                     </div>
-                    <button className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}>Log Off</button>
                   </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
+                  <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
                 </div>
               </div>
             ||

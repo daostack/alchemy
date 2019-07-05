@@ -486,6 +486,18 @@ body {
 
 }
 
-button.web3ProviderLogout {
-  display: inline-block;
+div.web3ProviderLogout {
+  float: right;
+  color: $accent-1;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  .text {
+    margin-right: 4px;
+    position: relative;
+    bottom: 2px;
+    display: inline-block;
+  }
 }
