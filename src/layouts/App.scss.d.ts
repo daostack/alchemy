@@ -13,6 +13,7 @@ export const alchemyLogo: string;
 export const version: string;
 export const alert: string;
 export const headerRight: string;
+export const accountInfoContainer: string;
 export const accountInfo: string;
 export const accountImage: string;
 export const profileName: string;

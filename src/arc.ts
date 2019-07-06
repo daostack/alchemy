@@ -6,6 +6,10 @@ import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { getNetworkName } from "./lib/util";
 
+/**
+ * This is only set after the user has selected a provider and enabled an account.
+ * It is like window.ethereum, but has not necessarily been injected as such.
+ */
 let selectedPovider: any;
 
 const settings = {
@@ -68,7 +72,7 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise
  * Get the current user from the web3.
  * @return [description]
  */
-export async function getCurrentAccountAddress(): Promise<Address> {
+export async function getCurrentAccountAddress(): Promise<Address | null> {
   const web3 = getWeb3();
   if (!web3) {
     return null;
@@ -221,13 +225,14 @@ async function enableWeb3Provider(): Promise<boolean> {
 }
 
 /**
- * Returns if an account is enabled
+ * Returns if an account is enabled in the selected web3Provider
  */
-// export async function getAccountIsEnabled(): Promise<boolean> {
-//   const web3 = getWeb3();
-//   const accounts = await web3.eth.getAccounts();
-//   return !!accounts.length;
-// }
+export function getAccountIsEnabled(): boolean {
+  return !!selectedPovider;
+  // const web3 = getWeb3();
+  // const accounts = await web3.eth.getAccounts();
+  // return !!accounts.length;
+}
 
 /**
  * Check if an injected web3Provider is available.
@@ -339,13 +344,13 @@ export async function initializeArc(web3Provider?: any): Promise<Arc> {
 // Polling is Evil!
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
-export function pollForAccountChanges(currentAccountAddress?: string, interval: number = 2000) {
-  console.log("start polling for account changes");
+export function pollForAccountChanges(currentAccountAddress: Address | null, interval: number = 2000) {
+  console.log(`start polling for account changes from: ${currentAccountAddress}`);
   return Observable.create((observer: any) => {
     let prevAccount = currentAccountAddress;
     function emitIfNewAccount() {
       getCurrentAccountAddress()
-        .then((account) => {
+        .then((account: Address | null) => {
           if (prevAccount !== account) {
             observer.next(account);
             prevAccount = account;

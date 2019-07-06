@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableWeb3ProviderAndWarn, getArc, gotoReadonly } from "arc";
+import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -96,8 +96,9 @@ class HeaderContainer extends React.Component<IProps, null> {
             />
           </div>
           <div className={css.headerRight}>
-            { currentAccountAddress &&
-              <div className={css.accountInfo}>
+            <div className={css.accountInfo}>
+            { currentAccountAddress ?
+              <div className={css.accountInfoContainer}>
                 <div className={css.accountImage}>
                   <Link className={css.profileLink}
                     to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
@@ -119,18 +120,20 @@ class HeaderContainer extends React.Component<IProps, null> {
                     </div>
                   </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
-                  <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
+                  { getAccountIsEnabled() ? <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> : "" }
                 </div>
-              </div>
-            ||
-              <div className={css.accountInfo}>
-                {/* TODO: remove this, as we never should see it */}
-                <button className={css.web3ProviderLogin} onClick={() => this.handleClickLogin()}>
+              </div> : ""
+            }
+            {!getAccountIsEnabled() ?
+              <div className={css.web3ProviderLogin}>
+                <button onClick={() => this.handleClickLogin()}>
                   <img src="/assets/images/metamask.png"/>
                   Please log in!
                 </button>
               </div>
+              : ""
             }
+            </div>
           </div>
         </nav>
       </div>
