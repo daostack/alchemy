@@ -4,6 +4,7 @@ import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 // const Web3 = require("web3");
 import Web3Connect from "web3connect";
+import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { getNetworkName } from "./lib/util";
 
 /**
@@ -73,6 +74,14 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise
  * @return [description]
  */
 export async function getCurrentAccountAddress(): Promise<Address | null> {
+  if (!selectedPovider) {
+    /**
+     * though an account may actually be available via injection, we're not going
+     * to return it. The flow needs to start from a selected provider first,
+     * only then then the account.
+     */
+    return null;
+  }
   const web3 = getWeb3();
   if (!web3) {
     return null;
@@ -235,13 +244,19 @@ export function getAccountIsEnabled(): boolean {
 }
 
 /**
- * Check if an injected web3Provider is available.
- * Does not imply that an account is unlocked.
+ * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
  * Does not know about the default read-only providers.
- * @return [description]
+ */
+export function getWeb3ProviderInfo(): IWeb3ProviderInfo {
+  return selectedPovider ? Web3Connect.getProviderInfo(selectedPovider) : null;
+}
+
+/**
+ * Check if a web3Provider has been selected and is fully available.
+ * Does not know about the default read-only providers.
  */
 // function getSelectedWeb3Provider(): any {
-//   // we set the when we get a provider from Web3Connect
+//   // we set this when we get a provider from Web3Connect
 //   return selectedPovider;
 // }
 
@@ -363,4 +378,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
     const timeout = setInterval(emitIfNewAccount, interval);
     return () => clearTimeout(timeout);
   });
+}
+
+export interface IWeb3ProviderInfo extends IProviderInfo {
 }
