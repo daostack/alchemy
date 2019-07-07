@@ -77,7 +77,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                     <td className={css.memberReputation}>
                       <span className={css.reputationAmount}>{Util.fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
                       <div className={css.reputationAmounts}>
-                        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>
+                        (<ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
                       </div>
                     </td>
                     <td className={css.memberSocial}>

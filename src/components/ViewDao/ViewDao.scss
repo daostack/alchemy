@@ -86,12 +86,12 @@ button:hover {
       font-size: 11px;
       color: rgba(78, 97, 118, 1.000);
       text-align: left;
-      width: 270px;
+      width: 370px;
     }
 
     .memberReputation {
       color: rgba(0, 29, 53, 1.000);
-      text-align: center;
+      text-align: left;
       width: 200px;
       font-size: 13px;
 
@@ -123,13 +123,8 @@ button:hover {
       width: 80px;
     }
 
-    .memberName {
-      text-align: center;
-    }
-
     .memberAddress {
       font-size: 13px;
-      text-align:center;
     }
   }
 
@@ -607,7 +602,12 @@ button:hover {
 }
 
 .membersContainer {
-  margin: 10px 0;
+  margin: 10px auto;
+  max-width: 980px;
+
+  table {
+    width: 100%;
+  }
 
   h2 {
     font-size: 28px;
