@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getCurrentAccountAddress, pollForAccountChanges } from "arc";
+import { getCurrentAccountAddress, getWeb3ProviderInfo, IWeb3ProviderInfo, pollForAccountChanges, setWeb3Provider } from "arc";
 import AccountProfileContainer from "components/Account/AccountProfileContainer";
 import DaoListContainer from "components/DaoList/DaoListContainer";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -55,6 +55,9 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
 
+  private static accountStorageKey = "currentAddress";
+  private static providerStorageKey = "currentWeb3ProviderInfo";
+
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -77,19 +80,30 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    const storageKey = "currentAddress";
+    const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
+    if (web3ProviderInfo) {
+      console.log(`using cached web3Provider`);
+      console.dir(web3ProviderInfo);
+      /**
+       * If successful, this will result in setting the current account which
+       * we'll pick up below.
+       */
+      await setWeb3Provider(web3ProviderInfo);
+    }
     /**
      * getCurrentAccountAddress is checking the provider state.
      * It will always return null on a clean browser refresh since
      * in that case we will not at this point yet have a provider.
      * But if we ever happen to get here via an internal app refresh, then
      * we may have a provider and could potentially get a non-null account.
+     * Addendum:  If we have a cached web3ProviderInfo and were able to use it
+     * then we should also find ourselves with a currentAddress.
      */
     let currentAddress = await getCurrentAccountAddress() || null;
     let accountWasCached = false;
     if (currentAddress)  {
       console.log(`using account from existing web3Provider: ${currentAddress}`);
-      localStorage.setItem(storageKey, currentAddress);
+      this.cacheWeb3Info(currentAddress);
     } else {
       /**
        * Heads up that there is a chance this cached account may differ from an account
@@ -97,12 +111,10 @@ class AppContainer extends React.Component<IProps, IState> {
        * not yet made available to the app (if the account were available we'd have caught it
        * with getCurrentAccountAddress).
        */
-      currentAddress = localStorage.getItem(storageKey) || null;
+      currentAddress = this.getCachedAccount();
       if (currentAddress) {
         accountWasCached = true;
         console.log(`using account from local storage: ${currentAddress}`);
-      } else {
-        localStorage.removeItem(storageKey);
       }
     }
 
@@ -124,9 +136,9 @@ class AppContainer extends React.Component<IProps, IState> {
         console.log(`new account: ${newAddress}`);
         this.props.setCurrentAccount(newAddress);
         if (newAddress) {
-          localStorage.setItem(storageKey, newAddress);
+          this.cacheWeb3Info(newAddress);
         } else {
-          localStorage.removeItem(storageKey);
+          this.uncacheWeb3Info();
         }
         // TODO: we reload on setting a new account,
         // but it would be more elegant if we did not need to
@@ -206,6 +218,25 @@ class AppContainer extends React.Component<IProps, IState> {
         </div>
       );
     }
+  }
+
+  private cacheWeb3Info(account: Address): void {
+    localStorage.setItem(AppContainer.accountStorageKey, account);
+    localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(getWeb3ProviderInfo()));
+  }
+
+  private uncacheWeb3Info(): void {
+    localStorage.removeItem(AppContainer.accountStorageKey);
+    localStorage.removeItem(AppContainer.providerStorageKey);
+  }
+
+  private getCachedAccount(): Address | null {
+    return localStorage.getItem(AppContainer.accountStorageKey);
+  }
+
+  private getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
+    const cached = localStorage.getItem(AppContainer.providerStorageKey);
+    return cached ? JSON.parse(cached) : null;
   }
 }
 

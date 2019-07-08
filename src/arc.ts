@@ -11,7 +11,7 @@ import { getNetworkName } from "./lib/util";
  * This is only set after the user has selected a provider and enabled an account.
  * It is like window.ethereum, but has not necessarily been injected as such.
  */
-let selectedPovider: any;
+let selectedProvider: any;
 
 const settings = {
   dev: {
@@ -53,7 +53,7 @@ const settings = {
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    return !!enableWeb3Provider();
+    return !! (await enableWeb3Provider());
   } catch (err) {
     const msg =  err.message;
     if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
@@ -74,7 +74,7 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise
  * @return [description]
  */
 export async function getCurrentAccountAddress(): Promise<Address | null> {
-  if (!selectedPovider) {
+  if (!selectedProvider) {
     /**
      * though an account may actually be available via injection, we're not going
      * to return it. The flow needs to start from a selected provider first,
@@ -91,8 +91,30 @@ export async function getCurrentAccountAddress(): Promise<Address | null> {
 }
 
 export async function gotoReadonly(): Promise<any> {
-  selectedPovider = undefined;
+  selectedProvider = undefined;
   return initializeArc();
+}
+
+/**
+ * Given IWeb3ProviderInfo, get a web3Provider and InitializeArc with it.
+ * Returns true if Arc is successfully initialized.
+ * @param web3ProviderInfo required IWeb3ProviderInfo
+ */
+export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<boolean> {
+  let provider: any;
+
+  if (web3ProviderInfo.type === "injected") {
+    try {
+      provider = await Web3Connect.ConnectToInjected();
+    } catch {}
+    /**
+     * make sure the injected provider is the one we're looking for
+     */
+    if (provider && !provider[web3ProviderInfo.check]) {
+      provider = null;
+    }
+  }
+  return provider ? enableWeb3Provider(provider) : false;
 }
 
 /**
@@ -127,82 +149,86 @@ async function checkWeb3Provider(web3Provider: any): Promise<string> {
 
 /**
  * Check if web3Provider account access is enabled, and if not, call the (async) function
- * that will ask the user to enable it
+ * that will ask the user to enable it.
+ * Then InitializeArc with it.
+ * Returns true if Arc is successfully initialized.
  */
-async function enableWeb3Provider(): Promise<boolean> {
+async function enableWeb3Provider(provider?: any): Promise<boolean> {
   /**
-   * get an already-selected provider
+   * Already got an already-selected provider?
+   * We'll replace it if provider has been supplied.
    */
-  if (selectedPovider) {
+  if (selectedProvider && !provider) {
     return true;
   }
 
-  /**
-   * if no provider then use web3Connect to obtain one
-   */
-  console.log(`****************************** instantiating web3Connect`);
-
-  let provider: any;
-  let providerOptions: any = {};
-
-  if (process.env.NODE_ENV === "production") {
-    providerOptions = {
-      portis: {
-        id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-        network: "mainnet"
-      },
-      fortmatic: {
-        key: "pk_live_38A2BD2B1D4E9912"
-      }
-    };
-  } else if (process.env.NODE_ENV === "staging") {
-    providerOptions = {
-      portis: {
-        id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-        network: "rinkeby"
-      },
-      fortmatic: {
-        key: "pk_test_659B5B486EF199E4"
-      }
-    };
-  }
-
-  const web3Connect = new Web3Connect.Core({
-    modal: true,
-    providerOptions
-  });
-
-  let resolveOnClosePromise: () => void;
-
-  const onClosePromise = new Promise(
-    (resolve: () => void) => {
-
-    resolveOnClosePromise = resolve;
-    web3Connect.on("close", () => {
-      resolve();
-    });
-  });
-
-  web3Connect.on("connect", (newProvider: any) => {
-    provider = newProvider;
-    /**
-     * Because we won't receive the "close" event in this case, even though
-     * the window will have closed
-     */
-    resolveOnClosePromise();
-  });
-
-  console.log(`****************************** fire up modal`);
-
-  web3Connect.toggleModal();
-
-  await onClosePromise;
-
-  console.log(`****************************** provider: ${provider}`);
-
   if (!provider) {
-    const msg = `A wallet is not found`;
-    throw Error(msg);
+    /**
+     * if no provider then use web3Connect to obtain one
+     */
+    console.log(`****************************** instantiating web3Connect`);
+
+    let providerOptions: any = {};
+
+    if (process.env.NODE_ENV === "production") {
+      providerOptions = {
+        portis: {
+          id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+          network: "mainnet"
+        },
+        fortmatic: {
+          key: "pk_live_38A2BD2B1D4E9912"
+        }
+      };
+    } else if (process.env.NODE_ENV === "staging") {
+      providerOptions = {
+        portis: {
+          id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+          network: "rinkeby"
+        },
+        fortmatic: {
+          key: "pk_test_659B5B486EF199E4"
+        }
+      };
+    }
+
+    const web3Connect = new Web3Connect.Core({
+      modal: true,
+      providerOptions
+    });
+
+    let resolveOnClosePromise: () => void;
+
+    const onClosePromise = new Promise(
+      (resolve: () => void) => {
+
+      resolveOnClosePromise = resolve;
+      web3Connect.on("close", () => {
+        resolve();
+      });
+    });
+
+    web3Connect.on("connect", (newProvider: any) => {
+      provider = newProvider;
+      /**
+       * Because we won't receive the "close" event in this case, even though
+       * the window will have closed
+       */
+      resolveOnClosePromise();
+    });
+
+    console.log(`****************************** fire up modal`);
+
+    web3Connect.toggleModal();
+
+    await onClosePromise;
+
+    console.log(`****************************** provider: ${provider}`);
+
+    if (!provider) {
+      const msg = `A wallet is not found`;
+      throw Error(msg);
+    }
   }
 
   /**
@@ -218,7 +244,7 @@ async function enableWeb3Provider(): Promise<boolean> {
     throw new Error(ex);
   }
 
-  selectedPovider = provider;
+  selectedProvider = provider;
 
   // const web3 = new Web3(provider);
   // // const accounts = await web3.eth.getAccounts();
@@ -230,14 +256,14 @@ async function enableWeb3Provider(): Promise<boolean> {
 
   // console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
 
-  return !!initializeArc(provider);
+  return !!(await initializeArc(provider));
 }
 
 /**
  * Returns if an account is enabled in the selected web3Provider
  */
 export function getAccountIsEnabled(): boolean {
-  return !!selectedPovider;
+  return !!selectedProvider;
   // const web3 = getWeb3();
   // const accounts = await web3.eth.getAccounts();
   // return !!accounts.length;
@@ -248,7 +274,7 @@ export function getAccountIsEnabled(): boolean {
  * Does not know about the default read-only providers.
  */
 export function getWeb3ProviderInfo(): IWeb3ProviderInfo {
-  return selectedPovider ? Web3Connect.getProviderInfo(selectedPovider) : null;
+  return selectedProvider ? Web3Connect.getProviderInfo(selectedProvider) : null;
 }
 
 /**
