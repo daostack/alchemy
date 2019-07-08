@@ -361,7 +361,6 @@ function getArcSettings(): any {
   return arcSettings;
 }
 
-
 /**
  * Initialize Arc with a web3 provider.  No guarantee at this point that we have
  * account access.  Readonly is OK here.
