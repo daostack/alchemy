@@ -1,5 +1,5 @@
 import { Address, Arc } from "@daostack/client";
-import { waitUntilTrue} from "lib/util";
+// import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 const Web3 = require("web3");
@@ -233,12 +233,10 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     await provider.enable();
   } catch (ex) {
     console.log(`****************************** failed to enable provider: ${ex.message}`);
-    throw new Error(ex);
+    throw ex;
   }
 
   console.log(`****************************** enabled`);
-
-  selectedProvider = provider;
 
   // const web3 = new Web3(provider);
   // // const accounts = await web3.eth.getAccounts();
@@ -251,10 +249,18 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
   // console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
 
   console.log(`****************************** initializeArc`);
-  const success = await initializeArc(provider);
-
-  // const networkName = await getNetworkName();
-  // console.log(`****************************** initialized Arc against ${networkName}`);
+  let success = false;
+  try {
+    success = await initializeArc(provider);
+    if (success) {
+      selectedProvider = provider;
+    }
+    // const networkName = await getNetworkName();
+    // console.log(`****************************** initialized Arc against ${networkName}`);
+  } catch (ex) {
+    console.log(`****************************** failed to initialize Arc: ${ex.message}`);
+    throw ex;
+  }
 
   return success;
 }
@@ -363,19 +369,18 @@ function getArcSettings(): any {
 export async function initializeArc(web3Provider?: any): Promise<boolean> {
   // clone because we may write to it
   const arcSettings = Object.assign({}, getArcSettings());
-  // const web3Provider = getInjectedWeb3Provider();
-  if (web3Provider && web3Provider.isMetaMask) {
-    console.log("waiting for Metamask to initialize");
-    try {
-      await waitUntilTrue(() => web3Provider.networkVersion, 1000);
-      console.log(`Metamask is ready, and connected to ${web3Provider.networkVersion}`);
-    } catch (err) {
-      if (err.message.match(/timed out/)) {
-        throw new Error("Error: Could not connect to Metamask (time out)");
-      }
-      throw new Error(err);
-    }
-  }
+  // if (web3Provider && web3Provider.isMetaMask) {
+  //   console.log("waiting for Metamask to initialize");
+  //   try {
+  //     await waitUntilTrue(() => web3Provider.networkVersion, 1000);
+  //     console.log(`Metamask is ready, and connected to ${web3Provider.networkVersion}`);
+  //   } catch (err) {
+  //     if (err.message.match(/timed out/)) {
+  //       throw new Error("Error: Could not connect to Metamask (time out)");
+  //     }
+  //     throw new Error(err);
+  //   }
+  // }
 
   if (web3Provider) {
     const expectedNetworkName = await checkWeb3Provider(web3Provider);

@@ -90,6 +90,7 @@ class AppContainer extends React.Component<IProps, IState> {
         console.log(`****************************** using cached web3Provider`);
       } else {
         console.log(`****************************** failed to instantiate cached web3Provider`);
+        this.uncacheWeb3Info();
       }
       console.dir(web3ProviderInfo);
     }
