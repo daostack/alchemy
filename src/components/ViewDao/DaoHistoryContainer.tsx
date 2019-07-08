@@ -94,7 +94,7 @@ export default class DaoHistory extends React.Component<IExternalProps & RouteCo
     const dao = arc.dao(daoAvatarAddress);
     const currentAccountAddress = this.props.currentAccountAddress;
 
-    const PAGE_SIZE = 20;
+    const PAGE_SIZE = 100;
 
     const observable = combineLatest(
       dao.proposals({

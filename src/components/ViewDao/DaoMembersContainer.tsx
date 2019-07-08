@@ -110,7 +110,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const arc = getArc();
 
   const dao = new DAO(props.dao.address, arc);
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 100;
   const observable = dao.members({
     orderBy: "balance",
     orderDirection: "desc",

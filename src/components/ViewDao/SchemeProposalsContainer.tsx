@@ -195,7 +195,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     const currentTime = Math.floor(new Date().getTime() / 1000);
 
     // For infinite scrolling
-    const PAGE_SIZE = 20;
+    const PAGE_SIZE = 100;
 
     const observable = combineLatest(
       // Scheme state
