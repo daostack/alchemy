@@ -32,7 +32,7 @@ class DaoListContainer extends React.Component<IProps, null> {
 
 export default () => {
   const arc = getArc();
-  const observable = arc.daos();
+  const observable = arc.daos({ orderBy: "reputationHoldersCount", orderDirection: "desc"});
   return <Subscribe observable={observable}>{(state: IObservableState<DAO[]>) => {
       if (state.isLoading) {
         return (

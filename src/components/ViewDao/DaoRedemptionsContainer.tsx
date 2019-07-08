@@ -134,10 +134,13 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
   }
   const arc = getArc();
   const query = gql`       {
-    proposals(where: {
-      accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-      dao: "${props.dao.address}"
-    }) {
+    proposals(
+      where: {
+        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
+        dao: "${props.dao.address}"
+      },
+      orderBy: "closingAt"
+    ) {
       id
       dao {
         id

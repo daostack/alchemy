@@ -74,10 +74,6 @@ const DaoContainer = (props: IProps) => {
                 <span>Open Proposals</span>
                </div>
 
-              <div className={css.daoInfo}>
-                <b>TODO</b>
-                <span>GEN Staked</span>
-              </div>
               )
             </div>
           </div>
