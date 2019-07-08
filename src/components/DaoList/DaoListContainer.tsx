@@ -1,5 +1,6 @@
 import { DAO } from "@daostack/client";
 import { getArc } from "arc";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import DaoContainer from "./DaoContainer";
@@ -31,12 +32,12 @@ class DaoListContainer extends React.Component<IProps, null> {
 
 export default () => {
   const arc = getArc();
-  const observable = arc.daos();
+  const observable = arc.daos({ orderBy: "reputationHoldersCount", orderDirection: "desc"});
   return <Subscribe observable={observable}>{(state: IObservableState<DAO[]>) => {
       if (state.isLoading) {
         return (
           <div className={css.wrapper}>
-            <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/>
+            <div className={css.loading}><Loading/>
             </div>
           </div>
         );

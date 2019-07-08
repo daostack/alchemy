@@ -2,6 +2,7 @@ import { IDAOState, IProposalStage, IProposalState, Proposal, Scheme } from "@da
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
@@ -97,25 +98,25 @@ export default (props: IExternalProps) => {
 
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
-    dao.proposals({
+    dao.proposals({where: {
       scheme:  props.scheme.id,
       stage: IProposalStage.Queued,
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
-    }), // the list of queued proposals
-    dao.proposals({
+    }}), // the list of queued proposals
+    dao.proposals({ where: {
       scheme:  props.scheme.id,
       stage: IProposalStage.PreBoosted
-    }), // the list of preboosted proposals
-    dao.proposals({
+    }}), // the list of preboosted proposals
+    dao.proposals({ where: {
       scheme:  props.scheme.id,
       stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
-    }) // the list of boosted proposals
+    }}) // the list of boosted proposals
   );
 
   return <Subscribe observable={observable}>{
     (state: IObservableState<[Proposal[], Proposal[], Proposal[]]>): any => {
       if (state.isLoading) {
-        return <div><img src="/assets/images/Icon/Loading-black.svg" /></div>;
+        return  <div><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {

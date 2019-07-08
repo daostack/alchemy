@@ -1,5 +1,6 @@
 import { Address, IDAOState, IProposalStage, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { schemeName} from "lib/util";
 import * as React from "react";
@@ -157,16 +158,25 @@ export default(props: IExternalProps & RouteComponentProps<any>) => {
   const arc = getArc();
   const observable = combineLatest(
     from(arc.scheme(schemeId)),
-    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) }), // the list of queued proposals
-    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage: IProposalStage.PreBoosted }), // the list of preboosted proposals
-    arc.dao(daoAvatarAddress).proposals({ scheme:     schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }), // the list of boosted proposals
+    arc.dao(daoAvatarAddress).proposals({
+      where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000) },
+      orderBy: "expiresInQueueAt",
+      orderDirection: "asc"}), // the list of queued proposals
+    arc.dao(daoAvatarAddress).proposals({
+      where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
+      orderBy: "preBoostedAt"
+    }), // the list of preboosted proposals
+    arc.dao(daoAvatarAddress).proposals({
+      where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
+      orderBy: "boostedAt"
+    }), // the list of boosted proposals
     arc.dao(daoAvatarAddress).state() // DAO state
   );
 
   return <Subscribe observable={observable}>{
     (state: IObservableState<[Scheme, Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
       if (state.isLoading) {
-        return  <div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>;
+        return  <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {

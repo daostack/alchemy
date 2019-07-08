@@ -292,7 +292,7 @@ export default (props: { proposalId: string, dao: IDAOState, currentAccountAddre
 
   const observable = from(dao.proposal(proposalId)).pipe(concatMap((proposal: Proposal) => combineLatest(
     proposal.state(), // state of the current proposal
-    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([]), //3
+    props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
   ))
   );

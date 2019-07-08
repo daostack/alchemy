@@ -40,21 +40,53 @@ a.daoLink {
 	color: $white;
 	text-align: left;
 
-	.daoName {
+  .daoInactive {
+    opacity: .65;
+
+    .daoName {
+      opacity: .8;
+    }
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
+
+	.daoTitle {
 		border-radius: 15px 15px 0 0;
-		font-size: 28px;
-		font-weight: bold;
-		padding: 30px;
+    padding-top: 38px;
+    padding-bottom:38px;
+		padding-left: 30px;
+		padding-right: 12px;
 		margin: 0;
 		margin-bottom: 10px;
 		color: $white;
 		background-repeat: repeat;
+
+    .daoName {
+      font-size: 28px;
+      font-weight: bold;
+      display: inline-block;
+      overflow-x: hidden;
+    }
+
+    .inactiveFeedback {
+      float: right;
+      position: relative;
+      bottom: 21px;
+
+      .time {
+        display: inline-block;
+        position: relative;
+        bottom: 14px;
+        right: 16px;
+        font-size: 20px;
+      }
+    }
 	}
 
 	.daoInfo {
 		color: $black;
 		font-size: $body;
-		float: left;
 		width: 33%;
 		display: inline-block;
 		padding: 30px 0;
@@ -72,7 +104,6 @@ a.daoLink {
 			color: $gray-1;
 		}
 	}
-
 }
 
 .daoListHeader {
@@ -110,6 +141,7 @@ a.daoLink {
 	.wrapper {
 		width: auto;
 		padding: 0;
+    		text-align: center;
 	}
 
 	.dao {

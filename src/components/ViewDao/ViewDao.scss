@@ -290,7 +290,6 @@ button:hover {
   width: 40px;
   height: 40px;
   display: inline-block;
-  border: 5px solid rgba(255,255,255,.5);
   border-radius: 40px;
   background-repeat: repeat;
 }
@@ -304,6 +303,7 @@ button:hover {
   background-color: $sky;
   color: $white;
   flex-grow: 1;
+  overflow-y: scroll;
 
   &:hover {
     z-index: 100000;
@@ -359,7 +359,7 @@ button:hover {
 .daoNavigation {
   position: relative;
   height: 100%;
-  min-height: 750px;
+  min-height: 780px;
   background-color: rgba(48, 120, 202, 1.000);
 
   .daoName {
@@ -372,6 +372,22 @@ button:hover {
       line-height: 29px;
       font-weight: bold;
 
+      em {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        opacity: .5;
+        z-index: 0;
+        background-color: rgba(255,255,255,.5);
+        top: -5px;
+        left: -5px;
+        border-radius: 50px;
+      }
+
+      b {
+        position: relative;
+        z-index: 100;
+      }
       span {
         position: absolute;
         padding-left: 60px;
@@ -1200,10 +1216,10 @@ a.navItem:hover {
     position: relative;
     height: auto;
     padding-bottom: 20px;
-  
+
     ul li {
       height: auto;
-    
+
       a {
         padding: 3px 0 3px 30px;
       }
@@ -1229,7 +1245,7 @@ a.navItem:hover {
   .navHeading {
     margin-top: -40px;
   }
-  
+
   .daoHoldings ul li {
     display: inline-block;
   }
@@ -1256,7 +1272,7 @@ a.navItem:hover {
 
   .noticeWrapper {
     height: 86px;
-    
+
     .noticeBuffer {
       display: none;
     }
@@ -1269,7 +1285,7 @@ a.navItem:hover {
       }
     }
   }
-  
+
   .queueType {
     font-size: 18px;
     padding-left: 15px;

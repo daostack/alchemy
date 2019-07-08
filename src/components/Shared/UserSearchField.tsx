@@ -8,6 +8,7 @@ import { first } from "rxjs/operators";
 
 import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 
 import * as css from "./UserSearchField.scss";
@@ -145,7 +146,7 @@ export default (props: IUserSearchProps) => {
   const dao = arc.dao(props.daoAvatarAddress);
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+        return (<div className={css.loading}><Loading/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {

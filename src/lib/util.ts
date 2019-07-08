@@ -65,13 +65,11 @@ export function humanProposalTitle(proposal: IProposalState) {
 }
 
 export function supportedTokens() {
-  tokens[getArc().GENToken().address] = {
+  return { [getArc().GENToken().address]:  {
     decimals: 18,
     name: "DAOstack GEN",
     symbol: "GEN"
-  };
-
-  return tokens;
+  }, ...tokens};
 }
 
 export function getExchangesList() {
@@ -263,6 +261,7 @@ export function hasClaimableRewards(reward: IRewardState) {
 export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
   const result: { [key: string]: BN } = {};
   if (
+    reward.ethReward &&
     !reward.ethReward.isZero()
     && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
     && reward.alreadyRedeemedEthPeriods < reward.periods
@@ -271,6 +270,7 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   }
 
   if (
+    !reward.reputationReward &&
     !reward.reputationReward.isZero()
     && (daoBalances["rep"] === undefined || daoBalances["rep"].gte(reward.reputationReward))
     && Number(reward.alreadyRedeemedReputationPeriods) < Number(reward.periods)
@@ -279,6 +279,7 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   }
 
   if (
+    !reward.nativeTokenReward &&
     !reward.nativeTokenReward.isZero()
     && (daoBalances["nativeToken"] === undefined || daoBalances["nativeToken"].gte(reward.nativeTokenReward))
     && Number(reward.alreadyRedeemedNativeTokenPeriods) < Number(reward.periods)
@@ -286,7 +287,7 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
     result["nativeToken"] = reward.nativeTokenReward;
   }
 
-  if (
+  if (reward.externalTokenReward &&
     !reward.externalTokenReward.isZero()
     && (daoBalances["externalToken"] === undefined || daoBalances["externalToken"].gte(reward.externalTokenReward))
     && Number(reward.alreadyRedeemedExternalTokenPeriods) < Number(reward.periods)

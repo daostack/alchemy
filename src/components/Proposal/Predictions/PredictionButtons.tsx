@@ -205,15 +205,13 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)} data-test-id="stakePass">
-        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg" /> Pass
-        <img src="/assets/images/Icon/Loading-black.svg" />
+        <img className={css.stakeIcon} src="/assets/images/Icon/v.svg"/> Pass
       </button>
     );
 
     const failButton = (
       <button className={failButtonClass} onClick={disableStakeFail ? null : this.showPreStakeModal(2)}>
-        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg" /> Fail
-        <img src="/assets/images/Icon/Loading-black.svg" />
+        <img className={css.stakeIcon} src="/assets/images/Icon/x.svg"/> Fail
       </button>
     );
 
@@ -285,7 +283,7 @@ export default (props: IContainerProps) => {
     observable = combineLatest(
       arc.GENToken().balanceOf(currentAccountAddress),
       arc.allowance(currentAccountAddress, spender),
-      props.proposal.proposal.stakes({ staker: currentAccountAddress })
+      props.proposal.proposal.stakes({where: { staker: currentAccountAddress }})
     );
   } else {
     observable = combineLatest(

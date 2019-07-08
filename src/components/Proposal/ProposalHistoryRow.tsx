@@ -209,8 +209,8 @@ export default (props: { proposal: Proposal, daoState: IDAOState, currentAccount
   const proposal = props.proposal;
   const observable = combineLatest(
     proposal.state(),
-    props.currentAccountAddress ? proposal.stakes({ staker: props.currentAccountAddress}) : of([]),
-    props.currentAccountAddress ? proposal.votes({ voter: props.currentAccountAddress }) : of([])
+    props.currentAccountAddress ? proposal.stakes({ where: { staker: props.currentAccountAddress}}) : of([]),
+    props.currentAccountAddress ? proposal.votes({ where: { voter: props.currentAccountAddress }}) : of([])
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, IStake[], IVote[]]>): any => {

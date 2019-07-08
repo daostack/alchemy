@@ -2,9 +2,10 @@ import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
+import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
-import { formatTokens } from "lib/util";
+import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -33,16 +34,14 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
       />;
     });
 
-    // TODO: the reward object from the subgraph only gives rewards for voting and staking and dao bounty,
-    // the original code also considers ethREward and externalTokenRewards
-    // let ethReward = 0
+    const genReward = new BN(0);
+    const ethReward = new BN(0);
+    const reputationReward = new BN(0);
+    const externalTokenRewards: { [symbol: string]: BN } = {};
 
     // TODO: move all the next logic to the client library
+
     // calculate the total rewards from the genesisprotocol
-    const genReward = new BN("0");
-    const ethReward = new BN("0");
-    const reputationReward = new BN(0);
-    // , externalTokenReward = 0;
     proposals.forEach((proposal) => {
       // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
       proposal.gpRewards.forEach((reward: any) => {
@@ -61,24 +60,34 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
           }
         }
       });
-      //
-      // const contributionReward = proposal.contributionReward;
-      // if (contributionReward && contributionReward.beneficiary === currentAccountAddress) {
-      //    ethReward.iadd(new BN(contributionReward.ethReward));
-      // }
+
+      // Add ContributionReward redemptions
+      const contributionReward = proposal.contributionReward;
+      if (contributionReward && contributionReward.beneficiary === currentAccountAddress) {
+        ethReward.iadd(new BN(contributionReward.ethReward));
+        reputationReward.iadd(new BN(contributionReward.reputationReward));
+
+        if (contributionReward.externslTokenReward && !contributionReward.externalTokenReward.isZero()) {
+          if (externalTokenRewards[contributionReward.externalToken]) {
+            externalTokenRewards[contributionReward.externalToken].iadd(new BN(contributionReward.externalTokenReward));
+          } else {
+            externalTokenRewards[contributionReward.externalToken] = new BN(contributionReward.externalTokenReward);
+          }
+        }
+      }
 
     });
 
     const totalRewards: any[] = [];
-    if (ethReward.gt(new BN(0))) {
+    if (!ethReward.isZero()) {
       totalRewards.push(formatTokens(ethReward, "ETH"));
     }
-    // if (externalTokenReward) {
-    //   totalRewards.push(formatTokens(externalTokenReward, dao.externalTokenSymbol));
-    // }
     if (!genReward.isZero()) {
       totalRewards.push(formatTokens(genReward, "GEN"));
     }
+    Object.keys(externalTokenRewards).forEach((tokenAddress) => {
+      totalRewards.push(formatTokens(externalTokenRewards[tokenAddress], tokenSymbol(tokenAddress)));
+    });
     if (!reputationReward.isZero()) {
       totalRewards.push(
         <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
@@ -125,10 +134,13 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
   }
   const arc = getArc();
   const query = gql`       {
-    proposals(where: {
-      accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-      dao: "${props.dao.address}"
-    }) {
+    proposals(
+      where: {
+        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
+        dao: "${props.dao.address}"
+      },
+      orderBy: "closingAt"
+    ) {
       id
       dao {
         id
@@ -158,7 +170,6 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
         ethReward
         externalToken
         externalTokenReward
-        externalToken
         nativeTokenReward
         periods
         periodLength
@@ -176,7 +187,7 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
       } else if (state.data) {
         return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
       } else {
-        return (<div className={css.loading}><img src="/assets/images/Icon/Loading-black.svg"/></div>);
+        return (<div className={css.loading}><Loading/></div>);
       }
     }
   }</Subscribe>;
