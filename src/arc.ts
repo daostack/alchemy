@@ -2,7 +2,7 @@ import { Address, Arc } from "@daostack/client";
 import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-// const Web3 = require("web3");
+const Web3 = require("web3");
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { getNetworkName } from "./lib/util";
@@ -52,19 +52,15 @@ const settings = {
  * @return the web3 connection, if everything is fine
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
+  // if we are in test mode, we'll do without - we should be connected to an unlocked ganache instance
   try {
     return !! (await enableWeb3Provider());
   } catch (err) {
     const msg =  err.message;
-    if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
-      console.log( `No metamask connection found - we are in "development" environment, so this may be ok`);
-      return true;
+    if (showNotification) {
+      showNotification(NotificationStatus.Failure, msg);
     } else {
-      if (showNotification) {
-        showNotification(NotificationStatus.Failure, msg);
-      } else {
-        alert(msg);
-      }
+      alert(msg);
     }
   }
 }
@@ -166,6 +162,13 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     /**
      * if no provider then use web3Connect to obtain one
      */
+
+    if (process.env.NODE_ENV === "development" && navigator.webdriver) {
+      // in test mode, we have an unlocked ganache and we are not using any wallet
+      console.log(`not using any wallet, because we are in automated test`);
+      selectedProvider = new Web3(settings.dev.web3Provider);
+      return true;
+    }
     console.log(`****************************** instantiating web3Connect`);
 
     let providerOptions: any = {};

@@ -14,6 +14,10 @@ describe("Profile page", () => {
 
     it("should exist and be editable", async () => {
       await browser.url(`http://127.0.0.1:3000/profile/${userAddress}?daoAvatarAddress=${daoAddress}`);
+
+      const loginButton = await $("*[data-test-id=\"loginButton\"]");
+      await loginButton.click();
+
       const title = await browser.getTitle();
       title.should.be.equal("Alchemy | DAOstack");
       const profileContainer = await $("*[data-test-id=\"profile-container\"]");

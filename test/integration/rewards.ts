@@ -12,6 +12,10 @@ describe("Redemptions page", () => {
 
     it("should exist", async () => {
       await browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/redemptions`);
+
+      const loginButton = await $("*[data-test-id=\"loginButton\"]");
+      await loginButton.click();
+
       const pageTitle = await browser.getTitle();
       pageTitle.should.be.equal("Alchemy | DAOstack");
 

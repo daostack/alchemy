@@ -126,7 +126,7 @@ class HeaderContainer extends React.Component<IProps, null> {
             }
             {!getAccountIsEnabled() ?
               <div className={css.web3ProviderLogin}>
-                <button onClick={() => this.handleClickLogin()}>
+                <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">
                   <img src="/assets/images/metamask.png"/>
                   Please log in!
                 </button>
