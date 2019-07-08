@@ -1,5 +1,5 @@
 import { Address, Arc } from "@daostack/client";
-// import { waitUntilTrue} from "lib/util";
+import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 const Web3 = require("web3");
@@ -127,6 +127,13 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
   try {
     switch (web3ProviderInfo.type) {
       case "injected":
+          /**
+           * Safe doesn't always inject itself in a timely manner
+           */
+          if (!!(window as any).ethereum) {
+            await waitUntilTrue(() => !!(window as any).ethereum, 500);
+          }
+
           provider = await Web3Connect.ConnectToInjected();
           break;
       case "qrcode":
