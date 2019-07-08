@@ -120,11 +120,12 @@ class HeaderContainer extends React.Component<IProps, null> {
                     </div>
                   </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
+                  { !getAccountIsEnabled() ? <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> : "" }
                   { getAccountIsEnabled() ? <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> : "" }
                 </div>
               </div> : ""
             }
-            {!getAccountIsEnabled() ?
+            {!currentAccountAddress ?
               <div className={css.web3ProviderLogin}>
                 <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">
                   <img src="/assets/images/metamask.png"/>
