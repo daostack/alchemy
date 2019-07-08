@@ -130,8 +130,8 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
           /**
            * Safe doesn't always inject itself in a timely manner
            */
-          if (!!(window as any).ethereum) {
-            await waitUntilTrue(() => !!(window as any).ethereum, 500);
+          if (!(window as any).ethereum) {
+            await waitUntilTrue(() => !!(window as any).ethereum, 2000);
           }
 
           provider = await Web3Connect.ConnectToInjected();
