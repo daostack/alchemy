@@ -211,10 +211,14 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
       }),
 
       // the list of preboosted proposals
-      dao.proposals({ where: { scheme: schemeId, stage: IProposalStage.PreBoosted }}),
-
-      // the list of boosted proposals
-      dao.proposals({ where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] }}),
+      dao.proposals({
+        where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
+        orderBy: "preBoostedAt"
+      }), // the list of preboosted proposals
+      arc.dao(daoAvatarAddress).proposals({
+        where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
+        orderBy: "boostedAt"
+      }), // the list of boosted proposals
 
       // DAO state
       dao.state()
