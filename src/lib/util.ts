@@ -1,7 +1,9 @@
 import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { promisify } from "util";
 import { getArc } from "../arc";
+const Web3 = require("web3");
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -50,8 +52,32 @@ export default class Util {
   public static getWeb3() {
     return getArc().web3;
   }
-  public static async getNetworkId() {
-    return await getArc().web3.eth.net.getId();
+
+  /**
+   * return network id, independent of the presence of Arc
+   * @param web3Provider
+   */
+  public static async getNetworkId(web3Provider?: any) {
+    let arc: any;
+    let web3: any;
+
+    try {
+      arc = getArc();
+    } catch {}
+
+    if (arc) {
+      web3 = arc.web3;
+    } else if ((<any> window).web3) {
+      web3 = (<any> window).web3;
+    } else if (web3Provider) {
+      web3 = new Web3(web3Provider);
+    }
+
+    if (!web3) {
+      throw new Error("getNetworkName: unable to find web3");
+    }
+
+    return (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)());
   }
 
   public static defaultAccount() {
@@ -181,10 +207,9 @@ export function schemeName(scheme: any, fallback?: string) {
   return name;
 }
 
-export async function getNetworkName(id?: string): Promise<string> {
-  if (!id) {
-    id = (await Util.getNetworkId()).toString();
-  }
+export async function getNetworkName(web3Provider?: any): Promise<string> {
+
+  let id = (await Util.getNetworkId(web3Provider)).toString();
 
   switch (id) {
     case "main":

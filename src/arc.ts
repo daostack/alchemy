@@ -98,7 +98,7 @@ export async function checkMetaMask(metamask?: any) {
     throw Error(msg);
   }
 
-  const networkName = await getNetworkName(web3Provider.networkVersion);
+  const networkName = await getNetworkName(web3Provider);
   if (networkName === expectedNetworkName) {
     return web3Provider;
   } else {
