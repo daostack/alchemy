@@ -74,7 +74,7 @@ export default class Util {
     }
 
     if (!web3) {
-      throw new Error("getNetworkName: unable to find web3");
+      throw new Error("getNetworkId: unable to find web3");
     }
 
     return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
@@ -209,7 +209,9 @@ export function schemeName(scheme: any, fallback?: string) {
 
 export async function getNetworkName(id?: string): Promise<string> {
 
-  id = id ? id : (await Util.getNetworkId());
+  if (!id) {
+    id = await Util.getNetworkId();
+  }
 
   switch (id) {
     case "main":
