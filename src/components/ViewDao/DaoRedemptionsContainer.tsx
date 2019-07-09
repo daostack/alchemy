@@ -67,7 +67,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         ethReward.iadd(new BN(contributionReward.ethReward));
         reputationReward.iadd(new BN(contributionReward.reputationReward));
 
-        if (!contributionReward.externalTokenReward.isZero()) {
+        if (contributionReward.externslTokenReward && !contributionReward.externalTokenReward.isZero()) {
           if (externalTokenRewards[contributionReward.externalToken]) {
             externalTokenRewards[contributionReward.externalToken].iadd(new BN(contributionReward.externalTokenReward));
           } else {

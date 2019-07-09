@@ -9,6 +9,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Util from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import * as InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -19,6 +20,7 @@ interface IProps extends RouteComponentProps<any> {
   dao: IDAOState;
   members: Member[];
   profiles: IProfilesState;
+  fetchMore: () => void;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
@@ -82,7 +84,20 @@ class DaoMembersContainer extends React.Component<IProps, null> {
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
         <h2>Reputation Holders</h2>
-        {membersHTML}
+        <InfiniteScroll
+          dataLength={members.length} //This is important field to render the next data
+          next={this.props.fetchMore}
+          hasMore={members.length < this.props.dao.memberCount}
+          loader={<h4>Loading...</h4>}
+          scrollableTarget="viewDaoWrapper"
+          endMessage={
+            <p style={{textAlign: "center"}}>
+              <b>&mdash;</b>
+            </p>
+          }
+        >
+          {membersHTML}
+        </InfiniteScroll>
       </div>
     );
   }
@@ -93,14 +108,35 @@ const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContaine
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const arc = getArc();
+
   const dao = new DAO(props.dao.address, arc);
-  return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
+  const PAGE_SIZE = 100;
+  const observable = dao.members({
+    orderBy: "balance",
+    orderDirection: "desc",
+    first: PAGE_SIZE,
+    skip: 0
+  });
+  return <Subscribe observable={observable}>{(state: IObservableState<Member[]>) => {
       if (state.isLoading) {
         return (<div className={css.loading}><Loading/></div>);
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        return <ConnectedDaoMembersContainer members={state.data} dao={props.dao} />;
+        return <ConnectedDaoMembersContainer
+          members={state.data}
+          dao={props.dao}
+          fetchMore={ () => {
+            state.fetchMore({
+              observable: dao.members({
+                orderBy: "balance",
+                orderDirection: "desc",
+                first: PAGE_SIZE,
+                skip: state.data.length
+              })
+            });
+          }}
+      />;
       }
     }
   }</Subscribe>;
