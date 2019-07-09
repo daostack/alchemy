@@ -101,12 +101,7 @@ export async function getCurrentAccountAddress(): Promise<Address | null> {
      */
     return null;
   }
-  const web3 = getWeb3();
-  if (!web3) {
-    return null;
-  }
-  const accounts = await web3.eth.getAccounts();
-  return accounts[0] ? accounts[0].toLowerCase() : null;
+  return _getCurrentAccount();
 }
 
 export async function gotoReadonly(): Promise<boolean> {
@@ -192,19 +187,26 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     console.log(`****************************** instantiating web3Connect`);
 
     const web3Connect = new Web3Connect.Core({
-      modal: true,
+      modal: false,
       providerOptions: web3ConnectProviderOptions
     });
 
     let resolveOnClosePromise: () => void;
+    let rejectOnClosePromise: (reason?: any) => void;
 
     const onClosePromise = new Promise(
-      (resolve: () => void) => {
+      (resolve: () => void, reject: (reason?: any) => void) => {
+        resolveOnClosePromise = resolve;
+        rejectOnClosePromise = reject;
+        web3Connect.on("close", () => {
+          console.log(`web3Connect closed`);
+          resolve();
+        });
+    });
 
-      resolveOnClosePromise = resolve;
-      web3Connect.on("close", () => {
-        resolve();
-      });
+    web3Connect.on("error", (error) => {
+      console.log(`web3Connect closed on error:  ${error.message}`);
+      rejectOnClosePromise(error);
     });
 
     web3Connect.on("connect", (newProvider: any) => {
@@ -218,12 +220,18 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 
     console.log(`****************************** fire up modal`);
 
-    web3Connect.toggleModal();
+    try {
+      web3Connect.toggleModal();
 
-    await onClosePromise;
+      await onClosePromise;
+
+    } catch (error) {
+      console.log(`web3Connect closed on error:  ${error.message}`);
+    }
 
     if (!provider) {
-      throw new Error(`A wallet is not found`);
+      console.log(`****************************** error or user cancelled out`);
+      return false;
     }
   }
 
@@ -239,15 +247,11 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     // brings up the provider UI as needed
     await provider.enable();
   } catch (ex) {
-    console.log(`****************************** failed to enable provider: ${ex.message}`);
+    console.log(`****************************** unable to enable provider: ${ex.message}`);
     throw ex;
   }
 
   console.log(`****************************** enabled`);
-
-  // const web3 = new Web3(provider);
-  // // const accounts = await web3.eth.getAccounts();
-  // // const defaultAccount = accounts[0] ? accounts[0].toLowerCase() : null;
 
   // console.log(`****************************** got web3: ${web3}`);
 
@@ -259,14 +263,22 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
   let success = false;
   try {
     success = await initializeArc(provider);
-    if (success) {
-      selectedProvider = provider;
-    }
     // const networkName = await getNetworkName();
     // console.log(`****************************** initialized Arc against ${networkName}`);
   } catch (ex) {
-    console.log(`****************************** failed to initialize Arc: ${ex.message}`);
+    console.log(`****************************** unable to initialize Arc: ${ex.message}`);
     throw ex;
+  }
+
+  if (!_getCurrentAccount()) {
+    // then something went wrong
+    console.log(`****************************** unable to lock an account`);
+    throw new Error("unable to lock an account");
+  }
+
+  if (success) {
+    selectedProvider = provider;
+    console.log(`****************************** enabled provider, account locked`);
   }
 
   return success;
@@ -306,10 +318,7 @@ async function checkWeb3Provider(web3Provider: any): Promise<string> {
  * Returns if an account is enabled in the selected web3Provider
  */
 export function getAccountIsEnabled(): boolean {
-  return !!selectedProvider;
-  // const web3 = getWeb3();
-  // const accounts = await web3.eth.getAccounts();
-  // return !!accounts.length;
+  return !!getCurrentAccountAddress();
 }
 
 /**
@@ -422,6 +431,15 @@ export function getArc(): Arc {
     throw Error("window.arc is not defined - please call initializeArc first");
   }
   return arc;
+}
+
+async function _getCurrentAccount(): Promise<string> {
+  const web3 = getWeb3();
+  if (!web3) {
+    return null;
+  }
+  const accounts = await web3.eth.getAccounts();
+  return accounts[0] ? accounts[0].toLowerCase() : null;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
