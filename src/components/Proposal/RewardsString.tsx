@@ -2,7 +2,7 @@ import BN = require("bn.js");
 import * as React from "react";
 
 import { IDAOState, IProposalState } from "@daostack/client";
-import { formatTokens, tokenSymbol } from "lib/util";
+import { formatTokens, tokenDetails } from "lib/util";
 
 import ReputationView from "components/Account/ReputationView";
 
@@ -16,19 +16,21 @@ export default class RewardsString extends React.Component<IProps, null> {
   public render() {
     const { dao, proposal, separator } = this.props;
 
+    const contributionReward = proposal.contributionReward;
     const rewards = [];
-    if (proposal.ethReward.gt(new BN(0))) {
-      rewards.push(formatTokens(proposal.ethReward, "ETH"));
+    if (contributionReward.ethReward.gt(new BN(0))) {
+      rewards.push(formatTokens(contributionReward.ethReward, "ETH"));
     }
-    if (proposal.externalToken && proposal.externalTokenReward.gt(new BN(0))) {
-      rewards.push(formatTokens(proposal.externalTokenReward, tokenSymbol(proposal.externalToken)));
+    if (contributionReward.externalToken && contributionReward.externalTokenReward.gt(new BN(0))) {
+      const tokenData = tokenDetails(contributionReward.externalToken);
+      rewards.push(formatTokens(contributionReward.externalTokenReward, tokenData ? tokenData["symbol"] : "?", tokenData ? tokenData["decimals"] : 18));
     }
-    if (proposal.nativeTokenReward.gt(new BN(0))) {
-      rewards.push(formatTokens(proposal.nativeTokenReward, dao.tokenSymbol));
+    if (contributionReward.nativeTokenReward.gt(new BN(0))) {
+      rewards.push(formatTokens(contributionReward.nativeTokenReward, dao.tokenSymbol));
     }
-    if (!proposal.reputationReward.isZero()) {
+    if (!contributionReward.reputationReward.isZero()) {
       rewards.push(
-        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.reputationReward}/>
+        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={contributionReward.reputationReward}/>
       );
     }
     return <strong>

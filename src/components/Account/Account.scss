@@ -1,20 +1,19 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
 .accountBalance {
   text-align: right;
 }
 
 a.historyView {
-  position: absolute;
-  top: 25px;
-  left: 66px;
-  display: block;
-  color: rgba(80, 97, 118, 1.000);
+  display: inline-block;
+  color: #506176;
   font-size: 13px;
+  width: 90px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 20px;
+  position: relative;
+  top: -3px;
+  left: 5px;
 }
 
 a.detailView {
@@ -400,4 +399,75 @@ input {
 .alignCenter {
   text-align: center;
   margin-top: 30px;
+}
+
+
+@media only screen and (max-width: 425px) {
+  .profileWrapper {
+    display: block;
+  }
+
+  .profileContainer {
+    width: auto;
+    padding: 0;
+
+    form {
+      border-radius: 0;
+      padding: 15px;
+    }
+
+    input,textarea {
+      width: 88%;
+    }
+
+    .socialButton button {
+      background-color: transparent;
+    }
+
+    .profileDataContainer {
+      display: block;
+    }
+  }
+
+  .setupProfile {
+    padding: 15px;
+  }
+
+  .submitButton {
+    margin-right: 0;
+    margin-top: 15px;
+  }
+
+  .socialProof {
+    left: 70px;
+    opacity: .6;
+    width: 77%;
+  }
+
+  :global .membersPage {
+    border-radius: 3px;
+    height: 40px;
+    width: 40px;
+    float: left;
+    margin: 3px 10px 0 0px;
+  }
+
+  .historyView.targetAccount {
+    width: 12px;
+    height: 12px;
+  }
+
+  .historyView.targetAccount .avatar {
+    top: 3px;
+  }
+
+  .historyView.targetAccount .avatar img {
+    height: 12px;
+    width: 12px;
+  }
+
+  a.historyView {
+    font-size: 11px;
+    top: 10px;
+  }
 }

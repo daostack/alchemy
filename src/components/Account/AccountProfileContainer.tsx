@@ -1,6 +1,6 @@
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { getArc } from "arc";
+import { checkMetaMaskAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
@@ -44,7 +44,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     accountAddress,
     accountInfo: ownProps.accountInfo,
     accountProfile: state.profiles[accountAddress],
-    currentAccountAddress: state.web3.ethAccountAddress ? state.web3.ethAccountAddress.toLowerCase() : null,
+    currentAccountAddress: state.web3.currentAccountAddress,
     dao: ownProps.dao,
     ethBalance: ownProps.ethBalance,
     genBalance: ownProps.genBalance
@@ -91,8 +91,10 @@ class AccountProfileContainer extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any ) {
-    const { accountAddress, showNotification, updateProfile } = this.props;
+  public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any) {
+    const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
+
+    if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
 
     const web3 = await Util.getWeb3();
     const timestamp = new Date().getTime().toString();
@@ -105,8 +107,8 @@ class AccountProfileContainer extends React.Component<IProps, null> {
 
     // Create promise-based version of send
     const send = promisify(web3.currentProvider.send);
-    const params = [msg, accountAddress];
-    const result = await send({ method, params, accountAddress });
+    const params = [msg, currentAccountAddress];
+    const result = await send({ method, params, from: currentAccountAddress });
     if (result.error) {
       console.error("Signing canceled, data was not saved");
       showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
@@ -138,13 +140,13 @@ class AccountProfileContainer extends React.Component<IProps, null> {
     return (
       <div className={css.profileWrapper}>
         <BreadcrumbsItem to={`/profile/${accountAddress}`}>
-          { editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}
+          {editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}
         </BreadcrumbsItem>
 
-        { dao ? <DaoSidebar address={dao.address} /> : ""}
+        {dao ? <DaoSidebar {...this.props} dao={dao} /> : ""}
 
         <div className={css.profileContainer} data-test-id="profile-container">
-          { editing && (!accountProfile || !accountProfile.name) ? <div>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
+          { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
           { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
               enableReinitialize={true}
@@ -187,7 +189,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                         <label htmlFor="nameInput">
                           Name:&nbsp;
                         </label>
-                        { editing ?
+                        {editing ?
                           <div>
                             <Field
                               autoFocus
@@ -206,7 +208,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                         <label htmlFor="descriptionInput">
                           Description:&nbsp;
                         </label>
-                        { editing ?
+                        {editing ?
                           <div>
                             <div>
                               <Field
@@ -222,7 +224,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                             </div>
                             <div className={css.saveProfile}>
                               <button className={css.submitButton} type="submit" disabled={isSubmitting}>
-                                <img className={css.loading} src="/assets/images/Icon/Loading-black.svg"/>
+                                <img className={css.loading} src="/assets/images/Icon/Loading-black.svg" />
                                 SUBMIT
                               </button>
                             </div>
@@ -232,14 +234,14 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                         }
                       </div>
                     </div>
-                    {!editing && Object.keys(accountProfile.socialURLs).length === 0 ? "None connected" :
+                    {!editing && Object.keys(accountProfile.socialURLs).length === 0 ? " " :
                       <div className={css.socialLogins}>
                         {editing
                           ? <div className={css.socialProof}>
-                              <strong><img src="/assets/images/Icon/Alert-yellow.svg"/> Prove it's you by linking your social accounts</strong>
-                              <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
-                            </div>
-                          : <div><strong>Social accounts:</strong></div>
+                            <strong><img src="/assets/images/Icon/Alert-yellow.svg" /> Prove it's you by linking your social accounts</strong>
+                            <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
+                          </div>
+                          : " "
                         }
 
                         <h3>Social Verification</h3>
@@ -250,15 +252,15 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                     <div className={css.otherInfoContainer}>
                       <div className={css.tokens}>
                         {accountInfo
-                           ? <div><strong>Rep. Score</strong><br/><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name}/> </div>
-                           : ""}
-                         <div><strong>GEN:</strong><br/><span>{formatTokens(genBalance)}</span></div>
--                        <div><strong>ETH:</strong><br/><span>{formatTokens(ethBalance)}</span></div>
+                          ? <div><strong>Rep. Score</strong><br /><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
+                          : ""}
+                        <div><strong>GEN:</strong><br /><span>{formatTokens(genBalance)}</span></div>
+                        -                        <div><strong>ETH:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
                       </div>
                       <div>
-                        <strong>ETH Address:</strong><br/>
+                        <strong>ETH Address:</strong><br />
                         <span>{accountAddress.substr(0, 20)}...</span>
-                        <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
+                        <button className={css.copyButton} onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg" /></button>
                       </div>
                     </div>
                   </div>

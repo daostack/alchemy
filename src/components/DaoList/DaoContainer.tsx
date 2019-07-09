@@ -1,70 +1,82 @@
-import { IDAOState, IProposalStage, Member, Proposal } from "@daostack/client";
-import { getArc } from "arc";
+import { DAO, IDAOState,
+  IProposalStage,
+  Proposal
+  } from "@daostack/client";
+import classNames from "classnames";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as GeoPattern from "geopattern";
-import { formatTokens } from "lib/util";
+import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { combineLatest } from "rxjs";
-
 import * as css from "./DaoList.scss";
 
 interface IProps {
-  address: string;
+  dao: DAO;
 }
 
 const DaoContainer = (props: IProps) => {
-  const { address } = props;
-  const arc = getArc();
-  const dao = arc.dao(address);
+  // const { address } = props;
+  const dao = props.dao;
   const observable = combineLatest(
-    dao.proposals({
-      stage: IProposalStage.Queued,
+    dao.proposals({ where: {
+      stage_in: [IProposalStage.Queued],
       expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
-    }), // the list of queued proposals
-    dao.state() // DAO state
+    }}),
+    dao.proposals({ where: {
+      stage_in: [IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod]
+    }}),
+    dao.state()
   );
 
-  return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], IDAOState]>) => {
+  return <Subscribe observable={observable}>{(state: IObservableState<[Proposal[], Proposal[], IDAOState]>) => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        const dao = state.data[1];
-        const bgPattern = GeoPattern.generate(dao.address + dao.name);
+        const [regularProposals, boostedProposals, daoState] = state.data;
+        const bgPattern = GeoPattern.generate(dao.address + daoState.name);
+        const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
+        const inActive = (daoState.name === "dxDAO") && dxDaoActivationDate.isSameOrAfter(moment());
 
         return <Link
           className={css.daoLink}
           to={"/dao/" + dao.address}
           key={"dao_" + dao.address}
           data-test-id="dao-link"
+          onClick={ (e) => { if (inActive) { e.preventDefault(); } } }
         >
-          <div className={css.dao}>
-            <h3 className={css.daoName} style={{backgroundImage: bgPattern.toDataUrl()}}>{dao.name}</h3>
+          <div className={classNames({
+              [css.dao]: true,
+              [css.daoInactive]: inActive})}>
+            <div className={css.daoTitle}
+              style={{backgroundImage: bgPattern.toDataUrl()}}>
 
-            <div className={css.clearfix + " " + css.daoInfoContainer}>
+              <div className={css.daoName}>{daoState.name}</div>
+
+              {inActive ? <div className={css.inactiveFeedback} ><div className={css.time}>{ dxDaoActivationDate.format("MMM Do")}&nbsp;
+              {dxDaoActivationDate.format("h:mma z")}</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
+            </div>
+
+            <div className={"clearfix " + css.daoInfoContainer}>
               <div className={css.daoInfoTitle}>
                 Statistics
               </div>
 
               <div className={css.daoInfo}>
-                <b>{dao.memberCount}</b>
+                <b>{daoState.memberCount || "?"}</b>
                 <span>Reputation Holders</span>
                </div>
 
               <div className={css.daoInfo}>
-                <b>{state.data[0].length}</b>
+                <b>{regularProposals.length + boostedProposals.length}</b>
                 <span>Open Proposals</span>
                </div>
 
-              <div className={css.daoInfo}>
-                <b>TODO</b>
-                <span>GEN Staked</span>
-              </div>
               )
             </div>
-          </div>;
+          </div>
         </Link>;
       }
     }

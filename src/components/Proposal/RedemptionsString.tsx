@@ -3,7 +3,6 @@ import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
-import * as css from "./Proposal.scss";
 
 interface IProps {
   currentAccountAddress: Address;
@@ -35,18 +34,20 @@ export default class RedemptionsString extends React.Component<IProps, null> {
       }
     }
 
-    if (currentAccountAddress === proposal.beneficiary) {
-      if (proposal.ethReward.gt(zero)) {
-        rewardComponents.push(formatTokens(proposal.ethReward, "ETH"));
+    const contributionReward = proposal.contributionReward;
+
+    if (currentAccountAddress === contributionReward.beneficiary) {
+      if (contributionReward.ethReward.gt(zero)) {
+        rewardComponents.push(formatTokens(contributionReward.ethReward, "ETH"));
       }
-      if (proposal.externalTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(proposal.externalTokenReward, tokenSymbol(proposal.externalToken)));
+      if (contributionReward.externalTokenReward.gt(zero)) {
+        rewardComponents.push(formatTokens(contributionReward.externalTokenReward, tokenSymbol(contributionReward.externalToken)));
       }
-      if (proposal.nativeTokenReward.gt(zero)) {
-        rewardComponents.push(formatTokens(proposal.nativeTokenReward, dao.tokenSymbol));
+      if (contributionReward.nativeTokenReward.gt(zero)) {
+        rewardComponents.push(formatTokens(contributionReward.nativeTokenReward, dao.tokenSymbol));
       }
-      if (!proposal.reputationReward.isZero()) {
-        reputation.add(proposal.reputationReward);
+      if (!contributionReward.reputationReward.isZero()) {
+        reputation.add(contributionReward.reputationReward);
       }
     }
 
@@ -59,7 +60,14 @@ export default class RedemptionsString extends React.Component<IProps, null> {
         <ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
-    return <span className={css.redemptionString}>
+    const redemptionsStyle = {
+      position: "relative" as "relative",
+      right: "5px",
+      display: "inline-block",
+      color: "rgba(49, 120, 202, 1.000)"
+    };
+
+    return <span style={redemptionsStyle}>
     {rewardComponents.reduce((acc: any, v: any) => {
       return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
     }, null)}

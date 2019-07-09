@@ -8,6 +8,8 @@ interface IProps {
   detailView?: boolean;
   toDate: Date | moment.Moment;
   fromDate?: Date | moment.Moment;
+  overTime?: boolean;
+  schemeView?: boolean;
   onEnd?(): any;
 }
 
@@ -16,6 +18,7 @@ interface IState {
   days: number;
   hours: number;
   min: number;
+  seconds: number;
 }
 
 class Countdown extends React.Component<IProps, IState> {
@@ -28,7 +31,8 @@ class Countdown extends React.Component<IProps, IState> {
       years: 0,
       days: 0,
       hours: 0,
-      min: 0
+      min: 0,
+      seconds: 0
     };
   }
 
@@ -44,7 +48,7 @@ class Countdown extends React.Component<IProps, IState> {
           this.props.onEnd();
         }
       }
-    }, 5000);
+    }, 1000);
   }
 
   public componentWillUnmount() {
@@ -66,7 +70,8 @@ class Countdown extends React.Component<IProps, IState> {
       years: duration.years(),
       days: duration.days(),
       hours: duration.hours(),
-      min: duration.minutes()
+      min: duration.minutes(),
+      seconds: duration.seconds()
     };
 
     return timeLeft;
@@ -105,28 +110,32 @@ class Countdown extends React.Component<IProps, IState> {
     const containerClass = classNames({
       [css.detailView]: this.props.detailView,
       [css.container]: true,
+      [css.schemeView]: this.props.schemeView,
     });
 
     return (
       <div className={containerClass}>
         <div className={css.percentageContainer}>
-          <div style={{backgroundColor: "blue", height: "2px", width: percentageComplete + "%"}}></div>
+          <div style={{ backgroundColor: "blue", height: "2px", width: percentageComplete + "%" }}></div>
         </div>
         {this.props.detailView ?
-            <span>Proposal ends:</span>
+          <span className={css.label}>Proposal ends:</span>
           : " "
         }
-        <span className={css.timeSection}>
-           <strong>{this.addLeadingZeros(countDown.days)}d</strong>
-        </span>
-        &nbsp;:&nbsp;
-        <span className={css.timeSection}>
-          <strong>{this.addLeadingZeros(countDown.hours)}h</strong>
-        </span>
-        &nbsp;:&nbsp;
-        <span className={css.timeSection}>
-          <strong>{this.addLeadingZeros(countDown.min)}m</strong>
-        </span>
+        {
+          countDown.days ? <span className={css.timeSection}><strong>{this.addLeadingZeros(countDown.days)}d</strong><span className={css.colon}>:</span></span> : ""
+        }
+        <span className={css.timeSection}><strong>{this.addLeadingZeros(countDown.hours)}h</strong><span className={css.colon}>:</span></span>
+        <span className={css.timeSection}><strong>{this.addLeadingZeros(countDown.min)}m</strong></span>
+        {
+          countDown.days ? "" : <span className={css.timeSection}><span className={css.colon}>:</span><strong>{this.addLeadingZeros(countDown.seconds)}s</strong></span>
+        }
+        {this.props.overTime ?
+          <strong className={css.overTime}>
+            <img src="/assets/images/Icon/Overtime.svg" /> OVERTIME
+          </strong>
+          : " "
+        }
       </div>
     );
   }

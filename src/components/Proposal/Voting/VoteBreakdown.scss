@@ -1,0 +1,157 @@
+.wrapper {
+  float: left;
+  width: 50%;
+  text-align: left;
+}
+
+.label {
+  display: none;
+}
+
+.voteBreakdown {
+  border: none;
+  position: relative;
+  display: block;
+  width: 73px;
+  height: 20px;
+  background-color: transparent;
+  outline: none;
+  margin-left: 5px;
+
+  img {
+    vertical-align: middle;
+  }
+
+  .reputation {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #506176;
+    vertical-align: middle;
+  }
+}
+
+.detailView  {
+  text-align: right;
+  margin-left: 42px;
+  width: auto;
+  display: inline-block;
+
+  .label {
+    text-align: left;
+    display: inline
+  }
+
+  span.label {
+    font-size: 13px;
+    color: $gray-1;
+  }
+
+  b.label {
+    margin-left: 5px;
+    font-size: 16px;
+  }
+
+  .voteBreakdown {
+    position: relative;
+    width: 120px;
+    text-align: left;
+    margin-left: 5px;
+    display: block;
+    color: rgba(0, 29, 52, 1.000);
+
+    .reputation {
+      top: 0px;
+      font-size: 16px;
+    }
+
+    img {
+      top: -10px;
+      left: -32px;
+      width: 18px;
+    }
+  }
+}
+
+.voteUp {
+  position: relative;
+  display: block;
+  margin-top: 9px;
+}
+
+.detailView .voteUp {
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.voteDown {
+  position: relative;
+}
+
+.upvoted, .downvoted {
+  display: none;
+}
+
+.votedFor .upvote, .votedAgainst .downvote  {
+  display: none;
+}
+
+.votedFor .upvoted, .votedAgainst .downvoted {
+  display: inline;
+}
+
+.upvotePending .upvote, .downvotePending .downvote {
+  opacity: 0;
+}
+
+.downvotePending .downvotePendingIcon {
+  opacity: 1;
+}
+
+.upvotePending .upvotePendingIcon {
+  opacity: 1;
+}
+
+.downvotePendingIcon, .upvotePendingIcon {
+  left: 0;
+  opacity: 0;
+  display: none;
+  width: 28px;
+  height: 15px;
+}
+
+.downvotePendingIcon {
+  top: 2px;
+}
+
+.upvotePendingIcon {
+  top: 3px;
+}
+
+.verifyMask {
+  transform: translateY(30px);
+  opacity: 0;
+  animation: verifying 1s linear infinite;
+}
+
+@keyframes verifying {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+  .detailView {
+    margin-left: 24px;
+  }
+}

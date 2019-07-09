@@ -1,0 +1,52 @@
+.container {
+  display: inline-block;
+  position: relative;
+
+  img {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    height: 40%;
+    transform: translate(-50%,-50%);
+  }
+}
+
+.container.yesWinning img.yesWinning {
+  display: block;
+}
+
+.container.noWinning img.noWinning {
+  display: block;
+}
+
+.yesVotesCircle {
+  display: block;
+}
+
+.noVotesCircle {
+  position: absolute;
+  top: 0;
+  left:0;
+}
+
+.circleChartCircle {
+  animation: circle-chart-fill 2s reverse; /* 1 */
+  transform: rotate(-90deg); /* 2, 3 */
+  transform-origin: center; /* 4 */
+}
+
+.circleChartCircleNegative {
+  transform: rotate(-90deg) scale(1,-1); /* 1, 2, 3 */
+}
+
+@keyframes circle-chart-fill {
+  to { stroke-dasharray: 0 100; }
+}
+
+@keyframes circle-chart-appear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

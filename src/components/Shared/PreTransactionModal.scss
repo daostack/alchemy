@@ -1,19 +1,12 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-
 .stakeFail, .stakePass, .voteDown, .voteUp {
   display: block;
 }
 
 .genLabel.genSymbol {
-    top: 3px;
-    left: 143px;
-    opacity: .5;
-    position: absolute;
+  top: 3px;
+  left: 143px;
+  opacity: .5;
+  position: absolute;
 }
 
 .yourStakeTitle {
@@ -37,20 +30,25 @@
   height: 20px;
   border-radius: 20px;
   text-align: center;
-  background-color: rgba(246, 80, 80, 1.000);
+  background-color: $accent-2;
   margin-right: 10px;
+  position: relative;
+  top: -3px;
 
   img {
     margin: 0;
     padding: 0;
     position: relative;
-    top: -3px;
-    left: -1px;
+    top: -1px;
+    left: 1px;
   }
 }
 
 .metaMaskModal .modalWindow .transactionHeader.stakePass .transactionIcon {
   background-color: rgba(0, 190, 144, 1.000);
+  position: relative;
+  top: -3px;
+  background-color: $accent-3;
 
   img {
     left: 0;
@@ -68,7 +66,7 @@
     outline: none;
     margin-right: 10px;
     line-height: 30px;
-    padding: 0 15px;
+    padding: 0 25px;
     color: rgba(0, 113, 255, 1.000);
   }
 }
@@ -109,22 +107,22 @@
 }
 
 .helpButton.open button.hover {
-    b {
-      display: block;
-      width: 50px;
-      position: absolute;
-      left: -60px;
-      color: white;
-      font-weight: normal;
-      font-size: 13px;
-    }
+  b {
+    display: block;
+    width: 50px;
+    position: absolute;
+    left: -60px;
+    color: white;
+    font-weight: normal;
+    font-size: 13px;
+  }
 
-    span:nth-child(1) {
-      display: none;
-    }
-    span:nth-child(2) {
-      display: block;
-    }
+  span:nth-child(1) {
+    display: none;
+  }
+  span:nth-child(2) {
+    display: block;
+  }
 }
 
 .launchMetaMask {
@@ -135,7 +133,7 @@
   border: 0;
   outline: none;
   line-height: 30px;
-  padding: 0 15px;
+  padding: 0 25px;
   margin: 0 20px 20px 0;
   display: inline-block;
   float: right;
@@ -158,11 +156,13 @@
   display: inline-block;
   left: -10px;
 }
+
 .preTransactionBottom {
-  padding: 20px 30px;
-  border-top: 1px solid rgba(191, 203, 213, 1.000);
+  padding: 20px 0;
+  border-top: $gray-border-2;
   text-align: right;
 }
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
@@ -208,7 +208,7 @@ input[type=number] {
     display: block;
     margin: 0 25px 25px 25px;
     padding-left: 10px;
-    border-left: 2px solid rgba(246, 80, 80, 1.000);
+    border-left: 2px solid $accent-2;
   }
 }
 
@@ -217,23 +217,6 @@ input[type=number] {
 }
 
 .metaMaskModal {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  overflow: scroll;
-  top: 0;
-  z-index: 1000000000000000;
-  left: 0;
-
-  .bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(2, 0, 22, .4);
-    z-index: 0;
-  }
 
   .decisionGraph {
     position: relative;
@@ -265,26 +248,26 @@ input[type=number] {
     .graphInfo{
       float: left;
       width: 50%;
-      padding: 32px 0 10px 0;
+      padding: 33px 0 10px 0;
 
       div {
-          padding-bottom: 15px;
-          font-size: 16px;
-          display: block;
-          width: 100%;
-          color: rgba(154, 169, 181, 1.000);
+        padding-bottom: 15px;
+        font-size: 16px;
+        display: block;
+        width: 100%;
+        color: $gray-1;
 
-          img {
-            width: 20px;
-            margin-right: 7px;
-            position: relative;
-            top: 5px;
-          }
+        img {
+          width: 20px;
+          margin-right: 7px;
+          position: relative;
+          top: 5px;
+        }
 
-          span {
-            font-weight: bold;
-            color: rgba(0, 28, 53, 1.000);
-          }
+        span {
+          font-weight: bold;
+          color: rgba(0, 28, 53, 1.000);
+        }
       }
     }
   }
@@ -317,7 +300,6 @@ input[type=number] {
         top: 0;
     }
   }
-
   .help {
     width: 340px;
     height: 100%;
@@ -328,7 +310,7 @@ input[type=number] {
 
     .notification {
       font-size: 11px;
-      color: rgba(154, 169, 181, 1.000);
+      color: $gray-1;
       padding: 0px 25px 15px 25px;
 
       img {
@@ -357,64 +339,64 @@ input[type=number] {
   }
 
   .helpBox {
-      transition: all .25s ease;
-      width: 340px;
-      position: relative;
-      top: 0px;
+    transition: all .25s ease;
+    width: 340px;
+    position: relative;
+    top: 0px;
+    height: 100%;
+    z-index: 10000;
+    border-left: $gray-border-2;
+
+    .bg {
+      width: 100%;
       height: 100%;
-      z-index: 10000;
-      border-left: 1px solid rgba(191, 203, 213, 1.000);
+      background-color: rgba(255,255,255, 1);
+      position: absolute;
+      z-index: 0;
+    }
 
-      .bg {
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255,255,255, 1);
-        position: absolute;
-        z-index: 0;
+    .header {
+      position: absolute;
+      text-align: center;
+      height: 50px;
+      width: 100%;
+      background-color: #132e5b;
+      top: -51px;
+      padding-left: 15px;
+      left: -15px;
+      border-radius: 0 15px 0 0;
+    }
+
+    .body {
+      position: relative;
+      height: 100%;
+      overflow: scroll;
+
+      h2 {
+        margin: 0;
+        font-size: 22px;
+        padding-top: 30px;
+        font-weight: bold;
+        color: rgba(0, 26, 35, 1.000);
       }
 
-      .header {
-        position: absolute;
-        text-align: center;
-        height: 50px;
-        width: 100%;
-        background-color: #132e5b;
-        top: -51px;
-        padding-left: 15px;
-        left: -15px;
-        border-radius: 0 15px 0 0;
+      h3 {
+        margin: 0;
+        color: rgba(0, 26, 35, 1.000);
+        font-size: 11px;
+        text-align: left;
+        font-weight: normal;
+        padding: 0 30px 15px 30px;
       }
 
-      .body {
-        position: relative;
-        height: 100%;
-        overflow: scroll;
-
-        h2 {
-          margin: 0;
-          font-size: 22px;
-          padding-top: 30px;
-          font-weight: bold;
-          color: rgba(0, 26, 35, 1.000);
-        }
-
-        h3 {
-          margin: 0;
-          color: rgba(0, 26, 35, 1.000);
-          font-size: 11px;
-          text-align: left;
-          font-weight: normal;
-          padding: 0 30px 15px 30px;
-        }
-
-        p {
-          font-size: 13px;
-          color: rgba(80, 97, 118, 1.000);
-          padding: 0 25px 14px 25px;
-          margin: 0;
-        }
+      p {
+        font-size: 13px;
+        color: rgba(80, 97, 118, 1.000);
+        padding: 0 25px 14px 25px;
+        margin: 0;
       }
     }
+  }
 
   .instructionsOpen.modalWindow {
     margin-left: -170px;
@@ -430,7 +412,7 @@ input[type=number] {
     border-radius: 15px 15px 0 0;
 
     .decisionGraph {
-      border-top: 1px solid rgba(191, 203, 213, 1.000);
+      border-top: $gray-border-2;
       width: 100%;
       float: none;
       left: auto;
@@ -485,8 +467,8 @@ input[type=number] {
     .incentives {
       padding: 30px;
       font-size: 11px;
-      border-top: 1px solid rgba(191, 203, 213, 1.000);
-      border-bottom: 1px solid rgba(191, 203, 213, 1.000);
+      border-top: $gray-border-2;
+      border-bottom: $gray-border-2;
       margin-bottom: 20px;
 
       .passIncentive {
@@ -540,13 +522,13 @@ input[type=number] {
 
       .transactionInfo {
         position: relative;
-        top: -2px;
+        top: -1px;
         display: inline;
 
         .transactionEffect {
           font-size: 12px;
           display: inline;
-          color: rgba(154, 169, 181, 1.000);
+          color: $gray-1;
           opacity: .7;
 
           strong {
@@ -558,15 +540,15 @@ input[type=number] {
           font-size: 21px;
 
           .passVote {
-            color: rgba(0, 190, 144, 1.000);
+            color: $accent-3;
           }
 
           .failVote {
-            color: rgba(246, 80, 80, 1.000);
+            color: $accent-2;
           }
 
           .redeem {
-            color: rgba(0, 190, 144, 1.000);
+            color: $accent-3;
           }
         }
 
@@ -608,7 +590,7 @@ input[type=number] {
       .predictionAmount {
         display: inline-block;
         background-color: transparent;
-        border: 1px solid rgba(191, 203, 213, 1.000);
+        border: $gray-border-2;
         width: 154px;
         font-size: $body;
         padding: 10px 13px;
@@ -629,6 +611,9 @@ input[type=number] {
         transform: none;
         text-align: center;
 
+        margin-top: 7px;
+        width: 100%;
+
         span {
           font-size: $body;
           padding-top: 5px;
@@ -641,16 +626,6 @@ input[type=number] {
         margin-top: 8px;
         border: 1px solid $accent-1;
         color: $accent-1;
-      }
-
-      .clearfix {
-        margin-top: 7px;
-        position: relative;
-        top: auto;
-        left: auto;
-        width: 100%;
-        text-align: center;
-        transform: none;
       }
 
       .genError {
@@ -691,6 +666,7 @@ input[type=number] {
         transform: translate(0,0);
         display: inline-block;
         margin: 0;
+        padding-right: 25px;
 
         ul {
           position: absolute;
@@ -700,22 +676,57 @@ input[type=number] {
           list-style: none;
           box-shadow: $shadow-3;
           margin: 0;
-          width: 150px;
+          width: 120px;
           left: -1px;
-          padding: 10px 5px;
+          padding: 10px 0;
           opacity: 0;
           transform: scale(0);
           transition: all .25s ease;
+          background-color: rgba(255,255,255,1);
+          border-radius: 0 10px 10px 0;
+
+          .diamond {
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            position: absolute;
+            z-index: 0;
+            top: 50%;
+            transform: translateY(-5px) rotate(45deg);
+            left: -5px;
+          }
+
+          li {
+            position: relative;
+            z-index: 100;
+          }
 
           a {
             font-weight: bold;
-            width: 100%;
             color: rgba(80, 97, 118, 1.000);
-            display: inline-block;
-            padding: 8px 0;
+            display: block;
+            padding: 5px 10px;
+
+            b {
+              display: inline-block;
+              width: 30px;
+              text-align: left;
+              text-align: center;
+            }
+
+            img {
+              height: 14px;
+              margin-bottom: -3px;
+            }
+
+            span {
+              font-size: 11px;
+              font-family: "Open Sans";
+              font-weight: normal;
+            }
 
             &:hover {
-              background-color: rgba(80, 97, 118, .1);
+              background-color: rgba(240, 245, 251, 1.000);
             }
           }
         }
@@ -728,7 +739,8 @@ input[type=number] {
           ul {
             opacity: 1;
             transform: scale(1);
-            top: 21px;
+            top: -69px;
+            left: 64px;
           }
         }
       }

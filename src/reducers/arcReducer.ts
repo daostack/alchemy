@@ -1,7 +1,7 @@
 import * as update from "immutability-helper";
 import * as moment from "moment";
 
-import { CreateProposalAction, RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
+import { RedeemAction, StakeAction, VoteAction } from "actions/arcActions";
 import { AsyncActionSequence } from "actions/async";
 
 import { IProposalOutcome, IProposalStage, IProposalState as IProposalStateFromDaoStackClient } from "@daostack/client";
@@ -189,14 +189,13 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
   switch (proposal.stage) {
     case IProposalStage.ExpiredInQueue:
     case IProposalStage.Queued:
-      return moment((proposal.createdAt + proposal.queuedVotePeriodLimit) * 1000);
+      return moment((proposal.createdAt + proposal.genesisProtocolParams.queuedVotePeriodLimit) * 1000);
     case IProposalStage.PreBoosted:
-      return moment((proposal.preBoostedAt + proposal.preBoostedVotePeriodLimit) * 1000);
+      return moment((proposal.preBoostedAt + proposal.genesisProtocolParams.preBoostedVotePeriodLimit) * 1000);
     case IProposalStage.Boosted:
-      return moment((proposal.boostedAt + proposal.boostedVotePeriodLimit) * 1000);
-    // TODO: waiting on client library to return proposal.quietEndingPeriod
-    // case IProposalStage.QuietEndingPeriod:
-    //   return moment((proposal.quietEndingPeriodBeganAt + proposal.quietEndingPeriod) * 1000);
+      return moment((proposal.boostedAt + proposal.genesisProtocolParams.boostedVotePeriodLimit) * 1000);
+    case IProposalStage.QuietEndingPeriod:
+      return moment((proposal.quietEndingPeriodBeganAt + proposal.genesisProtocolParams.quietEndingPeriod) * 1000);
     case IProposalStage.Executed:
       return moment(proposal.executedAt * 1000);
   }
@@ -204,7 +203,12 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
 
 export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
   const res = (
-    (proposal.stage === IProposalStage.Executed) ||
+    (proposal.stage === IProposalStage.Executed) || proposalExpired(proposal));
+  return res;
+}
+
+export function proposalExpired(proposal: IProposalStateFromDaoStackClient) {
+  const res = (
     (proposal.stage === IProposalStage.ExpiredInQueue) ||
     (proposal.stage === IProposalStage.Queued && closingTime(proposal) <= moment())
   );
@@ -221,8 +225,7 @@ export function proposalPassed(proposal: IProposalStateFromDaoStackClient) {
 export function proposalFailed(proposal: IProposalStateFromDaoStackClient) {
   const res = (
     (proposal.stage === IProposalStage.Executed && proposal.winningOutcome === IProposalOutcome.Fail) ||
-    (proposal.stage === IProposalStage.ExpiredInQueue) ||
-    (proposal.stage === IProposalStage.Queued && proposal.expiresInQueueAt <= +moment() / 1000)
+    proposalExpired(proposal)
   );
   return res;
 }
@@ -249,7 +252,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_VOTE: {
       const { meta, sequence, payload } = action as VoteAction;
-      const { avatarAddress, proposalId, voteOption, voterAddress } = meta;
+      const { avatarAddress, proposalId, voterAddress } = meta;
       const voteKey = `${proposalId}-${voterAddress}`;
       const accountKey = `${voterAddress}-${avatarAddress}`;
 
@@ -293,7 +296,7 @@ const arcReducer = (state = initialState, action: any) => {
 
     case ActionTypes.ARC_STAKE: {
       const { meta, sequence, payload } = action as StakeAction;
-      const { avatarAddress, stakerAddress, proposalId, prediction, stakeAmount } = meta;
+      const { avatarAddress, stakerAddress, proposalId } = meta;
       const stakeKey = `${proposalId}-${stakerAddress}`;
       const accountKey = `${stakerAddress}-${avatarAddress}`;
 
@@ -339,7 +342,7 @@ const arcReducer = (state = initialState, action: any) => {
 
       switch (sequence) {
         case AsyncActionSequence.Success: {
-          const { currentAccount, beneficiary, dao, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
+          const { currentAccount, beneficiary, beneficiaryRedemptions, currentAccountRedemptions, proposal } = payload;
 
           // Update beneficiary reputation
           state = update(state, {

@@ -1,12 +1,12 @@
-import { IDAOState, IMemberState, IProposalStage, IProposalState  } from "@daostack/client";
-import { checkNetworkAndWarn } from "arc";
+import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
+import { checkMetaMaskAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
-import TransferDetails from "components/Proposal/TransferDetails";
-import VoteGraph from "components/Proposal/VoteGraph";
-import Util from "lib/util";
-import { humanProposalTitle } from "lib/util";
+import ProposalSummary from "components/Proposal/ProposalSummary";
+import VoteGraph from "components/Proposal/Voting/VoteGraph";
+import { default as Util, formatTokens } from "lib/util";
+import { getExchangesList, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -63,7 +63,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
   public async handleClickAction() {
     const { actionType } = this.props;
-    if (!(await checkNetworkAndWarn(this.props.showNotification))) { return; }
+    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
       this.props.action(this.state.stakeAmount);
@@ -82,7 +82,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     const { stakeAmount } = this.state;
 
     let icon, transactionType, rulesHeader, rules, actionTypeClass;
-    let accountGens, buyGensClass, reputationFor, reputationAgainst, yesPercentage, noPercentage;
+    let accountGens, buyGensClass, reputationFor, reputationAgainst;
 
     const modalWindowClass = classNames({
       [css.modalWindow]: true,
@@ -92,12 +92,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     if (actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp) {
       reputationFor = proposal.votesFor.add(actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0));
       reputationAgainst = proposal.votesAgainst.add(actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0));
-
-      const totalReputation = Util.fromWei(dao.reputationTotalSupply);
-
-      // If percentages are less than 2 then set them to 2 so they can be visibly noticed
-      yesPercentage = totalReputation && reputationFor.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationFor) / totalReputation * 100)) : 0;
-      noPercentage = totalReputation && reputationAgainst.gt(new BN(0)) ? Math.max(2, Math.ceil(Util.fromWei(reputationAgainst) / totalReputation * 100)) : 0;
     }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
@@ -113,7 +107,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       case ActionTypes.VoteUp:
         actionTypeClass = css.voteUp;
         icon = <img src="/assets/images/Icon/vote/for-fill-green.svg" />;
-        transactionType = <span><strong className={css.passVote}>Pass</strong> vote</span>;
+        transactionType = <span><strong className={css.passVote}>For</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
         // passIncentive = proposal.state === ProposalStates.PreBoosted ? <span>GAIN GEN &amp; REPUTATION</span> : <span>NO REWARDS</span>;
         // failIncentive = proposal.state === ProposalStates.PreBoosted ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
@@ -121,9 +115,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
         // failIncentive = proposal.stage === IProposalStage.Queued ? <span>LOSE 1% OF YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR YES VOTES";
         rules = <div>
-                  <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
-                  <p>If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.</p>
-                  <p>If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.</p>
+                  <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote For on a proposal that passes or vote Against on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
+                  <p>If you vote For and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.</p>
+                  <p>If you vote Against and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
                   <div className={css.notification}>
                     <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
@@ -131,10 +125,10 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
                   <div className={css.passFailConditions}>
                     <span className={css.passCondition}>
-                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote For and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                     <span className={css.failCondition}>
-                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote Against and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                   </div>
                 </div>;
@@ -142,13 +136,13 @@ class PreTransactionModal extends React.Component<IProps, IState> {
       case ActionTypes.VoteDown:
         actionTypeClass = css.voteDown;
         icon = <img src="/assets/images/Icon/vote/against.svg" />;
-        transactionType = <span><strong className={css.failVote}>Fail</strong> vote</span>;
+        transactionType = <span><strong className={css.failVote}>Against</strong> vote</span>;
         // TODO: check if the commented lines are correctly refactored
         // passIncentive = proposal.stage === IProposalStage.Queued ? <span>LOSE 1% YOUR REPUTATION</span> : <span>NO REWARDS</span>;
         // failIncentive = proposal.stage === IProposalStage.Queued ? <span>GAIN REPUTATION AND GEN</span> : <span>NO REWARDS</span>;
         rulesHeader = "RULES FOR NO VOTES";
         rules = <div>
-                  <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote Pass on a proposal that passes or vote Fail on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
+                  <p>When you vote on a regular proposal, 1% of your reputation is taken away for the duration of the vote. You will get the 1% back + an extra reputation reward if you vote correctly (e.g. vote For on a proposal that passes or vote Against on a proposal that fails). If you vote on a regular proposal that times-out, you will get your reputation back.</p>
                   <p>If you vote for something to pass and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>If you vote for something to fail and it does, you will be given a portion of whatever GEN have been staked on the proposal.</p>
                   <p>You will not receive reputation or GEN for voting on a boosted proposal.</p>
@@ -158,10 +152,10 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
                   <div className={css.passFailConditions}>
                     <span className={css.passCondition}>
-                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote Against and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                     <span className={css.failCondition}>
-                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote Against and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                   </div>
                 </div>;
@@ -184,10 +178,10 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
                   <div className={css.passFailConditions}>
                     <span className={css.passCondition}>
-                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote For and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                     <span className={css.failCondition}>
-                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote Against and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                   </div>
                 </div>;
@@ -209,10 +203,10 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                   <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank">View the Genesis Protocol ></a>
                   <div className={css.passFailConditions}>
                     <span className={css.passCondition}>
-                      If you vote Pass and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote For and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                     <span className={css.failCondition}>
-                      If you vote Fail and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
+                      If you vote Against and the proposal fails you will be given a portion of whatever GEN have been staked on the proposal.
                     </span>
                   </div>
                 </div>;
@@ -230,9 +224,8 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     return (
       <Modal onBackdropClick={this.props.closeAction}>
         <div className={css.metaMaskModal}>
-          <div className={css.bg} onClick={this.props.closeAction}></div>
           <div className={modalWindowClass}>
-            <div className={css.transactionHeader + " " + css.clearfix + " " + actionTypeClass}>
+            <div className={css.transactionHeader + " clearfix " + actionTypeClass}>
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
@@ -270,11 +263,11 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                 <div className={css.proposalTitle}>
                   <strong>{humanProposalTitle(proposal)}</strong>
                 </div>
-                <TransferDetails beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
+                <ProposalSummary beneficiaryProfile={beneficiaryProfile} proposal={proposal} dao={dao} transactionModal={true}/>
               </div>
               { /******* Staking form ******  **/
                 actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass ?
-                <div className={css.stakingInfo + " " + css.clearfix}>
+                <div className={css.stakingInfo + " clearfix"}>
                   <div className={css.stakingForm}>
                     <span className={css.yourStakeTitle}>Your stake</span>
                     <div className={buyGensClass}>
@@ -282,7 +275,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                         You do not have enough GEN
                       </h4>
                     </div>
-                   <div className={css.formGroup + " " + css.clearfix}>
+                   <div className={css.formGroup + " clearfix"}>
                       <input
                         autoFocus={true}
                         type="number"
@@ -294,15 +287,23 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       />
                       <span className={css.genLabel + " " + css.genSymbol}>GEN</span>
                       <div className={css.yourBalance}>
-                        <div>Your balance: {accountGens} GEN</div>
+                        <div>Your balance: {formatTokens(currentAccountGens)} GEN</div>
                         <div className={css.exchangeList}>
-                          Buy GEN &#8964;
+                          Buy GEN &gt;
                           <ul>
-                            <li><a href="https://idex.market/eth/gen" target="_blank"><img src="/assets/images/Exchanges/idex.png"/> IDEX</a></li>
-                            <li><a href="https://ddex.io/trade/GEN-ETH" target="_blank"><img src="/assets/images/Exchanges/ddex.png"/> DDEX</a></li>
-                            <li><a href="https://forkdelta.github.io/#!/trade/0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/forkdelta.png"/> Forkdelta</a></li>
-                            <li><a href="https://etherdelta.com/#0x543ff227f64aa17ea132bf9886cab5db55dcaddf-ETH" target="_blank"><img src="/assets/images/Exchanges/etherdelta.png"/> Etherdelta</a></li>
-                            <li><a href="https://www.hotbit.io/exchange?symbol=GEN_ETH" target="_blank"><img src="/assets/images/Exchanges/hotbit.png"/> Hotbit</a></li>
+                            <div className={css.diamond}></div>
+                            {
+                              getExchangesList().map((item: any) => {
+                                return(
+                                  <li key={item.name}>
+                                    <a href={item.url} target="_blank">
+                                      <b><img src={item.logo}/></b>
+                                      <span>{item.name}</span>
+                                    </a>
+                                  </li>
+                                );
+                              })
+                            }
                           </ul>
                         </div>
                       </div>
@@ -313,9 +314,15 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               {actionType === ActionTypes.VoteDown || actionType === ActionTypes.VoteUp ?
                 <div className={css.decisionGraph}>
                    <h3>State after your vote</h3>
-                   <div className={css.clearfix}>
+                   <div className="clearfix">
                      <div className={css.graphContainer}>
-                       <VoteGraph size={90} yesPercentage={yesPercentage} noPercentage={noPercentage} relative={proposal.stage === IProposalStage.Boosted} />
+                       <VoteGraph
+                         dao={dao}
+                         newVotesAgainst={actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0)}
+                         newVotesFor={actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0)}
+                         proposal={proposal}
+                         size={90}
+                       />
                      </div>
                      <div className={css.graphInfo}>
                        <div>

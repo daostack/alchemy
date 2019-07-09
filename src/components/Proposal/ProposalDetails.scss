@@ -1,0 +1,301 @@
+button.disabled {
+  cursor: not-allowed !important;
+}
+
+.loading {
+  display: none;
+  position: absolute;
+  width: 80%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  text-align: center;
+  z-index: 100000;
+  box-shadow: $shadow-2;
+  border-radius: 3px;
+  background-color: $white;
+
+  img {
+    height: 35px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+  }
+}
+
+.wrapper {
+  width: 100%;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.proposal {
+  border-radius: 0 15px 15px 15px;
+  background-color: transparent;
+  margin-right: 20px;
+  margin-bottom: 0px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  transition: all .25s ease;
+  vertical-align: top;
+  height: auto;
+  overflow: visible;
+  justify-content: center;
+  width: 100%;
+}
+
+.proposalInfo {
+  font-size: $body;
+  flex-grow: 2;
+  padding-right: 25px;
+  position: relative;
+
+  a {
+    color: $black;
+  }
+
+  a.attachmentLink, a.attachmentLink:visited {
+    font-size: 11px;
+    color: rgba(0, 113, 255, 1.000);
+    display: inline-block;
+    margin-bottom: 15px;
+
+    img {
+      position: relative;
+      top: 2px;
+      margin-right: 5px;
+    }
+  }
+
+  h3 {
+    font-size: 28px;
+    margin: 4px 10px 10px 0px;
+  }
+
+  .closedTime {
+    position: relative;
+    display: block;
+    font-weight: $normal;
+    font-size: 11px;
+    color: $black-halftone;
+    margin: 6px 0 0 12px;
+  }
+}
+
+.description {
+	margin-bottom: 30px;
+	white-space: pre-wrap;
+
+  a {
+    color: #0071ff;
+  }
+}
+
+.statusTitle {
+  position: absolute;
+  top: 12px;
+  padding-bottom: 12px;
+  border-bottom: $gray-border-2;
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+
+  h3 {
+    margin: 0;
+    padding: 0;
+    margin-left: 17px;
+    display: inline;
+    color: rgba(104, 155, 214, 1.000);
+  }
+
+  span {
+    display: inline-block;
+    padding-left: 10px;
+    color: rgba(0, 113, 255, 1.000);
+    font-size: 11px;
+    margin-left: 10px;
+    border-left: 1px solid rgba(233, 238, 244, 1.000);
+  }
+}
+
+.voteBox {
+  position: relative;
+  background-color: $white;
+  border-right: 1px solid rgba(215, 225, 237, 1.000);
+  border-radius: 0 15px 15px 15px;
+  margin: 0 0 20px 20px;
+}
+
+.voteBox.unconfirmedVote {
+  .loading {
+    display: block;
+  }
+}
+
+.voteButtons {
+  float: right;
+  top: 10px;
+  right: 10px;
+  position: relative;
+}
+
+.voteStatus {
+  height: 140px;
+  padding-top: 70px;
+
+  .voteGraph {
+    float: right;
+    text-align: left;
+    display: inline-block;
+    right: 40px;
+    top: 12px;
+    position: relative;
+  }
+}
+
+.predictions {
+  padding-bottom: 12px;
+  line-height: 20px;
+  position: relative;
+  background-color: white;
+  border-right: 1px solid #d7e1ed;
+  border-radius: 0 15px 15px 15px;
+  margin: 0 0 20px 20px;
+
+  .predictionStatus {
+    padding-top: 45px;
+  }
+}
+
+.stakeButtons {
+  float: right;
+  top: 9px;
+  right: 10px;
+  position: relative;
+}
+
+.timer {
+  height: 20px;
+  text-align: right;
+  font-size: 12px;
+  border-top: 1px solid rgba(200, 210, 219, 1.000);
+
+  .content {
+    display: inline-block;
+    margin: 6px 0 0 12px;
+    opacity: .6;
+    color: rgba(104, 155, 214, 1.000);
+    font-weight: bold;
+  }
+}
+
+.voteButtonsBottom {
+  // text-align: left;
+  // font-size: 12px;
+  position: relative;
+  top: 20px;
+  // right: 0;
+
+  .voteLabel {
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
+
+/* TODO: don't need both execute buttons? */
+.proposalTitleTop {
+  display: block;
+  color: rgba(104, 155, 214, 1.000);
+  font-size: 28px;
+  margin: 0 0 15px 0;
+
+  a {
+    color: rgba(104, 155, 214, 1.000);
+  }
+}
+
+.proposalActions {
+  position: relative;
+  transition: all .25s ease;
+  margin-top: 15px;
+  flex-grow: 1;
+  min-width: 350px;
+}
+
+.createdBy {
+  font-size: $small;
+  color: $black-thirdtone;
+  margin: 30px 0;
+
+  .targetAccount {
+    top: 7px;
+    left: 4px;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.discussionTitle {
+  font-size: 28px;
+  color: rgba(104, 155, 214, 1.000);
+  width: 100%;
+  border-bottom: $gray-border-2;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width: 425px) {
+  .proposal {
+    display: block;
+  }
+
+  .proposalInfo {
+	  padding: 15px;
+	  padding-right: 15px;
+
+	  h3 {
+	  	font-size: 16px;
+	  }
+  }
+
+  .voteBox {
+    margin: 0 0 0 0;
+    border-radius: 0;
+  }
+
+  .predictions {
+    margin: 0 0 20px 0;
+    border-radius: 0;
+  }
+
+  .discussionTitle {
+    padding: 5px 15px;
+    width: auto;
+  }
+
+  .proposalActions {
+  	min-width: auto;
+  }
+
+  .disqus {
+  	padding: 15px;
+  }
+
+  .voteButtonsBottom {
+  	display: none;
+  }
+}
+
+.statusContainer {
+  margin-right: 16px;
+  display: inline-block;
+}

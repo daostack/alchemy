@@ -3,6 +3,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 
@@ -13,21 +14,44 @@ const config = merge(baseConfig, {
 
   devtool: 'nosources-source-map',
 
+  entry: {
+    // the entry point of our app
+    app: __dirname + '/src/index.tsx',
+    'ipfs-http-client': ['ipfs-http-client'],
+    // '@daostack/migration': ['@daostack/migration/']
+  },
+
   output: {
-    filename: "bundle-[hash:8].js",
+    filename: "[name].bundle-[hash:8].js",
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/'
   },
 
-  entry: [
-    // the entry point of our app
-    __dirname + '/src/index.tsx',
-  ],
-
   optimization: {
+    minimize: true,
     minimizer: [
-      new OptimizeCSSAssetsPlugin({})
-    ]
+      new OptimizeCSSAssetsPlugin({}),
+      new UglifyJsPlugin({uglifyOptions: {
+        compress: true
+        }
+      })
+    ],
+    splitChunks: {
+      cacheGroups: {
+        "ipfs-http-client": {
+          chunks: "initial",
+          test: "ipfs-http-client",
+          name: "ipfs-http-client",
+          enforce: true
+        },
+        // "@daostack/migration": {
+        //   chunks: "initial",
+        //   test: "@daostack/migration",
+        //   name: "@daostack/migration",
+        //   enforce: true
+        // }
+      }
+    }
   },
 
   module: {
@@ -39,9 +63,10 @@ const config = merge(baseConfig, {
           {
             loader: "css-loader",
             options: {
-              modules: true,
-              importLoaders: 2,
-              localIdentName: "[name]--[local]--[hash:base64:5]"
+              modules: {
+                localIdentName: "[name]--[local]--[hash:base64:5]"
+              },
+              importLoaders: 2
             }
           },
           'sass-loader',
@@ -56,7 +81,7 @@ const config = merge(baseConfig, {
     ],
   },
 
-  plugins: [
+plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
@@ -74,13 +99,13 @@ const config = merge(baseConfig, {
     }),
     new CopyWebpackPlugin([
       { from: 'src/assets', to: 'assets' }
-    ])
+    ]),
   ],
 });
 
 if (process.env.ANALYZE) {
-  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-  config.plugins.push(new BundleAnalyzerPlugin())
+  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+  config.plugins.push(new BundleAnalyzerPlugin());
 }
 
-module.exports = config
+module.exports = config;

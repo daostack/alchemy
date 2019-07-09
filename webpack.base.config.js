@@ -20,6 +20,8 @@ module.exports = {
       actions: path.resolve(basePath, 'src/actions'),
       components: path.resolve(basePath, 'src/components'),
       constants: path.resolve(basePath, 'src/constants'),
+      data: path.resolve(basePath, 'data'),
+      genericSchemeRegistry: path.resolve(basePath, 'src/genericSchemeRegistry'),
       layouts: path.resolve(basePath, 'src/layouts'),
       lib: path.resolve(basePath, 'src/lib'),
       reducers: path.resolve(basePath, 'src/reducers'),
@@ -27,7 +29,8 @@ module.exports = {
       schemas: path.resolve(basePath, 'src/schemas'),
       src: path.resolve(basePath, 'src'),
       'ipfs-api': 'ipfs-api/dist',
-      'ipfs-http-client': 'ipfs-http-client/dist'
+      'ipfs-http-client': 'ipfs-http-client/dist',
+      'bn.js': 'bn.js/lib/bn.js'
     },
   },
 
@@ -97,17 +100,9 @@ module.exports = {
       template: 'src/index.html'
     }),
     new webpack.DefinePlugin({
-      'VERSION': JSON.stringify(require('./package.json').version),
-      TOKENS: {
-        "GEN": JSON.stringify("0x543ff227f64aa17ea132bf9886cab5db55dcaddf"),
-        "DAI": JSON.stringify("0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"),
-        "GUSD": JSON.stringify("0x056fd409e1d7a124bd7017459dfea2f387b6d5cd"),
-        "PAX": JSON.stringify("0x8e870d67f660d95d5be530380d0ec0bd388289e1"),
-        "TUSD": JSON.stringify("0x0000000000085d4780B73119b644AE5ecd22b376"),
-        "USDC": JSON.stringify("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"),
-        "USDT": JSON.stringify("0xdac17f958d2ee523a2206206994597c13d831ec7")
-      }
+      'VERSION': JSON.stringify(require('./package.json').version)
     }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
   node: {
     fs: 'empty',

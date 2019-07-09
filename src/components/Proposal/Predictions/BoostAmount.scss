@@ -1,0 +1,44 @@
+.wrapper {
+  position: relative;
+  font-family: "Open Sans";
+  font-weight: normal;
+}
+
+.boostedAmount {
+  display: block;
+  font-size: 9px;
+  color: #0076ff;
+  text-align: center;
+  padding-top: 11px;
+
+  b {
+    font-weight: normal;
+    position: relative;
+    top: 3px;
+  }
+}
+
+.detailView .boostedAmount {
+  color: black;
+  font-size: 11px;
+  height: 18px;
+  min-height: 8px;
+  padding-top: 0px;
+  opacity: .6;
+  float: right;
+  position: relative;
+  right: 12px;
+  bottom: 12px;
+
+  img {
+    margin-right: 6px;
+    position: relative;
+    top: 2px;
+  }
+}
+
+.unboostAmount {
+  img {
+    transform: rotate(180deg);
+  }
+}

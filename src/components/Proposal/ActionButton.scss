@@ -1,0 +1,73 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+
+  button {
+    background-color: rgba(0, 118, 255, 1.000);
+    border-radius: 10px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 6px;
+    color: $white;
+    border: none;
+    transition: all .25s ease;
+    margin: 0;
+    display: inline-block;
+    overflow: hidden;
+    width: 20px;
+    cursor: pointer;
+
+    span {
+      display: inline-block;
+      padding-left: 6px;
+    }
+  }
+
+  button:hover {
+    width: auto;
+  }
+}
+
+.preboostButton, .unboostButton, .boostButton, .executeButton {
+  position: relative;
+}
+
+.unboostButton {
+  img {
+    transform: rotate(180deg);
+  }
+}
+
+.redeemButton {
+  img {
+    margin-left: -1px;
+  }
+
+  &.pending {
+    border: 1px solid $black-tenthtone;
+    color: $black-halftone;
+
+    img {
+      display: inline-block;
+      height: 16px;
+      position: relative;
+      top: 4px;
+      margin-left: 5px;
+      margin-top: -6px;
+    }
+  }
+}
+
+.detailView button {
+  width: auto;
+  height: 30px;
+  border-radius: 30px;
+  background-color: #0376ff;
+  color: $white;
+  line-height: 30px;
+  padding: 0 15px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 13px;
+  font-weight: bold;
+}

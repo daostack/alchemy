@@ -1,4 +1,3 @@
-export const clearfix: string;
 export const accountBalance: string;
 export const historyView: string;
 export const detailView: string;
@@ -31,3 +30,4 @@ export const submitButton: string;
 export const loading: string;
 export const sendIcon: string;
 export const alignCenter: string;
+export const setupProfile: string;

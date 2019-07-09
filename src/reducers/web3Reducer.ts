@@ -1,9 +1,3 @@
-import BN = require("bn.js");
-import Web3 = require("web3");
-
-import { AsyncActionSequence } from "actions/async";
-import { ApproveAction, ConnectAction } from "actions/web3Actions";
-
 export enum ActionTypes {
   WEB3_CONNECT = "WEB3_CONNECT",
   WEB3_SET_ACCOUNT = "WEB3_SET_ACCOUNT",
@@ -20,14 +14,14 @@ export enum ConnectionStatus {
 export interface IWeb3State {
   accounts: string[];
   connectionStatus: ConnectionStatus;
-  ethAccountAddress: string | null;
+  currentAccountAddress: string | null;
   networkId: number;
 }
 
 export const initialState: IWeb3State = {
   accounts: [],
   connectionStatus: ConnectionStatus.Pending,
-  ethAccountAddress: null,
+  currentAccountAddress: null,
   networkId: 0 // unknown network
 };
 

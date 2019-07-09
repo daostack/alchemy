@@ -1,9 +1,3 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
 .wrapper {
   position: relative;
   max-width: $max-width;
@@ -13,12 +7,6 @@
 
 .loading img {
   margin: 0 auto;
-}
-
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
 }
 
 .daoInfoContainer {
@@ -52,21 +40,53 @@ a.daoLink {
 	color: $white;
 	text-align: left;
 
-	.daoName {
+  .daoInactive {
+    opacity: .65;
+
+    .daoName {
+      opacity: .8;
+    }
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
+
+	.daoTitle {
 		border-radius: 15px 15px 0 0;
-		font-size: 28px;
-		font-weight: bold;
-		padding: 30px;
+    padding-top: 38px;
+    padding-bottom:38px;
+		padding-left: 30px;
+		padding-right: 12px;
 		margin: 0;
 		margin-bottom: 10px;
 		color: $white;
 		background-repeat: repeat;
+
+    .daoName {
+      font-size: 28px;
+      font-weight: bold;
+      display: inline-block;
+      overflow-x: hidden;
+    }
+
+    .inactiveFeedback {
+      float: right;
+      position: relative;
+      bottom: 21px;
+
+      .time {
+        display: inline-block;
+        position: relative;
+        bottom: 14px;
+        right: 16px;
+        font-size: 20px;
+      }
+    }
 	}
 
 	.daoInfo {
 		color: $black;
 		font-size: $body;
-		float: left;
 		width: 33%;
 		display: inline-block;
 		padding: 30px 0;
@@ -81,10 +101,9 @@ a.daoLink {
 			display: block;
 			text-align: center;
 			font-size: 16px;
-			color: rgba(154, 169, 181, 1.000);
+			color: $gray-1;
 		}
 	}
-
 }
 
 .daoListHeader {
@@ -115,5 +134,42 @@ a.daoLink {
 		background-color: $accent-1-transparent;
 		border-radius: $button-border-radius;
 		vertical-align: middle;
+	}
+}
+
+@media only screen and (max-width: 425px) {
+	.wrapper {
+		width: auto;
+		padding: 0;
+    		text-align: center;
+	}
+
+	.dao {
+		width: auto;
+		border-radius: 0;
+		margin: 0 0 15px 0;
+		left: 0;
+	}
+
+	a.daoLink .daoName {
+		border-radius: 0 0 0 0;
+	}
+
+	a.daoLink .daoInfo b {
+		font-size: 20px;
+	}
+
+	.daoLink .daoInfo {
+
+
+		span {
+			font-size: 13px;
+			font-weight: normal;
+			font-family: "Open Sans";
+		}
+	}
+
+	.daoListHeader h2 {
+		text-align: center;
 	}
 }

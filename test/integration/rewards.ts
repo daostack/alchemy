@@ -1,19 +1,35 @@
+import { Address } from "@daostack/client";
+import { getContractAddresses } from "./utils";
 
-import { chai, getContractAddresses, userAddresses } from './utils'
-
-describe('Redemptions page', () => {
-    let addresses;
-    let daoAddress;
-    const userAddress = userAddresses[0];
+describe("Redemptions page", () => {
+    let testAddresses;
+    let daoAddress: Address;
 
     before(async () => {
-      addresses = getContractAddresses();
-      daoAddress = addresses.Avatar.toLowerCase();
-    })
+      testAddresses = getContractAddresses();
+      daoAddress = testAddresses.test.Avatar.toLowerCase();
+    });
 
-    it('should exist', async () => {
+    it("should exist", async () => {
       await browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/redemptions`);
-      const title = await browser.getTitle();
-      title.should.be.equal('Alchemy | DAOstack');
-    })
-})
+      const pageTitle = await browser.getTitle();
+      pageTitle.should.be.equal("Alchemy | DAOstack");
+
+      // we expect the
+      const proposalId = testAddresses.test.executedProposalId;
+      let proposalCard = await $(`[data-test-id=\"proposal-${proposalId}\"]`);
+      await proposalCard.waitForExist();
+
+      const redeemButton = await $(`[data-test-id=\"button-redeem\"]`);
+      // console.log(Object.keys(proposalCard));
+      // const redeemButton = proposalCard
+      const html = await redeemButton.getHTML();
+      console.log(html);
+      // browser.debug();
+      await redeemButton.click();
+      let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
+      await launchMetaMaskButton.click();
+      browser.debug();
+
+    });
+});

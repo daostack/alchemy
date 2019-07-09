@@ -1,19 +1,29 @@
 .container {
   width: 100%;
+  white-space: nowrap;
 }
 
 .detailView {
 	text-align: right;
 
-	.timeSection strong {
-		font-weight: bold;
-	    margin-right: 8px;
+  .label {
+    margin-right: 8px;
+		color: $black-halftone;
+  }
+
+	.timeSection {
+
+    strong {
+      font-weight: bold;
+      display: inline-block;
+    }
 	}
 }
 
 .percentageContainer {
 	width: 100%;
 	height: 2px;
+	display: none;
 	border-top: 1px solid rgba(105, 164, 231, 1.000);
 }
 
@@ -23,5 +33,21 @@
 
   strong {
   	font-weight: normal;
+  	font-family: $body-font;
   }
+
+  .colon {
+    display: inline-block;
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+}
+
+.schemeView .timeSection strong {
+	color: $gray-1;
+}
+
+.overTime {
+	margin-left: 8px;
+	display: inline-block;
 }

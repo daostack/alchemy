@@ -1,18 +1,10 @@
-.clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
-}
+@import "./react-mde.css";
 
-.downV {
-  position: absolute;
-  right: 20px;
-  bottom: 21px;
-  z-index: 1000;
+.hidden {
+  display: none !important;
 }
 
 .createProposalWrapper {
-  width: 540px;
   border-radius: 15px 15px 0 0;
   background-color: $white;
   position: fixed;
@@ -21,12 +13,11 @@
   transform: translate(-50%,-50%);
   box-shadow: $shadow-3;
 
-  h2 {
+  .header {
     background-color: $navy;
     border-radius: 15px 15px 0 0;
     position: relative;
     margin: 0;
-    margin-bottom: 20px;
     padding: 0;
     color: $white;
     height: 40px;
@@ -36,7 +27,6 @@
 
     span {
       position: relative;
-      top: -13px;
       font-size: 16px;
       font-weight: normal;
       left: 13px;
@@ -54,25 +44,22 @@
   }
 
   form {
-    padding: 0 30px 30px 30px;
+    padding: 20px 30px 30px 30px;
 
-    textarea {
-      height: 50px;
-    }
-
-    input, textarea {
+    input {
       margin-top: 3px;
       margin-bottom: 5px;
       width: 445px;
       display: block;
       border: none;
       background-color: transparent;
-      border: 1px solid rgba(191, 203, 213, 1.000);
+      border: $gray-border-2;
       font-size: 13px;
       padding: 12px 12px;
       font-family: $body-font;
+
       &.error {
-        border: 1px solid rgba(255, 8, 96, 1.000);
+        border: 1px solid rgba(246, 80, 80, 1.000);
       }
       &:focus {
         outline: none;
@@ -86,11 +73,14 @@
       line-height: 35px;
     }
 
+    input::placeholder, textarea::placeholder {
+        color: rgba(154, 169, 181, 1.000);
+    }
+
     .contributionReward {
       width: 110px;
       display: inline-block;
     }
-
 
     .reward {
       float: left;
@@ -104,7 +94,7 @@
       .externalTokenSelect {
         display: block;
         font-size: 13PX;
-        color: rgba(154, 169, 181, 1.000);
+        color: $gray-1;
         margin: 0;
         border: 1px solid #aaa;
         border-radius: 0;
@@ -125,25 +115,9 @@
       margin-right: 10px;
     }
 
-    .contributionType {
-      border-top: 1px solid rgba(191, 203, 213, 1.000);
-      border-right: 1px solid rgba(191, 203, 213, 1.000);
-      border-bottom: 1px solid rgba(191, 203, 213, 1.000);
-      width: 75px;
-      font-size: 14px;
-      position: relative;
-      height: 28px;
-      display: inline-block;
-      top: 9px;
-    }
 
-    .contributionTypeDropdown {
-      width: 75px;
-      height: 28px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      border: 0;
+    .permissionCheckbox {
+      font-size: 9px;
     }
 
     label {
@@ -173,9 +147,12 @@
     }
 
     .errorMessage {
+      font-weight: normal;
       position: relative;
       left: 10px;
-      color: red
+      color: rgba(246, 80, 80, 1.000);
+      font-size: 11px;
+      font-weight: 300;
     }
 
     .errorMessage.someReward {
@@ -185,6 +162,7 @@
       left: 0;
       font-size: $small;
       z-index: -10;
+      font-weight: 300;
     }
 
   }
@@ -203,6 +181,7 @@
 
   .transactionList {
     padding: 30px 0;
+
     .transactionListHeader {
       font-size: $body;
       font-weight: $normal;
@@ -216,6 +195,7 @@
         font-size: $small;
       }
     }
+
     table {
       font-size: $caption;
       width: 100%;
@@ -223,6 +203,7 @@
       border-spacing: 0;
       margin-top: 12px;
       color: $black-halftone;
+
       td {
         padding: 8px 0;
         border-spacing: 0;
@@ -230,10 +211,12 @@
         border-bottom: $gray-border-halftone;
       }
     }
+
     .tokenAmount {
       color: $accent-1;
       font-weight: $bold;
     }
+
     .userAvatar {
       height: 20px;
       position: relative;
@@ -241,21 +224,24 @@
       margin: 0 8px;
       margin-top: -6px;
     }
+
     .transferIcon {
       margin-left: 8px;
     }
+
     .transferTotals {
       text-align: right;
     }
   }
+
   .exitProposalCreation {
     cursor: pointer;
     height: 30px;
     display: inline-block;
     margin: 0 5px;
     font-weight: normal;
-    font-size: $body;
-    padding: 0 15px 2px 15px;
+    font-size: 13px;
+    padding: 0 25px 2px 25px;
     font-family: $body-font;
     transition: all .25s ease;
     border: none;
@@ -263,15 +249,17 @@
     border-radius: 15px;
     color: rgba(0, 113, 255, 1.000);
   }
+
   .submitProposal {
     height: 30px;
     border: none;
     display: inline-block;
     margin: 0 5px;
     font-weight: normal;
-    font-size: $body;
-    padding: 0 15px 2px 15px;
+    font-size: 13px;
+    padding: 0 25px 2px 25px;
     font-family: $body-font;
+    font-weight: bold;
     transition: all .25s ease;
     background-color: rgba(0, 113, 255, 1.000);
     border-radius: 15px;
@@ -292,6 +280,7 @@
       display: none;
     }
   }
+
   .submitProposal:disabled .loading {
     display: inline-block;
   }
@@ -305,8 +294,299 @@
   .submitProposal:disabled .sendIcon {
     display: none;
   }
+
   .createProposalActions {
     text-align: right;
-    margin-top: 30px;
+    margin-top: 20px;
+  }
+}
+
+.downV {
+  position: absolute;
+  right: 20px;
+  bottom: 21px;
+  z-index: 1000;
+}
+
+.contributionReward {
+  width: 540px;
+}
+
+.clearfix:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.createWrapperWithSidebar {
+  width: 735px;
+  content: "";
+  clear: both;
+  display: table;
+
+  .sidebar {
+    width: 199px;
+    float: left;
+    padding-top: 30px;
+
+    .addSchemeButton {
+      display: block;
+    }
+
+    button {
+      display: block;
+      position: relative;
+      border: 0;
+      outline: none;
+      font-size: 13px;
+      font-weight: bold;
+      color: rgba(80, 97, 118, 1.000);
+      margin: 0;
+      padding: 15px 30px;
+      width: 100%;
+      text-align: left;
+
+      span {
+        display: none;
+      }
+    }
+
+    button:hover, button.selected {
+      background-color: rgba(233, 238, 244, 1.000);
+
+      span {
+        width: 25px;
+        height: 19px;
+        position: absolute;
+        right: -8px;
+        transform: rotate(63deg) skew(35deg) translateY(-50%);
+        display: block;
+        top: 50%;
+        background-color: #e9eef4;
+      }
+    }
+  }
+
+  .formWrapper {
+    width: 535px;
+    float: left;
+    border-left: 1px solid #e9eef4;
+
+    .tab {
+      display: none;
+    }
+
+    .tab.selected {
+      display: block;
+    }
+
+    .arrayFieldContainer {
+      margin-top: 3px;
+
+      input {
+        width: 398px;
+        display: inline-block;
+      }
+
+      .arrayField {
+        margin-bottom: 15px;
+      }
+
+      .removeItemButton {
+        height: 30px;
+        padding: 0;
+        margin: 0 0 0 10px;
+        width: 30px;
+      }
+
+      .addItemButton {
+        margin-bottom: 15px;
+      }
+
+      button {
+        border: none;
+        background-color: rgba(245, 247, 250, 1.000);
+        height: 30px;
+        line-height: 30px;
+        padding: 0 15px;
+        margin-right: 8px;
+        border-radius: 3px;
+        outline: none;
+        color: rgba(104, 155, 214, 1.000);
+        font-weight: bold;
+        text-align: center;
+      }
+    }
+  }
+
+  .addEditSchemeFields, .removeSchemeFields, .addSchemeSelectContainer, .editSchemeSelectContainer {
+    display: none;
+    position: relative;
+  }
+
+  .editSchemeSelectContainer {
+    height: 63px;
+  }
+
+  .addScheme .addEditSchemeFields, .removeScheme .removeSchemeFields, .editScheme .addEditSchemeFields {
+    display: block;
+  }
+
+  .addScheme .addSchemeSelectContainer {
+    display: block;
+  }
+
+  .editScheme .editSchemeSelectContainer {
+    display: block;
+  }
+
+  .removeSchemeSelectContainer {
+    position: relative;
+  }
+
+  label {
+    z-index: 100;
+  }
+
+  .otherScheme {
+    width: 445px;
+  }
+
+  .schemeSelect {
+    display: block;
+    font-size: 13px;
+    margin: 3px 0 5px 0;
+    border: 1px solid #aaa;
+    border-radius: 0;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    bottom: 0px;
+    height: 37px;
+    padding: 0 30px 0 15px;
+    left: 0;
+    z-index: 0;
+    border: 1px solid #bfcbd5;
+    width: 477px;
+  }
+
+  .parametersHash {
+    input {
+      font-size: 12px;
+    }
+  }
+
+  .permissions {
+    display: block;
+    padding-top: 15px;
+
+    .permissionsLabel {
+      font-size: 13px;
+      font-weight: bold;
+      color: rgba(80, 97, 118, 1.000);
+    }
+
+    .permissionCheckbox  {
+      width: 50%;
+      display: inline-block;
+      padding: 4px 0 0 0;
+
+      input {
+        display: inline;
+        width: 20px;
+        height: 13px;
+      }
+
+      label {
+        font-size: 11px;
+        font-weight: normal;
+        display: inline;
+        z-index: 1000;
+      }
+    }
+  }
+}
+
+form .radioButtons {
+  input {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+    margin: 0 5px;
+    padding: 0px;
+  }
+
+  label {
+    display: inline-block;
+    width: auto;
+    font-weight: normal;
+    vertical-align: middle;
+    padding: 0;
+
+    .requiredMarker {
+      display: none;
+    }
+
+  }
+}
+
+
+@media only screen and (max-width: 425px) {
+  .createProposalWrapper {
+    top: 0;
+    left: 0;
+    transform: translate(0,0);
+
+    form {
+      padding: 15px 15px 15px 15px;
+
+      input, textarea, label {
+        width: 255px;
+      }
+    }
+  }
+
+  .contributionReward {
+    width: auto;
+  }
+
+  .schemeRegistrar {
+    width: auto;
+
+    .permissions .permissionCheckbox {
+      width: auto;
+    }
+
+    .schemeRegistrarForm {
+      width: auto;
+    }
+  }
+
+  .schemeRegistrar .schemeRegistrarSidebar {
+    width: auto;
+    float: none;
+
+    button {
+      font-size: 12px;
+      padding: 10px 11px;
+      display: inline-block;
+      width: auto;
+    }
+
+    .addSchemeButton {
+      display: inline-block;
+      margin: 0 0 0 0;
+    }
+
+    button.selected span {
+      width: 24px;
+      left: 50%;
+      right: auto;
+      transform: rotate(153deg) skew(35deg);
+      top: 25px;
+      background-color: #e9eef4;
+      margin-left: -12px;
+    }
   }
 }
