@@ -65,12 +65,23 @@ export default class Util {
       arc = getArc();
     } catch {}
 
-    if (arc) {
+    /**
+     * make sure that if the web3Provider is passed in, then the web3 we use matches it
+     */
+    if (arc && arc.web3 &&
+      (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
+
       web3 = arc.web3;
-    } else if ((<any> window).web3) {
+
+    } else if ((<any> window).web3 &&
+      (!web3Provider || ((<any> window).web3.currentProvider === web3Provider))) {
+
       web3 = (<any> window).web3;
+
     } else if (web3Provider) {
+
       web3 = new Web3(web3Provider);
+
     }
 
     if (!web3) {

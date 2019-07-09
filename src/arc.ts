@@ -66,7 +66,7 @@ export async function checkMetaMaskAndWarn(showNotification?: any): Promise<bool
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export async function checkMetaMask(metamask?: any) {
+export async function checkMetaMask() {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -86,12 +86,8 @@ export async function checkMetaMask(metamask?: any) {
     }
   }
 
-  let web3Provider: any;
-  if (metamask) {
-    web3Provider = metamask;
-  } else {
-    web3Provider = getMetaMask();
-  }
+  let web3Provider = getMetaMask();
+
   if (!web3Provider) {
     const msg = `Please install or enable metamask`;
     throw Error(msg);
@@ -176,10 +172,9 @@ export function getArc(): Arc {
 
 export async function initializeArc(): Promise<Arc> {
   const arcSettings = getArcSettings();
-  const metamask = getMetaMask();
 
   try {
-    arcSettings.web3Provider = await checkMetaMask(metamask);
+    arcSettings.web3Provider = await checkMetaMask();
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
     console.log(err);
