@@ -30,6 +30,7 @@ interface IState {
 interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
+  contextMenu?: boolean;
   currentAccountAddress?: Address;
   dao: IDAOState;
   detailView?: boolean;
@@ -111,6 +112,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   public render() {
     const {
       beneficiaryProfile,
+      contextMenu,
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
@@ -170,6 +172,7 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     const wrapperClass = classNames({
       [css.predictions]: true,
+      [css.contextMenu]: contextMenu,
       [css.detailView]: detailView,
       [css.historyView]: historyView,
       [css.unconfirmedPrediction]: isPredicting,
@@ -227,46 +230,95 @@ class PredictionBox extends React.Component<IProps, IState> {
       );
     }
 
-    return (
-      <div className={wrapperClass}>
-        {showPreStakeModal ?
-          <PreTransactionModal
-            actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
-            beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreStakeModal.bind(this)}
-            currentAccountGens={currentAccountGens}
-            dao={dao}
-            proposal={proposal}
-            secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
-          /> : ""
-        }
-
-        <div className={css.stakeControls}>
-          {stakingEnabled
-            ? <span>
-              {
-                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
-                    {passButton}
-                  </Tooltip> :
-                  passButton
-              }
-              {
-                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
-                  <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
-                    {failButton}
-                  </Tooltip> :
-                  failButton
-              }
-            </span>
-            : <span className={css.disabledPredictions}>
-              Predictions are disabled
-            </span>
+    if (contextMenu) {
+      return (
+        <div className={wrapperClass}>
+          {showPreStakeModal ?
+            <PreTransactionModal
+              actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
+              action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
+              beneficiaryProfile={beneficiaryProfile}
+              closeAction={this.closePreStakeModal.bind(this)}
+              currentAccountGens={currentAccountGens}
+              dao={dao}
+              proposal={proposal}
+              secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
+            /> : ""
           }
+          <div className={css.contextTitle}>
+            <div>
+              <span>
+                Predict
+              </span>
+            </div>
+          </div>
+          <div className={css.contextContent}>
+            {stakingEnabled
+              ? <div>
+                {
+                  (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
+                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                      {passButton}
+                    </Tooltip> :
+                    passButton
+                }
+                {
+                  (!this.props.currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
+                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                      {failButton}
+                    </Tooltip> :
+                    failButton
+                }
+              </div>
+              : <span className={css.disabledPredictions}>
+                Predictions are disabled
+              </span>
+            }
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className={wrapperClass}>
+          {showPreStakeModal ?
+            <PreTransactionModal
+              actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
+              action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
+              beneficiaryProfile={beneficiaryProfile}
+              closeAction={this.closePreStakeModal.bind(this)}
+              currentAccountGens={currentAccountGens}
+              dao={dao}
+              proposal={proposal}
+              secondaryHeader={"> " + formatTokens(proposal.upstakeNeededToPreBoost, "GEN") + " for boost!"}
+            /> : ""
+          }
+
+          <div className={css.stakeControls}>
+            {stakingEnabled
+              ? <span>
+                {
+                  (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
+                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
+                      {passButton}
+                    </Tooltip> :
+                    passButton
+                }
+                {
+                  (!this.props.currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
+                    <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
+                      {failButton}
+                    </Tooltip> :
+                    failButton
+                }
+              </span>
+              : <span className={css.disabledPredictions}>
+                Predictions are disabled
+              </span>
+            }
+          </div>
+        </div>
+      );
+    }
   }
 }
 

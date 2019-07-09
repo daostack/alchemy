@@ -143,6 +143,31 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 daoEthBalance={daoEthBalance}
                 proposalState={proposalState}
               />
+
+              <div className={css.contextMenu}>
+                <div className={css.menuIcon}>
+                  <img src="/assets/images/Icon/Context-menu.svg"/>
+                </div>
+                <div className={css.menu}>
+                  <VoteButtons
+                    currentAccountAddress={currentAccountAddress}
+                    currentVote={currentAccountVote}
+                    dao={dao}
+                    expired={expired}
+                    isVotingNo={isVotingNo}
+                    isVotingYes={isVotingYes}
+                    proposal={proposalState}
+                    contextMenu={true}/>
+                  <PredictionButtons
+                    beneficiaryProfile={beneficiaryProfile}
+                    currentAccountAddress={currentAccountAddress}
+                    dao={dao}
+                    expired={this.state.expired}
+                    proposal={proposalState}
+                    contextMenu={true}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div className={css.createdBy}>

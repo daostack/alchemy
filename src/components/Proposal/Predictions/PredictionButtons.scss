@@ -320,3 +320,67 @@
     padding: 0 15px;
   }
 }
+
+.contextMenu {
+  margin-top: -15px;
+
+  .contextTitle {
+    width: 100%;
+    border-bottom: 1px solid rgba(233, 238, 244, 1.000);
+    text-align: left;
+    position: relative;
+    top: -5px;
+    margin-bottom: 10px;
+
+    span {
+      font-size: 11px;
+      font-family: "Open Sans";
+      color: rgba(154, 169, 181, 1.000);
+      padding: 3px;
+      background-color: white;
+      position: relative;
+      left: 5px;
+      top: 10px;
+    }
+  }
+}
+
+.contextContent button {
+    display: block;
+    text-align: left;
+    width: 100%;
+    border: none;
+    background-color: rgba(240, 245, 251, 0);
+    transition: all .25s ease;
+    padding: 5px 0;
+    border-radius: 0;
+    margin: 0 0 0 0;
+    font-size: 11px;
+    color: rgba(78, 97, 118, 1.000);
+    font-weight: normal;
+
+    img {
+      margin-left: 15px;
+      position: relative;
+      top: 3px;
+      margin-right: 10px;
+    }
+
+    span {
+      display: inline-block;
+      position: relative;
+      top: -2px;
+      left: 10px;
+    }
+
+    &:hover {
+      background-color: rgba(240, 245, 251, 1.000);
+    }
+}
+
+.contextContent .disabledPredictions {
+    width: 80%;
+    text-align: center;
+    margin: 5px auto 0 auto;
+    display: block;
+}
