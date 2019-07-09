@@ -1,8 +1,7 @@
 import { Address, Arc } from "@daostack/client";
-import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-import { getNetworkName } from "./lib/util";
+import Util, { getNetworkName } from "./lib/util";
 
 const settings = {
   dev: {
@@ -98,8 +97,11 @@ export async function checkMetaMask(metamask?: any) {
     throw Error(msg);
   }
 
-  const networkName = await getNetworkName(web3Provider);
+  const networkId = await Util.getNetworkId(web3Provider);
+  const networkName = await getNetworkName(networkId);
   if (networkName === expectedNetworkName) {
+    // save for future reference
+    web3Provider.__networkId = networkId;
     return web3Provider;
   } else {
     const msg = `Please connect to "${expectedNetworkName}"`;
@@ -175,19 +177,6 @@ export function getArc(): Arc {
 export async function initializeArc(): Promise<Arc> {
   const arcSettings = getArcSettings();
   const metamask = getMetaMask();
-  if (metamask) {
-    console.log("waiting for MetaMask to initialize");
-    //
-    try {
-      await waitUntilTrue(() => metamask.networkVersion, 1000);
-      console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
-    } catch (err) {
-      if (err.message.match(/timed out/)) {
-        console.log("Error: Could not connect to Metamask (time out)");
-      }
-      console.log(err);
-    }
-  }
 
   try {
     arcSettings.web3Provider = await checkMetaMask(metamask);
@@ -201,7 +190,7 @@ export async function initializeArc(): Promise<Arc> {
   console.log(arcSettings);
   console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
   if (arcSettings.web3Provider.isMetaMask) {
-    console.log("Using Metamask Web3 provider");
+    console.log(`Using ${arcSettings.web3Provider.isSafe ? "Gnosis Safe" : "Metamask"} Web3 provider`);
   } else {
     console.log("Using default Web3 provider");
   }

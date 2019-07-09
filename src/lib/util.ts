@@ -57,7 +57,7 @@ export default class Util {
    * return network id, independent of the presence of Arc
    * @param web3Provider
    */
-  public static async getNetworkId(web3Provider?: any) {
+  public static async getNetworkId(web3Provider?: any): Promise<string> {
     let arc: any;
     let web3: any;
 
@@ -77,7 +77,7 @@ export default class Util {
       throw new Error("getNetworkName: unable to find web3");
     }
 
-    return (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)());
+    return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
   }
 
   public static defaultAccount() {
@@ -207,9 +207,9 @@ export function schemeName(scheme: any, fallback?: string) {
   return name;
 }
 
-export async function getNetworkName(web3Provider?: any): Promise<string> {
+export async function getNetworkName(id?: string): Promise<string> {
 
-  let id = (await Util.getNetworkId(web3Provider)).toString();
+  id = id ? id : (await Util.getNetworkId());
 
   switch (id) {
     case "main":
@@ -238,7 +238,7 @@ export async function getNetworkName(web3Provider?: any): Promise<string> {
 export function linkToEtherScan(address: Address) {
   let prefix = "";
   const arc = getArc();
-  if (arc.web3.currentProvider.networkVersion === "4") {
+  if (arc.web3.currentProvider.__networkId === "4") {
     prefix = "rinkeby.";
   }
   return `https://${prefix}etherscan.io/address/${address}`;
