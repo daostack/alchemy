@@ -1,6 +1,6 @@
 import { IProposalState } from "@daostack/client";
 import * as classNames from "classnames";
-import { default as Util, formatTokens } from "lib/util";
+import { formatTokens, fromWei } from "lib/util";
 import * as React from "react";
 
 import * as css from "./PredictionGraph.scss";
@@ -21,8 +21,8 @@ export default class PredictionGraph extends React.Component<IProps, null> {
     } = this.props;
 
     // round second decimal up
-    const stakesFor = Util.fromWei(proposal.stakesFor);
-    const stakesAgainst = Util.fromWei(proposal.stakesAgainst);
+    const stakesFor = fromWei(proposal.stakesFor);
+    const stakesAgainst = fromWei(proposal.stakesAgainst);
     const isPassing = stakesFor >= stakesAgainst;
     const isFailing = stakesAgainst >= stakesFor;
     const maxWidth = Math.max(stakesFor, stakesAgainst);

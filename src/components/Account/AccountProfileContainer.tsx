@@ -96,7 +96,8 @@ class AccountProfileContainer extends React.Component<IProps, null> {
 
     if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-    const web3 = await Util.getWeb3();
+    const arc = getArc();
+    const web3 = arc.web3;
     const timestamp = new Date().getTime().toString();
     const text = ("Please sign this message to confirm your request to update your profile to name '" +
       values.name + "' and description '" + values.description +
