@@ -24,7 +24,7 @@ button:hover {
 
 .wrapper {
   flex-grow: 2;
-  padding: 30px 50px 100px;
+  padding: 50px 50px 100px;
   overflow: scroll;
   position: relative;
 }
@@ -34,6 +34,7 @@ button:hover {
 }
 
 .outer {
+  position: fixed;
   display: flex;
   height: 100%;
   width: 100%;
@@ -360,8 +361,6 @@ button:hover {
   height: 100%;
   min-height: 780px;
   background-color: rgba(48, 120, 202, 1.000);
-  height: -webkit-fill-available;
-  height: -opera-fill-available;
 
   .daoName {
     padding: 20px;
@@ -551,8 +550,6 @@ button:hover {
     border-bottom: 1px solid rgba(195, 212, 231, 1.000);
     margin-bottom: 15px;
     padding-bottom: 3px;
-    background-color: rgba(229, 235, 242, 1.000);
-    padding-top: 10px;
   }
 }
 
@@ -654,7 +651,7 @@ a.navRedemption:hover {
   position: absolute;
   z-index: 100;
   right: 0;
-  top: 10px;
+  top: 11px;
   padding: 0 15px;
 }
 
@@ -856,12 +853,11 @@ a.navItem:hover {
   padding: 0;
   font-size: 28px;
   position: relative;
+  bottom: -10px;
   color: rgba(104, 155, 214, 1.000);
   z-index: 0;
   border-bottom: 1px solid rgba(212,220,228,1);
   padding-bottom: 2px;
-  padding-top: 10px;
-  background-color: rgba(229, 235, 242, 1.000);
 }
 
 .daoHistoryHeader {
@@ -871,8 +867,6 @@ a.navItem:hover {
     padding-bottom: 5px;
     font-weight: bold;
     margin-bottom: 30px;
-    background-color: rgba(229, 235, 242, 1.000);
-    padding-top: 10px;
 }
 
 .redemptionsHeader {
@@ -881,8 +875,6 @@ a.navItem:hover {
   color: rgba(104, 155, 214, 1);
   padding-bottom: 5px;
   border-bottom: 1px solid rgba(191, 203, 213, 1);
-  padding-top: 10px;
-  background-color: rgba(229, 235, 242, 1.000);
 
   span {
     font-size: 13px;
@@ -1187,7 +1179,6 @@ a.navItem:hover {
       min-height: auto;
       overflow: hidden;
       transition: all .25s ease;
-
 
       .daoName a span {
         position: absolute;
