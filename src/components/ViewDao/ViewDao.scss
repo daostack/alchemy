@@ -24,8 +24,9 @@ button:hover {
 
 .wrapper {
   flex-grow: 2;
-  padding: 30px 50px 100px;
-  overflow: scroll;
+  padding: 30px 50px 100px 300px;
+  overflow: auto;
+  z-index: 0;
   position: relative;
 }
 
@@ -302,10 +303,14 @@ button:hover {
   background-color: $sky;
   color: $white;
   flex-grow: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  padding-top: 50px;
+  z-index: 1000;
 
   &:hover {
-    z-index: 100000;
+    z-index: 1000;
   }
 }
 
@@ -1276,7 +1281,7 @@ a.navItem:hover {
   }
 
   .wrapper {
-    padding: 50px 0 100px 0 ;
+    padding: 50px 0 100px 0;
   }
 
   .noticeWrapper {
