@@ -2,6 +2,7 @@ export const wrapper: string;
 export const loading: string;
 export const daoInfoContainer: string;
 export const dao: string;
+export const daoList: string;
 export const daoInfoTitle: string;
 export const daoLink: string;
 export const daoInactive: string;
