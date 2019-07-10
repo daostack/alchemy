@@ -1,7 +1,7 @@
 import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-import Util, { getNetworkName } from "./lib/util";
+import { getNetworkId, getNetworkName } from "./lib/util";
 
 const settings = {
   dev: {
@@ -93,7 +93,7 @@ export async function checkWeb3Provider() {
     throw Error(msg);
   }
 
-  const networkId = await Util.getNetworkId(web3Provider);
+  const networkId = await getNetworkId(web3Provider);
   const networkName = await getNetworkName(networkId);
   if (networkName === expectedNetworkName) {
     // save for future reference

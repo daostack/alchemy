@@ -6,7 +6,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
+import { copyToClipboard  } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -60,7 +60,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
 
   public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
-    Util.copyToClipboard(accountAddress);
+    copyToClipboard(accountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
     e.preventDefault();
   }

@@ -167,7 +167,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           <div className={voteWrapperClass}>
             <div className={voteControls + " clearfix"}>
               <div className={css.voteDivider}>
-                <VoteGraph dao={dao} size={40} proposal={proposalState} />
+                <VoteGraph size={40} proposal={proposalState} />
               </div>
 
               <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposalState} detailView={false} />

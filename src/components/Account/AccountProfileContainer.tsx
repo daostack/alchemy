@@ -10,7 +10,7 @@ import DaoSidebar from "components/ViewDao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
-import { default as Util, formatTokens } from "lib/util";
+import { copyToClipboard, formatTokens } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -86,7 +86,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
 
   public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
-    Util.copyToClipboard(accountAddress);
+    copyToClipboard(accountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
     e.preventDefault();
   }

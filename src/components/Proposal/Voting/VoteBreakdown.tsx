@@ -113,7 +113,7 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>For</span>
             <br className={css.label}/>
-            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.votesFor} hideSymbol={true} hideTooltip={!detailView} />
+            <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol={true} hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -145,7 +145,7 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>Against</span>
             <br className={css.label}/>
-            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.votesAgainst} hideSymbol={true} hideTooltip={!detailView} />
+            <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol={true} hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>

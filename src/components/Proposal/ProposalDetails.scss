@@ -26,6 +26,7 @@ button.disabled {
 
 .wrapper {
   width: 100%;
+  max-width: 750px;
 }
 
 .clickable {
@@ -225,7 +226,8 @@ button.disabled {
   transition: all .25s ease;
   margin-top: 15px;
   flex-grow: 1;
-  min-width: 350px;
+  min-width: 320px;
+  max-width: 40%;
 }
 
 .createdBy {
@@ -284,6 +286,7 @@ button.disabled {
 
   .proposalActions {
   	min-width: auto;
+    max-width: inherit;
   }
 
   .disqus {

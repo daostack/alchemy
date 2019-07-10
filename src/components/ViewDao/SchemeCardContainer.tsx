@@ -25,7 +25,7 @@ const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
           <Link className={css.proposalTitle} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
             <span>
               <em className={css.miniGraph}>
-                <VoteGraph size={20} dao={dao} proposal={proposalState} />
+                <VoteGraph size={20} proposal={proposalState} />
               </em>
               {humanProposalTitle(proposalState)}
             </span>
