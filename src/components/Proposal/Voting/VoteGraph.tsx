@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, } from "@daostack/client";
+import { IProposalStage, IProposalState, } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { fromWei } from "lib/util";
@@ -7,7 +7,6 @@ import * as React from "react";
 import * as css from "./VoteGraph.scss";
 
 interface IProps {
-  dao: IDAOState;
   proposal: IProposalState;
   size: number;
   newVotesAgainst?: BN;
@@ -16,9 +15,9 @@ interface IProps {
 
 export default class VoteGraph extends React.Component<IProps, null> {
   public render() {
-    const { dao, newVotesAgainst, newVotesFor, proposal, size } = this.props;
+    const { newVotesAgainst, newVotesFor, proposal, size } = this.props;
 
-    const totalReputationSupply = fromWei(dao.reputationTotalSupply);
+    const totalReputationSupply = fromWei(proposal.totalRepWhenCreated);
     const votesFor = fromWei(proposal.votesFor.add(newVotesFor || new BN(0)));
     const votesAgainst = fromWei(proposal.votesAgainst.add(newVotesAgainst || new BN(0)));
 
