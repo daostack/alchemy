@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
-import { checkMetaMaskAndWarn } from "arc";
+import { checkWeb3ProviderAndWarn } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -69,7 +69,7 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public async handleClickExecute(event: any) {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 

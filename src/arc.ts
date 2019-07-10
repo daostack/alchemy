@@ -1,8 +1,7 @@
 import { Address, Arc } from "@daostack/client";
-import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-import { getNetworkName } from "./lib/util";
+import { getNetworkId, getNetworkName } from "./lib/util";
 
 const settings = {
   dev: {
@@ -42,11 +41,11 @@ const settings = {
  *    it will use `alert()` if no such function is provided
  * @return the web3 connection, if everything is fine
  */
-export async function checkMetaMaskAndWarn(showNotification?: any): Promise<boolean> {
+export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    const metamask = await checkMetaMask();
-    await metamask.enable();
-    return metamask;
+    const web3Provider = await checkWeb3Provider();
+    await web3Provider.enable();
+    return web3Provider;
   } catch (err) {
     const msg =  err.message;
     if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
@@ -67,7 +66,7 @@ export async function checkMetaMaskAndWarn(showNotification?: any): Promise<bool
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export async function checkMetaMask(metamask?: any) {
+export async function checkWeb3Provider() {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -87,19 +86,18 @@ export async function checkMetaMask(metamask?: any) {
     }
   }
 
-  let web3Provider: any;
-  if (metamask) {
-    web3Provider = metamask;
-  } else {
-    web3Provider = getMetaMask();
-  }
+  let web3Provider = getMetaMask();
+
   if (!web3Provider) {
-    const msg = `Please install or enable metamask`;
+    const msg = `Please install or enable Metamask or Gnosis Safe`;
     throw Error(msg);
   }
 
-  const networkName = await getNetworkName(web3Provider.networkVersion);
+  const networkId = await getNetworkId(web3Provider);
+  const networkName = await getNetworkName(networkId);
   if (networkName === expectedNetworkName) {
+    // save for future reference
+    web3Provider.__networkId = networkId;
     return web3Provider;
   } else {
     const msg = `Please connect to "${expectedNetworkName}"`;
@@ -131,7 +129,7 @@ export async function enableMetamask(): Promise<any> {
   // that will ask the user to enable it
   const ethereum = getMetaMask();
   if (!ethereum) {
-    const msg = `Please install or enable metamask`;
+    const msg = `Please install or enable metamask or Gnosis Safe`;
     throw Error(msg);
   }
   await ethereum.enable();
@@ -174,34 +172,21 @@ export function getArc(): Arc {
 
 export async function initializeArc(): Promise<Arc> {
   const arcSettings = getArcSettings();
-  const metamask = getMetaMask();
-  if (metamask) {
-    console.log("waiting for MetaMask to initialize");
-    //
-    try {
-      await waitUntilTrue(() => metamask.networkVersion, 1000);
-      console.log(`MetaMask is ready, and connected to ${metamask.networkVersion}`);
-    } catch (err) {
-      if (err.message.match(/timed out/)) {
-        console.log("Error: Could not connect to Metamask (time out)");
-      }
-      console.log(err);
-    }
-  }
 
   try {
-    arcSettings.web3Provider = await checkMetaMask(metamask);
+    arcSettings.web3Provider = await checkWeb3Provider();
+
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
     console.log(err);
   }
 
   // log some useful info
-  console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
-  console.log(arcSettings);
-  console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
+  // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
+  // console.log(arcSettings);
+  // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
   if (arcSettings.web3Provider.isMetaMask) {
-    console.log("Using Metamask Web3 provider");
+    console.log(`Using ${arcSettings.web3Provider.isSafe ? "Gnosis Safe" : "Metamask"} Web3 provider`);
   } else {
     console.log("Using default Web3 provider");
   }

@@ -1,7 +1,9 @@
 import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { promisify } from "util";
 import { getArc } from "../arc";
+const Web3 = require("web3");
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -201,13 +203,41 @@ export function schemeName(scheme: any, fallback?: string) {
   return name;
 }
 
-export async function getNetworkId() {
-  return await getArc().web3.eth.net.getId();
+/**
+ * return network id, independent of the presence of Arc
+ * @param web3Provider
+ */
+export async function getNetworkId(web3Provider?: any): Promise<string> {
+  let arc: any;
+  let web3: any;
+
+  try {
+    arc = getArc();
+  } catch {}
+
+  /**
+   * make sure that if the web3Provider is passed in, then the web3 we use matches it
+   */
+  if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
+    web3 = arc.web3;
+  } else if ((<any> window).web3 &&
+    (!web3Provider || ((<any> window).web3.currentProvider === web3Provider))) {
+    web3 = (<any> window).web3;
+  } else if (web3Provider) {
+    web3 = new Web3(web3Provider);
+  }
+
+  if (!web3) {
+    throw new Error("getNetworkId: unable to find web3");
+  }
+
+  return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
 }
 
 export async function getNetworkName(id?: string): Promise<string> {
+
   if (!id) {
-    id = (await getNetworkId()).toString();
+    id = await getNetworkId();
   }
 
   switch (id) {
@@ -237,7 +267,7 @@ export async function getNetworkName(id?: string): Promise<string> {
 export function linkToEtherScan(address: Address) {
   let prefix = "";
   const arc = getArc();
-  if (arc.web3.currentProvider.networkVersion === "4") {
+  if (arc.web3.currentProvider.__networkId === "4") {
     prefix = "rinkeby.";
   }
   return `https://${prefix}etherscan.io/address/${address}`;
