@@ -5,7 +5,7 @@ import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
-import { default as Util, formatTokens } from "lib/util";
+import { formatTokens, fromWei } from "lib/util";
 import { getExchangesList, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -95,7 +95,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
-      accountGens = Util.fromWei(currentAccountGens);
+      accountGens = fromWei(currentAccountGens);
 
       buyGensClass = classNames({
         [css.genError]: true,
@@ -317,7 +317,6 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                    <div className="clearfix">
                      <div className={css.graphContainer}>
                        <VoteGraph
-                         dao={dao}
                          newVotesAgainst={actionType === ActionTypes.VoteDown ? currentAccount.reputation : new BN(0)}
                          newVotesFor={actionType === ActionTypes.VoteUp ? currentAccount.reputation : new BN(0)}
                          proposal={proposal}
@@ -327,11 +326,11 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                      <div className={css.graphInfo}>
                        <div>
                          <img src="/assets/images/Icon/vote/for.svg"/>
-                         For <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationFor} />
+                         For <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationFor} />
                        </div>
                        <div>
                          <img src="/assets/images/Icon/vote/against.svg"/>
-                         Against <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationAgainst} />
+                         Against <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationAgainst} />
                        </div>
                    </div>
                    </div>

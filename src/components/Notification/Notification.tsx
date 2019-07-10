@@ -1,5 +1,5 @@
 import classNames = require("classnames");
-import Util from "lib/util";
+import { copyToClipboard } from "lib/util";
 import * as React from "react";
 import Linkify from "react-linkify";
 import { NotificationStatus, showNotification } from "reducers/notifications";
@@ -42,7 +42,7 @@ export default class Notification extends React.Component<IProps, null> {
 
   public copyToClipboard(message: string) {
     const { showNotification } = this.props;
-    Util.copyToClipboard(message);
+    copyToClipboard(message);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
   }
 
