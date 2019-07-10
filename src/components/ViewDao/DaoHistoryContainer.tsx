@@ -10,6 +10,7 @@ import * as InfiniteScroll from "react-infinite-scroll-component";
 import { RouteComponentProps } from "react-router-dom";
 import { combineLatest } from "rxjs";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
+import * as Sticky from "react-stickynode";
 import * as css from "./ViewDao.scss";
 
 interface IProps {
@@ -32,10 +33,11 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
     return(
         <div>
           <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
-
-          <div className={css.daoHistoryHeader}>
-            History
-          </div>
+          <Sticky enabled={true} top={0} innerZ={10000}>
+            <div className={css.daoHistoryHeader}>
+              History
+            </div>
+          </Sticky>
           <div className={css.proposalsContainer}>
             <div className={css.closedProposalsHeader}>
               <div className={css.proposalCreator}>Proposed by</div>
