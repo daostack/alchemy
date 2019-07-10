@@ -41,11 +41,11 @@ const settings = {
  *    it will use `alert()` if no such function is provided
  * @return the web3 connection, if everything is fine
  */
-export async function checkMetaMaskAndWarn(showNotification?: any): Promise<boolean> {
+export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    const metamask = await checkWeb3Provider();
-    await metamask.enable();
-    return metamask;
+    const web3Provider = await checkWeb3Provider();
+    await web3Provider.enable();
+    return web3Provider;
   } catch (err) {
     const msg =  err.message;
     if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {

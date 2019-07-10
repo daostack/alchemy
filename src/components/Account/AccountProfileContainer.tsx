@@ -1,6 +1,6 @@
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { checkWeb3ProviderAndWarn, getArc, getMetaMask } from "arc";
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
@@ -94,35 +94,38 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any) {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification.bind(this)))) { return; }
+    try {
+      if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-    const web3 = await Util.getWeb3();
-    const timestamp = new Date().getTime().toString();
-    const text = ("Please sign this message to confirm your request to update your profile to name '" +
-      values.name + "' and description '" + values.description +
-      "'. There's no gas cost to you. Timestamp:" + timestamp);
-    const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
+      const web3Provider = await getMetaMask();
+      const timestamp = new Date().getTime().toString();
+      const text = ("Please sign this message to confirm your request to update your profile to name '" +
+        values.name + "' and description '" + values.description +
+        "'. There's no gas cost to you. Timestamp:" + timestamp);
+      const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
 
-    const method = "personal_sign";
+      const method = "personal_sign";
 
-    // Create promise-based version of send
-    const send = promisify(web3.currentProvider.send);
-    const params = [msg, currentAccountAddress];
-    const result = await send({ method, params, from: currentAccountAddress });
-    if (result.error) {
-      console.error("Signing canceled, data was not saved");
-      showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
-      setSubmitting(false);
-      return;
-    }
-    const signature = result.result;
+      // Create promise-based version of send
+      const send = promisify(web3Provider.send);
+      const params = [msg, currentAccountAddress];
+      const result = await send({ method, params, from: currentAccountAddress });
+      if (result.error) {
+        console.error("Signing canceled, data was not saved");
+        showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
+        setSubmitting(false);
+        return;
+      }
+      const signature = result.result;
 
-    const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
-    if (recoveredAddress.toLowerCase() === accountAddress) {
-      await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
-    } else {
-      console.error("Signing failed");
-      showNotification(NotificationStatus.Failure, `Saving profile failed, please try again`);
+      const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
+      if (recoveredAddress.toLowerCase() === accountAddress) {
+        await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
+      } else {
+        showNotification(NotificationStatus.Failure, `Saving profile failed, please try again`);
+      }
+    } catch (error) {
+      showNotification(NotificationStatus.Failure, error.message);
     }
     setSubmitting(false);
   }
