@@ -9,6 +9,7 @@ import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
+import * as Sticky from "react-stickynode";
 import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
@@ -103,14 +104,15 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     return (
       <div>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
-        <div className={css.redemptionsHeader}>
-          Redemptions
-          {proposals.length > 0 ?
-              <span>Pending Protocol Rewards:&nbsp;{totalRewardsString}</span>
-            : ""
-          }
-        </div>
-
+        <Sticky enabled={true} top={0} innerZ={10000}>
+          <div className={css.redemptionsHeader}>
+            Redemptions
+            {proposals.length > 0 ?
+                <span>Pending Protocol Rewards:&nbsp;{totalRewardsString}</span>
+              : ""
+            }
+          </div>
+        </Sticky>
         <div className={css.proposalsContainer}>
           {proposals.length > 0 ?
             <div>{proposalsHTML}</div>

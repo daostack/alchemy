@@ -3,6 +3,7 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
+import * as Sticky from "react-stickynode";
 import DaoContainer from "./DaoContainer";
 import * as css from "./DaoList.scss";
 
@@ -21,10 +22,14 @@ class DaoListContainer extends React.Component<IProps, null> {
     });
     return (
       <div className={css.wrapper}>
-        <div className={css.daoListHeader + " clearfix"}>
-          <h2 data-test-id="header-all-daos">All DAOs</h2>
+        <Sticky enabled={true} top={0} innerZ={10000}>
+          <div className={css.daoListHeader + " clearfix"}>
+            <h2 data-test-id="header-all-daos">All DAOs</h2>
+          </div>
+        </Sticky>
+        <div className={css.daoList}>
+          {daoNodes ? daoNodes : "None"}
         </div>
-        {daoNodes ? daoNodes : "None"}
       </div>
     );
       }
