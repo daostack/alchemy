@@ -94,10 +94,11 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any) {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    try {
-      if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-      const web3Provider = await getMetaMask();
+    const web3Provider = await getMetaMask();
+    try {
+
       const timestamp = new Date().getTime().toString();
       const text = ("Please sign this message to confirm your request to update your profile to name '" +
         values.name + "' and description '" + values.description +
@@ -107,7 +108,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
       const method = "personal_sign";
 
       // Create promise-based version of send
-      const send = promisify(web3Provider.send);
+      const send = promisify(web3Provider.sendAsync);
       const params = [msg, currentAccountAddress];
       const result = await send({ method, params, from: currentAccountAddress });
       if (result.error) {
@@ -125,7 +126,12 @@ class AccountProfileContainer extends React.Component<IProps, null> {
         showNotification(NotificationStatus.Failure, `Saving profile failed, please try again`);
       }
     } catch (error) {
-      showNotification(NotificationStatus.Failure, error.message);
+      if (web3Provider.isSafe) {
+        console.log(error.message);
+        showNotification(NotificationStatus.Failure, "We're very sorry, but Gnosis Safe does not support message signing :-(");
+      } else {
+        showNotification(NotificationStatus.Failure, error.message);
+      }
     }
     setSubmitting(false);
   }
