@@ -28,12 +28,13 @@ interface IProps {
 
 interface IVoteRowProps {
   dao: IDAOState;
+  proposalState: IProposalState;
   vote: IVote;
 }
 class VoteRow extends React.Component<IVoteRowProps, null> {
 
   public render() {
-    const {dao, vote} = this.props;
+    const {dao, proposalState, vote} = this.props;
 
     return (
       <div className={css.voteRow}>
@@ -45,7 +46,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
             </span>
           </div>
           <div className={css.reputationAmount}>
-            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={vote.amount} hideSymbol={true} />
+            <ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={vote.amount} hideSymbol={true} />
           </div>
           <div className={css.reputationLine}></div>
         </div>
@@ -98,11 +99,11 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
                   <span className={css.reputationTitle}>For</span>
                   <br/>
-                  <p><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposalState.votesFor} hideSymbol={true} /> Rep</p>
+                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol={true} /> Rep</p>
                 </span>
               </div>
               <div className={css.graphContainer}>
-                <VoteGraph size={90} dao={dao} proposal={proposalState} />
+                <VoteGraph size={90} proposal={proposalState} />
               </div>
               <div className={voteDownClass}>
                 <span className={css.reputation}>
@@ -110,17 +111,17 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
                   <span className={css.reputationTitle}>Against</span>
                   <br />
-                  <p><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposalState.votesAgainst} hideSymbol={true} /> Rep</p>
+                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol={true} /> Rep</p>
                 </span>
               </div>
             </div>
 
             <div className={css.voters}>
               <div>
-                <div>{yesVotes.map((vote) => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposalState={proposalState} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
               <div>
-                <div>{noVotes.map((vote) => <VoteRow dao={dao} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposalState={proposalState} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
             </div>
           </div>
