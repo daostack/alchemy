@@ -1,67 +1,92 @@
 import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
 import BN = require("bn.js");
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
+import { promisify } from "util";
 import { getArc } from "../arc";
+const Web3 = require("web3");
 
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
 
-export default class Util {
-  public static fromWei(amount: BN): number {
-    try {
-      return Number(getArc().web3.utils.fromWei(amount.toString(), "ether"));
-    } catch (err) {
-      console.warn(`Invalid number value passed to fromWei: "${amount}"`);
-      return 0;
-    }
-  }
+export function getExchangesList() {
+  return exchangesList;
+}
 
-  public static toWei(amount: number): BN {
-    return new BN(getArc().web3.utils.toWei(amount.toString(), "ether"));
-  }
+export function copyToClipboard(value: any) {
+  const el = document.createElement("textarea");
+  el.value = value;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+}
 
-  public static getBalance(account: Address) {
-    return getArc().web3.eth.getBalance(account);
-  }
-
-  public static copyToClipboard(value: any) {
-    const el = document.createElement("textarea");
-    el.value = value;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand("copy");
-    document.body.removeChild(el);
-  }
-
-  public static async getLatestBlock() {
-    try {
-      return (await getArc().web3.getBlock("latest")).number;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  public static trace<T>(x: T, ...args: any[]): T {
-    // tslint:disable-next-line:no-console
-    console.debug("trace", ...args, x);
-    return x;
-  }
-
-  public static getWeb3() {
-    return getArc().web3;
-  }
-  public static async getNetworkId() {
-    return await getArc().web3.eth.net.getId();
-  }
-
-  public static defaultAccount() {
-    return getArc().web3.eth.defaultAccount;
-  }
+export function trace<T>(x: T, ...args: any[]): T {
+  // tslint:disable-next-line:no-console
+  console.debug("trace", ...args, x);
+  return x;
 }
 
 export function humanProposalTitle(proposal: IProposalState) {
   return proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
+}
+
+// Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
+export function toBaseUnit(value: string, decimals: number) {
+  const ten = new BN(10);
+  const base = ten.pow(new BN(decimals));
+
+  // Is it negative?
+  let negative = (value.substring(0, 1) === "-");
+  if (negative) {
+    value = value.substring(1);
+  }
+
+  if (value === ".") {
+    throw new Error(
+    `Invalid value ${value} cannot be converted to`
+    + ` base unit with ${decimals} decimals.`);
+  }
+
+  // Split it into a whole and fractional part
+  let comps = value.split(".");
+  if (comps.length > 2) { throw new Error("Too many decimal points"); }
+
+  let whole = comps[0], fraction = comps[1];
+
+  if (!whole) { whole = "0"; }
+  if (!fraction) { fraction = "0"; }
+  if (fraction.length > decimals) {
+    fraction = fraction.substr(0, decimals);
+  }
+
+  while (fraction.length < decimals) {
+    fraction += "0";
+  }
+
+  const wholeBN = new BN(whole);
+  const fractionBN = new BN(fraction);
+  let wei = (wholeBN.mul(base)).add(fractionBN);
+
+  if (negative) {
+    wei = wei.mul(new BN(-1));
+  }
+
+  return new BN(wei.toString(10), 10);
+}
+
+export function fromWei(amount: BN): number {
+  try {
+    return Number(getArc().web3.utils.fromWei(amount.toString(), "ether"));
+  } catch (err) {
+    console.warn(`Invalid number value passed to fromWei: "${amount}"`);
+    return 0;
+  }
+}
+
+export function toWei(amount: number): BN {
+  return new BN(getArc().web3.utils.toWei(amount.toString(), "ether"));
 }
 
 export function supportedTokens() {
@@ -72,13 +97,9 @@ export function supportedTokens() {
   }, ...tokens};
 }
 
-export function getExchangesList() {
-  return exchangesList;
-}
-
 export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
   const negative = amountWei.lt(new BN(0));
-  const amount = Math.abs(decimals === 18 ? Util.fromWei(amountWei) : amountWei.div(new BN(10).pow(new BN(decimals))).toNumber());
+  const amount = Math.abs(decimals === 18 ? fromWei(amountWei) : amountWei.div(new BN(10).pow(new BN(decimals))).toNumber());
 
   let returnString;
   if (amount === 0) {
@@ -94,6 +115,7 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
     returnString = (amount / 1000000)
       .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "M";
   }
+
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
 }
 
@@ -181,9 +203,41 @@ export function schemeName(scheme: any, fallback?: string) {
   return name;
 }
 
+/**
+ * return network id, independent of the presence of Arc
+ * @param web3Provider
+ */
+export async function getNetworkId(web3Provider?: any): Promise<string> {
+  let arc: any;
+  let web3: any;
+
+  try {
+    arc = getArc();
+  } catch {}
+
+  /**
+   * make sure that if the web3Provider is passed in, then the web3 we use matches it
+   */
+  if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
+    web3 = arc.web3;
+  } else if ((<any> window).web3 &&
+    (!web3Provider || ((<any> window).web3.currentProvider === web3Provider))) {
+    web3 = (<any> window).web3;
+  } else if (web3Provider) {
+    web3 = new Web3(web3Provider);
+  }
+
+  if (!web3) {
+    throw new Error("getNetworkId: unable to find web3");
+  }
+
+  return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
+}
+
 export async function getNetworkName(id?: string): Promise<string> {
+
   if (!id) {
-    id = (await Util.getNetworkId()).toString();
+    id = await getNetworkId();
   }
 
   switch (id) {
@@ -213,7 +267,7 @@ export async function getNetworkName(id?: string): Promise<string> {
 export function linkToEtherScan(address: Address) {
   let prefix = "";
   const arc = getArc();
-  if (arc.web3.currentProvider.networkVersion === "4") {
+  if (arc.web3.currentProvider.__networkId === "4") {
     prefix = "rinkeby.";
   }
   return `https://${prefix}etherscan.io/address/${address}`;

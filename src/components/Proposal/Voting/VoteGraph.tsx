@@ -1,13 +1,12 @@
-import { IDAOState, IProposalStage, IProposalState, } from "@daostack/client";
+import { IProposalStage, IProposalState, } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import { default as Util } from "lib/util";
+import { fromWei } from "lib/util";
 import * as React from "react";
 
 import * as css from "./VoteGraph.scss";
 
 interface IProps {
-  dao: IDAOState;
   proposal: IProposalState;
   size: number;
   newVotesAgainst?: BN;
@@ -16,11 +15,11 @@ interface IProps {
 
 export default class VoteGraph extends React.Component<IProps, null> {
   public render() {
-    const { dao, newVotesAgainst, newVotesFor, proposal, size } = this.props;
+    const { newVotesAgainst, newVotesFor, proposal, size } = this.props;
 
-    const totalReputationSupply = Util.fromWei(dao.reputationTotalSupply);
-    const votesFor = Util.fromWei(proposal.votesFor.add(newVotesFor || new BN(0)));
-    const votesAgainst = Util.fromWei(proposal.votesAgainst.add(newVotesAgainst || new BN(0)));
+    const totalReputationSupply = fromWei(proposal.totalRepWhenCreated);
+    const votesFor = fromWei(proposal.votesFor.add(newVotesFor || new BN(0)));
+    const votesAgainst = fromWei(proposal.votesAgainst.add(newVotesAgainst || new BN(0)));
 
     // If percentages are less than 2 then set them to 2 so they can be visibly noticed
     const yesPercentage = totalReputationSupply && votesFor ? Math.max(2, +(votesFor / totalReputationSupply * 100).toFixed(2)) : 0;

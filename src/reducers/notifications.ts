@@ -1,4 +1,4 @@
-import { default as Util, getNetworkName } from "lib/util";
+import { fromWei, getNetworkName } from "lib/util";
 import * as moment from "moment";
 import { VoteOptions } from "reducers/arcReducer";
 import { Action, Dispatch, Middleware } from "redux";
@@ -163,7 +163,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   "GenesisProtocol.vote": (proposalTitle, {vote, proposalId}) =>
     `Voting ${vote === VoteOptions.Yes ? "Yes" : "No"} on ${elipsis(proposalTitle, 22)}`,
   "GenesisProtocol.stake": (proposalTitle, {vote, proposalId, amount}) =>
-    `Predicting ${vote === VoteOptions.Yes ? "Pass" : "Fail"} on ${elipsis(proposalTitle, 22)} with ${Util.fromWei(amount)} GEN`,
+    `Predicting ${vote === VoteOptions.Yes ? "Pass" : "Fail"} on ${elipsis(proposalTitle, 22)} with ${fromWei(amount)} GEN`,
   "GenesisProtocol.execute": (proposalTitle, {proposalId}) =>
     `Executing "${elipsis(proposalTitle, 22)}"`,
   "Redeemer.redeem": (proposalTitle, {proposalId}) =>
@@ -175,7 +175,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
   "ContributionReward.redeemContributionReward": (proposalTitle, {proposalId}) =>
     `Redeeming contribution reward for "${elipsis(proposalTitle, 22)}"`,
   "StandardToken.approve": (proposalTitle, {amount}) =>
-    `Approving ${Util.fromWei(amount)} GEN for staking`
+    `Approving ${fromWei(amount)} GEN for staking`
 };
 
 /**

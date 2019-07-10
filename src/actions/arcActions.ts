@@ -1,7 +1,7 @@
 import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate } from "@daostack/client";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
-import Util from "lib/util";
+import { toWei } from "lib/util";
 import { IRedemptionState } from "reducers/arcReducer";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
@@ -82,7 +82,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
     // @ts-ignore
-    await proposalObj.stake(prediction, Util.toWei(stakeAmount)).subscribe(...observer);
+    await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
   };
 }
 
