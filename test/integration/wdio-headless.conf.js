@@ -8,7 +8,7 @@ exports.config = {
   capabilities: [{
     ...config.capabilities[0],
     'goog:chromeOptions': {
-        args: ['--headless', '--disable-gpu']
+        args: ['--headless', '--disable-gpu', '--window-size=1920,1080']
     },
   }],
   waitforTimeout: 900000, // 15 minutes
