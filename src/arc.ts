@@ -43,7 +43,7 @@ const settings = {
  */
 export async function checkMetaMaskAndWarn(showNotification?: any): Promise<boolean> {
   try {
-    const metamask = await checkMetaMask();
+    const metamask = await checkWeb3Provider();
     await metamask.enable();
     return metamask;
   } catch (err) {
@@ -66,7 +66,7 @@ export async function checkMetaMaskAndWarn(showNotification?: any): Promise<bool
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export async function checkMetaMask() {
+export async function checkWeb3Provider() {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -89,7 +89,7 @@ export async function checkMetaMask() {
   let web3Provider = getMetaMask();
 
   if (!web3Provider) {
-    const msg = `Please install or enable metamask`;
+    const msg = `Please install or enable Metamask or Gnosis Safe`;
     throw Error(msg);
   }
 
@@ -129,7 +129,7 @@ export async function enableMetamask(): Promise<any> {
   // that will ask the user to enable it
   const ethereum = getMetaMask();
   if (!ethereum) {
-    const msg = `Please install or enable metamask`;
+    const msg = `Please install or enable metamask or Gnosis Safe`;
     throw Error(msg);
   }
   await ethereum.enable();
@@ -174,16 +174,17 @@ export async function initializeArc(): Promise<Arc> {
   const arcSettings = getArcSettings();
 
   try {
-    arcSettings.web3Provider = await checkMetaMask();
+    arcSettings.web3Provider = await checkWeb3Provider();
+
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
     console.log(err);
   }
 
   // log some useful info
-  console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
-  console.log(arcSettings);
-  console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
+  // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
+  // console.log(arcSettings);
+  // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
   if (arcSettings.web3Provider.isMetaMask) {
     console.log(`Using ${arcSettings.web3Provider.isSafe ? "Gnosis Safe" : "Metamask"} Web3 provider`);
   } else {
