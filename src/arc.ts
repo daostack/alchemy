@@ -8,12 +8,14 @@ const settings = {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     web3Provider: "ws://127.0.0.1:8545",
+    web3ProviderRead: "ws://127.0.0.1:8545",
     ipfsProvider: "localhost",
   },
   staging: {
     graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v23",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3ProviderRead: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
       "port": "443",
@@ -25,6 +27,7 @@ const settings = {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v23",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3ProviderRead: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "subgraph.daostack.io",
       "port": "443",
@@ -185,14 +188,18 @@ export async function initializeArc(): Promise<Arc> {
   // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
   // console.log(arcSettings);
   // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
-  if (arcSettings.web3Provider.isMetaMask) {
-    console.log(`Using ${arcSettings.web3Provider.isSafe ? "Gnosis Safe" : "Metamask"} Web3 provider`);
+  if (arcSettings.web3Provider.isSafe) {
+    console.log(`Using Gnosis Safe`);
+  } else if (arcSettings.web3Provider.isMetaMask) {
+    console.log(`Using MetaMask`);
   } else {
-    console.log("Using default Web3 provider");
+    console.log("Using default Web3 (read-only) provider");
   }
 
   const arc: Arc = new Arc(arcSettings);
-  await arc.initialize();
+  // get contract information from the subgraph
+  const contractInfos = await arc.getContractInfos();
+  arc.setContractInfos(contractInfos);
   // save the object on a global window object (I know, not nice, but it works..)
   (<any> window).arc = arc;
   return arc;
