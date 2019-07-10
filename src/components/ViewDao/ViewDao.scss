@@ -1181,11 +1181,16 @@ a.navItem:hover {
   }
 
   .daoSidebar {
-    min-width: auto;
+    width: 50px;
     max-width: 100%;
     height: auto;
     flex-grow: unset;
     z-index: 100000;
+    background-color: rgba(49, 120, 202, 0);
+
+    &:hover {
+      z-index: 100000;
+    }
 
     .daoNavigation {
       height: 0px;
@@ -1212,6 +1217,8 @@ a.navItem:hover {
 
   .daoSidebar.openMenu {
       z-index: 100000;
+      width: 100%;
+      background-color: rgba(49, 120, 202, 1.000);
 
       .daoNavigation {
         height: 520px;
@@ -1268,7 +1275,7 @@ a.navItem:hover {
     display: block;
     position: absolute;
     top: -30px;
-    top: -34px;
+    top: 16px;
     left: 12px;
 
     .menuClosed {
