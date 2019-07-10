@@ -360,6 +360,8 @@ button:hover {
   height: 100%;
   min-height: 780px;
   background-color: rgba(48, 120, 202, 1.000);
+  height: -webkit-fill-available;
+  height: -opera-fill-available;
 
   .daoName {
     padding: 20px;
@@ -1185,6 +1187,7 @@ a.navItem:hover {
       min-height: auto;
       overflow: hidden;
       transition: all .25s ease;
+
 
       .daoName a span {
         position: absolute;
