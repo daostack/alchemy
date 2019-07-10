@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
+import * as Sticky from "react-stickynode";
 import * as css from "./ViewDao.scss";
 
 interface IProps extends RouteComponentProps<any> {
@@ -83,7 +84,9 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     return (
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
-        <h2>Reputation Holders</h2>
+        <Sticky enabled={true} top={0} innerZ={10000}>
+          <h2>Reputation Holders</h2>
+        </Sticky>
         <InfiniteScroll
           dataLength={members.length} //This is important field to render the next data
           next={this.props.fetchMore}

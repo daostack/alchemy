@@ -24,7 +24,7 @@ button:hover {
 
 .wrapper {
   flex-grow: 2;
-  padding: 50px 50px 100px;
+  padding: 30px 50px 100px;
   overflow: scroll;
   position: relative;
 }
@@ -549,6 +549,8 @@ button:hover {
     border-bottom: 1px solid rgba(195, 212, 231, 1.000);
     margin-bottom: 15px;
     padding-bottom: 3px;
+    background-color: rgba(229, 235, 242, 1.000);
+    padding-top: 10px;
   }
 }
 
@@ -877,6 +879,8 @@ a.navItem:hover {
   color: rgba(104, 155, 214, 1);
   padding-bottom: 5px;
   border-bottom: 1px solid rgba(191, 203, 213, 1);
+  padding-top: 10px;
+  background-color: rgba(229, 235, 242, 1.000);
 
   span {
     font-size: 13px;
