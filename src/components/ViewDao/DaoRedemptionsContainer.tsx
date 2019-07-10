@@ -9,8 +9,8 @@ import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
-import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as Sticky from "react-stickynode";
+import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
 interface IProps {

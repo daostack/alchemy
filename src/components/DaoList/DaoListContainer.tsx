@@ -3,9 +3,9 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
+import * as Sticky from "react-stickynode";
 import DaoContainer from "./DaoContainer";
 import * as css from "./DaoList.scss";
-import * as Sticky from "react-stickynode";
 
 interface IProps {
   daos: DAO[];

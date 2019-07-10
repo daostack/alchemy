@@ -7,11 +7,11 @@ import { isKnownScheme } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
+import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
 import * as css from "./AllSchemes.scss";
 import SchemeCardContainer from "./SchemeCardContainer";
-import * as Sticky from "react-stickynode";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition

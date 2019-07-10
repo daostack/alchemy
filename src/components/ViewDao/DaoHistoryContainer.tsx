@@ -8,9 +8,9 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { RouteComponentProps } from "react-router-dom";
+import * as Sticky from "react-stickynode";
 import { combineLatest } from "rxjs";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
-import * as Sticky from "react-stickynode";
 import * as css from "./ViewDao.scss";
 
 interface IProps {

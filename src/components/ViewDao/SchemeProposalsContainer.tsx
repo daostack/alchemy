@@ -9,10 +9,10 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
+import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest, from } from "rxjs";
 import ProposalCardContainer from "../Proposal/ProposalCardContainer";
-import * as Sticky from "react-stickynode";
 import * as css from "./ViewDao.scss";
 
 const Fade = ({ children, ...props }: any) => (
@@ -79,7 +79,6 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
     return (
       <div className={css.daoProposalsContainer} id="scrollContainer">
         <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
-
 
         <Sticky enabled={true} top={0} innerZ={10000}>
           <h2 className={css.queueType}>
