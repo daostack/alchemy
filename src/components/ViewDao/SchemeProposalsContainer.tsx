@@ -15,6 +15,9 @@ import { combineLatest, from } from "rxjs";
 import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
+// For infinite scrolling
+const PAGE_SIZE = 100;
+
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
     {...props}
@@ -137,7 +140,7 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
             </div>
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                Regular Proposals
+                Regular Proposals ({proposalsQueued.length}{hasMoreProposalsToLoad ? "+" : ""})
                 {proposalsQueued.length === 0
                   ?
                     <div>
@@ -196,9 +199,6 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
     const currentTime = Math.floor(new Date().getTime() / 1000);
 
-    // For infinite scrolling
-    const PAGE_SIZE = 100;
-
     const observable = combineLatest(
       // Scheme state
       from(arc.scheme(schemeId)),
@@ -237,9 +237,14 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
           throw state.error;
         } else {
           const data = state.data;
+          let hasMoreProposals = parentState.hasMoreProposalsToLoad;
+          if (data.length < PAGE_SIZE) {
+            setState({ hasMoreProposalsToLoad: false});
+            hasMoreProposals = false;
+          }
           return <SchemeProposalsContainer
             {...this.props}
-            hasMoreProposalsToLoad={parentState.hasMoreProposalsToLoad}
+            hasMoreProposalsToLoad={hasMoreProposals}
             scheme={data[0]}
             proposalsQueued={data[1]}
             proposalsPreBoosted={data[2]}
