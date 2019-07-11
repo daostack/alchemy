@@ -33,7 +33,7 @@ interface IABISpec {
   type: string;
 }
 
-export interface IActionField {
+export interface IActionFieldOptions {
   decimals ?: number;
   defaultValue ?: any;
   name: string;
@@ -52,7 +52,7 @@ export  class ActionField {
   public labelFalse?: string;
   public type?: string;
 
-  constructor(options: IActionField) {
+  constructor(options: IActionFieldOptions) {
     this.decimals = options.decimals;
     this.defaultValue = options.defaultValue;
     this.name = options.name;

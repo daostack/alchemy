@@ -18,6 +18,8 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
   public render() {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
     const decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
+    const action = decodedCallData.action;
+    const values = decodedCallData.values;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -32,11 +34,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Update Mastercopy
+              {action.label}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                New master copy address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
+                { action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -47,7 +49,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Change ETH:USD oracle
+              {action.label}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
@@ -62,7 +64,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              Change DutchX owner
+              {action.label}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
