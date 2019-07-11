@@ -365,7 +365,6 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                               {field.type !== "bool" ? <div className={css.requiredMarker}>*</div> : ""}
                             </label>
-
                             {this.renderField(field, values, touched, errors)}
                           </div>
                         );
