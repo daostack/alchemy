@@ -85,10 +85,10 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
-      // TODO: show notification, not an alert, and close the form
-      alert(err.message);
+      // alert(err.message);
+      console.log(err.message);
       showNotification(NotificationStatus.Failure, err.message);
-      this.props.handleClose();
+      setSubmitting(false);
       return;
     }
     setSubmitting(false);
@@ -105,7 +105,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     try {
       await this.props.createProposal(proposalValues);
     } catch (err) {
-      alert(err.message);
+      showNotification(NotificationStatus.Failure, err.message);
       throw err;
     }
     this.props.handleClose();
@@ -264,6 +264,12 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
               for (let input of this.state.currentAction.abi.inputs) {
                 if (input.type !== "bool") {
                   valueIsRequired(input.name);
+                }
+                if (input.type === "address") {
+                  const value = values[input.name];
+                  if (!arc.web3.utils.isAddress(value)) {
+                    errors[input.name] = "Invalid address";
+                  }
                 }
 
                 if (input.type === "address[]") {
