@@ -55,7 +55,6 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
                 next={fetchMore}
                 hasMore={hasMoreProposalsToLoad}
                 loader={<h4>Loading...</h4>}
-                scrollableTarget="viewDaoWrapper"
                 style={{overflow: "visible"}}
                 endMessage={
                   <p style={{textAlign: "center"}}>

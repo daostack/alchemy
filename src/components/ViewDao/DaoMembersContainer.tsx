@@ -92,7 +92,6 @@ class DaoMembersContainer extends React.Component<IProps, null> {
           next={this.props.fetchMore}
           hasMore={members.length < this.props.dao.memberCount}
           loader={<h4>Loading...</h4>}
-          scrollableTarget="viewDaoWrapper"
           endMessage={
             <p style={{textAlign: "center"}}>
               <b>&mdash;</b>

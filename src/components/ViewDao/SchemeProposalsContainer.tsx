@@ -152,7 +152,6 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
                   next={fetchMore}
                   hasMore={hasMoreProposalsToLoad}
                   loader={<h4>Loading...</h4>}
-                  scrollableTarget="viewDaoWrapper"
                   endMessage={
                     <p style={{textAlign: "center"}}>
                       <b>&mdash;</b>
