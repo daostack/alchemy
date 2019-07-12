@@ -1,5 +1,5 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/client";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
@@ -43,7 +43,7 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
   }
 
   public async handleClickVote(vote: number, event: any) {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const { currentAccountState } = this.props;
     if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
@@ -113,7 +113,7 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>For</span>
             <br className={css.label}/>
-            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.votesFor} hideSymbol={true} hideTooltip={!detailView} />
+            <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol={true} hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -145,7 +145,7 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>Against</span>
             <br className={css.label}/>
-            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={proposal.votesAgainst} hideSymbol={true} hideTooltip={!detailView} />
+            <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol={true} hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>

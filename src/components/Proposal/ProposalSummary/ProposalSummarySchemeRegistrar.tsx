@@ -1,6 +1,6 @@
 import { IDAOState, IProposalState, IProposalType } from "@daostack/client";
 import * as classNames from "classnames";
-import { default as Util, getNetworkName, linkToEtherScan, schemeNameAndAddress } from "lib/util";
+import { copyToClipboard, getNetworkName, linkToEtherScan, schemeNameAndAddress } from "lib/util";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./ProposalSummary.scss";
@@ -91,14 +91,14 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         </th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegister}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegister)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => copyToClipboard(schemeRegistrar.schemeToRegister)} />
                         </td>
                       </tr>
                       <tr>
                         <th>Param Hash:</th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => Util.copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
                         </td>
                       </tr>
                       <tr>

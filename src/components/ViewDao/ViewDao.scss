@@ -24,8 +24,9 @@ button:hover {
 
 .wrapper {
   flex-grow: 2;
-  padding: 50px 50px 100px;
-  overflow: scroll;
+  padding: 30px 50px 100px 300px;
+  overflow: auto;
+  z-index: 0;
   position: relative;
 }
 
@@ -34,7 +35,6 @@ button:hover {
 }
 
 .outer {
-  position: fixed;
   display: flex;
   height: 100%;
   width: 100%;
@@ -303,10 +303,14 @@ button:hover {
   background-color: $sky;
   color: $white;
   flex-grow: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  padding-top: 50px;
+  z-index: 1000;
 
   &:hover {
-    z-index: 100000;
+    z-index: 1000;
   }
 }
 
@@ -361,6 +365,8 @@ button:hover {
   height: 100%;
   min-height: 780px;
   background-color: rgba(48, 120, 202, 1.000);
+  height: -webkit-fill-available;
+  height: -opera-fill-available;
 
   .daoName {
     padding: 20px;
@@ -550,6 +556,8 @@ button:hover {
     border-bottom: 1px solid rgba(195, 212, 231, 1.000);
     margin-bottom: 15px;
     padding-bottom: 3px;
+    background-color: rgba(229, 235, 242, 1.000);
+    padding-top: 10px;
   }
 }
 
@@ -651,7 +659,7 @@ a.navRedemption:hover {
   position: absolute;
   z-index: 100;
   right: 0;
-  top: 11px;
+  top: 10px;
   padding: 0 15px;
 }
 
@@ -853,11 +861,12 @@ a.navItem:hover {
   padding: 0;
   font-size: 28px;
   position: relative;
-  bottom: -10px;
   color: rgba(104, 155, 214, 1.000);
   z-index: 0;
   border-bottom: 1px solid rgba(212,220,228,1);
   padding-bottom: 2px;
+  padding-top: 10px;
+  background-color: rgba(229, 235, 242, 1.000);
 }
 
 .daoHistoryHeader {
@@ -867,6 +876,8 @@ a.navItem:hover {
     padding-bottom: 5px;
     font-weight: bold;
     margin-bottom: 30px;
+    background-color: rgba(229, 235, 242, 1.000);
+    padding-top: 10px;
 }
 
 .redemptionsHeader {
@@ -875,6 +886,8 @@ a.navItem:hover {
   color: rgba(104, 155, 214, 1);
   padding-bottom: 5px;
   border-bottom: 1px solid rgba(191, 203, 213, 1);
+  padding-top: 10px;
+  background-color: rgba(229, 235, 242, 1.000);
 
   span {
     font-size: 13px;
@@ -1168,17 +1181,23 @@ a.navItem:hover {
   }
 
   .daoSidebar {
-    min-width: auto;
+    width: 50px;
     max-width: 100%;
     height: auto;
     flex-grow: unset;
     z-index: 100000;
+    background-color: rgba(49, 120, 202, 0);
+
+    &:hover {
+      z-index: 100000;
+    }
 
     .daoNavigation {
       height: 0px;
       min-height: auto;
       overflow: hidden;
       transition: all .25s ease;
+
 
       .daoName a span {
         position: absolute;
@@ -1198,6 +1217,8 @@ a.navItem:hover {
 
   .daoSidebar.openMenu {
       z-index: 100000;
+      width: 100%;
+      background-color: rgba(49, 120, 202, 1.000);
 
       .daoNavigation {
         height: 520px;
@@ -1254,7 +1275,7 @@ a.navItem:hover {
     display: block;
     position: absolute;
     top: -30px;
-    top: -34px;
+    top: 16px;
     left: 12px;
 
     .menuClosed {
@@ -1267,7 +1288,7 @@ a.navItem:hover {
   }
 
   .wrapper {
-    padding: 50px 0 100px 0 ;
+    padding: 50px 0 100px 0;
   }
 
   .noticeWrapper {

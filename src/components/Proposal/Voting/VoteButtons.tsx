@@ -1,6 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkMetaMaskAndWarn, getArc } from "arc";
+import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
@@ -53,7 +53,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
   }
 
   public async handleClickVote(vote: number, event: any) {
-    if (!(await checkMetaMaskAndWarn(this.props.showNotification))) { return; }
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const { currentAccountState } = this.props;
     if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });

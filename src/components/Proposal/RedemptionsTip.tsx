@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 import ReputationView from "components/Account/ReputationView";
-import Util, { claimableContributionRewards, formatTokens, getClaimableRewards, tokenSymbol } from "lib/util";
+import { claimableContributionRewards, formatTokens, fromWei, getClaimableRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
@@ -40,7 +40,7 @@ export default (props: IProps) => {
     c = <div key={rewardsForCurrentUser.id}>
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
-        <li>{Util.fromWei(claimableRewards.tokensForStaker)} GEN</li>
+        <li>{fromWei(claimableRewards.tokensForStaker)} GEN</li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -49,7 +49,7 @@ export default (props: IProps) => {
     c = <div key={rewardsForCurrentUser.id}>
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
-        <li>{Util.fromWei(claimableRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
+        <li>{fromWei(claimableRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
         { /*
           // TODO: subscribe to tokenBalance
           dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : "" */}

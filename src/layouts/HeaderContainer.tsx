@@ -1,11 +1,11 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { checkMetaMask, enableMetamask, getArc } from "arc";
+import { checkWeb3Provider, enableMetamask, getArc } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
+import { copyToClipboard } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
@@ -54,7 +54,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   public copyAddress(e: any) {
     const { showNotification, currentAccountAddress } = this.props;
-    Util.copyToClipboard(currentAccountAddress);
+    copyToClipboard(currentAccountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
     e.preventDefault();
   }
@@ -64,13 +64,13 @@ class HeaderContainer extends React.Component<IProps, null> {
     showTour();
   }
 
-  public handleClickLogin = () => {
+  public handleClickLogin = async () => {
     try {
-      checkMetaMask();
+      await checkWeb3Provider();
+      await enableMetamask();
     } catch (err) {
       this.props.showNotification(NotificationStatus.Failure, err.message);
     }
-    enableMetamask();
   }
 
   public render() {
