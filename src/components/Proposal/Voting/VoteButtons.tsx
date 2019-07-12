@@ -124,20 +124,21 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       [css.detailView]: detailView
     });
 
-    if (contextMenu) {
-      return (
-        <div className={wrapperClass}>
-          {this.state.showPreVoteModal ?
-            <PreTransactionModal
-              actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-              action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
-              closeAction={this.closePreVoteModal.bind(this)}
-              currentAccount={currentAccountState}
-              dao={dao}
-              effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
-              proposal={proposal}
-            /> : ""
-          }
+    return (
+      <div className={wrapperClass}>
+        {this.state.showPreVoteModal ?
+          <PreTransactionModal
+            actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+            action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
+            closeAction={this.closePreVoteModal.bind(this)}
+            currentAccount={currentAccountState}
+            dao={dao}
+            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
+            proposal={proposal}
+          /> : ""
+        }
+        {contextMenu ?
+          <div>
           <div className={css.contextTitle}>
             <div>
               <span className={css.hasVoted}>
@@ -147,12 +148,6 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
                 Vote
               </span>
             </div>
-            {votingDisabled ?
-              <span className={css.votingDisabled}>
-                Voting disabled
-              </span>
-              : " "
-            }
           </div>
           <div className={css.contextContent}>
             <div className={css.hasVoted}>
@@ -191,30 +186,10 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
                 </div>
               }
             </div>
-            {votingDisabled ?
-              <span className={css.votingDisabled}>
-                You do not have enough reputation
-              </span>
-              : " "
-            }
           </div>
         </div>
-      );
-    } else {
-      return (
-        <div className={wrapperClass} >
-          {this.state.showPreVoteModal ?
-            <PreTransactionModal
-              actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-              action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
-              closeAction={this.closePreVoteModal.bind(this)}
-              currentAccount={currentAccountState}
-              dao={dao}
-              effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
-              proposal={proposal}
-            /> : ""
-          }
-
+      :
+        <div>
           <div className={css.castVote}>
             {!votingDisabled ?
               <div>
@@ -248,10 +223,12 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
             </span>
           </div>
         </div>
-      );
-    }
+      }
+      </div>
+    );
   }
 }
+
 const ConnectedVoteButtons = connect(null, mapDispatchToProps)(VoteButtons);
 
 interface IProps {
