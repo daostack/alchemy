@@ -1261,6 +1261,9 @@ a.navItem:hover {
       overflow: hidden;
       transition: all .25s ease;
 
+      .daoName {
+        padding: 20px 20px 23px 20px;
+      }
 
       .daoName a span {
         position: absolute;
