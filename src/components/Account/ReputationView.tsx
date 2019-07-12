@@ -1,5 +1,5 @@
 import BN = require("bn.js");
-import Util from "lib/util";
+import { fromWei } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 
@@ -26,7 +26,7 @@ export default class ReputationView extends React.Component<IProps, null> {
     return (
       <Tooltip
         placement="bottom"
-        overlay={<span>{Util.fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}
+        overlay={<span>{fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}
         trigger={hideTooltip ? [] : ["hover"]}
       >
         <span data-test-id="reputation">

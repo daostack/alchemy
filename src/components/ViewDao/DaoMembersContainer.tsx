@@ -6,12 +6,13 @@ import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
+import { fromWei } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
+import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 import * as css from "./ViewDao.scss";
@@ -47,7 +48,6 @@ class DaoMembersContainer extends React.Component<IProps, null> {
             <div className={css.member + " clearfix"}
               key={"member_" + memberState.address}
               data-test-id={"member_" + memberState.address}>
-
               <table className={css.memberTable}>
                 <tbody>
                   <tr>
@@ -70,7 +70,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                       {memberState.address}
                     </td>
                     <td className={css.memberReputation}>
-                      <span className={css.reputationAmount}>{Util.fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
+                      <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
                       <div className={css.reputationAmounts}>
                         (<ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
                       </div>
@@ -87,6 +87,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                   </tr>
                 </tbody>
               </table>
+
             </div>
           );
         } else {
@@ -98,7 +99,10 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     return (
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
-        <h2>Reputation Holders</h2>
+
+        <Sticky enabled={true} top={0} innerZ={10000}>
+          <h2>Reputation Holders</h2>
+        </Sticky>
         <table>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>
             <tr>
