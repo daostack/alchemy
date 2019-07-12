@@ -48,6 +48,10 @@ class DaoMembersContainer extends React.Component<IProps, null> {
             <div className={css.member + " clearfix"}
               key={"member_" + memberState.address}
               data-test-id={"member_" + memberState.address}>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2028fd703162b58448f9bef9296f9a0d1c0b9ccc
               <table className={css.memberTable}>
                 <tbody>
                   <tr>
@@ -87,7 +91,6 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                   </tr>
                 </tbody>
               </table>
-
             </div>
           );
         } else {
@@ -99,7 +102,6 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     return (
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
-
         <Sticky enabled={true} top={0} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
