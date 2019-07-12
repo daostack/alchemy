@@ -27,7 +27,6 @@ body {
 
 .container {
   width: 100%;
-  overflow: scroll;
   z-index: 100;
   position: relative;
   height: 100%;
@@ -405,7 +404,7 @@ body {
 .topInfo {
   position: absolute;
   left: 70px;
-  top: 14px;
+  top: 16px;
   font-size: 14px;
 
   span span b {
