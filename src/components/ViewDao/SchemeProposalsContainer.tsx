@@ -16,7 +16,7 @@ import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
 // For infinite scrolling
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 100;
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
