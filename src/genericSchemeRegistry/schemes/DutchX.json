@@ -13,85 +13,7 @@
     ]
   },
   "actions": [
-    {
-      "id": "updateMasterCopy",
-      "label": "Update MasterCopy",
-      "description": "This proposal will update the DutchX master logic. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
-      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
-      "fields": [
-        {
-          "label": "New master copy address",
-          "name": "_masterCopy"
-        }
-      ],
-      "abi": {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_masterCopy",
-            "type": "address"
-          }
-        ],
-        "name": "startMasterCopyCountdown",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    },
-    {
-      "id": "changeETHUSDOracle",
-      "label": "Change ETH:USD oracle",
-      "description": "This proposal can update the external ETH-USD price feed that the DutchX uses for a) fee calculation and b) threshold calculation. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
-      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
-      "fields": [
-        {
-          "label": "New ETH:USD oracle adddress",
-          "name": "_ethUSDOracle"
-        }
-      ],
-      "abi": {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_ethUSDOracle",
-            "type": "address"
-          }
-        ],
-        "name": "initiateEthUsdOracleUpdate",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    },
-    {
-      "id": "updateAuctioneer",
-      "label": "Change DutchX owner",
-      "description": "This proposal can change the owner of the DutchX. With this, you remove all DutchX rights from the dxDAO. After successful passing of the proposal, the effect is immediate and the dxDAO cannot change anything else regarding the DutchX from that point onwards. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
-      "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
-      "fields": [
-        {
-          "label": "New DutchX owner address",
-          "name": "_auctioneer"
-        }
-      ],
-      "abi": {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_auctioneer",
-            "type": "address"
-          }
-        ],
-        "name": "updateAuctioneer",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      }
-    },
-    {
+      {
       "id": "updateApprovalOfToken",
       "label": "(De-)whitelist MGN generating tokens",
       "description": "Only whitelisted tokens generate MGN when traded on the DutchX. Read about the details and whitelist <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#decentralized-trading-protocol-for-erc20-tokens\">here</a>. Multiple tokens can be added or removed at a time. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
@@ -178,6 +100,84 @@
           }
         ],
         "name": "updateThresholdNewAuction",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "changeETHUSDOracle",
+      "label": "Change ETH:USD oracle",
+      "description": "This proposal can update the external ETH-USD price feed that the DutchX uses for a) fee calculation and b) threshold calculation. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
+      "fields": [
+        {
+          "label": "New ETH:USD oracle adddress",
+          "name": "_ethUSDOracle"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_ethUSDOracle",
+            "type": "address"
+          }
+        ],
+        "name": "initiateEthUsdOracleUpdate",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateMasterCopy",
+      "label": "Update MasterCopy",
+      "description": "This proposal will update the DutchX master logic. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
+      "fields": [
+        {
+          "label": "New master copy address",
+          "name": "_masterCopy"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_masterCopy",
+            "type": "address"
+          }
+        ],
+        "name": "startMasterCopyCountdown",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "updateAuctioneer",
+      "label": "Change DutchX owner",
+      "description": "This proposal can change the owner of the DutchX. With this, you remove all DutchX rights from the dxDAO. After successful passing of the proposal, the effect is immediate and the dxDAO cannot change anything else regarding the DutchX from that point onwards. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
+      "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
+      "fields": [
+        {
+          "label": "New DutchX owner address",
+          "name": "_auctioneer"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_auctioneer",
+            "type": "address"
+          }
+        ],
+        "name": "updateAuctioneer",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
