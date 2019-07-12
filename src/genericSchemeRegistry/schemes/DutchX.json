@@ -16,6 +16,7 @@
     {
       "id": "updateMasterCopy",
       "label": "Update MasterCopy",
+      "description": "This proposal will update the DutchX master logic. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/DxUpgrade.sol#L17",
       "fields": [
         {
@@ -41,6 +42,7 @@
     {
       "id": "changeETHUSDOracle",
       "label": "Change ETH:USD oracle",
+      "description": "This proposal can update the external ETH-USD price feed that the DutchX uses for a) fee calculation and b) threshold calculation. Check addresses <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/smart-contracts_addresses.html#mainnet\">here</a>. There is a 30-day time delay for this change after a proposal is accepted. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/EthOracle.sol",
       "fields": [
         {
@@ -66,6 +68,7 @@
     {
       "id": "updateAuctioneer",
       "label": "Change DutchX owner",
+      "description": "This proposal can change the owner of the DutchX. With this, you remove all DutchX rights from the dxDAO. After successful passing of the proposal, the effect is immediate and the dxDAO cannot change anything else regarding the DutchX from that point onwards. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
       "notes": "https://github.com/gnosis/dx-contracts/blob/1fc99740a86a1635c9bf856a370b16295915b76d/contracts/base/AuctioneerManaged.sol",
       "fields": [
         {
@@ -90,7 +93,8 @@
     },
     {
       "id": "updateApprovalOfToken",
-      "label": "Add/Remove Tokens",
+      "label": "(De-)whitelist MGN generating tokens",
+      "description": "Only whitelisted tokens generate MGN when traded on the DutchX. Read about the details and whitelist <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#decentralized-trading-protocol-for-erc20-tokens\">here</a>. Multiple tokens can be added or removed at a time. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
       "notes": "https://github.com/gnosis/dx-contracts/blob/master/contracts/base/TokenWhitelist.sol#L28",
       "fields": [
         {
@@ -126,7 +130,8 @@
     },
     {
       "id": "updateThresholdNewTokenPair",
-      "label": "Update TokenPair Threshold",
+      "label": "Update Token Pair Listing Threshold",
+      "description": "This is the threshold that needs to be reached in order to trigger the very first auction of a token pair (to be entered in a round USD amount). Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>",
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L248",
       "fields": [
         {
@@ -153,7 +158,8 @@
     },
     {
       "id": "updateThresholdNewAuction",
-      "label": "Update Auction Threshold",
+      "label": "Update New Auction Start Threshold",
+      "description": "This is the threshold that an auction deposit (i.e. the sellVolume) (of each opposite auction) has to reach before an auction commences (to be entered in a round USD amount). Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",
       "notes": "https://github.com/gnosis/dx-contracts/blob/c9a9bd0d73f96eed65dca5c5a947451adb8e80b6/contracts/DutchExchange.sol#L252",
       "fields": [
         {

@@ -5,6 +5,7 @@ import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
+import Interweave from "interweave";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -306,6 +307,9 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
+                  <div className={css.description}>
+                  <Interweave content={currentAction.description} />
+                  </div>
                   <label htmlFor="titleInput">
                     Title
                     <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
