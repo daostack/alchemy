@@ -48,10 +48,6 @@ class DaoMembersContainer extends React.Component<IProps, null> {
             <div className={css.member + " clearfix"}
               key={"member_" + memberState.address}
               data-test-id={"member_" + memberState.address}>
-<<<<<<< HEAD
-=======
-
->>>>>>> 2028fd703162b58448f9bef9296f9a0d1c0b9ccc
               <table className={css.memberTable}>
                 <tbody>
                   <tr>
