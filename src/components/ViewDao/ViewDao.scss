@@ -108,6 +108,7 @@ button:hover {
 
     .memberSocial {
       text-align: right;
+      min-width: 110px;
     }
   }
 }
@@ -120,11 +121,15 @@ button:hover {
 
   tr {
     .memberAvatar {
-      width: 80px;
+      min-width: 80px;
     }
 
     .memberAddress {
       font-size: 13px;
+    }
+
+    .memberSocial {
+      min-width: 110px;
     }
   }
 

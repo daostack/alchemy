@@ -76,12 +76,13 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                       </div>
                     </td>
                     <td className={css.memberSocial}>
-                      {Object.keys(profile.socialURLs).length === 0 ? "" :
+                      {profile && Object.keys(profile.socialURLs).length > 0 ?
                         <span>
                           <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
                           <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
                           <OAuthLogin editing={false} provider="github" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
                         </span>
+                        : ""
                       }
                     </td>
                   </tr>
