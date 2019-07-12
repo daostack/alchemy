@@ -16,7 +16,7 @@ import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
 // For infinite scrolling
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 2;
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -154,7 +154,7 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
                   hasMore={hasMoreProposalsToLoad}
-                  loader={<h4>Loading...</h4>}
+                  loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
                       <b>&mdash;</b>
@@ -239,7 +239,6 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
           const data = state.data;
           let hasMoreProposals = parentState.hasMoreProposalsToLoad;
           if (data.length < PAGE_SIZE) {
-            setState({ hasMoreProposalsToLoad: false});
             hasMoreProposals = false;
           }
           return <SchemeProposalsContainer
