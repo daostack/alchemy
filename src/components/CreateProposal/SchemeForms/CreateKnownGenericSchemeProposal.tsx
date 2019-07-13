@@ -307,7 +307,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
-                  <label className={css.description}>Proposal Description</label>
+                  <label className={css.description}>Proposal Info</label>
                   <div className={css.description}>
                   <Interweave content={currentAction.description} />
                   </div>
