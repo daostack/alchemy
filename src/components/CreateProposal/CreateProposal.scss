@@ -531,7 +531,11 @@ form .radioButtons {
   }
 }
 
-.description {
+label.description {
+  margin-bottom: 2px;
+}
+
+div.description {
   font-size: 11px;
   margin-bottom: 12px;
 
