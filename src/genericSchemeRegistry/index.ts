@@ -79,6 +79,7 @@ export  class ActionField {
 }
 
 export interface IActionSpec {
+  description: string;
   id: string;
   label: string;
   abi: IABISpec;
@@ -92,6 +93,7 @@ export interface IGenericSchemeJSON {
 }
 
 export class Action implements IActionSpec {
+  public description: string;
   public id: string;
   public label: string;
   public abi: IABISpec;
@@ -102,6 +104,7 @@ export class Action implements IActionSpec {
     if (this.fields && this.abi.inputs.length !== this.fields.length) {
       throw Error(`Error parsing action: the number if abi.inputs should equal the number of fields`);
     }
+    this.description = options.description;
     this.id = options.id;
     this.label = options.label;
     this.abi = options.abi;
