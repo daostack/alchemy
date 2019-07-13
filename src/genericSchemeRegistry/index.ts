@@ -41,6 +41,7 @@ export interface IActionFieldOptions {
   labelTrue ?: string;
   labelFalse ?: string;
   type ?: string;
+  placeholder?: string;
 }
 
 export  class ActionField {
@@ -51,6 +52,7 @@ export  class ActionField {
   public labelTrue?: string;
   public labelFalse?: string;
   public type?: string;
+  public placeholder?: string;
 
   constructor(options: IActionFieldOptions) {
     this.decimals = options.decimals;
@@ -60,7 +62,7 @@ export  class ActionField {
     this.labelTrue = options.labelTrue;
     this.labelFalse = options.labelFalse;
     this.type = options.type;
-
+    this.placeholder = options.placeholder;
   }
   /**
    * the value to pass to the contract call (as calculated from the user's input data)
@@ -112,7 +114,7 @@ export class Action implements IActionSpec {
     this.fields = options.fields;
   }
 
-  public getFields() {
+  public getFields(): ActionField[] {
     const result: ActionField[] = [];
     for (let i = 0; i <  this.abi.inputs.length; i++) {
       result.push(new ActionField({
@@ -146,7 +148,7 @@ export class GenericSchemeInfo {
     }
     throw Error(`An action with id ${id} coult not be found`);
   }
-  public actionByFunctionName(name: string) {
+  public actionByFunctionName(name: string): IActionSpec | undefined {
     for (const action of this.specs.actions) {
         if (action.abi.name === name) {
           return action;

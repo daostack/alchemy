@@ -150,7 +150,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                 values[field.name].map((value: any, index: number) => (
                   <div key={field.name + "_" + index} className={css.arrayField}>
                     {this.renderField(
-                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: ""}),
+                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder}),
                       values,
                       touched,
                       errors
@@ -178,7 +178,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     return <Field
       id={field.name}
       data-test-id={field.name}
-      placeholder=""
+      placeholder={field.placeholder}
       name={field.name}
       type={type}
       className={touched[field.name] && errors[field.name] ? css.error : null}

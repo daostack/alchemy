@@ -21,7 +21,8 @@
       "fields": [
         {
           "label": "Token address",
-          "name": "token"
+          "name": "token",
+          "placeholder": "Address (0x0000…)"
         },
         {
           "name": "approved",
@@ -60,7 +61,8 @@
           "decimals": 18,
           "label": "New token pair threshold",
           "name": "_thresholdNewTokenPair",
-          "unit": "USD"
+          "unit": "USD",
+          "placeholder": "New threshold: Amount in USD (1500)"
         }
       ],
       "abi": {
@@ -88,7 +90,8 @@
           "decimals": 18,
           "label": "New auction threshold",
           "name": "_thresholdNewAuction",
-          "unit": "USD"
+          "unit": "USD",
+          "placeholder": "New threshold: Amount in USD (1500)"
         }
       ],
       "abi": {
@@ -114,7 +117,8 @@
       "fields": [
         {
           "label": "New ETH:USD oracle adddress",
-          "name": "_ethUSDOracle"
+          "name": "_ethUSDOracle",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
@@ -140,7 +144,8 @@
       "fields": [
         {
           "label": "New master copy address",
-          "name": "_masterCopy"
+          "name": "_masterCopy",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
@@ -166,7 +171,8 @@
       "fields": [
         {
           "label": "New DutchX owner address",
-          "name": "_auctioneer"
+          "name": "_auctioneer",
+          "placeholder": "Address (0x0000…)"
         }
       ],
       "abi": {
