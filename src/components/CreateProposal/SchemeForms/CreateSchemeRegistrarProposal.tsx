@@ -227,7 +227,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
-                  <label className={css.description}>Proposal Info</label>
+                  <label className={css.description}>What to Expect</label>
                   { (currentTab === "addScheme") ?
                   <div className={css.description}>Propose to add a new scheme to the DAO. If this scheme is a universal scheme, you must also supply its param hash configuration.</div> :
                     (currentTab === "editScheme") ?
