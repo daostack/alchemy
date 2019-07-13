@@ -225,6 +225,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
         <div className={css.sidebar}>
           { actions.map((action) =>
             <button
+              data-test-id={"action-tab-" + action.id}
               key={action.id}
               className={classNames({
                 [css.tab]: true,
