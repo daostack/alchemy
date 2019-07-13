@@ -91,7 +91,7 @@
     "normalizr": "^3.3.0",
     "query-string": "^6.2.0",
     "rc-tooltip": "^3.7.3",
-    "react": "^16.8.6",
+    "react": "16.7.0",
     "react-autosuggest": "^9.4.3",
     "react-breadcrumbs-dynamic": "^1.2.0",
     "react-dom": "^16.7.0",
