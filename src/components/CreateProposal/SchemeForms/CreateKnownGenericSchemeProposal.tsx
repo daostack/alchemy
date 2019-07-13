@@ -5,6 +5,7 @@ import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
+import Interweave from "interweave";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -149,7 +150,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                 values[field.name].map((value: any, index: number) => (
                   <div key={field.name + "_" + index} className={css.arrayField}>
                     {this.renderField(
-                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: ""}),
+                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder}),
                       values,
                       touched,
                       errors
@@ -177,7 +178,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     return <Field
       id={field.name}
       data-test-id={field.name}
-      placeholder=""
+      placeholder={field.placeholder}
       name={field.name}
       type={type}
       className={touched[field.name] && errors[field.name] ? css.error : null}
@@ -224,6 +225,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
         <div className={css.sidebar}>
           { actions.map((action) =>
             <button
+              data-test-id={"action-tab-" + action.id}
               key={action.id}
               className={classNames({
                 [css.tab]: true,
@@ -306,6 +308,10 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
+                  <label className={css.description}>What to Expect</label>
+                  <div className={css.description}>
+                  <Interweave content={currentAction.description} />
+                  </div>
                   <label htmlFor="titleInput">
                     Title
                     <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>

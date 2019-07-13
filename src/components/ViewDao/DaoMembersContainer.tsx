@@ -48,31 +48,46 @@ class DaoMembersContainer extends React.Component<IProps, null> {
             <div className={css.member + " clearfix"}
               key={"member_" + memberState.address}
               data-test-id={"member_" + memberState.address}>
-              <AccountImage
-                accountAddress={memberState.address}
-                className="membersPage"
-              />
-              <div className={css.memberAddress}>
-                { profile ?
-                  <div>
-                    <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={dao.address} />
-                    {Object.keys(profile.socialURLs).length === 0 ? "" :
-                      <span>
-                        <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
-                        <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                        <OAuthLogin editing={false} provider="github" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                      </span>
-                    }
-                    <br/>
-                  </div>
-                  : <div className={css.noProfile}>No Profile</div>
-                }
-                <div className={css.address}>{memberState.address}</div>
-              </div>
-              <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
-              <div className={css.reputationAmounts}>
-                <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>
-              </div>
+              <table className={css.memberTable}>
+                <tbody>
+                  <tr>
+                    <td className={css.memberAvatar}>
+                      <AccountImage
+                        accountAddress={memberState.address}
+                        className="membersPage"
+                      />
+                    </td>
+                    <td className={css.memberName}>
+                      { profile ?
+                        <div>
+                          <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={dao.address} />
+                          <br/>
+                        </div>
+                        : <div className={css.noProfile}>No Profile</div>
+                      }
+                    </td>
+                    <td className={css.memberAddress}>
+                      {memberState.address}
+                    </td>
+                    <td className={css.memberReputation}>
+                      <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
+                      <div className={css.reputationAmounts}>
+                        (<ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
+                      </div>
+                    </td>
+                    <td className={css.memberSocial}>
+                      {profile && Object.keys(profile.socialURLs).length > 0 ?
+                        <span>
+                          <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
+                          <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
+                          <OAuthLogin editing={false} provider="github" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
+                        </span>
+                        : ""
+                      }
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           );
         } else {
@@ -87,6 +102,17 @@ class DaoMembersContainer extends React.Component<IProps, null> {
         <Sticky enabled={true} top={0} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
+        <table>
+          <tbody className={css.memberTable + " " + css.memberTableHeading}>
+            <tr>
+              <td className={css.memberAvatar}></td>
+              <td className={css.memberName}>Name</td>
+              <td className={css.memberAddress}>Address</td>
+              <td className={css.memberReputation}>Reputation</td>
+              <td className={css.memberSocial}>Social Verification</td>
+            </tr>
+          </tbody>
+        </table>
         <InfiniteScroll
           dataLength={members.length} //This is important field to render the next data
           next={this.props.fetchMore}

@@ -26,7 +26,7 @@ export default class ReputationView extends React.Component<IProps, null> {
     return (
       <Tooltip
         placement="bottom"
-        overlay={<span>{fromWei(reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}
+        overlay={<span>{fromWei(totalReputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}
         trigger={hideTooltip ? [] : ["hover"]}
       >
         <span data-test-id="reputation">
