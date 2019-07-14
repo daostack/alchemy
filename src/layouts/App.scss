@@ -485,26 +485,23 @@ body {
 }
 
 .cookieDisclaimerContainer {
-  padding-left: 10%;
-  padding-right: 10%;
+  padding-left: 12%;
+  padding-right: 12%;
   text-align: center;
-  width: 80%;
+  width: 76%;
   position: fixed;
   bottom: 0px;
   z-index: 999999;
   display: inline-block;
 
   .cookieDisclaimer {
-    padding-top: 23px;
-    padding-bottom: 25px;
-    border-radius: 10px;
+    padding: 25px;
+    border-radius: 10px 10px 0px 0px;
     box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.15);
     background-color: #132e5b;
     display: flex;
     justify-content: center;
     align-content: center;
-    padding-left: 5%;
-    padding-right: 5%;
 
     .body {
       text-align: left;
