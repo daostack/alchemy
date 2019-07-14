@@ -55,6 +55,8 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
 
+  private static hasAcceptedCookiesKey = "acceptedCookies";
+
   constructor(props: IProps) {
     super(props);
     this.state = {
@@ -133,6 +135,9 @@ class AppContainer extends React.Component<IProps, IState> {
         <pre>{ this.state.error.toString() }</pre>
       </div>;
     } else {
+
+      const hasAcceptedCookies = !!localStorage.getItem(AppContainer.hasAcceptedCookiesKey);
+
       return (
         <div className={css.outer}>
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
@@ -185,15 +190,22 @@ class AppContainer extends React.Component<IProps, IState> {
             }
           </div>
           <div className={css.background}></div>
-          <div className={css.cookieDisclaimerContainer}>
-            <div className={css.cookieDisclaimer}>
-              <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website and allow us to remember you. We use this information in order to improve and customize your browsing experience and for analytics. To find out more about the cookies we use, see our Privacy Policy.</div>
-              <div className={css.accept}><a className={css.blueButton}><img src="/assets/images/icon/v-white-thick.svg"></img>Accept</a></div>
+          { hasAcceptedCookies ? "" :
+            <div id="cookieDisclaimer" className={css.cookieDisclaimerContainer}>
+              <div className={css.cookieDisclaimer}>
+                <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website and allow us to remember you. We use this information in order to improve and customize your browsing experience and for analytics. To find out more about the cookies we use, see our Privacy Policy.</div>
+                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton}><img src="/assets/images/icon/v-white-thick.svg"></img>Accept</a></div>
+              </div>
             </div>
-          </div>
+          }
         </div>
       );
     }
+  }
+
+  private handleAccept() {
+    localStorage.setItem(AppContainer.hasAcceptedCookiesKey, "1");
+    $("#cookieDisclaimer")[0].css("display", "none");
   }
 }
 
