@@ -206,6 +206,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
               <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
               <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
               <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
+              <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank">Privacy Policy</a></li>
               <li className={css.daoStack}>
                 <a href="http://daostack.io" target="_blank">
                   <img src="/assets/images/Icon/dao-logo.svg" /> DAOstack
