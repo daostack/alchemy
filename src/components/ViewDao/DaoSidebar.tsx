@@ -65,7 +65,12 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
             </Link>
           </div>
           <div className={css.daoDescription}>
-            {dao.name === "Meme" ?
+            {dao.name === "dxDAO" ?
+              <p>
+                By submitting a proposal, you agree to be bound by the&nbsp;
+                <a href="https://cloudflare-ipfs.com/ipfs/QmRQhXUKKfUCgsAf5jre18T3bz5921fSfvnZCB5rR8mCKj" target="_blank">Participation Agreement</a>, which includes the terms of participation in the dxDAO
+              </p>
+              : dao.name === "Meme" ?
               <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank">Learn how to MemeDAO</a></p>
               : dao.name === "Identity" ?
                 <p>
