@@ -191,7 +191,7 @@ class AppContainer extends React.Component<IProps, IState> {
           </div>
           <div className={css.background}></div>
           { hasAcceptedCookies ? "" :
-            <div id="cookieDisclaimer" className={css.cookieDisclaimerContainer}>
+            <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
                 <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website and allow us to remember you. We use this information in order to improve and customize your browsing experience and for analytics. To find out more about the cookies we use, see our Privacy Policy.</div>
                 <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton}><img src="/assets/images/icon/v-white-thick.svg"></img>Accept</a></div>
@@ -205,7 +205,6 @@ class AppContainer extends React.Component<IProps, IState> {
 
   private handleAccept() {
     localStorage.setItem(AppContainer.hasAcceptedCookiesKey, "1");
-    $("#cookieDisclaimer")[0].css("display", "none");
   }
 }
 
