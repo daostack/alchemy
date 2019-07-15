@@ -5,7 +5,7 @@ import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import Util from "lib/util";
+import { copyToClipboard } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { Breadcrumbs } from "react-breadcrumbs-dynamic";
@@ -54,7 +54,7 @@ class HeaderContainer extends React.Component<IProps, null> {
 
   public copyAddress(e: any) {
     const { showNotification, currentAccountAddress } = this.props;
-    Util.copyToClipboard(currentAccountAddress);
+    copyToClipboard(currentAccountAddress);
     showNotification(NotificationStatus.Success, `Copied to clipboard!`);
     e.preventDefault();
   }

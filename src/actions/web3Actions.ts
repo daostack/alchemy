@@ -2,7 +2,7 @@ import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import { getProfile } from "actions/profilesActions";
 import { getArc } from "arc";
-import Util from "lib/util";
+import { toWei } from "lib/util";
 import { IRootState } from "reducers";
 import { ActionTypes, ConnectionStatus, IWeb3State } from "reducers/web3Reducer";
 import * as Redux from "redux";
@@ -65,7 +65,7 @@ export function approveStakingGens(spender: Address) {
     } as ApproveAction);
 
     try {
-      await arc.approveForStaking(spender, Util.toWei(100000)).send();
+      await arc.approveForStaking(spender, toWei(100000)).send();
     } catch (err) {
       console.error(err);
       dispatch({

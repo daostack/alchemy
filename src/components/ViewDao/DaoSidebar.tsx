@@ -65,7 +65,12 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
             </Link>
           </div>
           <div className={css.daoDescription}>
-            {dao.name === "Meme" ?
+            {dao.name === "dxDAO" ?
+              <p>
+                By submitting a proposal, you agree to be bound by the&nbsp;
+                <a href="https://cloudflare-ipfs.com/ipfs/QmRQhXUKKfUCgsAf5jre18T3bz5921fSfvnZCB5rR8mCKj" target="_blank">Participation Agreement</a>, which includes the terms of participation in the dxDAO
+              </p>
+              : dao.name === "Meme" ?
               <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank">Learn how to MemeDAO</a></p>
               : dao.name === "Identity" ?
                 <p>
@@ -201,6 +206,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
               <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
               <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
               <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
+              <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank">Privacy Policy</a></li>
               <li className={css.daoStack}>
                 <a href="http://daostack.io" target="_blank">
                   <img src="/assets/images/Icon/dao-logo.svg" /> DAOstack

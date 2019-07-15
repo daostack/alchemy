@@ -5,7 +5,8 @@ import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
-import { Action, GenericSchemeInfo, IFieldSpec } from "genericSchemeRegistry";
+import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
+import Interweave from "interweave";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -73,22 +74,19 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
 
     const callValues = [];
     for (let field of currentAction.getFields()) {
-      if (field.type === "bool") {
-        values[field.name] = parseInt(values[field.name], 10) === 1;
-      }
-      if (field.decimals) {
-        values[field.name] = (new BN(values[field.name]).mul(new BN(10).pow(new BN(field.decimals)))).toString();
-      }
-      callValues.push(values[field.name]);
+      const callValue = field.callValue(values[field.name]);
+      values[field.name] = callValue;
+      callValues.push(callValue);
     }
+
     let callData: string = "";
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
-      // TODO: show notification, not an alert, and close the form
-      alert(err.message);
+      // alert(err.message);
+      console.log(err.message);
       showNotification(NotificationStatus.Failure, err.message);
-      this.props.handleClose();
+      setSubmitting(false);
       return;
     }
     setSubmitting(false);
@@ -105,7 +103,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     try {
       await this.props.createProposal(proposalValues);
     } catch (err) {
-      alert(err.message);
+      showNotification(NotificationStatus.Failure, err.message);
       throw err;
     }
     this.props.handleClose();
@@ -115,7 +113,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     this.setState({ currentAction: this.props.genericSchemeInfo.action(tab) });
   }
 
-  public renderField(field: IFieldSpec, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
+  public renderField(field: ActionField, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
     let type = "string";
     switch (field.type) {
       case "uint256":
@@ -145,7 +143,6 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
               {field.labelFalse}
             </label>
           </div>;
-        break;
       default:
         if (field.type.includes("[]")) {
           return <FieldArray name={field.name} render={(arrayHelpers) => (
@@ -153,7 +150,12 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
               {values[field.name] && values[field.name].length > 0 ? (
                 values[field.name].map((value: any, index: number) => (
                   <div key={field.name + "_" + index} className={css.arrayField}>
-                    {this.renderField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: ""}, values, touched, errors)}
+                    {this.renderField(
+                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder}),
+                      values,
+                      touched,
+                      errors
+                    )}
                     <button
                       className={css.removeItemButton}
                       type="button"
@@ -177,7 +179,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     return <Field
       id={field.name}
       data-test-id={field.name}
-      placeholder=""
+      placeholder={field.placeholder}
       name={field.name}
       type={type}
       className={touched[field.name] && errors[field.name] ? css.error : null}
@@ -197,7 +199,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
       url: ""
     };
 
-    actions.forEach((action) => action.getFields().forEach((field: IFieldSpec) => {
+    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
       if (typeof(field.defaultValue) !== "undefined") {
         initialFormValues[field.name] = field.defaultValue;
       } else {
@@ -224,6 +226,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
         <div className={css.sidebar}>
           { actions.map((action) =>
             <button
+              data-test-id={"action-tab-" + action.id}
               key={action.id}
               className={classNames({
                 [css.tab]: true,
@@ -261,20 +264,39 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                 errors.url = "Invalid URL";
               }
 
-              for (let input of this.state.currentAction.abi.inputs) {
-                if (input.type !== "bool") {
-                  valueIsRequired(input.name);
+              for (let field of this.state.currentAction.getFields()) {
+                if (field.type !== "bool") {
+                  valueIsRequired(field.name);
                 }
 
-                if (input.type === "address[]") {
-                  for (let value of values[input.name]) {
+                if (field.type === "uint256") {
+                  const value = values[field.name];
+                  try {
+                    field.callValue(value);
+                  } catch (error) {
+                    if (error.message === `Assertion failed`) {
+                      // thank you BN.js for your helpful error messages
+                      errors[field.name] = "Invalid number value";
+                    } else {
+                      errors[field.name] = error.message;
+                    }
+                  }
+                }
+                if (field.type === "address") {
+                  const value = values[field.name];
+                  if (!arc.web3.utils.isAddress(value)) {
+                    errors[field.name] = "Invalid address";
+                  }
+                }
+
+                if (field.type === "address[]") {
+                  for (let value of values[field.name]) {
                     if (!arc.web3.utils.isAddress(value)) {
-                      errors[input.name] = "Invalid address";
+                      errors[field.name] = "Invalid address";
                     }
                   }
                 }
               }
-
               return errors;
             }}
             onSubmit={this.handleSubmit.bind(this)}
@@ -287,6 +309,10 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
+                  <label className={css.description}>What to Expect</label>
+                  <div className={css.description}>
+                  <Interweave content={currentAction.description} />
+                  </div>
                   <label htmlFor="titleInput">
                     Title
                     <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -338,7 +364,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                     }
                   >
                     {
-                      currentAction.getFields().map((field: IFieldSpec) => {
+                      currentAction.getFields().map((field: ActionField) => {
                         return (
                           <div key={field.name}>
                             <label htmlFor={field.name}>
@@ -346,7 +372,6 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                               {field.type !== "bool" ? <div className={css.requiredMarker}>*</div> : ""}
                             </label>
-
                             {this.renderField(field, values, touched, errors)}
                           </div>
                         );

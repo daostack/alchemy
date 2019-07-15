@@ -1,8 +1,8 @@
-// tslint:disable:max-classes-per-file
-
-/* eslint-disable no-console *//*
- * TODO: This logic will move to the client library, where it willb e properly tested
+ // tslint:disable:max-classes-per-file
+/*
+ * TODO; : This; logic; will; move; to; the; client; library, where; it; willb; e; properly; tested
  */
+import BN = require("bn.js");
 const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 
@@ -17,14 +17,12 @@ const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
 };
 
 for (let schemeInfo of KNOWNSCHEMES) {
-  console.log(schemeInfo.addresses);
   for (let network of Object.keys(SCHEMEADDRESSES)) {
     for (let address of schemeInfo.addresses[network]) {
         SCHEMEADDRESSES[network][address] = schemeInfo;
     }
   }
 }
-
 interface IABISpec {
   constant: boolean;
   name: string;
@@ -35,17 +33,55 @@ interface IABISpec {
   type: string;
 }
 
-export interface IFieldSpec {
-  decimals?: number;
-  defaultValue?: any;
+export interface IActionFieldOptions {
+  decimals ?: number;
+  defaultValue ?: any;
   name: string;
-  label?: string;
-  labelTrue?: string;
-  labelFalse?: string;
-  type?: string;
+  label ?: string;
+  labelTrue ?: string;
+  labelFalse ?: string;
+  type ?: string;
+  placeholder?: string;
+}
+
+export  class ActionField {
+  public decimals?: number;
+  public defaultValue?: any;
+  public name: string;
+  public label?: string;
+  public labelTrue?: string;
+  public labelFalse?: string;
+  public type?: string;
+  public placeholder?: string;
+
+  constructor(options: IActionFieldOptions) {
+    this.decimals = options.decimals;
+    this.defaultValue = options.defaultValue;
+    this.name = options.name;
+    this.label = options.label;
+    this.labelTrue = options.labelTrue;
+    this.labelFalse = options.labelFalse;
+    this.type = options.type;
+    this.placeholder = options.placeholder;
+  }
+  /**
+   * the value to pass to the contract call (as calculated from the user's input data)
+   * @return [description]
+   */
+  public callValue(userValue: any) {
+    if (this.type === "bool") {
+        return parseInt(userValue, 10) === 1;
+    }
+
+    if (this.decimals) {
+      return (new BN(userValue).mul(new BN(10).pow(new BN(this.decimals)))).toString();
+    }
+    return userValue;
+  }
 }
 
 export interface IActionSpec {
+  description: string;
   id: string;
   label: string;
   abi: IABISpec;
@@ -59,6 +95,7 @@ export interface IGenericSchemeJSON {
 }
 
 export class Action implements IActionSpec {
+  public description: string;
   public id: string;
   public label: string;
   public abi: IABISpec;
@@ -69,6 +106,7 @@ export class Action implements IActionSpec {
     if (this.fields && this.abi.inputs.length !== this.fields.length) {
       throw Error(`Error parsing action: the number if abi.inputs should equal the number of fields`);
     }
+    this.description = options.description;
     this.id = options.id;
     this.label = options.label;
     this.abi = options.abi;
@@ -76,14 +114,14 @@ export class Action implements IActionSpec {
     this.fields = options.fields;
   }
 
-  public getFields() {
-    const result: IFieldSpec[] = [];
+  public getFields(): ActionField[] {
+    const result: ActionField[] = [];
     for (let i = 0; i <  this.abi.inputs.length; i++) {
-      result.push({
+      result.push(new ActionField({
         name: this.abi.inputs[i].name,
         type: this.abi.inputs[i].type,
         ...this.fields[i]
-      });
+      }));
     }
     return result;
   }
@@ -110,7 +148,7 @@ export class GenericSchemeInfo {
     }
     throw Error(`An action with id ${id} coult not be found`);
   }
-  public actionByFunctionName(name: string) {
+  public actionByFunctionName(name: string): IActionSpec | undefined {
     for (const action of this.specs.actions) {
         if (action.abi.name === name) {
           return action;

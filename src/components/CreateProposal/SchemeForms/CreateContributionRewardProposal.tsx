@@ -5,7 +5,7 @@ import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { default as Util, supportedTokens, tokenDetails } from "lib/util";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
@@ -72,19 +72,19 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
     // If we know the decimals for the token then multiply by that
     if (externalTokenDetails) {
-      externalTokenReward = new BN(values.externalTokenReward).mul(new BN(10).pow(new BN(externalTokenDetails.decimals)));
+      externalTokenReward = toBaseUnit(values.externalTokenReward.toString(), externalTokenDetails.decimals);
     // Otherwise just convert to Wei and hope for the best
     } else {
-      externalTokenReward = Util.toWei(Number(values.externalTokenReward));
+      externalTokenReward = toWei(Number(values.externalTokenReward));
     }
 
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
-      ethReward: Util.toWei(Number(values.ethReward)),
+      ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
-      nativeTokenReward: Util.toWei(Number(values.nativeTokenReward)),
-      reputationReward: Util.toWei(Number(values.reputationReward))
+      nativeTokenReward: toWei(Number(values.nativeTokenReward)),
+      reputationReward: toWei(Number(values.reputationReward))
     };
 
     setSubmitting(false);
@@ -179,7 +179,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   setFieldValue
                 }: FormikProps<FormValues>) =>
                   <Form noValidate>
-
+                    <label className={css.description}>What to Expect</label>
+                    <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
                     <label htmlFor="titleInput">
                       Title
                       <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>

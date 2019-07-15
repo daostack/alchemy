@@ -229,7 +229,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
               <div className={css.voteStatus + " clearfix"}>
                 <div className={css.voteGraph}>
-                  <VoteGraph size={90} dao={dao} proposal={proposal} />
+                  <VoteGraph size={90} proposal={proposal} />
                 </div>
 
                 <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} detailView={true} />

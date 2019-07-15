@@ -57,6 +57,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
   private static accountStorageKey = "currentAddress";
   private static providerStorageKey = "currentWeb3ProviderInfo";
+  private static hasAcceptedCookiesKey = "acceptedCookies";
 
   constructor(props: IProps) {
     super(props);
@@ -167,6 +168,9 @@ class AppContainer extends React.Component<IProps, IState> {
         <pre>{ this.state.error.toString() }</pre>
       </div>;
     } else {
+
+      const hasAcceptedCookies = !!localStorage.getItem(AppContainer.hasAcceptedCookiesKey);
+
       return (
         <div className={css.outer}>
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
@@ -219,6 +223,14 @@ class AppContainer extends React.Component<IProps, IState> {
             }
           </div>
           <div className={css.background}></div>
+          { hasAcceptedCookies ? "" :
+            <div className={css.cookieDisclaimerContainer}>
+              <div className={css.cookieDisclaimer}>
+                <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website. We use this information for analytics in order to improve our website.</div>
+                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton}><img src="/assets/images/Icon/v-white-thick.svg"></img>Accept</a></div>
+              </div>
+            </div>
+          }
         </div>
       );
     }
@@ -241,6 +253,10 @@ class AppContainer extends React.Component<IProps, IState> {
   private getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
     const cached = localStorage.getItem(AppContainer.providerStorageKey);
     return cached ? JSON.parse(cached) : null;
+  }
+
+  private handleAccept() {
+    localStorage.setItem(AppContainer.hasAcceptedCookiesKey, "1");
   }
 }
 

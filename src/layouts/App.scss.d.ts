@@ -44,3 +44,8 @@ export const topInfo: string;
 export const headerContainer: string;
 export const web3ProviderLogout: string;
 export const text: string;
+export const cookieDisclaimerContainer: string;
+export const cookieDisclaimer: string;
+export const body: string;
+export const accept: string;
+export const blueButton: string;

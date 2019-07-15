@@ -1,5 +1,4 @@
 import { Address, Arc } from "@daostack/client";
-import { waitUntilTrue} from "lib/util";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 const Web3 = require("web3");
@@ -40,12 +39,14 @@ const settings = {
     graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
     graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
     web3Provider: "ws://127.0.0.1:8545",
+    web3ProviderRead: "ws://127.0.0.1:8545",
     ipfsProvider: "localhost",
   },
   staging: {
     graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v23",
     web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3ProviderRead: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
       "port": "443",
@@ -57,6 +58,7 @@ const settings = {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v23",
     web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3ProviderRead: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
     ipfsProvider: {
       "host": "subgraph.daostack.io",
       "port": "443",
@@ -290,7 +292,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
  * throws an Error if no provider or wrong provider
  * @return the web3 provider if is OK
  */
-async function checkWeb3Provider(web3Provider: any): Promise<string> {
+export async function checkWeb3Provider() {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -310,8 +312,23 @@ async function checkWeb3Provider(web3Provider: any): Promise<string> {
     }
   }
 
-  const networkName = await getNetworkName(web3Provider.networkVersion);
-  return networkName === expectedNetworkName ? null : expectedNetworkName;
+  let web3Provider = getMetaMask();
+
+  if (!web3Provider) {
+    const msg = `Please install or enable Metamask or Gnosis Safe`;
+    throw Error(msg);
+  }
+
+  const networkId = await getNetworkId(web3Provider);
+  const networkName = await getNetworkName(networkId);
+  if (networkName === expectedNetworkName) {
+    // save for future reference
+    web3Provider.__networkId = networkId;
+    return web3Provider;
+  } else {
+    const msg = `Please connect to "${expectedNetworkName}"`;
+    throw new Error(msg);
+  }
 }
 
 /**
@@ -377,59 +394,35 @@ function getArcSettings(): any {
   return arcSettings;
 }
 
-/**
- * Initialize Arc with a web3 provider.  No guarantee at this point that we have
- * account access.  Readonly is OK here.
- */
-export async function initializeArc(web3Provider?: any): Promise<boolean> {
-  // clone because we may write to it
-  const arcSettings = Object.assign({}, getArcSettings());
-  // if (web3Provider && web3Provider.isMetaMask) {
-  //   console.log("waiting for Metamask to initialize");
-  //   try {
-  //     await waitUntilTrue(() => web3Provider.networkVersion, 1000);
-  //     console.log(`Metamask is ready, and connected to ${web3Provider.networkVersion}`);
-  //   } catch (err) {
-  //     if (err.message.match(/timed out/)) {
-  //       throw new Error("Error: Could not connect to Metamask (time out)");
-  //     }
-  //     throw new Error(err);
-  //   }
-  // }
+export async function initializeArc(): Promise<Arc> {
+  const arcSettings = getArcSettings();
 
-  if (web3Provider) {
-    const expectedNetworkName = await checkWeb3Provider(web3Provider);
-    if (expectedNetworkName) {
-        const msg = `Please connect to "${expectedNetworkName}"`;
-        throw new Error(msg);
-    }
-    arcSettings.web3Provider = web3Provider;
+  try {
+    arcSettings.web3Provider = await checkWeb3Provider();
+
+  } catch (err) {
+    // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
+    console.log(err);
   }
 
   // log some useful info
-  console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
-  console.log(arcSettings);
-  console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
-  // if (web3Provider) {
-  //   console.log("Using injected Web3 provider");
-  // } else {
-  //   console.log("Using default Web3 provider");
-  // }
+  // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
+  // console.log(arcSettings);
+  // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
+  if (arcSettings.web3Provider.isSafe) {
+    console.log(`Using Gnosis Safe`);
+  } else if (arcSettings.web3Provider.isMetaMask) {
+    console.log(`Using MetaMask`);
+  } else {
+    console.log("Using default Web3 (read-only) provider");
+  }
 
   const arc: Arc = new Arc(arcSettings);
-  const success = await arc.initialize();
-  (window as any).arc = success ? arc : null;
-  return success;
-}
-
-/**
- * Returns the Arc instance. Throws an exception when Arc hasn't yet been initialized!
- */
-export function getArc(): Arc {
-  const arc = (window as any).arc;
-  if (!arc) {
-    throw Error("window.arc is not defined - please call initializeArc first");
-  }
+  // get contract information from the subgraph
+  const contractInfos = await arc.getContractInfos();
+  arc.setContractInfos(contractInfos);
+  // save the object on a global window object (I know, not nice, but it works..)
+  (<any> window).arc = arc;
   return arc;
 }
 

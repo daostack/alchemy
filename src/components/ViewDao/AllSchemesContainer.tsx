@@ -7,6 +7,7 @@ import { isKnownScheme } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
+import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
 import * as css from "./AllSchemes.scss";
@@ -57,7 +58,9 @@ const AllSchemesContainer = (props: IProps) => {
     <div className={css.wrapper}>
       <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
-      <h1>All Schemes</h1>
+      <Sticky enabled={true} top={0} innerZ={10000}>
+        <h1>All Schemes</h1>
+      </Sticky>
       {schemes.length === 0
         ? <div>
           <img src="/assets/images/meditate.svg" />
@@ -66,7 +69,7 @@ const AllSchemesContainer = (props: IProps) => {
             </div>
         </div>
         :
-        <div>{schemeCardsHTML}</div>
+        <div className={css.allSchemes}>{schemeCardsHTML}</div>
       }
     </div>
   );

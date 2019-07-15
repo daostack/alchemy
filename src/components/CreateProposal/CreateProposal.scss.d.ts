@@ -49,6 +49,7 @@ export const parametersHash: string;
 export const permissions: string;
 export const permissionsLabel: string;
 export const radioButtons: string;
+export const description: string;
 export const schemeRegistrar: string;
 export const schemeRegistrarForm: string;
 export const schemeRegistrarSidebar: string;
