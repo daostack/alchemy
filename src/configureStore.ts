@@ -1,4 +1,4 @@
-import createHistory from "history/createBrowserHistory";
+import { createBrowserHistory } from "history";
 import { routerMiddleware } from "react-router-redux";
 import { notificationUpdater, successDismisser } from "reducers/notifications";
 import { operationsTracker } from "reducers/operations";
@@ -7,7 +7,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import thunkMiddleware from "redux-thunk";
 import reducers from "./reducers";
 
-export const history = createHistory();
+export const history = createBrowserHistory();
 
 const store = createStore(
   reducers,
