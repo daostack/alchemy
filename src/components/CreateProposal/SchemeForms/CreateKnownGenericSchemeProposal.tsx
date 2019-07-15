@@ -2,7 +2,6 @@
 import { IProposalType, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";

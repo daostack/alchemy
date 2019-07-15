@@ -1,7 +1,6 @@
 import { IDAOState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
-import BN = require("bn.js");
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";

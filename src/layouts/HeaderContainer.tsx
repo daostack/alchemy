@@ -80,6 +80,7 @@ class HeaderContainer extends React.Component<IProps, null> {
     } = this.props;
 
     const daoAvatarAddress = dao ? dao.address : null;
+    const accountIsEnabled = getAccountIsEnabled();
 
     return(
       <div className={css.headerContainer}>
@@ -120,8 +121,9 @@ class HeaderContainer extends React.Component<IProps, null> {
                     </div>
                   </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
-                  { !getAccountIsEnabled() ? <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> : "" }
-                  { getAccountIsEnabled() ? <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> : "" }
+                  { accountIsEnabled ?
+                    <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
+                    <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> }
                 </div>
               </div> : ""
             }

@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 const Web3 = require("web3");
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { getNetworkName } from "./lib/util";
+import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -23,7 +23,7 @@ const web3ConnectProviderOptions =
           key: "pk_live_38A2BD2B1D4E9912"
         }
       }
-      : (process.env.NODE_ENV === "staging") ?
+      : // (process.env.NODE_ENV === "staging") ?
       {
         portis: {
           id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
@@ -32,7 +32,7 @@ const web3ConnectProviderOptions =
         fortmatic: {
           key: "pk_test_659B5B486EF199E4"
         }
-      } : {};
+      };
 
 const settings = {
   dev: {
@@ -206,7 +206,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
         });
     });
 
-    web3Connect.on("error", (error) => {
+    web3Connect.on("error", (error: Error) => {
       console.log(`web3Connect closed on error:  ${error.message}`);
       rejectOnClosePromise(error);
     });
@@ -292,7 +292,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
  * throws an Error if no provider or wrong provider
  * @return the web3 provider if is OK
  */
-export async function checkWeb3Provider() {
+export async function checkWeb3Provider(provider?: any) {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -312,7 +312,7 @@ export async function checkWeb3Provider() {
     }
   }
 
-  let web3Provider = getMetaMask();
+  let web3Provider = provider ? provider : getWeb3Provider();
 
   if (!web3Provider) {
     const msg = `Please install or enable Metamask or Gnosis Safe`;
@@ -335,7 +335,10 @@ export async function checkWeb3Provider() {
  * Returns if an account is enabled in the selected web3Provider
  */
 export function getAccountIsEnabled(): boolean {
-  return !!getCurrentAccountAddress();
+  /**
+   * proxy for the presence of an account. selectedProvider cannot be set without a locked account.
+   */
+  return !!getWeb3Provider();
 }
 
 /**
@@ -346,6 +349,12 @@ export function getWeb3ProviderInfo(): IWeb3ProviderInfo {
   return selectedProvider ? Web3Connect.getProviderInfo(selectedProvider) : null;
 }
 
+/**
+ * Return currently-selected and fully-enabled web3Provider.
+ */
+export function getWeb3Provider(): any | undefined {
+  return selectedProvider;
+}
 /**
  * Check if a web3Provider has been selected and is fully available.
  * Does not know about the default read-only providers.
@@ -394,12 +403,11 @@ function getArcSettings(): any {
   return arcSettings;
 }
 
-export async function initializeArc(): Promise<Arc> {
+export async function initializeArc(provider?: any): Promise<boolean> {
   const arcSettings = getArcSettings();
 
   try {
-    arcSettings.web3Provider = await checkWeb3Provider();
-
+    arcSettings.web3Provider = await checkWeb3Provider(provider);
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
     console.log(err);
@@ -417,12 +425,29 @@ export async function initializeArc(): Promise<Arc> {
     console.log("Using default Web3 (read-only) provider");
   }
 
-  const arc: Arc = new Arc(arcSettings);
   // get contract information from the subgraph
-  const contractInfos = await arc.getContractInfos();
-  arc.setContractInfos(contractInfos);
-  // save the object on a global window object (I know, not nice, but it works..)
-  (<any> window).arc = arc;
+  let success = false;
+  let arc: Arc;
+  try {
+    arc = new Arc(arcSettings);
+    const contractInfos = await arc.getContractInfos();
+    await arc.setContractInfos(contractInfos);
+    success = true;
+  } catch (ex) {
+    console.log(ex.message);
+  }
+  (window as any).arc = success ? arc : null;
+  return success;
+}
+
+/**
+ * Returns the Arc instance. Throws an exception when Arc hasn't yet been initialized!
+ */
+export function getArc(): Arc {
+  const arc = (window as any).arc;
+  if (!arc) {
+    throw Error("window.arc is not defined - please call initializeArc first");
+  }
   return arc;
 }
 
