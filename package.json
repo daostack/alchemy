@@ -1,6 +1,6 @@
 {
   "name": "alchemy-client",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "React based client app for interacting with DAO Stack",
   "author": "Tibet Sprague",
   "license": "GPL-3.0",
@@ -10,8 +10,8 @@
     "url": "git+https://github.com/daostack/alchemy.git"
   },
   "engines": {
-    "node": "9.5",
-    "npm": "5.10"
+    "node": ">=10.16",
+    "npm": ">=6.9.0"
   },
   "jest": {
     "testURL": "http://127.0.0.1:3000/",
