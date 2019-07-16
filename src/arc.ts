@@ -206,9 +206,6 @@ export async function initializeArc(): Promise<Arc> {
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
-// Polling is Evil!
-// TODO: check if this (new?) function can replace polling:
-// https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
 export function pollForAccountChanges(currentAccountAddress?: string, interval: number = 2000) {
   console.log("start polling for account changes");
   return Observable.create((observer: any) => {

@@ -18,9 +18,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
 
       const dao = new DAO(proposalOptions.dao, arc);
 
-      // TODO: use the Option stages of the client lib to communicate about the progress
       const observer = operationNotifierObserver(dispatch, "Create proposal");
-      // @ts-ignore
       await dao.createProposal(proposalOptions).subscribe(...observer);
     } catch (err) {
       console.error(err);
@@ -32,13 +30,11 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
 export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Dispatch<any>) => {
     const arc = getArc();
-    // TODO: the subscription should defined in a separate contant so it can be reuse
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
     const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
 
     // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
-    // @ts-ignore
     await proposalObj.claimRewards(null).subscribe(...observer);
   };
 }
@@ -60,7 +56,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");
-    // @ts-ignore
     await proposalObj.vote(voteOption).subscribe(...observer);
   };
 }
@@ -81,7 +76,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
-    // @ts-ignore
     await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
   };
 }
