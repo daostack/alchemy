@@ -51,7 +51,7 @@ export default class VoteGraph extends React.Component<IProps, null> {
         </svg>
         <svg className={css.noVotesCircle} viewBox="0 0 33.83098862 33.83098862" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
           {displayNoPercentage ?
-            <circle className={css.circleChartCircle + " " + css.circleChartCircleNegative} stroke="$accent-2" strokeWidth="2" strokeDasharray={displayNoPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
+            <circle className={css.circleChartCircle + " " + css.circleChartCircleNegative} stroke="rgba(246, 80, 80, 1.000)" strokeWidth="2" strokeDasharray={displayNoPercentage + ",100"} strokeLinecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
             : ""
           }
         </svg>
