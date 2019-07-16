@@ -30,7 +30,6 @@ const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
               {humanProposalTitle(proposalState)}
             </span>
             <b>
-              {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
               <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView={true} />
             </b>
           </Link>

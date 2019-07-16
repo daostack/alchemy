@@ -1,6 +1,5 @@
  // tslint:disable:max-classes-per-file
 /*
- * TODO; : This; logic; will; move; to; the; client; library, where; it; willb; e; properly; tested
  */
 import BN = require("bn.js");
 const Web3 = require("web3");
