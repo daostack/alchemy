@@ -531,6 +531,18 @@ form .radioButtons {
   }
 }
 
+label.description {
+  margin-bottom: 2px;
+}
+
+div.description {
+  font-size: 11px;
+  margin-bottom: 12px;
+
+  a, a:hover {
+    color: #0071ff;
+  }
+}
 
 @media only screen and (max-width: 425px) {
   .createProposalWrapper {

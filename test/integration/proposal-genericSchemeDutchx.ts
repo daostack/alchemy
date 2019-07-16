@@ -23,6 +23,9 @@ describe("Proposals", () => {
 
       await createProposalButton.click();
 
+      const masterCopyTab = await $("*[data-test-id=\"action-tab-updateMasterCopy\"]");
+      await masterCopyTab.click();
+
       const titleInput = await $("*[id=\"titleInput\"]");
       await titleInput.waitForExist();
 
