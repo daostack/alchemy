@@ -652,19 +652,11 @@ button:hover {
   }
 }
 
-.proposalsContainer, .membersContainer {
-
-}
-
-.proposalsContainer.boostedProposalsContainer {
-  margin: 10px 0 20px 0;
-}
-
 .member {
   padding: 15px;
-    margin-bottom: 2px;
-    background-color: white;
-    border-radius: 3px;
+  margin-bottom: 2px;
+  background-color: white;
+  border-radius: 3px;
 }
 
 a {
@@ -709,26 +701,6 @@ a.navRedemption:hover {
 
 .nav a.navItem:nth-child(1) {
   margin-left: 0;
-}
-
-.daoProposalsContainer {
-  padding-bottom: 150px;
-  position: relative;
-}
-
-.createProposal {
-  height: 30px;
-  line-height: 30px;
-  font-size: 13px;
-  color: $white;
-  background-color: rgba(3, 118, 255, 1.000);
-  border-radius: 15px;
-  display: block;
-  position: absolute;
-  z-index: 100;
-  right: 0;
-  top: 10px;
-  padding: 0 15px;
 }
 
 .redeemAllRewardsButton {
@@ -783,10 +755,6 @@ a.navRedemption:hover {
   font-size: $small;
 }
 
-a.createProposal:hover {
-  background-color: $accent-1;
-  color: $white;
-}
 
 a.navItem.selected {
   font-size: $headline-2;
@@ -918,24 +886,6 @@ a.navItem:hover {
   text-align: right;
 }
 
-.boostedContainer, .regularContainer {
-  position: relative;
-  margin-top: 20px;
-}
-
-.queueType {
-  margin-top: 0;
-  font-weight: bold;
-  padding: 0;
-  font-size: 28px;
-  position: relative;
-  color: rgba(104, 155, 214, 1.000);
-  z-index: 0;
-  border-bottom: 1px solid rgba(212,220,228,1);
-  padding-bottom: 2px;
-  padding-top: 10px;
-  background-color: rgba(229, 235, 242, 1.000);
-}
 
 .daoHistoryHeader {
     font-size: 28px;
@@ -974,123 +924,6 @@ a.navItem:hover {
     }
   }
 
-}
-
-.boostedContainer .proposalsHeader {
-  border-top: none;
-}
-
-.proposalsHeader {
-  font-size: 16px;
-  position: relative;
-  text-align: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  border-top: $gray-border-2;
-  color: $gray-1;
-  font-weight: $bold;
-
-  img {
-    margin-top: 8px;
-  }
-
-  span {
-    position: absolute;
-    right: 0;
-    font-size: $body;
-
-    span {
-      font-weight: $bold;
-      position: relative;
-    }
-  }
-}
-
-.noDecisions {
-  padding: 50px;
-  text-align: center;
-  margin-top: 80px;
-
-  p {
-    color: rgba(154, 169, 181, 1.000);
-    font-size: 21px;
-    font-family: "AccordBold", sans-serif;
-    margin: 0 auto;
-    max-width: 450px;
-    text-align: center;
-  }
-
-  .relax {
-    width: 64px;
-    display: block;
-    margin: 0 auto;
-  }
-
-  .proposalsHeader {
-    font-size: 45px;
-    padding-top: 30px;
-    border-top: none;
-    max-width: 100%;
-    color: rgba(104, 154, 214, 1.000);
-  }
-
-  .subheader {
-    font-size: $subheader;
-    color: $black-halftone;
-  }
-
-  .cta {
-    padding-top: 50px;
-
-    a {
-      color: rgba(6, 118, 255, 1.000);
-      font-size: 11px;
-      font-family: "Open Sans";
-      display: inline-block;
-      margin-right: 20px;
-
-      img {
-        height: 8px;
-        display: inline-block;
-        width: 8px;
-      }
-    }
-
-    a.blueButton {
-      height: 30px;
-      line-height: 30px;
-      font-size: 13px;
-      color: white;
-      background-color: rgba(5, 118, 255, 1.000);
-      transition: all .25s ease;
-      border-radius: 15px;
-      display: inline-block;
-      padding: 0 30px;
-
-      &:hover {
-        background-color: rgba(19, 46, 91, 1.000);
-        color: $white;
-      }
-    }
-  }
-}
-
-.fadeEnter {
-  opacity: 0.01;
-}
-
-.fadeEnter.fadeEnterActive {
-  opacity: 1;
-  transition: opacity 1000ms ease-in;
-}
-
-.fadeExit {
-  opacity: 1;
-}
-
-.fadeExit.fadeExitActive {
-  opacity: 0.01;
-  transition: opacity 1000ms ease-in;
 }
 
 .hidden {
@@ -1376,16 +1209,6 @@ a.navItem:hover {
         background-color: transparent;
       }
     }
-  }
-
-  .queueType {
-    font-size: 18px;
-    padding-left: 15px;
-  }
-
-  .createProposal {
-    top: 5px;
-    right: 15px;
   }
 
   .proposalsHeader {

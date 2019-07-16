@@ -38,7 +38,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
               History
             </div>
           </Sticky>
-          <div className={css.proposalsContainer}>
+          <div>
             <div className={css.closedProposalsHeader}>
               <div className={css.proposalCreator}>Proposed by</div>
               <div className={css.endDate}>End date</div>
@@ -49,7 +49,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
               <div className={css.closeReason}>Status</div>
               <div className={css.myActions}>My actions</div>
             </div>
-            <div className={css.proposalsContainer + " " + css.proposalHistory}>
+            <div className={css.proposalHistory}>
               <InfiniteScroll
                 dataLength={proposals.length} //This is important field to render the next data
                 next={fetchMore}

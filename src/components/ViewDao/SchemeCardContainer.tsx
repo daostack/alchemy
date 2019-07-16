@@ -64,7 +64,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
   const proposalsHTML = proposals.map((proposal: Proposal) => <ProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
-      <Link className={css.headerLink} to={`/dao/${dao.address}/proposals/${scheme.id}`}>
+      <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${scheme.id}`}>
         <h2>{schemeName(scheme, "[Unknown]")}</h2>
         <div>
           <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
@@ -83,7 +83,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
         <div>
           {proposalsHTML}
           <div className={css.numProposals}>
-            <Link to={`/dao/${dao.address}/proposals/${scheme.id}`}>View all {numProposals} &gt;</Link>
+            <Link to={`/dao/${dao.address}/scheme/${scheme.id}/proposals`}>View all {numProposals} &gt;</Link>
           </div>
         </div>
         : " "

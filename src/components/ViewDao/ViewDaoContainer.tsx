@@ -3,6 +3,7 @@ import * as profilesActions from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
 import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
+import SchemePage from "components/Scheme/SchemePage";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -20,7 +21,6 @@ import DaoHistoryContainer from "./DaoHistoryContainer";
 import DaoMembersContainer from "./DaoMembersContainer";
 import DaoRedemptionsContainer from "./DaoRedemptionsContainer";
 import DaoSidebar from "./DaoSidebar";
-import SchemeProposalsContainer from "./SchemeProposalsContainer";
 import * as css from "./ViewDao.scss";
 
 interface IStateProps extends RouteComponentProps<any> {
@@ -115,13 +115,16 @@ class ViewDaoContainer extends React.Component<IProps, IState> {
                 />
               }
             />
-            <Route path="/dao/:daoAvatarAddress/proposals/:scheme" render={(props) => <SchemeProposalsContainer {...props} currentAccountAddress={currentAccountAddress} />} />
+
+            <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
+              render={(props) => <SchemePage {...props} currentAccountAddress={currentAccountAddress} />} />
+
             <Route path="/dao/:daoAvatarAddress" render={(props) => <AllSchemesContainer {...props} />} />
           </Switch>
 
           <ModalRoute
-            path="/dao/:daoAvatarAddress/proposals/:scheme/create"
-            parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}/proposals/${route.params.scheme}/`}
+            path="/dao/:daoAvatarAddress/scheme/:schemeId/proposals/create"
+            parentPath={(route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`}
             component={CreateProposalContainer}
           />
 

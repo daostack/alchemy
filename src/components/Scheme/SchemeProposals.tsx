@@ -9,11 +9,10 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
-import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { combineLatest, from } from "rxjs";
+import { combineLatest } from "rxjs";
 import ProposalCardContainer from "../Proposal/ProposalCardContainer";
-import * as css from "./ViewDao.scss";
+import * as css from "./SchemeProposals.scss";
 
 // For infinite scrolling
 const PAGE_SIZE = 100;
@@ -44,7 +43,7 @@ interface IProps {
   scheme: Scheme;
 }
 
-class SchemeProposalsContainer extends React.Component<IProps, IState> {
+class SchemeProposals extends React.Component<IProps, IState> {
 
   public render() {
     const { currentAccountAddress, dao, fetchMore, hasMoreProposalsToLoad, proposalsQueued, proposalsBoosted, proposalsPreBoosted, scheme } = this.props;
@@ -80,17 +79,9 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
     );
 
     return (
-      <div className={css.daoProposalsContainer} id="scrollContainer">
-        <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+      <div>
+        <BreadcrumbsItem to={`/dao/${dao.address}/scheme/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
-        <Sticky enabled={true} top={0} innerZ={10000}>
-          <h2 className={css.queueType}>
-            {schemeName(scheme, scheme.address)}
-            <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">
-              + New proposal
-            </Link>
-          </h2>
-        </Sticky>
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
           ? <div className={css.noDecisions}>
               <img className={css.relax} src="/assets/images/yogaman.svg"/>
@@ -102,7 +93,7 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
                 <Link to={"/dao/" + dao.address}>
                   <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
                 </Link>
-                <Link to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
+                <Link to={`/dao/${dao.address}/scheme/${scheme.id}/proposals/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
               </div>
             </div>
           :
@@ -174,6 +165,7 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
 
 interface IExternalProps {
   currentAccountAddress: Address;
+  scheme: Scheme;
 }
 
 interface IState {
@@ -192,17 +184,14 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
 
   public render() {
     const daoAvatarAddress = this.props.match.params.daoAvatarAddress;
-    const schemeId = this.props.match.params.scheme;
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
+    const schemeId = this.props.scheme.id;
 
     // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
     const currentTime = Math.floor(new Date().getTime() / 1000);
 
     const observable = combineLatest(
-      // Scheme state
-      from(arc.scheme(schemeId)),
-
       // the list of queued proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
@@ -230,7 +219,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     const parentState = this.state;
 
     return <Subscribe observable={observable}>{
-      (state: IObservableState<[Scheme, Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
+      (state: IObservableState<[Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
         if (state.isLoading) {
           return  <div className={css.loading}><Loading/></div>;
         } else if (state.error) {
@@ -241,14 +230,14 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
           if (data.length < PAGE_SIZE) {
             hasMoreProposals = false;
           }
-          return <SchemeProposalsContainer
+          return <SchemeProposals
             {...this.props}
             hasMoreProposalsToLoad={hasMoreProposals}
-            scheme={data[0]}
-            proposalsQueued={data[1]}
-            proposalsPreBoosted={data[2]}
-            proposalsBoosted={data[3]}
-            dao={data[4]}
+            scheme={this.props.scheme}
+            proposalsQueued={data[0]}
+            proposalsPreBoosted={data[1]}
+            proposalsBoosted={data[2]}
+            dao={data[3]}
             fetchMore={ () => {
               state.fetchMore({
                 observable: dao.proposals({
@@ -258,11 +247,11 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
                   first: PAGE_SIZE,
                   skip: data[1].length
                 }),
-                combine: (prevState: [Scheme, Proposal[], Proposal[], Proposal[], IDAOState], newData: Proposal[]) => {
+                combine: (prevState: [Proposal[], Proposal[], Proposal[], IDAOState], newData: Proposal[]) => {
                   if (newData.length < PAGE_SIZE) {
                     setState({ hasMoreProposalsToLoad: false});
                   }
-                  return [prevState[0], prevState[1].concat(newData), prevState[2], prevState[3], prevState[4]];
+                  return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
                 }
               });
             }}

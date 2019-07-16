@@ -25,7 +25,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     history: ownProps.history,
-    schemeId: ownProps.match.params.scheme
+    schemeId: ownProps.match.params.schemeId
   };
 };
 
@@ -37,7 +37,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     if (history.length > 0) {
       history.goBack();
     } else {
-      history.push("/dao/" + daoAvatarAddress + "/proposals/" + schemeId);
+      history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
     }
   }
 
@@ -80,8 +80,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
         }
 
         return <div className={css.createProposalWrapper}>
-          <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}`}>{schemeName.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
-          <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/proposals/${scheme.id}/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
+          <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`}>Create {schemeName.replace(/([A-Z])/g, " $1")} Proposal</BreadcrumbsItem>
           <h2 className={css.header}>
             <span>+ New proposal <b>| {schemeName}</b></span>
           </h2>

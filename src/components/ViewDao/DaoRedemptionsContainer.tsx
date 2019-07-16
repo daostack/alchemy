@@ -113,7 +113,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
             }
           </div>
         </Sticky>
-        <div className={css.proposalsContainer}>
+        <div>
           {proposals.length > 0 ?
             <div>{proposalsHTML}</div>
           :
