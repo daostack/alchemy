@@ -64,7 +64,7 @@ class VotersModal extends React.Component<IProps, null> {
   public render() {
     const { dao, proposalState, votes } = this.props;
 
-    const currentAccountVote = votes[0]; // TODO
+    const currentAccountVote = votes[0];
 
     const yesVotes = votes.filter((vote) => vote.outcome === IProposalOutcome.Pass);
     const noVotes = votes.filter((vote) => vote.outcome === IProposalOutcome.Fail);

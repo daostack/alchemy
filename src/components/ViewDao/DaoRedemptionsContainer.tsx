@@ -40,11 +40,8 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const reputationReward = new BN(0);
     const externalTokenRewards: { [symbol: string]: BN } = {};
 
-    // TODO: move all the next logic to the client library
-
     // calculate the total rewards from the genesisprotocol
     proposals.forEach((proposal) => {
-      // TODO: gpRewards __should__ be a list with a single element, but we need some error handling here anyway, prboably
       proposal.gpRewards.forEach((reward: any) => {
         if (reward.beneficiary === currentAccountAddress) {
           if (reward.tokensForStaker && Number(reward.tokensForStakerRedeemedAt) === 0) {
