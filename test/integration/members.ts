@@ -20,9 +20,5 @@ describe("Members page", () => {
       const address = userAddresses[0];
       const memberElement = await $(`*[data-test-id="member_${address}"]`);
       await memberElement.waitForExist();
-      // TODO: we should see the repuation of this member
-      // const reputationElement = await $(`*[data-test-id="member_${address}"] *[data-test-id="reputation"]`);
-      // const reputation = await reputationElement.getText();
-      // reputation.should.have.string("% Rep.");
     });
 });
