@@ -128,7 +128,6 @@ class AppContainer extends React.Component<IProps, IState> {
 
     if (this.state.error) {
       // Render error fallback UI
-      // TODO: style this!
       console.log(this.state.error);
       return <div>
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>

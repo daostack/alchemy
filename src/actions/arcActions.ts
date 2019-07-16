@@ -19,6 +19,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
       const dao = new DAO(proposalOptions.dao, arc);
 
       const observer = operationNotifierObserver(dispatch, "Create proposal");
+      // @ts-ignore
       await dao.createProposal(proposalOptions).subscribe(...observer);
     } catch (err) {
       console.error(err);
@@ -35,6 +36,7 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
 
     // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
+    // @ts-ignore
     await proposalObj.claimRewards(null).subscribe(...observer);
   };
 }
@@ -56,6 +58,7 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");
+    // @ts-ignore
     await proposalObj.vote(voteOption).subscribe(...observer);
   };
 }
@@ -76,6 +79,7 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
+    // @ts-ignore
     await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
   };
 }
