@@ -310,7 +310,6 @@ export function hasClaimableRewards(reward: IRewardState) {
  * @param  reward an object that immplements IContributionReward
  * @return  an array mapping strings to BN
  */
-// TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
 export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
   const result: { [key: string]: BN } = {};
   if (

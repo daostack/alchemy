@@ -29,7 +29,7 @@ describe("Proposals", () => {
       await titleInput.setValue(title);
 
       // using uuid value so that the test will pass also if there is already a proposal with this description
-      // (which must be unique). TODO: find a way to reset the state
+      // (which must be unique).
       const descriptionInput = await $(".mde-text");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
