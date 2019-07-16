@@ -101,7 +101,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     return (
       <div>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
-        <Sticky enabled={true} top={0} innerZ={10000}>
+        <Sticky enabled={true} top={50} innerZ={10000}>
           <div className={css.redemptionsHeader}>
             Redemptions
             {proposals.length > 0 ?
