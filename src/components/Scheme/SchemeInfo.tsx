@@ -31,13 +31,13 @@ export default class SchemeInfo extends React.Component<IProps, null> {
       return <div>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
-        <div>
-          <h3>{schemeName(scheme, scheme.address)}></h3>
+        <div className={css.schemeInfoContainer}>
+          <h3>{schemeName(scheme, scheme.address)}</h3>
           Address <a href={linkToEtherScan(scheme.address)} target="_blank">icon</a>: {scheme.address}<br/>
           Param Hash: {schemeState.paramsHash}
         </div>
 
-        <div>
+        <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank">Learn more</a></h3>
         </div>
       </div>

@@ -43,9 +43,10 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
           <h2 className={css.schemeName}>
             {schemeName(scheme, scheme.address)}
           </h2>
-          <div>
-            <Link to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/`}>Proposals</Link>
-            <Link to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info/`}>Info</Link>
+
+          <div className={css.schemeMenu}>
+            <Link className={css.proposals + " " + css.active} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/`}>Proposals</Link>
+            <Link className={css.info} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info/`}>Info</Link>
             <Link className={css.createProposal} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`} data-test-id="createProposal">
               + New proposal
             </Link>
