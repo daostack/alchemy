@@ -36,15 +36,6 @@
     contracts.dutchx[name] = migration.test[VERSION_FOR_DUTCHX_TEST][name];
   }
 
-  // check if the dutchX contract has the correct address
-  const dutchXJSON = require("../../src/genericSchemeRegistry/schemes/DutchX.json");
-  const expectedDutchXSchemeAddress = migration.base[VERSION_FOR_DUTCHX_TEST]["GenericScheme"].toLowerCase();
-  if (dutchXJSON.addresses.private[0] !== expectedDutchXSchemeAddress) {
-    const msg = `Expected to find ${expectedDutchXSchemeAddress}  in  require("genericSchemeRegistry/schemes/DutchX.json").address.private
-      Perhaps migration.json has changed? Please edit the DutchX file if so.
-    `;
-    throw Error(msg);
-  }
   return contracts;
 }
 
