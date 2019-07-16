@@ -1,5 +1,5 @@
 // const BN = require("bn.js");
-import { IProposalType, Scheme } from "@daostack/client";
+import { IProposalType, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
@@ -17,7 +17,7 @@ interface IStateProps {
   daoAvatarAddress: string;
   genericSchemeInfo: GenericSchemeInfo;
   handleClose: () => any;
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
