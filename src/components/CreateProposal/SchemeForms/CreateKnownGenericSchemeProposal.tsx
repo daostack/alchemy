@@ -40,7 +40,7 @@ interface FormValues {
   description: string;
   title: string;
   url: string;
-  [key: string]: any; // TODO: "allowSyntheticDefaultImports": true in tsconfig.json should render this unecessary. But it is needed anyway
+  [key: string]: any;
 }
 
 interface IState {

@@ -102,7 +102,6 @@ class ActionButton extends React.Component<IProps, IState> {
     if (proposalState.contributionReward) {
       const daoBalances: {[key: string]: BN} = {
         eth: daoEthBalance,
-        // TODO: add the other balances as well
         nativeToken: undefined,
         rep: undefined,
         externalToken: undefined

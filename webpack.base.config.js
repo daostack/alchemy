@@ -44,7 +44,6 @@ module.exports = {
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-      // TODO; does this end up in the budnle? If so, we may only want to do this in dev
       {
         enforce: "pre",
         test: /\.js$/,

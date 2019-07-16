@@ -101,7 +101,6 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     }
 
     let currentStake: IStake;
-    // TODO: this is not good at all. What if the user staked more than one time?
     if (stakesOfCurrentUser.length > 0) {
       currentStake = stakesOfCurrentUser[0];
     }
