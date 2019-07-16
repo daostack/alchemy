@@ -17,7 +17,8 @@
     },
     "rules": {
         "max-len": ["warn", 120, 2],
-        "indent": ["warn", 2],
+        "indent": "off",
+        "@typescript-eslint/indent": ["error", 2],
         "@typescript-eslint/prefer-for-of": "warn",
         "no-console": "warn",
         "one-var": ["warn", "never"],
