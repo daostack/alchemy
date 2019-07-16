@@ -1,14 +1,48 @@
 {
-    "extends": "eslint:recommended",
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended"
+    ],
     "env": {
       "amd": true,
       "node": true,
       "es6": true,
     },
+    "settings": {
+      "react": {
+        "version": "detect", // React version. "detect" automatically picks the version you have installed.
+      }
+    },
     "rules": {
-        "semi": 2,
-        "eol-last": 2,
-        "eqeqeq": "error",
-        "no-console": 0
+        "max-len": ["warn", 120, 2],
+        "indent": ["warn", 2],
+        "@typescript-eslint/prefer-for-of": "warn",
+        "no-console": "warn",
+        "one-var": ["warn", "never"],
+        "no-var": "warn",
+        "react/jsx-boolean-value": "warn",
+        "react/jsx-no-bind": "warn",
+        "react/jsx-curly-spacing": "warn",
+        "no-bitwise": "warn",
+        "@typescript-eslint/interface-name-prefix": "warn",
+        "prefer-const": "warn",
+        "no-unused-expressions": "warn",
+        "quotes": ["error", "double"],
+        "sort-imports": ["error", {
+          "ignoreCase": true,
+          "ignoreMemberSort": false,
+          "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+        }],
+        "comma-dangle": ["error" ,"always-multiline"],
+        "semi": ["error", "always"],
+        "eol-last": "warn",
+        "eqeqeq": "warn",
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint", "react"],
+    "parserOptions": {
+      "project": "./tsconfig.json"
     }
-}
+  }
