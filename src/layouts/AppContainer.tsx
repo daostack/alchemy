@@ -113,7 +113,7 @@ class AppContainer extends React.Component<IProps, IState> {
             window.location.reload();
           }
         });
-      }
+    }
   }
 
   public render() {
@@ -140,7 +140,7 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/" render={ ( props ) => <HeaderContainer {...props} /> } />
+            <Route path="/" render={( props ) => <HeaderContainer {...props} />} />
 
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
@@ -165,22 +165,22 @@ class AppContainer extends React.Component<IProps, IState> {
               sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
                 <div key={id}>
                   <Notification
-                      title={(title || status).toUpperCase()}
-                      status={
-                        status === NotificationStatus.Failure ?
-                          NotificationViewStatus.Failure :
+                    title={(title || status).toUpperCase()}
+                    status={
+                      status === NotificationStatus.Failure ?
+                        NotificationViewStatus.Failure :
                         status === NotificationStatus.Success ?
                           NotificationViewStatus.Success :
                           NotificationViewStatus.Pending
-                      }
-                      message={message}
-                      fullErrorMessage={fullErrorMessage}
-                      url={url}
-                      timestamp={timestamp}
-                      dismiss={() => dismissNotification(id)}
-                      showNotification={showNotification}
-                      minimize={() => this.setState({notificationsMinimized: true})}
-                    />
+                    }
+                    message={message}
+                    fullErrorMessage={fullErrorMessage}
+                    url={url}
+                    timestamp={timestamp}
+                    dismiss={() => dismissNotification(id)}
+                    showNotification={showNotification}
+                    minimize={() => this.setState({notificationsMinimized: true})}
+                  />
                   <br/>
                 </div>
               ))

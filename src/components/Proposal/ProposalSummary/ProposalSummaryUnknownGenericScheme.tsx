@@ -13,6 +13,7 @@ interface IProps {
   transactionModal?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IState {
 }
 
@@ -28,7 +29,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
-      [css.withDetails]: true
+      [css.withDetails]: true,
     });
     return (
       <div className={proposalSummaryClass}>

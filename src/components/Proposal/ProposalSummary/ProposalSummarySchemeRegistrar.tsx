@@ -23,7 +23,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      network: ""
+      network: "",
     };
 
   }
@@ -39,53 +39,53 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
-      [css.withDetails]: true
+      [css.withDetails]: true,
     });
 
     const schemeRegistrar = proposal.schemeRegistrar;
     const permissions = parseInt(schemeRegistrar.schemeToRegisterPermission, 16);
 
     return (
-        <div className={proposalSummaryClass}>
-          { schemeRegistrar.schemeToRemove  ?
-              <div>
-                <span className={css.summaryTitle}>
-                  <img src="/assets/images/Icon/delete.svg"/>&nbsp;
+      <div className={proposalSummaryClass}>
+        { schemeRegistrar.schemeToRemove  ?
+          <div>
+            <span className={css.summaryTitle}>
+              <img src="/assets/images/Icon/delete.svg"/>&nbsp;
                   Remove Scheme&nbsp;
-                  <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">{schemeNameAndAddress(schemeRegistrar.schemeToRemove)}</a>
-                </span>
-                { detailView ?
-                  <div className={css.summaryDetails}>
-                    <table><tbody>
-                      <tr>
-                        <th>
+              <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank" rel="noopener noreferrer">{schemeNameAndAddress(schemeRegistrar.schemeToRemove)}</a>
+            </span>
+            { detailView ?
+              <div className={css.summaryDetails}>
+                <table><tbody>
+                  <tr>
+                    <th>
                           Address:
-                          <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank">
-                            <img src="/assets/images/Icon/Link-blue.svg"/>
-                          </a>
-                        </th>
-                        <td>{schemeRegistrar.schemeToRemove}</td>
-                      </tr>
-                    </tbody></table>
-                  </div>
-                  : ""
-                }
+                      <a href={linkToEtherScan(schemeRegistrar.schemeToRemove)} target="_blank" rel="noopener noreferrer">
+                        <img src="/assets/images/Icon/Link-blue.svg"/>
+                      </a>
+                    </th>
+                    <td>{schemeRegistrar.schemeToRemove}</td>
+                  </tr>
+                </tbody></table>
               </div>
-              : schemeRegistrar.schemeToRegister ?
-              <div>
-                <span className={css.summaryTitle}>
-                  <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
-                  {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
-                  <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">{schemeNameAndAddress(schemeRegistrar.schemeToRegister)}</a>
-                </span>
-                { detailView ?
-                  <div className={css.summaryDetails}>
-                    <table>
-                      <tbody>
+              : ""
+            }
+          </div>
+          : schemeRegistrar.schemeToRegister ?
+            <div>
+              <span className={css.summaryTitle}>
+                <b className={css.schemeRegisterIcon}>{proposal.type === IProposalType.SchemeRegistrarEdit ? <img src="/assets/images/Icon/edit-sm.svg"/> : "+"}</b>&nbsp;
+                {proposal.type === IProposalType.SchemeRegistrarEdit ? "Edit" : "Add"} Scheme&nbsp;
+                <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank" rel="noopener noreferrer">{schemeNameAndAddress(schemeRegistrar.schemeToRegister)}</a>
+              </span>
+              { detailView ?
+                <div className={css.summaryDetails}>
+                  <table>
+                    <tbody>
                       <tr>
                         <th>
                           Address:
-                          <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank">
+                          <a href={linkToEtherScan(schemeRegistrar.schemeToRegister)} target="_blank" rel="noopener noreferrer">
                             <img src="/assets/images/Icon/Link-blue.svg"/>
                           </a>
                         </th>
@@ -110,17 +110,17 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                           {permissions & 16 ? <div>Call genericCall on behalf of</div> : ""}
                         </td>
                       </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  : ""
-                }
-              </div>
-              :
-              ""
-          }
-        </div>
-      );
+                    </tbody>
+                  </table>
+                </div>
+                : ""
+              }
+            </div>
+            :
+            ""
+        }
+      </div>
+    );
     // } else if (proposal.genericScheme) {
     //   return (
     //     <div className={proposalSummaryClass}>Unknown function call

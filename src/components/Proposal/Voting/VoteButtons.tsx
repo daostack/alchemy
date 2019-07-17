@@ -48,7 +48,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
 
     this.state = {
       currentVote: this.props.currentVote,
-      showPreVoteModal: false
+      showPreVoteModal: false,
     };
   }
 
@@ -92,26 +92,26 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
     const tipContent = (vote: IProposalOutcome) =>
       !currentAccountState ?
         "Cannot vote - please log in" :
-      currentVote ?
-        "Can't change your vote" :
-      currentAccountState.reputation.eq(new BN(0)) ?
-        "Voting requires reputation in " + dao.name :
-      proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) || (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ?
-        "Can't vote on expired proposals" :
-      proposal.stage === IProposalStage.Executed ?
-        "Can't vote on executed proposals" :
-      isVoting ?
-        "Warning: Voting for this proposal is already in progress" :
-      `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
+        currentVote ?
+          "Can't change your vote" :
+          currentAccountState.reputation.eq(new BN(0)) ?
+            "Voting requires reputation in " + dao.name :
+            proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) || (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ?
+              "Can't vote on expired proposals" :
+              proposal.stage === IProposalStage.Executed ?
+                "Can't vote on executed proposals" :
+                isVoting ?
+                  "Warning: Voting for this proposal is already in progress" :
+                  `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
     ;
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
-      [css.disabled]: votingDisabled
+      [css.disabled]: votingDisabled,
     });
     const voteDownButtonClass = classNames({
       [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
-      [css.disabled]: votingDisabled
+      [css.disabled]: votingDisabled,
     });
     const wrapperClass = classNames({
       [css.altStyle] : altStyle,
@@ -121,7 +121,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
       [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
-      [css.detailView]: detailView
+      [css.detailView]: detailView,
     });
 
     return (
@@ -257,7 +257,7 @@ export default (props: IProps) => {
       } else if (state.error) {
         return <div>{ state.error.message }</div>;
       } else {
-        return <ConnectedVoteButtons currentAccountState={state.data} { ...props } />;
+        return <ConnectedVoteButtons currentAccountState={state.data} {...props} />;
       }
     }
   }</Subscribe>;

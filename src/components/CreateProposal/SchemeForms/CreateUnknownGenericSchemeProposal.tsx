@@ -22,7 +22,7 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress: ownProps.daoAvatarAddress,
-    handleClose: ownProps.handleClose
+    handleClose: ownProps.handleClose,
   };
 };
 
@@ -33,7 +33,7 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IContainerProps & IStateProps & IDispatchProps;
@@ -58,7 +58,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
-      dao: this.props.daoAvatarAddress
+      dao: this.props.daoAvatarAddress,
     };
 
     setSubmitting(false);
@@ -80,7 +80,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                   callData: "",
                   title: "",
                   url: "",
-                  value: 0
+                  value: 0,
                 } as FormValues}
                 validate={(values: FormValues) => {
                   const errors: any = {};
@@ -130,7 +130,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                   handleSubmit,
                   isSubmitting,
                   setFieldTouched,
-                  setFieldValue
+                  setFieldValue,
                 }: FormikProps<FormValues>) =>
                   <Form noValidate>
                     <label htmlFor="titleInput">
@@ -183,7 +183,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                           <ErrorMessage name="callData">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           <div className={css.requiredMarker}>*</div>
                         </label>
-                         <Field
+                        <Field
                           id="callDataInput"
                           component="textarea"
                           placeholder="The encoded function call data of the contract function call"
@@ -225,8 +225,8 @@ class CreateGenericScheme extends React.Component<IProps, null> {
           );
         } else {
           return null;
-       }
-     }
+        }
+      }
     }</Subscribe>;
   }
 }

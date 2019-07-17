@@ -43,7 +43,7 @@ export default class Notification extends React.Component<IProps, null> {
   public copyToClipboard(message: string) {
     const { showNotification } = this.props;
     copyToClipboard(message);
-    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
   }
 
   public render() {
@@ -84,8 +84,8 @@ export default class Notification extends React.Component<IProps, null> {
             }
             {
               url ?
-              <span><br/><a href={url} target="_blank">See in etherscan</a></span>
-              : ""
+                <span><br/><a href={url} target="_blank" rel="noopener noreferrer">See in etherscan</a></span>
+                : ""
             }
           </div>
         </div>

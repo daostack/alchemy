@@ -31,42 +31,42 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
     });
 
     return(
-        <div>
-          <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
-          <Sticky enabled={true} top={0} innerZ={10000}>
-            <div className={css.daoHistoryHeader}>
+      <div>
+        <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
+        <Sticky enabled top={50} innerZ={10000}>
+          <div className={css.daoHistoryHeader}>
               History
-            </div>
-          </Sticky>
-          <div className={css.proposalsContainer}>
-            <div className={css.closedProposalsHeader}>
-              <div className={css.proposalCreator}>Proposed by</div>
-              <div className={css.endDate}>End date</div>
-              <div className={css.scheme}>Scheme</div>
-              <div className={css.title}>Title</div>
-              <div className={css.votes}>Votes</div>
-              <div className={css.predictions}>Predictions</div>
-              <div className={css.closeReason}>Status</div>
-              <div className={css.myActions}>My actions</div>
-            </div>
-            <div className={css.proposalsContainer + " " + css.proposalHistory}>
-              <InfiniteScroll
-                dataLength={proposals.length} //This is important field to render the next data
-                next={fetchMore}
-                hasMore={hasMoreProposalsToLoad}
-                loader={<h4>Loading...</h4>}
-                style={{overflow: "visible"}}
-                endMessage={
-                  <p style={{textAlign: "center"}}>
-                    <b>&mdash;</b>
-                  </p>
-                }
-              >
-                {proposalsHTML}
-              </InfiniteScroll>
-            </div>
+          </div>
+        </Sticky>
+        <div className={css.proposalsContainer}>
+          <div className={css.closedProposalsHeader}>
+            <div className={css.proposalCreator}>Proposed by</div>
+            <div className={css.endDate}>End date</div>
+            <div className={css.scheme}>Scheme</div>
+            <div className={css.title}>Title</div>
+            <div className={css.votes}>Votes</div>
+            <div className={css.predictions}>Predictions</div>
+            <div className={css.closeReason}>Status</div>
+            <div className={css.myActions}>My actions</div>
+          </div>
+          <div className={css.proposalsContainer + " " + css.proposalHistory}>
+            <InfiniteScroll
+              dataLength={proposals.length} //This is important field to render the next data
+              next={fetchMore}
+              hasMore={hasMoreProposalsToLoad}
+              loader={<h4>Loading...</h4>}
+              style={{overflow: "visible"}}
+              endMessage={
+                <p style={{textAlign: "center"}}>
+                  <b>&mdash;</b>
+                </p>
+              }
+            >
+              {proposalsHTML}
+            </InfiniteScroll>
           </div>
         </div>
+      </div>
     );
   }
 }
@@ -85,7 +85,7 @@ export default class DaoHistory extends React.Component<IExternalProps & RouteCo
     super(props);
 
     this.state = {
-      hasMoreProposalsToLoad: true
+      hasMoreProposalsToLoad: true,
     };
   }
 
@@ -100,13 +100,15 @@ export default class DaoHistory extends React.Component<IExternalProps & RouteCo
     const observable = combineLatest(
       dao.proposals({
         where: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-          closingAt_lte: Math.floor(new Date().getTime() / 1000)
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          closingAt_lte: Math.floor(new Date().getTime() / 1000),
         },
         orderBy: "closingAt",
         orderDirection: "desc",
         first: PAGE_SIZE,
-        skip: 0
+        skip: 0,
       }),
       dao.state()
     );
@@ -126,24 +128,26 @@ export default class DaoHistory extends React.Component<IExternalProps & RouteCo
             dao={state.data[1]}
             hasMoreProposalsToLoad={parentState.hasMoreProposalsToLoad}
             proposals={state.data[0]}
-            fetchMore={ () => {
+            fetchMore={() => {
               state.fetchMore({
                 observable: dao.proposals({
                   where: {
+                    // eslint-disable-next-line @typescript-eslint/camelcase
                     stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-                    closingAt_lte: Math.floor(new Date().getTime() / 1000)
+                    // eslint-disable-next-line @typescript-eslint/camelcase
+                    closingAt_lte: Math.floor(new Date().getTime() / 1000),
                   },
                   orderBy: "closingAt",
                   orderDirection: "desc",
                   first: PAGE_SIZE,
-                  skip: state.data[0].length
+                  skip: state.data[0].length,
                 }),
                 combine: (prevState: [Proposal[], IDAOState], newData: Proposal[]) => {
                   if (newData.length < PAGE_SIZE) {
                     setState({ hasMoreProposalsToLoad: false});
                   }
                   return [prevState[0].concat(newData), prevState[1]];
-                }
+                },
               });
             }}
           />;

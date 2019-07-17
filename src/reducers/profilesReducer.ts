@@ -23,7 +23,7 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
     description: "",
     ethereumAccountAddress,
     name: "",
-    socialURLs: {}
+    socialURLs: {},
   };
 }
 
@@ -79,6 +79,7 @@ const profilesReducer = (state = initialState, action: any) => {
         }
       }
     }
+      break;
 
     default: {
       return state;

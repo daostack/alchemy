@@ -1290,6 +1290,7 @@ a.navItem:hover {
       z-index: 100000;
       width: 100%;
       background-color: rgba(49, 120, 202, 1.000);
+      padding-bottom: 50px;
 
       .daoNavigation {
         height: 520px;
@@ -1381,11 +1382,19 @@ a.navItem:hover {
   .queueType {
     font-size: 18px;
     padding-left: 15px;
+    padding-top: 33px;
   }
 
   .createProposal {
-    top: 5px;
+    top: 28px;
     right: 15px;
+    height: 26px;
+    line-height: 26px;
+    color: #fff;
+  }
+
+  a.createProposal:visited {
+    color: #fff;
   }
 
   .proposalsHeader {

@@ -26,7 +26,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      openMenu: false
+      openMenu: false,
     };
   }
 
@@ -47,7 +47,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
     const menuClass = classNames({
       [css.openMenu]: this.state.openMenu,
       [css.daoSidebar]: true,
-      clearfix: true
+      clearfix: true,
     });
 
     return (
@@ -68,16 +68,16 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
             {dao.name === "dxDAO" ?
               <p>
                 By submitting a proposal, you agree to be bound by the&nbsp;
-                <a href="https://cloudflare-ipfs.com/ipfs/QmRQhXUKKfUCgsAf5jre18T3bz5921fSfvnZCB5rR8mCKj" target="_blank">Participation Agreement</a>, which includes the terms of participation in the dxDAO
+                <a href="https://cloudflare-ipfs.com/ipfs/QmRQhXUKKfUCgsAf5jre18T3bz5921fSfvnZCB5rR8mCKj" target="_blank" rel="noopener noreferrer">Participation Agreement</a>, which includes the terms of participation in the dxDAO
               </p>
               : dao.name === "Meme" ?
-              <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank">Learn how to MemeDAO</a></p>
-              : dao.name === "Identity" ?
-                <p>
+                <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank" rel="noopener noreferrer">Learn how to MemeDAO</a></p>
+                : dao.name === "Identity" ?
+                  <p>
                   A curated registry of identities on the Ethereum blockchain.&nbsp;
-                  <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank">How to register.</a>
-                </p>
-                : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
+                    <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
+                  </p>
+                  : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
             }
           </div>
           <div className={css.navigation}>
@@ -89,7 +89,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                   <span className={
                     classNames({
                       [css.notification]: true,
-                      [css.homeNotification]: true
+                      [css.homeNotification]: true,
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/home.svg" />
@@ -102,12 +102,12 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                   <span className={
                     classNames({
                       [css.notification]: true,
-                      [css.holdersNotification]: true
+                      [css.holdersNotification]: true,
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/holders.svg" />
                   Reputation Holders
-                 </Link>
+                </Link>
               </li>
               <li>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>
@@ -115,30 +115,30 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                   <span className={
                     classNames({
                       [css.notification]: true,
-                      [css.historyNotification]: true
+                      [css.historyNotification]: true,
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/history.svg" />
                   History
-                  </NavLink>
+                </NavLink>
               </li>
               <li>
                 <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
                   <span className={
                     classNames({
                       [css.menuDot]: true,
-                      [css.red]: !!proposalCount
+                      [css.red]: !!proposalCount,
                     })
                   } />
                   <span className={
                     classNames({
                       [css.notification]: true,
-                      [css.redemptionNotification]: true
+                      [css.redemptionNotification]: true,
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/redemption.svg" />
                   Redemptions ({proposalCount})
-                 </NavLink>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -184,7 +184,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
           <div className={css.menuWrapper}>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank">FAQ</a></li>
+              <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank" rel="noopener noreferrer">FAQ</a></li>
               <li>
                 <a>Buy GEN</a>
                 <ul>
@@ -193,7 +193,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                     getExchangesList().map((item: any) => {
                       return (
                         <li key={item.name}>
-                          <a href={item.url} target="_blank">
+                          <a href={item.url} target="_blank" rel="noopener noreferrer">
                             <b><img src={item.logo} /></b>
                             <span>{item.name}</span>
                           </a>
@@ -203,14 +203,14 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
                   }
                 </ul>
               </li>
-              <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank">Alchemy 101</a></li>
-              <li><a href="https://www.daostack.io/" target="_blank">About DAOstack</a></li>
-              <li><a href="https://www.daostack.io/community" target="_blank">Get involved</a></li>
-              <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank">Privacy Policy</a></li>
+              <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank" rel="noopener noreferrer">Alchemy 101</a></li>
+              <li><a href="https://www.daostack.io/" target="_blank" rel="noopener noreferrer">About DAOstack</a></li>
+              <li><a href="https://www.daostack.io/community" target="_blank" rel="noopener noreferrer">Get involved</a></li>
+              <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
               <li className={css.daoStack}>
-                <a href="http://daostack.io" target="_blank">
+                <a href="http://daostack.io" target="_blank" rel="noopener noreferrer">
                   <img src="/assets/images/Icon/dao-logo.svg" /> DAOstack
-                  </a>
+                </a>
               </li>
             </ul>
           </div>
@@ -220,7 +220,7 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
   }
 }
 
-export default (props: { dao: IDAOState, currentAccountAddress?: Address }) => {
+export default (props: { dao: IDAOState; currentAccountAddress?: Address }) => {
   const daoState = props.dao;
 
   if (!daoState) {

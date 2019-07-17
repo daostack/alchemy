@@ -22,7 +22,7 @@ export default class AccountProfileName extends React.Component<IProps, null> {
 
     const accountNameClass = classNames({
       [css.detailView]: detailView,
-      [css.historyView]: historyView
+      [css.historyView]: historyView,
     });
 
     return (

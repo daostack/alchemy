@@ -37,22 +37,22 @@ export function toBaseUnit(value: string, decimals: number) {
   const base = ten.pow(new BN(decimals));
 
   // Is it negative?
-  let negative = (value.substring(0, 1) === "-");
+  const negative = (value.substring(0, 1) === "-");
   if (negative) {
     value = value.substring(1);
   }
 
   if (value === ".") {
     throw new Error(
-    `Invalid value ${value} cannot be converted to`
+      `Invalid value ${value} cannot be converted to`
     + ` base unit with ${decimals} decimals.`);
   }
 
   // Split it into a whole and fractional part
-  let comps = value.split(".");
+  const comps = value.split(".");
   if (comps.length > 2) { throw new Error("Too many decimal points"); }
 
-  let whole = comps[0], fraction = comps[1];
+  let whole = comps[0]; let fraction = comps[1];
 
   if (!whole) { whole = "0"; }
   if (!fraction) { fraction = "0"; }
@@ -92,7 +92,7 @@ export function supportedTokens() {
   return { [getArc().GENToken().address]:  {
     decimals: 18,
     name: "DAOstack GEN",
-    symbol: "GEN"
+    symbol: "GEN",
   }, ...tokens};
 }
 
@@ -160,29 +160,6 @@ export function isKnownScheme(address: Address) {
   }
 }
 
-/**
- * given the address (of a scheme), return  a friendly string represeting the scheme's address and it'sname
- * @param  address [description]
- * @return         [description]
- */
-export function schemeNameAndAddress(address: string) {
-  const arc = getArc();
-  try {
-    const contractInfo = arc.getContractInfo(address);
-    const name = schemeName(contractInfo);
-
-    if (name) {
-      return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
-    } else {
-      return `${address.slice(0, 4)}...${address.slice(-4)}`;
-    }
-  } catch (err) {
-    if (err.message.match(/No contract/)) {
-      return `${address.slice(0, 4)}...${address.slice(-4)}`;
-    }
-  }
-}
-
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
   if (scheme.name === "GenericScheme") {
@@ -209,6 +186,29 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
 }
 
 /**
+ * given the address (of a scheme), return  a friendly string represeting the scheme's address and it'sname
+ * @param  address [description]
+ * @return         [description]
+ */
+export function schemeNameAndAddress(address: string) {
+  const arc = getArc();
+  try {
+    const contractInfo = arc.getContractInfo(address);
+    const name = schemeName(contractInfo);
+
+    if (name) {
+      return `${address.slice(0, 4)}...${address.slice(-4)} (${name})`;
+    } else {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+    }
+  } catch (err) {
+    if (err.message.match(/No contract/)) {
+      return `${address.slice(0, 4)}...${address.slice(-4)}`;
+    }
+  }
+}
+
+/**
  * return network id, independent of the presence of Arc
  * @param web3Provider
  */
@@ -218,16 +218,18 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
 
   try {
     arc = getArc();
-  } catch {}
+  } catch (ex) {
+    // Do nothing
+  }
 
   /**
    * make sure that if the web3Provider is passed in, then the web3 we use matches it
    */
   if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
     web3 = arc.web3;
-  } else if ((<any> window).web3 &&
-    (!web3Provider || ((<any> window).web3.currentProvider === web3Provider))) {
-    web3 = (<any> window).web3;
+  } else if ((window as any).web3 &&
+    (!web3Provider || ((window as any).web3.currentProvider === web3Provider))) {
+    web3 = (window as any).web3;
   } else if (web3Provider) {
     web3 = new Web3(web3Provider);
   }
@@ -303,7 +305,7 @@ export function getClaimableRewards(reward: IRewardState) {
 // TOOD: move this function to the client library!
 export function hasClaimableRewards(reward: IRewardState) {
   const claimableRewards = getClaimableRewards(reward);
-  for (let key of Object.keys(claimableRewards)) {
+  for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
       return true;
     }
