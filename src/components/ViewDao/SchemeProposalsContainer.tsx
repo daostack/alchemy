@@ -84,7 +84,7 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
       <div className={css.daoProposalsContainer} id="scrollContainer">
         <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
-        <Sticky enabled={true} top={0} innerZ={10000}>
+        <Sticky enabled={true} top={50} innerZ={10000}>
           <h2 className={css.queueType}>
             {schemeName(scheme, scheme.address)}
             <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">

@@ -58,7 +58,7 @@ const AllSchemesContainer = (props: IProps) => {
     <div className={css.wrapper}>
       <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
 
-      <Sticky enabled={true} top={0} innerZ={10000}>
+      <Sticky enabled={true} top={50} innerZ={10000}>
         <h1>All Schemes</h1>
       </Sticky>
       {schemes.length === 0

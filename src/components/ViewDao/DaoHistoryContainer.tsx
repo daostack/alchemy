@@ -33,7 +33,7 @@ class DaoHistoryContainer extends React.Component<IProps, null> {
     return(
         <div>
           <BreadcrumbsItem to={"/dao/" + dao.address + "/history"}>History</BreadcrumbsItem>
-          <Sticky enabled={true} top={0} innerZ={10000}>
+          <Sticky enabled={true} top={50} innerZ={10000}>
             <div className={css.daoHistoryHeader}>
               History
             </div>
