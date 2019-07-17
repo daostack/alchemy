@@ -31,7 +31,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
-      [css.withDetails]: true
+      [css.withDetails]: true,
     });
     let decodedCallData: any;
     try {
@@ -54,7 +54,7 @@ export default class ProposalSummary extends React.Component<IProps> {
     return <div className={proposalSummaryClass}>
       <span className={css.summaryTitle}>
         <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-          { decodedCallData.action.label }
+        { decodedCallData.action.label }
       </span>
 
       {detailView ?

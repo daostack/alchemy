@@ -12,8 +12,8 @@ export default class Loading extends React.Component {
       autoplay: true,
       animationData,
       rendererSettings: {
-        preserveAspectRatio: "xMidYMid slice"
-      }
+        preserveAspectRatio: "xMidYMid slice",
+      },
     };
 
     return <div>

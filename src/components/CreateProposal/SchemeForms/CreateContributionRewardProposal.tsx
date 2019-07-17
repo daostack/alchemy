@@ -24,7 +24,7 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress: ownProps.daoAvatarAddress,
-    handleClose: ownProps.handleClose
+    handleClose: ownProps.handleClose,
   };
 };
 
@@ -35,7 +35,7 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IContainerProps & IStateProps & IDispatchProps;
@@ -83,7 +83,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
-      reputationReward: toWei(Number(values.reputationReward))
+      reputationReward: toWei(Number(values.reputationReward)),
     };
 
     setSubmitting(false);
@@ -112,7 +112,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   nativeTokenReward: 0,
                   reputationReward: 0,
                   title: "",
-                  url: ""
+                  url: "",
                 } as FormValues}
                 validate={(values: FormValues) => {
                   const errors: any = {};
@@ -163,7 +163,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   handleSubmit,
                   isSubmitting,
                   setFieldTouched,
-                  setFieldValue
+                  setFieldValue,
                 }: FormikProps<FormValues>) =>
                   <Form noValidate>
                     <label className={css.description}>What to Expect</label>
@@ -265,7 +265,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                         </label>
                         <Field
                           id="externalTokenRewardInput"
-                          placeholder={`How many tokens to reward`}
+                          placeholder={"How many tokens to reward"}
                           name="externalTokenReward"
                           type="number"
                           className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
@@ -320,8 +320,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
           );
         } else {
           return null;
-       }
-     }
+        }
+      }
     }</Subscribe>;
   }
 }

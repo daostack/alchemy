@@ -27,7 +27,7 @@ const reducers = {
   profiles: profilesReducer,
   router: routerReducer,
   ui: uiReducer,
-  web3: web3Reducer
+  web3: web3Reducer,
 };
 
 const onlyPending = createTransform(

@@ -24,7 +24,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
       [css.detailView]: detailView,
       [css.transactionModal]: transactionModal,
       [css.proposalSummary]: true,
-      [css.withDetails]: true
+      [css.withDetails]: true,
     });
 
     switch (action.id) {
@@ -37,7 +37,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                { action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
+                { action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -52,7 +52,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                New oracle address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
+                New oracle address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -67,7 +67,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                New owner address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank">{decodedCallData.values[0]}</a>
+                New owner address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -82,7 +82,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             { detailView ?
               <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank">{token}</a></li>)}
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
               </ul>
               : ""
             }
@@ -90,6 +90,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         );
       case "updateThresholdNewTokenPair":
       case "updateThresholdNewAuction":
+      {
         const field = action.fields[0];
         const value = decodedCallData.values[0];
         return (
@@ -100,6 +101,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
           </div>
         );
+      }
       default:
         return "";
     }

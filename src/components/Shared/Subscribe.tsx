@@ -37,14 +37,14 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
         this.setState({
           data: next,
           isLoading: false,
-          fetchMore: this.fetchMore.bind(this)
-      });
+          fetchMore: this.fetchMore.bind(this),
+        });
       },
       (error: Error) => {
         this.setState({
           isLoading: false,
           error });
-        },
+      },
       () => { this.setState({complete: true}); }
     );
   }
@@ -69,12 +69,12 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     if (typeof children === "function") {
       return children(this.state);
     }
-    throw Error(`Children of <Subscribe> must be a function`);
+    throw Error("Children of <Subscribe> must be a function");
   }
 
   public fetchMore(options: {
-    observable: any // the observable that will return the data
-    combine: any // a function that combines the previousState with the results of the observable to return a new state
+    observable: any; // the observable that will return the data
+    combine: any; // a function that combines the previousState with the results of the observable to return a new state
   }) {
     // add more results to the query
     if (!options.combine) {
