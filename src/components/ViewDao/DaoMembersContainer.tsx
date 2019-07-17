@@ -28,7 +28,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     dao: ownProps.dao,
     members: ownProps.members,
-    profiles: state.profiles
+    profiles: state.profiles,
   };
 };
 
@@ -99,7 +99,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     return (
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
-        <Sticky enabled={true} top={0} innerZ={10000}>
+        <Sticky enabled top={0} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
         <table>
@@ -143,29 +143,29 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
     orderBy: "balance",
     orderDirection: "desc",
     first: PAGE_SIZE,
-    skip: 0
+    skip: 0,
   });
   return <Subscribe observable={observable}>{(state: IObservableState<Member[]>) => {
-      if (state.isLoading) {
-        return (<div className={css.loading}><Loading/></div>);
-      } else if (state.error) {
-        return <div>{ state.error.message }</div>;
-      } else {
-        return <ConnectedDaoMembersContainer
-          members={state.data}
-          dao={props.dao}
-          fetchMore={ () => {
-            state.fetchMore({
-              observable: dao.members({
-                orderBy: "balance",
-                orderDirection: "desc",
-                first: PAGE_SIZE,
-                skip: state.data.length
-              })
-            });
-          }}
+    if (state.isLoading) {
+      return (<div className={css.loading}><Loading/></div>);
+    } else if (state.error) {
+      return <div>{ state.error.message }</div>;
+    } else {
+      return <ConnectedDaoMembersContainer
+        members={state.data}
+        dao={props.dao}
+        fetchMore={() => {
+          state.fetchMore({
+            observable: dao.members({
+              orderBy: "balance",
+              orderDirection: "desc",
+              first: PAGE_SIZE,
+              skip: state.data.length,
+            }),
+          });
+        }}
       />;
-      }
     }
+  }
   }</Subscribe>;
 };

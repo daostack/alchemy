@@ -29,7 +29,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     dao,
-    currentAccountAddress: state.web3.currentAccountAddress
+    currentAccountAddress: state.web3.currentAccountAddress,
   };
 };
 
@@ -40,7 +40,7 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   showNotification,
-  showTour: uiActions.showTour
+  showTour: uiActions.showTour,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -55,7 +55,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   public copyAddress(e: any) {
     const { showNotification, currentAccountAddress } = this.props;
     copyToClipboard(currentAccountAddress);
-    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
     e.preventDefault();
   }
 
@@ -91,7 +91,7 @@ class HeaderContainer extends React.Component<IProps, null> {
           <div className={css.topInfo}>
             <Breadcrumbs
               separator={<b> >   </b>}
-              item={ NavLink }
+              item={NavLink}
               finalItem={"b"}
               compare={(a: any, b: any) => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
@@ -141,26 +141,26 @@ class HeaderContainer extends React.Component<IProps, null> {
 const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
 
 export default (props: RouteComponentProps<any>) => {
-    const arc = getArc();
-    const match = matchPath(props.location.pathname, {
-      path: "/dao/:daoAvatarAddress",
-      strict: false
-    });
-    const queryValues = queryString.parse(props.location.search);
-    const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
+  const arc = getArc();
+  const match = matchPath(props.location.pathname, {
+    path: "/dao/:daoAvatarAddress",
+    strict: false,
+  });
+  const queryValues = queryString.parse(props.location.search);
+  const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
 
-    if (daoAddress) {
-      return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>) => {
-          if (state.isLoading) {
-            return null;
-          } else if (state.error) {
-            return <div>{state.error.message}</div>;
-          } else {
-            return <ConnectedHeaderContainer {...props} dao={state.data} />;
-          }
-        }
-      }</Subscribe>;
+  if (daoAddress) {
+    return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>) => {
+      if (state.isLoading) {
+        return null;
+      } else if (state.error) {
+        return <div>{state.error.message}</div>;
+      } else {
+        return <ConnectedHeaderContainer {...props} dao={state.data} />;
+      }
+    }
+    }</Subscribe>;
   } else {
-    return <ConnectedHeaderContainer dao={undefined} {...props }/>;
+    return <ConnectedHeaderContainer dao={undefined} {...props}/>;
   }
 };

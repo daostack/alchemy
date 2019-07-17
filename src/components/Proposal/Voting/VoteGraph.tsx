@@ -1,4 +1,4 @@
-import { IProposalStage, IProposalState, } from "@daostack/client";
+import { IProposalStage, IProposalState } from "@daostack/client";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { fromWei } from "lib/util";
@@ -31,7 +31,7 @@ export default class VoteGraph extends React.Component<IProps, null> {
     const containerClass = classNames({
       [css.container]: true,
       [css.noWinning]: noWinning,
-      [css.yesWinning]: yesWinning
+      [css.yesWinning]: yesWinning,
     });
 
     const relative = proposal.stage === IProposalStage.Boosted || proposal.stage === IProposalStage.QuietEndingPeriod;

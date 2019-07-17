@@ -11,7 +11,7 @@ import { closingTime } from "reducers/arcReducer";
 import { combineLatest } from "rxjs";
 import * as css from "./SchemeCard.scss";
 
-const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
+const ProposalDetail = (props: { proposal: Proposal; dao: IDAOState }) => {
   const { proposal, dao } = props;
   return <Subscribe key={proposal.id} observable={proposal.state()}>{
     (state: IObservableState<IProposalState>): any => {
@@ -31,7 +31,7 @@ const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
             </span>
             <b>
               {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
-              <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView={true} />
+              <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView />
             </b>
           </Link>
         );
@@ -74,7 +74,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
             <img src="/assets/images/meditate.svg" />
             <div>
               No upcoming proposals
-                </div>
+            </div>
           </div>
           : " "
         }
@@ -101,15 +101,17 @@ export default (props: IExternalProps) => {
     dao.proposals({where: {
       scheme:  props.scheme.id,
       stage: IProposalStage.Queued,
-      expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
     }}), // the list of queued proposals
     dao.proposals({ where: {
       scheme:  props.scheme.id,
-      stage: IProposalStage.PreBoosted
+      stage: IProposalStage.PreBoosted,
     }}), // the list of preboosted proposals
     dao.proposals({ where: {
       scheme:  props.scheme.id,
-      stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
     }}) // the list of boosted proposals
   );
 

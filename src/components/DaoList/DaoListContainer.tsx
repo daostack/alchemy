@@ -22,7 +22,7 @@ class DaoListContainer extends React.Component<IProps, null> {
     });
     return (
       <div className={css.wrapper}>
-        <Sticky enabled={true} top={0} innerZ={10000}>
+        <Sticky enabled top={0} innerZ={10000}>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
           </div>
@@ -32,26 +32,26 @@ class DaoListContainer extends React.Component<IProps, null> {
         </div>
       </div>
     );
-      }
+  }
 }
 
 export default () => {
   const arc = getArc();
   const observable = arc.daos({ orderBy: "reputationHoldersCount", orderDirection: "desc"});
   return <Subscribe observable={observable}>{(state: IObservableState<DAO[]>) => {
-      if (state.isLoading) {
-        return (
-          <div className={css.wrapper}>
-            <div className={css.loading}><Loading/>
-            </div>
+    if (state.isLoading) {
+      return (
+        <div className={css.wrapper}>
+          <div className={css.loading}><Loading/>
           </div>
-        );
-      } else if (state.error) {
-        throw state.error;
-      } else {
-        return <DaoListContainer daos={state.data} />;
-      }
+        </div>
+      );
+    } else if (state.error) {
+      throw state.error;
+    } else {
+      return <DaoListContainer daos={state.data} />;
     }
+  }
 
   }</Subscribe>;
 };

@@ -34,7 +34,7 @@ export default class PredictionGraph extends React.Component<IProps, null> {
       [css.detailView] : detailView,
       [css.historyView] : historyView,
       [css.isPassing] : isPassing,
-      [css.isFailing] : isFailing
+      [css.isFailing] : isFailing,
     });
 
     return (

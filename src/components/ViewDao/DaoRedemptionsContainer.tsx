@@ -96,19 +96,19 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     }
 
     const totalRewardsString = <strong>
-        {totalRewards.reduce((acc, v) => {
-          return acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>;
-        }, null)}
-      </strong>;
+      {totalRewards.reduce((acc, v) => {
+        return acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>;
+      }, null)}
+    </strong>;
 
     return (
       <div>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
-        <Sticky enabled={true} top={0} innerZ={10000}>
+        <Sticky enabled top={0} innerZ={10000}>
           <div className={css.redemptionsHeader}>
             Redemptions
             {proposals.length > 0 ?
-                <span>Pending Protocol Rewards:&nbsp;{totalRewardsString}</span>
+              <span>Pending Protocol Rewards:&nbsp;{totalRewardsString}</span>
               : ""
             }
           </div>
@@ -116,7 +116,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
         <div className={css.proposalsContainer}>
           {proposals.length > 0 ?
             <div>{proposalsHTML}</div>
-          :
+            :
             <div className={css.emptyRedemptions}>
               <img src="/assets/images/empty-redemptions.svg"/>
               <h2>Nothing to redeem</h2>
@@ -130,7 +130,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
 }
 
-export default (props: { dao: IDAOState, currentAccountAddress?: Address } & RouteComponentProps<any>) => {
+export default (props: { dao: IDAOState; currentAccountAddress?: Address } & RouteComponentProps<any>) => {
   if (!props.currentAccountAddress) {
     return <div>Please log in to see your rewards</div>;
   }
@@ -184,13 +184,13 @@ export default (props: { dao: IDAOState, currentAccountAddress?: Address } & Rou
   }
   `;
   return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
-      if (state.error) {
-        return <div>{ state.error.message }</div>;
-      } else if (state.data) {
-        return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
-      } else {
-        return (<div className={css.loading}><Loading/></div>);
-      }
+    if (state.error) {
+      return <div>{ state.error.message }</div>;
+    } else if (state.data) {
+      return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
+    } else {
+      return (<div className={css.loading}><Loading/></div>);
     }
+  }
   }</Subscribe>;
 };

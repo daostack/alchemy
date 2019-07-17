@@ -46,7 +46,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
     dao,
     proposal,
     stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
-    votesOfCurrentUser: ownProps.votesOfCurrentUser
+    votesOfCurrentUser: ownProps.votesOfCurrentUser,
   };
 };
 
@@ -72,7 +72,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      preRedeemModalOpen: false
+      preRedeemModalOpen: false,
     };
   }
 
@@ -88,10 +88,10 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
 
     const proposalClass = classNames({
       [css.wrapper]: true,
-      clearfix: true
+      clearfix: true,
     });
 
-    let currentAccountVote = 0, currentAccountPrediction = 0, currentAccountStakeAmount = new BN(0), currentAccountVoteAmount = new BN(0);
+    let currentAccountVote = 0; let currentAccountPrediction = 0; let currentAccountStakeAmount = new BN(0); let currentAccountVoteAmount = new BN(0);
 
     let currentVote: IVote;
     if (votesOfCurrentUser.length > 0) {
@@ -117,13 +117,13 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
       [css.passVote]: currentAccountVote === IProposalOutcome.Pass,
       [css.iStaked]: currentAccountPrediction !== 0,
       [css.forStake]: currentAccountPrediction === IProposalOutcome.Pass,
-      [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail
+      [css.againstStake]: currentAccountPrediction === IProposalOutcome.Fail,
     });
 
     const closeReasonClass = classNames({
       [css.closeReason]: true,
       [css.decisionPassed]: proposalPassed(proposal),
-      [css.decisionFailed]: proposalFailed(proposal)
+      [css.decisionFailed]: proposalFailed(proposal),
     });
 
     let closeReason = "Time out";
@@ -140,14 +140,14 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
 
     const voteControls = classNames({
       [css.voteControls]: true,
-      clearfix: true
+      clearfix: true,
     });
 
     return (
       <div className={proposalClass}>
         <div className={css.proposalCreator}>
-          <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView={true}/>
-          <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView={true}/>
+          <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView/>
+          <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
         </div>
         <div className={css.endDate}>
           {closingTime(proposal).format("MMM D, YYYY")}
@@ -167,7 +167,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         <div className={css.predictions}>
           <PredictionGraph
             proposal={proposal}
-            historyView={true}
+            historyView
           />
         </div>
         <div className={closeReasonClass}>
@@ -205,7 +205,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
 
 export const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
 
-export default (props: { proposal: Proposal, daoState: IDAOState, currentAccountAddress: Address}) => {
+export default (props: { proposal: Proposal; daoState: IDAOState; currentAccountAddress: Address}) => {
   const proposal = props.proposal;
   const observable = combineLatest(
     proposal.state(),
@@ -228,7 +228,7 @@ export default (props: { proposal: Proposal, daoState: IDAOState, currentAccount
           dao={props.daoState}
           stakesOfCurrentUser={stakes}
           votesOfCurrentUser={votes}
-          />;
+        />;
       }
     }
   }</Subscribe>;

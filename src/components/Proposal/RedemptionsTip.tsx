@@ -20,20 +20,20 @@ export default (props: IProps) => {
   let c = null;
   if (claimableRewards.reputationForProposer) {
     c = <div key={rewardsForCurrentUser.id}>
-        <strong>For creating the proposal you will receive:</strong>
-        <ul>
-          <li><ReputationView reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-        </ul>
-      </div>;
+      <strong>For creating the proposal you will receive:</strong>
+      <ul>
+        <li><ReputationView reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+      </ul>
+    </div>;
     rewardComponents.push(c);
   }
   if (claimableRewards.reputationForVoter) {
     c = <div key={rewardsForCurrentUser.id}>
-        <strong>For voting on the proposal you will receive:</strong>
-        <ul>
-          <li><ReputationView reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-        </ul>
-      </div>;
+      <strong>For voting on the proposal you will receive:</strong>
+      <ul>
+        <li><ReputationView reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+      </ul>
+    </div>;
     rewardComponents.push(c);
   }
   if (claimableRewards.tokensForStaker) {
@@ -50,7 +50,7 @@ export default (props: IProps) => {
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
         <li>{fromWei(claimableRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
-        { /*
+          { /*
           // TODO: subscribe to tokenBalance
           dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : "" */}
         </li>
@@ -71,8 +71,8 @@ export default (props: IProps) => {
       ContributionRewardDiv = <div>
         <strong>
           {(currentAccountAddress && currentAccountAddress === contributionReward.beneficiary.toLowerCase()) ?
-              "As the beneficiary of the proposal you will recieve" :
-              "The beneficiary of the proposal will receive"}
+            "As the beneficiary of the proposal you will recieve" :
+            "The beneficiary of the proposal will receive"}
         </strong>
         <ul>
           {contributionRewards["eth"]  ?

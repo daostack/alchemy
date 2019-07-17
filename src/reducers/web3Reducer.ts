@@ -22,7 +22,7 @@ export const initialState: IWeb3State = {
   accounts: [],
   connectionStatus: ConnectionStatus.Pending,
   currentAccountAddress: null,
-  networkId: 0 // unknown network
+  networkId: 0, // unknown network
 };
 
 // TODO: make all action types explicit?

@@ -20,13 +20,13 @@ export function getProfilesForAllAccounts() {
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Success,
-        payload: { profiles: results.data }
+        payload: { profiles: results.data },
       });
     } catch (e) {
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
-        payload: e.toString()
+        payload: e.toString(),
       });
     }
   };
@@ -43,14 +43,14 @@ export function getProfile(accountAddress: string) {
         dispatch({
           type: ActionTypes.GET_PROFILE_DATA,
           sequence: AsyncActionSequence.Success,
-          payload: { profiles: response.data }
+          payload: { profiles: response.data },
         });
       } else {
         // Setup blank profile for the account
         dispatch({
           type: ActionTypes.GET_PROFILE_DATA,
           sequence: AsyncActionSequence.Success,
-          payload: { profiles: [newProfile(accountAddress)] }
+          payload: { profiles: [newProfile(accountAddress)] },
         });
       }
     } catch (e) {
@@ -58,20 +58,20 @@ export function getProfile(accountAddress: string) {
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
-        payload: e.toString()
+        payload: e.toString(),
       });
     }
   };
 }
 
-export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string, name: string, socialURLs?: any }>;
+export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
 export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
   return async (dispatch: any, getState: any) => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Pending,
-      meta: { accountAddress }
+      meta: { accountAddress },
     } as UpdateProfileAction);
 
     try {
@@ -80,7 +80,7 @@ export function updateProfile(accountAddress: string, name: string, description:
         name,
         description,
         timestamp,
-        signature
+        signature,
       });
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
@@ -100,10 +100,10 @@ export function updateProfile(accountAddress: string, name: string, description:
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Success,
       meta: { accountAddress },
-      payload: { name, description }
+      payload: { name, description },
     } as UpdateProfileAction);
 
-    dispatch(showNotification(NotificationStatus.Success, `Profile data saved`));
+    dispatch(showNotification(NotificationStatus.Success, "Profile data saved"));
     return true;
   };
 }
@@ -114,7 +114,7 @@ export function verifySocialAccount(accountAddress: string, account: IProfileSta
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Success,
       meta: { accountAddress },
-      payload: profileDbToRedux(account)
+      payload: profileDbToRedux(account),
     });
   };
 }

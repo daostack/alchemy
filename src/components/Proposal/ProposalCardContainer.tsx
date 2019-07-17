@@ -53,7 +53,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
     beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposalState.proposer],
     isVotingYes: isVotePending(proposalState.id, VoteOptions.Yes)(state),
-    isVotingNo: isVotePending(proposalState.id, VoteOptions.No)(state)
+    isVotingNo: isVotePending(proposalState.id, VoteOptions.No)(state),
   };
 };
 
@@ -66,7 +66,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      expired: closingTime(props.proposalState).isSameOrBefore(moment())
+      expired: closingTime(props.proposalState).isSameOrBefore(moment()),
     };
   }
 
@@ -84,7 +84,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
       proposalState,
       isVotingNo,
       isVotingYes,
-      votesOfCurrentUser
+      votesOfCurrentUser,
     } = this.props;
 
     const expired = this.state.expired;
@@ -102,17 +102,17 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
     const proposalClass = classNames({
       [css.proposal]: true,
       [css.failedProposal]: proposalFailed(proposalState),
-      [css.passedProposal]: proposalPassed(proposalState)
+      [css.passedProposal]: proposalPassed(proposalState),
     });
 
     const voteWrapperClass = classNames({
       [css.voteBox]: true,
       clearfix: true,
-      [css.unconfirmedVote]: isVoting
+      [css.unconfirmedVote]: isVoting,
     });
 
     const voteControls = classNames({
-      [css.voteControls]: true
+      [css.voteControls]: true,
     });
 
     return (proposalState.stage === IProposalStage.Queued && this.state.expired ? "" :
@@ -128,7 +128,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                       {proposalState.stage === IProposalStage.Queued ? "Expired" :
                         proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
                           "Closed"}&nbsp;
-                       {closingTime(proposalState).format("MMM D, YYYY")}
+                      {closingTime(proposalState).format("MMM D, YYYY")}
                     </span>
                   }
                 </span>

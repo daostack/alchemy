@@ -3,8 +3,8 @@ import * as React from "react";
 import * as css from "./Notification.scss";
 
 interface IProps {
-    notifications: number;
-    unminimize: () => any;
+  notifications: number;
+  unminimize: () => any;
 }
 
 export default class Notification extends React.Component<IProps, null> {

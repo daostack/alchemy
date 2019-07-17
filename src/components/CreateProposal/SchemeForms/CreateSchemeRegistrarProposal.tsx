@@ -34,7 +34,7 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IContainerProps & IStateProps & IDispatchProps;
@@ -97,7 +97,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
       proposalType = IProposalType.SchemeRegistrarAdd;
     } else {
       proposalType = IProposalType.SchemeRegistrarEdit;
-   }
+    }
     const proposalValues = {
       ...values,
       dao: this.props.daoAvatarAddress,
@@ -106,8 +106,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
       permissions: "0x" + permissions.toString(16).padStart(8, "0"),
       scheme: this.props.scheme.address,
       schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
-              currentTab === "editScheme" ? values.schemeToEdit :
-              values.schemeToRemove
+        currentTab === "editScheme" ? values.schemeToEdit :
+          values.schemeToRemove,
     };
 
     setSubmitting(false);
@@ -128,20 +128,20 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
     const addSchemeButtonClass = classNames({
       [css.addSchemeButton]: true,
-      [css.selected]: currentTab === "addScheme"
+      [css.selected]: currentTab === "addScheme",
     });
     const editSchemeButtonClass = classNames({
-      [css.selected]: currentTab === "editScheme"
+      [css.selected]: currentTab === "editScheme",
     });
     const removeSchemeButtonClass = classNames({
-      [css.selected]: currentTab === "removeScheme"
+      [css.selected]: currentTab === "removeScheme",
     });
 
     const schemeRegistrarFormClass = classNames({
       [css.formWrapper]: true,
       [css.addScheme]: currentTab === "addScheme",
       [css.removeScheme]: currentTab === "removeScheme",
-      [css.editScheme]: currentTab === "editScheme"
+      [css.editScheme]: currentTab === "editScheme",
     });
 
     return (
@@ -171,10 +171,10 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 registerSchemes: false,
                 changeConstraints: false,
                 upgradeController: false,
-                genericCall: false
+                genericCall: false,
               },
               title: "",
-              url: ""
+              url: "",
             } as FormValues}
             validate={(values: FormValues) => {
               const errors: any = {};
@@ -223,17 +223,17 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
               errors,
               touched,
               isSubmitting,
-              setFieldValue
+              setFieldValue,
             }: FormikProps<FormValues>) => {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
                   { (currentTab === "addScheme") ?
-                  <div className={css.description}>Propose to add a new scheme to the DAO. If this scheme is a universal scheme, you must also supply its param hash configuration.</div> :
+                    <div className={css.description}>Propose to add a new scheme to the DAO. If this scheme is a universal scheme, you must also supply its param hash configuration.</div> :
                     (currentTab === "editScheme") ?
-                  <div className={css.description}>Propose to edit a schemes' param hash configuration.</div> :
-                    (currentTab === "removeScheme") ?
-                  <div className={css.description}>Propose to remove a scheme from the DAO.</div> : ""
+                      <div className={css.description}>Propose to edit a schemes' param hash configuration.</div> :
+                      (currentTab === "removeScheme") ?
+                        <div className={css.description}>Propose to remove a scheme from the DAO.</div> : ""
                   }
                   <label htmlFor="titleInput">
                     Title

@@ -38,10 +38,10 @@ class AccountBalances extends React.Component<Props, null>  {
         </div>
         { dao
           ? <div className={css.daoBalance}>
-              <h3>{dao.name}</h3>
-              <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
-              <label>REPUTATION</label>
-            </div>
+            <h3>{dao.name}</h3>
+            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
+            <label>REPUTATION</label>
+          </div>
           : ""
         }
       </div>
@@ -49,30 +49,30 @@ class AccountBalances extends React.Component<Props, null>  {
   }
 }
 
-export default (props: { dao: IDAOState, address: Address}) => {
-    //  if no DAO is given, it is unclear which token balances to show
-    if (!props.dao) {
-      return null;
+export default (props: { dao: IDAOState; address: Address}) => {
+  //  if no DAO is given, it is unclear which token balances to show
+  if (!props.dao) {
+    return null;
+  }
+  const arc = getArc();
+  const dao = arc.dao(props.dao.address);
+
+  const observable = combineLatest(
+    props.address && dao.member(props.address).state() || of(null),
+    arc.ethBalance(props.address),
+    arc.GENToken().balanceOf(props.address),
+  );
+
+  return <Subscribe observable={observable}>{(state: IObservableState<[IMemberState, BN, BN]>) => {
+    if (state.isLoading) {
+      return <div>loading..</div>;
+    } else if (state.error) {
+      return <div>{state.error.message}</div>;
+    } else {
+      const [currentAccountState,  ethBalance, genBalance] = state.data ;
+      return <AccountBalances
+        dao={props.dao} currentAccountState={currentAccountState} ethBalance={ethBalance} genBalance={genBalance} />;
     }
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
-
-    const observable = combineLatest(
-      props.address && dao.member(props.address).state() || of(null),
-      arc.ethBalance(props.address),
-      arc.GENToken().balanceOf(props.address),
-    );
-
-    return <Subscribe observable={observable}>{(state: IObservableState<[IMemberState, BN, BN]>) => {
-        if (state.isLoading) {
-          return <div>loading..</div>;
-        } else if (state.error) {
-          return <div>{state.error.message}</div>;
-        } else {
-          const [currentAccountState,  ethBalance, genBalance] = state.data ;
-          return <AccountBalances
-            dao={props.dao} currentAccountState={currentAccountState} ethBalance={ethBalance} genBalance={genBalance} />;
-        }
-      }
-    }</Subscribe>;
+  }
+  }</Subscribe>;
 };

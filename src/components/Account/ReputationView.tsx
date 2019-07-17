@@ -15,7 +15,7 @@ export default class ReputationView extends React.Component<IProps, null> {
   public render() {
     const { daoName, hideSymbol, hideTooltip, reputation, totalReputation } = this.props;
     const PRECISION  = 2; // how many digits behind
-    let percentage: number = 0;
+    let percentage = 0;
     if (totalReputation.gt(new BN(0))) {
       percentage = new BN(100 * 10 ** PRECISION).mul(reputation).div(totalReputation).toNumber() / (10 ** PRECISION);
     }
