@@ -45,6 +45,7 @@
   box-shadow: 0 0 15px 0 rgba(133,168,208,.15);
   transition: all .25s ease;
   vertical-align: top;
+  z-index: 0;
 
   .description, .url {
     display: none;
