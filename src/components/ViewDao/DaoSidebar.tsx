@@ -232,9 +232,6 @@ export default (props: { dao: IDAOState; currentAccountAddress?: Address }) => {
     proposals(where: {
       accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
       dao: "${props.dao.address}"
-      # TODO: when we upgrade the the new version of the subgraph, this line will be unecessary : daostack/subgraph#252
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      stage_in: ["Executed"]
     }) {
       id
       }

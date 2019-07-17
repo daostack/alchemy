@@ -24,9 +24,6 @@ export default class ProposalSummary extends React.Component<IProps> {
 
   public render() {
     const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
-    // TODO: having this special case in the code for the DutchX scheme (and having a custom component for it)
-    // break the "generate the scheme forms from the DutchX.json file" idea
-    // we should try instead to generate this same UI using the json file, and drop the next 3 lines
     if (genericSchemeInfo.specs.name === "DutchX") {
       return <ProposalSummaryDutchX {...this.props} />;
     }
@@ -40,7 +37,6 @@ export default class ProposalSummary extends React.Component<IProps> {
     try {
       decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
     } catch (err) {
-      // TODO: we should only show this info when we cannot find any decodedCallData
       return (
         <div className={proposalSummaryClass}>
           <span className={css.summaryTitle}>Unknown function call</span>

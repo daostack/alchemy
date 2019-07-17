@@ -100,13 +100,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
         if ( state.data !== null ) {
           const dao: IDAOState = state.data;
 
-          // TODO: this is used to check uniqueness of proposalDescriptions,
-          // it is disabled at this moment, but should be restored
-          // const proposalDescriptions = (dao.proposals as IProposalState[])
-          //   .filter((proposal) => !proposalEnded(proposal))
-          //   .map((proposal) => proposal.description);
-          const proposalDescriptions: string[] = [];
-
           return (
             <div className={css.contributionReward}>
               <Formik
@@ -138,11 +131,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
                   if (values.title.length > 120) {
                     errors.title = "Title is too long (max 120 characters)";
-                  }
-
-                  // TODO: do we want this uniqueness check still?
-                  if (proposalDescriptions.indexOf(values.description) !== -1) {
-                    errors.description = "Must be unique";
                   }
 
                   if (!arc.web3.utils.isAddress(values.beneficiary)) {

@@ -1,4 +1,4 @@
-import { Scheme } from "@daostack/client";
+import { ISchemeState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import CreateContributionRewardProposal from "components/CreateProposal/SchemeForms/CreateContributionRewardProposal";
 import CreateKnownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateKnownGenericSchemeProposal";
@@ -13,6 +13,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { from } from "rxjs";
+import { concatMap } from "rxjs/operators";
 import * as css from "./CreateProposal.scss";
 
 interface IProps {
@@ -45,8 +46,8 @@ class CreateProposalContainer extends React.Component<IProps, null> {
     const {  daoAvatarAddress, schemeId } = this.props;
     const arc = getArc();
 
-    const observable = from(arc.scheme(schemeId));
-    return <Subscribe observable={observable}>{(state: IObservableState<Scheme>) => {
+    const observable = from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme) => scheme.state()));
+    return <Subscribe observable={observable}>{(state: IObservableState<ISchemeState>) => {
       if (state.isLoading) {
         return  <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
@@ -71,7 +72,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
           createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
         } else if (schemeName === "GenericScheme") {
           const genericSchemeRegistry = new GenericSchemeRegistry();
-          const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.address);
+          const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.genericScheme.contractToCall);
           if (genericSchemeInfo) {
             createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
           } else {

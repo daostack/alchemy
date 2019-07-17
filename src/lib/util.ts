@@ -1,4 +1,4 @@
-import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
+import { Address, IContractInfo, IContributionReward, IProposalState, IRewardState, ISchemeState } from "@daostack/client";
 import BN = require("bn.js");
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { promisify } from "util";
@@ -160,13 +160,19 @@ export function isKnownScheme(address: Address) {
   }
 }
 
-export function schemeName(scheme: any, fallback?: string) {
+export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
   if (scheme.name === "GenericScheme") {
-    const genericSchemeRegistry = new GenericSchemeRegistry();
-    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.address);
-    if (genericSchemeInfo) {
-      name = genericSchemeInfo.specs.name;
+    // @ts-ignore
+    if (scheme.genericScheme) {
+      const genericSchemeRegistry = new GenericSchemeRegistry();
+      // @ts-ignore
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericScheme.contractToCall);
+      if (genericSchemeInfo) {
+        name = genericSchemeInfo.specs.name;
+      } else {
+        name = "Generic Scheme";
+      }
     } else {
       name = "Generic Scheme";
     }
@@ -312,7 +318,6 @@ export function hasClaimableRewards(reward: IRewardState) {
  * @param  reward an object that immplements IContributionReward
  * @return  an array mapping strings to BN
  */
-// TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
 export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
   const result: { [key: string]: BN } = {};
   if (

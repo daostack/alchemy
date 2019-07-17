@@ -25,35 +25,8 @@ export const initialState: IWeb3State = {
   networkId: 0, // unknown network
 };
 
-// TODO: make all action types explicit?
 const web3Reducer = (state = initialState, action: any) => {
   switch (action.type) {
-
-    // case ActionTypes.WEB3_CONNECT: {
-    //   const {sequence, payload, meta} = action as ConnectAction;
-
-    //   switch (sequence) {
-    //     case AsyncActionSequence.Failure:
-    //       return {
-    //         ...state,
-    //         ...payload,
-    //         ...{
-    //           connectionStatus : ConnectionStatus.Failed
-    //         }
-    //       };
-    //     case AsyncActionSequence.Success:
-    //       return {
-    //         ...state,
-    //         ...payload,
-    //         ...{
-    //           connectionStatus : ConnectionStatus.Connected
-    //         }
-    //       };
-    //     default: {
-    //       return state;
-    //     }
-    //   }
-    // }
 
     case ActionTypes.WEB3_SET_ACCOUNT:
       return {...state, ...action.payload };

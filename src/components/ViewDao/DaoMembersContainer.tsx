@@ -99,7 +99,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
     return (
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
-        <Sticky enabled top={0} innerZ={10000}>
+        <Sticky enabled top={50} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
         <table>

@@ -22,7 +22,7 @@ class DaoListContainer extends React.Component<IProps, null> {
     });
     return (
       <div className={css.wrapper}>
-        <Sticky enabled top={0} innerZ={10000}>
+        <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
           </div>

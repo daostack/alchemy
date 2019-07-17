@@ -25,7 +25,6 @@ describe("Profile page", () => {
       await descriptionInput.setValue("The ballad");
       const submitButton = await $("*[type=\"submit\"]");
       await submitButton.click();
-      // TODO: this will ask for a metamask confirmation
     });
 
     it("should also work without a DAO address", async () => {

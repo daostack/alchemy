@@ -1,6 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 
-import { Address, IDAOState, IProposalStage, Proposal, Scheme } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -12,6 +12,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest, from } from "rxjs";
+import { concatMap} from "rxjs/operators";
 import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
@@ -41,7 +42,7 @@ interface IProps {
   proposalsBoosted: Proposal[];
   proposalsPreBoosted: Proposal[];
   proposalsQueued: Proposal[];
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 class SchemeProposalsContainer extends React.Component<IProps, IState> {
@@ -83,7 +84,7 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
       <div className={css.daoProposalsContainer} id="scrollContainer">
         <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
-        <Sticky enabled top={0} innerZ={10000}>
+        <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.queueType}>
             {schemeName(scheme, scheme.address)}
             <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">
@@ -201,7 +202,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
 
     const observable = combineLatest(
       // Scheme state
-      from(arc.scheme(schemeId)),
+      from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme) => scheme.state())),
 
       // the list of queued proposals
       dao.proposals({
@@ -232,7 +233,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     const parentState = this.state;
 
     return <Subscribe observable={observable}>{
-      (state: IObservableState<[Scheme, Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
+      (state: IObservableState<[ISchemeState, Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
         if (state.isLoading) {
           return  <div className={css.loading}><Loading/></div>;
         } else if (state.error) {

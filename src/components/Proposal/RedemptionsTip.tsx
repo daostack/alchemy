@@ -50,9 +50,6 @@ export default (props: IProps) => {
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
         <li>{fromWei(claimableRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
-          { /*
-          // TODO: subscribe to tokenBalance
-          dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : "" */}
         </li>
       </ul>
     </div >;
@@ -78,15 +75,11 @@ export default (props: IProps) => {
           {contributionRewards["eth"]  ?
             <li>
               {formatTokens(contributionReward.ethReward, "ETH")}
-              {/*TODO: subscribe to ethBalance, {dao.ethBalance < contributionReward.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
             </li> : ""
           }
           {contributionRewards["externalToken"] ?
             <li>
               {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
-              {/* TODO: should be looking at the DAO balance of proposal.externalToken
-                {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
-              */}
             </li> : ""
           }
           {contributionRewards["rep"] ? <li><ReputationView reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}

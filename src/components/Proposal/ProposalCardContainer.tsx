@@ -126,7 +126,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                     <Countdown toDate={closingTime(proposalState)} detailView={false} onEnd={this.countdownEnded.bind(this)} overTime={proposalState.stage === IProposalStage.QuietEndingPeriod && !this.state.expired} /> :
                     <span className={css.closedTime}>
                       {proposalState.stage === IProposalStage.Queued ? "Expired" :
-                        proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
+                        proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
                           "Closed"}&nbsp;
                       {closingTime(proposalState).format("MMM D, YYYY")}
                     </span>

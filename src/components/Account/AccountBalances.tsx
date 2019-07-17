@@ -29,12 +29,6 @@ class AccountBalances extends React.Component<Props, null>  {
           <div>
             <AccountBalance tokenSymbol="GEN" balance={genBalance} accountAddress={currentAccountState.address} />
           </div>
-          {/*TODO: { dao && dao.externalTokenAddress
-            ? <div>
-                <AccountBalance tokenSymbol={dao.externalTokenSymbol} balance={currentAccountExternalTokenBalance} accountAddress={currentAccountState.address} />
-              </div>
-            : ""
-          }*/}
         </div>
         { dao
           ? <div className={css.daoBalance}>
