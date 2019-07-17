@@ -1,4 +1,5 @@
 import { IProposalStage, IProposalState } from "@daostack/client";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { formatTokens } from "lib/util";

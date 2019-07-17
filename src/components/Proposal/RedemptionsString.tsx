@@ -1,4 +1,5 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
+
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import { formatTokens, tokenSymbol } from "lib/util";

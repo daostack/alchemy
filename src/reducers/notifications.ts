@@ -133,7 +133,7 @@ export const notificationsReducer =
  */
 export const successDismisser =
   (timeout: number = 5000): Middleware =>
-    ({ getState, dispatch }) =>
+    ({ _getState, dispatch }) =>
       (next) =>
         (action: any) => {
           if (isNotificationsAction(action)) {
@@ -182,7 +182,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
  * Effect for automatically showing and updating notifications based on transaction updates.
  */
 export const notificationUpdater: Middleware =
-  ({ getState, dispatch }) =>
+  ({ _getState, dispatch }) =>
     (next) => {
       const transaction2Notification = (network: string, id: string, {error, status, functionName, options, txHash, proposalTitle}: IOperation) => {
         const actionMessage = messages[functionName] && messages[functionName](proposalTitle, options);

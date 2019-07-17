@@ -75,6 +75,7 @@ export const operationsReducer =
       }
 
       if (a.type === "Operations/Dismiss") {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {[a.payload.id]: _, ...rest } = state;
         return rest;
       }
@@ -99,7 +100,7 @@ const errorType = (error: Error) => {
 };
 
 export const operationsTracker: Middleware =
-  ({ getState, dispatch }) =>
+  ({ _getState, dispatch }) =>
     (next) => {
     // Arc.TransactionService.subscribe("TxTracking", (topic, info: TransactionReceiptsEventInfo) => {
     //   const {
@@ -119,7 +120,7 @@ export const operationsTracker: Middleware =
 
       //   let proposalTitle = options.title;
       //   if (options.proposalId) {
-      //     const proposal = (getState() as any as IRootState).arc.proposals[options.proposalId];
+      //     const proposal = (_getState() as any as IRootState).arc.proposals[options.proposalId];
       //     if (proposal) {
       //       proposalTitle = proposal.title;
       //     }

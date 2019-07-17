@@ -1,4 +1,5 @@
 import { IProposalState } from "@daostack/client";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";

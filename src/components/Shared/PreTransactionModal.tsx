@@ -1,5 +1,6 @@
 import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
 import { checkWeb3ProviderAndWarn } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";

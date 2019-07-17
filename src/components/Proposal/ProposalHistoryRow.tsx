@@ -1,5 +1,6 @@
 import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, IStake, IVote, Proposal } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";

@@ -1,4 +1,5 @@
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -14,9 +15,9 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from "rxjs";
 
+import { Address, IDAOState, IMemberState } from "@daostack/client";
 import * as css from "./Account.scss";
 
-import { Address, IDAOState, IMemberState } from "@daostack/client";
 
 interface IStateProps {
   accountAddress: string;

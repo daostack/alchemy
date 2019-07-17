@@ -16,7 +16,6 @@ export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarA
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
 const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription: string = "") => {
-
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -32,8 +31,7 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription:
       }
     },
     (err: Error) => {
-      let msg: string;
-      msg = `${txDescription}: transaction failed :-(`;
+      const msg = `${txDescription}: transaction failed :-(`;
       console.warn(msg);
       console.warn(err.message);
       dispatch(showNotification(NotificationStatus.Failure, msg));
@@ -42,7 +40,7 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription:
 };
 
 export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  return async (dispatch: Redux.Dispatch<any>, _getState: () => IRootState) => {
     try {
       const arc = getArc();
 
@@ -58,7 +56,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
   };
 }
 
-export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
+export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
   return async (dispatch: Dispatch<any>) => {
     const arc = getArc();
     const observer = operationNotifierObserver(dispatch, "Execute proposal");
@@ -84,7 +82,7 @@ export type VoteAction = IAsyncAction<"ARC_VOTE", {
 }>;
 
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  return async (dispatch: Redux.Dispatch<any>, _getState: () => IRootState) => {
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");

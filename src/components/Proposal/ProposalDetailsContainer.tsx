@@ -1,5 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -11,7 +12,7 @@ import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-const ReactMarkdown = require("react-markdown");
+
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
@@ -33,6 +34,8 @@ import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
 
 import * as css from "./ProposalDetails.scss";
+
+const ReactMarkdown = require("react-markdown");
 
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
@@ -80,21 +83,21 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
 
   }
 
-  public showVotersModal(event: any) {
+  public showVotersModal(_event: any): void {
     if (this.props.proposal.votesCount > 0) {
       this.setState({ showVotersModal: true });
     }
   }
 
-  public closeVotersModal(event: any) {
+  public closeVotersModal(_event: any): void {
     this.setState({ showVotersModal: false });
   }
 
-  public countdownEnded() {
+  public countdownEnded(): void {
     this.setState({ expired: true });
   }
 
-  public render() {
+  public render(): any {
     const {
       beneficiaryProfile,
       creatorProfile,

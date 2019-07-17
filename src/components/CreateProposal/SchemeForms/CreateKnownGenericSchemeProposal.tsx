@@ -36,7 +36,7 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-interface FormValues {
+interface IFormValues {
   description: string;
   title: string;
   url: string;
@@ -66,7 +66,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     };
   }
 
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ) {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     const currentAction = this.state.currentAction;
@@ -108,11 +108,11 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     this.props.handleClose();
   }
 
-  public handleTabClick = (tab: string) => (e: any) => {
+  public handleTabClick = (tab: string) => (_e: any) => {
     this.setState({ currentAction: this.props.genericSchemeInfo.action(tab) });
   }
 
-  public renderField(field: ActionField, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
+  public renderField(field: ActionField, values: IFormValues, touched: FormikTouched<IFormValues>, errors: FormikErrors<IFormValues>) {
     let type = "string";
     switch (field.type) {
       case "uint256":
@@ -192,7 +192,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
 
-    const initialFormValues: FormValues = {
+    const initialFormValues: IFormValues = {
       description: "",
       title: "",
       url: "",
@@ -241,7 +241,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
         <div className={css.formWrapper}>
           <Formik
             initialValues={initialFormValues}
-            validate={(values: FormValues) => {
+            validate={(values: IFormValues) => {
               const errors: any = {};
 
               const valueIsRequired = (name: string) => {
@@ -305,7 +305,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
               isSubmitting,
               setFieldValue,
               values,
-            }: FormikProps<FormValues>) => {
+            }: FormikProps<IFormValues>) => {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
