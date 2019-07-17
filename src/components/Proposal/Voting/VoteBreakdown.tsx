@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/client";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import ReputationView from "components/Account/ReputationView";
@@ -42,7 +43,7 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
     };
   }
 
-  public async handleClickVote(vote: number, event: any) {
+  public async handleClickVote(vote: number, _event: any): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const { currentAccountState } = this.props;
     if (currentAccountState.reputation.gt(new BN(0))) {
@@ -50,11 +51,11 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
     }
   }
 
-  public closePreVoteModal(event: any) {
+  public closePreVoteModal(_event: any): void {
     this.setState({ showPreVoteModal: false });
   }
 
-  public render() {
+  public render(): any {
     const {
       currentVote,
       detailView,

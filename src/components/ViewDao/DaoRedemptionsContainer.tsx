@@ -1,5 +1,6 @@
 import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import ReputationView from "components/Account/ReputationView";
 import Loading from "components/Shared/Loading";
@@ -94,7 +95,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
 
     const totalRewardsString = <strong>
       {totalRewards.reduce((acc, v) => {
-        return acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>;
+        return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>&amp;</em> {v}</React.Fragment>;
       }, null)}
     </strong>;
 

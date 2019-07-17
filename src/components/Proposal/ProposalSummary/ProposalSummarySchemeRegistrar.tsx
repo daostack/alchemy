@@ -28,11 +28,11 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   }
 
-  public async componentWillMount() {
+  public async componentWillMount(): Promise<void> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  public render() {
+  public render(): any {
     const { proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
@@ -98,16 +98,28 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                         <th>Param Hash:</th>
                         <td>
                           <span>{schemeRegistrar.schemeToRegisterParamsHash.slice(0, 43)}</span>
-                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
+                          <img src="/assets/images/Icon/Copy-blue.svg" onClick={(): void => copyToClipboard(schemeRegistrar.schemeToRegisterParamsHash)} />
                         </td>
                       </tr>
                       <tr>
                         <th>Permissions:</th>
                         <td>
-                          {permissions & 2 ? <div>Register other schemes</div> : ""}
-                          {permissions & 4 ? <div>Change constraints</div> : ""}
-                          {permissions & 8 ? <div>Upgrade the controller</div> : ""}
-                          {permissions & 16 ? <div>Call genericCall on behalf of</div> : ""}
+                          {
+                            // eslint-disable-next-line no-bitwise
+                            permissions & 2 ? <div>Register other schemes</div> : ""
+                          }
+                          {
+                            // eslint-disable-next-line no-bitwise
+                            permissions & 4 ? <div>Change constraints</div> : ""
+                          }
+                          {
+                            // eslint-disable-next-line no-bitwise
+                            permissions & 8 ? <div>Upgrade the controller</div> : ""
+                          }
+                          {
+                            // eslint-disable-next-line no-bitwise
+                            permissions & 16 ? <div>Call genericCall on behalf of</div> : ""
+                          }
                         </td>
                       </tr>
                     </tbody>

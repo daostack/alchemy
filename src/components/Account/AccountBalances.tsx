@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
 import ReputationView from "components/Account/ReputationView";
@@ -8,16 +9,16 @@ import * as css from "layouts/App.scss";
 import * as React from "react";
 import { combineLatest, of } from "rxjs";
 
-interface Props {
+interface IProps {
   dao: IDAOState;
   ethBalance: BN;
   genBalance: BN;
   currentAccountState: IMemberState;
 }
 
-class AccountBalances extends React.Component<Props, null>  {
+class AccountBalances extends React.Component<IProps, null>  {
 
-  public render() {
+  public render(): any {
     const { dao, ethBalance, genBalance, currentAccountState } = this.props;
 
     return (
@@ -43,7 +44,7 @@ class AccountBalances extends React.Component<Props, null>  {
   }
 }
 
-export default (props: { dao: IDAOState; address: Address}) => {
+export default (props: { dao: IDAOState; address: Address}): any => {
   //  if no DAO is given, it is unclear which token balances to show
   if (!props.dao) {
     return null;

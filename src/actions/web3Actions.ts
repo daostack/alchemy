@@ -11,15 +11,13 @@ import { AsyncActionSequence, IAsyncAction } from "./async";
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
 export function setCurrentAccount(accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
+  return async (dispatch: Redux.Dispatch<any>, _getState: Function) => {
     const payload = {
       currentAccountAddress: accountAddress,
       connectionStatus : ConnectionStatus.Connected,
     };
 
-    let action;
-
-    action = {
+    const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
       payload,
     };

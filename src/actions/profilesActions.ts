@@ -67,7 +67,7 @@ export function getProfile(accountAddress: string) {
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
 export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
-  return async (dispatch: any, getState: any) => {
+  return async (dispatch: any, _getState: any) => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Pending,
@@ -109,7 +109,7 @@ export function updateProfile(accountAddress: string, name: string, description:
 }
 
 export function verifySocialAccount(accountAddress: string, account: IProfileState) {
-  return async (dispatch: any, getState: any) => {
+  return async (dispatch: any, _getState: any) => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Success,

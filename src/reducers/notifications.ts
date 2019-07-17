@@ -133,6 +133,7 @@ export const notificationsReducer =
  */
 export const successDismisser =
   (timeout: number = 5000): Middleware =>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ({ getState, dispatch }) =>
       (next) =>
         (action: any) => {
@@ -182,6 +183,7 @@ const messages: {[key: string]: (proposalTitle: string | undefined, options: any
  * Effect for automatically showing and updating notifications based on transaction updates.
  */
 export const notificationUpdater: Middleware =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ({ getState, dispatch }) =>
     (next) => {
       const transaction2Notification = (network: string, id: string, {error, status, functionName, options, txHash, proposalTitle}: IOperation) => {

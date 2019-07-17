@@ -38,7 +38,7 @@ const mapDispatchToProps = {
 
 type IProps = IContainerProps & IStateProps & IDispatchProps;
 
-interface FormValues {
+interface IFormValues {
   description: string;
   callData: string;
   title: string;
@@ -54,7 +54,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
@@ -66,23 +66,24 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render() {
+  public render(): any {
     const {  daoAvatarAddress, handleClose } = this.props;
     const arc = getArc();
 
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
-      (state: IObservableState<IDAOState>) => {
+      (state: IObservableState<IDAOState>): any => {
         if ( state.data !== null ) {
           return (
             <div className={css.contributionReward}>
               <Formik
+                // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
                 initialValues={{
                   callData: "",
                   title: "",
                   url: "",
                   value: 0,
-                } as FormValues}
-                validate={(values: FormValues) => {
+                } as IFormValues}
+                validate={(values: IFormValues): void => {
                   const errors: any = {};
 
                   const require = (name: string) => {
@@ -127,11 +128,13 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                 render={({
                   errors,
                   touched,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   handleSubmit,
                   isSubmitting,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   setFieldTouched,
                   setFieldValue,
-                }: FormikProps<FormValues>) =>
+                }: FormikProps<IFormValues>) =>
                   <Form noValidate>
                     <label htmlFor="titleInput">
                       Title

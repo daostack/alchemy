@@ -2,6 +2,7 @@ import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@dao
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -81,19 +82,19 @@ class PredictionBox extends React.Component<IProps, IState> {
     };
   }
 
-  public showApprovalModal = (event: any) => {
+  public showApprovalModal = (_event: any): void => {
     this.setState({ showApproveModal: true });
   }
 
-  public closeApprovalModal = (event: any) => {
+  public closeApprovalModal = (_event: any): void => {
     this.setState({ showApproveModal: false });
   }
 
-  public closePreStakeModal = (event: any) => {
+  public closePreStakeModal = (_event: any): void => {
     this.setState({ showPreStakeModal: false });
   }
 
-  public showPreStakeModal = (prediction: number) => (event: any) => {
+  public showPreStakeModal = (prediction: number): (_event: any) => void => (_event: any): void => {
     if (!this.props.currentAccountAddress) {
       checkWeb3ProviderAndWarn(this.props.showNotification.bind(this));
     } else {
@@ -101,14 +102,14 @@ class PredictionBox extends React.Component<IProps, IState> {
     }
   }
 
-  public handleClickPreApprove = async (event: any) => {
+  public handleClickPreApprove = async (_event: any): Promise<void> => {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
   }
 
-  public render() {
+  public render(): any {
     const {
       beneficiaryProfile,
       currentAccountGens,
