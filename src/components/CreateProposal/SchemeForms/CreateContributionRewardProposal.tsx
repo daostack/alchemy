@@ -161,7 +161,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
                 render={({
                   errors,
                   touched,
-                  _handleSubmit,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  handleSubmit,
                   isSubmitting,
                   setFieldTouched,
                   setFieldValue,

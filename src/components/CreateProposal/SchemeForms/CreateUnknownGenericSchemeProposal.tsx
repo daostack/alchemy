@@ -128,9 +128,11 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                 render={({
                   errors,
                   touched,
-                  _handleSubmit,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  handleSubmit,
                   isSubmitting,
-                  _setFieldTouched,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                  setFieldTouched,
                   setFieldValue,
                 }: FormikProps<IFormValues>) =>
                   <Form noValidate>

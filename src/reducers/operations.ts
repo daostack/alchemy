@@ -100,7 +100,8 @@ const errorType = (error: Error) => {
 };
 
 export const operationsTracker: Middleware =
-  ({ _getState, dispatch }) =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ({ getState, dispatch }) =>
     (next) => {
     // Arc.TransactionService.subscribe("TxTracking", (topic, info: TransactionReceiptsEventInfo) => {
     //   const {
