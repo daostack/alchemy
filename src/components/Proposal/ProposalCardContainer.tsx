@@ -144,7 +144,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 proposalState={proposalState}
               />
 
-              <div className={css.contextMenu}>
+              <div className={css.contextMenu} data-test-id="proposalContextMenu">
                 <div className={css.menuIcon}>
                   <img src="/assets/images/Icon/Context-menu.svg"/>
                 </div>
