@@ -17,16 +17,16 @@ export const voteList = new schema.Array(voteSchema);
 accountSchema.define({
   redemptions: redemptionList,
   stakes: stakeList,
-  votes: voteList
+  votes: voteList,
 });
 
 daoSchema.define({
   members: accountList,
-  proposals: proposalList
+  proposals: proposalList,
 });
 
 proposalSchema.define({
   redemptions: redemptionList,
   stakes: stakeList,
-  votes: voteList
+  votes: voteList,
 });

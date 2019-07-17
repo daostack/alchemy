@@ -47,7 +47,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
     currentAccountAddress: state.web3.currentAccountAddress,
     dao: ownProps.dao,
     ethBalance: ownProps.ethBalance,
-    genBalance: ownProps.genBalance
+    genBalance: ownProps.genBalance,
   };
 };
 
@@ -62,7 +62,7 @@ const mapDispatchToProps = {
   showNotification,
   getProfile: profileActions.getProfile,
   updateProfile: profileActions.updateProfile,
-  verifySocialAccount: profileActions.verifySocialAccount
+  verifySocialAccount: profileActions.verifySocialAccount,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -87,7 +87,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
     copyToClipboard(accountAddress);
-    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
     e.preventDefault();
   }
 
@@ -113,7 +113,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
       const result = await send({ method, params, from: currentAccountAddress });
       if (result.error) {
         console.error("Signing canceled, data was not saved");
-        showNotification(NotificationStatus.Failure, `Saving profile was canceled`);
+        showNotification(NotificationStatus.Failure, "Saving profile was canceled");
         setSubmitting(false);
         return;
       }
@@ -123,7 +123,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
       if (recoveredAddress.toLowerCase() === accountAddress) {
         await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
       } else {
-        showNotification(NotificationStatus.Failure, `Saving profile failed, please try again`);
+        showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
       }
     } catch (error) {
       if (web3Provider.isSafe) {
@@ -158,10 +158,10 @@ class AccountProfileContainer extends React.Component<IProps, null> {
           { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
           { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
-              enableReinitialize={true}
+              enableReinitialize
               initialValues={{
                 description: accountProfile ? accountProfile.description || "" : "",
-                name: accountProfile ? accountProfile.name || "" : ""
+                name: accountProfile ? accountProfile.name || "" : "",
               } as FormValues}
               validate={(values: FormValues) => {
                 // const { name } = values;

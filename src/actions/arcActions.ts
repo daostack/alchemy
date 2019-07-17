@@ -11,6 +11,36 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
+/** use like this (unfortunatly you need the @ts-ignore)
+ * // @ts-ignore
+ * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
+ */
+const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription: string = "") => {
+
+  return [
+    (update: ITransactionUpdate<any>) => {
+      let msg: string;
+      if (update.state === ITransactionState.Sent) {
+        msg = `${txDescription} transaction sent! Please wait for it to be processed`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      } else if (update.confirmations === 0) {
+        msg = `${txDescription} transaction processed succesfully`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      } else if (update.confirmations === 3) {
+        msg = `${txDescription} transaction confirmed`;
+        dispatch(showNotification(NotificationStatus.Success, msg));
+      }
+    },
+    (err: Error) => {
+      let msg: string;
+      msg = `${txDescription}: transaction failed :-(`;
+      console.warn(msg);
+      console.warn(err.message);
+      dispatch(showNotification(NotificationStatus.Failure, msg));
+    },
+  ];
+};
+
 export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
     try {
@@ -42,16 +72,16 @@ export function executeProposal(avatarAddress: string, proposalId: string, accou
 }
 
 export type VoteAction = IAsyncAction<"ARC_VOTE", {
-  avatarAddress: string,
-  proposalId: string,
-  reputation: number,
-  voteOption: IProposalOutcome,
-  voterAddress: string,
+  avatarAddress: string;
+  proposalId: string;
+  reputation: number;
+  voteOption: IProposalOutcome;
+  voterAddress: string;
 }, {
-    entities: any,
-    proposal: any,
-    voter: any,
-  }>;
+  entities: any;
+  proposal: any;
+  voter: any;
+}>;
 
 export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
   return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
@@ -64,15 +94,15 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
 }
 
 export type StakeAction = IAsyncAction<"ARC_STAKE", {
-  avatarAddress: string,
-  proposalId: string,
-  prediction: IProposalOutcome,
-  stakeAmount: number,
-  stakerAddress: string,
+  avatarAddress: string;
+  proposalId: string;
+  prediction: IProposalOutcome;
+  stakeAmount: number;
+  stakerAddress: string;
 }, {
-    dao: any,
-    proposal: any,
-  }>;
+  dao: any;
+  proposal: any;
+}>;
 
 export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
   return async (dispatch: Redux.Dispatch<any>, ) => {
@@ -85,17 +115,17 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
 }
 
 export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
-  avatarAddress: string,
-  proposalId: string,
-  accountAddress: string,
+  avatarAddress: string;
+  proposalId: string;
+  accountAddress: string;
 }, {
-    currentAccount: any,
-    beneficiary: any,
-    dao: any,
-    proposal: any;
-    beneficiaryRedemptions: IRedemptionState,
-    currentAccountRedemptions: IRedemptionState,
-  }>;
+  currentAccount: any;
+  beneficiary: any;
+  dao: any;
+  proposal: any;
+  beneficiaryRedemptions: IRedemptionState;
+  currentAccountRedemptions: IRedemptionState;
+}>;
 
 export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
   return async (dispatch: Redux.Dispatch<any>) => {
@@ -106,33 +136,3 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
     await proposalObj.claimRewards(accountAddress).subscribe(...observer);
   };
 }
-
-/** use like this (unfortunatly you need the @ts-ignore)
- * // @ts-ignore
- * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
- */
-const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription: string = "") => {
-
-  return [
-    (update: ITransactionUpdate<any>) => {
-      let msg: string;
-      if (update.state === ITransactionState.Sent) {
-        msg = `${txDescription} transaction sent! Please wait for it to be processed`;
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      } else if (update.confirmations === 0) {
-        msg = `${txDescription} transaction processed succesfully`;
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      } else if (update.confirmations === 3) {
-        msg = `${txDescription} transaction confirmed`;
-        dispatch(showNotification(NotificationStatus.Success, msg));
-      }
-    },
-    (err: Error) => {
-      let msg: string;
-      msg = `${txDescription}: transaction failed :-(`;
-      console.warn(msg);
-      console.warn(err.message);
-      dispatch(showNotification(NotificationStatus.Failure, msg));
-    }
-  ];
-};

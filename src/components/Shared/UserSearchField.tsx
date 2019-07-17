@@ -28,7 +28,7 @@ interface IUserSearchInternalState {
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
-    profiles: state.profiles
+    profiles: state.profiles,
   };
 };
 
@@ -39,7 +39,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
 
     this.state = {
       suggestions: [],
-      value: ""
+      value: "",
     };
   }
 
@@ -49,7 +49,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
 
   public handleChange = (event: any, { newValue }: { newValue: string }) => {
     this.setState({
-      value: newValue
+      value: newValue,
     });
     this.props.onChange(newValue);
   }
@@ -77,14 +77,14 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
   // Autosuggest will call this function every time you need to update suggestions.
   public onSuggestionsFetchRequested = async ({ value }: { value: string}) => {
     this.setState({
-      suggestions: await this.getSuggestions(value)
+      suggestions: await this.getSuggestions(value),
     });
   }
 
   // Autosuggest will call this function every time you need to clear suggestions.
   public onSuggestionsClearRequested = () => {
     this.setState({
-      suggestions: []
+      suggestions: [],
     });
   }
 
@@ -115,7 +115,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
       "onBlur": this.handleBlur,
       "onChange": this.handleChange,
       "placeholder": "name / public key",
-      value
+      value,
     };
 
     return (
@@ -145,13 +145,13 @@ export default (props: IUserSearchProps) => {
   const arc = getArc();
   const dao = arc.dao(props.daoAvatarAddress);
   return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
-      if (state.isLoading) {
-        return (<div className={css.loading}><Loading/></div>);
-      } else if (state.error) {
-        return <div>{ state.error.message }</div>;
-      } else {
-        return <ConnectedUserSearchField members={state.data} {...props} />;
-      }
+    if (state.isLoading) {
+      return (<div className={css.loading}><Loading/></div>);
+    } else if (state.error) {
+      return <div>{ state.error.message }</div>;
+    } else {
+      return <ConnectedUserSearchField members={state.data} {...props} />;
     }
+  }
   }</Subscribe>;
 };

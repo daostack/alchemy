@@ -22,10 +22,10 @@ const Fade = ({ children, ...props }: any) => (
     {...props}
     timeout={1000}
     classNames={{
-     enter: css.fadeEnter,
-     enterActive: css.fadeEnterActive,
-     exit: css.fadeExit,
-     exitActive: css.fadeExitActive,
+      enter: css.fadeEnter,
+      enterActive: css.fadeEnterActive,
+      exit: css.fadeExit,
+      exitActive: css.fadeExitActive,
     }}
   >
     {children}
@@ -103,9 +103,9 @@ class SchemeProposals extends React.Component<IProps, IState> {
                 Boosted Proposals ({proposalsBoosted.length})
                 {proposalsBoosted.length === 0
                   ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
                   : " "
                 }
               </div>
@@ -119,9 +119,9 @@ class SchemeProposals extends React.Component<IProps, IState> {
                 Pending Proposals ({proposalsPreBoosted.length})
                 {proposalsPreBoosted.length === 0
                   ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
                   : " "
                 }
               </div>
@@ -134,9 +134,9 @@ class SchemeProposals extends React.Component<IProps, IState> {
                 Regular Proposals ({proposalsQueued.length}{hasMoreProposalsToLoad ? "+" : ""})
                 {proposalsQueued.length === 0
                   ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
                   : " "
                 }
               </div>
@@ -178,7 +178,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     super(props);
 
     this.state = {
-      hasMoreProposalsToLoad: true
+      hasMoreProposalsToLoad: true,
     };
   }
 
@@ -195,21 +195,23 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
 
       // the list of queued proposals
       dao.proposals({
+      // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
         orderBy: "confidence",
         orderDirection: "desc",
         first: PAGE_SIZE,
-        skip: 0
+        skip: 0,
       }),
 
       // the list of preboosted proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
-        orderBy: "preBoostedAt"
+        orderBy: "preBoostedAt",
       }), // the list of preboosted proposals
       arc.dao(daoAvatarAddress).proposals({
+      // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
-        orderBy: "boostedAt"
+        orderBy: "boostedAt",
       }), // the list of boosted proposals
 
       // DAO state
@@ -242,11 +244,12 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
             fetchMore={ () => {
               state.fetchMore({
                 observable: dao.proposals({
+                  // eslint-disable-next-line @typescript-eslint/camelcase
                   where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
                   orderBy: "confidence",
                   orderDirection: "desc",
                   first: PAGE_SIZE,
-                  skip: data[1].length
+                  skip: data[1].length,
                 }),
                 combine: (prevState: [Proposal[], Proposal[], Proposal[], IDAOState], newData: Proposal[]) => {
                   if (newData.length < PAGE_SIZE) {

@@ -51,7 +51,7 @@ interface IStateProps {
 const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   stakeProposal: arcActions.stakeProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IStateProps & IDispatchProps & IContainerProps & {
@@ -77,7 +77,7 @@ class PredictionBox extends React.Component<IProps, IState> {
     this.state = {
       pendingPrediction: null,
       showApproveModal: false,
-      showPreStakeModal: false
+      showPreStakeModal: false,
     };
   }
 
@@ -121,13 +121,13 @@ class PredictionBox extends React.Component<IProps, IState> {
       isPredictingFail,
       isPredictingPass,
       stakeProposal,
-      stakesOfCurrentUser
+      stakesOfCurrentUser,
     } = this.props;
 
     const {
       pendingPrediction,
       showApproveModal,
-      showPreStakeModal
+      showPreStakeModal,
     } = this.state;
 
     let currentStake: IStake;
@@ -156,7 +156,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               <p>
                 Once you click the button below, we will pop-up a MetaMask dialogue.
                 It will set a default gas limit and price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank">this calculator</a>
+                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank" rel="noopener noreferrer">this calculator</a>
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
@@ -185,12 +185,12 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     const passButtonClass = classNames({
       [css.pendingPrediction]: isPredictingPass,
-      [css.passButton]: true
+      [css.passButton]: true,
     });
 
     const failButtonClass = classNames({
       [css.pendingPrediction]: isPredictingFail,
-      [css.failButton]: true
+      [css.failButton]: true,
     });
 
     const tip = (prediction: VoteOptions) =>

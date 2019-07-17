@@ -40,7 +40,7 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
       return <div className={css.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
-        <Sticky enabled={true} top={0} innerZ={10000}>
+        <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.schemeName}>
             {schemeName(scheme, scheme.address)}
           </h2>

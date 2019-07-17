@@ -19,7 +19,7 @@ export default class MarkdownField extends React.Component<Props, IState> {
     super(props);
 
     this.state = {
-      selectedTab: "write"
+      selectedTab: "write",
     };
   }
 
