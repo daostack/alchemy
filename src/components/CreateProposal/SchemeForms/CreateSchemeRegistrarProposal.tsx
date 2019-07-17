@@ -1,4 +1,4 @@
-import { IProposalType, Scheme } from "@daostack/client";
+import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
@@ -14,7 +14,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
 interface IContainerProps {
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 interface IStateProps {

@@ -2,18 +2,17 @@
   "name": "DutchX",
   "addresses": {
     "main": [
-      "0x199719ee4d5dcf174b80b80afa1fe4a8e5b0e3a0"
+      "0xb9812e2fa995ec53b5b6df34d21f9304762c5497"
     ],
     "rinkeby": [
-      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b",
-      "0x5663ca36e790f1f55198404f35ba3afb64949150"
+      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b"
     ],
     "private": [
-      "0xb0015714b541a99265f529c7c0d34da47deca5b2"
+      "0x8c634b72ff5d6a9f6a0281eef36365e4db8bdf8d"
     ]
   },
   "actions": [
-      {
+    {
       "id": "updateApprovalOfToken",
       "label": "(De-)whitelist MGN generating tokens",
       "description": "Only whitelisted tokens generate MGN when traded on the DutchX. Read about the details and whitelist <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#decentralized-trading-protocol-for-erc20-tokens\">here</a>. Multiple tokens can be added or removed at a time. Details can be found <a target=\"_blank\" href=\"https://dutchx.readthedocs.io/en/latest/mechanism.html#auctioneer-powers\">here</a>.",

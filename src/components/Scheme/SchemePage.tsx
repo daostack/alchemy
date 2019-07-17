@@ -1,4 +1,4 @@
-import { Address, Scheme } from "@daostack/client";
+import { Address, ISchemeState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -8,6 +8,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { from } from "rxjs";
+import { concatMap } from "rxjs/operators";
 import SchemeInfo from "./SchemeInfo";
 import SchemeProposals from "./SchemeProposals";
 import * as css from "./Scheme.scss";
@@ -25,9 +26,9 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
     const daoAvatarAddress = match.params.daoAvatarAddress;
 
     const arc = getArc();
-    const schemeObservable = arc.scheme(schemeId);
+    const schemeObservable = from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme) => scheme.state()))
 
-    return <Subscribe observable={from(schemeObservable)}>{(state: IObservableState<Scheme>) => {
+    return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>) => {
       if (state.isLoading) {
         return  <div className={css.loading}><Loading/></div>;
       }

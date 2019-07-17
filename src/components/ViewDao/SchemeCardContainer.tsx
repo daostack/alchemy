@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, Proposal, Scheme } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
@@ -30,7 +30,6 @@ const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
               {humanProposalTitle(proposalState)}
             </span>
             <b>
-              {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
               <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView={true} />
             </b>
           </Link>
@@ -51,7 +50,7 @@ interface IInternalProps {
   boostedProposals: Proposal[];
   preBoostedProposals: Proposal[];
   queuedProposals: Proposal[];
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 const SchemeCardContainer = (props: IInternalProps) => {
@@ -98,6 +97,7 @@ export default (props: IExternalProps) => {
 
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
+    props.scheme.state(),
     dao.proposals({where: {
       scheme:  props.scheme.id,
       stage: IProposalStage.Queued,
@@ -114,13 +114,13 @@ export default (props: IExternalProps) => {
   );
 
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[Proposal[], Proposal[], Proposal[]]>): any => {
+    (state: IObservableState<[ISchemeState, Proposal[], Proposal[], Proposal[]]>): any => {
       if (state.isLoading) {
         return  <div><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
-        return <SchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
+        return <SchemeCardContainer {...props} scheme={state.data[0]} boostedProposals={state.data[3]} preBoostedProposals={state.data[2]} queuedProposals={state.data[1]} />;
       }
     }
   }</Subscribe>;

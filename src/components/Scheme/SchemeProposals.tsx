@@ -1,6 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 
-import { Address, IDAOState, IProposalStage, Proposal, Scheme } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -40,7 +40,7 @@ interface IProps {
   proposalsBoosted: Proposal[];
   proposalsPreBoosted: Proposal[];
   proposalsQueued: Proposal[];
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 class SchemeProposals extends React.Component<IProps, IState> {
@@ -165,7 +165,7 @@ class SchemeProposals extends React.Component<IProps, IState> {
 
 interface IExternalProps {
   currentAccountAddress: Address;
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 interface IState {
@@ -192,6 +192,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     const currentTime = Math.floor(new Date().getTime() / 1000);
 
     const observable = combineLatest(
+
       // the list of queued proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
