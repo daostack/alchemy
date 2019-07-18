@@ -87,6 +87,6 @@ describe("Proposals", () => {
       await stakeButton.click();
       launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
       await launchMetaMaskButton.click();
-    });
+    }, 60000);
 
 });
