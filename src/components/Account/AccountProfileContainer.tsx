@@ -253,7 +253,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                       <div className={css.socialLogins}>
                         {editing
                           ? <div className={css.socialProof}>
-                            <strong><img src="/assets/images/Icon/Alert-yellow.svg" /> Prove it's you by linking your social accounts</strong>
+                            <strong><img src="/assets/images/Icon/Alert-yellow.svg" /> Prove it&apos;s you by linking your social accounts</strong>
                             <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
                           </div>
                           : " "

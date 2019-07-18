@@ -90,7 +90,7 @@ class HeaderContainer extends React.Component<IProps, null> {
           </div>
           <div className={css.topInfo}>
             <Breadcrumbs
-              separator={<b> >   </b>}
+              separator={<b> &gt;   </b>}
               item={NavLink}
               finalItem={"b"}
               compare={(a: any, b: any) => a.weight ? a.weight - b.weight : a.to.length - b.to.length}

@@ -158,7 +158,7 @@ class PredictionBox extends React.Component<IProps, IState> {
               </p>
               <p>
                 Once you click the button below, we will pop-up a MetaMask dialogue.
-                It will set a default gas limit and price. It's fine to stick with these defaults.
+                It will set a default gas limit and price. It&apos;s fine to stick with these defaults.
                 You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank" rel="noopener noreferrer">this calculator</a>
                 &nbsp;to adjust the Gwei price.
               </p>

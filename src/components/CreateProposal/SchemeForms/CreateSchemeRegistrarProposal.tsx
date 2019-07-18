@@ -212,7 +212,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 errors.parametersHash = "Invalid parameters hash";
               }
 
-              const urlPattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+              const urlPattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
               if (values.url && !urlPattern.test(values.url)) {
                 errors.url = "Invalid URL";
               }
@@ -232,7 +232,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                   { (currentTab === "addScheme") ?
                     <div className={css.description}>Propose to add a new scheme to the DAO. If this scheme is a universal scheme, you must also supply its param hash configuration.</div> :
                     (currentTab === "editScheme") ?
-                      <div className={css.description}>Propose to edit a schemes' param hash configuration.</div> :
+                      <div className={css.description}>Propose to edit a schemes&apos; param hash configuration.</div> :
                       (currentTab === "removeScheme") ?
                         <div className={css.description}>Propose to remove a scheme from the DAO.</div> : ""
                   }

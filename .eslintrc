@@ -30,11 +30,11 @@
         "@typescript-eslint/explicit-function-return-type": "warn",
         "max-len": ["warn", 120, 2],
         "react/jsx-no-bind": "warn",
-        "no-useless-escape": "warn",
-        "react/no-unescaped-entities": "warn",
         /**
          * outright errors
         */
+        "no-useless-escape": "error",
+        "react/no-unescaped-entities": "error",
         "indent": "off", // to not interfere with @typescript just below
         "@typescript-eslint/indent": ["error", 2],
         "@typescript-eslint/prefer-for-of": "error",

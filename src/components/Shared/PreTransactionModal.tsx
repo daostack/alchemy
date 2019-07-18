@@ -118,7 +118,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
           <div className={css.notification}>
             <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
           </div>
-          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol ></a>
+          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol &gt;</a>
           <div className={css.passFailConditions}>
             <span className={css.passCondition}>
                       If you vote For and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
@@ -142,7 +142,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
           <div className={css.notification}>
             <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
           </div>
-          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol ></a>
+          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol &gt;</a>
           <div className={css.passFailConditions}>
             <span className={css.passCondition}>
                       If you vote Against and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
@@ -163,12 +163,12 @@ class PreTransactionModal extends React.Component<IProps, IState> {
         rulesHeader = "RULES FOR PASS PREDICTIONS";
         rules = <div>
           <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
-          <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
+          <p>When you predict correctly, you receive some reputation from other voters who didn&apos;t vote correctly on the proposal.</p>
           <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
           <div className={css.notification}>
             <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
           </div>
-          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol ></a>
+          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol &gt;</a>
           <div className={css.passFailConditions}>
             <span className={css.passCondition}>
                       If you vote For and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.
@@ -188,12 +188,12 @@ class PreTransactionModal extends React.Component<IProps, IState> {
         rulesHeader = "RULES FOR FAIL PREDICTIONS";
         rules = <div>
           <p>When you predict correctly you gain (1) GEN from the DAO bounty. (2) A portion of GEN from incorrect predictions.</p>
-          <p>When you predict correctly, you receive some reputation from other voters who didn't vote correctly on the proposal.</p>
+          <p>When you predict correctly, you receive some reputation from other voters who didn&apos;t vote correctly on the proposal.</p>
           <p>When you predict incorrectly you simply lose all the GEN you have staked.</p>
           <div className={css.notification}>
             <img src="/assets/images/Icon/Alert-yellow.svg"/> You will not receive reputation or GEN for voting on a boosted proposal.
           </div>
-          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol ></a>
+          <a className={css.genesisProtocolLink} href="https://docs.google.com/document/d/1LMe0S4ZFWELws1-kd-6tlFmXnlnX9kfVXUNzmcmXs6U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">View the Genesis Protocol &gt;</a>
           <div className={css.passFailConditions}>
             <span className={css.passCondition}>
                       If you vote For and the proposal passes you will be given a portion of whatever GEN have been staked on the proposal.

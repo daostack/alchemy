@@ -221,7 +221,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
                 <div className={css.statusTitle}>
                   <h3>Votes</h3>
                   <span onClick={this.showVotersModal.bind(this)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
-                    {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} >
+                    {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
                   </span>
                 </div>
 
