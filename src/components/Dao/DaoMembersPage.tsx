@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { fromWei } from "lib/util";
@@ -72,7 +72,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
                     <td className={css.memberReputation}>
                       <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
                       <div className={css.reputationAmounts}>
-                        (<ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
+                        (<Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
                       </div>
                     </td>
                     <td className={css.memberSocial}>

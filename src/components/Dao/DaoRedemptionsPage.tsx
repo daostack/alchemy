@@ -2,7 +2,7 @@ import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
@@ -89,7 +89,7 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
     });
     if (!reputationReward.isZero()) {
       totalRewards.push(
-        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
+        <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
       );
     }
 

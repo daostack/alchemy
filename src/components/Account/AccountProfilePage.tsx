@@ -6,7 +6,7 @@ import { checkWeb3ProviderAndWarn, getArc, getMetaMask } from "arc";
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import DaoSidebar from "components/Dao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
@@ -267,7 +267,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
                     <div className={css.otherInfoContainer}>
                       <div className={css.tokens}>
                         {accountInfo
-                          ? <div><strong>Rep. Score</strong><br /><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
+                          ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
                         <div><strong>GEN:</strong><br /><span>{formatTokens(genBalance)}</span></div>
                         -                        <div><strong>ETH:</strong><br /><span>{formatTokens(ethBalance)}</span></div>

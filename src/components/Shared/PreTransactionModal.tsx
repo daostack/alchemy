@@ -3,7 +3,7 @@ import { checkWeb3ProviderAndWarn } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import { formatTokens, fromWei } from "lib/util";
@@ -319,11 +319,11 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                     <div className={css.graphInfo}>
                       <div>
                         <img src="/assets/images/Icon/vote/for.svg"/>
-                         For <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationFor} />
+                         For <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationFor} />
                       </div>
                       <div>
                         <img src="/assets/images/Icon/vote/against.svg"/>
-                         Against <ReputationView daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationAgainst} />
+                         Against <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={reputationAgainst} />
                       </div>
                     </div>
                   </div>

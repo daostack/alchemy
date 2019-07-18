@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
 
 import BN = require("bn.js");
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 
@@ -58,7 +58,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     if (reputation.gt(zero)) {
       rewardComponents.push(
-        <ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
+        <Reputation reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
     const redemptionsStyle = {

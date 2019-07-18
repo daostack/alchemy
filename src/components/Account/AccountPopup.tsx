@@ -5,7 +5,7 @@ import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { copyToClipboard  } from "lib/util";
 import * as React from "react";
@@ -95,7 +95,7 @@ class AccountPopup extends React.Component<IProps, null> {
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>
-            <div><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputation}/></div>
+            <div><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputation}/></div>
           </div>
         </div>
       </div>
