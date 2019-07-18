@@ -7,7 +7,6 @@
 }
 
 .schemeInfoContainer {
-  padding: 20px;
   background-color: rgba(252, 253, 255, 1.000);
   color: rgba(78, 97, 118, 1.000);
   font-size: 11px;
@@ -17,7 +16,18 @@
   border-radius: 0 14px 14px 14px;
 
   h3 {
-    margin-top: 0;
-    font-size: 13px;
+    margin: 0;
+    font-size: 16px;
+    font-family: "AccordBold";
+    border-bottom: 1px solid #e9eef4;
+    padding: 15px;
+  }
+
+  .infoCardContent {
+    padding: 15px;
+  }
+
+  th {
+    text-align: left;
   }
 }

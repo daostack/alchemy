@@ -72,7 +72,7 @@ class CreateProposalContainer extends React.Component<IProps, null> {
           createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
         } else if (schemeName === "GenericScheme") {
           const genericSchemeRegistry = new GenericSchemeRegistry();
-          const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.genericScheme.contractToCall);
+          const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.genericSchemeParams.contractToCall);
           if (genericSchemeInfo) {
             createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
           } else {

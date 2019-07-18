@@ -4,7 +4,7 @@ import * as React from "react";
 import * as css from "./SchemeInfo.scss";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState } from "@daostack/client";
-import { linkToEtherScan, schemeName } from "lib/util";
+import { fromWei, linkToEtherScan, schemeName } from "lib/util";
 
 interface IProps {
   daoAvatarAddress: Address;
@@ -16,18 +16,83 @@ export default class SchemeInfo extends React.Component<IProps, null> {
   public render() {
     const { daoAvatarAddress, scheme } = this.props;
 
+ // activationTime: Number(params.activationTime),
+ //    boostedVotePeriodLimit: Number(params.boostedVotePeriodLimit),
+ //    daoBountyConst: Number(params.daoBountyConst),
+ //    limitExponentValue: Number(params.limitExponentValue),
+ //    minimumDaoBounty: new BN(params.minimumDaoBounty),
+ //    preBoostedVotePeriodLimit: Number(params.preBoostedVotePeriodLimit),
+ //    proposingRepReward: new BN(params.proposingRepReward),
+ //    queuedVotePeriodLimit: Number(params.queuedVotePeriodLimit),
+ //    queuedVoteRequiredPercentage: Number(params.queuedVoteRequiredPercentage),
+ //    quietEndingPeriod: Number(params.quietEndingPeriod),
+ //    thresholdConst: realMathToNumber(new BN(params.thresholdConst)),
+ //    votersReputationLossRatio: Number(params.votersReputationLossRatio)
+
+    const renderGpParams = (params: any) => {
+      return <tbody>
+        <tr><th>Activation Time:</th><td>{params.activationTime}</td></tr>
+        <tr><th>Boosted Vote Period Limit:</th><td>{params.boostedVotePeriodLimit} seconds</td></tr>
+        <tr><th>DAO Bounty Const:</th><td>{params.daoBountyConst}</td></tr>
+        <tr><th>Limit Exponent Value:</th><td>{params.limitExponentValue}</td></tr>
+        <tr><th>Minimum DAO Bounty:</th><td>{fromWei(params.minimumDaoBounty)} GEN</td></tr>
+        <tr><th>Pre-Boosted Vote Period Limit:</th><td>{params.preBoostedVotePeriodLimit} seconds</td></tr>
+        <tr><th>Queued Vote Period Limit:</th><td>{params.queuedVotePeriodLimit}</td></tr>
+        <tr><th>Queued Vote Required Percentage:</th><td>{params.queuedVoteRequiredPercentage}%</td></tr>
+        <tr><th>Quiet Ending Period:</th><td>{params.quietEndingPeriod} seconds</td></tr>
+        <tr><th>Threshold Const:</th><td>{params.thresholdConst.toString()}</td></tr>
+        <tr><th>Voters Reputation Loss Ratio:</th><td>{params.votersReputationLossRatio}</td></tr>
+      </tbody>;
+    }
+
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
       <div className={css.schemeInfoContainer}>
         <h3>{schemeName(scheme, scheme.address)}</h3>
-        Address <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer">icon</a>: {scheme.address}<br/>
-        Param Hash: {scheme.paramsHash}
+        <table className={css.infoCardContent}>
+          <tbody>
+            <tr>
+              <th>Address: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
+              <td>{scheme.address}</td>
+            </tr>
+            <tr>
+              <th>Param Hash:</th>
+              <td>{scheme.paramsHash}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div className={css.schemeInfoContainer}>
-        <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
-      </div>
+      {scheme.contributionRewardParams || scheme.genericSchemeParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <table className={css.infoCardContent}>
+            {renderGpParams(scheme.contributionRewardParams ? scheme.contributionRewardParams.voteParams : scheme.genericSchemeParams.voteParams)}
+          </table>
+        </div>
+        : ""
+      }
+
+      {scheme.schemeRegistrarParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params for Scheme Registration -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <table className={css.infoCardContent}>
+            {renderGpParams(scheme.schemeRegistrarParams.voteRegisterParams)}
+          </table>
+        </div>
+        : ""
+      }
+
+      {scheme.schemeRegistrarParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params for Scheme Removal -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <table className={css.infoCardContent}>
+            {renderGpParams(scheme.schemeRegistrarParams.voteRemoveParams)}
+          </table>
+        </div>
+        : ""
+      }
     </div>
   }
 }

@@ -75,8 +75,12 @@
     border-bottom: 2px solid rgba(34, 128, 254, 0);
   }
 
-  .proposals.active, .info.active, .info:hover, .proposals:hover {
+  .proposals.active, .info.active {
      border-bottom: 2px solid rgba(34, 128, 254, 1);
+  }
+
+  .info:hover, .proposals:hover {
+     border-bottom: 2px solid rgba(34, 128, 254, .5);
   }
 
 }

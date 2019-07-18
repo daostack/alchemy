@@ -1,5 +1,6 @@
 import { Address, ISchemeState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
+import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { schemeName} from "lib/util";
@@ -37,6 +38,16 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
       }
 
       const scheme = state.data;
+
+      const proposalsTabClass = classNames({
+        [css.proposals]: true,
+        [css.active]: !this.props.location.pathname.includes("info")
+      });
+      const infoTabClass = classNames({
+        [css.info]: true,
+        [css.active]: this.props.location.pathname.includes("info")
+      });
+
       return <div className={css.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
@@ -46,8 +57,8 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
           </h2>
 
           <div className={css.schemeMenu}>
-            <Link className={css.proposals + " " + css.active} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/`}>Proposals</Link>
-            <Link className={css.info} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info/`}>Info</Link>
+            <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/`}>Proposals</Link>
+            <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info/`}>Info</Link>
             <Link className={css.createProposal} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`} data-test-id="createProposal">
               + New proposal
             </Link>
