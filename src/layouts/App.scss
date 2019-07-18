@@ -364,7 +364,7 @@ body {
 .modalContainer {
   position: fixed;
   z-index: 100000;
-  overflow: scroll;
+  overflow: auto;
   top: 0;
   left: 0;
   width: 100%;
