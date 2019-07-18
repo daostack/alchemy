@@ -3,7 +3,7 @@ import { getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -62,7 +62,7 @@ interface IState {
   expired: boolean;
 }
 
-class ProposalCardContainer extends React.Component<IProps, IState> {
+class ProposalCard extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -172,7 +172,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.createdBy}>
-            <AccountPopupContainer accountAddress={proposalState.proposer} dao={dao} detailView={false} />
+            <AccountPopup accountAddress={proposalState.proposer} dao={dao} detailView={false} />
             <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false} />
           </div>
           <div className={css.description}>
@@ -226,7 +226,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalCardContainer = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCardContainer);
+export const ConnectedProposalCard = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCard);
 
 interface IExternalProps {
   currentAccountAddress: Address;
@@ -253,7 +253,7 @@ export default (props: IExternalProps) => {
         return <div>{state.error.message}</div>;
       } else {
         const [proposalState, votes, daoEthBalance] = state.data;
-        return <ConnectedProposalCardContainer
+        return <ConnectedProposalCard
           currentAccountAddress={props.currentAccountAddress}
           daoEthBalance={daoEthBalance}
           proposalState={proposalState}

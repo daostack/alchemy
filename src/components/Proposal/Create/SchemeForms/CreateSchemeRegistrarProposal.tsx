@@ -62,7 +62,7 @@ interface IState {
   currentTab: string;
 }
 
-class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, IState> {
+class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -400,7 +400,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
   }
 }
 
-const ConnectedCreateSchemeRegistrarProposalContainer = connect(mapStateToProps, mapDispatchToProps)(CreateSchemeRegistrarProposalContainer);
+const ConnectedCreateSchemeRegistrarProposal = connect(mapStateToProps, mapDispatchToProps)(CreateSchemeRegistrarProposal);
 
 export default(props: IContainerProps & IStateProps) => {
   const arc = getArc();
@@ -412,7 +412,7 @@ export default(props: IContainerProps & IStateProps) => {
       } else if (state.error) {
         throw state.error;
       } else {
-        return <ConnectedCreateSchemeRegistrarProposalContainer {...props} schemes={state.data} />;
+        return <ConnectedCreateSchemeRegistrarProposal {...props} schemes={state.data} />;
       }
     }
   }</Subscribe>;

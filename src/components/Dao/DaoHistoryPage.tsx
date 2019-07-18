@@ -11,7 +11,7 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { combineLatest } from "rxjs";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
-import * as css from "./ViewDao.scss";
+import * as css from "./Dao.scss";
 
 interface IProps {
   proposals: Proposal[];
@@ -21,7 +21,7 @@ interface IProps {
   hasMoreProposalsToLoad: boolean;
 }
 
-class DaoHistoryContainer extends React.Component<IProps, null> {
+class DaoHistoryPage extends React.Component<IProps, null> {
 
   public render() {
     const { currentAccountAddress, dao, fetchMore, hasMoreProposalsToLoad, proposals } = this.props;
@@ -125,7 +125,7 @@ export default class DaoHistory extends React.Component<IExternalProps & RouteCo
         } else if (state.error) {
           return <div>{ state.error.message }</div>;
         } else  {
-          return <DaoHistoryContainer
+          return <DaoHistoryPage
             currentAccountAddress={currentAccountAddress}
             dao={state.data[1]}
             hasMoreProposalsToLoad={parentState.hasMoreProposalsToLoad}

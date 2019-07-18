@@ -8,7 +8,7 @@ import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
 import ReputationView from "components/Account/ReputationView";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import DaoSidebar from "components/ViewDao/DaoSidebar";
+import DaoSidebar from "components/Dao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
@@ -73,7 +73,7 @@ interface IFormValues {
   name: string;
 }
 
-class AccountProfileContainer extends React.Component<IProps, null> {
+class AccountProfilePage extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
@@ -289,7 +289,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   }
 }
 
-const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToProps)(AccountProfileContainer);
+const ConnectedAccountProfilePage = connect(mapStateToProps, mapDispatchToProps)(AccountProfilePage);
 
 export default (props: RouteComponentProps<any>) => {
   const arc = getArc();
@@ -310,7 +310,7 @@ export default (props: RouteComponentProps<any>) => {
         return <div>{state.error.message}</div>;
       } else if (state.data) {
         const dao = state.data[0];
-        return <ConnectedAccountProfileContainer dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
+        return <ConnectedAccountProfilePage dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
       } else {
         return <div>Loading...</div>;
       }

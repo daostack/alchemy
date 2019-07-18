@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { formatTokens, humanProposalTitle } from "lib/util";
@@ -146,7 +146,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     return (
       <div className={proposalClass}>
         <div className={css.proposalCreator}>
-          <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView/>
+          <AccountPopup accountAddress={proposal.proposer} dao={dao} historyView/>
           <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
         </div>
         <div className={css.endDate}>

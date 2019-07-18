@@ -3,7 +3,7 @@ import { getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -71,7 +71,7 @@ interface IState {
   showVotersModal: boolean;
 }
 
-class ProposalDetailsContainer extends React.Component<IProps, IState> {
+class ProposalDetailsPage extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -181,7 +181,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.createdBy}>
-              <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} detailView />
+              <AccountPopup accountAddress={proposal.proposer} dao={dao} detailView />
               <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView />
             </div>
 
@@ -285,7 +285,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalDetailsContainer = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalDetailsContainer);
+export const ConnectedProposalDetailsPage = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalDetailsPage);
 
 export default (props: { proposalId: string; dao: IDAOState; currentAccountAddress: Address; detailView?: boolean } & RouteComponentProps<any>) => {
 
@@ -307,7 +307,7 @@ export default (props: { proposalId: string; dao: IDAOState; currentAccountAddre
         return <div>{state.error.message}</div>;
       } else {
         const [proposal, votes, daoEthBalance] = state.data;
-        return <ConnectedProposalDetailsContainer
+        return <ConnectedProposalDetailsPage
           {...props}
           daoEthBalance={daoEthBalance}
           proposal={proposal}

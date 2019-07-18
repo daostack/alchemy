@@ -57,7 +57,7 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-class AccountPopupContainer extends React.Component<IProps, null> {
+class AccountPopup extends React.Component<IProps, null> {
 
   public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
@@ -103,7 +103,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   }
 }
 
-const ConnectedAccountPopupContainer = connect(mapStateToProps, mapDispatchToProps)(AccountPopupContainer);
+const ConnectedAccountPopup = connect(mapStateToProps, mapDispatchToProps)(AccountPopup);
 
 export default (props: IOwnProps) => {
   const arc = getArc();
@@ -118,7 +118,7 @@ export default (props: IOwnProps) => {
         return <div>{state.error.message}</div>;
       } else if (state.data) {
         const dao = state.data[0];
-        return <ConnectedAccountPopupContainer dao={dao} accountAddress={props.accountAddress} accountInfo={state.data[1]} {...props} />;
+        return <ConnectedAccountPopup dao={dao} accountAddress={props.accountAddress} accountInfo={state.data[1]} {...props} />;
       } else {
         return <div>Loading...</div>;
       }

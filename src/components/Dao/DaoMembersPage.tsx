@@ -15,7 +15,7 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import * as css from "./ViewDao.scss";
+import * as css from "./Dao.scss";
 
 interface IProps extends RouteComponentProps<any> {
   dao: IDAOState;
@@ -32,7 +32,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   };
 };
 
-class DaoMembersContainer extends React.Component<IProps, null> {
+class DaoMembersPage extends React.Component<IProps, null> {
 
   public render() {
     const { dao, members, profiles } = this.props;
@@ -132,7 +132,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
 }
 
-const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContainer);
+const ConnectedDaoMembersPage = connect(mapStateToProps)(DaoMembersPage);
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const arc = getArc();
@@ -151,7 +151,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
     } else if (state.error) {
       return <div>{ state.error.message }</div>;
     } else {
-      return <ConnectedDaoMembersContainer
+      return <ConnectedDaoMembersPage
         members={state.data}
         dao={props.dao}
         fetchMore={() => {

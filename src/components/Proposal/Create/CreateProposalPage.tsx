@@ -30,7 +30,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   };
 };
 
-class CreateProposalContainer extends React.Component<IProps, null> {
+class CreateProposalPage extends React.Component<IProps, null> {
 
   public goBack() {
     const { daoAvatarAddress, history, schemeId } = this.props;
@@ -93,4 +93,4 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps)(CreateProposalContainer);
+export default connect(mapStateToProps)(CreateProposalPage);
