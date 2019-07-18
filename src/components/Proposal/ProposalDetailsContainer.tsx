@@ -23,9 +23,9 @@ import { combineLatest, concat, from, of } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
-import BoostAmount from "./Predictions/BoostAmount";
-import PredictionButtons from "./Predictions/PredictionButtons";
-import PredictionGraph from "./Predictions/PredictionGraph";
+import BoostAmount from "./Staking/BoostAmount";
+import StakeButtons from "./Staking/StakeButtons";
+import StakeGraph from "./Staking/StakeGraph";
 import ProposalStatus from "./ProposalStatus";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
@@ -245,7 +245,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               </div>
 
               <div className={css.stakeButtons}>
-                <PredictionButtons
+                <StakeButtons
                   beneficiaryProfile={beneficiaryProfile}
                   currentAccountAddress={currentAccountAddress}
                   dao={dao}
@@ -256,7 +256,7 @@ class ProposalDetailsContainer extends React.Component<IProps, IState> {
               </div>
 
               <div className={css.predictionStatus}>
-                <PredictionGraph
+                <StakeGraph
                   proposal={proposal}
                   detailView
                 />

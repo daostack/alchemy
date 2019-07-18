@@ -15,7 +15,7 @@ import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
-import PredictionGraph from "./Predictions/PredictionGraph";
+import StakeGraph from "./Staking/StakeGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 
 import * as css from "./ProposalHistoryRow.scss";
@@ -165,7 +165,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         </div>
 
         <div className={css.predictions}>
-          <PredictionGraph
+          <StakeGraph
             proposal={proposal}
             historyView
           />

@@ -20,7 +20,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import { isStakePending } from "selectors/operations";
 
-import * as css from "./PredictionButtons.scss";
+import * as css from "./StakeButtons.scss";
 
 interface IState {
   pendingPrediction: number;
@@ -71,7 +71,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStatePr
   };
 };
 
-class PredictionBox extends React.Component<IProps, IState> {
+class StakeButtons extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -285,7 +285,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedPredictionBox = connect(mapStateToProps, mapDispatchToProps)(PredictionBox);
+const ConnectedStakeButtons = connect(mapStateToProps, mapDispatchToProps)(StakeButtons);
 
 export default (props: IContainerProps) => {
 
@@ -317,7 +317,7 @@ export default (props: IContainerProps) => {
         const currentAccountGens = state.data[0] || new BN(0);
         const currentAccountGenStakingAllowance = new BN(state.data[1]);
         const stakes = state.data[2];
-        return <ConnectedPredictionBox {...props}
+        return <ConnectedStakeButtons {...props}
           currentAccountGens={currentAccountGens}
           currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
           stakesOfCurrentUser={stakes}

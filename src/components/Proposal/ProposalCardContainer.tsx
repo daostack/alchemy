@@ -19,9 +19,9 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
-import BoostAmount from "./Predictions/BoostAmount";
-import PredictionButtons from "./Predictions/PredictionButtons";
-import PredictionGraph from "./Predictions/PredictionGraph";
+import BoostAmount from "./Staking/BoostAmount";
+import StakeButtons from "./Staking/StakeButtons";
+import StakeGraph from "./Staking/StakeGraph";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
@@ -159,7 +159,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                     isVotingYes={isVotingYes}
                     proposal={proposalState}
                     contextMenu/>
-                  <PredictionButtons
+                  <StakeButtons
                     beneficiaryProfile={beneficiaryProfile}
                     currentAccountAddress={currentAccountAddress}
                     dao={dao}
@@ -205,13 +205,13 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.predictions}>
-            <PredictionGraph
+            <StakeGraph
               proposal={proposalState}
             />
             <BoostAmount proposal={proposalState} />
 
             <div className={css.predictionButtons}>
-              <PredictionButtons
+              <StakeButtons
                 beneficiaryProfile={beneficiaryProfile}
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
