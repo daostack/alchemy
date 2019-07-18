@@ -50,7 +50,7 @@ type OperationsAction = IUpdateOperation | IDismissOperation;
 export const isOperationsAction = (action: Action): action is OperationsAction =>
   typeof action.type === "string" && action.type.startsWith("Operations/");
 
-export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
+export const dismissOperation = (id: string) => (dispatch: Dispatch<any, "Operations/Dismiss">) =>
   dispatch({
     type: "Operations/Dismiss",
     payload: {
