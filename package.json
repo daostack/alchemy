@@ -115,8 +115,8 @@
     "socket.io-client": "^2.2.0",
     "ts-node": "^5.0.1",
     "web3": "1.0.0-beta.37",
-    "ws": "^7.1.0",
-    "webpack": "^4.36.1"
+    "webpack": "^4.36.1",
+    "ws": "^7.1.0"
   },
   "devDependencies": {
     "@storybook/addon-info": "^5.0.10",
