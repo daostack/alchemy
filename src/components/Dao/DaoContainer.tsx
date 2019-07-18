@@ -3,7 +3,7 @@ import * as profilesActions from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
-import SchemePage from "components/Scheme/SchemePage";
+import SchemeContainer from "components/Scheme/SchemeContainer";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
@@ -117,7 +117,7 @@ class DaoContainer extends React.Component<IProps, IState> {
             />
 
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-              render={(props) => <SchemePage {...props} currentAccountAddress={currentAccountAddress} />} />
+              render={(props) => <SchemeContainer {...props} currentAccountAddress={currentAccountAddress} />} />
 
             <Route path="/dao/:daoAvatarAddress" render={(props) => <DaoSchemesPage {...props} />} />
           </Switch>

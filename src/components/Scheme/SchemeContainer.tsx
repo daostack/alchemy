@@ -10,8 +10,8 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { from } from "rxjs";
 import { concatMap } from "rxjs/operators";
-import SchemeInfo from "./SchemeInfo";
-import SchemeProposals from "./SchemeProposals";
+import SchemeInfoPage from "./SchemeInfoPage";
+import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
 
 
@@ -19,7 +19,7 @@ interface IProps {
   currentAccountAddress: Address;
 }
 
-export default class SchemePage extends React.Component<IProps & RouteComponentProps<any>, null> {
+export default class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>, null> {
 
   public render() {
     const { currentAccountAddress, match } = this.props;
@@ -67,10 +67,10 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
 
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={(props) => <SchemeInfo {...props} daoAvatarAddress={daoAvatarAddress} scheme={scheme} />} />
+            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={scheme} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposals {...props} currentAccountAddress={currentAccountAddress} scheme={scheme} />} />
+            render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={scheme} />} />
         </Switch>
       </div>;
     }}</Subscribe>;
