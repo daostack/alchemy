@@ -1,7 +1,7 @@
 import { IDAOState } from "@daostack/client";
 import * as profilesActions from "actions/profilesActions";
 import { getArc } from "arc";
-import CreateProposalContainer from "components/CreateProposal/CreateProposalContainer";
+import CreateProposalContainer from "components/Proposal/Create/CreateProposalContainer";
 import ProposalDetailsContainer from "components/Proposal/ProposalDetailsContainer";
 import SchemePage from "components/Scheme/SchemePage";
 import Loading from "components/Shared/Loading";
