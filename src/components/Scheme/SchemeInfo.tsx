@@ -57,6 +57,38 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                 <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => copyToClipboard(scheme.paramsHash)} />
               </td>
             </tr>
+            <tr>
+              <th>Can Register Schemes?</th>
+              <td>
+                {scheme.canRegisterSchemes ? "Yes" : "No"}
+              </td>
+              <td>
+              </td>
+            </tr>
+            <tr>
+              <th>Can Upgrade Controller?</th>
+              <td>
+                {scheme.canUpgradeController ? "Yes" : "No"}
+              </td>
+              <td>
+              </td>
+            </tr>
+            <tr>
+              <th>Can Delegate Call?</th>
+              <td>
+                {scheme.canDelegateCall ? "Yes" : "No"}
+              </td>
+              <td>
+              </td>
+            </tr>
+            <tr>
+              <th>Can Manage Global Constraints?</th>
+              <td>
+                {scheme.canManageGlobalConstraints ? "Yes" : "No"}
+              </td>
+              <td>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
