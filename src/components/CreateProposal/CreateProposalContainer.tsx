@@ -26,7 +26,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     history: ownProps.history,
-    schemeId: ownProps.match.params.schemeId
+    schemeId: ownProps.match.params.schemeId,
   };
 };
 

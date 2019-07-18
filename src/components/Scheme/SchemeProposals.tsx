@@ -83,19 +83,20 @@ class SchemeProposals extends React.Component<IProps, IState> {
         <BreadcrumbsItem to={`/dao/${dao.address}/scheme/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
-          ? <div className={css.noDecisions}>
-              <img className={css.relax} src="/assets/images/yogaman.svg"/>
-              <div className={css.proposalsHeader}>
-                No upcoming proposals
-              </div>
-              <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
-              <div className={css.cta}>
-                <Link to={"/dao/" + dao.address}>
-                  <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
-                </Link>
-                <Link to={`/dao/${dao.address}/scheme/${scheme.id}/proposals/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
-              </div>
+          ?
+          <div className={css.noDecisions}>
+            <img className={css.relax} src="/assets/images/yogaman.svg"/>
+            <div className={css.proposalsHeader}>
+              No upcoming proposals
             </div>
+            <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
+            <div className={css.cta}>
+              <Link to={"/dao/" + dao.address}>
+                <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+              </Link>
+              <Link to={`/dao/${dao.address}/scheme/${scheme.id}/proposals/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
+            </div>
+          </div>
           :
           <div>
             <div className={css.boostedContainer}>
@@ -241,7 +242,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
             proposalsPreBoosted={data[1]}
             proposalsBoosted={data[2]}
             dao={data[3]}
-            fetchMore={ () => {
+            fetchMore={() => {
               state.fetchMore({
                 observable: dao.proposals({
                   // eslint-disable-next-line @typescript-eslint/camelcase
@@ -256,7 +257,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
                     setState({ hasMoreProposalsToLoad: false});
                   }
                   return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
-                }
+                },
               });
             }}
           />;

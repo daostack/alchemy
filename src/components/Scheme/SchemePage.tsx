@@ -27,7 +27,7 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
     const daoAvatarAddress = match.params.daoAvatarAddress;
 
     const arc = getArc();
-    const schemeObservable = from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme) => scheme.state()))
+    const schemeObservable = from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme) => scheme.state()));
 
     return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>) => {
       if (state.isLoading) {
@@ -41,11 +41,11 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
 
       const proposalsTabClass = classNames({
         [css.proposals]: true,
-        [css.active]: !this.props.location.pathname.includes("info")
+        [css.active]: !this.props.location.pathname.includes("info"),
       });
       const infoTabClass = classNames({
         [css.info]: true,
-        [css.active]: this.props.location.pathname.includes("info")
+        [css.active]: this.props.location.pathname.includes("info"),
       });
 
       return <div className={css.schemeContainer}>
@@ -67,7 +67,7 @@ export default class SchemePage extends React.Component<IProps & RouteComponentP
 
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={(props) => <SchemeInfo daoAvatarAddress={daoAvatarAddress} scheme={scheme} />} />
+            render={(props) => <SchemeInfo {...props} daoAvatarAddress={daoAvatarAddress} scheme={scheme} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
             render={(props) => <SchemeProposals {...props} currentAccountAddress={currentAccountAddress} scheme={scheme} />} />

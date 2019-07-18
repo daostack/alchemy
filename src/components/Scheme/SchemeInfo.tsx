@@ -1,10 +1,10 @@
 /* tslint:disable:max-classes-per-file */
 
 import * as React from "react";
-import * as css from "./SchemeInfo.scss";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState } from "@daostack/client";
 import { copyToClipboard, fromWei, linkToEtherScan, schemeName } from "lib/util";
+import * as css from "./SchemeInfo.scss";
 
 interface IProps {
   daoAvatarAddress: Address;
@@ -30,7 +30,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <tr><th>Threshold Const:</th><td>{params.thresholdConst.toString()}</td></tr>
         <tr><th>Voters Reputation Loss Ratio:</th><td>{params.votersReputationLossRatio}</td></tr>
       </tbody>;
-    }
+    };
 
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
@@ -90,7 +90,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         </div>
         : ""
       }
-    </div>
+    </div>;
   }
 }
 
