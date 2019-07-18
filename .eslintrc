@@ -21,8 +21,6 @@
          */
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
-        "no-useless-escape": "warn",
-        "react/no-unescaped-entities": "warn",
         "@typescript-eslint/no-explicit-any": "off",
         "react/display-name" : "off",
         /**
@@ -32,6 +30,8 @@
         "@typescript-eslint/explicit-function-return-type": "warn",
         "max-len": ["warn", 120, 2],
         "react/jsx-no-bind": "warn",
+        "no-useless-escape": "warn",
+        "react/no-unescaped-entities": "warn",
         /**
          * outright errors
         */

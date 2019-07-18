@@ -158,14 +158,14 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                     isVotingNo={isVotingNo}
                     isVotingYes={isVotingYes}
                     proposal={proposalState}
-                    contextMenu={true}/>
+                    contextMenu/>
                   <PredictionButtons
                     beneficiaryProfile={beneficiaryProfile}
                     currentAccountAddress={currentAccountAddress}
                     dao={dao}
                     expired={this.state.expired}
                     proposal={proposalState}
-                    contextMenu={true}
+                    contextMenu
                   />
                 </div>
               </div>

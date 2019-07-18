@@ -140,32 +140,58 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
         }
         {contextMenu ?
           <div>
-          <div className={css.contextTitle}>
-            <div>
-              <span className={css.hasVoted}>
+            <div className={css.contextTitle}>
+              <div>
+                <span className={css.hasVoted}>
                 You voted
-              </span>
-              <span className={css.hasNotVoted}>
-                Vote
-              </span>
-            </div>
-          </div>
-          <div className={css.contextContent}>
-            <div className={css.hasVoted}>
-              <div className={css.voteRecord}>
-                <span className={css.castVoteFor} data-test-id="youVotedFor">
-                 <img src="/assets/images/Icon/Vote/against-btn-fill-red.svg"/>
-                 <br/>
-                 For
                 </span>
-                <span className={css.castVoteAgainst}>
-                 <img src="/assets/images/Icon/Vote/for-fill-green.svg"/>
-                 <br/>
-                 Against
+                <span className={css.hasNotVoted}>
+                Vote
                 </span>
               </div>
             </div>
-            <div className={css.hasNotVoted}>
+            <div className={css.contextContent}>
+              <div className={css.hasVoted}>
+                <div className={css.voteRecord}>
+                  <span className={css.castVoteFor} data-test-id="youVotedFor">
+                    <img src="/assets/images/Icon/Vote/against-btn-fill-red.svg"/>
+                    <br/>
+                 For
+                  </span>
+                  <span className={css.castVoteAgainst}>
+                    <img src="/assets/images/Icon/Vote/for-fill-green.svg"/>
+                    <br/>
+                 Against
+                  </span>
+                </div>
+              </div>
+              <div className={css.hasNotVoted}>
+                {!votingDisabled ?
+                  <div>
+                    <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
+                      <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
+                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                      <span> For</span>
+                    </button>
+                    <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                      <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
+                      <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                      <span> Against</span>
+                    </button>
+                  </div>
+                  :
+                  <div className={css.votingDisabled}>
+                    <Tooltip overlay={tipContent}>
+                      <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> Voting disabled</span>
+                    </Tooltip>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+          :
+          <div>
+            <div className={css.castVote}>
               {!votingDisabled ?
                 <div>
                   <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
@@ -182,49 +208,23 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
                 :
                 <div className={css.votingDisabled}>
                   <Tooltip overlay={tipContent}>
-                    <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> Voting disabled</span>
+                    <span>Voting disabled</span>
                   </Tooltip>
                 </div>
               }
             </div>
-          </div>
-        </div>
-      :
-        <div>
-          <div className={css.castVote}>
-            {!votingDisabled ?
-              <div>
-                <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
-                  <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
-                  <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
-                  <span> For</span>
-                </button>
-                <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-                  <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
-                  <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
-                  <span> Against</span>
-                </button>
-              </div>
-              :
-              <div className={css.votingDisabled}>
-                <Tooltip overlay={tipContent}>
-                  <span>Voting disabled</span>
-                </Tooltip>
-              </div>
-            }
-          </div>
 
-          <div className={css.voteRecord}>
+            <div className={css.voteRecord}>
             You voted
-            <span className={css.castVoteFor} data-test-id="youVotedFor">
+              <span className={css.castVoteFor} data-test-id="youVotedFor">
               - For
-            </span>
-            <span className={css.castVoteAgainst}>
+              </span>
+              <span className={css.castVoteAgainst}>
               - Against
-            </span>
+              </span>
+            </div>
           </div>
-        </div>
-      }
+        }
       </div>
     );
   }
