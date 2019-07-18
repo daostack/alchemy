@@ -54,17 +54,20 @@ describe("Proposals", () => {
       // locate the new proposal element
       let proposal = await titleElement.$("./../../..");
 
-      await proposal.scrollIntoView();
+      await proposal.scrollIntoView(false);
 
       // vote for the proposal
-      // Click on proposal so voting controls appear
+      // Click on context menu so voting controls appear
       await proposal.click();
+      const contextMenu = await proposal.$(`[data-test-id="proposalContextMenu"]`);
+      await contextMenu.click();
+
       const voteButton = await proposal.$(`[data-test-id="voteFor"]`);
       await voteButton.click();
       let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
       await launchMetaMaskButton.click();
 
-      await proposal.click();
+      await contextMenu.click();
       const youVotedFor = await proposal.$(`span[data-test-id="youVotedFor"`);
       await youVotedFor.waitForDisplayed();
 
@@ -79,6 +82,7 @@ describe("Proposals", () => {
         await buttonPreapprove.click();
       }
 
+      await contextMenu.click();
       const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);
       await stakeButton.click();
       launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);

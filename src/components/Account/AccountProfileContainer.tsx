@@ -1,6 +1,8 @@
+import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
 import { checkWeb3ProviderAndWarn, getArc, getMetaMask } from "arc";
+
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
@@ -21,7 +23,6 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import * as io from "socket.io-client";
-import { promisify } from "util";
 import * as css from "./Account.scss";
 
 const socket = io(process.env.API_URL);
@@ -67,7 +68,7 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-interface FormValues {
+interface IFormValues {
   description: string;
   name: string;
 }
@@ -78,20 +79,20 @@ class AccountProfileContainer extends React.Component<IProps, null> {
     super(props);
   }
 
-  public async componentWillMount() {
+  public async componentWillMount(): Promise<void> {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
   }
 
-  public copyAddress = (e: any) => {
+  public copyAddress = (e: any): void => {
     const { showNotification, accountAddress } = this.props;
     copyToClipboard(accountAddress);
     showNotification(NotificationStatus.Success, "Copied to clipboard!");
     e.preventDefault();
   }
 
-  public async handleSubmit(values: FormValues, { props, setSubmitting, setErrors }: any) {
+  public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
@@ -140,7 +141,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
     this.props.verifySocialAccount(this.props.accountAddress, account);
   }
 
-  public render() {
+  public render(): any {
     const { accountAddress, accountInfo, accountProfile,
       currentAccountAddress, dao, ethBalance, genBalance } = this.props;
 
@@ -159,15 +160,16 @@ class AccountProfileContainer extends React.Component<IProps, null> {
           { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
               enableReinitialize
+              // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
               initialValues={{
                 description: accountProfile ? accountProfile.description || "" : "",
                 name: accountProfile ? accountProfile.name || "" : "",
-              } as FormValues}
-              validate={(values: FormValues) => {
+              } as IFormValues}
+              validate={(values: IFormValues): void => {
                 // const { name } = values;
                 const errors: any = {};
 
-                const require = (name: string) => {
+                const require = (name: string): any => {
                   if (!(values as any)[name]) {
                     errors[name] = "Required";
                   }
@@ -179,15 +181,19 @@ class AccountProfileContainer extends React.Component<IProps, null> {
               }}
               onSubmit={this.handleSubmit.bind(this)}
               render={({
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 values,
                 errors,
                 touched,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 handleChange,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 handleBlur,
                 handleSubmit,
                 isSubmitting,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 isValid,
-              }: FormikProps<FormValues>) =>
+              }: FormikProps<IFormValues>) =>
                 <form onSubmit={handleSubmit} noValidate>
                   <div className={css.profileContent}>
                     <div className={css.profileDataContainer}>
@@ -247,7 +253,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                       <div className={css.socialLogins}>
                         {editing
                           ? <div className={css.socialProof}>
-                            <strong><img src="/assets/images/Icon/Alert-yellow.svg" /> Prove it's you by linking your social accounts</strong>
+                            <strong><img src="/assets/images/Icon/Alert-yellow.svg" /> Prove it&apos;s you by linking your social accounts</strong>
                             <p>Authenticate your identity by linking your social accounts. Once linked, your social accounts will display in your profile page, and server as proof that you are who you say you are.</p>
                           </div>
                           : " "

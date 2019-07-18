@@ -16,44 +16,53 @@
       }
     },
     "rules": {
+        /**
+         * disable or warn for perpetuity
+         */
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
-        "no-useless-escape": "warn",
-        "react/no-unescaped-entities": "warn",
-        "react/display-name" : "warn",
-
+        "@typescript-eslint/no-explicit-any": "off",
+        "react/display-name" : "off",
+        /**
+         * convert to error when all have been manually fixed
+         */
+        "no-console": "warn",
+        "@typescript-eslint/explicit-function-return-type": "warn",
         "max-len": ["warn", 120, 2],
-        "indent": "off",
-        "@typescript-eslint/indent": ["warn", 2],
-        "@typescript-eslint/prefer-for-of": "warn",
-        "@typescript-eslint/no-object-literal-type-assertion": [ "warn", { "allowAsParameter": true } ],
-        "no-empty-function": "off",
+        "react/jsx-no-bind": "warn",
+        /**
+         * outright errors
+        */
+        "no-useless-escape": "error",
+        "react/no-unescaped-entities": "error",
+        "indent": "off", // to not interfere with @typescript just below
+        "@typescript-eslint/indent": ["error", 2],
+        "@typescript-eslint/prefer-for-of": "error",
+        "@typescript-eslint/no-object-literal-type-assertion": [ "error", { "allowAsParameter": true } ],
+        "no-empty-function": "off", // to not interfere with @typescript just below
         "@typescript-eslint/no-empty-function": "error",
         "@typescript-eslint/no-empty-interface": ["error", { "allowSingleExtends": true }],
-        "no-console": "warn",
-        "one-var": ["warn", "never"],
-        "no-var": "warn",
-        "react/jsx-boolean-value": "warn",
-        "react/jsx-no-bind": "warn",
-        "react/jsx-curly-spacing": "warn",
-        "no-bitwise": "warn",
-        "@typescript-eslint/interface-name-prefix": "warn",
-        "prefer-const": "warn",
-        "no-unused-expressions": "warn",
-        "quotes": ["warn", "double"],
-        "sort-imports": ["warn", {
-          "ignoreCase": true,
-          "ignoreMemberSort": false,
-          "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
-        }],
-        "comma-dangle": ["warn" ,"always-multiline"],
-        "semi": ["warn", "always"],
-        "eol-last": "warn",
-        "eqeqeq": "warn",
+        "one-var": ["error", "never"],
+        "no-var": "error",
+        "react/jsx-boolean-value": "error",
+        "react/jsx-curly-spacing": "error",
+        "no-bitwise": "error",
+        "@typescript-eslint/interface-name-prefix": ["error", "always"],
+        "prefer-const": "error",
+        "no-unused-expressions": "error",
+        "no-unused-vars": "off", // to not interfere with @typescript just below
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "[_].*" }],
+        "quotes": ["error", "double"],
+        "import/order": "error",
+        "import/newline-after-import": "error",
+        "comma-dangle": ["error" ,"always-multiline"],
+        "semi": ["error", "always"],
+        "eol-last": "error",
+        "eqeqeq": "error",
     },
     "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint", "react"],
+    "plugins": ["@typescript-eslint", "react", "import"],
     "parserOptions": {
       "project": "./tsconfig.json"
     }
-  }
+}

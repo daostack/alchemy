@@ -1,5 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -143,6 +144,31 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 daoEthBalance={daoEthBalance}
                 proposalState={proposalState}
               />
+
+              <div className={css.contextMenu} data-test-id="proposalContextMenu">
+                <div className={css.menuIcon}>
+                  <img src="/assets/images/Icon/Context-menu.svg"/>
+                </div>
+                <div className={css.menu}>
+                  <VoteButtons
+                    currentAccountAddress={currentAccountAddress}
+                    currentVote={currentAccountVote}
+                    dao={dao}
+                    expired={expired}
+                    isVotingNo={isVotingNo}
+                    isVotingYes={isVotingYes}
+                    proposal={proposalState}
+                    contextMenu/>
+                  <PredictionButtons
+                    beneficiaryProfile={beneficiaryProfile}
+                    currentAccountAddress={currentAccountAddress}
+                    dao={dao}
+                    expired={this.state.expired}
+                    proposal={proposalState}
+                    contextMenu
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div className={css.createdBy}>

@@ -39,7 +39,7 @@ const mapDispatchToProps = {
 
 type IProps = IContainerProps & IStateProps & IDispatchProps;
 
-interface FormValues {
+interface IFormValues {
   description: string;
   otherScheme: string;
   parametersHash: string;
@@ -72,7 +72,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
     this.state = { currentTab: "addScheme" };
   }
 
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     let permissions = 1;
@@ -115,11 +115,11 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
     this.props.handleClose();
   }
 
-  public handleTabClick = (tab: string) => (e: any) => {
+  public handleTabClick = (tab: string) => (_e: any) => {
     this.setState({ currentTab: tab });
   }
 
-  public render() {
+  public render(): any {
     const { handleClose, schemes } = this.props;
     // "schemes" are the schemes registered in this DAO
     const currentTab = this.state.currentTab;
@@ -163,6 +163,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
 
         <div className={schemeRegistrarFormClass}>
           <Formik
+            // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
             initialValues={{
               description: "",
               otherScheme: "",
@@ -175,8 +176,8 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
               },
               title: "",
               url: "",
-            } as FormValues}
-            validate={(values: FormValues) => {
+            } as IFormValues}
+            validate={(values: IFormValues) => {
               const errors: any = {};
 
               const require = (name: string) => {
@@ -211,7 +212,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                 errors.parametersHash = "Invalid parameters hash";
               }
 
-              const urlPattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+              const urlPattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
               if (values.url && !urlPattern.test(values.url)) {
                 errors.url = "Invalid URL";
               }
@@ -224,14 +225,14 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
               touched,
               isSubmitting,
               setFieldValue,
-            }: FormikProps<FormValues>) => {
+            }: FormikProps<IFormValues>) => {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
                   { (currentTab === "addScheme") ?
                     <div className={css.description}>Propose to add a new scheme to the DAO. If this scheme is a universal scheme, you must also supply its param hash configuration.</div> :
                     (currentTab === "editScheme") ?
-                      <div className={css.description}>Propose to edit a schemes' param hash configuration.</div> :
+                      <div className={css.description}>Propose to edit a schemes&apos; param hash configuration.</div> :
                       (currentTab === "removeScheme") ?
                         <div className={css.description}>Propose to remove a scheme from the DAO.</div> : ""
                   }
@@ -306,7 +307,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                         defaultValue=""
                       >
                         <option value="">Select a scheme...</option>
-                        {schemes.map((scheme, i) => {
+                        {schemes.map((scheme, _i) => {
                           return <option key={`edit_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
                         })}
                       </Field>
@@ -374,7 +375,7 @@ class CreateSchemeRegistrarProposalContainer extends React.Component<IProps, ISt
                         defaultValue=""
                       >
                         <option value="">Select a scheme...</option>
-                        {schemes.map((scheme, i) => {
+                        {schemes.map((scheme, _i) => {
                           return <option key={`remove_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
                         })}
                       </Field>

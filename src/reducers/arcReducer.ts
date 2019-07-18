@@ -78,11 +78,11 @@ export function newAccount(
   return {
     address,
     daoAvatarAddress,
-    redemptions: [],
+    redemptions: redemptions,
     reputation,
-    stakes: [],
+    stakes: stakes,
     tokens,
-    votes: [],
+    votes: votes,
   };
 }
 

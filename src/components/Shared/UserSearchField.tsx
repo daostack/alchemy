@@ -26,7 +26,7 @@ interface IUserSearchInternalState {
   value: string;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, _ownProps: any) => {
   return {
     profiles: state.profiles,
   };
@@ -43,7 +43,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
     };
   }
 
-  public handleBlur = (event: any) => {
+  public handleBlur = (_event: any): void => {
     this.props.onBlur(true);
   }
 

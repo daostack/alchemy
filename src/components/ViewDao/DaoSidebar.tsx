@@ -1,5 +1,6 @@
 import { Address, IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -30,11 +31,11 @@ class DaoSidebarComponent extends React.Component<IProps, IState> {
     };
   }
 
-  public handleOpenMenu(event: any) {
+  public handleOpenMenu(_event: any): void {
     this.setState({ openMenu: !this.state.openMenu });
   }
 
-  public render() {
+  public render(): any {
     const dao = this.props.dao;
     const proposalCount = this.props.proposals.length;
 

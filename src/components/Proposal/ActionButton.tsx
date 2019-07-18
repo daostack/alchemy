@@ -1,6 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -68,20 +69,20 @@ class ActionButton extends React.Component<IProps, IState> {
     };
   }
 
-  public async handleClickExecute(event: any) {
+  public async handleClickExecute(_event: any): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  public handleClickRedeem(event: any) {
+  public handleClickRedeem(_event: any): void {
     this.setState({ preRedeemModalOpen: true });
   }
 
-  public closePreRedeemModal(event: any) {
+  public closePreRedeemModal(_event: any): void {
     this.setState({ preRedeemModalOpen: false });
   }
 
-  public render() {
+  public render(): any {
     const {
       beneficiaryProfile,
       currentAccountAddress,
@@ -96,7 +97,7 @@ class ActionButton extends React.Component<IProps, IState> {
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
     const expired = closingTime(proposalState).isSameOrBefore(moment());
 
-    let beneficiaryHasRewards; let redeemable = false; let redemptionsTip; let redeemButtonClass;
+    let beneficiaryHasRewards;
 
     const accountHasGPRewards = hasClaimableRewards(rewardsForCurrentUser);
     if (proposalState.contributionReward) {
@@ -111,9 +112,9 @@ class ActionButton extends React.Component<IProps, IState> {
       beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
     }
 
-    redeemable = proposalState.executedAt && (accountHasGPRewards || beneficiaryHasRewards);
+    const redeemable = proposalState.executedAt && (accountHasGPRewards || beneficiaryHasRewards);
 
-    redemptionsTip = RedemptionsTip({
+    const redemptionsTip = RedemptionsTip({
       beneficiaryHasRewards,
       currentAccountAddress,
       dao,
@@ -121,7 +122,7 @@ class ActionButton extends React.Component<IProps, IState> {
       rewardsForCurrentUser,
     });
 
-    redeemButtonClass = classNames({
+    const redeemButtonClass = classNames({
       [css.redeemButton]: true,
     });
 
