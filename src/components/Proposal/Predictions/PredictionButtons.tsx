@@ -31,6 +31,7 @@ interface IState {
 interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
+  contextMenu?: boolean;
   currentAccountAddress?: Address;
   dao: IDAOState;
   detailView?: boolean;
@@ -112,6 +113,7 @@ class PredictionBox extends React.Component<IProps, IState> {
   public render(): any {
     const {
       beneficiaryProfile,
+      contextMenu,
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
@@ -171,6 +173,7 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     const wrapperClass = classNames({
       [css.predictions]: true,
+      [css.contextMenu]: contextMenu,
       [css.detailView]: detailView,
       [css.historyView]: historyView,
       [css.unconfirmedPrediction]: isPredicting,
@@ -243,9 +246,20 @@ class PredictionBox extends React.Component<IProps, IState> {
           /> : ""
         }
 
-        <div className={css.stakeControls}>
-          {stakingEnabled
-            ? <span>
+        {contextMenu ?
+          <div className={css.contextTitle}>
+            <div>
+              <span>
+                Predict
+              </span>
+            </div>
+          </div>
+          : ""
+        }
+
+        <div className={contextMenu ? css.contextContent : css.stakeControls}>
+          {stakingEnabled ?
+            <div>
               {
                 (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -260,7 +274,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                   </Tooltip> :
                   failButton
               }
-            </span>
+            </div>
             : <span className={css.disabledPredictions}>
               Predictions are disabled
             </span>

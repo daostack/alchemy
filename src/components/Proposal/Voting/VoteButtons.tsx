@@ -16,6 +16,7 @@ import * as css from "./VoteButtons.scss";
 
 interface IContainerProps {
   altStyle?: boolean;
+  contextMenu?: boolean;
   currentAccountAddress: Address;
   currentAccountState: IMemberState|undefined;
   currentVote: number;
@@ -30,6 +31,7 @@ interface IContainerProps {
 }
 
 interface IState {
+  contextMenu?: boolean;
   currentVote: number;
   showPreVoteModal: boolean;
   detailView?: boolean;
@@ -66,6 +68,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
   public render(): any {
     const {
       altStyle,
+      contextMenu,
       currentVote,
       currentAccountState,
       detailView,
@@ -113,6 +116,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
     });
     const wrapperClass = classNames({
       [css.altStyle] : altStyle,
+      [css.contextMenu] : contextMenu,
       [css.wrapper]: true,
       [css.hasVoted]: currentVote,
       [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
@@ -122,7 +126,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
     });
 
     return (
-      <div className={wrapperClass} >
+      <div className={wrapperClass}>
         {this.state.showPreVoteModal ?
           <PreTransactionModal
             actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
@@ -134,47 +138,103 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
             proposal={proposal}
           /> : ""
         }
-
-        <div className={css.castVote}>
-          {!votingDisabled ?
+        {contextMenu ?
+          <div>
+          <div className={css.contextTitle}>
             <div>
-              <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
-                <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
-                <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
-                <span> For</span>
-              </button>
-              <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
-                <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
-                <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
-                <span> Against</span>
-              </button>
+              <span className={css.hasVoted}>
+                You voted
+              </span>
+              <span className={css.hasNotVoted}>
+                Vote
+              </span>
             </div>
-            :
-            <div className={css.votingDisabled}>
-              <Tooltip overlay={tipContent}>
-                <span>Voting disabled</span>
-              </Tooltip>
+          </div>
+          <div className={css.contextContent}>
+            <div className={css.hasVoted}>
+              <div className={css.voteRecord}>
+                <span className={css.castVoteFor} data-test-id="youVotedFor">
+                 <img src="/assets/images/Icon/Vote/against-btn-fill-red.svg"/>
+                 <br/>
+                 For
+                </span>
+                <span className={css.castVoteAgainst}>
+                 <img src="/assets/images/Icon/Vote/for-fill-green.svg"/>
+                 <br/>
+                 Against
+                </span>
+              </div>
             </div>
-          }
+            <div className={css.hasNotVoted}>
+              {!votingDisabled ?
+                <div>
+                  <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
+                    <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
+                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                    <span> For</span>
+                  </button>
+                  <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                    <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
+                    <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                    <span> Against</span>
+                  </button>
+                </div>
+                :
+                <div className={css.votingDisabled}>
+                  <Tooltip overlay={tipContent}>
+                    <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> Voting disabled</span>
+                  </Tooltip>
+                </div>
+              }
+            </div>
+          </div>
         </div>
+      :
+        <div>
+          <div className={css.castVote}>
+            {!votingDisabled ?
+              <div>
+                <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
+                  <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
+                  <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                  <span> For</span>
+                </button>
+                <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                  <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
+                  <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
+                  <span> Against</span>
+                </button>
+              </div>
+              :
+              <div className={css.votingDisabled}>
+                <Tooltip overlay={tipContent}>
+                  <span>Voting disabled</span>
+                </Tooltip>
+              </div>
+            }
+          </div>
 
-        <div className={css.voteRecord}>
-          You voted
-          <span className={css.castVoteFor} data-test-id="youVotedFor">
-            - For
-          </span>
-          <span className={css.castVoteAgainst}>
-            - Against
-          </span>
+          <div className={css.voteRecord}>
+            You voted
+            <span className={css.castVoteFor} data-test-id="youVotedFor">
+              - For
+            </span>
+            <span className={css.castVoteAgainst}>
+              - Against
+            </span>
+          </div>
         </div>
+      }
       </div>
     );
   }
 }
+
 const ConnectedVoteButtons = connect(null, mapDispatchToProps)(VoteButtons);
 
 interface IProps {
   altStyle?: boolean;
+  contextMenu?: boolean;
   currentAccountAddress: Address;
   currentVote: number;
   dao: IDAOState;
