@@ -10,7 +10,7 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
-import * as css from "./DaoProposalsPage.scss";
+import * as css from "./DaoSchemesPage.scss";
 import SchemeCard from "./SchemeCard";
 
 const Fade = ({ children, ...props }: any) => (
@@ -33,7 +33,7 @@ interface IProps {
   schemes: Scheme[];
 }
 
-const DaoProposalsPage = (props: IProps) => {
+const DaoSchemesPage = (props: IProps) => {
   const { dao, schemes } = props;
   const knownSchemes = schemes.filter((scheme: Scheme) => isKnownScheme(scheme.address));
   const unknownSchemes = schemes.filter((scheme: Scheme) => !isKnownScheme(scheme.address));
@@ -90,7 +90,7 @@ export default (props: {} & RouteComponentProps<any>) => {
       } else if (state.error) {
         throw state.error;
       } else {
-        return <DaoProposalsPage dao={state.data[0]} schemes={state.data[1]} />;
+        return <DaoSchemesPage dao={state.data[0]} schemes={state.data[1]} />;
       }
     }
   }</Subscribe>;
