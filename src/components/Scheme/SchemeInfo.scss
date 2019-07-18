@@ -14,6 +14,7 @@
   font-weight: normal;
   margin: 30px auto;
   border-radius: 0 14px 14px 14px;
+  min-width: 340px;
 
   h3 {
     margin: 0;
@@ -25,9 +26,37 @@
 
   .infoCardContent {
     padding: 15px;
+    width: 100%;
   }
 
   th {
     text-align: left;
+    min-width: 75px;
   }
+}
+
+.ellipsis {
+  position: relative;
+  width: 83%;
+
+  span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  img {
+    position: absolute;
+    right: -15px;
+    top:0;
+    cursor: pointer;
+  }
+}
+
+.ellipsis:before {
+  content: '&nbsp;';
+  visibility: hidden;
 }
