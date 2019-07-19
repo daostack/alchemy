@@ -1386,14 +1386,27 @@ a.navItem:hover {
   }
 
   .noticeWrapper {
-    height: 86px;
+    height: 52px;
 
     .noticeBuffer {
       display: none;
     }
 
     .notice {
-      padding-right: 40px;
+      font-size: 10px;
+      padding-right: 70px;
+      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
+
+      div {
+        padding-left: 0;
+
+        img {
+          height: 18px;
+          float: left;
+          position: relative;
+          top: 5px;
+        }
+      }
 
       .closeNotice {
         background-color: transparent;
