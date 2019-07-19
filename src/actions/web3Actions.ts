@@ -11,7 +11,7 @@ import { AsyncActionSequence, IAsyncAction } from "./async";
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
 export function setCurrentAccount(accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any>, _getState: Function) => {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: Function) => {
     const payload = {
       currentAccountAddress: accountAddress,
       connectionStatus : ConnectionStatus.Connected,
@@ -46,7 +46,7 @@ export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
 
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
 export function approveStakingGens(spender: Address) {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
+  return async (dispatch: Redux.Dispatch<any, any>, getState: () => IRootState) => {
     const arc = getArc();
     const currentAccountAddress: string = getState().web3.currentAccountAddress;
 

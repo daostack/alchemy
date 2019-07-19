@@ -61,7 +61,7 @@ export const showNotification =
     url?: string,
     id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
     timestamp: number = +moment(),
-  ) => (dispatch: Dispatch<any>) =>
+  ) => (dispatch: Dispatch<any, any>) =>
     dispatch(filterUndefined({
       type: "Notifications/Show",
       payload: {
@@ -75,7 +75,7 @@ export const showNotification =
       },
     }) as IShowNotification);
 
-export const dismissNotification = (id: string) => (dispatch: Dispatch<any>) =>
+export const dismissNotification = (id: string) => (dispatch: Dispatch<any, any>) =>
   dispatch({
     type: "Notifications/Dismiss",
     payload: {
