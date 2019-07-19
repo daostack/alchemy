@@ -14,54 +14,46 @@ const settings = {
   staging: {
     graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v23",
-    web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
-    web3ProviderRead: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3Provider: "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3ProviderRead: "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
       "port": "443",
       "protocol": "https",
-      "api-path": "/ipfs/api/v0/"
+      "api-path": "/ipfs/api/v0/",
     },
   },
   production: {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v23",
-    web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
-    web3ProviderRead: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3Provider: "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3ProviderRead: "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: {
       "host": "subgraph.daostack.io",
       "port": "443",
       "protocol": "https",
-      "api-path": "/ipfs/api/v0/"
+      "api-path": "/ipfs/api/v0/",
     },
-  }
+  },
 };
 
-/**
- * check if the web3 connection is ready to send transactions, and warn the user if it is not
- *
- * @param showNotification the warning will be sent using the showNotification function;
- *    it will use `alert()` if no such function is provided
- * @return the web3 connection, if everything is fine
- */
-export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
-  try {
-    const web3Provider = await checkWeb3Provider();
-    await web3Provider.enable();
-    return web3Provider;
-  } catch (err) {
-    const msg =  err.message;
-    if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
-      console.log( `No metamask connection found - we are in "development" environment, so this may be ok`);
-      return true;
-    } else {
-      if (showNotification) {
-        showNotification(NotificationStatus.Failure, msg);
-      } else {
-        alert(msg);
-      }
-    }
+export function getArc(): Arc {
+  // store the Arc instance in the global namespace on the 'window' object
+  // (this is not best practice)
+  const arc = (window as any).arc;
+  if (!arc) {
+    throw Error("window.arc is not defined - please call initializeArc first");
   }
+  return arc;
+}
+
+/**
+ * check if a metamask instanse is available and an account is unlocked
+ * @return [description]
+ */
+export function getMetaMask(): any {
+  const ethereum = (window as any).ethereum;
+  return ethereum;
 }
 
 /**
@@ -89,10 +81,10 @@ export async function checkWeb3Provider() {
     }
   }
 
-  let web3Provider = getMetaMask();
+  const web3Provider = getMetaMask();
 
   if (!web3Provider) {
-    const msg = `Please install or enable Metamask or Gnosis Safe`;
+    const msg = "Please install or enable Metamask or Gnosis Safe";
     throw Error(msg);
   }
 
@@ -109,6 +101,34 @@ export async function checkWeb3Provider() {
 }
 
 /**
+ * check if the web3 connection is ready to send transactions, and warn the user if it is not
+ *
+ * @param showNotification the warning will be sent using the showNotification function;
+ *    it will use `alert()` if no such function is provided
+ * @return the web3 connection, if everything is fine
+ */
+export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
+  try {
+    const web3Provider = await checkWeb3Provider();
+    await web3Provider.enable();
+    return web3Provider;
+  } catch (err) {
+    const msg =  err.message;
+    if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
+      console.log( "No metamask connection found - we are in \"development\" environment, so this may be ok");
+      return true;
+    } else {
+      if (showNotification) {
+        showNotification(NotificationStatus.Failure, msg);
+      } else {
+        alert(msg);
+      }
+    }
+  }
+}
+
+
+/**
  * get the current user from the web3 Provider
  * @return [description]
  */
@@ -118,21 +138,12 @@ export async function getCurrentAccountAddress(): Promise<Address> {
   return accounts[0] ? accounts[0].toLowerCase() : null;
 }
 
-/**
- * check if a metamask instanse is available and an account is unlocked
- * @return [description]
- */
-export function getMetaMask(): any {
-  const ethereum = (<any> window).ethereum;
-  return ethereum;
-}
-
 export async function enableMetamask(): Promise<any> {
   // check if Metamask account access is enabled, and if not, call the (async) function
   // that will ask the user to enable it
   const ethereum = getMetaMask();
   if (!ethereum) {
-    const msg = `Please install or enable metamask or Gnosis Safe`;
+    const msg = "Please install or enable metamask or Gnosis Safe";
     throw Error(msg);
   }
   await ethereum.enable();
@@ -163,16 +174,6 @@ function getArcSettings(): any {
   return arcSettings;
 }
 
-export function getArc(): Arc {
-  // store the Arc instance in the global namespace on the 'window' object
-  // (this is not best practice)
-  const arc = (<any> window).arc;
-  if (!arc) {
-    throw Error("window.arc is not defined - please call initializeArc first");
-  }
-  return arc;
-}
-
 export async function initializeArc(): Promise<Arc> {
   const arcSettings = getArcSettings();
 
@@ -189,9 +190,9 @@ export async function initializeArc(): Promise<Arc> {
   // console.log(arcSettings);
   // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
   if (arcSettings.web3Provider.isSafe) {
-    console.log(`Using Gnosis Safe`);
+    console.log("Using Gnosis Safe");
   } else if (arcSettings.web3Provider.isMetaMask) {
-    console.log(`Using MetaMask`);
+    console.log("Using MetaMask");
   } else {
     console.log("Using default Web3 (read-only) provider");
   }
@@ -201,14 +202,11 @@ export async function initializeArc(): Promise<Arc> {
   const contractInfos = await arc.getContractInfos();
   arc.setContractInfos(contractInfos);
   // save the object on a global window object (I know, not nice, but it works..)
-  (<any> window).arc = arc;
+  (window  as any).arc = arc;
   return arc;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
-// Polling is Evil!
-// TODO: check if this (new?) function can replace polling:
-// https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
 export function pollForAccountChanges(currentAccountAddress?: string, interval: number = 2000) {
   console.log("start polling for account changes");
   return Observable.create((observer: any) => {

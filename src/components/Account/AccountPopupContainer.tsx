@@ -1,4 +1,5 @@
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -14,9 +15,9 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from "rxjs";
 
+import { Address, IDAOState, IMemberState } from "@daostack/client";
 import * as css from "./Account.scss";
 
-import { Address, IDAOState, IMemberState } from "@daostack/client";
 
 interface IStateProps {
   accountAddress: string;
@@ -51,7 +52,7 @@ interface IDispatchProps {
 }
 
 const mapDispatchToProps = {
-  showNotification
+  showNotification,
 };
 
 type IProps = IStateProps & IDispatchProps;
@@ -61,7 +62,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
   public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;
     copyToClipboard(accountAddress);
-    showNotification(NotificationStatus.Success, `Copied to clipboard!`);
+    showNotification(NotificationStatus.Success, "Copied to clipboard!");
     e.preventDefault();
   }
 
@@ -71,7 +72,7 @@ class AccountPopupContainer extends React.Component<IProps, null> {
     const targetAccountClass = classNames({
       [css.detailView]: this.props.detailView,
       [css.historyView]: this.props.historyView,
-      [css.targetAccount]: true
+      [css.targetAccount]: true,
     });
 
     return (

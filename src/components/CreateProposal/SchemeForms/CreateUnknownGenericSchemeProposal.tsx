@@ -22,7 +22,7 @@ interface IStateProps {
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress: ownProps.daoAvatarAddress,
-    handleClose: ownProps.handleClose
+    handleClose: ownProps.handleClose,
   };
 };
 
@@ -33,12 +33,12 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IContainerProps & IStateProps & IDispatchProps;
 
-interface FormValues {
+interface IFormValues {
   description: string;
   callData: string;
   title: string;
@@ -54,11 +54,11 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
-      dao: this.props.daoAvatarAddress
+      dao: this.props.daoAvatarAddress,
     };
 
     setSubmitting(false);
@@ -66,23 +66,24 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render() {
+  public render(): any {
     const {  daoAvatarAddress, handleClose } = this.props;
     const arc = getArc();
 
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
-      (state: IObservableState<IDAOState>) => {
+      (state: IObservableState<IDAOState>): any => {
         if ( state.data !== null ) {
           return (
             <div className={css.contributionReward}>
               <Formik
+                // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
                 initialValues={{
                   callData: "",
                   title: "",
                   url: "",
-                  value: 0
-                } as FormValues}
-                validate={(values: FormValues) => {
+                  value: 0,
+                } as IFormValues}
+                validate={(values: IFormValues): void => {
                   const errors: any = {};
 
                   const require = (name: string) => {
@@ -107,7 +108,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                     errors.title = "Title is too long (max 120 characters)";
                   }
 
-                  const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+                  const pattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
                   if (values.url && !pattern.test(values.url)) {
                     errors.url = "Invalid URL";
                   }
@@ -127,11 +128,13 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                 render={({
                   errors,
                   touched,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   handleSubmit,
                   isSubmitting,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   setFieldTouched,
-                  setFieldValue
-                }: FormikProps<FormValues>) =>
+                  setFieldValue,
+                }: FormikProps<IFormValues>) =>
                   <Form noValidate>
                     <label htmlFor="titleInput">
                       Title
@@ -183,7 +186,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                           <ErrorMessage name="callData">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                           <div className={css.requiredMarker}>*</div>
                         </label>
-                         <Field
+                        <Field
                           id="callDataInput"
                           component="textarea"
                           placeholder="The encoded function call data of the contract function call"
@@ -225,8 +228,8 @@ class CreateGenericScheme extends React.Component<IProps, null> {
           );
         } else {
           return null;
-       }
-     }
+        }
+      }
     }</Subscribe>;
   }
 }

@@ -1,6 +1,7 @@
 import { FieldProps } from "formik";
 import * as React from "react";
 import ReactMde, { commands } from "react-mde";
+
 const ReactMarkdown = require("react-markdown");
 
 interface IProps {
@@ -19,7 +20,7 @@ export default class MarkdownField extends React.Component<Props, IState> {
     super(props);
 
     this.state = {
-      selectedTab: "write"
+      selectedTab: "write",
     };
   }
 

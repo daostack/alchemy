@@ -8,14 +8,14 @@ import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import { persistStore } from "redux-persist";
-import { default as store, history } from "./configureStore";
+import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
 
 export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      arcIsInitialized: false
+      arcIsInitialized: false,
     };
   }
 
@@ -57,11 +57,11 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
       return (
         <Provider store={store}>
           <ThroughProvider>
-              <ConnectedRouter history={history}>
-                <Switch>
-                  <Route path="/" component={AppContainer}/>
-                </Switch>
-              </ConnectedRouter>
+            <ConnectedRouter history={history}>
+              <Switch>
+                <Route path="/" component={AppContainer}/>
+              </Switch>
+            </ConnectedRouter>
           </ThroughProvider>
         </Provider>
       );

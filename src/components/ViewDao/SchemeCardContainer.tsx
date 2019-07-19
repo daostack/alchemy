@@ -1,4 +1,4 @@
-import { IDAOState, IProposalStage, IProposalState, Proposal, Scheme } from "@daostack/client";
+import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
@@ -11,7 +11,7 @@ import { closingTime } from "reducers/arcReducer";
 import { combineLatest } from "rxjs";
 import * as css from "./SchemeCard.scss";
 
-const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
+const ProposalDetail = (props: { proposal: Proposal; dao: IDAOState }) => {
   const { proposal, dao } = props;
   return <Subscribe key={proposal.id} observable={proposal.state()}>{
     (state: IObservableState<IProposalState>): any => {
@@ -30,8 +30,7 @@ const ProposalDetail = (props: { proposal: Proposal, dao: IDAOState }) => {
               {humanProposalTitle(proposalState)}
             </span>
             <b>
-              {/* TODO: Show if proposal is in overtime? Track when it expires and then hide it? */}
-              <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView={true} />
+              <Countdown toDate={closingTime(proposalState)} detailView={false} schemeView />
             </b>
           </Link>
         );
@@ -51,7 +50,7 @@ interface IInternalProps {
   boostedProposals: Proposal[];
   preBoostedProposals: Proposal[];
   queuedProposals: Proposal[];
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 const SchemeCardContainer = (props: IInternalProps) => {
@@ -74,7 +73,7 @@ const SchemeCardContainer = (props: IInternalProps) => {
             <img src="/assets/images/meditate.svg" />
             <div>
               No upcoming proposals
-                </div>
+            </div>
           </div>
           : " "
         }
@@ -98,29 +97,32 @@ export default (props: IExternalProps) => {
 
   const dao = arc.dao(props.dao.address);
   const observable = combineLatest(
+    props.scheme.state(),
     dao.proposals({where: {
       scheme:  props.scheme.id,
       stage: IProposalStage.Queued,
-      expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000)
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
     }}), // the list of queued proposals
     dao.proposals({ where: {
       scheme:  props.scheme.id,
-      stage: IProposalStage.PreBoosted
+      stage: IProposalStage.PreBoosted,
     }}), // the list of preboosted proposals
     dao.proposals({ where: {
       scheme:  props.scheme.id,
-      stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod]
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
     }}) // the list of boosted proposals
   );
 
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[Proposal[], Proposal[], Proposal[]]>): any => {
+    (state: IObservableState<[ISchemeState, Proposal[], Proposal[], Proposal[]]>): any => {
       if (state.isLoading) {
         return  <div><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
-        return <SchemeCardContainer {...props} boostedProposals={state.data[2]} preBoostedProposals={state.data[1]} queuedProposals={state.data[0]} />;
+        return <SchemeCardContainer {...props} scheme={state.data[0]} boostedProposals={state.data[3]} preBoostedProposals={state.data[2]} queuedProposals={state.data[1]} />;
       }
     }
   }</Subscribe>;

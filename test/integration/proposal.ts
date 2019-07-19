@@ -1,6 +1,8 @@
 import * as uuid from "uuid";
 import { getContractAddresses } from "./utils";
 
+
+
 describe("Proposals", () => {
     let daoAddress: string;
     let addresses;
@@ -29,7 +31,7 @@ describe("Proposals", () => {
       await titleInput.setValue(title);
 
       // using uuid value so that the test will pass also if there is already a proposal with this description
-      // (which must be unique). TODO: find a way to reset the state
+      // (which must be unique).
       const descriptionInput = await $(".mde-text");
       await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
@@ -54,37 +56,41 @@ describe("Proposals", () => {
       // locate the new proposal element
       let proposal = await titleElement.$("./../../..");
 
-      await proposal.scrollIntoView();
+      await proposal.scrollIntoView(false);
 
       // vote for the proposal
-      // Click on proposal so voting controls appear
+      // Click on context menu so voting controls appear
       await proposal.click();
+      const contextMenu = await proposal.$(`[data-test-id="proposalContextMenu"]`);
+      await contextMenu.click();
+
       const voteButton = await proposal.$(`[data-test-id="voteFor"]`);
+      await voteButton.waitForDisplayed();
       await voteButton.click();
       let launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
       await launchMetaMaskButton.click();
 
-      await proposal.click();
+      await contextMenu.click();
       const youVotedFor = await proposal.$(`span[data-test-id="youVotedFor"`);
       await youVotedFor.waitForDisplayed();
 
-      // TODO: Commmented this because of difficult-to-trace Travis failures
-      // TODO: fix those...
-      // const enablePredictionsButton = await proposal.$(`[data-test-id="button-enable-predicting"]`);
-      // if (await enablePredictionsButton.isExisting()) {
-      //   // get notifications out of the way
-      //   const buttonCloseNotification = await $$(`[data-test-id="button-notification-close"]`);
-      //   await buttonCloseNotification.forEach(async (button: any) => await button.click());
-      //
-      //   await enablePredictionsButton.click();
-      //   const buttonPreapprove = await $("[data-test-id=\"button-preapprove\"]");
-      //   await buttonPreapprove.click();
-      // }
-      //
-      // const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);
-      // await stakeButton.click();
-      // launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
-      // await launchMetaMaskButton.click();
-    });
+      const enablePredictionsButton = await proposal.$(`[data-test-id="button-enable-predicting"]`);
+      if (await enablePredictionsButton.isExisting()) {
+        // get notifications out of the way
+        const buttonCloseNotification = await $$(`[data-test-id="button-notification-close"]`);
+        await buttonCloseNotification.forEach(async (button: any) => await button.click());
+
+        await enablePredictionsButton.click();
+        const buttonPreapprove = await $("[data-test-id=\"button-preapprove\"]");
+        await buttonPreapprove.click();
+      }
+
+      await contextMenu.click();
+      const stakeButton = await proposal.$(`[data-test-id="stakePass"]`);
+      await stakeButton.waitForDisplayed();
+      await stakeButton.click();
+      launchMetaMaskButton = await $(`[data-test-id="launch-metamask"]`);
+      await launchMetaMaskButton.click();
+    }, 60000);
 
 });

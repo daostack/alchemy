@@ -19,3 +19,6 @@ export const historyView: string;
 export const stakeControls: string;
 export const preApproval: string;
 export const preapproveWrapper: string;
+export const contextMenu: string;
+export const contextTitle: string;
+export const contextContent: string;

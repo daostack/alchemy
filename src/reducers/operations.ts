@@ -54,8 +54,8 @@ export const dismissOperation = (id: string) => (dispatch: Dispatch<any>) =>
   dispatch({
     type: "Operations/Dismiss",
     payload: {
-      id
-    }
+      id,
+    },
   } as IDismissOperation);
 
 /** -- Reducer -- */
@@ -69,12 +69,13 @@ export const operationsReducer =
           ...state,
           [action.payload.id]: {
             ...state[action.payload.id],
-            ...action.payload.operation
-          }
+            ...action.payload.operation,
+          },
         };
       }
 
       if (a.type === "Operations/Dismiss") {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const {[a.payload.id]: _, ...rest } = state;
         return rest;
       }
@@ -99,8 +100,9 @@ const errorType = (error: Error) => {
 };
 
 export const operationsTracker: Middleware =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ({ getState, dispatch }) =>
-  (next) => {
+    (next) => {
     // Arc.TransactionService.subscribe("TxTracking", (topic, info: TransactionReceiptsEventInfo) => {
     //   const {
     //     invocationKey,
@@ -110,83 +112,83 @@ export const operationsTracker: Middleware =
     //     functionName
     //   } = info;
 
-    //   if (txStage == Arc.TransactionStage.mined && !error) {
-    //     return;
-    //   }
+      //   if (txStage == Arc.TransactionStage.mined && !error) {
+      //     return;
+      //   }
 
-    //   // discard the `txEventContext` property since it's not serializable and irelevent.
-    //   const {txEventContext: _,  ...options} = info.options;
+      //   // discard the `txEventContext` property since it's not serializable and irelevent.
+      //   const {txEventContext: _,  ...options} = info.options;
 
-    //   let proposalTitle = options.title;
-    //   if (options.proposalId) {
-    //     const proposal = (getState() as any as IRootState).arc.proposals[options.proposalId];
-    //     if (proposal) {
-    //       proposalTitle = proposal.title;
-    //     }
-    //   }
+      //   let proposalTitle = options.title;
+      //   if (options.proposalId) {
+      //     const proposal = (_getState() as any as IRootState).arc.proposals[options.proposalId];
+      //     if (proposal) {
+      //       proposalTitle = proposal.title;
+      //     }
+      //   }
 
-    //   dispatch({
-    //     type: "Operations/Update",
-    //     payload: {
-    //       id: `${invocationKey}`,
-    //       operation: {
-    //         txHash: tx,
-    //         error: error ? errorType(error) : undefined,
-    //         status:
-    //           txStage === Arc.TransactionStage.kickoff ?
-    //             OperationStatus.Started :
-    //           txStage === Arc.TransactionStage.sent ?
-    //             OperationStatus.Sent :
-    //             OperationStatus.Complete,
-    //         functionName,
-    //         options,
-    //         proposalTitle
-    //       }
-    //     }
-    //   } as IUpdateOperation);
-    // });
+      //   dispatch({
+      //     type: "Operations/Update",
+      //     payload: {
+      //       id: `${invocationKey}`,
+      //       operation: {
+      //         txHash: tx,
+      //         error: error ? errorType(error) : undefined,
+      //         status:
+      //           txStage === Arc.TransactionStage.kickoff ?
+      //             OperationStatus.Started :
+      //           txStage === Arc.TransactionStage.sent ?
+      //             OperationStatus.Sent :
+      //             OperationStatus.Complete,
+      //         functionName,
+      //         options,
+      //         proposalTitle
+      //       }
+      //     }
+      //   } as IUpdateOperation);
+      // });
 
-    return (a: any) => {
-      if (a.type === REHYDRATE) {
+      return (a: any) => {
+        if (a.type === REHYDRATE) {
         /**
          * Resubscribe to sent Operations after rehydrating.
          */
-        const action = a as RehydrateAction;
-        const payload = action.payload;
+          const action = a as RehydrateAction;
+          const payload = action.payload;
 
-        if (payload) {
-          const state = payload.operations as IOperationsState;
-          Object.keys(state).forEach(async (id: string) => {
-            if (state[id].status && state[id].status === OperationStatus.Sent && !state[id].error) {
-              try {
+          if (payload) {
+            const state = payload.operations as IOperationsState;
+            Object.keys(state).forEach(async (id: string) => {
+              if (state[id].status && state[id].status === OperationStatus.Sent && !state[id].error) {
+                try {
                 //const receipt = await Arc.TransactionService.watchForConfirmedTransaction(state[id].txHash);
-                dispatch({
-                  type: "Operations/Update",
-                  payload: {
-                    id: `${id}`,
-                    operation: {
-                      status: OperationStatus.Complete
-                    }
-                  }
-                } as IUpdateOperation);
-              } catch (e) {
-                console.error(e);
-                dispatch({
-                  type: "Operations/Update",
-                  payload: {
-                    id: `${id}`,
-                    operation: {
-                      error: errorType(e)
-                    }
-                  }
-                } as IUpdateOperation);
+                  dispatch({
+                    type: "Operations/Update",
+                    payload: {
+                      id: `${id}`,
+                      operation: {
+                        status: OperationStatus.Complete,
+                      },
+                    },
+                  } as IUpdateOperation);
+                } catch (e) {
+                  console.error(e);
+                  dispatch({
+                    type: "Operations/Update",
+                    payload: {
+                      id: `${id}`,
+                      operation: {
+                        error: errorType(e),
+                      },
+                    },
+                  } as IUpdateOperation);
+                }
               }
-            }
-          });
+            });
+          }
         }
-      }
 
-      next(a);
-    };
-  }
+        next(a);
+      };
+    }
 ;

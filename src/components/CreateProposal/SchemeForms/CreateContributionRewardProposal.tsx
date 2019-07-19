@@ -21,10 +21,10 @@ interface IStateProps {
   handleClose: () => any;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (_state: IRootState, ownProps: any) => {
   return {
     daoAvatarAddress: ownProps.daoAvatarAddress,
-    handleClose: ownProps.handleClose
+    handleClose: ownProps.handleClose,
   };
 };
 
@@ -35,12 +35,12 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IContainerProps & IStateProps & IDispatchProps;
 
-interface FormValues {
+interface IFormValues {
   beneficiary: string;
   description: string;
   ethReward: number;
@@ -61,7 +61,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ) {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
@@ -83,7 +83,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
       ethReward: toWei(Number(values.ethReward)),
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
-      reputationReward: toWei(Number(values.reputationReward))
+      reputationReward: toWei(Number(values.reputationReward)),
     };
 
     setSubmitting(false);
@@ -91,25 +91,19 @@ class CreateContributionReward extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render() {
+  public render(): any {
     const {  daoAvatarAddress, handleClose } = this.props;
     const arc = getArc();
 
     return <Subscribe observable={arc.dao(daoAvatarAddress).state()}>{
-      (state: IObservableState<IDAOState>) => {
+      (state: IObservableState<IDAOState>): any => {
         if ( state.data !== null ) {
           const dao: IDAOState = state.data;
-
-          // TODO: this is used to check uniqueness of proposalDescriptions,
-          // it is disabled at this moment, but should be restored
-          // const proposalDescriptions = (dao.proposals as IProposalState[])
-          //   .filter((proposal) => !proposalEnded(proposal))
-          //   .map((proposal) => proposal.description);
-          const proposalDescriptions: string[] = [];
 
           return (
             <div className={css.contributionReward}>
               <Formik
+                // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
                 initialValues={{
                   beneficiary: "",
                   description: "",
@@ -119,18 +113,18 @@ class CreateContributionReward extends React.Component<IProps, null> {
                   nativeTokenReward: 0,
                   reputationReward: 0,
                   title: "",
-                  url: ""
-                } as FormValues}
-                validate={(values: FormValues) => {
+                  url: "",
+                } as IFormValues}
+                validate={(values: IFormValues): void => {
                   const errors: any = {};
 
-                  const require = (name: string) => {
+                  const require = (name: string): void => {
                     if (!(values as any)[name]) {
                       errors[name] = "Required";
                     }
                   };
 
-                  const nonNegative = (name: string) => {
+                  const nonNegative = (name: string): void => {
                     if ((values as any)[name] < 0) {
                       errors[name] = "Please enter a non-negative reward";
                     }
@@ -140,16 +134,11 @@ class CreateContributionReward extends React.Component<IProps, null> {
                     errors.title = "Title is too long (max 120 characters)";
                   }
 
-                  // TODO: do we want this uniqueness check still?
-                  if (proposalDescriptions.indexOf(values.description) !== -1) {
-                    errors.description = "Must be unique";
-                  }
-
                   if (!arc.web3.utils.isAddress(values.beneficiary)) {
                     errors.beneficiary = "Invalid address";
                   }
 
-                  const pattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+                  const pattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
                   if (values.url && !pattern.test(values.url)) {
                     errors.url = "Invalid URL";
                   }
@@ -172,11 +161,12 @@ class CreateContributionReward extends React.Component<IProps, null> {
                 render={({
                   errors,
                   touched,
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   handleSubmit,
                   isSubmitting,
                   setFieldTouched,
-                  setFieldValue
-                }: FormikProps<FormValues>) =>
+                  setFieldValue,
+                }: FormikProps<IFormValues>) =>
                   <Form noValidate>
                     <label className={css.description}>What to Expect</label>
                     <div className={css.description}>This proposal can send eth / erc20 token, mint new DAO tokens ({dao.tokenSymbol}) and mint / slash reputation in the DAO. Each proposal can have one of each of these actions. e.g. 100 rep for completing a project + 0.05 ETH for covering expenses.</div>
@@ -277,7 +267,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                         </label>
                         <Field
                           id="externalTokenRewardInput"
-                          placeholder={`How many tokens to reward`}
+                          placeholder={"How many tokens to reward"}
                           name="externalTokenReward"
                           type="number"
                           className={touched.externalTokenReward && errors.externalTokenReward ? css.error : null}
@@ -332,8 +322,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
           );
         } else {
           return null;
-       }
-     }
+        }
+      }
     }</Subscribe>;
   }
 }

@@ -110,12 +110,10 @@ class AppContainer extends React.Component<IProps, IState> {
             console.log(`new address: ${newAddress}`);
             this.props.setCurrentAccount(newAddress);
             localStorage.setItem(storageKey, newAddress);
-            // TODO: we reload on setting a new account,
-            // but it would be more elegant if we did not need to
             window.location.reload();
           }
         });
-      }
+    }
   }
 
   public render() {
@@ -128,7 +126,6 @@ class AppContainer extends React.Component<IProps, IState> {
 
     if (this.state.error) {
       // Render error fallback UI
-      // TODO: style this!
       console.log(this.state.error);
       return <div>
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
@@ -143,7 +140,7 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/" render={ ( props ) => <HeaderContainer {...props} /> } />
+            <Route path="/" render={( props ) => <HeaderContainer {...props} />} />
 
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
@@ -168,22 +165,22 @@ class AppContainer extends React.Component<IProps, IState> {
               sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
                 <div key={id}>
                   <Notification
-                      title={(title || status).toUpperCase()}
-                      status={
-                        status === NotificationStatus.Failure ?
-                          NotificationViewStatus.Failure :
+                    title={(title || status).toUpperCase()}
+                    status={
+                      status === NotificationStatus.Failure ?
+                        NotificationViewStatus.Failure :
                         status === NotificationStatus.Success ?
                           NotificationViewStatus.Success :
                           NotificationViewStatus.Pending
-                      }
-                      message={message}
-                      fullErrorMessage={fullErrorMessage}
-                      url={url}
-                      timestamp={timestamp}
-                      dismiss={() => dismissNotification(id)}
-                      showNotification={showNotification}
-                      minimize={() => this.setState({notificationsMinimized: true})}
-                    />
+                    }
+                    message={message}
+                    fullErrorMessage={fullErrorMessage}
+                    url={url}
+                    timestamp={timestamp}
+                    dismiss={() => dismissNotification(id)}
+                    showNotification={showNotification}
+                    minimize={() => this.setState({notificationsMinimized: true})}
+                  />
                   <br/>
                 </div>
               ))

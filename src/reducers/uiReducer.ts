@@ -8,10 +8,9 @@ export interface IUIState {
 }
 
 export const initialState: IUIState = {
-  tourVisible: false
+  tourVisible: false,
 };
 
-// TODO: make all action types explicit?
 const uiReducer = (state = initialState, action: any) => {
   switch (action.type) {
 

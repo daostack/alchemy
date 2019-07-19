@@ -1,5 +1,5 @@
 // const BN = require("bn.js");
-import { IProposalType, Scheme } from "@daostack/client";
+import { IProposalType, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
@@ -17,7 +17,7 @@ interface IStateProps {
   daoAvatarAddress: string;
   genericSchemeInfo: GenericSchemeInfo;
   handleClose: () => any;
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
@@ -31,16 +31,16 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   createProposal: arcActions.createProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IStateProps & IDispatchProps;
 
-interface FormValues {
+interface IFormValues {
   description: string;
   title: string;
   url: string;
-  [key: string]: any; // TODO: "allowSyntheticDefaultImports": true in tsconfig.json should render this unecessary. But it is needed anyway
+  [key: string]: any;
 }
 
 interface IState {
@@ -62,23 +62,23 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     const actions = props.genericSchemeInfo.actions();
     this.state = {
       actions,
-      currentAction:  actions[0]
+      currentAction:  actions[0],
     };
   }
 
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ) {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     const currentAction = this.state.currentAction;
 
     const callValues = [];
-    for (let field of currentAction.getFields()) {
+    for (const field of currentAction.getFields()) {
       const callValue = field.callValue(values[field.name]);
       values[field.name] = callValue;
       callValues.push(callValue);
     }
 
-    let callData: string = "";
+    let callData = "";
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
@@ -108,11 +108,11 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     this.props.handleClose();
   }
 
-  public handleTabClick = (tab: string) => (e: any) => {
+  public handleTabClick = (tab: string) => (_e: any) => {
     this.setState({ currentAction: this.props.genericSchemeInfo.action(tab) });
   }
 
-  public renderField(field: ActionField, values: FormValues, touched: FormikTouched<FormValues>, errors: FormikErrors<FormValues>) {
+  public renderField(field: ActionField, values: IFormValues, touched: FormikTouched<IFormValues>, errors: FormikErrors<IFormValues>) {
     let type = "string";
     switch (field.type) {
       case "uint256":
@@ -120,28 +120,28 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
         break;
       case "bool":
         return <div className={css.radioButtons}>
-            <Field
-              id={field.name + "_true"}
-              name={field.name}
-              checked={parseInt(values[field.name], 10) === 1}
-              type="radio"
-              value={1}
-            />
-            <label htmlFor={field.name + "_true"}>
-              {field.labelTrue}
-            </label>
+          <Field
+            id={field.name + "_true"}
+            name={field.name}
+            checked={parseInt(values[field.name], 10) === 1}
+            type="radio"
+            value={1}
+          />
+          <label htmlFor={field.name + "_true"}>
+            {field.labelTrue}
+          </label>
 
-            <Field
-              id={field.name + "_false"}
-              name={field.name}
-              checked={parseInt(values[field.name], 10) === 0}
-              type="radio"
-              value={0}
-            />
-            <label htmlFor={field.name + "_false"}>
-              {field.labelFalse}
-            </label>
-          </div>;
+          <Field
+            id={field.name + "_false"}
+            name={field.name}
+            checked={parseInt(values[field.name], 10) === 0}
+            type="radio"
+            value={0}
+          />
+          <label htmlFor={field.name + "_false"}>
+            {field.labelFalse}
+          </label>
+        </div>;
       default:
         if (field.type.includes("[]")) {
           return <FieldArray name={field.name} render={(arrayHelpers) => (
@@ -169,7 +169,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                 Add {field.label}
               </button>
             </div>
-            )}
+          )}
           />;
         }
         break;
@@ -192,10 +192,10 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
     const actions = this.state.actions;
     const currentAction = this.state.currentAction;
 
-    const initialFormValues: FormValues = {
+    const initialFormValues: IFormValues = {
       description: "",
       title: "",
-      url: ""
+      url: "",
     };
 
     actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
@@ -229,7 +229,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
               key={action.id}
               className={classNames({
                 [css.tab]: true,
-                [css.selected]: currentAction.id === action.id
+                [css.selected]: currentAction.id === action.id,
               })}
               onClick={this.handleTabClick(action.id)}>
               <span></span>
@@ -241,7 +241,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
         <div className={css.formWrapper}>
           <Formik
             initialValues={initialFormValues}
-            validate={(values: FormValues) => {
+            validate={(values: IFormValues) => {
               const errors: any = {};
 
               const valueIsRequired = (name: string) => {
@@ -258,12 +258,12 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                 errors.title = "Title is too long (max 120 characters)";
               }
 
-              const urlPattern = new RegExp("(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})");
+              const urlPattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
               if (values.url && !urlPattern.test(values.url)) {
                 errors.url = "Invalid URL";
               }
 
-              for (let field of this.state.currentAction.getFields()) {
+              for (const field of this.state.currentAction.getFields()) {
                 if (field.type !== "bool") {
                   valueIsRequired(field.name);
                 }
@@ -273,7 +273,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                   try {
                     field.callValue(value);
                   } catch (error) {
-                    if (error.message === `Assertion failed`) {
+                    if (error.message === "Assertion failed") {
                       // thank you BN.js for your helpful error messages
                       errors[field.name] = "Invalid number value";
                     } else {
@@ -289,7 +289,7 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                 }
 
                 if (field.type === "address[]") {
-                  for (let value of values[field.name]) {
+                  for (const value of values[field.name]) {
                     if (!arc.web3.utils.isAddress(value)) {
                       errors[field.name] = "Invalid address";
                     }
@@ -304,13 +304,13 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
               touched,
               isSubmitting,
               setFieldValue,
-              values
-            }: FormikProps<FormValues>) => {
+              values,
+            }: FormikProps<IFormValues>) => {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
                   <div className={css.description}>
-                  <Interweave content={currentAction.description} />
+                    <Interweave content={currentAction.description} />
                   </div>
                   <label htmlFor="titleInput">
                     Title
@@ -356,10 +356,10 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
                   />
 
                   <div key={currentAction.id}
-                     className={classNames({
-                        [css.tab]: true,
-                        [css.selected]: this.state.currentAction.id === currentAction.id
-                      })
+                    className={classNames({
+                      [css.tab]: true,
+                      [css.selected]: this.state.currentAction.id === currentAction.id,
+                    })
                     }
                   >
                     {

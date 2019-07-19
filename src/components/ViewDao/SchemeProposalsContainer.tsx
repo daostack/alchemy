@@ -1,6 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 
-import { Address, IDAOState, IProposalStage, Proposal, Scheme } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -12,6 +12,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest, from } from "rxjs";
+import { concatMap} from "rxjs/operators";
 import ProposalCardContainer from "../Proposal/ProposalCardContainer";
 import * as css from "./ViewDao.scss";
 
@@ -23,10 +24,10 @@ const Fade = ({ children, ...props }: any) => (
     {...props}
     timeout={1000}
     classNames={{
-     enter: css.fadeEnter,
-     enterActive: css.fadeEnterActive,
-     exit: css.fadeExit,
-     exitActive: css.fadeExitActive,
+      enter: css.fadeEnter,
+      enterActive: css.fadeEnterActive,
+      exit: css.fadeExit,
+      exitActive: css.fadeExitActive,
     }}
   >
     {children}
@@ -41,7 +42,7 @@ interface IProps {
   proposalsBoosted: Proposal[];
   proposalsPreBoosted: Proposal[];
   proposalsQueued: Proposal[];
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 class SchemeProposalsContainer extends React.Component<IProps, IState> {
@@ -83,7 +84,7 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
       <div className={css.daoProposalsContainer} id="scrollContainer">
         <BreadcrumbsItem to={`/dao/${dao.address}/proposals/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
-        <Sticky enabled={true} top={0} innerZ={10000}>
+        <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.queueType}>
             {schemeName(scheme, scheme.address)}
             <Link className={css.createProposal} to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal">
@@ -93,18 +94,18 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
         </Sticky>
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
           ? <div className={css.noDecisions}>
-              <img className={css.relax} src="/assets/images/yogaman.svg"/>
-              <div className={css.proposalsHeader}>
+            <img className={css.relax} src="/assets/images/yogaman.svg"/>
+            <div className={css.proposalsHeader}>
                 No upcoming proposals
-              </div>
-              <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
-              <div className={css.cta}>
-                <Link to={"/dao/" + dao.address}>
-                  <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
-                </Link>
-                <Link to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
-              </div>
             </div>
+            <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
+            <div className={css.cta}>
+              <Link to={"/dao/" + dao.address}>
+                <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
+              </Link>
+              <Link to={`/dao/${dao.address}/proposals/${scheme.id}/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
+            </div>
+          </div>
           :
           <div>
             <div className={css.boostedContainer}>
@@ -112,9 +113,9 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
                 Boosted Proposals ({proposalsBoosted.length})
                 {proposalsBoosted.length === 0
                   ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
                   : " "
                 }
               </div>
@@ -128,9 +129,9 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
                 Pending Proposals ({proposalsPreBoosted.length})
                 {proposalsPreBoosted.length === 0
                   ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
                   : " "
                 }
               </div>
@@ -143,9 +144,9 @@ class SchemeProposalsContainer extends React.Component<IProps, IState> {
                 Regular Proposals ({proposalsQueued.length}{hasMoreProposalsToLoad ? "+" : ""})
                 {proposalsQueued.length === 0
                   ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
                   : " "
                 }
               </div>
@@ -186,7 +187,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     super(props);
 
     this.state = {
-      hasMoreProposalsToLoad: true
+      hasMoreProposalsToLoad: true,
     };
   }
 
@@ -201,25 +202,27 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
 
     const observable = combineLatest(
       // Scheme state
-      from(arc.scheme(schemeId)),
+      from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme) => scheme.state())),
 
       // the list of queued proposals
       dao.proposals({
+      // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
         orderBy: "confidence",
         orderDirection: "desc",
         first: PAGE_SIZE,
-        skip: 0
+        skip: 0,
       }),
 
       // the list of preboosted proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
-        orderBy: "preBoostedAt"
+        orderBy: "preBoostedAt",
       }), // the list of preboosted proposals
       arc.dao(daoAvatarAddress).proposals({
+      // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
-        orderBy: "boostedAt"
+        orderBy: "boostedAt",
       }), // the list of boosted proposals
 
       // DAO state
@@ -230,7 +233,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     const parentState = this.state;
 
     return <Subscribe observable={observable}>{
-      (state: IObservableState<[Scheme, Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
+      (state: IObservableState<[ISchemeState, Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
         if (state.isLoading) {
           return  <div className={css.loading}><Loading/></div>;
         } else if (state.error) {
@@ -249,21 +252,22 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
             proposalsPreBoosted={data[2]}
             proposalsBoosted={data[3]}
             dao={data[4]}
-            fetchMore={ () => {
+            fetchMore={() => {
               state.fetchMore({
                 observable: dao.proposals({
+                  // eslint-disable-next-line @typescript-eslint/camelcase
                   where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
                   orderBy: "confidence",
                   orderDirection: "desc",
                   first: PAGE_SIZE,
-                  skip: data[1].length
+                  skip: data[1].length,
                 }),
                 combine: (prevState: [Scheme, Proposal[], Proposal[], Proposal[], IDAOState], newData: Proposal[]) => {
                   if (newData.length < PAGE_SIZE) {
                     setState({ hasMoreProposalsToLoad: false});
                   }
                   return [prevState[0], prevState[1].concat(newData), prevState[2], prevState[3], prevState[4]];
-                }
+                },
               });
             }}
           />;

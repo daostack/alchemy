@@ -1,5 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopupContainer from "components/Account/AccountPopupContainer";
@@ -53,7 +54,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
     beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposalState.proposer],
     isVotingYes: isVotePending(proposalState.id, VoteOptions.Yes)(state),
-    isVotingNo: isVotePending(proposalState.id, VoteOptions.No)(state)
+    isVotingNo: isVotePending(proposalState.id, VoteOptions.No)(state),
   };
 };
 
@@ -66,7 +67,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      expired: closingTime(props.proposalState).isSameOrBefore(moment())
+      expired: closingTime(props.proposalState).isSameOrBefore(moment()),
     };
   }
 
@@ -84,7 +85,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
       proposalState,
       isVotingNo,
       isVotingYes,
-      votesOfCurrentUser
+      votesOfCurrentUser,
     } = this.props;
 
     const expired = this.state.expired;
@@ -102,17 +103,17 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
     const proposalClass = classNames({
       [css.proposal]: true,
       [css.failedProposal]: proposalFailed(proposalState),
-      [css.passedProposal]: proposalPassed(proposalState)
+      [css.passedProposal]: proposalPassed(proposalState),
     });
 
     const voteWrapperClass = classNames({
       [css.voteBox]: true,
       clearfix: true,
-      [css.unconfirmedVote]: isVoting
+      [css.unconfirmedVote]: isVoting,
     });
 
     const voteControls = classNames({
-      [css.voteControls]: true
+      [css.voteControls]: true,
     });
 
     return (proposalState.stage === IProposalStage.Queued && this.state.expired ? "" :
@@ -126,9 +127,9 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                     <Countdown toDate={closingTime(proposalState)} detailView={false} onEnd={this.countdownEnded.bind(this)} overTime={proposalState.stage === IProposalStage.QuietEndingPeriod && !this.state.expired} /> :
                     <span className={css.closedTime}>
                       {proposalState.stage === IProposalStage.Queued ? "Expired" :
-                        proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" : // TODO: handle case of below threshold
+                        proposalState.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
                           "Closed"}&nbsp;
-                       {closingTime(proposalState).format("MMM D, YYYY")}
+                      {closingTime(proposalState).format("MMM D, YYYY")}
                     </span>
                   }
                 </span>
@@ -143,6 +144,31 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                 daoEthBalance={daoEthBalance}
                 proposalState={proposalState}
               />
+
+              <div className={css.contextMenu} data-test-id="proposalContextMenu">
+                <div className={css.menuIcon}>
+                  <img src="/assets/images/Icon/Context-menu.svg"/>
+                </div>
+                <div className={css.menu}>
+                  <VoteButtons
+                    currentAccountAddress={currentAccountAddress}
+                    currentVote={currentAccountVote}
+                    dao={dao}
+                    expired={expired}
+                    isVotingNo={isVotingNo}
+                    isVotingYes={isVotingYes}
+                    proposal={proposalState}
+                    contextMenu/>
+                  <PredictionButtons
+                    beneficiaryProfile={beneficiaryProfile}
+                    currentAccountAddress={currentAccountAddress}
+                    dao={dao}
+                    expired={this.state.expired}
+                    proposal={proposalState}
+                    contextMenu
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div className={css.createdBy}>

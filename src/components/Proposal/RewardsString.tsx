@@ -35,7 +35,7 @@ export default class RewardsString extends React.Component<IProps, null> {
     }
     return <strong>
       {rewards.reduce((acc, v) => {
-        return acc == null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
+        return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
       }, null)}
     </strong>;
   }

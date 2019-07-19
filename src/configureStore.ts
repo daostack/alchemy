@@ -1,4 +1,4 @@
-import createHistory from "history/createBrowserHistory";
+import { createBrowserHistory } from "history";
 import { routerMiddleware } from "react-router-redux";
 import { notificationUpdater, successDismisser } from "reducers/notifications";
 import { operationsTracker } from "reducers/operations";
@@ -7,12 +7,12 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import thunkMiddleware from "redux-thunk";
 import reducers from "./reducers";
 
-export const history = createHistory();
+export const history = createBrowserHistory();
 
-const store = createStore(
-  reducers,
-  // TODO: only compose with devtools in when ENV === 'dev'
-  composeWithDevTools(   // makes the store available to the Chrome redux dev tools
+let store: any;
+if (process.env.NODE_ENV === "production") {
+  store = createStore(
+    reducers,
     applyMiddleware(
       thunkMiddleware,
       operationsTracker,
@@ -20,19 +20,22 @@ const store = createStore(
       successDismisser(15000),
       routerMiddleware(history)
     ),
-  ),
-);
+  );
 
-// A store for testing purposes
-export const mockStore = () => createStore(
-  reducers,
-  applyMiddleware(
-    thunkMiddleware,
-    operationsTracker,
-    notificationUpdater,
-    successDismisser(15000),
-    routerMiddleware(history),
-  ),
-);
+} else {
+  store = createStore(
+    reducers,
+    composeWithDevTools(   // makes the store available to the Chrome redux dev tools
+      applyMiddleware(
+        thunkMiddleware,
+        operationsTracker,
+        notificationUpdater,
+        successDismisser(15000),
+        routerMiddleware(history)
+      ),
+    ),
+  );
+
+}
 
 export default store;

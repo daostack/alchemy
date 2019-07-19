@@ -46,7 +46,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
             </span>
           </div>
           <div className={css.reputationAmount}>
-            <ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={vote.amount} hideSymbol={true} />
+            <ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={vote.amount} hideSymbol />
           </div>
           <div className={css.reputationLine}></div>
         </div>
@@ -64,25 +64,25 @@ class VotersModal extends React.Component<IProps, null> {
   public render() {
     const { dao, proposalState, votes } = this.props;
 
-    const currentAccountVote = votes[0]; // TODO
+    const currentAccountVote = votes[0];
 
     const yesVotes = votes.filter((vote) => vote.outcome === IProposalOutcome.Pass);
     const noVotes = votes.filter((vote) => vote.outcome === IProposalOutcome.Fail);
 
     const modalWindowClass = classNames({
-      [css.modalWindow]: true
+      [css.modalWindow]: true,
     });
 
     const voteUpClass = classNames({
       [css.voteBreakdown]: true,
       [css.voteUp]: true,
-      [css.votedFor]: currentAccountVote.outcome === IProposalOutcome.Pass
+      [css.votedFor]: currentAccountVote.outcome === IProposalOutcome.Pass,
     });
 
     const voteDownClass = classNames({
       [css.voteBreakdown]: true,
       [css.voteDown]: true,
-      [css.votedAgainst]: currentAccountVote.outcome === IProposalOutcome.Fail
+      [css.votedAgainst]: currentAccountVote.outcome === IProposalOutcome.Fail,
     });
 
     return (
@@ -99,7 +99,7 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
                   <span className={css.reputationTitle}>For</span>
                   <br/>
-                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol={true} /> Rep</p>
+                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol /> Rep</p>
                 </span>
               </div>
               <div className={css.graphContainer}>
@@ -111,7 +111,7 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
                   <span className={css.reputationTitle}>Against</span>
                   <br />
-                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol={true} /> Rep</p>
+                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol /> Rep</p>
                 </span>
               </div>
             </div>

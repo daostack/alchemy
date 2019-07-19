@@ -11,17 +11,15 @@ import { AsyncActionSequence, IAsyncAction } from "./async";
 export type ConnectAction = IAsyncAction<"WEB3_CONNECT", void, IWeb3State>;
 
 export function setCurrentAccount(accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any>, getState: Function) => {
+  return async (dispatch: Redux.Dispatch<any>, _getState: Function) => {
     const payload = {
       currentAccountAddress: accountAddress,
-      connectionStatus : ConnectionStatus.Connected
+      connectionStatus : ConnectionStatus.Connected,
     };
 
-    let action;
-
-    action = {
+    const action = {
       type: ActionTypes.WEB3_SET_ACCOUNT,
-      payload
+      payload,
     };
     dispatch(action);
 
@@ -41,9 +39,9 @@ export function setCurrentAccount(accountAddress: string) {
 }
 
 export type ApproveAction = IAsyncAction<ActionTypes.APPROVE_STAKING_GENS, {
-  accountAddress: string
+  accountAddress: string;
 }, {
-  numTokensApproved: number
+  numTokensApproved: number;
 }>;
 
 // Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
@@ -58,10 +56,10 @@ export function approveStakingGens(spender: Address) {
       type: ActionTypes.APPROVE_STAKING_GENS,
       sequence: AsyncActionSequence.Pending,
       operation: {
-        message: `Approving tokens for staking...`,
-        totalSteps: 1
+        message: "Approving tokens for staking...",
+        totalSteps: 1,
       },
-      meta
+      meta,
     } as ApproveAction);
 
     try {
@@ -73,8 +71,8 @@ export function approveStakingGens(spender: Address) {
         sequence: AsyncActionSequence.Failure,
         meta,
         operation: {
-          message: `Approving tokens for staking failed`
-        }
+          message: "Approving tokens for staking failed",
+        },
       } as ApproveAction);
     }
   };

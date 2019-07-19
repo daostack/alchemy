@@ -27,13 +27,13 @@ const reducers = {
   profiles: profilesReducer,
   router: routerReducer,
   ui: uiReducer,
-  web3: web3Reducer
+  web3: web3Reducer,
 };
 
 const onlyPending = createTransform(
   (state, key) => {
     if (key === "operations") {
-      const out = {...state} as IOperationsState;
+      const out: IOperationsState = {...state} as any;
 
       for (const k in out) {
         if (!(out[k].status === OperationStatus.Sent || out[k].error)) {
@@ -46,7 +46,7 @@ const onlyPending = createTransform(
       return state;
     }
   },
-  (raw, key) => raw
+  (raw, _key) => raw
 );
 
 export default persistReducer({

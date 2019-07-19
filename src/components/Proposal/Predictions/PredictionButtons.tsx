@@ -2,6 +2,7 @@ import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@dao
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -30,6 +31,7 @@ interface IState {
 interface IContainerProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
+  contextMenu?: boolean;
   currentAccountAddress?: Address;
   dao: IDAOState;
   detailView?: boolean;
@@ -51,7 +53,7 @@ interface IStateProps {
 const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   stakeProposal: arcActions.stakeProposal,
-  showNotification
+  showNotification,
 };
 
 type IProps = IStateProps & IDispatchProps & IContainerProps & {
@@ -77,23 +79,23 @@ class PredictionBox extends React.Component<IProps, IState> {
     this.state = {
       pendingPrediction: null,
       showApproveModal: false,
-      showPreStakeModal: false
+      showPreStakeModal: false,
     };
   }
 
-  public showApprovalModal = (event: any) => {
+  public showApprovalModal = (_event: any): void => {
     this.setState({ showApproveModal: true });
   }
 
-  public closeApprovalModal = (event: any) => {
+  public closeApprovalModal = (_event: any): void => {
     this.setState({ showApproveModal: false });
   }
 
-  public closePreStakeModal = (event: any) => {
+  public closePreStakeModal = (_event: any): void => {
     this.setState({ showPreStakeModal: false });
   }
 
-  public showPreStakeModal = (prediction: number) => (event: any) => {
+  public showPreStakeModal = (prediction: number): (_event: any) => void => (_event: any): void => {
     if (!this.props.currentAccountAddress) {
       checkWeb3ProviderAndWarn(this.props.showNotification.bind(this));
     } else {
@@ -101,16 +103,17 @@ class PredictionBox extends React.Component<IProps, IState> {
     }
   }
 
-  public handleClickPreApprove = async (event: any) => {
+  public handleClickPreApprove = async (_event: any): Promise<void> => {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
   }
 
-  public render() {
+  public render(): any {
     const {
       beneficiaryProfile,
+      contextMenu,
       currentAccountGens,
       currentAccountGenStakingAllowance,
       dao,
@@ -121,13 +124,13 @@ class PredictionBox extends React.Component<IProps, IState> {
       isPredictingFail,
       isPredictingPass,
       stakeProposal,
-      stakesOfCurrentUser
+      stakesOfCurrentUser,
     } = this.props;
 
     const {
       pendingPrediction,
       showApproveModal,
-      showPreStakeModal
+      showPreStakeModal,
     } = this.state;
 
     let currentStake: IStake;
@@ -155,8 +158,8 @@ class PredictionBox extends React.Component<IProps, IState> {
               </p>
               <p>
                 Once you click the button below, we will pop-up a MetaMask dialogue.
-                It will set a default gas limit and price. It's fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank">this calculator</a>
+                It will set a default gas limit and price. It&apos;s fine to stick with these defaults.
+                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank" rel="noopener noreferrer">this calculator</a>
                 &nbsp;to adjust the Gwei price.
               </p>
               <div>
@@ -170,6 +173,7 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     const wrapperClass = classNames({
       [css.predictions]: true,
+      [css.contextMenu]: contextMenu,
       [css.detailView]: detailView,
       [css.historyView]: historyView,
       [css.unconfirmedPrediction]: isPredicting,
@@ -185,12 +189,12 @@ class PredictionBox extends React.Component<IProps, IState> {
 
     const passButtonClass = classNames({
       [css.pendingPrediction]: isPredictingPass,
-      [css.passButton]: true
+      [css.passButton]: true,
     });
 
     const failButtonClass = classNames({
       [css.pendingPrediction]: isPredictingFail,
-      [css.failButton]: true
+      [css.failButton]: true,
     });
 
     const tip = (prediction: VoteOptions) =>
@@ -242,9 +246,20 @@ class PredictionBox extends React.Component<IProps, IState> {
           /> : ""
         }
 
-        <div className={css.stakeControls}>
-          {stakingEnabled
-            ? <span>
+        {contextMenu ?
+          <div className={css.contextTitle}>
+            <div>
+              <span>
+                Predict
+              </span>
+            </div>
+          </div>
+          : ""
+        }
+
+        <div className={contextMenu ? css.contextContent : css.stakeControls}>
+          {stakingEnabled ?
+            <div>
               {
                 (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
@@ -259,7 +274,7 @@ class PredictionBox extends React.Component<IProps, IState> {
                   </Tooltip> :
                   failButton
               }
-            </span>
+            </div>
             : <span className={css.disabledPredictions}>
               Predictions are disabled
             </span>
