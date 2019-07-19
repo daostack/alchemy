@@ -45,7 +45,7 @@ const mapDispatchToProps = {
 
 type IProps = IStateProps & IDispatchProps;
 
-class HeaderContainer extends React.Component<IProps, null> {
+class Header extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
@@ -130,7 +130,7 @@ class HeaderContainer extends React.Component<IProps, null> {
   }
 }
 
-const ConnectedHeaderContainer = connect(mapStateToProps, mapDispatchToProps)(HeaderContainer);
+const ConnectedHeader = connect(mapStateToProps, mapDispatchToProps)(Header);
 
 export default (props: RouteComponentProps<any>) => {
   const arc = getArc();
@@ -148,11 +148,11 @@ export default (props: RouteComponentProps<any>) => {
       } else if (state.error) {
         return <div>{state.error.message}</div>;
       } else {
-        return <ConnectedHeaderContainer {...props} dao={state.data} />;
+        return <ConnectedHeader {...props} dao={state.data} />;
       }
     }
     }</Subscribe>;
   } else {
-    return <ConnectedHeaderContainer dao={undefined} {...props}/>;
+    return <ConnectedHeader dao={undefined} {...props}/>;
   }
 };

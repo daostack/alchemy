@@ -48,7 +48,7 @@ interface IState {
   currentAction: Action;
 }
 
-class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState> {
+class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -396,4 +396,4 @@ class CreateKnownSchemeProposalContainer extends React.Component<IProps, IState>
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateKnownSchemeProposalContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateKnownSchemeProposal);

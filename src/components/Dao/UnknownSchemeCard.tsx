@@ -11,7 +11,7 @@ interface IInternalProps {
   schemes: Scheme[];
 }
 
-const UnknownSchemeCardContainer = (props: IInternalProps) => {
+const UnknownSchemeCard = (props: IInternalProps) => {
 
   const { schemes } = props;
 
@@ -43,5 +43,5 @@ const UnknownSchemeCardContainer = (props: IInternalProps) => {
 };
 
 export default (props: IExternalProps) => {
-  return <UnknownSchemeCardContainer {...props} />;
+  return <UnknownSchemeCard {...props} />;
 };

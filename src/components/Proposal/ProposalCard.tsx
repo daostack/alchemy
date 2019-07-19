@@ -3,7 +3,7 @@ import { getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -19,9 +19,9 @@ import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
-import BoostAmount from "./Predictions/BoostAmount";
-import PredictionButtons from "./Predictions/PredictionButtons";
-import PredictionGraph from "./Predictions/PredictionGraph";
+import BoostAmount from "./Staking/BoostAmount";
+import StakeButtons from "./Staking/StakeButtons";
+import StakeGraph from "./Staking/StakeGraph";
 import ProposalSummary from "./ProposalSummary";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
@@ -62,7 +62,7 @@ interface IState {
   expired: boolean;
 }
 
-class ProposalCardContainer extends React.Component<IProps, IState> {
+class ProposalCard extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -159,7 +159,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
                     isVotingYes={isVotingYes}
                     proposal={proposalState}
                     contextMenu/>
-                  <PredictionButtons
+                  <StakeButtons
                     beneficiaryProfile={beneficiaryProfile}
                     currentAccountAddress={currentAccountAddress}
                     dao={dao}
@@ -172,7 +172,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.createdBy}>
-            <AccountPopupContainer accountAddress={proposalState.proposer} dao={dao} detailView={false} />
+            <AccountPopup accountAddress={proposalState.proposer} dao={dao} detailView={false} />
             <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false} />
           </div>
           <div className={css.description}>
@@ -205,13 +205,13 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
           </div>
 
           <div className={css.predictions}>
-            <PredictionGraph
+            <StakeGraph
               proposal={proposalState}
             />
             <BoostAmount proposal={proposalState} />
 
             <div className={css.predictionButtons}>
-              <PredictionButtons
+              <StakeButtons
                 beneficiaryProfile={beneficiaryProfile}
                 currentAccountAddress={currentAccountAddress}
                 dao={dao}
@@ -226,7 +226,7 @@ class ProposalCardContainer extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalCardContainer = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCardContainer);
+export const ConnectedProposalCard = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCard);
 
 interface IExternalProps {
   currentAccountAddress: Address;
@@ -253,7 +253,7 @@ export default (props: IExternalProps) => {
         return <div>{state.error.message}</div>;
       } else {
         const [proposalState, votes, daoEthBalance] = state.data;
-        return <ConnectedProposalCardContainer
+        return <ConnectedProposalCard
           currentAccountAddress={props.currentAccountAddress}
           daoEthBalance={daoEthBalance}
           proposalState={proposalState}

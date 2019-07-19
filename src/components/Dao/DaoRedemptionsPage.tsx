@@ -2,7 +2,7 @@ import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import gql from "graphql-tag";
@@ -11,8 +11,8 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
-import ProposalCardContainer from "../Proposal/ProposalCardContainer";
-import * as css from "./ViewDao.scss";
+import ProposalCard from "../Proposal/ProposalCard";
+import * as css from "./Dao.scss";
 
 interface IProps {
   currentAccountAddress: string;
@@ -20,7 +20,7 @@ interface IProps {
   proposals: any[];
 }
 
-class DaoRedemptionsContainer extends React.Component<IProps, null> {
+class DaoRedemptionsPage extends React.Component<IProps, null> {
 
   public render() {
     const { dao, proposals, currentAccountAddress } = this.props;
@@ -29,7 +29,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     const proposalsHTML = proposals.map((proposalData: any) => {
       const proposal = new Proposal(proposalData.id, dao.address, proposalData.scheme.address, proposalData.votingMachine, arc);
 
-      return <ProposalCardContainer
+      return <ProposalCard
         key={"proposal_" + proposal.id}
         proposal={proposal} dao={dao}
         currentAccountAddress={currentAccountAddress}
@@ -89,7 +89,7 @@ class DaoRedemptionsContainer extends React.Component<IProps, null> {
     });
     if (!reputationReward.isZero()) {
       totalRewards.push(
-        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
+        <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
       );
     }
 
@@ -185,7 +185,7 @@ export default (props: { dao: IDAOState; currentAccountAddress?: Address } & Rou
     if (state.error) {
       return <div>{ state.error.message }</div>;
     } else if (state.data) {
-      return <DaoRedemptionsContainer {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
+      return <DaoRedemptionsPage {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
     } else {
       return (<div className={css.loading}><Loading/></div>);
     }

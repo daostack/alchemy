@@ -1,9 +1,9 @@
 import { ISchemeState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
-import CreateContributionRewardProposal from "components/CreateProposal/SchemeForms/CreateContributionRewardProposal";
-import CreateKnownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateKnownGenericSchemeProposal";
-import CreateSchemeRegistrarProposal from "components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal";
-import CreateUnknownGenericSchemeProposal from "components/CreateProposal/SchemeForms/CreateUnknownGenericSchemeProposal";
+import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
+import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
+import CreateSchemeRegistrarProposal from "components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal";
+import CreateUnknownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
@@ -30,7 +30,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   };
 };
 
-class CreateProposalContainer extends React.Component<IProps, null> {
+class CreateProposalPage extends React.Component<IProps, null> {
 
   public goBack() {
     const { daoAvatarAddress, history, schemeId } = this.props;
@@ -93,4 +93,4 @@ class CreateProposalContainer extends React.Component<IProps, null> {
   }
 }
 
-export default connect(mapStateToProps)(CreateProposalContainer);
+export default connect(mapStateToProps)(CreateProposalPage);

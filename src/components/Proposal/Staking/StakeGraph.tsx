@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 import { formatTokens, fromWei } from "lib/util";
 import * as React from "react";
 
-import * as css from "./PredictionGraph.scss";
+import * as css from "./StakeGraph.scss";
 
 interface IProps {
   detailView?: boolean;
@@ -11,7 +11,7 @@ interface IProps {
   proposal: IProposalState;
 }
 
-export default class PredictionGraph extends React.Component<IProps, null> {
+export default class StakeGraph extends React.Component<IProps, null> {
 
   public render() {
     const {

@@ -11,7 +11,7 @@ interface IProps {
   totalReputation: BN;
 }
 
-export default class ReputationView extends React.Component<IProps, null> {
+export default class Reputation extends React.Component<IProps, null> {
   public render() {
     const { daoName, hideSymbol, hideTooltip, reputation, totalReputation } = this.props;
     const PRECISION  = 2; // how many digits behind

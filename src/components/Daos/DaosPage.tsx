@@ -4,20 +4,20 @@ import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import DaoContainer from "./DaoContainer";
-import * as css from "./DaoList.scss";
+import DaoCard from "./DaoCard";
+import * as css from "./Daos.scss";
 
 interface IProps {
   daos: DAO[];
 }
 
-class DaoListContainer extends React.Component<IProps, null> {
+class DaosPage extends React.Component<IProps, null> {
 
   public render() {
     const { daos } = this.props;
     const daoNodes = daos.map((dao: DAO) => {
       return (
-        <DaoContainer key={dao.address}  dao={dao}/>
+        <DaoCard key={dao.address}  dao={dao}/>
       );
     });
     return (
@@ -49,7 +49,7 @@ export default () => {
     } else if (state.error) {
       throw state.error;
     } else {
-      return <DaoListContainer daos={state.data} />;
+      return <DaosPage daos={state.data} />;
     }
   }
 

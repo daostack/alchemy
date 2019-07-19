@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { fromWei } from "lib/util";
@@ -15,7 +15,7 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
-import * as css from "./ViewDao.scss";
+import * as css from "./Dao.scss";
 
 interface IProps extends RouteComponentProps<any> {
   dao: IDAOState;
@@ -32,7 +32,7 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
   };
 };
 
-class DaoMembersContainer extends React.Component<IProps, null> {
+class DaoMembersPage extends React.Component<IProps, null> {
 
   public render() {
     const { dao, members, profiles } = this.props;
@@ -72,7 +72,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
                     <td className={css.memberReputation}>
                       <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
                       <div className={css.reputationAmounts}>
-                        (<ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
+                        (<Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
                       </div>
                     </td>
                     <td className={css.memberSocial}>
@@ -132,7 +132,7 @@ class DaoMembersContainer extends React.Component<IProps, null> {
 
 }
 
-const ConnectedDaoMembersContainer = connect(mapStateToProps)(DaoMembersContainer);
+const ConnectedDaoMembersPage = connect(mapStateToProps)(DaoMembersPage);
 
 export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
   const arc = getArc();
@@ -151,7 +151,7 @@ export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
     } else if (state.error) {
       return <div>{ state.error.message }</div>;
     } else {
-      return <ConnectedDaoMembersContainer
+      return <ConnectedDaoMembersPage
         members={state.data}
         dao={props.dao}
         fetchMore={() => {

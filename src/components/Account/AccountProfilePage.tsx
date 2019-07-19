@@ -6,9 +6,9 @@ import { checkWeb3ProviderAndWarn, getArc, getMetaMask } from "arc";
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import DaoSidebar from "components/ViewDao/DaoSidebar";
+import DaoSidebar from "components/Dao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
@@ -73,7 +73,7 @@ interface IFormValues {
   name: string;
 }
 
-class AccountProfileContainer extends React.Component<IProps, null> {
+class AccountProfilePage extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
     super(props);
@@ -267,7 +267,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
                     <div className={css.otherInfoContainer}>
                       <div className={css.tokens}>
                         {accountInfo
-                          ? <div><strong>Rep. Score</strong><br /><ReputationView reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
+                          ? <div><strong>Rep. Score</strong><br /><Reputation reputation={accountInfo.reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /> </div>
                           : ""}
                         <div><strong>GEN:</strong><br /><span>{formatTokens(genBalance)}</span></div>
                         -                        <div><strong>ETH:</strong><br /><span>{formatTokens(ethBalance)}</span></div>
@@ -289,7 +289,7 @@ class AccountProfileContainer extends React.Component<IProps, null> {
   }
 }
 
-const ConnectedAccountProfileContainer = connect(mapStateToProps, mapDispatchToProps)(AccountProfileContainer);
+const ConnectedAccountProfilePage = connect(mapStateToProps, mapDispatchToProps)(AccountProfilePage);
 
 export default (props: RouteComponentProps<any>) => {
   const arc = getArc();
@@ -310,7 +310,7 @@ export default (props: RouteComponentProps<any>) => {
         return <div>{state.error.message}</div>;
       } else if (state.data) {
         const dao = state.data[0];
-        return <ConnectedAccountProfileContainer dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
+        return <ConnectedAccountProfilePage dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
       } else {
         return <div>Loading...</div>;
       }

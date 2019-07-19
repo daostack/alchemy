@@ -9,13 +9,13 @@ import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { combineLatest } from "rxjs";
-import * as css from "./DaoList.scss";
+import * as css from "./Daos.scss";
 
 interface IProps {
   dao: DAO;
 }
 
-const DaoContainer = (props: IProps) => {
+const DaoCard = (props: IProps) => {
   // const { address } = props;
   const dao = props.dao;
   const observable = combineLatest(
@@ -86,4 +86,4 @@ const DaoContainer = (props: IProps) => {
   }</Subscribe>;
 };
 
-export default DaoContainer;
+export default DaoCard;

@@ -2,7 +2,7 @@ import { IDAOState, Scheme } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import UnknownSchemeCardContainer from "components/ViewDao/UnknownSchemeCardContainer";
+import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
 import { isKnownScheme } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -10,8 +10,8 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
-import * as css from "./AllSchemes.scss";
-import SchemeCardContainer from "./SchemeCardContainer";
+import * as css from "./DaoSchemesPage.scss";
+import SchemeCard from "./SchemeCard";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -33,7 +33,7 @@ interface IProps {
   schemes: Scheme[];
 }
 
-const AllSchemesContainer = (props: IProps) => {
+const DaoSchemesPage = (props: IProps) => {
   const { dao, schemes } = props;
   const knownSchemes = schemes.filter((scheme: Scheme) => isKnownScheme(scheme.address));
   const unknownSchemes = schemes.filter((scheme: Scheme) => !isKnownScheme(scheme.address));
@@ -41,14 +41,14 @@ const AllSchemesContainer = (props: IProps) => {
     <TransitionGroup>
       {knownSchemes.map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.id}>
-          <SchemeCardContainer dao={dao} scheme={scheme} />
+          <SchemeCard dao={dao} scheme={scheme} />
         </Fade>
       ))
       }
 
       {!unknownSchemes ? "" :
         <Fade key={"schemes unknown"}>
-          <UnknownSchemeCardContainer schemes={unknownSchemes} />
+          <UnknownSchemeCard schemes={unknownSchemes} />
         </Fade>
       }
     </TransitionGroup>
@@ -90,7 +90,7 @@ export default (props: {} & RouteComponentProps<any>) => {
       } else if (state.error) {
         throw state.error;
       } else {
-        return <AllSchemesContainer dao={state.data[0]} schemes={state.data[1]} />;
+        return <DaoSchemesPage dao={state.data[0]} schemes={state.data[1]} />;
       }
     }
   }</Subscribe>;

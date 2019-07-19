@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import { claimableContributionRewards, formatTokens, fromWei, getClaimableRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
 
@@ -22,7 +22,7 @@ export default (props: IProps) => {
     c = <div key={rewardsForCurrentUser.id}>
       <strong>For creating the proposal you will receive:</strong>
       <ul>
-        <li><ReputationView reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+        <li><Reputation reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -31,7 +31,7 @@ export default (props: IProps) => {
     c = <div key={rewardsForCurrentUser.id}>
       <strong>For voting on the proposal you will receive:</strong>
       <ul>
-        <li><ReputationView reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+        <li><Reputation reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
       </ul>
     </div>;
     rewardComponents.push(c);
@@ -82,7 +82,7 @@ export default (props: IProps) => {
               {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
             </li> : ""
           }
-          {contributionRewards["rep"] ? <li><ReputationView reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
+          {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
           { /*
             TOOD: add native token
           */ }

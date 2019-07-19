@@ -11,7 +11,7 @@ import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
-import ProposalCardContainer from "../Proposal/ProposalCardContainer";
+import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
 
 // For infinite scrolling
@@ -52,7 +52,7 @@ class SchemeProposals extends React.Component<IProps, IState> {
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: Proposal) => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -62,7 +62,7 @@ class SchemeProposals extends React.Component<IProps, IState> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsPreBoosted.map((proposal: Proposal) => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -72,7 +72,7 @@ class SchemeProposals extends React.Component<IProps, IState> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal) => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCardContainer proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>

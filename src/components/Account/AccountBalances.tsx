@@ -3,7 +3,7 @@ import { getArc } from "arc";
 
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as css from "layouts/App.scss";
 import * as React from "react";
@@ -34,7 +34,7 @@ class AccountBalances extends React.Component<IProps, null>  {
         { dao
           ? <div className={css.daoBalance}>
             <h3>{dao.name}</h3>
-            <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
+            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
             <label>REPUTATION</label>
           </div>
           : ""

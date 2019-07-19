@@ -11,7 +11,7 @@ import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-import * as css from "./ViewDao.scss";
+import * as css from "./Dao.scss";
 
 interface IProps {
   dao: IDAOState;
@@ -22,7 +22,7 @@ interface IState {
   openMenu: boolean;
 }
 
-class DaoSidebarComponent extends React.Component<IProps, IState> {
+class DaoSidebar extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -227,7 +227,7 @@ export default (props: { dao: IDAOState; currentAccountAddress?: Address }) => {
   if (!daoState) {
     return null;
   } else if (!props.currentAccountAddress) {
-    return <DaoSidebarComponent dao={daoState} proposals={[]} />;
+    return <DaoSidebar dao={daoState} proposals={[]} />;
   } else {
     const query = gql`       {
     proposals(where: {
@@ -244,7 +244,7 @@ export default (props: { dao: IDAOState; currentAccountAddress?: Address }) => {
       if (state.error) {
         return <div>{state.error.message}</div>;
       } else if (state.data) {
-        return <DaoSidebarComponent dao={daoState} proposals={state.data.data.proposals} />;
+        return <DaoSidebar dao={daoState} proposals={state.data.data.proposals} />;
       } else {
         return (<div className={css.loading}><Loading /></div>);
       }
