@@ -1248,6 +1248,28 @@ a.navItem:hover {
     position: relative;
   }
 
+  .memberTable {
+    display: block;
+    width: 100%;
+
+    tr {
+      display: block;
+
+      .memberReputation .reputationAmount {
+        display: none;
+      }
+
+      td {
+        display: block;
+      }
+    }
+  }
+
+  .memberTable.memberTableHeading {
+    display: none;
+  }
+
+
   .daoSidebar {
     width: 50px;
     max-width: 100%;
