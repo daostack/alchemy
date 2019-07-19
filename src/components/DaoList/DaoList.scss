@@ -148,8 +148,20 @@ a.daoLink {
 	.wrapper {
 		width: auto;
 		padding: 0;
-    		text-align: center;
+		text-align: center;
 	}
+
+  .daoListHeader {
+    padding-top: 0;
+    text-align: left;
+
+    h2 {
+      margin-top: 0;
+      padding: 10px 0 10px 15px;
+      text-align: left;
+      font-size: 18px;
+    }
+  }
 
 	.dao {
 		width: 100%;
@@ -174,9 +186,5 @@ a.daoLink {
 			font-weight: normal;
 			font-family: "Open Sans";
 		}
-	}
-
-	.daoListHeader h2 {
-		text-align: center;
 	}
 }
