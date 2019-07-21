@@ -26,7 +26,7 @@ export enum ActionTypes {
   ARC_VOTE = "ARC_VOTE",
 }
 
-export enum ProposalStates {
+enum ProposalStates {
   None,
   Closed,
   Executed,
@@ -67,7 +67,7 @@ export interface IAccountState {
   votes: (IVoteState | string)[]; // Either normalized (string) or denormalized (object)
 }
 
-export function newAccount(
+function newAccount(
   daoAvatarAddress: string,
   address: string,
   reputation = 0,
@@ -102,18 +102,18 @@ export interface IRedemptionState {
   voterReputation: number;
 }
 
-export function anyRedemptions(redemptions: IRedemptionState) {
+function anyRedemptions(redemptions: IRedemptionState): boolean {
   return (
-    redemptions.beneficiaryEth ||
-    redemptions.beneficiaryReputation ||
-    redemptions.beneficiaryNativeToken ||
-    redemptions.beneficiaryExternalToken ||
-    redemptions.proposerReputation ||
-    redemptions.stakerReputation ||
-    redemptions.stakerTokens ||
-    redemptions.stakerBountyTokens ||
-    redemptions.voterReputation ||
-    redemptions.voterTokens
+    !!redemptions.beneficiaryEth ||
+    !!redemptions.beneficiaryReputation ||
+    !!redemptions.beneficiaryNativeToken ||
+    !!redemptions.beneficiaryExternalToken ||
+    !!redemptions.proposerReputation ||
+    !!redemptions.stakerReputation ||
+    !!redemptions.stakerTokens ||
+    !!redemptions.stakerBountyTokens ||
+    !!redemptions.voterReputation ||
+    !!redemptions.voterTokens
   );
 }
 
@@ -176,7 +176,7 @@ export interface IArcState {
   votes: { [voteKey: string]: IVoteState };
 }
 
-export const initialState: IArcState = {
+const initialState: IArcState = {
   accounts: {},
   lastBlock: 0,
   proposals: {},
