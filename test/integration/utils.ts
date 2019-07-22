@@ -1,22 +1,23 @@
- const chai = require("chai");
- global.expect = chai.expect;
- chai.Should();
+const chai = require("chai");
 
- export const LATEST_ARC_VERSION = "0.0.1-rc.19";
+global.expect = chai.expect;
+chai.Should();
+
+export const LATEST_ARC_VERSION = "0.0.1-rc.19";
 // because we do not have a "real" dutchX test, we'll just choose one (older) version
- // not thtat the correct address (migration.private.base[VERSION_FOR_DUTCHX_TEST]. GEenericScheme)
- // needs to be set in the generiscEhemeRegiststry/dutchx.json file for the tests to pass
- // (ie.e. for version 0.0.1-rc.17 this is 0xa6f8431c9eee4ac2859207af4004f7a948924c30)
- export const VERSION_FOR_DUTCHX_TEST = "0.0.1-rc.17";
+// not thtat the correct address (migration.private.base[VERSION_FOR_DUTCHX_TEST]. GEenericScheme)
+// needs to be set in the generiscEhemeRegiststry/dutchx.json file for the tests to pass
+// (ie.e. for version 0.0.1-rc.17 this is 0xa6f8431c9eee4ac2859207af4004f7a948924c30)
+export const VERSION_FOR_DUTCHX_TEST = "0.0.1-rc.17";
 
- export function getContractAddresses() {
+export function getContractAddresses() {
   // contract addresses for testing...
   const migration = require("@daostack/migration/migration.json")["private"];
   const contracts: {
-    base: {[address: string]: string},
-    dao: {[address: string]: string},
-    test: {[address: string]: string},
-    dutchx: {[address: string]: string},
+    base: {[address: string]: string};
+    dao: {[address: string]: string};
+    test: {[address: string]: string};
+    dutchx: {[address: string]: string};
   } = { base: {}, dao: {}, test: {}, dutchx: {} };
   const version = LATEST_ARC_VERSION;
   for (const name of Object.keys(migration.base[version])) {
@@ -39,6 +40,6 @@
   return contracts;
 }
 
- export const userAddresses = [
-  "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1"
+export const userAddresses = [
+  "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
 ];
