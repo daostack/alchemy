@@ -28,12 +28,6 @@ export function copyToClipboard(value: any) {
   document.body.removeChild(el);
 }
 
-export function trace<T>(x: T, ...args: any[]): T {
-  // tslint:disable-next-line:no-console
-  console.debug("trace", ...args, x);
-  return x;
-}
-
 export function humanProposalTitle(proposal: IProposalState) {
   return proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";

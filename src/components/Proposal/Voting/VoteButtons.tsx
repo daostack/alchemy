@@ -4,7 +4,7 @@ import { checkWeb3ProviderAndWarn, getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import Tooltip from "rc-tooltip";
@@ -124,7 +124,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
             closeAction={this.closePreVoteModal.bind(this)}
             currentAccount={currentAccountState}
             dao={dao}
-            effectText={<span>Your influence: <strong><ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
+            effectText={<span>Your influence: <strong><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
             proposal={proposal}
           /> : ""
         }

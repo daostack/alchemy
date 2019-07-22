@@ -5,7 +5,7 @@ import { getArc } from "arc";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 //@ts-ignore
@@ -44,7 +44,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
             </span>
           </div>
           <div className={css.reputationAmount}>
-            <ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={vote.amount} hideSymbol />
+            <Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={vote.amount} hideSymbol />
           </div>
           <div className={css.reputationLine}></div>
         </div>
@@ -97,7 +97,7 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
                   <span className={css.reputationTitle}>For</span>
                   <br/>
-                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol /> Rep</p>
+                  <p><Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol /> Rep</p>
                 </span>
               </div>
               <div className={css.graphContainer}>
@@ -109,7 +109,7 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
                   <span className={css.reputationTitle}>Against</span>
                   <br />
-                  <p><ReputationView daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol /> Rep</p>
+                  <p><Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol /> Rep</p>
                 </span>
               </div>
             </div>

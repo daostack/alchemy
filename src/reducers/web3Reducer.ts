@@ -18,7 +18,7 @@ export interface IWeb3State {
   networkId: number;
 }
 
-export const initialState: IWeb3State = {
+const initialState: IWeb3State = {
   accounts: [],
   connectionStatus: ConnectionStatus.Pending,
   currentAccountAddress: null,

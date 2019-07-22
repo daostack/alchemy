@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import AccountPopupContainer from "components/Account/AccountPopupContainer";
+import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { formatTokens, humanProposalTitle } from "lib/util";
@@ -15,7 +15,7 @@ import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
-import PredictionGraph from "./Predictions/PredictionGraph";
+import StakeGraph from "./Staking/StakeGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 
 import * as css from "./ProposalHistoryRow.scss";
@@ -146,7 +146,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     return (
       <div className={proposalClass}>
         <div className={css.proposalCreator}>
-          <AccountPopupContainer accountAddress={proposal.proposer} dao={dao} historyView/>
+          <AccountPopup accountAddress={proposal.proposer} dao={dao} historyView/>
           <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
         </div>
         <div className={css.endDate}>
@@ -165,7 +165,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         </div>
 
         <div className={css.predictions}>
-          <PredictionGraph
+          <StakeGraph
             proposal={proposal}
             historyView
           />
@@ -203,7 +203,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
+const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
 
 export default (props: { proposal: Proposal; daoState: IDAOState; currentAccountAddress: Address}) => {
   const proposal = props.proposal;
