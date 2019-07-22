@@ -11,7 +11,6 @@ export const detailLink: string;
 export const failedProposal: string;
 export const passedProposal: string;
 export const voteBox: string;
-export const unconfirmedVote: string;
 export const voteButtons: string;
 export const voteControls: string;
 export const voteDivider: string;
