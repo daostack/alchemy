@@ -98,9 +98,9 @@ for (const dao of daoForms) {
     if (!daoAddress) continue;
     // for each GenericScheme in the DAO
     for (const gsScheme of dao.genericSchemes) {
-      // for each formId in the GenericScheme
+      // for each form in the GenericScheme, create the collection of forms
       const daoSchemeForms = [] as IActionFormSpec[];
-      for (const formId of gsScheme.forms) { 
+      for (const formId of gsScheme.forms) {
         // get the form specification
         const formSpec = ACTIONFORMSPECS.get(formId);
         if (formSpec) {
@@ -108,18 +108,19 @@ for (const dao of daoForms) {
         } else {
           console.log(`GenericScheme form id not found: ${formId}`);
         }
-        if (daoSchemeForms.length) {
-          const targetContractAddress = gsScheme.targetContractAddresses[daoNetwork];
-          if (!SCHEMEINFOS[daoNetwork][daoAddress]) {
-            SCHEMEINFOS[daoNetwork][daoAddress] = {};
-          }
-          SCHEMEINFOS[daoNetwork][daoAddress][targetContractAddress] = {
-            schemeName: gsScheme.name,
-            forms: daoSchemeForms,
-          };
-        } else {
-          console.log("No GenericScheme forms found");
+      }
+      // save the collection of forms
+      if (daoSchemeForms.length) {
+        const targetContractAddress = gsScheme.targetContractAddresses[daoNetwork];
+        if (!SCHEMEINFOS[daoNetwork][daoAddress]) {
+          SCHEMEINFOS[daoNetwork][daoAddress] = {};
         }
+        SCHEMEINFOS[daoNetwork][daoAddress][targetContractAddress] = {
+          schemeName: gsScheme.name,
+          forms: daoSchemeForms,
+        };
+      } else {
+        console.log("No GenericScheme forms found");
       }
     }
   }
