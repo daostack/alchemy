@@ -15,11 +15,17 @@ const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
 
-export function getExchangesList() {
+export interface ITokenInfo {
+  decimals: number;
+  name: string;
+  symbol: string;
+}
+
+export function getExchangesList(): any {
   return exchangesList;
 }
 
-export function copyToClipboard(value: any) {
+export function copyToClipboard(value: any): void {
   const el = document.createElement("textarea");
   el.value = value;
   document.body.appendChild(el);
@@ -28,13 +34,13 @@ export function copyToClipboard(value: any) {
   document.body.removeChild(el);
 }
 
-export function humanProposalTitle(proposal: IProposalState) {
+export function humanProposalTitle(proposal: IProposalState): string {
   return proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
 }
 
 // Convert a value to its base unit based on the number of decimals passed in (i.e. WEI if 18 decimals)
-export function toBaseUnit(value: string, decimals: number) {
+export function toBaseUnit(value: string, decimals: number): BN {
   const ten = new BN(10);
   const base = ten.pow(new BN(decimals));
 
@@ -90,7 +96,7 @@ export function toWei(amount: number): BN {
   return new BN(getArc().web3.utils.toWei(amount.toString(), "ether"));
 }
 
-export function supportedTokens() {
+export function supportedTokens(): any  {
   return { [getArc().GENToken().address]:  {
     decimals: 18,
     name: "DAOstack GEN",
@@ -120,21 +126,21 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
 }
 
-export function tokenDetails(tokenAddress: string) {
+export function tokenDetails(tokenAddress: string): ITokenInfo {
   return supportedTokens()[tokenAddress.toLowerCase()];
 }
 
-export function tokenSymbol(tokenAddress: string) {
+export function tokenSymbol(tokenAddress: string): string{
   const token = supportedTokens()[tokenAddress.toLowerCase()];
   return token ? token["symbol"] : "?";
 }
 
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
-  return new Promise((resolve, reject) => {
-    const timerId = setInterval(async () => {
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000): Promise<void> {
+  return new Promise((resolve: () => any, reject: (e: Error) => any): any => {
+    const timerId = setInterval(async (): Promise<void> => {
       if (await test()) { return resolve(); }
     }, 30);
-    setTimeout(() => { clearTimeout(timerId); return reject(new Error("Test timed out..")); }, timeOut);
+    setTimeout((): any => { clearTimeout(timerId); return reject(new Error("Test timed out..")); }, timeOut);
   });
 }
 
@@ -143,7 +149,7 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
  * @param  address [description]
  * @return         [description]
  */
-export function isKnownScheme(address: Address) {
+export function isKnownScheme(address: Address): boolean {
   const arc = getArc();
   let contractInfo;
   try {
@@ -162,19 +168,12 @@ export function isKnownScheme(address: Address) {
   }
 }
 
-export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
+export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string): string {
   let name: string;
   if (scheme.name === "GenericScheme") {
-    // @ts-ignore
-    if (scheme.genericScheme) {
+    if ((scheme as any).genericScheme) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      // @ts-ignore
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericScheme.contractToCall);
-      if (genericSchemeInfo) {
-        name = genericSchemeInfo.specs.name;
-      } else {
-        name = "Generic Scheme";
-      }
+      name = genericSchemeRegistry.getGenericSchemeName((scheme as any).dao, (scheme as any).genericScheme.contractToCall);
     } else {
       name = "Generic Scheme";
     }
@@ -192,7 +191,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
  * @param  address [description]
  * @return         [description]
  */
-export function schemeNameAndAddress(address: string) {
+export function schemeNameAndAddress(address: string): string {
   const arc = getArc();
   try {
     const contractInfo = arc.getContractInfo(address);
@@ -243,37 +242,32 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
   return (await (web3.eth.net ? web3.eth.net.getId() : promisify(web3.version.getNetwork)())).toString();
 }
 
-export async function getNetworkName(id?: string): Promise<string> {
+export function getNetworkNameFromId(id: string): "main"|"rinkeby"|"private"|"unknown" {
+  switch (id) {
+    case "main":
+    case "1":
+      return "main";
+    case "rinkeby":
+    case "4":
+      return "rinkeby";
+    case "private":
+    case "1512051714758":
+      return "private";
+    default: 
+      return "unknown";
+  }
+}
+
+export async function getNetworkName(id?: string): Promise<"main"|"rinkeby"|"private"|"unknown"> {
 
   if (!id) {
     id = await getNetworkId();
   }
 
-  switch (id) {
-    case "main":
-    case "1":
-      return "main";
-    case "morden":
-    case "2":
-      return "morden";
-    case "ropsten":
-    case "3":
-      return "ropsten";
-    case "rinkeby":
-    case "4":
-      return "rinkeby";
-    case "kovan":
-    case "42":
-      return "kovan";
-    case "private":
-    case "1512051714758":
-      return "ganache";
-    default:
-      return `unknown (${id})`;
-  }
+  return getNetworkNameFromId(id);
 }
 
-export function linkToEtherScan(address: Address) {
+export function linkToEtherScan(address: Address): string {
   let prefix = "";
   const arc = getArc();
   if (arc.web3.currentProvider.__networkId === "4") {
@@ -305,7 +299,7 @@ export function getClaimableRewards(reward: IRewardState) {
 }
 
 // TOOD: move this function to the client library!
-export function hasClaimableRewards(reward: IRewardState) {
+export function hasClaimableRewards(reward: IRewardState): boolean {
   const claimableRewards = getClaimableRewards(reward);
   for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
@@ -359,6 +353,6 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   return result;
 }
 
-export function splitByCamelCase(str: string) {
+export function splitByCamelCase(str: string): string {
   return str.replace(/([A-Z])/g, " $1");
 }

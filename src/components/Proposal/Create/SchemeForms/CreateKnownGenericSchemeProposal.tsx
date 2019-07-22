@@ -4,7 +4,7 @@ import * as arcActions from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
-import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
+import { ActionFormSpec, ActionFormField, GenericSchemeInfo, IActionFormSpec } from "genericSchemeRegistry";
 import Interweave from "interweave";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -20,7 +20,7 @@ interface IStateProps {
   scheme: ISchemeState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
+const mapStateToProps = (state: IRootState, ownProps: IStateProps): IStateProps => {
   return ownProps;
 };
 
@@ -44,8 +44,8 @@ interface IFormValues {
 }
 
 interface IState {
-  actions: Action[];
-  currentAction: Action;
+  forms: ActionFormSpec[];
+  currentForm: ActionFormSpec;
 }
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
@@ -59,17 +59,17 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       throw Error("GenericSchemeInfo should be provided");
     }
 
-    const actions = props.genericSchemeInfo.actions();
+    const forms = props.genericSchemeInfo.forms();
     this.state = {
-      actions,
-      currentAction:  actions[0],
+      forms: forms,
+      currentForm: forms[0],
     };
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
-    const currentAction = this.state.currentAction;
+    const currentAction = this.state.currentForm;
 
     const callValues = [];
     for (const field of currentAction.getFields()) {
@@ -108,11 +108,16 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     this.props.handleClose();
   }
 
-  public handleTabClick = (tab: string) => (_e: any) => {
-    this.setState({ currentAction: this.props.genericSchemeInfo.action(tab) });
+  public handleTabClick = (tab: string): (e: any) => void => (_e: any): void => {
+    this.setState({ currentForm: this.props.genericSchemeInfo.form(tab) });
   }
 
-  public renderField(field: ActionField, values: IFormValues, touched: FormikTouched<IFormValues>, errors: FormikErrors<IFormValues>) {
+  public renderField(
+    field: ActionFormField,
+    values: IFormValues,
+    touched: FormikTouched<IFormValues>,
+    errors: FormikErrors<IFormValues>): any {
+
     let type = "string";
     switch (field.type) {
       case "uint256":
@@ -150,7 +155,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                 values[field.name].map((value: any, index: number) => (
                   <div key={field.name + "_" + index} className={css.arrayField}>
                     {this.renderField(
-                      new ActionField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder}),
+                      new ActionFormField({name: `${field.name}.${index}`, type: field.type.slice(0, -2), label: "", placeholder: field.placeholder}),
                       values,
                       touched,
                       errors
@@ -185,12 +190,12 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     />;
   }
 
-  public render() {
+  public render(): any {
     const { handleClose } = this.props;
     const arc = getArc();
 
-    const actions = this.state.actions;
-    const currentAction = this.state.currentAction;
+    const actions = this.state.forms;
+    const currentAction = this.state.currentForm;
 
     const initialFormValues: IFormValues = {
       description: "",
@@ -198,7 +203,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       url: "",
     };
 
-    actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
+    actions.forEach((action: ActionFormSpec): void => action.getFields().forEach((field: ActionFormField): void => {
       if (typeof(field.defaultValue) !== "undefined") {
         initialFormValues[field.name] = field.defaultValue;
       } else {
@@ -223,7 +228,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
-          { actions.map((action) =>
+          { actions.map((action: IActionFormSpec): any =>
             <button
               data-test-id={"action-tab-" + action.id}
               key={action.id}
@@ -241,7 +246,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         <div className={css.formWrapper}>
           <Formik
             initialValues={initialFormValues}
-            validate={(values: IFormValues) => {
+            validate={(values: IFormValues): any => {
               const errors: any = {};
 
               const valueIsRequired = (name: string) => {
@@ -263,7 +268,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                 errors.url = "Invalid URL";
               }
 
-              for (const field of this.state.currentAction.getFields()) {
+              for (const field of this.state.currentForm.getFields()) {
                 if (field.type !== "bool") {
                   valueIsRequired(field.name);
                 }
@@ -305,7 +310,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               isSubmitting,
               setFieldValue,
               values,
-            }: FormikProps<IFormValues>) => {
+            }: FormikProps<IFormValues>): any => {
               return (
                 <Form noValidate>
                   <label className={css.description}>What to Expect</label>
@@ -358,12 +363,12 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   <div key={currentAction.id}
                     className={classNames({
                       [css.tab]: true,
-                      [css.selected]: this.state.currentAction.id === currentAction.id,
+                      [css.selected]: this.state.currentForm.id === currentAction.id,
                     })
                     }
                   >
                     {
-                      currentAction.getFields().map((field: ActionField) => {
+                      currentAction.getFields().map((field: ActionFormField) => {
                         return (
                           <div key={field.name}>
                             <label htmlFor={field.name}>

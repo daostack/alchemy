@@ -1,0 +1,31 @@
+{
+  "daos": [
+    {
+      "name": "DutchX",
+      "avatarAddresses": {
+        "main": "0x519b70055af55a007110b4ff99b0ea33071c720a",
+        "rinkeby": "0x1eb3bcae24d42fde2f90e91d26313ac3946c4764",
+        "private": ""
+      },
+      "genericSchemes": [
+        {
+          "name": "DutchX",
+          "targetContractAddresses": {
+            "main": "0xb9812e2fa995ec53b5b6df34d21f9304762c5497",
+            "rinkeby": "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b",
+            "private": "0x70ee878d560d7e17a986872f54b7c58f564b2784"
+          },
+          "forms": [
+            "updateApprovalOfToken",
+            "updateThresholdNewTokenPair",
+            "updateThresholdNewAuction",
+            "changeETHUSDOracle",
+            "updateMasterCopy",
+            "updateAuctioneer"
+          ]
+        }
+      ]
+    }
+  ]
+}
+

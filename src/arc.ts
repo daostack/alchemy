@@ -1,7 +1,7 @@
 import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-import { getNetworkId, getNetworkName } from "./lib/util";
+import { getNetworkId, getNetworkName, getNetworkNameFromId } from "./lib/util";
 
 const settings = {
   dev: {
@@ -56,16 +56,42 @@ export function getMetaMask(): any {
   return ethereum;
 }
 
+export function getNetworkNameSync(id?: string): "main"|"rinkeby"|"private"|"unknown" {
+
+  if (!id) {
+    const web3Provider = getMetaMask();
+
+    if (!web3Provider) {
+      throw new Error("getNetworkNameSync: missing web3Provider");
+    }
+
+    id = web3Provider.__networkId;
+  }
+  
+  return getNetworkNameFromId(id);
+}
+
 /**
  * Checks if the web3 Provider is ready to send transactions and configured as expected;
  * throws an Error if something is wrong, returns the web3 connection if that is ok
  * @return
  */
-export async function checkWeb3Provider() {
+export async function checkWeb3Provider(): Promise<any> {
+
+  const web3Provider = getMetaMask();
+
+  if (!web3Provider) {
+    const msg = "Please install or enable Metamask or Gnosis Safe";
+    throw Error(msg);
+  }
+
+  const networkId = await getNetworkId(web3Provider);
+  const networkName = await getNetworkName(networkId);
+
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
-      expectedNetworkName = "ganache";
+      expectedNetworkName = networkName; // take what we get in development
       break;
     }
     case "staging": {
@@ -81,15 +107,6 @@ export async function checkWeb3Provider() {
     }
   }
 
-  const web3Provider = getMetaMask();
-
-  if (!web3Provider) {
-    const msg = "Please install or enable Metamask or Gnosis Safe";
-    throw Error(msg);
-  }
-
-  const networkId = await getNetworkId(web3Provider);
-  const networkName = await getNetworkName(networkId);
   if (networkName === expectedNetworkName) {
     // save for future reference
     web3Provider.__networkId = networkId;
@@ -150,19 +167,48 @@ export async function enableMetamask(): Promise<any> {
   return ethereum;
 }
 
+/**
+ * Return a web3 if we have one.
+ */
+export function getWeb3(): any {
+  const arc = (window as any).arc;
+  const web3 = arc ? arc.web3 : null;
+  return web3;
+}
+
 // get appropriate Arc configuration for the given environment
-function getArcSettings(): any {
+async function getArcSettings(): Promise<any> {
+
   let arcSettings: any;
+
   switch (process.env.NODE_ENV || "development") {
     case "development": {
-      arcSettings = settings.dev;
+      const web3Provider = getMetaMask();
+      if (web3Provider) {
+        // take what would be consistent with how MM is set
+        const networkId = await getNetworkId(web3Provider);
+        switch(networkId) {
+          case "1":
+            arcSettings = settings.production;
+            break;
+          case "4":
+            arcSettings = settings.staging;
+            break;
+          default:
+            arcSettings = settings.dev;
+            break;
+        }
+      } else {
+        arcSettings = settings.dev;
+      }
       break;
     }
-    case "staging" : {
+
+    case "staging": {
       arcSettings = settings.staging;
       break;
     }
-    case "production" : {
+    case "production": {
       arcSettings = settings.production;
       break;
     }
@@ -175,7 +221,7 @@ function getArcSettings(): any {
 }
 
 export async function initializeArc(): Promise<Arc> {
-  const arcSettings = getArcSettings();
+  const arcSettings = await getArcSettings();
 
   try {
     arcSettings.web3Provider = await checkWeb3Provider();

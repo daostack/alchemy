@@ -1,27 +1,46 @@
-// tslint:disable:max-classes-per-file
-/*
- */
 import BN = require("bn.js");
-const Web3 = require("web3");
-const dutchXInfo = require("./schemes/DutchX.json");
+import { Address } from "@daostack/client";
+import { getWeb3, getNetworkNameSync } from "arc";
 
-const KNOWNSCHEMES = [
-  dutchXInfo,
-];
-
-const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
-  main: {},
-  rinkeby: {},
-  private: {},
-};
-
-for (const schemeInfo of KNOWNSCHEMES) {
-  for (const network of Object.keys(SCHEMEADDRESSES)) {
-    for (const address of schemeInfo.addresses[network]) {
-      SCHEMEADDRESSES[network][address] = schemeInfo;
-    }
-  }
+interface INetworkAddressJson {
+  [network: string]: Address;
 }
+
+interface IDaoGenericSchemeJson {
+  /**
+   * name to display for the GenericScheme
+   */
+  name: string;
+  /**
+   * target address by each network
+   */
+  targetContractAddresses: INetworkAddressJson;
+  /**
+   * form ids, one for each form to generate for the GenericScheme
+   */
+  forms: string[];
+}
+
+interface IDaoGenericSchemesJson {
+  /**
+   * name of the DAO
+   */
+  name: string;
+  /**
+   * addresses per-network of the DAO
+   */
+  avatarAddresses: INetworkAddressJson;
+  /**
+   * set of GenericSchemes registered in the DAO
+   */
+  genericSchemes: IDaoGenericSchemeJson[];
+}
+
+interface IDaoGenericSchemeInfo {
+  schemeName: string;
+  forms: IActionFormSpec[];
+}
+
 interface IABISpec {
   constant: boolean;
   name: string;
@@ -32,7 +51,82 @@ interface IABISpec {
   type: string;
 }
 
-export interface IActionFieldOptions {
+export interface IActionFormSpec {
+  description: string;
+  id: string;
+  label: string;
+  abi: IABISpec;
+  notes: string;
+  fields: any[];
+}
+
+const daoForms = require("./schemes/DaoGenericSchemesForms.json").daos as IDaoGenericSchemesJson[];
+const formSchemas = require("./schemes/GenericSchemeFormSchemas.json").forms as IActionFormSpec[];
+
+const SCHEMEINFOS: {
+  [network: string]: {
+    [daoAddress: string]: {
+      [targetContractAddress: string]: IDaoGenericSchemeInfo;
+    };
+  };
+} = {
+  main: {},
+  rinkeby: {},
+  private: {},
+};
+
+const ACTIONFORMSPECS = new Map<string, IActionFormSpec>();
+
+/**
+ * create Map of all form schemes
+ */
+for (const formSpec of formSchemas) {
+  if (ACTIONFORMSPECS.has(formSpec.id)) {
+    console.log(`GenericScheme form is duplicated: ${formSpec.id}`);
+  } else {
+    ACTIONFORMSPECS.set(formSpec.id, formSpec);
+  }
+}
+
+/**
+ * create Map of all form schemes
+ */
+for (const dao of daoForms) {
+  // for each GenericScheme in the DAO
+  for (const daoNetwork of ["main", "rinkeby", "private"]) {
+    const daoAddress = dao.avatarAddresses[daoNetwork];
+    if (!daoAddress) continue;
+    // for each GenericScheme in the DAO
+    for (const gsScheme of dao.genericSchemes) {
+      // for each formId in the GenericScheme
+      const daoSchemeForms = [] as IActionFormSpec[];
+      for (const formId of gsScheme.forms) { 
+        // get the form specification
+        const formSpec = ACTIONFORMSPECS.get(formId);
+        if (formSpec) {
+          daoSchemeForms.push(formSpec);
+        } else {
+          console.log(`GenericScheme form id not found: ${formId}`);
+        }
+        if (daoSchemeForms.length) {
+        // for each network
+          const targetContractAddress = gsScheme.targetContractAddresses[daoNetwork];
+          if (!SCHEMEINFOS[daoNetwork][daoAddress]) {
+            SCHEMEINFOS[daoNetwork][daoAddress] = {};
+          }
+          SCHEMEINFOS[daoNetwork][daoAddress][targetContractAddress] = {
+            schemeName: gsScheme.name,
+            forms: daoSchemeForms,
+          };
+        } else {
+          console.log("No GenericScheme forms found");
+        }
+      }
+    }
+  }
+}
+
+export interface IActionFormFieldOptions {
   decimals?: number;
   defaultValue?: any;
   name: string;
@@ -43,7 +137,7 @@ export interface IActionFieldOptions {
   placeholder?: string;
 }
 
-export  class ActionField {
+export  class ActionFormField {
   public decimals?: number;
   public defaultValue?: any;
   public name: string;
@@ -53,7 +147,7 @@ export  class ActionField {
   public type?: string;
   public placeholder?: string;
 
-  constructor(options: IActionFieldOptions) {
+  constructor(options: IActionFormFieldOptions) {
     this.decimals = options.decimals;
     this.defaultValue = options.defaultValue;
     this.name = options.name;
@@ -67,7 +161,7 @@ export  class ActionField {
    * the value to pass to the contract call (as calculated from the user's input data)
    * @return [description]
    */
-  public callValue(userValue: any) {
+  public callValue(userValue: any): any {
     if (this.type === "bool") {
       return parseInt(userValue, 10) === 1;
     }
@@ -79,21 +173,7 @@ export  class ActionField {
   }
 }
 
-export interface IActionSpec {
-  description: string;
-  id: string;
-  label: string;
-  abi: IABISpec;
-  notes: string;
-  fields: any[];
-}
-export interface IGenericSchemeJSON {
-  name: string;
-  addresses: any[];
-  actions: IActionSpec[];
-}
-
-export class Action implements IActionSpec {
+export class ActionFormSpec implements IActionFormSpec {
   public description: string;
   public id: string;
   public label: string;
@@ -101,7 +181,7 @@ export class Action implements IActionSpec {
   public notes: string;
   public fields: any[];
 
-  constructor(options: IActionSpec) {
+  constructor(options: IActionFormSpec) {
     if (this.fields && this.abi.inputs.length !== this.fields.length) {
       throw Error("Error parsing action: the number if abi.inputs should equal the number of fields");
     }
@@ -113,10 +193,10 @@ export class Action implements IActionSpec {
     this.fields = options.fields;
   }
 
-  public getFields(): ActionField[] {
-    const result: ActionField[] = [];
+  public getFields(): ActionFormField[] {
+    const result: ActionFormField[] = [];
     for (let i = 0; i <  this.abi.inputs.length; i++) {
-      result.push(new ActionField({
+      result.push(new ActionFormField({
         name: this.abi.inputs[i].name,
         type: this.abi.inputs[i].type,
         ...this.fields[i],
@@ -131,32 +211,43 @@ export class Action implements IActionSpec {
  * @param info [description]
  */
 export class GenericSchemeInfo {
-  public specs: IGenericSchemeJSON;
+  private specs: IDaoGenericSchemeInfo;
 
-  constructor(info: IGenericSchemeJSON) {
+  constructor(info: IDaoGenericSchemeInfo) {
     this.specs = info;
   }
-  public actions() {
-    return this.specs.actions.map((spec) => new Action(spec));
+
+  /**
+   * name to display for the GenericScheme
+   */
+  public get name(): string {
+    return this.specs.schemeName;
   }
-  public action(id: string) {
-    for (const action of this.specs.actions) {
-      if (action.id === id) {
-        return new Action(action);
-      }
+
+  public forms(): ActionFormSpec[] {
+    return this.specs.forms.map((spec): ActionFormSpec => new ActionFormSpec(spec));
+  }
+
+  public form(formId: string): ActionFormSpec {
+    const form = ACTIONFORMSPECS.get(formId);
+    if (form) {
+      return new ActionFormSpec(form);
+    } else {
+      throw Error(`An action form with id ${formId} could not be found`);
     }
-    throw Error(`An action with id ${id} coult not be found`);
   }
-  public actionByFunctionName(name: string): IActionSpec | undefined {
-    for (const action of this.specs.actions) {
-      if (action.abi.name === name) {
-        return action;
+
+  public formByActionFunctionName(name: string): IActionFormSpec | undefined {
+    for (const form of this.specs.forms) {
+      if (form.abi.name === name) {
+        return form;
       }
     }
     return;
   }
-  public encodeABI(action: IActionSpec, values: any[]) {
-    return (new Web3()).eth.abi.encodeFunctionCall(action.abi, values);
+
+  public encodeABI(action: IActionFormSpec, values: any[]): string {
+    return (getWeb3()).eth.abi.encodeFunctionCall(action.abi, values);
   }
 
   /*
@@ -164,10 +255,10 @@ export class GenericSchemeInfo {
    * returns: an object containing the action, and the decoded values.
    * It returns 'undefined' if the action could not be found
    */
-  public decodeCallData(callData: string): { action: IActionSpec; values: any[]} {
-    const web3 = new Web3();
-    let action: undefined|IActionSpec;
-    for (const act of this.actions()) {
+  public decodeCallData(callData: string): { action: IActionFormSpec; values: any[]} {
+    const web3 = getWeb3();
+    let action: undefined|IActionFormSpec;
+    for (const act of this.forms()) {
       const encodedFunctionSignature = web3.eth.abi.encodeFunctionSignature(act.abi);
       if (callData.startsWith(encodedFunctionSignature)) {
         action = act;
@@ -194,32 +285,43 @@ export class GenericSchemeInfo {
 }
 
 export class GenericSchemeRegistry {
+
+  public getGenericSchemeName(daoAddress: Address, contractToCall: Address, network?: "main"|"rinkeby"|"private"): string {
+    const genericSchemeInfo = this.getSchemeInfo(daoAddress, contractToCall, network);
+    return (genericSchemeInfo) ? genericSchemeInfo.name : "Generic Scheme";
+  }
   /**
    * Check the address to see if this is a known contract, and if so
    * return an object with information on how to call it
-   * @param  address an ethereum address
+   * @param  daoAddress avatar address
+   * @param  targetContractAddress address of the GenesisScheme target contract
    * @return an object [specs to be written..]
    */
-  public getSchemeInfo(address: string, network?: "main"|"rinkeby"|"private"|undefined): GenericSchemeInfo {
-    if (!network) {
+  public getSchemeInfo(
+    daoAddress: Address,
+    targetContractAddress: Address,
+    network?: "main"|"rinkeby"|"private"): GenericSchemeInfo {
+
+    let networkName: string = network;
+
+    if (!networkName) {
       switch (process.env.NODE_ENV) {
         case "production":
-          network = "main";
+        default:
+          networkName = "main";
           break;
         case "staging":
-          network = "rinkeby";
+          networkName = "rinkeby";
           break;
         case "development":
-          network = "private";
+          networkName = getNetworkNameSync();
           break;
-        default:
-          network = "main";
       }
     }
-    const spec = SCHEMEADDRESSES[network][address];
-    if (spec) {
-      return new GenericSchemeInfo(spec);
+    let spec: IDaoGenericSchemeInfo;
+    if (networkName) {
+      spec = SCHEMEINFOS[networkName][daoAddress] && SCHEMEINFOS[networkName][daoAddress][targetContractAddress];
     }
+    return spec ? new GenericSchemeInfo(spec) : undefined;
   }
-
 }

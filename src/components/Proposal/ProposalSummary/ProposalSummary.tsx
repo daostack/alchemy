@@ -21,7 +21,7 @@ export default class ProposalSummary extends React.Component<IProps> {
 
   public render() {
 
-    const { proposal, detailView, transactionModal } = this.props;
+    const { dao, proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
       [css.detailView]: detailView,
@@ -35,7 +35,7 @@ export default class ProposalSummary extends React.Component<IProps> {
       return <ProposalSummarySchemeRegistrar {...this.props} />;
     } else if (proposal.type === IProposalType.GenericScheme) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(proposal.genericScheme.contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(dao.address, proposal.genericScheme.contractToCall);
       if (genericSchemeInfo) {
         return <ProposalSummaryKnownGenericScheme  {...this.props} genericSchemeInfo={genericSchemeInfo} />;
       } else {
