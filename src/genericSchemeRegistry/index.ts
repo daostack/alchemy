@@ -92,7 +92,7 @@ for (const formSpec of formSchemas) {
  * create Map of all form schemes
  */
 for (const dao of daoForms) {
-  // for each GenericScheme in the DAO
+  // for each network in which the DAO exists
   for (const daoNetwork of ["main", "rinkeby", "private"]) {
     const daoAddress = dao.avatarAddresses[daoNetwork];
     if (!daoAddress) continue;
@@ -109,7 +109,6 @@ for (const dao of daoForms) {
           console.log(`GenericScheme form id not found: ${formId}`);
         }
         if (daoSchemeForms.length) {
-        // for each network
           const targetContractAddress = gsScheme.targetContractAddresses[daoNetwork];
           if (!SCHEMEINFOS[daoNetwork][daoAddress]) {
             SCHEMEINFOS[daoNetwork][daoAddress] = {};
