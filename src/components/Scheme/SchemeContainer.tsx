@@ -10,6 +10,7 @@ import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { from } from "rxjs";
 import { concatMap } from "rxjs/operators";
+import FixedReputationAllocationScheme from "./FixedReputationAllocationScheme";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
@@ -38,6 +39,11 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
       }
 
       const scheme = state.data;
+
+      // TODO: remove the true
+      if (true || scheme.name === "FixedReputationAllocation") {
+        return <FixedReputationAllocationScheme scheme={scheme} />
+      }
 
       const proposalsTabClass = classNames({
         [css.proposals]: true,
