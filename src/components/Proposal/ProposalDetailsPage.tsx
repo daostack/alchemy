@@ -285,7 +285,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalDetailsPage = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalDetailsPage);
+const ConnectedProposalDetailsPage = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalDetailsPage);
 
 export default (props: { proposalId: string; dao: IDAOState; currentAccountAddress: Address; detailView?: boolean } & RouteComponentProps<any>) => {
 

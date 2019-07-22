@@ -226,7 +226,7 @@ class ProposalCard extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalCard = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCard);
+const ConnectedProposalCard = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCard);
 
 interface IExternalProps {
   currentAccountAddress: Address;

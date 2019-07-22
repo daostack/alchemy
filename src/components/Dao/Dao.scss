@@ -1081,6 +1081,28 @@ a.navItem:hover {
     position: relative;
   }
 
+  .memberTable {
+    display: block;
+    width: 100%;
+
+    tr {
+      display: block;
+
+      .memberReputation .reputationAmount {
+        display: none;
+      }
+
+      td {
+        display: block;
+      }
+    }
+  }
+
+  .memberTable.memberTableHeading {
+    display: none;
+  }
+
+
   .daoSidebar {
     width: 50px;
     max-width: 100%;
@@ -1197,14 +1219,27 @@ a.navItem:hover {
   }
 
   .noticeWrapper {
-    height: 86px;
+    height: 52px;
 
     .noticeBuffer {
       display: none;
     }
 
     .notice {
-      padding-right: 40px;
+      font-size: 10px;
+      padding-right: 70px;
+      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
+
+      div {
+        padding-left: 0;
+
+        img {
+          height: 18px;
+          float: left;
+          position: relative;
+          top: 5px;
+        }
+      }
 
       .closeNotice {
         background-color: transparent;

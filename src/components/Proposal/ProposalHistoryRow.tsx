@@ -203,7 +203,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 }
 
-export const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
+const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
 
 export default (props: { proposal: Proposal; daoState: IDAOState; currentAccountAddress: Address}) => {
   const proposal = props.proposal;
