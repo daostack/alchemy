@@ -171,9 +171,9 @@ export function isKnownScheme(address: Address): boolean {
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string): string {
   let name: string;
   if (scheme.name === "GenericScheme") {
-    if ((scheme as any).genericScheme) {
+    if ((scheme as any).genericSchemeParams) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      name = genericSchemeRegistry.getGenericSchemeName((scheme as any).dao, (scheme as any).genericScheme.contractToCall);
+      name = genericSchemeRegistry.getGenericSchemeName((scheme as any).dao, (scheme as any).genericSchemeParams.contractToCall);
     } else {
       name = "Generic Scheme";
     }
