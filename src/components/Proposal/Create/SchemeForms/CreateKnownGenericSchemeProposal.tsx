@@ -247,7 +247,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               const valueIsRequired = (name: string) => {
                 const value = values[name];
                 if (value === 0) {
-                  return
+                  return;
                 }
                 if (!value || (Array.isArray(value) && value.length === 0)) {
                   errors[name] = "Required";

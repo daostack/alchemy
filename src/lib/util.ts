@@ -6,11 +6,9 @@ import {
   IProposalState,
   IRewardState,
   ISchemeState } from "@daostack/client";
-
 import BN = require("bn.js");
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { getArc } from "../arc";
-
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");

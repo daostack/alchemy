@@ -8,7 +8,7 @@ const gpInfo = require("./schemes/GenesisProtocol.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
-  gpInfo
+  gpInfo,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
