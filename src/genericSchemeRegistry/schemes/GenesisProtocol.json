@@ -125,8 +125,8 @@
     },
     {
       "id": "redeem",
-      "label": "Redeem GensisProtocol rewards for voting and staking",
-      "description": "Executing this proposal will redeem any pending rewards",
+      "label": "Redeem GensisProtocol",
+      "description": "Executing this proposal will redeem any pending rewards for voting and staking",
       "notes": "",
       "fields": [
         {
