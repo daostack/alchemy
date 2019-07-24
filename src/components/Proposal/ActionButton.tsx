@@ -90,12 +90,12 @@ class ActionButton extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       proposalState,
-      redeemProposal,
       rewardsForCurrentUser,
     } = this.props;
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
     const expired = closingTime(proposalState).isSameOrBefore(moment());
+    const _handleRedeemProposal = this.handleRedeemProposal.bind(this);
 
     let beneficiaryHasRewards;
 
@@ -138,7 +138,7 @@ class ActionButton extends React.Component<IProps, IState> {
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
             actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-            action={redeemProposal.bind(null, dao.address, proposalState.id, currentAccountAddress)}
+            action={_handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
             dao={dao}
@@ -197,7 +197,22 @@ class ActionButton extends React.Component<IProps, IState> {
       </div>
     );
   }
+
+  private async handleRedeemProposal(): Promise<void> {
+
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+
+    const {
+      currentAccountAddress,
+      dao,
+      proposalState,
+      redeemProposal,
+    } = this.props;
+
+    redeemProposal(dao.address, proposalState.id, currentAccountAddress);
+  }
 }
+
 
 interface IMyProps {
   currentAccountAddress?: Address;
@@ -209,19 +224,19 @@ interface IMyProps {
 
 const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
 
-export default (props: IMyProps) => {
+export default (props: IMyProps): any => {
 
   const proposalState = props.proposalState;
   let observable: Observable<IRewardState>;
   if (props.currentAccountAddress) {
     observable = proposalState.proposal.rewards({ where: {beneficiary: props.currentAccountAddress}})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
-      .pipe(mergeMap(((reward) => reward ? reward.state() : of(null))));
+      .pipe(mergeMap(((reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
   } else {
     observable = of(null);
   }
 
-  return <Subscribe observable={observable}>{(state: IObservableState<any>) => {
+  return <Subscribe observable={observable}>{(state: IObservableState<any>): any => {
     if (state.isLoading) {
       return <div>Loading proposal {props.proposalState.id.substr(0, 6)} ...</div>;
     } else if (state.error) {
