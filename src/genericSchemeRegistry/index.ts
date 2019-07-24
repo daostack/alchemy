@@ -4,9 +4,11 @@
 import BN = require("bn.js");
 const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
+const gpInfo = require("./schemes/GenesisProtocol.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
+  gpInfo
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {

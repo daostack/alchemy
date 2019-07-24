@@ -166,10 +166,10 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   let name: string;
   if (scheme.name === "GenericScheme") {
     // @ts-ignore
-    if (scheme.genericScheme) {
+    if (scheme.genericSchemeParams) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       // @ts-ignore
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericScheme.contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
