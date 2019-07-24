@@ -80,8 +80,8 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
                             proposal.stage === IProposalStage.Executed ||
                             (proposal.stage === IProposalStage.Boosted && expired) ||
                             (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
-                            !currentAccountState ||
-                            currentAccountState.reputation.eq(new BN(0)) ||
+                            (currentAccountState &&
+                            currentAccountState.reputation.eq(new BN(0))) ||
                             !!currentVote;
 
     const tipContent = (vote: IProposalOutcome): string =>
