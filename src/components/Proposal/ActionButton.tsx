@@ -209,7 +209,7 @@ class ActionButton extends React.Component<IProps, IState> {
       redeemProposal,
     } = this.props;
 
-    redeemProposal(dao.address, proposalState.id, currentAccountAddress);
+    await redeemProposal(dao.address, proposalState.id, currentAccountAddress);
   }
 }
 
