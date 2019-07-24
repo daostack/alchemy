@@ -1,7 +1,6 @@
-/* tslint:disable:max-classes-per-file */
-
+import * as H from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
-import { getArc } from "arc";
+import { getArc, checkWeb3ProviderAndWarn } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { schemeName} from "lib/util";
@@ -11,13 +10,16 @@ import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
+import { connect } from "react-redux";
+import { IRootState } from "reducers";
+import { showNotification } from "reducers/notifications";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
 
 // For infinite scrolling
 const PAGE_SIZE = 100;
 
-const Fade = ({ children, ...props }: any) => (
+const Fade = ({ children, ...props }: any): any => (
   <CSSTransition
     {...props}
     timeout={1000}
@@ -33,6 +35,7 @@ const Fade = ({ children, ...props }: any) => (
 );
 
 interface IProps {
+  showNotification: typeof showNotification;
   currentAccountAddress: Address;
   dao: IDAOState;
   fetchMore: () => void;
@@ -41,16 +44,24 @@ interface IProps {
   proposalsPreBoosted: Proposal[];
   proposalsQueued: Proposal[];
   scheme: ISchemeState;
+  history: H.History;
 }
 
-class SchemeProposals extends React.Component<IProps, IState> {
+class SchemeProposals extends React.Component<IProps, null> {
 
-  public render() {
+  private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
+    if ((await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+      this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
+    }
+  }
+
+  public render(): any {
     const { currentAccountAddress, dao, fetchMore, hasMoreProposalsToLoad, proposalsQueued, proposalsBoosted, proposalsPreBoosted, scheme } = this.props;
+    const _handleNewProposal = (e: any): void => { this.handleNewProposal(dao.address, scheme.id); e.preventDefault(); /* e.stopPropagation(); */};
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
-        { proposalsQueued.map((proposal: Proposal) => (
+        { proposalsQueued.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
@@ -60,7 +71,7 @@ class SchemeProposals extends React.Component<IProps, IState> {
 
     const preBoostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
-        { proposalsPreBoosted.map((proposal: Proposal) => (
+        { proposalsPreBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
@@ -70,7 +81,7 @@ class SchemeProposals extends React.Component<IProps, IState> {
 
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
-        { proposalsBoosted.map((proposal: Proposal) => (
+        { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
             <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
@@ -94,7 +105,11 @@ class SchemeProposals extends React.Component<IProps, IState> {
               <Link to={"/dao/" + dao.address}>
                 <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
               </Link>
-              <Link to={`/dao/${dao.address}/scheme/${scheme.id}/proposals/create/`} data-test-id="createProposal" className={css.blueButton}>+ New Proposal</Link>
+              <a className={css.blueButton}
+                href="#"
+                onClick={_handleNewProposal}
+                data-test-id="createProposal"
+              >+ New Proposal</a>
             </div>
           </div>
           :
@@ -164,18 +179,32 @@ class SchemeProposals extends React.Component<IProps, IState> {
   }
 }
 
+interface IState {
+  hasMoreProposalsToLoad: boolean;
+}
+
 interface IExternalProps {
   currentAccountAddress: Address;
   scheme: ISchemeState;
 }
 
-interface IState {
-  hasMoreProposalsToLoad: boolean;
+interface IDispatchProps {
+  showNotification: typeof showNotification;
 }
 
-export default class SchemeProposalsSubscription extends React.Component<IExternalProps & RouteComponentProps<any>, IState> {
+type IPropsSubscription = IExternalProps & IDispatchProps;
 
-  constructor(props: IExternalProps & RouteComponentProps<any>) {
+const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExternalProps => {
+  return ownProps;
+};
+
+const mapDispatchToProps = {
+  showNotification,
+};
+
+class SchemeProposalsSubscription extends React.Component<IPropsSubscription & RouteComponentProps<any>, IState> {
+
+  constructor(props: IPropsSubscription & RouteComponentProps<any>) {
     super(props);
 
     this.state = {
@@ -183,7 +212,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     };
   }
 
-  public render() {
+  public render(): any {
     const daoAvatarAddress = this.props.match.params.daoAvatarAddress;
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
@@ -242,7 +271,7 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
             proposalsPreBoosted={data[1]}
             proposalsBoosted={data[2]}
             dao={data[3]}
-            fetchMore={() => {
+            fetchMore={(): void => {
               state.fetchMore({
                 observable: dao.proposals({
                   // eslint-disable-next-line @typescript-eslint/camelcase
@@ -266,3 +295,5 @@ export default class SchemeProposalsSubscription extends React.Component<IExtern
     }</Subscribe>;
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SchemeProposalsSubscription);

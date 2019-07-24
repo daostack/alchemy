@@ -105,13 +105,13 @@ export async function checkWeb3Provider() {
  *
  * @param showNotification the warning will be sent using the showNotification function;
  *    it will use `alert()` if no such function is provided
- * @return the web3 connection, if everything is fine
+ * @return true if everything is fine
  */
 export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   try {
     const web3Provider = await checkWeb3Provider();
     await web3Provider.enable();
-    return web3Provider;
+    return true;
   } catch (err) {
     const msg =  err.message;
     if (msg.match(/enable metamask/i) && process.env.NODE_ENV === "development") {
@@ -125,6 +125,7 @@ export async function checkWeb3ProviderAndWarn(showNotification?: any): Promise<
       }
     }
   }
+  return false;
 }
 
 
