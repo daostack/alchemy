@@ -154,12 +154,12 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
               <div className={css.hasVoted}>
                 <div className={css.voteRecord}>
                   <span className={css.castVoteFor} data-test-id="youVotedFor">
-                    <img src="/assets/images/Icon/Vote/against-btn-fill-red.svg"/>
+                    <img src="/assets/images/Icon/vote/for-fill-green.svg"/>
                     <br/>
                  For
                   </span>
                   <span className={css.castVoteAgainst}>
-                    <img src="/assets/images/Icon/Vote/for-fill-green.svg"/>
+                    <img src="/assets/images/Icon/vote/against-btn-fill-red.svg"/>
                     <br/>
                  Against
                   </span>
