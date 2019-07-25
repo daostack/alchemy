@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import { claimableContributionRewards, formatTokens, fromWei, getClaimableRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
 
@@ -20,20 +20,20 @@ export default (props: IProps) => {
   let c = null;
   if (claimableRewards.reputationForProposer) {
     c = <div key={rewardsForCurrentUser.id}>
-        <strong>For creating the proposal you will receive:</strong>
-        <ul>
-          <li><ReputationView reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-        </ul>
-      </div>;
+      <strong>For creating the proposal you will receive:</strong>
+      <ul>
+        <li><Reputation reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+      </ul>
+    </div>;
     rewardComponents.push(c);
   }
   if (claimableRewards.reputationForVoter) {
     c = <div key={rewardsForCurrentUser.id}>
-        <strong>For voting on the proposal you will receive:</strong>
-        <ul>
-          <li><ReputationView reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
-        </ul>
-      </div>;
+      <strong>For voting on the proposal you will receive:</strong>
+      <ul>
+        <li><Reputation reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
+      </ul>
+    </div>;
     rewardComponents.push(c);
   }
   if (claimableRewards.tokensForStaker) {
@@ -50,9 +50,6 @@ export default (props: IProps) => {
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
         <li>{fromWei(claimableRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
-        { /*
-          // TODO: subscribe to tokenBalance
-          dao.tokenBalance.lt(reward.daoBountyForStaker) ? " (Insufficient funds in DAO)" : "" */}
         </li>
       </ul>
     </div >;
@@ -71,25 +68,21 @@ export default (props: IProps) => {
       ContributionRewardDiv = <div>
         <strong>
           {(currentAccountAddress && currentAccountAddress === contributionReward.beneficiary.toLowerCase()) ?
-              "As the beneficiary of the proposal you will recieve" :
-              "The beneficiary of the proposal will receive"}
+            "As the beneficiary of the proposal you will recieve" :
+            "The beneficiary of the proposal will receive"}
         </strong>
         <ul>
           {contributionRewards["eth"]  ?
             <li>
               {formatTokens(contributionReward.ethReward, "ETH")}
-              {/*TODO: subscribe to ethBalance, {dao.ethBalance < contributionReward.ethReward ? " (Insufficient funds in DAO)" : ""}*/}
             </li> : ""
           }
           {contributionRewards["externalToken"] ?
             <li>
               {formatTokens(contributionRewards["externalToken"], tokenSymbol(contributionReward.externalToken))}
-              {/* TODO: should be looking at the DAO balance of proposal.externalToken
-                {dao.externalTokenBalance && dao.externalTokenBalance.lt(proposal.externalTokenReward) ? " (Insufficient funds in DAO)" : ""}
-              */}
             </li> : ""
           }
-          {contributionRewards["rep"] ? <li><ReputationView reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
+          {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
           { /*
             TOOD: add native token
           */ }

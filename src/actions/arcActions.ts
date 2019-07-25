@@ -11,110 +11,11 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    try {
-      const arc = getArc();
-
-      const dao = new DAO(proposalOptions.dao, arc);
-
-      // TODO: use the Option stages of the client lib to communicate about the progress
-      const observer = operationNotifierObserver(dispatch, "Create proposal");
-      // @ts-ignore
-      await dao.createProposal(proposalOptions).subscribe(...observer);
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  };
-}
-
-export function executeProposal(avatarAddress: string, proposalId: string, accountAddress: string) {
-  return async (dispatch: Dispatch<any>) => {
-    const arc = getArc();
-    // TODO: the subscription should defined in a separate contant so it can be reuse
-    const observer = operationNotifierObserver(dispatch, "Execute proposal");
-    const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
-
-    // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
-    //   pass in null to not redeem any GenesisProtocol rewards
-    // @ts-ignore
-    await proposalObj.claimRewards(null).subscribe(...observer);
-  };
-}
-
-export type VoteAction = IAsyncAction<"ARC_VOTE", {
-  avatarAddress: string,
-  proposalId: string,
-  reputation: number,
-  voteOption: IProposalOutcome,
-  voterAddress: string,
-}, {
-    entities: any,
-    proposal: any,
-    voter: any,
-  }>;
-
-export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
-  return async (dispatch: Redux.Dispatch<any>, getState: () => IRootState) => {
-    const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
-    const observer = operationNotifierObserver(dispatch, "Vote");
-    // @ts-ignore
-    await proposalObj.vote(voteOption).subscribe(...observer);
-  };
-}
-
-export type StakeAction = IAsyncAction<"ARC_STAKE", {
-  avatarAddress: string,
-  proposalId: string,
-  prediction: IProposalOutcome,
-  stakeAmount: number,
-  stakerAddress: string,
-}, {
-    dao: any,
-    proposal: any,
-  }>;
-
-export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
-  return async (dispatch: Redux.Dispatch<any>, ) => {
-    const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
-    const observer = operationNotifierObserver(dispatch, "Stake");
-    // @ts-ignore
-    await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
-  };
-}
-
-export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
-  avatarAddress: string,
-  proposalId: string,
-  accountAddress: string,
-}, {
-    currentAccount: any,
-    beneficiary: any,
-    dao: any,
-    proposal: any;
-    beneficiaryRedemptions: IRedemptionState,
-    currentAccountRedemptions: IRedemptionState,
-  }>;
-
-export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
-  return async (dispatch: Redux.Dispatch<any>) => {
-    const arc = getArc();
-    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
-    const observer = operationNotifierObserver(dispatch, "Reward");
-    // @ts-ignore
-    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
-  };
-}
-
 /** use like this (unfortunatly you need the @ts-ignore)
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
-const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription: string = "") => {
-
+const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription: string = "") => {
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -130,11 +31,106 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any>, txDescription:
       }
     },
     (err: Error) => {
-      let msg: string;
-      msg = `${txDescription}: transaction failed :-(`;
+      const msg = `${txDescription}: transaction failed :-(`;
       console.warn(msg);
       console.warn(err.message);
       dispatch(showNotification(NotificationStatus.Failure, msg));
-    }
+    },
   ];
 };
+
+export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAction<any, IRootState, null> {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    try {
+      const arc = getArc();
+
+      const dao = new DAO(proposalOptions.dao, arc);
+
+      const observer = operationNotifierObserver(dispatch, "Create proposal");
+      // @ts-ignore
+      await dao.createProposal(proposalOptions).subscribe(...observer);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+}
+
+export function executeProposal(avatarAddress: string, proposalId: string, _accountAddress: string) {
+  return async (dispatch: Dispatch<any, any>) => {
+    const arc = getArc();
+    const observer = operationNotifierObserver(dispatch, "Execute proposal");
+    const proposalObj = await arc.dao(avatarAddress).proposal(proposalId);
+
+    // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
+    //   pass in null to not redeem any GenesisProtocol rewards
+    // @ts-ignore
+    await proposalObj.claimRewards(null).subscribe(...observer);
+  };
+}
+
+export type VoteAction = IAsyncAction<"ARC_VOTE", {
+  avatarAddress: string;
+  proposalId: string;
+  reputation: number;
+  voteOption: IProposalOutcome;
+  voterAddress: string;
+}, {
+  entities: any;
+  proposal: any;
+  voter: any;
+}>;
+
+export function voteOnProposal(daoAvatarAddress: string, proposalId: string, voteOption: IProposalOutcome) {
+  return async (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    const arc = getArc();
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
+    const observer = operationNotifierObserver(dispatch, "Vote");
+    // @ts-ignore
+    await proposalObj.vote(voteOption).subscribe(...observer);
+  };
+}
+
+export type StakeAction = IAsyncAction<"ARC_STAKE", {
+  avatarAddress: string;
+  proposalId: string;
+  prediction: IProposalOutcome;
+  stakeAmount: number;
+  stakerAddress: string;
+}, {
+  dao: any;
+  proposal: any;
+}>;
+
+export function stakeProposal(daoAvatarAddress: string, proposalId: string, prediction: number, stakeAmount: number) {
+  return async (dispatch: Redux.Dispatch<any, any>, ) => {
+    const arc = getArc();
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
+    const observer = operationNotifierObserver(dispatch, "Stake");
+    // @ts-ignore
+    await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
+  };
+}
+
+export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
+  avatarAddress: string;
+  proposalId: string;
+  accountAddress: string;
+}, {
+  currentAccount: any;
+  beneficiary: any;
+  dao: any;
+  proposal: any;
+  beneficiaryRedemptions: IRedemptionState;
+  currentAccountRedemptions: IRedemptionState;
+}>;
+
+export function redeemProposal(daoAvatarAddress: string, proposalId: string, accountAddress: string) {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    const arc = getArc();
+    const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
+    const observer = operationNotifierObserver(dispatch, "Reward");
+    // @ts-ignore
+    await proposalObj.claimRewards(accountAddress).subscribe(...observer);
+  };
+}

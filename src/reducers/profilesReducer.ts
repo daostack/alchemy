@@ -23,7 +23,7 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
     description: "",
     ethereumAccountAddress,
     name: "",
-    socialURLs: {}
+    socialURLs: {},
   };
 }
 
@@ -44,7 +44,7 @@ export function profileDbToRedux(dbProfile: any) {
   return reduxProfile;
 }
 
-export const initialState: IProfilesState = {};
+const initialState: IProfilesState = {};
 
 const profilesReducer = (state = initialState, action: any) => {
   const { payload } = action;
@@ -79,6 +79,7 @@ const profilesReducer = (state = initialState, action: any) => {
         }
       }
     }
+      break;
 
     default: {
       return state;

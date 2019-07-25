@@ -3,13 +3,13 @@ import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
 import { getCurrentAccountAddress, getWeb3ProviderInfo, IWeb3ProviderInfo, pollForAccountChanges, setWeb3Provider } from "arc";
-import AccountProfileContainer from "components/Account/AccountProfileContainer";
-import DaoListContainer from "components/DaoList/DaoListContainer";
+import AccountProfilePage from "components/Account/AccountProfilePage";
+import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
-import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
+import DaoContainer from "components/Dao/DaoContainer";
 import * as History from "history";
-import HeaderContainer from "layouts/HeaderContainer";
+import Header from "layouts/Header";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -88,9 +88,9 @@ class AppContainer extends React.Component<IProps, IState> {
        * we'll pick up below.
        */
       if (await setWeb3Provider(web3ProviderInfo)) {
-        console.log(`****************************** using cached web3Provider`);
+        console.log("****************************** using cached web3Provider");
       } else {
-        console.log(`****************************** failed to instantiate cached web3Provider`);
+        console.log("****************************** failed to instantiate cached web3Provider");
         this.uncacheWeb3Info();
       }
       console.dir(web3ProviderInfo);
@@ -161,7 +161,6 @@ class AppContainer extends React.Component<IProps, IState> {
 
     if (this.state.error) {
       // Render error fallback UI
-      // TODO: style this!
       console.log(this.state.error);
       return <div>
         <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
@@ -176,12 +175,12 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/" render={ ( props ) => <HeaderContainer {...props} /> } />
+            <Route path="/" render={( props ) => <Header {...props} />} />
 
             <Switch>
-              <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-              <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
-              <Route path="/" component={DaoListContainer} />
+              <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
+              <Route path="/profile/:accountAddress" component={AccountProfilePage} />
+              <Route path="/" component={DaosPage} />
             </Switch>
 
             <ModalContainer
@@ -201,22 +200,22 @@ class AppContainer extends React.Component<IProps, IState> {
               sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
                 <div key={id}>
                   <Notification
-                      title={(title || status).toUpperCase()}
-                      status={
-                        status === NotificationStatus.Failure ?
-                          NotificationViewStatus.Failure :
+                    title={(title || status).toUpperCase()}
+                    status={
+                      status === NotificationStatus.Failure ?
+                        NotificationViewStatus.Failure :
                         status === NotificationStatus.Success ?
                           NotificationViewStatus.Success :
                           NotificationViewStatus.Pending
-                      }
-                      message={message}
-                      fullErrorMessage={fullErrorMessage}
-                      url={url}
-                      timestamp={timestamp}
-                      dismiss={() => dismissNotification(id)}
-                      showNotification={showNotification}
-                      minimize={() => this.setState({notificationsMinimized: true})}
-                    />
+                    }
+                    message={message}
+                    fullErrorMessage={fullErrorMessage}
+                    url={url}
+                    timestamp={timestamp}
+                    dismiss={() => dismissNotification(id)}
+                    showNotification={showNotification}
+                    minimize={() => this.setState({notificationsMinimized: true})}
+                  />
                   <br/>
                 </div>
               ))

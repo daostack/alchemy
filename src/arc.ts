@@ -1,10 +1,11 @@
 import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-const Web3 = require("web3");
+
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
+const Web3 = require("web3");
 
 /**
  * This is only set after the user has selected a provider and enabled an account.
@@ -17,21 +18,21 @@ const web3ConnectProviderOptions =
       {
         portis: {
           id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-          network: "mainnet"
+          network: "mainnet",
         },
         fortmatic: {
-          key: "pk_live_38A2BD2B1D4E9912"
-        }
+          key: "pk_live_38A2BD2B1D4E9912",
+        },
       }
       : // (process.env.NODE_ENV === "staging") ?
       {
         portis: {
           id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-          network: "rinkeby"
+          network: "rinkeby",
         },
         fortmatic: {
-          key: "pk_test_659B5B486EF199E4"
-        }
+          key: "pk_test_659B5B486EF199E4",
+        },
       };
 
 const settings = {
@@ -45,35 +46,42 @@ const settings = {
   staging: {
     graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v23",
-    web3Provider: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
-    web3ProviderRead: `wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3Provider: "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3ProviderRead: "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: {
       "host": "rinkeby.subgraph.daostack.io",
       "port": "443",
       "protocol": "https",
-      "api-path": "/ipfs/api/v0/"
+      "api-path": "/ipfs/api/v0/",
     },
   },
   production: {
     graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v23",
     graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v23",
-    web3Provider: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
-    web3ProviderRead: `wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2`,
+    web3Provider: "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
+    web3ProviderRead: "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: {
       "host": "subgraph.daostack.io",
       "port": "443",
       "protocol": "https",
-      "api-path": "/ipfs/api/v0/"
+      "api-path": "/ipfs/api/v0/",
     },
-  }
+  },
 };
 
+export function getArc(): Arc {
+  // store the Arc instance in the global namespace on the 'window' object
+  // (this is not best practice)
+  const arc = (window as any).arc;
+  if (!arc) {
+    throw Error("window.arc is not defined - please call initializeArc first");
+  }
+  return arc;
+}
+
 /**
- * check if the web3 connection is ready to send transactions, and warn the user if it is not
- *
- * @param showNotification the warning will be sent using the showNotification function;
- *    it will use `alert()` if no such function is provided
- * @return the web3 connection, if everything is fine
+ * check if a metamask instanse is available and an account is unlocked
+ * @return [description]
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   // if we are in test mode, we'll do without - we should be connected to an unlocked ganache instance
@@ -124,18 +132,18 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
   try {
     switch (web3ProviderInfo.type) {
       case "injected":
-          /**
+        /**
            * Safe doesn't always inject itself in a timely manner
            */
-          if (!(window as any).ethereum) {
-            await waitUntilTrue(() => !!(window as any).ethereum, 2000);
-          }
+        if (!(window as any).ethereum) {
+          await waitUntilTrue(() => !!(window as any).ethereum, 2000);
+        }
 
-          provider = await Web3Connect.ConnectToInjected();
-          break;
+        provider = await Web3Connect.ConnectToInjected();
+        break;
       case "qrcode":
-          provider = await Web3Connect.ConnectToWalletConnect({});
-          break;
+        provider = await Web3Connect.ConnectToWalletConnect({});
+        break;
       case "web":
         switch (web3ProviderInfo.name) {
           case "Portis":
@@ -146,10 +154,10 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
             break;
         }
         break;
-      }
-    } catch (ex) {
-      console.log(`****************************** unable to instantiate provider: ${ex.message}`);
     }
+  } catch (ex) {
+    console.log(`****************************** unable to instantiate provider: ${ex.message}`);
+  }
   /**
    * make sure the injected provider is the one we're looking for
    */
@@ -181,16 +189,16 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
      */
     if (process.env.NODE_ENV === "development" && navigator.webdriver) {
       // in test mode, we have an unlocked ganache and we are not using any wallet
-      console.log(`not using any wallet, because we are in automated test`);
+      console.log("not using any wallet, because we are in automated test");
       selectedProvider = new Web3(settings.dev.web3Provider);
       return true;
     }
 
-    console.log(`****************************** instantiating web3Connect`);
+    console.log("****************************** instantiating web3Connect");
 
     const web3Connect = new Web3Connect.Core({
       modal: false,
-      providerOptions: web3ConnectProviderOptions
+      providerOptions: web3ConnectProviderOptions,
     });
 
     let resolveOnClosePromise: () => void;
@@ -201,10 +209,10 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
         resolveOnClosePromise = resolve;
         rejectOnClosePromise = reject;
         web3Connect.on("close", () => {
-          console.log(`web3Connect closed`);
+          console.log("web3Connect closed");
           resolve();
         });
-    });
+      });
 
     web3Connect.on("error", (error: Error) => {
       console.log(`web3Connect closed on error:  ${error.message}`);
@@ -220,7 +228,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
       resolveOnClosePromise();
     });
 
-    console.log(`****************************** fire up modal`);
+    console.log("****************************** fire up modal");
 
     try {
       web3Connect.toggleModal();
@@ -232,12 +240,12 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     }
 
     if (!provider) {
-      console.log(`****************************** error or user cancelled out`);
+      console.log("****************************** error or user cancelled out");
       return false;
     }
   }
 
-  console.log(`****************************** provider:`);
+  console.log("****************************** provider:");
   console.dir(provider);
 
   /**
@@ -245,7 +253,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
    * whatever the provider requires....
    */
   try {
-    console.log(`****************************** calling enable`);
+    console.log("****************************** calling enable");
     // brings up the provider UI as needed
     await provider.enable();
   } catch (ex) {
@@ -253,7 +261,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     throw ex;
   }
 
-  console.log(`****************************** enabled`);
+  console.log("****************************** enabled");
 
   // console.log(`****************************** got web3: ${web3}`);
 
@@ -261,7 +269,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 
   // console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
 
-  console.log(`****************************** initializeArc`);
+  console.log("****************************** initializeArc");
   let success = false;
   try {
     success = await initializeArc(provider);
@@ -274,13 +282,13 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 
   if (!_getCurrentAccount()) {
     // then something went wrong
-    console.log(`****************************** unable to lock an account`);
+    console.log("****************************** unable to lock an account");
     throw new Error("unable to lock an account");
   }
 
   if (success) {
     selectedProvider = provider;
-    console.log(`****************************** enabled provider, account locked`);
+    console.log("****************************** enabled provider, account locked");
   }
 
   return success;
@@ -312,10 +320,10 @@ export async function checkWeb3Provider(provider?: any) {
     }
   }
 
-  let web3Provider = provider ? provider : getWeb3Provider();
+  const web3Provider = provider ? provider : getWeb3Provider();
 
   if (!web3Provider) {
-    const msg = `Please install or enable Metamask or Gnosis Safe`;
+    const msg = "Please install or enable Metamask or Gnosis Safe";
     throw Error(msg);
   }
 
@@ -369,7 +377,7 @@ export function getWeb3Provider(): any | undefined {
  */
 function getWeb3(): any {
   const arc = (window as any).arc;
-  let web3 = arc ? arc.web3 : null;
+  const web3 = arc ? arc.web3 : null;
   // if (!web3) {
   //   const provider = getInjectedWeb3Provider();
   //   if (provider) {
@@ -418,9 +426,9 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   // console.log(arcSettings);
   // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
   if (arcSettings.web3Provider.isSafe) {
-    console.log(`Using Gnosis Safe`);
+    console.log("Using Gnosis Safe");
   } else if (arcSettings.web3Provider.isMetaMask) {
-    console.log(`Using MetaMask`);
+    console.log("Using MetaMask");
   } else {
     console.log("Using default Web3 (read-only) provider");
   }

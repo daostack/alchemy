@@ -1,8 +1,16 @@
-import { Address, IContributionReward, IProposalState, IRewardState } from "@daostack/client";
-import BN = require("bn.js");
-import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { promisify } from "util";
+import {
+  Address,
+  IContractInfo,
+  IContributionReward,
+  IProposalState,
+  IRewardState,
+  ISchemeState } from "@daostack/client";
+import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { getArc } from "../arc";
+
+import BN = require("bn.js");
+
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -20,12 +28,6 @@ export function copyToClipboard(value: any) {
   document.body.removeChild(el);
 }
 
-export function trace<T>(x: T, ...args: any[]): T {
-  // tslint:disable-next-line:no-console
-  console.debug("trace", ...args, x);
-  return x;
-}
-
 export function humanProposalTitle(proposal: IProposalState) {
   return proposal.title ||
     "[No title " + proposal.id.substr(0, 6) + "..." + proposal.id.substr(proposal.id.length - 4) + "]";
@@ -37,22 +39,22 @@ export function toBaseUnit(value: string, decimals: number) {
   const base = ten.pow(new BN(decimals));
 
   // Is it negative?
-  let negative = (value.substring(0, 1) === "-");
+  const negative = (value.substring(0, 1) === "-");
   if (negative) {
     value = value.substring(1);
   }
 
   if (value === ".") {
     throw new Error(
-    `Invalid value ${value} cannot be converted to`
+      `Invalid value ${value} cannot be converted to`
     + ` base unit with ${decimals} decimals.`);
   }
 
   // Split it into a whole and fractional part
-  let comps = value.split(".");
+  const comps = value.split(".");
   if (comps.length > 2) { throw new Error("Too many decimal points"); }
 
-  let whole = comps[0], fraction = comps[1];
+  let whole = comps[0]; let fraction = comps[1];
 
   if (!whole) { whole = "0"; }
   if (!fraction) { fraction = "0"; }
@@ -92,7 +94,7 @@ export function supportedTokens() {
   return { [getArc().GENToken().address]:  {
     decimals: 18,
     name: "DAOstack GEN",
-    symbol: "GEN"
+    symbol: "GEN",
   }, ...tokens};
 }
 
@@ -160,6 +162,31 @@ export function isKnownScheme(address: Address) {
   }
 }
 
+export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
+  let name: string;
+  if (scheme.name === "GenericScheme") {
+    // @ts-ignore
+    if (scheme.genericSchemeParams) {
+      const genericSchemeRegistry = new GenericSchemeRegistry();
+      // @ts-ignore
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericSchemeParams.contractToCall);
+      if (genericSchemeInfo) {
+        name = genericSchemeInfo.specs.name;
+      } else {
+        name = "Generic Scheme";
+      }
+    } else {
+      name = "Generic Scheme";
+    }
+  } else if (scheme.name) {
+    // add spaces before capital letters to approximate a human-readable title
+    name = scheme.name.replace(/([A-Z])/g, " $1");
+  } else {
+    name =  fallback;
+  }
+  return name;
+}
+
 /**
  * given the address (of a scheme), return  a friendly string represeting the scheme's address and it'sname
  * @param  address [description]
@@ -183,25 +210,6 @@ export function schemeNameAndAddress(address: string) {
   }
 }
 
-export function schemeName(scheme: any, fallback?: string) {
-  let name: string;
-  if (scheme.name === "GenericScheme") {
-    const genericSchemeRegistry = new GenericSchemeRegistry();
-    const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.address);
-    if (genericSchemeInfo) {
-      name = genericSchemeInfo.specs.name;
-    } else {
-      name = "Generic Scheme";
-    }
-  } else if (scheme.name) {
-    // add spaces before capital letters to approximate a human-readable title
-    name = scheme.name.replace(/([A-Z])/g, " $1");
-  } else {
-    name =  fallback;
-  }
-  return name;
-}
-
 /**
  * return network id, independent of the presence of Arc
  * @param web3Provider
@@ -212,16 +220,18 @@ export async function getNetworkId(web3Provider?: any): Promise<string> {
 
   try {
     arc = getArc();
-  } catch {}
+  } catch (ex) {
+    // Do nothing
+  }
 
   /**
    * make sure that if the web3Provider is passed in, then the web3 we use matches it
    */
   if (arc && arc.web3 && (!web3Provider || (arc.web3.currentProvider === web3Provider))) {
     web3 = arc.web3;
-  } else if ((<any> window).web3 &&
-    (!web3Provider || ((<any> window).web3.currentProvider === web3Provider))) {
-    web3 = (<any> window).web3;
+  } else if ((window as any).web3 &&
+    (!web3Provider || ((window as any).web3.currentProvider === web3Provider))) {
+    web3 = (window as any).web3;
   } else if (web3Provider) {
     web3 = new Web3(web3Provider);
   }
@@ -297,7 +307,7 @@ export function getClaimableRewards(reward: IRewardState) {
 // TOOD: move this function to the client library!
 export function hasClaimableRewards(reward: IRewardState) {
   const claimableRewards = getClaimableRewards(reward);
-  for (let key of Object.keys(claimableRewards)) {
+  for (const key of Object.keys(claimableRewards)) {
     if (claimableRewards[key].gt(new BN(0))) {
       return true;
     }
@@ -310,7 +320,6 @@ export function hasClaimableRewards(reward: IRewardState) {
  * @param  reward an object that immplements IContributionReward
  * @return  an array mapping strings to BN
  */
-// TODO: use IContributionReward after https://github.com/daostack/client/issues/250 has been resolved
 export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
   const result: { [key: string]: BN } = {};
   if (

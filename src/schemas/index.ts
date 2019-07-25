@@ -1,32 +1,31 @@
 import { schema } from "normalizr";
 
-export const accountSchema = new schema.Entity("accounts", {}, { idAttribute: (value) => `${value.address}-${value.daoAvatarAddress}` });
-export const daoSchema = new schema.Entity("daos", {}, { idAttribute: "address" });
-export const proposalSchema = new schema.Entity("proposals", {}, { idAttribute: "proposalId" });
-export const redemptionSchema = new schema.Entity("redemptions", {}, { idAttribute: (value) => `${value.proposalId}-${value.accountAddress}` });
-export const stakeSchema = new schema.Entity("stakes", {}, { idAttribute: (value) => `${value.proposalId}-${value.stakerAddress}` });
-export const voteSchema = new schema.Entity("votes", {}, { idAttribute: (value) => `${value.proposalId}-${value.voterAddress}` });
+const accountSchema = new schema.Entity("accounts", {}, { idAttribute: (value) => `${value.address}-${value.daoAvatarAddress}` });
+const daoSchema = new schema.Entity("daos", {}, { idAttribute: "address" });
+const proposalSchema = new schema.Entity("proposals", {}, { idAttribute: "proposalId" });
+const redemptionSchema = new schema.Entity("redemptions", {}, { idAttribute: (value) => `${value.proposalId}-${value.accountAddress}` });
+const stakeSchema = new schema.Entity("stakes", {}, { idAttribute: (value) => `${value.proposalId}-${value.stakerAddress}` });
+const voteSchema = new schema.Entity("votes", {}, { idAttribute: (value) => `${value.proposalId}-${value.voterAddress}` });
 
-export const accountList = new schema.Array(accountSchema);
-export const daoList = new schema.Array(daoSchema);
-export const proposalList = new schema.Array(proposalSchema);
-export const redemptionList = new schema.Array(redemptionSchema);
-export const stakeList = new schema.Array(stakeSchema);
-export const voteList = new schema.Array(voteSchema);
+const accountList = new schema.Array(accountSchema);
+const proposalList = new schema.Array(proposalSchema);
+const redemptionList = new schema.Array(redemptionSchema);
+const stakeList = new schema.Array(stakeSchema);
+const voteList = new schema.Array(voteSchema);
 
 accountSchema.define({
   redemptions: redemptionList,
   stakes: stakeList,
-  votes: voteList
+  votes: voteList,
 });
 
 daoSchema.define({
   members: accountList,
-  proposals: proposalList
+  proposals: proposalList,
 });
 
 proposalSchema.define({
   redemptions: redemptionList,
   stakes: stakeList,
-  votes: voteList
+  votes: voteList,
 });

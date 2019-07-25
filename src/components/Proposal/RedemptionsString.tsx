@@ -1,6 +1,7 @@
 import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
+
 import BN = require("bn.js");
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 
@@ -57,20 +58,20 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     if (reputation.gt(zero)) {
       rewardComponents.push(
-        <ReputationView reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
+        <Reputation reputation={reputation} totalReputation={dao.reputationTotalSupply} daoName={dao.name} />);
     }
 
     const redemptionsStyle = {
       position: "relative" as "relative",
       right: "5px",
       display: "inline-block",
-      color: "rgba(49, 120, 202, 1.000)"
+      color: "rgba(49, 120, 202, 1.000)",
     };
 
     return <span style={redemptionsStyle}>
-    {rewardComponents.reduce((acc: any, v: any) => {
-      return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
-    }, null)}
+      {rewardComponents.reduce((acc: any, v: any) => {
+        return acc === null ? <React.Fragment>{v}</React.Fragment> : <React.Fragment>{acc} <em>{separator || "+"}</em> {v}</React.Fragment>;
+      }, null)}
     </span>;
   }
 }

@@ -26,7 +26,7 @@ export enum ActionTypes {
   ARC_VOTE = "ARC_VOTE",
 }
 
-export enum ProposalStates {
+enum ProposalStates {
   None,
   Closed,
   Executed,
@@ -60,29 +60,29 @@ export enum RewardType {
 export interface IAccountState {
   address?: string;
   daoAvatarAddress: string;
-  redemptions: Array<IRedemptionState | string>; // Either normalized (string) or denormalized (object)
+  redemptions: (IRedemptionState | string)[]; // Either normalized (string) or denormalized (object)
   reputation: number;
-  stakes: Array<IStakeState | string>; // Either normalized (string) or denormalized (object)
+  stakes: (IStakeState | string)[]; // Either normalized (string) or denormalized (object)
   tokens: number;
-  votes: Array<IVoteState | string>; // Either normalized (string) or denormalized (object)
+  votes: (IVoteState | string)[]; // Either normalized (string) or denormalized (object)
 }
 
-export function newAccount(
-    daoAvatarAddress: string,
-    address: string,
-    reputation = 0,
-    tokens = 0,
-    redemptions: Array<IRedemptionState | string> = [],
-    stakes: Array<IStakeState | string> = [],
-    votes: Array<IVoteState | string> = []): IAccountState {
+function newAccount(
+  daoAvatarAddress: string,
+  address: string,
+  reputation = 0,
+  tokens = 0,
+  redemptions: (IRedemptionState | string)[] = [],
+  stakes: (IStakeState | string)[] = [],
+  votes: (IVoteState | string)[] = []): IAccountState {
   return {
     address,
     daoAvatarAddress,
-    redemptions: [],
+    redemptions: redemptions,
     reputation,
-    stakes: [],
+    stakes: stakes,
     tokens,
-    votes: []
+    votes: votes,
   };
 }
 
@@ -102,18 +102,18 @@ export interface IRedemptionState {
   voterReputation: number;
 }
 
-export function anyRedemptions(redemptions: IRedemptionState) {
+function anyRedemptions(redemptions: IRedemptionState): boolean {
   return (
-    redemptions.beneficiaryEth ||
-    redemptions.beneficiaryReputation ||
-    redemptions.beneficiaryNativeToken ||
-    redemptions.beneficiaryExternalToken ||
-    redemptions.proposerReputation ||
-    redemptions.stakerReputation ||
-    redemptions.stakerTokens ||
-    redemptions.stakerBountyTokens ||
-    redemptions.voterReputation ||
-    redemptions.voterTokens
+    !!redemptions.beneficiaryEth ||
+    !!redemptions.beneficiaryReputation ||
+    !!redemptions.beneficiaryNativeToken ||
+    !!redemptions.beneficiaryExternalToken ||
+    !!redemptions.proposerReputation ||
+    !!redemptions.stakerReputation ||
+    !!redemptions.stakerTokens ||
+    !!redemptions.stakerBountyTokens ||
+    !!redemptions.voterReputation ||
+    !!redemptions.voterTokens
   );
 }
 
@@ -135,17 +135,17 @@ export interface IProposalState {
   proposalId: string;
   proposer: string;
   redeemedPeriods?: number[];
-  redemptions: Array<IRedemptionState | string>; // Either normalized (string) or denormalized (object)
+  redemptions: (IRedemptionState | string)[]; // Either normalized (string) or denormalized (object)
   reputationChange: number;
   reputationWhenExecuted?: number;
-  stakes: Array<IStakeState | string>; // Either normalized (string) or denormalized (object)
+  stakes: (IStakeState | string)[]; // Either normalized (string) or denormalized (object)
   stakesNo: number;
   stakesYes: number;
   state: ProposalStates;
   submittedTime: number;
   title: string;
   ITransactionState: TransactionStates;
-  votes: Array<IVoteState | string>; // Either normalized (string) or denormalized (object)
+  votes: (IVoteState | string)[]; // Either normalized (string) or denormalized (object)
   votesYes: number;
   votesNo: number;
   winningVote: VoteOptions;
@@ -176,13 +176,13 @@ export interface IArcState {
   votes: { [voteKey: string]: IVoteState };
 }
 
-export const initialState: IArcState = {
+const initialState: IArcState = {
   accounts: {},
   lastBlock: 0,
   proposals: {},
   redemptions: {},
   stakes: {},
-  votes: {}
+  votes: {},
 };
 
 export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
@@ -201,17 +201,17 @@ export const closingTime = (proposal: IProposalStateFromDaoStackClient) => {
   }
 };
 
-export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
-  const res = (
-    (proposal.stage === IProposalStage.Executed) || proposalExpired(proposal));
-  return res;
-}
-
 export function proposalExpired(proposal: IProposalStateFromDaoStackClient) {
   const res = (
     (proposal.stage === IProposalStage.ExpiredInQueue) ||
     (proposal.stage === IProposalStage.Queued && closingTime(proposal) <= moment())
   );
+  return res;
+}
+
+export function proposalEnded(proposal: IProposalStateFromDaoStackClient) {
+  const res = (
+    (proposal.stage === IProposalStage.Executed) || proposalExpired(proposal));
   return res;
 }
 
@@ -271,8 +271,8 @@ const arcReducer = (state = initialState, action: any) => {
             proposals: { [proposalId]: { $merge: proposal } },
             // Add vote to the state
             votes: {
-              [voteKey]: { $set: meta }
-            }
+              [voteKey]: { $set: meta },
+            },
           });
 
           // Add vote to account if not already there.
@@ -310,12 +310,12 @@ const arcReducer = (state = initialState, action: any) => {
 
           state = update(state, {
             proposals: {
-              [proposalId]: { $merge : payload.proposal }
+              [proposalId]: { $merge : payload.proposal },
             },
             // Add stake to the state
             stakes: {
-              [stakeKey]: { $set: meta }
-            }
+              [stakeKey]: { $set: meta },
+            },
           });
 
           // Add stake to account if not already there
@@ -350,31 +350,31 @@ const arcReducer = (state = initialState, action: any) => {
               [accountKey]: (account: any) => {
                 // Make sure account exists for this DAO
                 return update(account || newAccount(avatarAddress, accountAddress), {
-                  $merge: beneficiary
+                  $merge: beneficiary,
                 });
-              }
-            }
+              },
+            },
           });
 
           if (beneficiaryRedemptions) {
             // Still redemptions left for this proposal & beneficiary combo
             state = update(state, {
-              redemptions: { [redemptionsKey] : { $set: beneficiaryRedemptions }}
+              redemptions: { [redemptionsKey] : { $set: beneficiaryRedemptions }},
             });
           } else {
             // No redemptions left for this proposal & beneficiary combo so remove from the state
             state = update(state, {
               accounts: {
                 [accountKey]: {
-                  redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionsKey)
-                }
+                  redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionsKey),
+                },
               },
               proposals: {
                 [proposalId]: {
                   redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionsKey),
-                }
+                },
               },
-              redemptions: { $unset: [redemptionsKey] }
+              redemptions: { $unset: [redemptionsKey] },
             });
           }
 
@@ -388,38 +388,38 @@ const arcReducer = (state = initialState, action: any) => {
                 [currentAccountKey]: (account: any) => {
                   // Make sure account exists for this DAO
                   return update(account || newAccount(avatarAddress, currentAccount.address), {
-                    $merge: currentAccount
+                    $merge: currentAccount,
                   });
-                }
-              }
+                },
+              },
             });
 
             if (currentAccountRedemptions) {
               // Still redemptions left for this proposal for current account
               state = update(state, {
-                redemptions: { [currentAccountRedemptionsKey] : { $set: currentAccountRedemptions }}
+                redemptions: { [currentAccountRedemptionsKey] : { $set: currentAccountRedemptions }},
               });
             } else {
               // No redemptions left for this proposal & current account combo so remove from the state
               state = update(state, {
                 accounts: {
                   [currentAccountKey]: {
-                    redemptions: (arr: string[]) => arr.filter((item) => item !== currentAccountRedemptionsKey)
-                  }
+                    redemptions: (arr: string[]) => arr.filter((item) => item !== currentAccountRedemptionsKey),
+                  },
                 },
                 proposals: {
                   [proposalId]: {
                     redemptions: (arr: string[]) => arr.filter((item) => item !== currentAccountRedemptionsKey),
-                  }
+                  },
                 },
-                redemptions: { $unset: [currentAccountRedemptionsKey] }
+                redemptions: { $unset: [currentAccountRedemptionsKey] },
               });
             }
           }
 
           // Also update the dao and proposal
           return update(state, {
-            proposals: { [proposalId]: { $merge: proposal }}
+            proposals: { [proposalId]: { $merge: proposal }},
           });
         }
         default: {
@@ -443,38 +443,38 @@ const arcReducer = (state = initialState, action: any) => {
           (
             type === RewardType.Eth ?
               { beneficiaryEth: {$set: 0} } :
-            type === RewardType.ExternalToken ?
-              { beneficiaryExternalToken: {$set: 0} } :
-            type === RewardType.Reputation ?
-              { beneficiaryReputation: {$set: 0} } :
-            type === RewardType.NativeToken ?
-              { beneficiaryNativeToken: {$set: 0} } :
-              {}
+              type === RewardType.ExternalToken ?
+                { beneficiaryExternalToken: {$set: 0} } :
+                type === RewardType.Reputation ?
+                  { beneficiaryReputation: {$set: 0} } :
+                  type === RewardType.NativeToken ?
+                    { beneficiaryNativeToken: {$set: 0} } :
+                    {}
           ) :
           (
             type === RewardType.Reputation ?
               {
                 proposerReputation: {$set: 0},
                 stakerReputation: {$set: 0},
-                voterReputation: {$set: 0}
+                voterReputation: {$set: 0},
               } :
-            type === RewardType.GEN ?
-              {
-                stakerTokens: {$set: 0},
-                voterTokens: {$set: 0},
-              } :
-            type === RewardType.BountyGEN ?
-              {
-                stakerBountyTokens: {$set: 0}
-              } :
-              {}
+              type === RewardType.GEN ?
+                {
+                  stakerTokens: {$set: 0},
+                  voterTokens: {$set: 0},
+                } :
+                type === RewardType.BountyGEN ?
+                  {
+                    stakerBountyTokens: {$set: 0},
+                  } :
+                  {}
           );
 
       // Set redeemed rewards to zero
       state = update(state, {
         redemptions: {
-          [redemptionKey]: updateObj
-        }
+          [redemptionKey]: updateObj,
+        },
       });
 
       // Remove if there are no more redemptions
@@ -482,15 +482,15 @@ const arcReducer = (state = initialState, action: any) => {
         state = update(state, {
           accounts: {
             [accountKey]: {
-              redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionKey)
-            }
+              redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionKey),
+            },
           },
           proposals: {
             [proposalId]: {
               redemptions: (arr: string[]) => arr.filter((item) => item !== redemptionKey),
-            }
+            },
           },
-          redemptions: { $unset: [redemptionKey] }
+          redemptions: { $unset: [redemptionKey] },
         });
       }
 
