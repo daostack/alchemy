@@ -44,7 +44,7 @@ export function profileDbToRedux(dbProfile: any) {
   return reduxProfile;
 }
 
-export const initialState: IProfilesState = {};
+const initialState: IProfilesState = {};
 
 const profilesReducer = (state = initialState, action: any) => {
   const { payload } = action;
