@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { closingTime } from "reducers/arcReducer";
-import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
+import { proposalEnded } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
 import ActionButton from "./ActionButton";
@@ -92,9 +92,7 @@ class ProposalCard extends React.Component<IProps, IState> {
     }
 
     const proposalClass = classNames({
-      [css.proposal]: true,
-      [css.failedProposal]: proposalFailed(proposalState),
-      [css.passedProposal]: proposalPassed(proposalState),
+      [css.proposal]: true
     });
 
     const voteWrapperClass = classNames({
