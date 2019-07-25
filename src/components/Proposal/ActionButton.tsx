@@ -74,7 +74,8 @@ class ActionButton extends React.Component<IProps, IState> {
     await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  public handleClickRedeem(_event: any): void {
+  public async handleClickRedeem(_event: any): Promise<void> {
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     this.setState({ preRedeemModalOpen: true });
   }
 
@@ -200,6 +201,7 @@ class ActionButton extends React.Component<IProps, IState> {
 
   private async handleRedeemProposal(): Promise<void> {
 
+    // may not be required, but just in case
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
     const {
