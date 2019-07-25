@@ -61,13 +61,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-<<<<<<< HEAD:src/components/CreateProposal/SchemeForms/CreateContributionRewardProposal.tsx
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
-=======
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ) {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
->>>>>>> dev:src/components/Proposal/Create/SchemeForms/CreateContributionRewardProposal.tsx
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 

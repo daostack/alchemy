@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
+
 const Web3 = require("web3");
 
 /**
@@ -68,16 +69,6 @@ const settings = {
     },
   },
 };
-
-export function getArc(): Arc {
-  // store the Arc instance in the global namespace on the 'window' object
-  // (this is not best practice)
-  const arc = (window as any).arc;
-  if (!arc) {
-    throw Error("window.arc is not defined - please call initializeArc first");
-  }
-  return arc;
-}
 
 /**
  * check if a metamask instanse is available and an account is unlocked

@@ -66,13 +66,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     };
   }
 
-<<<<<<< HEAD:src/components/CreateProposal/SchemeForms/CreateKnownGenericSchemeProposal.tsx
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
-=======
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ) {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
->>>>>>> dev:src/components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal.tsx
 
     const currentAction = this.state.currentAction;
 

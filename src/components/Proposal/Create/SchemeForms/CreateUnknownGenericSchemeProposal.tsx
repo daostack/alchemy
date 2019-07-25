@@ -54,13 +54,8 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-<<<<<<< HEAD:src/components/CreateProposal/SchemeForms/CreateUnknownGenericSchemeProposal.tsx
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
-=======
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
->>>>>>> dev:src/components/Proposal/Create/SchemeForms/CreateUnknownGenericSchemeProposal.tsx
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,

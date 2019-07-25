@@ -1,12 +1,8 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-<<<<<<< HEAD:src/components/Proposal/Predictions/PredictionButtons.tsx
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
-=======
-import { checkWeb3ProviderAndWarn, getArc } from "arc";
 
->>>>>>> dev:src/components/Proposal/Staking/StakeButtons.tsx
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -107,13 +103,8 @@ class StakeButtons extends React.Component<IProps, IState> {
     }
   }
 
-<<<<<<< HEAD:src/components/Proposal/Predictions/PredictionButtons.tsx
-  public handleClickPreApprove = async (event: any) => {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
-=======
   public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
->>>>>>> dev:src/components/Proposal/Staking/StakeButtons.tsx
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
@@ -165,15 +156,6 @@ class StakeButtons extends React.Component<IProps, IState> {
                 will be authorized to receive up to 100000 GENs. This transaction will not
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
-<<<<<<< HEAD:src/components/Proposal/Predictions/PredictionButtons.tsx
-=======
-              <p>
-                Once you click the button below, we will pop-up a MetaMask dialogue.
-                It will set a default gas limit and price. It&apos;s fine to stick with these defaults.
-                You can also consult <a href="https://ethgasstation.info/calculatorTxV.php" target="_blank" rel="noopener noreferrer">this calculator</a>
-                &nbsp;to adjust the Gwei price.
-              </p>
->>>>>>> dev:src/components/Proposal/Staking/StakeButtons.tsx
               <div>
                 <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>
               </div>

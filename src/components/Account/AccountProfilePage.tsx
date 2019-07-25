@@ -1,12 +1,8 @@
 import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-<<<<<<< HEAD:src/components/Account/AccountProfileContainer.tsx
 import { enableWeb3ProviderAndWarn, getArc, getWeb3Provider } from "arc";
-=======
-import { checkWeb3ProviderAndWarn, getArc, getMetaMask } from "arc";
 
->>>>>>> dev:src/components/Account/AccountProfilePage.tsx
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";

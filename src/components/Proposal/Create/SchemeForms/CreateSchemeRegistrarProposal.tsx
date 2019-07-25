@@ -72,13 +72,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.state = { currentTab: "addScheme" };
   }
 
-<<<<<<< HEAD:src/components/CreateProposal/SchemeForms/CreateSchemeRegistrarProposal.tsx
-  public async handleSubmit(values: FormValues, { setSubmitting }: any ) {
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
-=======
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
->>>>>>> dev:src/components/Proposal/Create/SchemeForms/CreateSchemeRegistrarProposal.tsx
 
     let permissions = 1;
     if (values.permissions.registerSchemes) {

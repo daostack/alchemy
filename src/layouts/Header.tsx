@@ -24,7 +24,7 @@ interface IStateProps {
   networkId: number;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any): any => {
   const dao = ownProps.dao;
   return {
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
@@ -52,27 +52,27 @@ class Header extends React.Component<IProps, null> {
     this.copyAddress = this.copyAddress.bind(this);
   }
 
-  public copyAddress(e: any) {
+  public copyAddress(e: any): void {
     const { showNotification, currentAccountAddress } = this.props;
     copyToClipboard(currentAccountAddress);
     showNotification(NotificationStatus.Success, "Copied to clipboard!");
     e.preventDefault();
   }
 
-  public handleClickTour = () => {
+  public handleClickTour = (): void => {
     const { showTour } = this.props;
     showTour();
   }
 
-  public handleClickLogin = () => {
+  public handleClickLogin = (): void => {
     enableWeb3ProviderAndWarn(this.props.showNotification);
   }
 
-  public handleClickLogout = () => {
+  public handleClickLogout = (): void => {
     gotoReadonly();
   }
 
-  public render() {
+  public render(): any {
     const {
       currentAccountProfile,
       dao,
@@ -93,53 +93,49 @@ class Header extends React.Component<IProps, null> {
               separator={<b> &gt;   </b>}
               item={NavLink}
               finalItem={"b"}
-              compare={(a: any, b: any) => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
+              compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
           <div className={css.headerRight}>
             <div className={css.accountInfo}>
-            { currentAccountAddress ?
-              <div className={css.accountInfoContainer}>
-                <div className={css.accountImage}>
-                  <Link className={css.profileLink}
-                    to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
-                    <AccountImage accountAddress={currentAccountAddress} />
-                  </Link>
-                </div>
-                <div className={css.holdings}>
-                  <div className={css.pointer}></div>
-                  <div className={css.walletDetails}>
-                    <div className={css.profileName}>
-                      <AccountProfileName accountAddress={currentAccountAddress}
-                        accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                    </div>
-                    <div className={css.holdingsLabel}>Your wallet</div>
-                    <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
-                      <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
-                      <img src="/assets/images/Icon/Copy-white.svg"/>
-                      <div className={css.fade}></div>
-                    </div>
+              { currentAccountAddress ?
+                <div className={css.accountInfoContainer}>
+                  <div className={css.accountImage}>
+                    <Link className={css.profileLink}
+                      to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                      <AccountImage accountAddress={currentAccountAddress} />
+                    </Link>
                   </div>
-                  <AccountBalances dao={dao} address={currentAccountAddress} />
-                  { accountIsEnabled ?
-                    <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
-                    <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> }
-                </div>
-<<<<<<< HEAD:src/layouts/HeaderContainer.tsx
-              </div> : ""
-            }
-            {!currentAccountAddress ?
-              <div className={css.web3ProviderLogin}>
-                <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">
-                  <img src="/assets/images/metamask.png"/>
+                  <div className={css.holdings}>
+                    <div className={css.pointer}></div>
+                    <div className={css.walletDetails}>
+                      <div className={css.profileName}>
+                        <AccountProfileName accountAddress={currentAccountAddress}
+                          accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
+                      </div>
+                      <div className={css.holdingsLabel}>Your wallet</div>
+                      <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
+                        <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
+                        <img src="/assets/images/Icon/Copy-white.svg"/>
+                        <div className={css.fade}></div>
+                      </div>
+                    </div>
+                    <AccountBalances dao={dao} address={currentAccountAddress} />
+                    { accountIsEnabled ?
+                      <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
+                      <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> }
+                  </div>
+                </div> : ""
+              }
+              {!currentAccountAddress ?
+                <div className={css.web3ProviderLogin}>
+                  <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">
+                    <img src="/assets/images/metamask.png"/>
                   Please log in!
-                </button>
-              </div>
-              : ""
-=======
-              </div>
->>>>>>> dev:src/layouts/Header.tsx
-            }
+                  </button>
+                </div>
+                : ""
+              }
             </div>
           </div>
         </nav>
@@ -150,7 +146,7 @@ class Header extends React.Component<IProps, null> {
 
 const ConnectedHeader = connect(mapStateToProps, mapDispatchToProps)(Header);
 
-export default (props: RouteComponentProps<any>) => {
+export default (props: RouteComponentProps<any>): any => {
   const arc = getArc();
   const match = matchPath(props.location.pathname, {
     path: "/dao/:daoAvatarAddress",
@@ -160,7 +156,7 @@ export default (props: RouteComponentProps<any>) => {
   const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
 
   if (daoAddress) {
-    return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>) => {
+    return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>): any => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {
