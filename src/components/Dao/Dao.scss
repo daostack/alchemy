@@ -1081,6 +1081,11 @@ a.navItem:hover {
     position: relative;
   }
 
+  .redemptionsHeader {
+    padding: 10px 0 10px 15px;
+    font-size: 18px;
+  }
+
   .memberTable {
     display: block;
     width: 100%;
@@ -1101,7 +1106,6 @@ a.navItem:hover {
   .memberTable.memberTableHeading {
     display: none;
   }
-
 
   .daoSidebar {
     width: 50px;
@@ -1215,7 +1219,7 @@ a.navItem:hover {
   }
 
   .wrapper {
-    padding: 50px 0 100px 0;
+    padding: 0px 0 100px 0;
   }
 
   .noticeWrapper {
@@ -1247,6 +1251,25 @@ a.navItem:hover {
     }
   }
 
+  .queueType {
+    font-size: 18px;
+    padding-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .createProposal {
+    top: 8px;
+    right: 15px;
+    height: 26px;
+    line-height: 26px;
+    color: #fff;
+  }
+
+  a.createProposal:visited {
+    color: #fff;
+  }
+
   .proposalsHeader {
     padding-top: 10px;
     padding-bottom: 0px;
@@ -1272,12 +1295,23 @@ a.navItem:hover {
     position: relative;
   }
 
-  .membersContainer h2 {
-    padding-left: 10px;
+  .membersContainer {
+    margin: 0px auto 10px auto;
+
+    h2 {
+      padding-left: 15px;
+      font-size: 18px;
+      padding-bottom: 10px;
+      padding-top: 10px;
+      margin: 0;
+    }
   }
 
     .daoHistoryHeader {
-      padding-left: 10px;
+      padding-left: 15px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      font-size: 18px;
     }
 
     .closedProposalsHeader {
