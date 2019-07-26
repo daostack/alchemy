@@ -17,7 +17,7 @@ class DaosPage extends React.Component<IProps, null> {
     const { daos } = this.props;
     const daoNodes = daos.map((dao: DAO) => {
       return (
-        <DaoCard key={dao.address}  dao={dao}/>
+        <DaoCard key={dao.id}  dao={dao}/>
       );
     });
     return (

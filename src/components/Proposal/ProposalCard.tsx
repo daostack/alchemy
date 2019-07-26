@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, Vote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
@@ -38,7 +38,7 @@ interface IContainerProps {
   currentAccountAddress: Address;
   daoEthBalance: BN;
   proposalState: IProposalState;
-  votesOfCurrentUser: IVote[];
+  votesOfCurrentUser: Vote[];
 }
 
 type IProps = IStateProps & IContainerProps;
@@ -85,10 +85,10 @@ class ProposalCard extends React.Component<IProps, IState> {
 
     let currentAccountVote = 0;
 
-    let currentVote: IVote;
+    let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
       currentVote = votesOfCurrentUser[0];
-      currentAccountVote = currentVote.outcome;
+      currentAccountVote = currentVote.staticState.outcome;
     }
 
     const proposalClass = classNames({
@@ -232,7 +232,7 @@ export default (props: IExternalProps) => {
     concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, Vote[], BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
       } else if (state.error) {

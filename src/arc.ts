@@ -199,8 +199,8 @@ export async function initializeArc(): Promise<Arc> {
 
   const arc: Arc = new Arc(arcSettings);
   // get contract information from the subgraph
-  const contractInfos = await arc.getContractInfos();
-  arc.setContractInfos(contractInfos);
+  await arc.fetchContractInfos();
+
   // save the object on a global window object (I know, not nice, but it works..)
   (window  as any).arc = arc;
   return arc;
