@@ -92,7 +92,7 @@ class ProposalCard extends React.Component<IProps, IState> {
     }
 
     const proposalClass = classNames({
-      [css.proposal]: true
+      [css.proposal]: true,
     });
 
     const voteWrapperClass = classNames({
