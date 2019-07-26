@@ -12,8 +12,8 @@ const settings = {
     ipfsProvider: "localhost",
   },
   staging: {
-    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v23",
-    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v23",
+    graphqlHttpProvider: "https://rinkeby.subgraph.daostack.io/subgraphs/name/v24",
+    graphqlWsProvider: "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v24",
     web3Provider: "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead: "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: {
@@ -24,8 +24,8 @@ const settings = {
     },
   },
   production: {
-    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v23",
-    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v23",
+    graphqlHttpProvider: "https://subgraph.daostack.io/subgraphs/name/v24",
+    graphqlWsProvider: "wss://ws.subgraph.daostack.io/subgraphs/name/v24",
     web3Provider: "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead: "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: {
