@@ -21,8 +21,6 @@ interface IProps {
   currentAccountAddress: Address;
   dao: IDAOState;
   proposalState: IProposalState;
-  isVotingNo?: boolean;
-  isVotingYes?: boolean;
   votes: IVote[];
 }
 

@@ -101,34 +101,6 @@
   display: inline;
 }
 
-.upvotePending .upvote, .downvotePending .downvote {
-  opacity: 0;
-}
-
-.downvotePending .downvotePendingIcon {
-  opacity: 1;
-}
-
-.upvotePending .upvotePendingIcon {
-  opacity: 1;
-}
-
-.downvotePendingIcon, .upvotePendingIcon {
-  left: 0;
-  opacity: 0;
-  display: none;
-  width: 28px;
-  height: 15px;
-}
-
-.downvotePendingIcon {
-  top: 2px;
-}
-
-.upvotePendingIcon {
-  top: 3px;
-}
-
 .verifyMask {
   transform: translateY(30px);
   opacity: 0;

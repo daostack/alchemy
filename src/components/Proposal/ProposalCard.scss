@@ -103,21 +103,11 @@
   overflow: visible;
 }
 
-.failedProposal .proposalInfo, .passedProposal .proposalInfo {
-  left: 60px;
-}
-
 .voteBox {
   position: relative;
   float: left;
   border-right: 1px solid rgba(215, 225, 237, 1.000);
   width: 49%;
-}
-
-.voteBox.unconfirmedVote {
-  .loading {
-    display: block;
-  }
 }
 
 .voteButtons {
