@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IStake } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
@@ -59,7 +59,7 @@ const mapDispatchToProps = {
 type IProps = IStateProps & IDispatchProps & IContainerProps & {
   currentAccountGens: BN;
   currentAccountGenStakingAllowance: BN;
-  stakesOfCurrentUser: IStake[];
+  stakesOfCurrentUser: Stake[];
 };
 
 const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
@@ -133,13 +133,13 @@ class StakeButtons extends React.Component<IProps, IState> {
       showPreStakeModal,
     } = this.state;
 
-    let currentStake: IStake;
+    let currentStake: Stake;
     let currentAccountPrediction = 0;
     if (stakesOfCurrentUser.length > 0) {
       currentStake = stakesOfCurrentUser[0];
     }
     if (currentStake) {
-      currentAccountPrediction = currentStake.outcome;
+      currentAccountPrediction = currentStake.staticState.outcome;
     }
 
     const isPredicting = isPredictingFail || isPredictingPass;
@@ -236,7 +236,7 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.address, proposal.id, pendingPrediction, amount); }}
+            action={(amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); }}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreStakeModal.bind(this)}
             currentAccountGens={currentAccountGens}
@@ -308,7 +308,7 @@ export default (props: IContainerProps) => {
     );
   }
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[BN, any, IStake[]]>): any => {
+    (state: IObservableState<[BN, any, Stake[]]>): any => {
       if (state.isLoading) {
         return <div>Loading PredictionBox</div>;
       } else if (state.error) {

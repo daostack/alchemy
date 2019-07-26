@@ -1,6 +1,5 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, Vote } from "@daostack/client";
 import { getArc } from "arc";
-
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
@@ -12,15 +11,13 @@ import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime, VoteOptions } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, from, of } from "rxjs";
-import { concatMap } from "rxjs/operators";
+import { combineLatest, concat, of } from "rxjs";
 import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -49,7 +46,7 @@ interface IContainerProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoEthBalance: BN;
   proposal: IProposalState;
-  votesOfCurrentUser: IVote[];
+  votesOfCurrentUser: Vote[];
 }
 
 type IProps = IStateProps & IContainerProps;
@@ -121,10 +118,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     let currentAccountVote = 0;
 
-    let currentVote: IVote;
+    let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
       currentVote = votesOfCurrentUser[0];
-      currentAccountVote = currentVote.outcome;
+      currentAccountVote = currentVote.staticState.outcome;
     }
 
     const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
@@ -292,15 +289,14 @@ export default (props: { proposalId: string; dao: IDAOState; currentAccountAddre
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
   const proposalId = props.match.params.proposalId;
-
-  const observable = from(dao.proposal(proposalId)).pipe(concatMap((proposal: Proposal) => combineLatest(
+  const proposal = dao.proposal(proposalId)
+  const observable = combineLatest(
     proposal.state(), // state of the current proposal
     props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
-  ))
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, Vote[], BN]>): any => {
       if (state.isLoading) {
         return <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {

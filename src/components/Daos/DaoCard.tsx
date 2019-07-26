@@ -16,7 +16,6 @@ interface IProps {
 }
 
 const DaoCard = (props: IProps) => {
-  // const { address } = props;
   const dao = props.dao;
   const observable = combineLatest(
     dao.proposals({ where: {
@@ -39,14 +38,14 @@ const DaoCard = (props: IProps) => {
       return <div>{ state.error.message }</div>;
     } else {
       const [regularProposals, boostedProposals, daoState] = state.data;
-      const bgPattern = GeoPattern.generate(dao.address + daoState.name);
+      const bgPattern = GeoPattern.generate(dao.id + daoState.name);
       const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
       const inActive = (daoState.name === "dxDAO") && dxDaoActivationDate.isSameOrAfter(moment());
 
       return <Link
         className={css.daoLink}
-        to={"/dao/" + dao.address}
-        key={"dao_" + dao.address}
+        to={"/dao/" + dao.id}
+        key={"dao_" + dao.id}
         data-test-id="dao-link"
         onClick={(e) => { if (inActive) { e.preventDefault(); } }}
       >

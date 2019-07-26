@@ -1,4 +1,4 @@
-import { ISchemeState, Scheme } from "@daostack/client";
+import { ISchemeState } from "@daostack/client";
 import { getArc } from "arc";
 import CreateContributionRewardProposal from "components/Proposal/Create/SchemeForms/CreateContributionRewardProposal";
 import CreateKnownGenericSchemeProposal from "components/Proposal/Create/SchemeForms/CreateKnownGenericSchemeProposal";
@@ -12,8 +12,6 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { from } from "rxjs";
-import { concatMap } from "rxjs/operators";
 import * as css from "./CreateProposal.scss";
 
 interface IProps {
@@ -45,9 +43,10 @@ class CreateProposalPage extends React.Component<IProps, null> {
   public render() {
     const {  daoAvatarAddress, schemeId } = this.props;
     const arc = getArc();
-
-    const observable = from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme) => scheme.state()));
+    const scheme = arc.scheme(schemeId)
+    const observable = scheme.state();
     return <Subscribe observable={observable}>{(state: IObservableState<ISchemeState>) => {
+
       if (state.isLoading) {
         return  <div className={css.loading}><Loading/></div>;
       } else if (state.error) {

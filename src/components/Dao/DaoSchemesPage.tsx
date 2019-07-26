@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
-import { isKnownScheme } from "lib/util";
+import { KNOWN_SCHEME_NAMES } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -30,13 +30,12 @@ const Fade = ({ children, ...props }: any) => (
 
 interface IProps {
   dao: IDAOState;
-  schemes: Scheme[];
+  knownSchemes: Scheme[];
+  unknownSchemes: Scheme[];
 }
 
 const DaoSchemesPage = (props: IProps) => {
-  const { dao, schemes } = props;
-  const knownSchemes = schemes.filter((scheme: Scheme) => isKnownScheme(scheme.address));
-  const unknownSchemes = schemes.filter((scheme: Scheme) => !isKnownScheme(scheme.address));
+  const { dao, knownSchemes, unknownSchemes } = props;
   const schemeCardsHTML = (
     <TransitionGroup>
       {knownSchemes.map((scheme: Scheme) => (
@@ -61,7 +60,7 @@ const DaoSchemesPage = (props: IProps) => {
       <Sticky enabled top={50} innerZ={10000}>
         <h1>All Schemes</h1>
       </Sticky>
-      {schemes.length === 0
+      {(knownSchemes.length + unknownSchemes.length) === 0
         ? <div>
           <img src="/assets/images/meditate.svg" />
           <div>
@@ -81,16 +80,20 @@ export default (props: {} & RouteComponentProps<any>) => {
 
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).state(), // DAO state
-    arc.dao(daoAvatarAddress).schemes()
+    arc.dao(daoAvatarAddress).schemes({where: { name_in: JSON.stringify(KNOWN_SCHEME_NAMES)}}),
+    arc.dao(daoAvatarAddress).schemes({where: { name_not_in: JSON.stringify(KNOWN_SCHEME_NAMES)}})
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IDAOState, Scheme[]]>): any => {
+    (state: IObservableState<[IDAOState, Scheme[], Scheme[]]>): any => {
       if (state.isLoading) {
         return <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
-        return <DaoSchemesPage dao={state.data[0]} schemes={state.data[1]} />;
+        return <DaoSchemesPage dao={state.data[0]}
+          knownSchemes={state.data[1]}
+          unknownSchemes={state.data[2]}
+        />;
       }
     }
   }</Subscribe>;

@@ -1,4 +1,4 @@
-import { IDAOState, Scheme } from "@daostack/client";
+import { IDAOState, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -11,7 +11,7 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
 interface IContainerProps {
-  scheme: Scheme;
+  scheme: ISchemeState;
 }
 
 interface IStateProps {
