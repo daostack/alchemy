@@ -80,8 +80,8 @@ export default (props: {} & RouteComponentProps<any>) => {
 
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).state(), // DAO state
-    arc.dao(daoAvatarAddress).schemes({where: { name_in: JSON.stringify(KNOWN_SCHEME_NAMES)}}),
-    arc.dao(daoAvatarAddress).schemes({where: { name_not_in: JSON.stringify(KNOWN_SCHEME_NAMES)}})
+    arc.dao(daoAvatarAddress).schemes({where: { name_in: KNOWN_SCHEME_NAMES}}),
+    arc.dao(daoAvatarAddress).schemes({where: { name_not_in: KNOWN_SCHEME_NAMES}})
   );
   return <Subscribe observable={observable}>{
     (state: IObservableState<[IDAOState, Scheme[], Scheme[]]>): any => {
