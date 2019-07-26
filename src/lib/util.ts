@@ -139,7 +139,12 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
 }
 
 
-export const KNOWN_SCHEME_NAMES = ["ContributionReward", "SchemeRegistrar", "GenericScheme"];
+export const KNOWN_SCHEME_NAMES = [
+  "ContributionReward",
+  "GenericScheme",
+  "ReputationFromToken",
+  "SchemeRegistrar"
+];
 /**
  * return true if the address is the address of a known scheme (which we know how to represent)
  * @param  address [description]

@@ -1,4 +1,4 @@
-import { Address, ISchemeState, } from "@daostack/client";
+import { Address, ISchemeState, ReputationFromTokenScheme, Scheme } from "@daostack/client";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName} from "lib/util";
@@ -14,7 +14,8 @@ import * as css from "./FixedReputationAllocationScheme.scss";
 interface IStateProps {
   currentAccountAddress: Address;
   daoAvatarAddress: Address;
-  scheme: ISchemeState;
+  scheme: Scheme;
+  schemeState: ISchemeState;
 }
 
 interface IDispatchProps {
@@ -40,23 +41,32 @@ interface IFormValues {
 
 class FixedReputationAllocationScheme extends React.Component<IProps, null> {
 
+  constructor(props: IProps) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-    // TODO: some call in the subgraph?
+    const reputationFromTokenScheme = this.props.scheme.ReputationFromToken as ReputationFromTokenScheme;
+    // TODO: get the address from the form
+    const addressToRedeem = values.accountAddress;
+    // send the transaction and get notifications
+    reputationFromTokenScheme.redeem(addressToRedeem).subscribe((next) => console.log(next));
   }
 
   public render() {
-    const { currentAccountAddress, daoAvatarAddress, scheme } = this.props;
+    const { currentAccountAddress, daoAvatarAddress, schemeState } = this.props;
     const arc = getArc();
 
     return (
       <div className={schemeCss.schemeContainer}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeState.id}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
           <h2 className={schemeCss.schemeName}>
-            {schemeName(scheme, scheme.address)}
+            {schemeName(schemeState, schemeState.address)}
           </h2>
         </Sticky>
 
@@ -159,6 +169,5 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
 }
 
 const ConnectedFixedReputationAllocationScheme = connect(mapStateToProps, mapDispatchToProps)(FixedReputationAllocationScheme);
+
 export default ConnectedFixedReputationAllocationScheme;
-
-
