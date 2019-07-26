@@ -18,7 +18,6 @@ import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
-import { isStakePending } from "selectors/operations";
 
 import * as css from "./StakeButtons.scss";
 
@@ -45,30 +44,20 @@ interface IDispatchProps {
   approveStakingGens: typeof web3Actions.approveStakingGens;
 }
 
-interface IStateProps {
-  isPredictingFail: boolean;
-  isPredictingPass: boolean;
-}
-
 const mapDispatchToProps = {
   approveStakingGens: web3Actions.approveStakingGens,
   stakeProposal: arcActions.stakeProposal,
   showNotification,
 };
 
-type IProps = IStateProps & IDispatchProps & IContainerProps & {
+type IProps = IDispatchProps & IContainerProps & {
   currentAccountGens: BN;
   currentAccountGenStakingAllowance: BN;
   stakesOfCurrentUser: Stake[];
 };
 
-const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
-
-  return {
-    ...ownProps,
-    isPredictingPass: isStakePending(ownProps.proposal.id, VoteOptions.Yes)(state),
-    isPredictingFail: isStakePending(ownProps.proposal.id, VoteOptions.No)(state),
-  };
+const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IContainerProps => {
+  return ownProps;
 };
 
 class StakeButtons extends React.Component<IProps, IState> {
@@ -121,8 +110,6 @@ class StakeButtons extends React.Component<IProps, IState> {
       expired,
       historyView,
       proposal,
-      isPredictingFail,
-      isPredictingPass,
       stakeProposal,
       stakesOfCurrentUser,
     } = this.props;
@@ -142,7 +129,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       currentAccountPrediction = currentStake.staticState.outcome;
     }
 
-    const isPredicting = isPredictingFail || isPredictingPass;
+    const isPredicting = pendingPrediction !== null;
 
     if (showApproveModal) {
       return (
@@ -188,12 +175,12 @@ class StakeButtons extends React.Component<IProps, IState> {
     const disableStakeFail = (this.props.currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
 
     const passButtonClass = classNames({
-      [css.pendingPrediction]: isPredictingPass,
+      [css.pendingPrediction]: pendingPrediction === VoteOptions.Yes,
       [css.passButton]: true,
     });
 
     const failButtonClass = classNames({
-      [css.pendingPrediction]: isPredictingFail,
+      [css.pendingPrediction]: pendingPrediction === VoteOptions.No,
       [css.failButton]: true,
     });
 

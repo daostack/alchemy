@@ -15,10 +15,10 @@ import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
-import { closingTime, VoteOptions } from "reducers/arcReducer";
+import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, of } from "rxjs";
-import { isVotePending } from "selectors/operations";
+import { combineLatest, concat, from, of } from "rxjs";
+import { concatMap } from "rxjs/operators";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -37,8 +37,6 @@ const ReactMarkdown = require("react-markdown");
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
-  isVotingYes: boolean;
-  isVotingNo: boolean;
 }
 
 interface IContainerProps extends RouteComponentProps<any> {
@@ -58,8 +56,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
     ...ownProps,
     beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposal.proposer],
-    isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
-    isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
   };
 };
 
@@ -102,14 +98,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       dao,
       daoEthBalance,
       proposal,
-      isVotingNo,
-      isVotingYes,
       votesOfCurrentUser,
     } = this.props;
 
     const expired = this.state.expired;
-
-    const isVoting = isVotingNo || isVotingYes;
 
     const proposalClass = classNames({
       [css.proposal]: true,
@@ -129,7 +121,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     const voteWrapperClass = classNames({
       [css.voteBox]: true,
       clearfix: true,
-      [css.unconfirmedVote]: isVoting,
     });
 
     const disqusConfig = {
@@ -205,8 +196,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 dao={dao}
                 detailView
                 expired={expired}
-                isVotingNo={isVotingNo}
-                isVotingYes={isVotingYes}
                 proposal={proposal}
               />
             </div>
@@ -223,7 +212,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 </div>
 
                 <div className={css.voteButtons}>
-                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} detailView expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
+                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} detailView expired={expired} proposal={proposal} />
                 </div>
               </div>
 
@@ -232,7 +221,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteGraph size={90} proposal={proposal} />
                 </div>
 
-                <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} detailView />
+                <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} detailView />
               </div>
             </div>
 
