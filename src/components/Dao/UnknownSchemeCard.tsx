@@ -1,4 +1,5 @@
-import { Scheme } from "@daostack/client";
+import { Scheme, ISchemeState } from "@daostack/client";
+import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { linkToEtherScan, splitByCamelCase } from "lib/util";
 import * as React from "react";
 import * as css from "./UnknownSchemeCard.scss";
@@ -24,17 +25,27 @@ const UnknownSchemeCard = (props: IInternalProps) => {
         <table><tbody>
           {
             schemes.map((scheme: Scheme) => {
-              return (
-                <tr key={scheme.address}>
-                  <td className={css.left}>&nbsp;</td>
-                  <td>
-                    <img className={css.attention} src="/assets/images/Icon/Alert-red.svg" />
-                    {scheme.name ?
-                      <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer">{splitByCamelCase(scheme.name)}</a> :
-                      <a className={css.address} target="_blank" rel="noopener noreferrer" href={linkToEtherScan(scheme.address)}>{scheme.address}</a>
-                    }
-                  </td>
-                </tr>);
+              return <Subscribe observable={scheme.state()} key={scheme.id}>{
+                (state: IObservableState<ISchemeState>): any => {
+                  if (state.isLoading) {
+                    return  <div>Loading..</div>;
+                  } else if (state.error) {
+                    throw state.error;
+                  } else {
+                    const schemeState = state.data;
+                    return <tr key={schemeState.address}>
+                      <td className={css.left}>&nbsp;</td>
+                      <td>
+                        <img className={css.attention} src="/assets/images/Icon/Alert-red.svg" />
+                        {schemeState.name ?
+                          <a href={linkToEtherScan(schemeState.address)} target="_blank" rel="noopener noreferrer">{splitByCamelCase(schemeState.name)}</a> :
+                          <a className={css.address} target="_blank" rel="noopener noreferrer" href={linkToEtherScan(schemeState.address)}>{schemeState.address}</a>
+                        }
+                      </td>
+                    </tr>;
+                  }
+                }
+              }</Subscribe>;
             })
           }
         </tbody></table>
