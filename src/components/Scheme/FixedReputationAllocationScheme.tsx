@@ -60,9 +60,7 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
           </h2>
         </Sticky>
 
-        <div>
-          <h3>100 Rep to redeem </h3>
-          <b>Which account would you like to receive the reputation?</b>
+        <div className={schemeCss.schemeRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
             initialValues={{
@@ -102,46 +100,53 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
               values
             }: FormikProps<IFormValues>) =>
               <Form noValidate>
-                <Field
-                  id="thisAccountTrue"
-                  name="thisAcount"
-                  checked={values.thisAccount}
-                  onChange={(ev: any) => { setFieldValue('accountAddress', currentAccountAddress, false)}}
-                  type="radio"
-                  value={true}
-                />
-                <label htmlFor="thisAccountTrue">
-                  This Account
-                </label>
-
-                <Field
-                  id="thisAccountFalse"
-                  name="thisAccount"
-                  checked={!values.thisAccount}
-                  onChange={(ev: any) => { setFieldValue('accountAddress', "", false)}}
-                  type="radio"
-                  value={false}
-                />
-                <label htmlFor="thisAccountFalse">
-                  Other Account
-                </label>
-
-                <label htmlFor="accountAddressInput">
-                  Address
-                  <ErrorMessage name="accountAddress">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                </label>
-                <Field
-                  id="accountAddressInput"
-                  maxLength={120}
-                  disabled={values.thisAccount}
-                  placeholder=""
-                  name="accountAddress"
-                  className={touched.accountAddress && errors.accountAddress ? css.error : null}
-                />
-
-                <div>
+                <div className={schemeCss.fields}>
+                  <h3>100 Rep to redeem </h3>
+                  <b>Which account would you like to receive the reputation?</b>
+                  <div>
+                    <Field
+                      id="thisAccountTrue"
+                      name="thisAcount"
+                      checked={values.thisAccount}
+                      onChange={(ev: any) => { setFieldValue('accountAddress', currentAccountAddress, false)}}
+                      type="radio"
+                      value={true}
+                    />
+                    <label htmlFor="thisAccountTrue">
+                      This Account
+                    </label>
+                  </div>
+                  <div>
+                    <Field
+                      id="thisAccountFalse"
+                      name="thisAccount"
+                      checked={!values.thisAccount}
+                      onChange={(ev: any) => { setFieldValue('accountAddress', "", false)}}
+                      type="radio"
+                      value={false}
+                    />
+                    <label htmlFor="thisAccountFalse">
+                      Other Account
+                    </label>
+                  </div>
+                  <div className={schemeCss.redemptionAddress}>
+                    <label htmlFor="accountAddressInput">
+                      Address
+                      <ErrorMessage name="accountAddress">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    </label>
+                    <Field
+                      id="accountAddressInput"
+                      maxLength={120}
+                      disabled={values.thisAccount}
+                      placeholder=""
+                      name="accountAddress"
+                      className={touched.accountAddress && errors.accountAddress ? css.error : null}
+                    />
+                  </div>
+                </div>
+                <div className={schemeCss.redemptionButton}>
                   <button type="submit" disabled={isSubmitting}>
-                    Redeem
+                    <img src="/assets/images/Icon/Execute.svg"/> Redeem
                   </button>
                 </div>
               </Form>
