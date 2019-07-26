@@ -229,8 +229,17 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   private cacheWeb3Info(account: Address): void {
-    localStorage.setItem(AppContainer.accountStorageKey, account);
-    localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(getWeb3ProviderInfo()));
+    if (account) {
+      localStorage.setItem(AppContainer.accountStorageKey, account);
+    } else {
+      localStorage.removeItem(AppContainer.accountStorageKey);
+    }
+    const providerInfo = getWeb3ProviderInfo();
+    if (providerInfo) {
+      localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
+    } else {
+      localStorage.removeItem(AppContainer.providerStorageKey);
+    }
   }
 
   private uncacheWeb3Info(): void {

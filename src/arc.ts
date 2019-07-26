@@ -71,29 +71,8 @@ const settings = {
 };
 
 /**
- * Return a web3 if we already have one.  Create it if needed.
+ * return the default Arc configuration given the execution environment
  */
-function getWeb3(): any {
-  const arc = (window as any).arc;
-  const web3 = arc ? arc.web3 : null;
-  // if (!web3) {
-  //   const provider = getInjectedWeb3Provider();
-  //   if (provider) {
-  //     web3 = new Web3(provider);
-  //   }
-  // }
-  return web3;
-}
-
-async function _getCurrentAccount(): Promise<string> {
-  const web3 = getWeb3();
-  if (!web3) {
-    return null;
-  }
-  const accounts = await web3.eth.getAccounts();
-  return accounts[0] ? accounts[0].toLowerCase() : null;
-}
-
 function getArcSettings(): any {
   let arcSettings: any;
   switch (process.env.NODE_ENV || "development") {
@@ -118,7 +97,29 @@ function getArcSettings(): any {
 }
 
 /**
- * Returns the Arc instance. Throws an exception when Arc hasn't yet been initialized!
+ * Return the web3 in current use by Arc.
+ */
+function getWeb3(): any {
+  const arc = (window as any).arc;
+  const web3 = arc ? arc.web3 : null;
+  return web3;
+}
+
+/**
+ * Return the default account, locked, in current use by Arc.
+ */
+async function _getCurrentLockedAccount(): Promise<string> {
+  const web3 = getWeb3();
+  if (!web3) {
+    return null;
+  }
+  const accounts = await web3.eth.getAccounts();
+  return accounts[0] ? accounts[0].toLowerCase() : null;
+}
+
+/**
+ * Returns the Arc instance
+ * Throws an exception when Arc hasn't yet been initialized!
  */
 export function getArc(): Arc {
   const arc = (window as any).arc;
@@ -129,7 +130,8 @@ export function getArc(): Arc {
 }
 
 /**
- * Return currently-selected and fully-enabled web3Provider.
+ * Return currently-selected and fully-enabled web3Provider (a
+ * locked account can be presumed to exist).
  */
 export function getWeb3Provider(): any | undefined {
   return selectedProvider;
@@ -139,6 +141,7 @@ export function getWeb3Provider(): any | undefined {
  * Checks if the web3 provider is set to the required network.
  * Does not ensure we have access to the user's account.
  * throws an Error if no provider or wrong provider
+ * @param provider Optional web3Provider
  * @return the web3 provider if is OK
  */
 async function checkWeb3Provider(provider?: any): Promise<any> {
@@ -164,7 +167,7 @@ async function checkWeb3Provider(provider?: any): Promise<any> {
   const web3Provider = provider ? provider : getWeb3Provider();
 
   if (!web3Provider) {
-    const msg = "Please install or enable Metamask or Gnosis Safe";
+    const msg = "Please install or enable a wallet provider";
     throw Error(msg);
   }
 
@@ -180,6 +183,10 @@ async function checkWeb3Provider(provider?: any): Promise<any> {
   }
 }
 
+/**
+ * initialize Arc.  
+ * @param provider Optional web3Provider
+ */
 export async function initializeArc(provider?: any): Promise<boolean> {
   const arcSettings = getArcSettings();
 
@@ -194,13 +201,15 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
   // console.log(arcSettings);
   // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
-  if (arcSettings.web3Provider.isSafe) {
-    console.log("Using Gnosis Safe");
-  } else if (arcSettings.web3Provider.isMetaMask) {
-    console.log("Using MetaMask");
-  } else {
-    console.log("Using default Web3 (read-only) provider");
-  }
+  // if (arcSettings.web3Provider.isSafe) {
+  //   console.log("Using Gnosis Safe");
+  // } else if (arcSettings.web3Provider.isMetaMask) {
+  //   console.log("Using MetaMask");
+  // } else {
+  //   console.log("Using default Web3 (read-only) provider");
+  // }
+
+  console.log(`Using provider ${arcSettings.web3Provider.name}`);
 
   // get contract information from the subgraph
   let success = false;
@@ -209,6 +218,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     arc = new Arc(arcSettings);
     const contractInfos = await arc.getContractInfos();
     await arc.setContractInfos(contractInfos);
+    // TODO: when available use:
+    //success = await arc.initialize();
     success = true;
   } catch (ex) {
     console.log(ex.message);
@@ -218,10 +229,11 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 }
 
 /**
- * Check if web3Provider account access is enabled, and if not, call the (async) function
- * that will ask the user to enable it.
- * Then InitializeArc with it.
- * Returns true if Arc is successfully initialized.
+ * Prompt user to select a web3Provider and enable their account.
+ * Initializes Arc with the newly-selected web3Provider.
+ * Is a no-op if already done.
+ * @param provider Optional web3Provider
+ * @returns whether Arc has been successfully initialized.
  */
 async function enableWeb3Provider(provider?: any): Promise<boolean> {
   /**
@@ -329,7 +341,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     throw ex;
   }
 
-  if (!_getCurrentAccount()) {
+  if (!_getCurrentLockedAccount()) {
     // then something went wrong
     console.log("****************************** unable to lock an account");
     throw new Error("unable to lock an account");
@@ -344,8 +356,10 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 }
 
 /**
- * check if a metamask instanse is available and an account is unlocked
- * @return [description]
+ * See `enableWeb3Provider`.  If that fails then issue a warning to the user.
+ * 
+ * @param provider Optional web3Provider
+ * @return boolean whether Arc is successfully initialized.
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   // if we are in test mode, we'll do without - we should be connected to an unlocked ganache instance
@@ -363,30 +377,37 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise
 }
 
 /**
- * Get the current user from the web3.
- * @return [description]
+ * @return the currently-locked account address from Arc. Ignores any injected
+ * account unless Arc knows about the provider.
  */
 export async function getCurrentAccountAddress(): Promise<Address | null> {
   if (!selectedProvider) {
     /**
      * though an account may actually be available via injection, we're not going
      * to return it. The flow needs to start from a selected provider first,
-     * only then then the account.
+     * only then a locked account.
      */
     return null;
   }
-  return _getCurrentAccount();
+  return _getCurrentLockedAccount();
 }
 
+/**
+ * switch to readonly mode (effectively a logout)
+ */
 export async function gotoReadonly(): Promise<boolean> {
+  // clearing this, initializeArc will be made to use the default web3Provider
   selectedProvider = undefined;
-  return true; // initializeArc();
+  return initializeArc();
 }
 
 /**
  * Given IWeb3ProviderInfo, get a web3Provider and InitializeArc with it.
- * Returns true if Arc is successfully initialized.
+ * 
+ * This is meant to be used to bypass allowing the user to select a provider in the
+ * case where we are initializing the app from a previously-cached (selected) provider.
  * @param web3ProviderInfo required IWeb3ProviderInfo
+ * @returns whether Arc has been successfully initialized.
  */
 export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<boolean> {
   let provider: any;
@@ -433,7 +454,7 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
 }
 
 /**
- * Returns if an account is enabled in the selected web3Provider
+ * @returns whether an account is enabled in a selected web3Provider
  */
 export function getAccountIsEnabled(): boolean {
   /**
@@ -449,40 +470,34 @@ export function getAccountIsEnabled(): boolean {
 export function getWeb3ProviderInfo(): IWeb3ProviderInfo {
   return selectedProvider ? Web3Connect.getProviderInfo(selectedProvider) : null;
 }
-/**
- * Check if a web3Provider has been selected and is fully available.
- * Does not know about the default read-only providers.
- */
-// function getSelectedWeb3Provider(): any {
-//   // we set this when we get a provider from Web3Connect
-//   return selectedPovider;
-// }
 
-// returns appropriate Arc configuration for the given environment
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
 // Polling is Evil!
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
-export function pollForAccountChanges(currentAccountAddress: Address | null, interval: number = 2000) {
+export function pollForAccountChanges(currentAccountAddress: Address | null, interval: number = 2000): Observable<Address> {
   console.log(`****************************** start polling for account changes from: ${currentAccountAddress}`);
-  return Observable.create((observer: any) => {
+  return Observable.create((observer: any): () => void  => {
     let prevAccount = currentAccountAddress;
-    function emitIfNewAccount() {
+    function emitIfNewAccount(): void {
       getCurrentAccountAddress()
-        .then((account: Address | null) => {
+        .then((account: Address | null): void => {
           if (prevAccount !== account) {
             observer.next(account);
             prevAccount = account;
           }
         })
-        .catch((err) => { console.warn(err.message); });
+        .catch((err): void => { console.warn(err.message); });
     }
 
     emitIfNewAccount();
     const timeout = setInterval(emitIfNewAccount, interval);
-    return () => clearTimeout(timeout);
+    return (): void => { clearTimeout(timeout); };
   });
 }
 
+/**
+ * extension of the Web3Connect IProviderInfo
+ */
 export interface IWeb3ProviderInfo extends IProviderInfo {
 }
