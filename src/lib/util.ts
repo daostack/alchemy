@@ -143,7 +143,7 @@ export const KNOWN_SCHEME_NAMES = [
   "ContributionReward",
   "GenericScheme",
   "ReputationFromToken",
-  "SchemeRegistrar"
+  "SchemeRegistrar",
 ];
 /**
  * return true if the address is the address of a known scheme (which we know how to represent)

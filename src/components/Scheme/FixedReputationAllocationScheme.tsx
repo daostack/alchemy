@@ -30,7 +30,7 @@ type IProps = IStateProps & IDispatchProps;
 
 const mapStateToProps = (state: IRootState, ownProps: any) => {
   return {...ownProps,
-    currentAccountAddress: state.web3.currentAccountAddress
+    currentAccountAddress: state.web3.currentAccountAddress,
   };
 };
 
@@ -46,7 +46,7 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
+  public async handleSubmit(values: IFormValues, { _props, _setSubmitting, _setErrors }: any): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
     const reputationFromTokenScheme = this.props.scheme.ReputationFromToken as ReputationFromTokenScheme;
@@ -107,7 +107,7 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
               setFieldTouched,
               setFieldValue,
-              values
+              values,
             }: FormikProps<IFormValues>) =>
               <Form noValidate>
                 <div className={schemeCss.fields}>
@@ -118,9 +118,9 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
                       id="thisAccountTrue"
                       name="thisAcount"
                       checked={values.thisAccount}
-                      onChange={(ev: any) => { setFieldValue('accountAddress', currentAccountAddress, false)}}
+                      onChange={(_ev: any) => { setFieldValue("accountAddress", currentAccountAddress, false);}}
                       type="radio"
-                      value={true}
+                      value
                     />
                     <label htmlFor="thisAccountTrue">
                       This Account
@@ -131,7 +131,7 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
                       id="thisAccountFalse"
                       name="thisAccount"
                       checked={!values.thisAccount}
-                      onChange={(ev: any) => { setFieldValue('accountAddress', "", false)}}
+                      onChange={(_ev: any) => { setFieldValue("accountAddress", "", false);}}
                       type="radio"
                       value={false}
                     />

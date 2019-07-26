@@ -26,7 +26,7 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
     const daoAvatarAddress = match.params.daoAvatarAddress;
 
     const arc = getArc();
-    const scheme = arc.scheme(schemeId)
+    const scheme = arc.scheme(schemeId);
     const schemeObservable = scheme.state();
 
     return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>) => {
@@ -40,7 +40,7 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
       const schemeState = state.data;
 
       if (schemeState.name === "ReputationFromToken") {
-        return <FixedReputationAllocationScheme schemeState={schemeState} scheme={scheme}/>
+        return <FixedReputationAllocationScheme schemeState={schemeState} scheme={scheme}/>;
       }
 
       const proposalsTabClass = classNames({
