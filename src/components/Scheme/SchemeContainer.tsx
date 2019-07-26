@@ -8,7 +8,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
-import FixedReputationAllocationScheme from "./FixedReputationAllocationScheme";
+import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
@@ -40,7 +40,7 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
       const schemeState = state.data;
 
       if (schemeState.name === "ReputationFromToken") {
-        return <FixedReputationAllocationScheme schemeState={schemeState} scheme={scheme}/>;
+        return <ReputationFromToken daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} scheme={scheme}/>;
       }
 
       const proposalsTabClass = classNames({

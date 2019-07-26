@@ -1,4 +1,5 @@
-import { Address, ISchemeState, ReputationFromTokenScheme, Scheme } from "@daostack/client";
+import { Address, ISchemeState, Scheme } from "@daostack/client";
+import { redeemReputationFromToken } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName} from "lib/util";
@@ -9,51 +10,61 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as schemeCss from "./Scheme.scss";
-import * as css from "./FixedReputationAllocationScheme.scss";
+import * as css from "./ReputationFromToken.scss";
 
-interface IStateProps {
-  currentAccountAddress: Address;
+interface IExternalProps {
   daoAvatarAddress: Address;
   scheme: Scheme;
   schemeState: ISchemeState;
 }
 
+interface IStateProps {
+  currentAccountAddress: Address;
+}
+
 interface IDispatchProps {
+  redeemReputationFromToken: typeof redeemReputationFromToken;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
+  redeemReputationFromToken,
   showNotification,
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IExternalProps & IStateProps & IDispatchProps;
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {...ownProps,
-    currentAccountAddress: state.web3.currentAccountAddress,
+    currentAccountAddress: state.web3.currentAccountAddress
   };
 };
+
+interface IState {
+  redemptionAmount: number;
+}
 
 interface IFormValues {
   thisAccount: boolean;
   accountAddress: string;
 }
 
-class FixedReputationAllocationScheme extends React.Component<IProps, null> {
+class ReputationFromToken extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = { redemptionAmount: null };
+  }
+
+  public async componentWillMount() {
+    this.setState( { redemptionAmount: (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
   }
 
   public async handleSubmit(values: IFormValues, { _props, _setSubmitting, _setErrors }: any): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-    const reputationFromTokenScheme = this.props.scheme.ReputationFromToken as ReputationFromTokenScheme;
-    // TODO: get the address from the form
-    const addressToRedeem = values.accountAddress;
-    // send the transaction and get notifications
-    reputationFromTokenScheme.redeem(addressToRedeem).subscribe((next) => console.log(next));
+    this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
   }
 
   public render() {
@@ -108,19 +119,22 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
               setFieldTouched,
               setFieldValue,
               values,
-            }: FormikProps<IFormValues>) =>
-              <Form noValidate>
+            }: FormikProps<IFormValues>) => {
+              return <Form noValidate>
                 <div className={schemeCss.fields}>
-                  <h3>100 Rep to redeem </h3>
+                  <h3>{ this.state.redemptionAmount || "..." } Rep to redeem </h3>
                   <b>Which account would you like to receive the reputation?</b>
                   <div>
                     <Field
                       id="thisAccountTrue"
                       name="thisAcount"
                       checked={values.thisAccount}
-                      onChange={(_ev: any) => { setFieldValue("accountAddress", currentAccountAddress, false);}}
+                      onChange={(_ev: any) => {
+                        setFieldValue("accountAddress", currentAccountAddress, false);
+                        setFieldValue("thisAccount", true, false);
+                      }}
                       type="radio"
-                      value
+                      value={true}
                     />
                     <label htmlFor="thisAccountTrue">
                       This Account
@@ -131,7 +145,10 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
                       id="thisAccountFalse"
                       name="thisAccount"
                       checked={!values.thisAccount}
-                      onChange={(_ev: any) => { setFieldValue("accountAddress", "", false);}}
+                      onChange={(_ev: any) => {
+                        setFieldValue("accountAddress", "", false);
+                        setFieldValue("thisAccount", false, false);
+                      }}
                       type="radio"
                       value={false}
                     />
@@ -160,7 +177,7 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
                   </button>
                 </div>
               </Form>
-            }
+            }}
           />
         </div>
       </div>
@@ -168,6 +185,6 @@ class FixedReputationAllocationScheme extends React.Component<IProps, null> {
   }
 }
 
-const ConnectedFixedReputationAllocationScheme = connect(mapStateToProps, mapDispatchToProps)(FixedReputationAllocationScheme);
+const ConnectedReputationFromToken = connect(mapStateToProps, mapDispatchToProps)(ReputationFromToken);
 
-export default ConnectedFixedReputationAllocationScheme;
+export default ConnectedReputationFromToken;
