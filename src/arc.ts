@@ -71,92 +71,150 @@ const settings = {
 };
 
 /**
- * check if a metamask instanse is available and an account is unlocked
- * @return [description]
+ * Return a web3 if we already have one.  Create it if needed.
  */
-export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
-  // if we are in test mode, we'll do without - we should be connected to an unlocked ganache instance
-  try {
-    return await enableWeb3Provider();
-  } catch (err) {
-    const msg =  err.message;
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
-    } else {
-      alert(msg);
-    }
-  }
-  return false;
+function getWeb3(): any {
+  const arc = (window as any).arc;
+  const web3 = arc ? arc.web3 : null;
+  // if (!web3) {
+  //   const provider = getInjectedWeb3Provider();
+  //   if (provider) {
+  //     web3 = new Web3(provider);
+  //   }
+  // }
+  return web3;
 }
 
-/**
- * Get the current user from the web3.
- * @return [description]
- */
-export async function getCurrentAccountAddress(): Promise<Address | null> {
-  if (!selectedProvider) {
-    /**
-     * though an account may actually be available via injection, we're not going
-     * to return it. The flow needs to start from a selected provider first,
-     * only then then the account.
-     */
+async function _getCurrentAccount(): Promise<string> {
+  const web3 = getWeb3();
+  if (!web3) {
     return null;
   }
-  return _getCurrentAccount();
+  const accounts = await web3.eth.getAccounts();
+  return accounts[0] ? accounts[0].toLowerCase() : null;
 }
 
-export async function gotoReadonly(): Promise<boolean> {
-  selectedProvider = undefined;
-  return true; // initializeArc();
+function getArcSettings(): any {
+  let arcSettings: any;
+  switch (process.env.NODE_ENV || "development") {
+    case "development": {
+      arcSettings = settings.dev;
+      break;
+    }
+    case "staging" : {
+      arcSettings = settings.staging;
+      break;
+    }
+    case "production" : {
+      arcSettings = settings.production;
+      break;
+    }
+    default: {
+      console.log(process.env.NODE_ENV === "development");
+      throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
+    }
+  }
+  return arcSettings;
 }
 
 /**
- * Given IWeb3ProviderInfo, get a web3Provider and InitializeArc with it.
- * Returns true if Arc is successfully initialized.
- * @param web3ProviderInfo required IWeb3ProviderInfo
+ * Returns the Arc instance. Throws an exception when Arc hasn't yet been initialized!
  */
-export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<boolean> {
-  let provider: any;
+export function getArc(): Arc {
+  const arc = (window as any).arc;
+  if (!arc) {
+    throw Error("window.arc is not defined - please call initializeArc first");
+  }
+  return arc;
+}
 
-  console.log(`****************************** connecting to: ${web3ProviderInfo.name}`);
+/**
+ * Return currently-selected and fully-enabled web3Provider.
+ */
+export function getWeb3Provider(): any | undefined {
+  return selectedProvider;
+}
+
+/**
+ * Checks if the web3 provider is set to the required network.
+ * Does not ensure we have access to the user's account.
+ * throws an Error if no provider or wrong provider
+ * @return the web3 provider if is OK
+ */
+async function checkWeb3Provider(provider?: any): Promise<any> {
+  let expectedNetworkName;
+  switch (process.env.NODE_ENV) {
+    case "development": {
+      expectedNetworkName = "ganache";
+      break;
+    }
+    case "staging": {
+      expectedNetworkName = "rinkeby";
+      break;
+    }
+    case  "production": {
+      expectedNetworkName = "main";
+      break;
+    }
+    default: {
+      throw new Error(`Unknown NODE_ENV: ${process.env.NODE_ENV}`);
+    }
+  }
+
+  const web3Provider = provider ? provider : getWeb3Provider();
+
+  if (!web3Provider) {
+    const msg = "Please install or enable Metamask or Gnosis Safe";
+    throw Error(msg);
+  }
+
+  const networkId = await getNetworkId(web3Provider);
+  const networkName = await getNetworkName(networkId);
+  if (networkName === expectedNetworkName) {
+    // save for future reference
+    web3Provider.__networkId = networkId;
+    return web3Provider;
+  } else {
+    const msg = `Please connect to "${expectedNetworkName}"`;
+    throw new Error(msg);
+  }
+}
+
+export async function initializeArc(provider?: any): Promise<boolean> {
+  const arcSettings = getArcSettings();
 
   try {
-    switch (web3ProviderInfo.type) {
-      case "injected":
-        /**
-           * Safe doesn't always inject itself in a timely manner
-           */
-        if (!(window as any).ethereum) {
-          await waitUntilTrue(() => !!(window as any).ethereum, 2000);
-        }
+    arcSettings.web3Provider = await checkWeb3Provider(provider);
+  } catch (err) {
+    // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
+    console.log(err);
+  }
 
-        provider = await Web3Connect.ConnectToInjected();
-        break;
-      case "qrcode":
-        provider = await Web3Connect.ConnectToWalletConnect({});
-        break;
-      case "web":
-        switch (web3ProviderInfo.name) {
-          case "Portis":
-            provider = await Web3Connect.ConnectToPortis(web3ConnectProviderOptions.portis);
-            break;
-          case "Fortmatic":
-            provider = await Web3Connect.ConnectToFortmatic(web3ConnectProviderOptions.fortmatic);
-            break;
-        }
-        break;
-    }
+  // log some useful info
+  // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
+  // console.log(arcSettings);
+  // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
+  if (arcSettings.web3Provider.isSafe) {
+    console.log("Using Gnosis Safe");
+  } else if (arcSettings.web3Provider.isMetaMask) {
+    console.log("Using MetaMask");
+  } else {
+    console.log("Using default Web3 (read-only) provider");
+  }
+
+  // get contract information from the subgraph
+  let success = false;
+  let arc: Arc;
+  try {
+    arc = new Arc(arcSettings);
+    const contractInfos = await arc.getContractInfos();
+    await arc.setContractInfos(contractInfos);
+    success = true;
   } catch (ex) {
-    console.log(`****************************** unable to instantiate provider: ${ex.message}`);
+    console.log(ex.message);
   }
-  /**
-   * make sure the injected provider is the one we're looking for
-   */
-  if (provider && !provider[web3ProviderInfo.check]) {
-    console.log(`****************************** instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
-    provider = null;
-  }
-  return provider ? enableWeb3Provider(provider) : Promise.resolve(false);
+  (window as any).arc = success ? arc : null;
+  return success;
 }
 
 /**
@@ -196,27 +254,27 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     let rejectOnClosePromise: (reason?: any) => void;
 
     const onClosePromise = new Promise(
-      (resolve: () => void, reject: (reason?: any) => void) => {
+      (resolve: () => void, reject: (reason?: any) => void): any => {
         resolveOnClosePromise = resolve;
         rejectOnClosePromise = reject;
-        web3Connect.on("close", () => {
+        web3Connect.on("close", (): any => {
           console.log("web3Connect closed");
-          resolve();
+          return resolve();
         });
       });
 
-    web3Connect.on("error", (error: Error) => {
+    web3Connect.on("error", (error: Error): any => {
       console.log(`web3Connect closed on error:  ${error.message}`);
-      rejectOnClosePromise(error);
+      return rejectOnClosePromise(error);
     });
 
-    web3Connect.on("connect", (newProvider: any) => {
+    web3Connect.on("connect", (newProvider: any): any => {
       provider = newProvider;
       /**
        * Because we won't receive the "close" event in this case, even though
        * the window will have closed
        */
-      resolveOnClosePromise();
+      return resolveOnClosePromise();
     });
 
     console.log("****************************** fire up modal");
@@ -286,48 +344,92 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 }
 
 /**
- * Checks if the web3 provider is set to the required network.
- * Does not ensure we have access to the user's account.
- * throws an Error if no provider or wrong provider
- * @return the web3 provider if is OK
+ * check if a metamask instanse is available and an account is unlocked
+ * @return [description]
  */
-export async function checkWeb3Provider(provider?: any) {
-  let expectedNetworkName;
-  switch (process.env.NODE_ENV) {
-    case "development": {
-      expectedNetworkName = "ganache";
-      break;
-    }
-    case "staging": {
-      expectedNetworkName = "rinkeby";
-      break;
-    }
-    case  "production": {
-      expectedNetworkName = "main";
-      break;
-    }
-    default: {
-      throw new Error(`Unknown NODE_ENV: ${process.env.NODE_ENV}`);
+export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
+  // if we are in test mode, we'll do without - we should be connected to an unlocked ganache instance
+  try {
+    return await enableWeb3Provider();
+  } catch (err) {
+    const msg =  err.message;
+    if (showNotification) {
+      showNotification(NotificationStatus.Failure, msg);
+    } else {
+      alert(msg);
     }
   }
+  return false;
+}
 
-  const web3Provider = provider ? provider : getWeb3Provider();
-
-  if (!web3Provider) {
-    const msg = "Please install or enable Metamask or Gnosis Safe";
-    throw Error(msg);
+/**
+ * Get the current user from the web3.
+ * @return [description]
+ */
+export async function getCurrentAccountAddress(): Promise<Address | null> {
+  if (!selectedProvider) {
+    /**
+     * though an account may actually be available via injection, we're not going
+     * to return it. The flow needs to start from a selected provider first,
+     * only then then the account.
+     */
+    return null;
   }
+  return _getCurrentAccount();
+}
 
-  const networkId = await getNetworkId(web3Provider);
-  const networkName = await getNetworkName(networkId);
-  if (networkName === expectedNetworkName) {
-    // save for future reference
-    web3Provider.__networkId = networkId;
-    return web3Provider;
-  } else {
-    const msg = `Please connect to "${expectedNetworkName}"`;
-    throw new Error(msg);
+export async function gotoReadonly(): Promise<boolean> {
+  selectedProvider = undefined;
+  return true; // initializeArc();
+}
+
+/**
+ * Given IWeb3ProviderInfo, get a web3Provider and InitializeArc with it.
+ * Returns true if Arc is successfully initialized.
+ * @param web3ProviderInfo required IWeb3ProviderInfo
+ */
+export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<boolean> {
+  let provider: any;
+
+  console.log(`****************************** connecting to: ${web3ProviderInfo.name}`);
+
+  try {
+    switch (web3ProviderInfo.type) {
+      case "injected":
+        /**
+           * Safe doesn't always inject itself in a timely manner
+           */
+        if (!(window as any).ethereum) {
+          await waitUntilTrue((): boolean => !!(window as any).ethereum, 2000);
+        }
+
+        provider = await Web3Connect.ConnectToInjected();
+        break;
+      case "qrcode":
+        provider = await Web3Connect.ConnectToWalletConnect({});
+        break;
+      case "web":
+        switch (web3ProviderInfo.name) {
+          case "Portis":
+            provider = await Web3Connect.ConnectToPortis(web3ConnectProviderOptions.portis);
+            break;
+          case "Fortmatic":
+            provider = await Web3Connect.ConnectToFortmatic(web3ConnectProviderOptions.fortmatic);
+            break;
+        }
+        break;
+    }
+  } catch (ex) {
+    console.log(`****************************** unable to instantiate provider: ${ex.message}`);
   }
+  /**
+   * make sure the injected provider is the one we're looking for
+   */
+  if (provider && !provider[web3ProviderInfo.check]) {
+    console.log(`****************************** instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
+    provider = null;
+  }
+  return provider ? enableWeb3Provider(provider) : Promise.resolve(false);
 }
 
 /**
@@ -347,13 +449,6 @@ export function getAccountIsEnabled(): boolean {
 export function getWeb3ProviderInfo(): IWeb3ProviderInfo {
   return selectedProvider ? Web3Connect.getProviderInfo(selectedProvider) : null;
 }
-
-/**
- * Return currently-selected and fully-enabled web3Provider.
- */
-export function getWeb3Provider(): any | undefined {
-  return selectedProvider;
-}
 /**
  * Check if a web3Provider has been selected and is fully available.
  * Does not know about the default read-only providers.
@@ -363,102 +458,7 @@ export function getWeb3Provider(): any | undefined {
 //   return selectedPovider;
 // }
 
-/**
- * Return a web3 if we already have one.  Create it if needed.
- */
-function getWeb3(): any {
-  const arc = (window as any).arc;
-  const web3 = arc ? arc.web3 : null;
-  // if (!web3) {
-  //   const provider = getInjectedWeb3Provider();
-  //   if (provider) {
-  //     web3 = new Web3(provider);
-  //   }
-  // }
-  return web3;
-}
-
 // returns appropriate Arc configuration for the given environment
-function getArcSettings(): any {
-  let arcSettings: any;
-  switch (process.env.NODE_ENV || "development") {
-    case "development": {
-      arcSettings = settings.dev;
-      break;
-    }
-    case "staging" : {
-      arcSettings = settings.staging;
-      break;
-    }
-    case "production" : {
-      arcSettings = settings.production;
-      break;
-    }
-    default: {
-      console.log(process.env.NODE_ENV === "development");
-      throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
-    }
-  }
-  return arcSettings;
-}
-
-export async function initializeArc(provider?: any): Promise<boolean> {
-  const arcSettings = getArcSettings();
-
-  try {
-    arcSettings.web3Provider = await checkWeb3Provider(provider);
-  } catch (err) {
-    // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
-    console.log(err);
-  }
-
-  // log some useful info
-  // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
-  // console.log(arcSettings);
-  // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
-  if (arcSettings.web3Provider.isSafe) {
-    console.log("Using Gnosis Safe");
-  } else if (arcSettings.web3Provider.isMetaMask) {
-    console.log("Using MetaMask");
-  } else {
-    console.log("Using default Web3 (read-only) provider");
-  }
-
-  // get contract information from the subgraph
-  let success = false;
-  let arc: Arc;
-  try {
-    arc = new Arc(arcSettings);
-    const contractInfos = await arc.getContractInfos();
-    await arc.setContractInfos(contractInfos);
-    success = true;
-  } catch (ex) {
-    console.log(ex.message);
-  }
-  (window as any).arc = success ? arc : null;
-  return success;
-}
-
-/**
- * Returns the Arc instance. Throws an exception when Arc hasn't yet been initialized!
- */
-export function getArc(): Arc {
-  const arc = (window as any).arc;
-  if (!arc) {
-    throw Error("window.arc is not defined - please call initializeArc first");
-  }
-  return arc;
-}
-
-async function _getCurrentAccount(): Promise<string> {
-  const web3 = getWeb3();
-  if (!web3) {
-    return null;
-  }
-  const accounts = await web3.eth.getAccounts();
-  return accounts[0] ? accounts[0].toLowerCase() : null;
-}
-
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
 // Polling is Evil!
 // TODO: check if this (new?) function can replace polling:

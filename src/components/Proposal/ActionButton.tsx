@@ -69,7 +69,7 @@ class ActionButton extends React.Component<IProps, IState> {
     };
   }
 
-  public async handleClickExecute(event: any) {
+  public async handleClickExecute(_event: any): Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }

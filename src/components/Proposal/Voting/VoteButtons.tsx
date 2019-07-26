@@ -53,7 +53,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
     };
   }
 
-  public async handleClickVote(vote: number, event: any) {
+  public async handleClickVote(vote: number, _event: any): Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const { currentAccountState } = this.props;
     if (currentAccountState.reputation.gt(new BN(0))) {

@@ -68,11 +68,11 @@ class AppContainer extends React.Component<IProps, IState> {
     };
   }
 
-  public componentDidCatch(error: Error, errorInfo: any) {
+  public componentDidCatch(error: Error, errorInfo: any): void {
     this.setState({ error });
 
     if (process.env.NODE_ENV === "PRODUCTION") {
-      Sentry.withScope((scope) => {
+      Sentry.withScope((scope): void => {
         scope.setExtras(errorInfo);
         const sentryEventId = Sentry.captureException(error);
         this.setState({ sentryEventId });
@@ -80,7 +80,7 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async componentWillMount() {
+  public async componentWillMount(): Promise<void> {
     const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
     if (web3ProviderInfo) {
       /**
@@ -124,20 +124,13 @@ class AppContainer extends React.Component<IProps, IState> {
     }
 
     this.props.setCurrentAccount(currentAddress);
-
-    // try {
-    //   await checkWeb3Provider();
-    // } catch (err) {
-    //   console.log("web3 provider not injected or set to wrong network: ", err.message);
-    // }
-
     /**
      * Only supply currentAddress if it was obtained from a provider.  The poll
      * is only comparing changes with respect to the provider state.  Passing it a cached state
      * will only cause it to get the wrong impression and misbehave.
      */
     pollForAccountChanges(accountWasCached ? null : currentAddress).subscribe(
-      (newAddress: Address | null) => {
+      (newAddress: Address | null): void => {
         console.log(`****************************** new account: ${newAddress}`);
         this.props.setCurrentAccount(newAddress);
         if (newAddress) {
@@ -151,7 +144,7 @@ class AppContainer extends React.Component<IProps, IState> {
       });
   }
 
-  public render() {
+  public render(): any {
     const {
       // connectionStatus,
       dismissNotification,
@@ -163,7 +156,7 @@ class AppContainer extends React.Component<IProps, IState> {
       // Render error fallback UI
       console.log(this.state.error);
       return <div>
-        <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
+        <a onClick={(): void => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
         <pre>{ this.state.error.toString() }</pre>
       </div>;
     } else {
@@ -197,7 +190,7 @@ class AppContainer extends React.Component<IProps, IState> {
                 notifications={sortedNotifications.length}
                 unminimize={() => this.setState({notificationsMinimized: false})}
               /> :
-              sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
+              sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}): any => (
                 <div key={id}>
                   <Notification
                     title={(title || status).toUpperCase()}
@@ -254,7 +247,7 @@ class AppContainer extends React.Component<IProps, IState> {
     return cached ? JSON.parse(cached) : null;
   }
 
-  private handleAccept() {
+  private handleAccept(): void {
     localStorage.setItem(AppContainer.hasAcceptedCookiesKey, "1");
   }
 }
