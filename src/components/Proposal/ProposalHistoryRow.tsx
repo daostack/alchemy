@@ -13,7 +13,6 @@ import { proposalFailed, proposalPassed } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
-// import { concatMap } from "rxjs/operators";
 import StakeGraph from "./Staking/StakeGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import * as css from "./ProposalHistoryRow.scss";
@@ -208,7 +207,7 @@ const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContai
 export default (props: { proposal: Proposal; daoState: IDAOState; currentAccountAddress: Address}) => {
   const proposal = props.proposal;
   let observable;
-  if (props.currentAccountAddress) {
+  if (!props.currentAccountAddress) {
     observable = combineLatest(
       proposal.state(),
       of([]),
