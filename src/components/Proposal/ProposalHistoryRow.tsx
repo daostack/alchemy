@@ -17,6 +17,7 @@ import { combineLatest, of } from "rxjs";
 import StakeGraph from "./Staking/StakeGraph";
 import VoteBreakdown from "./Voting/VoteBreakdown";
 import * as css from "./ProposalHistoryRow.scss";
+
 import BN = require("bn.js");
 
 interface IStateProps {
@@ -206,7 +207,7 @@ const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContai
 
 export default (props: { proposal: Proposal; daoState: IDAOState; currentAccountAddress: Address}) => {
   const proposal = props.proposal;
-  let observable
+  let observable;
   if (props.currentAccountAddress) {
     observable = combineLatest(
       proposal.state(),
@@ -217,16 +218,12 @@ export default (props: { proposal: Proposal; daoState: IDAOState; currentAccount
   } else {
     observable = combineLatest(
       proposal.state(),
-      proposal
-        .stakes({ where: { staker: props.currentAccountAddress}}),
-        // .pipe(concatMap((stakes: Stake[]) => { if (stakes.length > 0) { return stakes[0].state() })) ,
-      proposal
-        .votes({ where: { voter: props.currentAccountAddress }})
-        // .pipe(concatMap((votes: Vote[]) => { if (votes.length > 0) { return votes[0].state()}))
+      proposal.stakes({ where: { staker: props.currentAccountAddress}}),
+      proposal.votes({ where: { voter: props.currentAccountAddress }})
     );
 
   }
-return <Subscribe observable={observable}>{
+  return <Subscribe observable={observable}>{
     (state: IObservableState<[IProposalState, Stake[], Vote[]]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal {proposal.id.substr(0, 6)}...</div>;

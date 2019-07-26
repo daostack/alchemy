@@ -43,7 +43,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
   public render() {
     const {  daoAvatarAddress, schemeId } = this.props;
     const arc = getArc();
-    const scheme = arc.scheme(schemeId)
+    const scheme = arc.scheme(schemeId);
     const observable = scheme.state();
     return <Subscribe observable={observable}>{(state: IObservableState<ISchemeState>) => {
 

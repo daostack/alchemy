@@ -1,6 +1,5 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Vote } from "@daostack/client";
 import { getArc } from "arc";
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -28,8 +27,9 @@ import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
-
 import * as css from "./ProposalDetails.scss";
+
+import BN = require("bn.js");
 
 const ReactMarkdown = require("react-markdown");
 
@@ -277,7 +277,7 @@ export default (props: { proposalId: string; dao: IDAOState; currentAccountAddre
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
   const proposalId = props.match.params.proposalId;
-  const proposal = dao.proposal(proposalId)
+  const proposal = dao.proposal(proposalId);
   const observable = combineLatest(
     proposal.state(), // state of the current proposal
     props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3

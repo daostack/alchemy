@@ -80,7 +80,9 @@ export default (props: {} & RouteComponentProps<any>) => {
 
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).state(), // DAO state
+    // eslint-disable-next-line
     arc.dao(daoAvatarAddress).schemes({where: { name_in: KNOWN_SCHEME_NAMES}}),
+    // eslint-disable-next-line
     arc.dao(daoAvatarAddress).schemes({where: { name_not_in: KNOWN_SCHEME_NAMES}})
   );
   return <Subscribe observable={observable}>{

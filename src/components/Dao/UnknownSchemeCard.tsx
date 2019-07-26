@@ -25,14 +25,14 @@ const UnknownSchemeCard = (props: IInternalProps) => {
         <table><tbody>
           {
             schemes.map((scheme: Scheme) => {
-              return <Subscribe observable={scheme.state()}>{
+              return <Subscribe observable={scheme.state()} key={scheme.id}>{
                 (state: IObservableState<ISchemeState>): any => {
                   if (state.isLoading) {
                     return  <div>Loading..</div>;
                   } else if (state.error) {
                     throw state.error;
                   } else {
-                    const schemeState = state.data
+                    const schemeState = state.data;
                     return <tr key={schemeState.address}>
                       <td className={css.left}>&nbsp;</td>
                       <td>
@@ -45,8 +45,8 @@ const UnknownSchemeCard = (props: IInternalProps) => {
                     </tr>;
                   }
                 }
-              }</Subscribe>
-          })
+              }</Subscribe>;
+            })
           }
         </tbody></table>
       </div>

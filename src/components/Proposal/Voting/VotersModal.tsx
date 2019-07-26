@@ -33,7 +33,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
 
   public render() {
     const {dao, proposalState, vote} = this.props;
-    const voteState = vote.staticState
+    const voteState = vote.staticState;
     return (
       <div className={css.voteRow}>
         <div className={css.voteRowContainer}>
@@ -147,7 +147,7 @@ export default (props: IExternalProps) => {
 
   const dao = arc.dao(props.dao.address);
   const proposalId = props.proposal.id;
-  const proposal = dao.proposal(proposalId)
+  const proposal = dao.proposal(proposalId);
 
   const observable = combineLatest(
     proposal.state(), // state of the current proposal
