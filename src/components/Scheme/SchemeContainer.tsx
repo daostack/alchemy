@@ -39,17 +39,16 @@ const mapDispatchToProps = {
 
 class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>, IExternalProps> {
 
-  private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
-    if ((await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
-      this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
-    }
-  }
-
   public render(): any {
     const { currentAccountAddress, match } = this.props;
     const schemeId = match.params.schemeId;
     const daoAvatarAddress = match.params.daoAvatarAddress;
-    const _handleNewProposal = (e: any): void => { this.handleNewProposal(daoAvatarAddress, schemeId); e.preventDefault(); /* e.stopPropagation(); */};
+    const handleNewProposal = async (e: any): Promise<void> => {
+      if ((await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+        this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
+      }
+      e.preventDefault();
+    };
 
     const arc = getArc();
     const schemeObservable = from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme): any => scheme.state()));
@@ -87,7 +86,7 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
             <a className={css.createProposal}
               data-test-id="createProposal"
               href="#"
-              onClick={_handleNewProposal}
+              onClick={handleNewProposal}
             >+ New proposal</a>
           </div>
         </Sticky>

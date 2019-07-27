@@ -19,7 +19,7 @@ interface IContainerProps {
   contextMenu?: boolean;
   currentAccountAddress: Address;
   currentAccountState: IMemberState|undefined;
-  currentVote: number;
+  currentVote: IProposalOutcome|undefined;
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
@@ -30,7 +30,7 @@ interface IContainerProps {
 
 interface IState {
   contextMenu?: boolean;
-  currentVote: number;
+  currentVote: IProposalOutcome|undefined;
   showPreVoteModal: boolean;
   detailView?: boolean;
 }
@@ -80,23 +80,25 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
                             proposal.stage === IProposalStage.Executed ||
                             (proposal.stage === IProposalStage.Boosted && expired) ||
                             (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
-                            (currentAccountState &&
-                            currentAccountState.reputation.eq(new BN(0))) ||
-                            !!currentVote;
+                            (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
+                            currentVote // is yes or no 
+                            ;
 
-    const tipContent = (vote: IProposalOutcome): string =>
-      !currentAccountState ?
-        "Cannot vote - please log in" :
-        currentVote ?
-          "Can't change your vote" :
-          currentAccountState.reputation.eq(new BN(0)) ?
-            "Voting requires reputation in " + dao.name :
-            proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) || (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ?
-              "Can't vote on expired proposals" :
-              proposal.stage === IProposalStage.Executed ?
-                "Can't vote on executed proposals" :
-                `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
-    ;
+    /**
+     * only invoked when votingDisabled
+     * @param vote 
+     */
+    const tipContent = (vote: IProposalOutcome|undefined): string =>
+      currentVote ? // is yes or no
+        "Can't change your vote" :
+        (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
+          "Voting requires reputation in " + dao.name :
+          proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) || (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ?
+            "Can't vote on expired proposals" :
+            proposal.stage === IProposalStage.Executed ?
+              "Can't vote on executed proposals" :
+              `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
+;
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -111,9 +113,9 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       [css.contextMenu] : contextMenu,
       [css.wrapper]: true,
       [css.hasVoted]: currentVote,
-      [css.hasNotVoted]: !currentVote,
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
       [css.votedAgainst]: currentVote === IProposalOutcome.Fail,
+      [css.hasNotVoted]: currentVote === IProposalOutcome.None,
       [css.detailView]: detailView,
     });
 
@@ -121,7 +123,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       <div className={wrapperClass}>
         {this.state.showPreVoteModal ?
           <PreTransactionModal
-            actionType={this.state.currentVote === 1 ? ActionTypes.VoteUp : ActionTypes.VoteDown}
+            actionType={this.state.currentVote === IProposalOutcome.Pass ? ActionTypes.VoteUp : ActionTypes.VoteDown}
             action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
             closeAction={this.closePreVoteModal.bind(this)}
             currentAccount={currentAccountState}
@@ -228,7 +230,7 @@ interface IProps {
   altStyle?: boolean;
   contextMenu?: boolean;
   currentAccountAddress: Address;
-  currentVote: number;
+  currentVote: IProposalOutcome|undefined;
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
