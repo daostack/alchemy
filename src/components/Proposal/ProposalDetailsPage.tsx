@@ -1,7 +1,5 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, Vote } from "@daostack/client";
 import { getArc } from "arc";
-
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -12,16 +10,13 @@ import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-
 import { connect } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
-import { closingTime, VoteOptions } from "reducers/arcReducer";
+import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, concat, from, of } from "rxjs";
-import { concatMap } from "rxjs/operators";
-import { isVotePending } from "selectors/operations";
+import { combineLatest, concat, of } from "rxjs";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -32,16 +27,15 @@ import VoteBreakdown from "./Voting/VoteBreakdown";
 import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
-
 import * as css from "./ProposalDetails.scss";
+
+import BN = require("bn.js");
 
 const ReactMarkdown = require("react-markdown");
 
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
-  isVotingYes: boolean;
-  isVotingNo: boolean;
 }
 
 interface IContainerProps extends RouteComponentProps<any> {
@@ -49,7 +43,7 @@ interface IContainerProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   daoEthBalance: BN;
   proposal: IProposalState;
-  votesOfCurrentUser: IVote[];
+  votesOfCurrentUser: Vote[];
 }
 
 type IProps = IStateProps & IContainerProps;
@@ -61,8 +55,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
     ...ownProps,
     beneficiaryProfile: proposal.contributionReward ? state.profiles[proposal.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposal.proposer],
-    isVotingYes: isVotePending(proposal.id, VoteOptions.Yes)(state),
-    isVotingNo: isVotePending(proposal.id, VoteOptions.No)(state),
   };
 };
 
@@ -105,14 +97,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       dao,
       daoEthBalance,
       proposal,
-      isVotingNo,
-      isVotingYes,
       votesOfCurrentUser,
     } = this.props;
 
     const expired = this.state.expired;
-
-    const isVoting = isVotingNo || isVotingYes;
 
     const proposalClass = classNames({
       [css.proposal]: true,
@@ -121,10 +109,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     let currentAccountVote = 0;
 
-    let currentVote: IVote;
+    let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
       currentVote = votesOfCurrentUser[0];
-      currentAccountVote = currentVote.outcome;
+      currentAccountVote = currentVote.staticState.outcome;
     }
 
     const url = proposal.url ? (/https?:\/\//.test(proposal.url) ? proposal.url : "//" + proposal.url) : null;
@@ -132,7 +120,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     const voteWrapperClass = classNames({
       [css.voteBox]: true,
       clearfix: true,
-      [css.unconfirmedVote]: isVoting,
     });
 
     const disqusConfig = {
@@ -208,8 +195,6 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 dao={dao}
                 detailView
                 expired={expired}
-                isVotingNo={isVotingNo}
-                isVotingYes={isVotingYes}
                 proposal={proposal}
               />
             </div>
@@ -226,7 +211,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 </div>
 
                 <div className={css.voteButtons}>
-                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} detailView expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} />
+                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} detailView expired={expired} proposal={proposal} />
                 </div>
               </div>
 
@@ -235,7 +220,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteGraph size={90} proposal={proposal} />
                 </div>
 
-                <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposal} detailView />
+                <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} detailView />
               </div>
             </div>
 
@@ -292,15 +277,14 @@ export default (props: { proposalId: string; dao: IDAOState; currentAccountAddre
   const arc = getArc();
   const dao = arc.dao(props.dao.address);
   const proposalId = props.match.params.proposalId;
-
-  const observable = from(dao.proposal(proposalId)).pipe(concatMap((proposal: Proposal) => combineLatest(
+  const proposal = dao.proposal(proposalId);
+  const observable = combineLatest(
     proposal.state(), // state of the current proposal
     props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
-  ))
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, Vote[], BN]>): any => {
       if (state.isLoading) {
         return <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {

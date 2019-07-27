@@ -26,8 +26,6 @@ interface IContainerProps {
   proposal: IProposalState;
   voteOnProposal: typeof arcActions.voteOnProposal;
   showNotification: typeof showNotification;
-  isVotingNo?: boolean;
-  isVotingYes?: boolean;
 }
 
 interface IState {
@@ -75,12 +73,8 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       proposal,
       dao,
       expired,
-      isVotingNo,
-      isVotingYes,
       voteOnProposal,
     } = this.props;
-
-    const isVoting = isVotingNo || isVotingYes;
 
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
                             proposal.stage === IProposalStage.Executed ||
@@ -101,17 +95,15 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
               "Can't vote on expired proposals" :
               proposal.stage === IProposalStage.Executed ?
                 "Can't vote on executed proposals" :
-                isVoting ?
-                  "Warning: Voting for this proposal is already in progress" :
-                  `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
+                `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
     ;
 
     const voteUpButtonClass = classNames({
-      [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
+      [css.votedFor]: currentVote === IProposalOutcome.Pass,
       [css.disabled]: votingDisabled,
     });
     const voteDownButtonClass = classNames({
-      [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
+      [css.votedAgainst]: currentVote === IProposalOutcome.Fail,
       [css.disabled]: votingDisabled,
     });
     const wrapperClass = classNames({
@@ -119,9 +111,9 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       [css.contextMenu] : contextMenu,
       [css.wrapper]: true,
       [css.hasVoted]: currentVote,
-      [css.votedFor]: !isVotingYes && currentVote === IProposalOutcome.Pass,
-      [css.votedAgainst]: !isVotingNo && currentVote === IProposalOutcome.Fail,
       [css.hasNotVoted]: !currentVote,
+      [css.votedFor]: currentVote === IProposalOutcome.Pass,
+      [css.votedAgainst]: currentVote === IProposalOutcome.Fail,
       [css.detailView]: detailView,
     });
 
@@ -241,8 +233,6 @@ interface IProps {
   detailView?: boolean;
   expired?: boolean;
   proposal: IProposalState;
-  isVotingNo?: boolean;
-  isVotingYes?: boolean;
 }
 
 export default (props: IProps): any => {
