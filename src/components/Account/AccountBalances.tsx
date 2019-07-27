@@ -23,7 +23,19 @@ class AccountBalances extends React.Component<IProps, null>  {
 
     return (
       <div className={css.balances}>
+        <h2>Reputation</h2>
+        { dao ?
+          <div className={css.daoBalance}>
+            <b>{dao.name}</b>
+            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
+          </div>
+          :
+          <div className={css.noReputation}>
+              No Reputation
+          </div>
+        }
         <div className={css.userBalance}>
+          <h2>Holdings</h2>
           <div>
             <AccountBalance tokenSymbol="ETH" balance={ethBalance} accountAddress={currentAccountState.address} />
           </div>
@@ -31,14 +43,6 @@ class AccountBalances extends React.Component<IProps, null>  {
             <AccountBalance tokenSymbol="GEN" balance={genBalance} accountAddress={currentAccountState.address} />
           </div>
         </div>
-        { dao
-          ? <div className={css.daoBalance}>
-            <h3>{dao.name}</h3>
-            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
-            <label>REPUTATION</label>
-          </div>
-          : ""
-        }
       </div>
     );
   }
