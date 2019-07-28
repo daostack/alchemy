@@ -122,7 +122,7 @@ class Header extends React.Component<IProps, null> {
                     </div>
                     <div className={css.fullProfile}>
                       <Link className={css.profileLink} to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
-                        Full Profile >
+                        Full Profile
                       </Link>
                     </div>
                   </div>
