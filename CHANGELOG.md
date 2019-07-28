@@ -7,3 +7,6 @@
 ### Unreleased
   - Features Added
     - Started a changelog
+  - Bugs Fixed
+  - Maintenence / Refactor
+  - Misc
