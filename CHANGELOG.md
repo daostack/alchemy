@@ -10,3 +10,7 @@
   - Bugs Fixed
   - Maintenence / Refactor
   - Misc
+
+### version 0.9.3
+  - Misc
+    - A whole lot of awesome stuff for DAOs 😎
