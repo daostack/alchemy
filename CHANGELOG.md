@@ -5,5 +5,5 @@
   - Misc
 
 ### Unreleased
-  - Featrures Added
-    - Started a change log
+  - Features Added
+    - Started a changelog
