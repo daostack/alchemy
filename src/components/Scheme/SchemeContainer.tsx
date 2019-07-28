@@ -1,5 +1,5 @@
 import * as H from "history";
-import { Address, ISchemeState, Scheme } from "@daostack/client";
+import { Address, ISchemeState } from "@daostack/client";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
@@ -9,8 +9,6 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
-import { from } from "rxjs";
-import { concatMap } from "rxjs/operators";
 import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -51,7 +49,7 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
     };
 
     const arc = getArc();
-    const schemeObservable = from(arc.scheme(schemeId)).pipe(concatMap((scheme: Scheme): any => scheme.state()));
+    const schemeObservable = arc.scheme(schemeId).state();
 
     return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>): any => {
       if (state.isLoading) {
