@@ -58,6 +58,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
+    await this.props.scheme.fetchStaticState();
     this.setState( { redemptionAmount: (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
   }
 
