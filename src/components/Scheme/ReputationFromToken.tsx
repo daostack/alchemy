@@ -36,7 +36,7 @@ type IProps = IExternalProps & IStateProps & IDispatchProps;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {...ownProps,
-    currentAccountAddress: state.web3.currentAccountAddress
+    currentAccountAddress: state.web3.currentAccountAddress,
   };
 };
 
@@ -134,7 +134,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                         setFieldValue("thisAccount", true, false);
                       }}
                       type="radio"
-                      value={true}
+                      value
                     />
                     <label htmlFor="thisAccountTrue">
                       This Account
@@ -176,7 +176,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/Execute.svg"/> Redeem
                   </button>
                 </div>
-              </Form>
+              </Form>;
             }}
           />
         </div>
