@@ -26,8 +26,6 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     complete: null,
   };
 
-  public id: string;
-
   constructor(props: IProps) {
     super(props);
     this.setupSubscription(props.observable);
