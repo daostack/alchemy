@@ -1,0 +1,100 @@
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+
+.schemeContainer {
+  padding-bottom: 150px;
+  position: relative;
+}
+
+.schemeName {
+  margin-top: 0;
+  font-weight: bold;
+  padding: 0;
+  font-size: 45px;
+  position: relative;
+  color: rgba(104, 155, 214, 1.000);
+  z-index: 0;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  margin-bottom: 0;
+  background-color: rgba(229, 235, 242, 1.000);
+}
+
+.createProposal {
+  height: 30px;
+  line-height: 30px;
+  font-size: 13px;
+  color: $white;
+  background-color: rgba(3, 118, 255, 1.000);
+  border-radius: 15px;
+  display: block;
+  position: absolute;
+  z-index: 100;
+  right: 0;
+  top: 90px;
+  padding: 0 15px;
+}
+
+.createProposal:hover {
+  background-color: $accent-1;
+  color: $white;
+}
+
+.schemeMenu {
+  width: 100%;
+  background-color: rgba(229, 235, 242, 1.000);
+  border-bottom: 1px solid rgba(212,220,228,1);
+
+  a {
+     color: rgba(0, 29, 53, 1.000);
+     display: inline-block;
+     font-size: 16px;
+     transition: all .25s ease;
+  }
+
+  a:visted {
+    color: rgba(0, 29, 53, 1.000);
+  }
+
+  a:visited.createProposal, a.createProposal {
+    color: #fff;
+  }
+
+  .proposals {
+     padding: 10px 30px;
+     border-bottom: 2px solid rgba(34, 128, 254, 0);
+  }
+
+  .info {
+    padding: 10px 50px;
+    border-bottom: 2px solid rgba(34, 128, 254, 0);
+  }
+
+  .proposals.active, .info.active {
+     border-bottom: 2px solid rgba(34, 128, 254, 1);
+  }
+
+  .info:hover, .proposals:hover {
+     border-bottom: 2px solid rgba(34, 128, 254, .5);
+  }
+
+}
+
+@media only screen and (max-width: 425px) {
+
+  .createProposal {
+    top: 5px;
+    right: 15px;
+  }
+
+  .schemeName {
+    font-size: 18px;
+    padding-left: 15px;
+  }
+
+}

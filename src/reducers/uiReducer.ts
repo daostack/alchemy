@@ -7,7 +7,7 @@ export interface IUIState {
   tourVisible: boolean;
 }
 
-export const initialState: IUIState = {
+const initialState: IUIState = {
   tourVisible: false,
 };
 

@@ -4,7 +4,7 @@ import * as React from "react";
 import { IDAOState, IProposalState } from "@daostack/client";
 import { formatTokens, tokenDetails } from "lib/util";
 
-import ReputationView from "components/Account/ReputationView";
+import Reputation from "components/Account/Reputation";
 
 interface IProps {
   dao: IDAOState;
@@ -30,7 +30,7 @@ export default class RewardsString extends React.Component<IProps, null> {
     }
     if (!contributionReward.reputationReward.isZero()) {
       rewards.push(
-        <ReputationView daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={contributionReward.reputationReward}/>
+        <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={contributionReward.reputationReward}/>
       );
     }
     return <strong>

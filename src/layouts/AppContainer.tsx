@@ -3,13 +3,13 @@ import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
 import { checkWeb3Provider, getCurrentAccountAddress, pollForAccountChanges } from "arc";
-import AccountProfileContainer from "components/Account/AccountProfileContainer";
-import DaoListContainer from "components/DaoList/DaoListContainer";
+import AccountProfilePage from "components/Account/AccountProfilePage";
+import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
-import ViewDaoContainer from "components/ViewDao/ViewDaoContainer";
+import DaoContainer from "components/Dao/DaoContainer";
 import * as History from "history";
-import HeaderContainer from "layouts/HeaderContainer";
+import Header from "layouts/Header";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -140,12 +140,12 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/" render={( props ) => <HeaderContainer {...props} />} />
+            <Route path="/" render={( props ) => <Header {...props} />} />
 
             <Switch>
-              <Route path="/dao/:daoAvatarAddress" component={ViewDaoContainer} />
-              <Route path="/profile/:accountAddress" component={AccountProfileContainer} />
-              <Route path="/" component={DaoListContainer} />
+              <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
+              <Route path="/profile/:accountAddress" component={AccountProfilePage} />
+              <Route path="/" component={DaosPage} />
             </Switch>
 
             <ModalContainer

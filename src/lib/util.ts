@@ -6,10 +6,10 @@ import {
   IProposalState,
   IRewardState,
   ISchemeState } from "@daostack/client";
-
-import BN = require("bn.js");
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { getArc } from "../arc";
+
+import BN = require("bn.js");
 
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
@@ -26,12 +26,6 @@ export function copyToClipboard(value: any) {
   el.select();
   document.execCommand("copy");
   document.body.removeChild(el);
-}
-
-export function trace<T>(x: T, ...args: any[]): T {
-  // tslint:disable-next-line:no-console
-  console.debug("trace", ...args, x);
-  return x;
 }
 
 export function humanProposalTitle(proposal: IProposalState) {
@@ -144,6 +138,8 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
   });
 }
 
+
+export const KNOWN_SCHEME_NAMES = ["ContributionReward", "SchemeRegistrar", "GenericScheme"];
 /**
  * return true if the address is the address of a known scheme (which we know how to represent)
  * @param  address [description]
@@ -161,7 +157,7 @@ export function isKnownScheme(address: Address) {
     throw err;
   }
 
-  if (["ContributionReward", "SchemeRegistrar", "GenericScheme"].includes(contractInfo.name)) {
+  if (KNOWN_SCHEME_NAMES.includes(contractInfo.name)) {
     return true;
   } else {
     return false;
@@ -172,10 +168,10 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
   let name: string;
   if (scheme.name === "GenericScheme") {
     // @ts-ignore
-    if (scheme.genericScheme) {
+    if (scheme.genericSchemeParams) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
       // @ts-ignore
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericScheme.contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
