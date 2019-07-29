@@ -67,6 +67,7 @@ class ActionButton extends React.Component<IProps, IState> {
     this.state = {
       preRedeemModalOpen: false,
     };
+    this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
   public async handleClickExecute(_event: any): Promise<void> {
@@ -96,7 +97,6 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
     const expired = closingTime(proposalState).isSameOrBefore(moment());
-    const _handleRedeemProposal = this.handleRedeemProposal.bind(this);
 
     let beneficiaryHasRewards;
 
@@ -139,7 +139,7 @@ class ActionButton extends React.Component<IProps, IState> {
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
             actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-            action={_handleRedeemProposal}
+            action={this.handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
             dao={dao}
