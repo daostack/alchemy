@@ -229,7 +229,7 @@ const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(Actio
 export default (props: IMyProps): any => {
 
   const proposalState = props.proposalState;
-  let observable: Observable<IRewardState>;
+  let observable: Observable<IRewardState|null>;
   if (props.currentAccountAddress) {
     observable = proposalState.proposal.rewards({ where: {beneficiary: props.currentAccountAddress}})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
