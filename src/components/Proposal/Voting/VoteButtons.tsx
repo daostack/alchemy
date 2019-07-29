@@ -81,7 +81,8 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
                             (proposal.stage === IProposalStage.Boosted && expired) ||
                             (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
                             (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
-                            currentVote // is yes or no 
+                            currentVote === IProposalOutcome.Pass ||
+                            currentVote === IProposalOutcome.Fail
                             ;
 
     /**
@@ -89,7 +90,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
      * @param vote 
      */
     const tipContent = (vote: IProposalOutcome|undefined): string =>
-      currentVote ? // is yes or no
+      ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
           "Voting requires reputation in " + dao.name :
@@ -112,10 +113,10 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
       [css.altStyle] : altStyle,
       [css.contextMenu] : contextMenu,
       [css.wrapper]: true,
-      [css.hasVoted]: currentVote,
+      [css.hasVoted]: ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)),
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
       [css.votedAgainst]: currentVote === IProposalOutcome.Fail,
-      [css.hasNotVoted]: currentVote === IProposalOutcome.None,
+      [css.hasNotVoted]: ((currentVote === undefined) || (currentVote === IProposalOutcome.None)),
       [css.detailView]: detailView,
     });
 
