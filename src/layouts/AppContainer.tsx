@@ -110,7 +110,6 @@ class AppContainer extends React.Component<IProps, IState> {
             console.log(`new address: ${newAddress}`);
             this.props.setCurrentAccount(newAddress);
             localStorage.setItem(storageKey, newAddress);
-            window.location.reload();
           }
         });
     }
