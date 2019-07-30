@@ -175,7 +175,7 @@ class ActionButton extends React.Component<IProps, IState> {
                   <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposalState} rewards={rewardsForCurrentUser} />
                   : ""
               */}
-                    <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip} overlayClassName={css.redeemTooltip}>
+                    <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                       <button
                         style={{ whiteSpace: "nowrap" }}
                         disabled={false}
