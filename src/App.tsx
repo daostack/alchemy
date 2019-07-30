@@ -18,14 +18,14 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
     };
   }
 
-  public async componentWillMount() {
+  public async componentWillMount(): Promise<void> {
     // Do this here because we need to have initialized Arc first.  This will
     // create a provider with no locked account (ie, we'll be readonly).
     initializeArc()
-      .then(async () => {
+      .then((): void => {
         this.setState({ arcIsInitialized: true });
       })
-      .catch ((err) => {
+      .catch ((err): void => {
         console.log(err);
       });
 
@@ -42,12 +42,12 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
       }
     }
     ReactGA.initialize(GOOGLE_ANALYTICS_ID);
-    history.listen((location: any) => {
+    history.listen((location: any): void => {
       ReactGA.pageview(location.pathname + location.search);
     });
   }
 
-  public render() {
+  public render(): any {
     if (!this.state.arcIsInitialized) {
       return <div className={css.loading}><Loading/></div>;
     } else  {

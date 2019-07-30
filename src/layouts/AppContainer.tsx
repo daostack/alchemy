@@ -27,7 +27,7 @@ interface IStateProps {
   sortedNotifications: INotificationsState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => ({
+const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => ({
   currentAccountAddress: state.web3.currentAccountAddress,
   history: ownProps.history,
   sortedNotifications: sortedNotifications()(state),
