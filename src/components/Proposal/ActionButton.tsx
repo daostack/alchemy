@@ -1,4 +1,4 @@
-   import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn } from "arc";
 
