@@ -4,6 +4,7 @@ import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
+import { combineLatest} from "rxjs";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
@@ -37,8 +38,11 @@ class DaosPage extends React.Component<IProps, null> {
 
 export default () => {
   const arc = getArc();
-  const observable = arc.daos({ where: { register: "registered" }, orderBy: "reputationHoldersCount", orderDirection: "desc"});
-  return <Subscribe observable={observable}>{(state: IObservableState<DAO[]>) => {
+  const observable = combineLatest(
+    arc.daos({ where: { name: "Genesis Alpha" }}),
+    arc.daos({ where: { register: "registered", name_not_contains: "Genesis Alpha" }, orderBy: "name", orderDirection: "asc"}),
+  );
+  return <Subscribe observable={observable}>{(state: IObservableState<[DAO[], DAO[]]>) => {
     if (state.isLoading) {
       return (
         <div className={css.wrapper}>
@@ -49,7 +53,11 @@ export default () => {
     } else if (state.error) {
       throw state.error;
     } else {
-      return <DaosPage daos={state.data} />;
+      const daos = state.data[1];
+      if (state.data[0].length > 0) {
+        daos.unshift(state.data[0][0]);
+      }
+      return <DaosPage daos={daos} />;
     }
   }
 
