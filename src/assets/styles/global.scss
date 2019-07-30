@@ -20,3 +20,10 @@
   display: table;
   clear: both;
 }
+
+/**
+ * the Web3Connect popup
+ */
+:global div#WEB3_CONNECT_MODAL_ID > div {
+  z-index: 100000;
+}
