@@ -40,6 +40,7 @@ export default () => {
   const arc = getArc();
   const observable = combineLatest(
     arc.daos({ where: { name: "Genesis Alpha" }}),
+    // eslint-disable-next-line
     arc.daos({ where: { register: "registered", name_not_contains: "Genesis Alpha" }, orderBy: "name", orderDirection: "asc"}),
   );
   return <Subscribe observable={observable}>{(state: IObservableState<[DAO[], DAO[]]>) => {
