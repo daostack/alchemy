@@ -254,6 +254,7 @@ body {
       .balances {
         text-align: left;
         padding: 25px;
+        border-bottom: 1px solid rgba(229, 235, 242, 1.000);
 
         h2 {
           font-size: 13px;
@@ -334,10 +335,6 @@ body {
         }
       }
 
-      .holdingsLabel {
-        color: rgba(0, 29, 53, 1.000);
-      }
-
       .testAccounts {
         padding: 12px;
         position: relative;
@@ -366,14 +363,18 @@ body {
         z-index: 0;
         width: 100%;
       }
+
+      .logoutButtonContainer {
+        padding-top: 5px;
+      }
     }
   }
 
   .accountInfoContainer:hover{
     background-color: rgba(10, 28, 61, 1.000);
 
-    .holdings {
-      width: 200px;
+    .wallet {
+      width: 270px;
       opacity: 1;
       box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
     }
@@ -655,3 +656,4 @@ body {
     }
   }
 }
+

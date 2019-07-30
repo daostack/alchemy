@@ -101,29 +101,38 @@ class Header extends React.Component<IProps, null> {
               { currentAccountAddress ?
                 <div className={css.accountInfoContainer}>
                   <div className={css.accountImage}>
-                    <Link className={css.profileLink}
-                      to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                    <div className={css.profileLink}>
+                      <AccountProfileName accountAddress={currentAccountAddress}
+                        accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                       <AccountImage accountAddress={currentAccountAddress} />
-                    </Link>
+                    </div>
                   </div>
-                  <div className={css.holdings}>
+                  <div className={css.wallet}>
                     <div className={css.pointer}></div>
                     <div className={css.walletDetails}>
+                      <div className={css.walletImage}>
+                        <AccountImage accountAddress={currentAccountAddress} />
+                      </div>
                       <div className={css.profileName}>
                         <AccountProfileName accountAddress={currentAccountAddress}
                           accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                       </div>
-                      <div className={css.holdingsLabel}>Your wallet</div>
                       <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
                         <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
-                        <img src="/assets/images/Icon/Copy-white.svg"/>
-                        <div className={css.fade}></div>
+                        <img src="/assets/images/Icon/Copy-blue.svg"/>
+                      </div>
+                      <div className={css.fullProfile}>
+                        <Link className={css.profileLink} to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                        Full Profile
+                        </Link>
                       </div>
                     </div>
                     <AccountBalances dao={dao} address={currentAccountAddress} />
-                    { accountIsEnabled ?
-                      <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
-                      <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> }
+                    <div className={css.logoutButtonContainer}>
+                      { accountIsEnabled ?
+                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
+                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> }
+                    </div>
                   </div>
                 </div> : ""
               }
