@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+   import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn } from "arc";
 
@@ -175,7 +175,7 @@ class ActionButton extends React.Component<IProps, IState> {
                   <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposalState} rewards={rewardsForCurrentUser} />
                   : ""
               */}
-                    <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
+                    <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip} overlayClassName={css.redeemTooltip}>
                       <button
                         style={{ whiteSpace: "nowrap" }}
                         disabled={false}
