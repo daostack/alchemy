@@ -216,11 +216,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   let arc: Arc;
   try {
     arc = new Arc(arcSettings);
-    const contractInfos = await arc.getContractInfos();
-    await arc.setContractInfos(contractInfos);
-    // TODO: when available use:
-    //success = await arc.initialize();
-    success = true;
+    const contractInfos = await arc.fetchContractInfos();
+    success = !!contractInfos;
   } catch (ex) {
     console.log(ex.message);
   }
