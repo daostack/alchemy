@@ -1,6 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 
-import { Address, IDAOState, IProposalOutcome, IProposalState, IVote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/client";
 import { getArc } from "arc";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -10,8 +10,7 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import * as React from "react";
 //@ts-ignore
 import { Modal } from "react-router-modal";
-import { combineLatest, from } from "rxjs";
-import { concatMap } from "rxjs/operators";
+import { combineLatest } from "rxjs";
 import VoteGraph from "./VoteGraph";
 
 import * as css from "./VotersModal.scss";
@@ -21,32 +20,31 @@ interface IProps {
   currentAccountAddress: Address;
   dao: IDAOState;
   proposalState: IProposalState;
-  isVotingNo?: boolean;
-  isVotingYes?: boolean;
-  votes: IVote[];
+  votes: Vote[];
 }
 
 interface IVoteRowProps {
   dao: IDAOState;
   proposalState: IProposalState;
-  vote: IVote;
+  vote: Vote;
 }
+
 class VoteRow extends React.Component<IVoteRowProps, null> {
 
   public render() {
     const {dao, proposalState, vote} = this.props;
-
+    const voteState = vote.staticState;
     return (
       <div className={css.voteRow}>
         <div className={css.voteRowContainer}>
           <div className={css.account}>
-            <AccountImage accountAddress={vote.voter} />
+            <AccountImage accountAddress={voteState.voter} />
             <span className={css.accountAddress}>
-              <AccountProfileName accountAddress={vote.voter} accountProfile={null} daoAvatarAddress={dao.address} />
+              <AccountProfileName accountAddress={voteState.voter} accountProfile={null} daoAvatarAddress={dao.address} />
             </span>
           </div>
           <div className={css.reputationAmount}>
-            <Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={vote.amount} hideSymbol />
+            <Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={voteState.amount} hideSymbol />
           </div>
           <div className={css.reputationLine}></div>
         </div>
@@ -66,8 +64,8 @@ class VotersModal extends React.Component<IProps, null> {
 
     const currentAccountVote = votes[0];
 
-    const yesVotes = votes.filter((vote) => vote.outcome === IProposalOutcome.Pass);
-    const noVotes = votes.filter((vote) => vote.outcome === IProposalOutcome.Fail);
+    const yesVotes = votes.filter((vote) => vote.staticState.outcome === IProposalOutcome.Pass);
+    const noVotes = votes.filter((vote) => vote.staticState.outcome === IProposalOutcome.Fail);
 
     const modalWindowClass = classNames({
       [css.modalWindow]: true,
@@ -76,13 +74,13 @@ class VotersModal extends React.Component<IProps, null> {
     const voteUpClass = classNames({
       [css.voteBreakdown]: true,
       [css.voteUp]: true,
-      [css.votedFor]: currentAccountVote.outcome === IProposalOutcome.Pass,
+      [css.votedFor]: currentAccountVote.staticState.outcome === IProposalOutcome.Pass,
     });
 
     const voteDownClass = classNames({
       [css.voteBreakdown]: true,
       [css.voteDown]: true,
-      [css.votedAgainst]: currentAccountVote.outcome === IProposalOutcome.Fail,
+      [css.votedAgainst]: currentAccountVote.staticState.outcome === IProposalOutcome.Fail,
     });
 
     return (
@@ -149,13 +147,14 @@ export default (props: IExternalProps) => {
 
   const dao = arc.dao(props.dao.address);
   const proposalId = props.proposal.id;
+  const proposal = dao.proposal(proposalId);
 
-  const observable = from(dao.proposal(proposalId)).pipe(concatMap((proposal: Proposal) => combineLatest(
+  const observable = combineLatest(
     proposal.state(), // state of the current proposal
     proposal.votes()
-  )));
+  );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IVote[]]>): any => {
+    (state: IObservableState<[IProposalState, Vote[]]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal {proposalId.substr(0, 6)} ...</div>;
       } else if (state.error) {

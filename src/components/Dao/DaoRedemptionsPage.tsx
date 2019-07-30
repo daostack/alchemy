@@ -27,7 +27,7 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
 
     const arc = getArc();
     const proposalsHTML = proposals.map((proposalData: any) => {
-      const proposal = new Proposal(proposalData.id, dao.address, proposalData.scheme.address, proposalData.votingMachine, arc);
+      const proposal = new Proposal(proposalData.id, arc);
 
       return <ProposalCard
         key={"proposal_" + proposal.id}

@@ -7,7 +7,6 @@ import { Provider } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
-import { persistStore } from "redux-persist";
 import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
 
@@ -25,8 +24,6 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
     initializeArc()
       .then(async () => {
         this.setState({ arcIsInitialized: true });
-        persistStore(store);
-
       })
       .catch ((err) => {
         console.log(err);

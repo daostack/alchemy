@@ -308,7 +308,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, _i) => {
-                          return <option key={`edit_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
+                          return <option key={`edit_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
                         })}
                       </Field>
                     </div>
@@ -376,7 +376,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                       >
                         <option value="">Select a scheme...</option>
                         {schemes.map((scheme, _i) => {
-                          return <option key={`remove_scheme_${scheme.address}`} value={scheme.address}>{schemeNameAndAddress(scheme.address)}</option>;
+                          return <option key={`remove_scheme_${scheme.staticState.address}`} value={scheme.staticState.address}>{schemeNameAndAddress(scheme.staticState.address)}</option>;
                         })}
                       </Field>
                     </div>

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWeb3ProviderAndWarn } from "arc";
 
@@ -112,7 +112,9 @@ class ActionButton extends React.Component<IProps, IState> {
       beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
     }
 
-    const redeemable = proposalState.executedAt && (accountHasGPRewards || beneficiaryHasRewards);
+    const redeemable = proposalState.executedAt
+                       && (accountHasGPRewards
+                           || (proposalState.winningOutcome === IProposalOutcome.Pass && beneficiaryHasRewards));
 
     const redemptionsTip = RedemptionsTip({
       beneficiaryHasRewards,

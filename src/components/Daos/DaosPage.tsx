@@ -17,7 +17,7 @@ class DaosPage extends React.Component<IProps, null> {
     const { daos } = this.props;
     const daoNodes = daos.map((dao: DAO) => {
       return (
-        <DaoCard key={dao.address}  dao={dao}/>
+        <DaoCard key={dao.id}  dao={dao}/>
       );
     });
     return (
@@ -37,7 +37,7 @@ class DaosPage extends React.Component<IProps, null> {
 
 export default () => {
   const arc = getArc();
-  const observable = arc.daos({ orderBy: "reputationHoldersCount", orderDirection: "desc"});
+  const observable = arc.daos({ where: { register: "registered" }, orderBy: "reputationHoldersCount", orderDirection: "desc"});
   return <Subscribe observable={observable}>{(state: IObservableState<DAO[]>) => {
     if (state.isLoading) {
       return (

@@ -31,15 +31,23 @@ services:
       context: ./docker/alchemy-server
     links:
       - postgres
+      - redis
     ports:
       - 3001:3001
     working_dir: /alchemy-server/
     environment:
       WAIT_HOSTS: postgres:5432
+      REDIS_URL: redis://cache
 
   postgres:
     build:
       context: ./docker/postgres/
+
+  redis:
+    image: redis
+    container_name: cache
+    expose:
+      - 6379
 
   graph-node:
     image: 'graphprotocol/graph-node:v0.12.0'

@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IVote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, Vote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
@@ -13,11 +13,10 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
-import { closingTime, VoteOptions } from "reducers/arcReducer";
-import { proposalEnded, proposalFailed, proposalPassed } from "reducers/arcReducer";
+import { closingTime } from "reducers/arcReducer";
+import { proposalEnded } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
-import { isVotePending } from "selectors/operations";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -32,8 +31,6 @@ import * as css from "./ProposalCard.scss";
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
-  isVotingYes: boolean;
-  isVotingNo: boolean;
 }
 
 interface IContainerProps {
@@ -41,7 +38,7 @@ interface IContainerProps {
   currentAccountAddress: Address;
   daoEthBalance: BN;
   proposalState: IProposalState;
-  votesOfCurrentUser: IVote[];
+  votesOfCurrentUser: Vote[];
 }
 
 type IProps = IStateProps & IContainerProps;
@@ -53,8 +50,6 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
     ...ownProps,
     beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
     creatorProfile: state.profiles[proposalState.proposer],
-    isVotingYes: isVotePending(proposalState.id, VoteOptions.Yes)(state),
-    isVotingNo: isVotePending(proposalState.id, VoteOptions.No)(state),
   };
 };
 
@@ -83,33 +78,26 @@ class ProposalCard extends React.Component<IProps, IState> {
       dao,
       daoEthBalance,
       proposalState,
-      isVotingNo,
-      isVotingYes,
       votesOfCurrentUser,
     } = this.props;
 
     const expired = this.state.expired;
 
-    const isVoting = isVotingNo || isVotingYes;
-
     let currentAccountVote = 0;
 
-    let currentVote: IVote;
+    let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
       currentVote = votesOfCurrentUser[0];
-      currentAccountVote = currentVote.outcome;
+      currentAccountVote = currentVote.staticState.outcome;
     }
 
     const proposalClass = classNames({
       [css.proposal]: true,
-      [css.failedProposal]: proposalFailed(proposalState),
-      [css.passedProposal]: proposalPassed(proposalState),
     });
 
     const voteWrapperClass = classNames({
       [css.voteBox]: true,
       clearfix: true,
-      [css.unconfirmedVote]: isVoting,
     });
 
     const voteControls = classNames({
@@ -155,8 +143,6 @@ class ProposalCard extends React.Component<IProps, IState> {
                     currentVote={currentAccountVote}
                     dao={dao}
                     expired={expired}
-                    isVotingNo={isVotingNo}
-                    isVotingYes={isVotingYes}
                     proposal={proposalState}
                     contextMenu/>
                   <StakeButtons
@@ -196,11 +182,11 @@ class ProposalCard extends React.Component<IProps, IState> {
                 <VoteGraph size={40} proposal={proposalState} />
               </div>
 
-              <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposalState} detailView={false} />
+              <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposalState} detailView={false} />
             </div>
 
             <div className={css.voteButtons}>
-              <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} isVotingNo={isVotingNo} isVotingYes={isVotingYes} proposal={proposalState} />
+              <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} proposal={proposalState} />
             </div>
           </div>
 
@@ -246,7 +232,7 @@ export default (props: IExternalProps) => {
     concat(of(new BN("0")), dao.ethBalance())
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, IVote[], BN]>): any => {
+    (state: IObservableState<[IProposalState, Vote[], BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
       } else if (state.error) {

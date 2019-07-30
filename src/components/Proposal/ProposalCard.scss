@@ -103,21 +103,11 @@
   overflow: visible;
 }
 
-.failedProposal .proposalInfo, .passedProposal .proposalInfo {
-  left: 60px;
-}
-
 .voteBox {
   position: relative;
   float: left;
   border-right: 1px solid rgba(215, 225, 237, 1.000);
   width: 49%;
-}
-
-.voteBox.unconfirmedVote {
-  .loading {
-    display: block;
-  }
 }
 
 .voteButtons {
@@ -257,4 +247,16 @@
     width: 100%;
   }
 
+  .cardTop .contextMenu {
+    z-index: 1000;
+
+    &:hover .menu {
+      left: auto;
+      right: 24px;
+    }
+
+    .menu {
+      border-radius: 8px 0 8px 8px;
+    }
+  }
 }
