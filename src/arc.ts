@@ -15,6 +15,9 @@ const Web3 = require("web3");
 let selectedProvider: any;
 
 const web3ConnectProviderOptions =
+    Object.assign({
+      disableWalletConnect: true,
+    },
     (process.env.NODE_ENV === "production") ?
       {
         portis: {
@@ -34,7 +37,7 @@ const web3ConnectProviderOptions =
         fortmatic: {
           key: "pk_test_659B5B486EF199E4",
         },
-      };
+      });
 
 const settings = {
   dev: {
