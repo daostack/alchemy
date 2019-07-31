@@ -2,8 +2,8 @@ import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 
-import Web3Connect from "web3connect";
-import { IProviderInfo } from "web3connect/lib/helpers/types";
+import Web3Connect from "@daostack/web3connect";
+import { IProviderInfo } from "@daostack/web3connect/lib/helpers/types";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
 
 const Web3 = require("web3");
