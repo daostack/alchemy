@@ -95,7 +95,7 @@ class AppContainer extends React.Component<IProps, IState> {
     let currentAddress = await getCurrentAccountAddress() || null;
     let accountWasCached = false;
     if (currentAddress)  {
-      console.log(`****************************** using account from existing web3Provider: ${currentAddress}`);
+      console.log(`using account from existing web3Provider: ${currentAddress}`);
       this.cacheWeb3Info(currentAddress);
     } else {
       /**
@@ -107,7 +107,7 @@ class AppContainer extends React.Component<IProps, IState> {
       currentAddress = this.getCachedAccount();
       if (currentAddress) {
         accountWasCached = true;
-        console.log(`****************************** using account from local storage: ${currentAddress}`);
+        console.log(`using account from local storage: ${currentAddress}`);
       }
     }
 
@@ -119,7 +119,7 @@ class AppContainer extends React.Component<IProps, IState> {
      */
     pollForAccountChanges(accountWasCached ? null : currentAddress).subscribe(
       (newAddress: Address | null): void => {
-        console.log(`****************************** new account: ${newAddress}`);
+        console.log(`new account: ${newAddress}`);
         this.props.setCurrentAccount(newAddress);
         if (newAddress) {
           this.cacheWeb3Info(newAddress);
@@ -137,10 +137,10 @@ class AppContainer extends React.Component<IProps, IState> {
        * we'll pick up below.
        */
       if (await setWeb3Provider(web3ProviderInfo)) {
-        console.log("****************************** using cached web3Provider");
+        console.log("using cached web3Provider");
         return true;
       } else {
-        console.log("****************************** failed to instantiate cached web3Provider");
+        console.log("failed to instantiate cached web3Provider");
         this.uncacheWeb3Info();
       }
     }

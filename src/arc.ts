@@ -202,18 +202,6 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     console.log(err);
   }
 
-  // log some useful info
-  // console.log(`Found NODE_ENV "${process.env.NODE_ENV}", using the following settings for Arc`);
-  // console.log(arcSettings);
-  // console.log(`alchemy-server (process.env.API_URL): ${process.env.API_URL}`);
-  // if (arcSettings.web3Provider.isSafe) {
-  //   console.log("Using Gnosis Safe");
-  // } else if (arcSettings.web3Provider.isMetaMask) {
-  //   console.log("Using MetaMask");
-  // } else {
-  //   console.log("Using default Web3 (read-only) provider");
-  // }
-
   console.log(`Using provider ${arcSettings.web3Provider.name}`);
 
   // get contract information from the subgraph
@@ -257,8 +245,6 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
       return true;
     }
 
-    console.log("****************************** instantiating web3Connect");
-
     const web3Connect = new Web3Connect.Core({
       modal: false,
       providerOptions: web3ConnectProviderOptions,
@@ -272,7 +258,6 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
         resolveOnClosePromise = resolve;
         rejectOnClosePromise = reject;
         web3Connect.on("close", (): any => {
-          console.log("web3Connect closed");
           return resolve();
         });
       });
@@ -291,8 +276,6 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
       return resolveOnClosePromise();
     });
 
-    console.log("****************************** fire up modal");
-
     try {
       web3Connect.toggleModal();
 
@@ -303,55 +286,40 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     }
 
     if (!provider) {
-      console.log("****************************** error or user cancelled out");
+      console.log("error or user cancelled out");
       return false;
     }
   }
-
-  console.log("****************************** provider:");
-  console.dir(provider);
 
   /**
    * now ensure that the user has logged in and enabled access to the account,
    * whatever the provider requires....
    */
   try {
-    console.log("****************************** calling enable");
     // brings up the provider UI as needed
     await provider.enable();
   } catch (ex) {
-    console.log(`****************************** unable to enable provider: ${ex.message}`);
+    console.log(`unable to enable provider: ${ex.message}`);
     throw ex;
   }
 
-  console.log("****************************** enabled");
-
-  // console.log(`****************************** got web3: ${web3}`);
-
-  // getArc().web3 = web3;
-
-  // console.log(`****************************** default account: ${await getCurrentAccountAddress()}`);
-
-  console.log("****************************** initializeArc");
   let success = false;
   try {
     success = await initializeArc(provider);
-    // const networkName = await getNetworkName();
-    // console.log(`****************************** initialized Arc against ${networkName}`);
   } catch (ex) {
-    console.log(`****************************** unable to initialize Arc: ${ex.message}`);
+    console.log(`unable to initialize Arc: ${ex.message}`);
     throw ex;
   }
 
   if (!_getCurrentLockedAccount()) {
     // then something went wrong
-    console.log("****************************** unable to lock an account");
+    console.log("unable to lock an account");
     throw new Error("unable to lock an account");
   }
 
   if (success) {
     selectedProvider = provider;
-    console.log("****************************** enabled provider, account locked");
+    console.log("enabled provider, account locked");
   }
 
   return success;
@@ -414,7 +382,7 @@ export async function gotoReadonly(): Promise<boolean> {
 export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<boolean> {
   let provider: any;
 
-  console.log(`****************************** connecting to: ${web3ProviderInfo.name}`);
+  console.log(`connecting to: ${web3ProviderInfo.name}`);
 
   try {
     switch (web3ProviderInfo.type) {
@@ -443,13 +411,13 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
         break;
     }
   } catch (ex) {
-    console.log(`****************************** unable to instantiate provider: ${ex.message}`);
+    console.log(`unable to instantiate provider: ${ex.message}`);
   }
   /**
    * make sure the injected provider is the one we're looking for
    */
   if (provider && !provider[web3ProviderInfo.check]) {
-    console.log(`****************************** instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
+    console.log(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
     provider = null;
   }
   return provider ? enableWeb3Provider(provider) : Promise.resolve(false);
@@ -478,7 +446,7 @@ export function getWeb3ProviderInfo(): IWeb3ProviderInfo {
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
 export function pollForAccountChanges(currentAccountAddress: Address | null, interval: number = 2000): Observable<Address> {
-  console.log(`****************************** start polling for account changes from: ${currentAccountAddress}`);
+  console.log(`start polling for account changes from: ${currentAccountAddress}`);
   return Observable.create((observer: any): () => void  => {
     let prevAccount = currentAccountAddress;
     function emitIfNewAccount(): void {
