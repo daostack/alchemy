@@ -192,9 +192,11 @@ async function checkWeb3Provider(provider?: any): Promise<any> {
  */
 export async function initializeArc(provider?: any): Promise<boolean> {
   const arcSettings = getArcSettings();
+  let correctNetwork = false;
 
   try {
     arcSettings.web3Provider = await checkWeb3Provider(provider);
+    correctNetwork = true;
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
     console.log(err);
@@ -225,7 +227,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     console.log(ex.message);
   }
   (window as any).arc = success ? arc : null;
-  return success;
+  return success && correctNetwork;
 }
 
 /**

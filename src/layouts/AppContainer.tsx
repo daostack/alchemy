@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getCurrentAccountAddress, getWeb3ProviderInfo, IWeb3ProviderInfo, pollForAccountChanges, setWeb3Provider } from "arc";
+import { getCurrentAccountAddress, getWeb3ProviderInfo, pollForAccountChanges } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -81,20 +81,20 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount(): Promise<void> {
-    const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
-    if (web3ProviderInfo) {
-      /**
-       * If successful, this will result in setting the current account which
-       * we'll pick up below.
-       */
-      if (await setWeb3Provider(web3ProviderInfo)) {
-        console.log("****************************** using cached web3Provider");
-      } else {
-        console.log("****************************** failed to instantiate cached web3Provider");
-        this.uncacheWeb3Info();
-      }
-      console.dir(web3ProviderInfo);
-    }
+    // const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
+    // if (web3ProviderInfo) {
+    //   /**
+    //    * If successful, this will result in setting the current account which
+    //    * we'll pick up below.
+    //    */
+    //   if (await setWeb3Provider(web3ProviderInfo)) {
+    //     console.log("****************************** using cached web3Provider");
+    //   } else {
+    //     console.log("****************************** failed to instantiate cached web3Provider");
+    //     this.uncacheWeb3Info();
+    //   }
+    //   console.dir(web3ProviderInfo);
+    // }
     /**
      * getCurrentAccountAddress is checking the provider state.
      * It will always return null on a clean browser refresh since
@@ -248,10 +248,10 @@ class AppContainer extends React.Component<IProps, IState> {
     return localStorage.getItem(AppContainer.accountStorageKey);
   }
 
-  private getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
-    const cached = localStorage.getItem(AppContainer.providerStorageKey);
-    return cached ? JSON.parse(cached) : null;
-  }
+  // private getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
+  //   const cached = localStorage.getItem(AppContainer.providerStorageKey);
+  //   return cached ? JSON.parse(cached) : null;
+  // }
 
   private handleAccept(): void {
     localStorage.setItem(AppContainer.hasAcceptedCookiesKey, "1");
