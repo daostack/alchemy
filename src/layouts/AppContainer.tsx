@@ -138,9 +138,6 @@ class AppContainer extends React.Component<IProps, IState> {
         } else {
           this.uncacheWeb3Info();
         }
-        // TODO: we reload on setting a new account,
-        // but it would be more elegant if we did not need to
-        window.location.reload();
       });
   }
 

@@ -344,9 +344,15 @@ button:hover {
     li.daoStack {
       padding-top: 10px;
 
+      a {
+        color: white;
+        font-family: "AccordBold";
+        font-size: 13px;
+      }
+
       img {
         margin-top: -3px;
-        top: 4px;
+        top: 5px;
         position: relative;
       }
     }
@@ -387,6 +393,7 @@ button:hover {
   p {
     padding: 0;
     margin: 0;
+    font-size: 13px;
   }
 
   a {
