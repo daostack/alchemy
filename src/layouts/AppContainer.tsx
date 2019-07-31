@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { checkWeb3Provider, getCurrentAccountAddress, pollForAccountChanges } from "arc";
+import { checkWeb3Provider, getCurrentAccountAddress, pollForAccountChanges, initializeArc } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -107,9 +107,10 @@ class AppContainer extends React.Component<IProps, IState> {
       pollForAccountChanges(currentAddress).subscribe(
         (newAddress: Address) => {
           if (newAddress && checkWeb3Provider()) {
-            console.log(`new address: ${newAddress}`);
             this.props.setCurrentAccount(newAddress);
             localStorage.setItem(storageKey, newAddress);
+
+            initializeArc();
           }
         });
     }
