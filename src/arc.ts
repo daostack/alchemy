@@ -142,10 +142,10 @@ export function getWeb3Provider(): any | undefined {
  * Checks if the web3 provider is set to the required network.
  * Does not ensure we have access to the user's account.
  * throws an Error if no provider or wrong provider
- * @param provider Optional web3Provider
- * @return the web3 provider if is OK
+ * @param provider web3Provider
+ * @return the expected network nameif not correct
  */
-async function checkWeb3Provider(provider?: any): Promise<any> {
+async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
   let expectedNetworkName;
   switch (process.env.NODE_ENV) {
     case "development": {
@@ -161,27 +161,15 @@ async function checkWeb3Provider(provider?: any): Promise<any> {
       break;
     }
     default: {
-      throw new Error(`Unknown NODE_ENV: ${process.env.NODE_ENV}`);
+      const msg = `Unknown NODE_ENV: ${process.env.NODE_ENV}`;
+      console.log(msg);
+      throw new Error(msg);
     }
   }
 
-  const web3Provider = provider ? provider : getWeb3Provider();
-
-  if (!web3Provider) {
-    const msg = "Please install or enable a wallet provider";
-    throw Error(msg);
-  }
-
-  const networkId = await getNetworkId(web3Provider);
+  const networkId = await getNetworkId(provider);
   const networkName = await getNetworkName(networkId);
-  if (networkName === expectedNetworkName) {
-    // save for future reference
-    web3Provider.__networkId = networkId;
-    return web3Provider;
-  } else {
-    const msg = `Please connect to "${expectedNetworkName}"`;
-    throw new Error(msg);
-  }
+  return (networkName === expectedNetworkName) ?  null : expectedNetworkName;
 }
 
 /**
@@ -190,17 +178,14 @@ async function checkWeb3Provider(provider?: any): Promise<any> {
  */
 export async function initializeArc(provider?: any): Promise<boolean> {
   const arcSettings = getArcSettings();
-  let correctNetwork = false;
 
-  try {
-    arcSettings.web3Provider = await checkWeb3Provider(provider);
-    correctNetwork = true;
-  } catch (err) {
-    // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
-    console.log(err);
+  if (provider) {
+    arcSettings.web3Provider = provider;
+  } else {
+    provider = arcSettings.web3Provider;
   }
 
-  console.log(`Using provider ${arcSettings.web3Provider.name}`);
+  const readonly = typeof provider === "string";
 
   // get contract information from the subgraph
   let success = false;
@@ -212,8 +197,16 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   } catch (ex) {
     console.log(ex.message);
   }
+
+  if (success) {
+    console.log(`Connected Arc to ${readonly ? provider : await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
+    provider = arc.web3.currentProvider; // won't be a string, but the actual provider
+    // save for future reference
+    provider.__networkId = await getNetworkId(provider);
+  }
+
   (window as any).arc = success ? arc : null;
-  return success && correctNetwork;
+  return success;
 }
 
 /**
@@ -290,29 +283,42 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
   }
 
   /**
-   * now ensure that the user has logged in and enabled access to the account,
-   * whatever the provider requires....
+   * note the thrown exceptions will be reported as notifications to the user
    */
-  try {
-    // brings up the provider UI as needed
-    await provider.enable();
-  } catch (ex) {
-    console.log(`unable to enable provider: ${ex.message}`);
-    throw ex;
+  const correctNetwork = await checkWeb3ProviderIsForNetwork(provider);
+
+  if (correctNetwork) {
+    provider = null;
+    console.log(`connected to the wrong provider, should be ${correctNetwork}`);
+    throw new Error(`Please connect to "${correctNetwork}"`);
+  } else {
+    /**
+     * now ensure that the user has logged in and enabled access to the account,
+     * whatever the provider requires....
+     */
+    try {
+      // brings up the provider UI as needed
+      await provider.enable();
+    } catch (ex) {
+      console.log(`Unable to enable provider: ${ex.message}`);
+      throw new Error("Unable to enable provider");
+    }
   }
 
   let success = false;
-  try {
-    success = await initializeArc(provider);
-  } catch (ex) {
-    console.log(`unable to initialize Arc: ${ex.message}`);
-    throw ex;
-  }
-
-  if (!_getCurrentAccountFromProvider()) {
-    // then something went wrong
-    console.log("unable to obtain an account from the provider");
-    throw new Error("unable to obtain an account from the provider");
+  
+  if (provider !== selectedProvider) {
+    try {
+      success = await initializeArc(provider);
+      if (!_getCurrentAccountFromProvider()) {
+        // then something went wrong
+        console.log("Unable to obtain an account from the provider");
+        throw new Error("Unable to obtain an account from the provider");
+      }
+    } catch (ex) {
+      console.log(`Unable to initialize Arc: ${ex.message}`);
+      throw new Error("Unable to initialize Arc");
+    }
   }
 
   if (success) {
@@ -330,24 +336,32 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
  * @return boolean whether Arc is successfully initialized.
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
+  let success = false;
   try {
-    return await enableWeb3Provider();
-  } catch (err) {
-    const msg =  err.message;
+    success = await enableWeb3Provider();
+    if (success && showNotification) {
+      showNotification(NotificationStatus.Success, `Logged in to ${await getNetworkName()}`);
+    }
+  } catch(err) {
+    console.log(err);
+  }
+
+  if (!success) {
+    const msg = "Unable to log in to the web3 provider";
     if (showNotification) {
       showNotification(NotificationStatus.Failure, msg);
     } else {
       alert(msg);
     }
   }
-  return false;
+  return success;
 }
 
 /**
  * @return the current account address from Arc. Ignores any injected
  * account unless Arc knows about the provider.
  */
-export async function getCurrentAccountFromProvider(): Promise<Address | null> {
+async function getCurrentAccountFromProvider(): Promise<Address | null> {
   if (!selectedProvider) {
     /**
      * though an account may actually be available via injection, we're not going
@@ -362,10 +376,30 @@ export async function getCurrentAccountFromProvider(): Promise<Address | null> {
 /**
  * switch to readonly mode (effectively a logout)
  */
-export async function gotoReadonly(): Promise<boolean> {
+export async function gotoReadonly(showNotification?: any): Promise<boolean> {
   // clearing this, initializeArc will be made to use the default web3Provider
+  const networkName = await getNetworkName();
   selectedProvider = undefined;
-  return initializeArc();
+  let success = false;
+  try {
+    success = await initializeArc();
+    if (success && showNotification) {
+      showNotification(NotificationStatus.Success, `Logged out from ${networkName}`);
+    }
+  } catch(err) {
+    console.log(err);
+  }
+
+  if (!success) {
+    const msg =  `Unable to log out from : ${networkName}`;
+    if (showNotification) {
+      showNotification(NotificationStatus.Failure, msg);
+    } else {
+      alert(msg);
+    }
+  }
+
+  return success;
 }
 
 /**
@@ -376,10 +410,14 @@ export async function gotoReadonly(): Promise<boolean> {
  * @param web3ProviderInfo required IWeb3ProviderInfo
  * @returns whether Arc has been successfully initialized.
  */
-export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<boolean> {
+export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo, showNotification?: any): Promise<boolean> {
   let provider: any;
 
-  console.log(`connecting to: ${web3ProviderInfo.name}`);
+  console.log(`connecting to provider: ${web3ProviderInfo.name}`);
+
+  /**
+   * note the thrown exceptions will be reported as notifications to the user
+   */
 
   try {
     switch (web3ProviderInfo.type) {
@@ -408,16 +446,38 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
         break;
     }
   } catch (ex) {
-    console.log(`unable to instantiate provider: ${ex.message}`);
+    console.log(`Unable to instantiate provider: ${ex.message}`);
+    throw new Error("Unable to instantiate provider");
   }
   /**
    * make sure the injected provider is the one we're looking for
    */
   if (provider && !provider[web3ProviderInfo.check]) {
     console.log(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
-    provider = null;
+    throw new Error("Unable to instantiate provider");
   }
-  return provider ? enableWeb3Provider(provider) : Promise.resolve(false);
+
+  let success = false;
+  
+  try {
+    success = provider ? await enableWeb3Provider(provider) : false;
+
+    if (success && showNotification) {
+      showNotification(NotificationStatus.Success, `Logged in to ${web3ProviderInfo.name}`);
+    }
+  } catch(err) {
+    console.log(err);
+  }
+
+  if (!success) {
+    const msg =  `Unable to log in to: ${web3ProviderInfo.name}`;
+    if (showNotification) {
+      showNotification(NotificationStatus.Failure, msg);
+    } else {
+      alert(msg);
+    }
+  }
+  return success;
 }
 
 /**

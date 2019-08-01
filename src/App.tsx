@@ -20,7 +20,8 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
 
   public async componentWillMount(): Promise<void> {
     // Do this here because we need to have initialized Arc first.  This will
-    // create a provider with no locked account (ie, we'll be readonly).
+    // not create a provider for the app, rather will just initialize Arc with a
+    // readonly provider with no account, internal only to it.
     initializeArc()
       .then((): void => {
         this.setState({ arcIsInitialized: true });

@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getCurrentAccountFromProvider, getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3Provider } from "arc";
+import { getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3ProviderAndWarn } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -73,7 +73,7 @@ class AppContainer extends React.Component<IProps, IState> {
   public componentDidCatch(error: Error, errorInfo: any): void {
     this.setState({ error });
 
-    if (process.env.NODE_ENV === "PRODUCTION") {
+    if (process.env.NODE_ENV === "production") {
       Sentry.withScope((scope): void => {
         scope.setExtras(errorInfo);
         const sentryEventId = Sentry.captureException(error);
@@ -84,31 +84,15 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public async componentWillMount(): Promise<void> {
     /**
-     * getCurrentAccountAddress is checking the provider state.
-     * It will always return null on a clean browser refresh since
-     * in that case we will not at this point yet have a provider.
-     * But if we ever happen to get here via an internal app refresh, then
-     * we may have a provider and could potentially get a non-null account.
-     * Addendum:  If we have a cached web3ProviderInfo and were able to use it
-     * then we should also find ourselves with a currentAddress.
+     * Heads up that there is a chance this cached account may differ from an account
+     * that the user has already selected in a provider but have
+     * not yet made available to the app.
      */
-    let currentAddress = await getCurrentAccountFromProvider() || null;
+    const currentAddress = this.getCachedAccount();
     let accountWasCached = false;
-    if (currentAddress)  {
-      console.log(`using account from existing web3Provider: ${currentAddress}`);
-      this.cacheWeb3Info(currentAddress);
-    } else {
-      /**
-       * Heads up that there is a chance this cached account may differ from an account
-       * that the user has already selected in a provider but have
-       * not yet made available to the app (if the account were available we'd have caught it
-       * with getCurrentAccountAddress).
-       */
-      currentAddress = this.getCachedAccount();
-      if (currentAddress) {
-        accountWasCached = true;
-        console.log(`using account from local storage: ${currentAddress}`);
-      }
+    if (currentAddress) {
+      accountWasCached = true;
+      console.log(`using account from local storage: ${currentAddress}`);
     }
 
     this.props.setCurrentAccount(currentAddress);
@@ -129,20 +113,26 @@ class AppContainer extends React.Component<IProps, IState> {
       });
   }
 
-  private async loadCachedWeb3Provider(): Promise<boolean> {
+  private async loadCachedWeb3Provider(showNotification: any): Promise<boolean> {
     const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
     if (web3ProviderInfo) {
+      let success = false;
       /**
        * If successful, this will result in setting the current account which
        * we'll pick up below.
        */
-      if (await setWeb3Provider(web3ProviderInfo)) {
-        console.log("using cached web3Provider");
-        return true;
-      } else {
+      try {
+        if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification)) {
+          console.log("using cached web3Provider");
+          success = true;
+        }
+      // eslint-disable-next-line no-empty
+      } catch(ex) { }
+      if (!success) {
         console.log("failed to instantiate cached web3Provider");
         this.uncacheWeb3Info();
       }
+      return success;
     }
     return false;
   }

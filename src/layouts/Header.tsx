@@ -22,7 +22,7 @@ interface IStateProps {
   dao: IDAOState;
   currentAccountAddress: string | null;
   networkId: number;
-  loadCachedWeb3Provider: () => Promise<boolean>;
+  loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): any => {
@@ -66,13 +66,13 @@ class Header extends React.Component<IProps, null> {
   }
 
   public handleClickLogin = async (): Promise<void> => {
-    if (!await this.props.loadCachedWeb3Provider()) {
-      enableWeb3ProviderAndWarn(this.props.showNotification);
+    if (!await this.props.loadCachedWeb3Provider(this.props.showNotification)) {
+      await enableWeb3ProviderAndWarn(this.props.showNotification);
     }
   }
 
-  public handleClickLogout = (): void => {
-    gotoReadonly();
+  public handleClickLogout = async (): Promise<void> => {
+    await gotoReadonly(this.props.showNotification);
   }
 
   public render(): any {
@@ -159,7 +159,7 @@ class Header extends React.Component<IProps, null> {
 const ConnectedHeader = connect(mapStateToProps, mapDispatchToProps)(Header);
 
 interface IExternalProps extends RouteComponentProps<any> {
-  loadCachedWeb3Provider: () => Promise<boolean>;
+  loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
 }
 
 export default (props: IExternalProps): any => {
