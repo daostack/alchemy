@@ -1,4 +1,4 @@
-import { Address, ISchemeState, Scheme } from "@daostack/client";
+import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
@@ -58,8 +58,17 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   }
 
   public async componentWillMount() {
-    await this.props.scheme.fetchStaticState();
-    this.setState( { redemptionAmount: (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
+    const state = await this.props.scheme.fetchStaticState();
+    // const schemeContract = await this.props.scheme.ReputationFromToken.getContract();
+    const schemeAddress = state.address;
+    const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
+    const tokenContractAddress = await schemeContract.methods.tokenContract().call();
+    console.log(tokenContractAddress);
+    const arc = getArc();
+    const tokenContract = new Token(tokenContractAddress, arc);
+    const balance = await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call();
+    // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
+    this.setState( { redemptionAmount: balance });
   }
 
   public async handleSubmit(values: IFormValues, { _props, _setSubmitting, _setErrors }: any): Promise<void> {
