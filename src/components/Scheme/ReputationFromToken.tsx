@@ -1,8 +1,10 @@
 import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
+
+import BN = require("bn.js");
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeName} from "lib/util";
+import { schemeName, fromWei } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as Sticky from "react-stickynode";
@@ -41,7 +43,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 };
 
 interface IState {
-  redemptionAmount: number;
+  redemptionAmount: BN;
 }
 
 interface IFormValues {
@@ -57,18 +59,26 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     this.state = { redemptionAmount: null };
   }
 
-  public async componentWillMount() {
+  private async _loadReputationBalance() {
     const state = await this.props.scheme.fetchStaticState();
-    // const schemeContract = await this.props.scheme.ReputationFromToken.getContract();
     const schemeAddress = state.address;
     const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
     const tokenContractAddress = await schemeContract.methods.tokenContract().call();
-    console.log(tokenContractAddress);
     const arc = getArc();
     const tokenContract = new Token(tokenContractAddress, arc);
-    const balance = await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call();
+    const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
     // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
-    this.setState( { redemptionAmount: balance });
+    this.setState({ redemptionAmount: balance });
+  }
+
+  public async componentDidMount() {
+    await this._loadReputationBalance();
+  }
+
+  public async componentDidUpdate(prevProps: IProps, prevState: IState) {
+    if (this.props.currentAccountAddress !== prevProps.currentAccountAddress) {
+      await this._loadReputationBalance();
+    }
   }
 
   public async handleSubmit(values: IFormValues, { _props, _setSubmitting, _setErrors }: any): Promise<void> {
@@ -132,7 +142,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             }: FormikProps<IFormValues>) => {
               return <Form noValidate>
                 <div className={schemeCss.fields}>
-                  <h3>{ this.state.redemptionAmount || "..." } Rep to redeem </h3>
+                  <h3>{ this.state.redemptionAmount ? fromWei(this.state.redemptionAmount) : "..." } Rep to redeem </h3>
                   <b>Which account would you like to receive the reputation?</b>
                   <div>
                     <Field
@@ -182,8 +192,8 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   </div>
                 </div>
                 <div className={schemeCss.redemptionButton}>
-                  <button type="submit" disabled={isSubmitting || !this.state.redemptionAmount || this.state.redemptionAmount === 0}>
-                    <img src="/assets/images/Icon/Execute.svg"/> Redeem
+                  <button type="submit" disabled={isSubmitting || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()}>
+                    <img src="/assets/images/Icon/Redeem.svg"/> Redeem
                   </button>
                 </div>
               </Form>;
