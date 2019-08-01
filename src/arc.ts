@@ -108,9 +108,9 @@ function getWeb3(): any {
 }
 
 /**
- * Return the default account, locked, in current use by Arc.
+ * Return the default account in current use by Arc.
  */
-async function _getCurrentLockedAccount(): Promise<string> {
+async function _getCurrentAccountFromProvider(): Promise<string> {
   const web3 = getWeb3();
   if (!web3) {
     return null;
@@ -132,8 +132,7 @@ export function getArc(): Arc {
 }
 
 /**
- * Return currently-selected and fully-enabled web3Provider (a
- * locked account can be presumed to exist).
+ * Return currently-selected and fully-enabled web3Provider (an account can be presumed to exist).
  */
 export function getWeb3Provider(): any | undefined {
   return selectedProvider;
@@ -310,15 +309,15 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     throw ex;
   }
 
-  if (!_getCurrentLockedAccount()) {
+  if (!_getCurrentAccountFromProvider()) {
     // then something went wrong
-    console.log("unable to lock an account");
-    throw new Error("unable to lock an account");
+    console.log("unable to obtain an account from the provider");
+    throw new Error("unable to obtain an account from the provider");
   }
 
   if (success) {
     selectedProvider = provider;
-    console.log("enabled provider, account locked");
+    console.log("enabled provider and account");
   }
 
   return success;
@@ -331,7 +330,6 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
  * @return boolean whether Arc is successfully initialized.
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
-  // if we are in test mode, we'll do without - we should be connected to an unlocked ganache instance
   try {
     return await enableWeb3Provider();
   } catch (err) {
@@ -346,19 +344,19 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise
 }
 
 /**
- * @return the currently-locked account address from Arc. Ignores any injected
+ * @return the current account address from Arc. Ignores any injected
  * account unless Arc knows about the provider.
  */
-export async function getCurrentAccountAddress(): Promise<Address | null> {
+export async function getCurrentAccountFromProvider(): Promise<Address | null> {
   if (!selectedProvider) {
     /**
      * though an account may actually be available via injection, we're not going
      * to return it. The flow needs to start from a selected provider first,
-     * only then a locked account.
+     * only then the current account.
      */
     return null;
   }
-  return _getCurrentLockedAccount();
+  return _getCurrentAccountFromProvider();
 }
 
 /**
@@ -423,11 +421,11 @@ export async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Prom
 }
 
 /**
- * @returns whether an account is enabled in a selected web3Provider
+ * @returns whether we have a current account
  */
 export function getAccountIsEnabled(): boolean {
   /**
-   * proxy for the presence of an account. selectedProvider cannot be set without a locked account.
+   * easy proxy for the presence of an account. selectedProvider cannot be set without an account.
    */
   return !!getWeb3Provider();
 }
@@ -449,7 +447,7 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
   return Observable.create((observer: any): () => void  => {
     let prevAccount = currentAccountAddress;
     function emitIfNewAccount(): void {
-      getCurrentAccountAddress()
+      getCurrentAccountFromProvider()
         .then((account: Address | null): void => {
           if (prevAccount !== account) {
             observer.next(account);

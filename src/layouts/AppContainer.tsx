@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getCurrentAccountAddress, getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3Provider } from "arc";
+import { getCurrentAccountFromProvider, getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3Provider } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -92,7 +92,7 @@ class AppContainer extends React.Component<IProps, IState> {
      * Addendum:  If we have a cached web3ProviderInfo and were able to use it
      * then we should also find ourselves with a currentAddress.
      */
-    let currentAddress = await getCurrentAccountAddress() || null;
+    let currentAddress = await getCurrentAccountFromProvider() || null;
     let accountWasCached = false;
     if (currentAddress)  {
       console.log(`using account from existing web3Provider: ${currentAddress}`);
