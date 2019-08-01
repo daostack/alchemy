@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalState, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalState, IProposalOutcome, IRewardState } from "@daostack/client";
 import Reputation from "components/Account/Reputation";
 import { claimableContributionRewards, formatTokens, fromWei, getClaimableRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
@@ -59,7 +59,7 @@ export default (props: IProps) => {
   const contributionReward = proposal.contributionReward;
 
   let ContributionRewardDiv = <div />;
-  if (proposal.contributionReward) {
+  if (proposal.winningOutcome === IProposalOutcome.Pass && proposal.contributionReward) {
     const contributionRewards = claimableContributionRewards(contributionReward);
     // const hasEthReward = contributionReward.ethReward.gt(new BN(0));
     // const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
