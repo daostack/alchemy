@@ -134,17 +134,14 @@ class Header extends React.Component<IProps, null> {
                     <div className={css.logoutButtonContainer}>
                       { accountIsEnabled ?
                         <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
-                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/metamask.png"/></div> }
+                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/Icon/logout.svg"/></div> }
                     </div>
                   </div>
                 </div> : ""
               }
               {!currentAccountAddress ?
                 <div className={css.web3ProviderLogin}>
-                  <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">
-                    <img src="/assets/images/metamask.png"/>
-                  Please log in!
-                  </button>
+                  <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">Please log in!</button>
                 </div>
                 : ""
               }
