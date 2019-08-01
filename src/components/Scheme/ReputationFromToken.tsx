@@ -193,7 +193,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                 </div>
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit" disabled={isSubmitting || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()}>
-                    <img src="/assets/images/Icon/Redeem.svg"/> Redeem
+                    <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
               </Form>;

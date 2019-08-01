@@ -143,6 +143,10 @@
     border-top: 1px solid rgba(233, 238, 244, 1.000);
     text-align: right;
 
+    button img {
+      width: 15px;
+    }
+
     button:disabled {
       background-color: rgba(200,200,200,.5);
       border: 1px solid rgba(200,200,200,1);
