@@ -290,7 +290,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
   if (correctNetwork) {
     provider = null;
     console.log(`connected to the wrong provider, should be ${correctNetwork}`);
-    throw new Error(`Please connect to "${correctNetwork}"`);
+    throw new Error(`Please connect to ${correctNetwork}`);
   } else {
     /**
      * now ensure that the user has logged in and enabled access to the account,
@@ -337,17 +337,18 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
  */
 export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
   let success = false;
+  let msg: string;
   try {
     success = await enableWeb3Provider();
     if (success && showNotification) {
       showNotification(NotificationStatus.Success, `Logged in to ${await getNetworkName()}`);
     }
   } catch(err) {
-    console.log(err);
+    msg = err.message;
   }
 
-  if (!success) {
-    const msg = "Unable to log in to the web3 provider";
+  if (!success  && msg) {
+    msg = msg ? msg : "Unable to log in to the web3 provider";
     if (showNotification) {
       showNotification(NotificationStatus.Failure, msg);
     } else {
@@ -419,47 +420,49 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
    * note the thrown exceptions will be reported as notifications to the user
    */
 
+  let success = false;
+  let msg: string;
+  
   try {
-    switch (web3ProviderInfo.type) {
-      case "injected":
+
+    try {
+      switch (web3ProviderInfo.type) {
+        case "injected":
         /**
            * Safe doesn't always inject itself in a timely manner
            */
-        if (!(window as any).ethereum) {
-          await waitUntilTrue((): boolean => !!(window as any).ethereum, 2000);
-        }
+          if (!(window as any).ethereum) {
+            await waitUntilTrue((): boolean => !!(window as any).ethereum, 2000);
+          }
 
-        provider = await Web3Connect.ConnectToInjected();
-        break;
-      case "qrcode":
-        provider = await Web3Connect.ConnectToWalletConnect({});
-        break;
-      case "web":
-        switch (web3ProviderInfo.name) {
-          case "Portis":
-            provider = await Web3Connect.ConnectToPortis(web3ConnectProviderOptions.portis);
-            break;
-          case "Fortmatic":
-            provider = await Web3Connect.ConnectToFortmatic(web3ConnectProviderOptions.fortmatic);
-            break;
-        }
-        break;
+          provider = await Web3Connect.ConnectToInjected();
+          break;
+        case "qrcode":
+          provider = await Web3Connect.ConnectToWalletConnect({});
+          break;
+        case "web":
+          switch (web3ProviderInfo.name) {
+            case "Portis":
+              provider = await Web3Connect.ConnectToPortis(web3ConnectProviderOptions.portis);
+              break;
+            case "Fortmatic":
+              provider = await Web3Connect.ConnectToFortmatic(web3ConnectProviderOptions.fortmatic);
+              break;
+          }
+          break;
+      }
+    } catch (ex) {
+      console.log(`Unable to instantiate provider: ${ex.message}`);
+      throw new Error("Unable to instantiate provider");
     }
-  } catch (ex) {
-    console.log(`Unable to instantiate provider: ${ex.message}`);
-    throw new Error("Unable to instantiate provider");
-  }
-  /**
+    /**
    * make sure the injected provider is the one we're looking for
    */
-  if (provider && !provider[web3ProviderInfo.check]) {
-    console.log(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
-    throw new Error("Unable to instantiate provider");
-  }
+    if (provider && !provider[web3ProviderInfo.check]) {
+      console.log(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
+      throw new Error("Unable to instantiate provider");
+    }
 
-  let success = false;
-  
-  try {
     success = provider ? await enableWeb3Provider(provider) : false;
 
     if (success && showNotification) {
@@ -467,10 +470,11 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
     }
   } catch(err) {
     console.log(err);
+    msg = err.message;
   }
 
-  if (!success) {
-    const msg =  `Unable to log in to: ${web3ProviderInfo.name}`;
+  if (!success && msg) {
+    msg =  msg ? msg : `Unable to log in to: ${web3ProviderInfo.name}`;
     if (showNotification) {
       showNotification(NotificationStatus.Failure, msg);
     } else {
