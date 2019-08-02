@@ -65,25 +65,32 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   }
 
   private async _loadReputationBalance() {
-    const state = await this.props.scheme.fetchStaticState();
-    const schemeAddress = state.address;
-    const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
-    const tokenContractAddress = await schemeContract.methods.tokenContract().call();
-    const arc = getArc();
-    const tokenContract = new Token(tokenContractAddress, arc);
-    const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
-    // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
-    const alreadyRedeemed = await schemeContract.methods.redeems(this.props.currentAccountAddress).call();
-    let redemptionAmount;
-    if (alreadyRedeemed) {
-      redemptionAmount = new BN(0);
+    if (this.props.currentAccountAddress) {
+      const state = await this.props.scheme.fetchStaticState();
+      const schemeAddress = state.address;
+      const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
+      const tokenContractAddress = await schemeContract.methods.tokenContract().call();
+      const arc = getArc();
+      const tokenContract = new Token(tokenContractAddress, arc);
+      const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
+      // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
+      const alreadyRedeemed = await schemeContract.methods.redeems(this.props.currentAccountAddress).call();
+      let redemptionAmount;
+      if (alreadyRedeemed) {
+        redemptionAmount = new BN(0);
+      } else {
+        redemptionAmount = balance;
+      }
+      this.setState({
+        redemptionAmount,
+        alreadyRedeemed,
+      });
     } else {
-      redemptionAmount = balance;
+      this.setState({
+        redemptionAmount: new BN(0),
+        alreadyRedeemed: false,
+      });
     }
-    this.setState({
-      redemptionAmount,
-      alreadyRedeemed,
-    });
   }
 
   public async componentDidMount() {
