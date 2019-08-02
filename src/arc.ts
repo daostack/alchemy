@@ -340,9 +340,11 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise
   let msg: string;
   try {
     success = await enableWeb3Provider();
+    /* hold off on this for now: 
     if (success && showNotification) {
       showNotification(NotificationStatus.Success, `Logged in to ${await getNetworkName()}`);
     }
+    */
   } catch(err) {
     msg = err.message;
   }
@@ -384,9 +386,11 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
   let success = false;
   try {
     success = await initializeArc();
+    /* hold off on this for now: 
     if (success && showNotification) {
       showNotification(NotificationStatus.Success, `Logged out from ${networkName}`);
     }
+    */
   } catch(err) {
     console.log(err);
   }
@@ -465,9 +469,11 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
 
     success = provider ? await enableWeb3Provider(provider) : false;
 
+    /* hold off on this for now: 
     if (success && showNotification) {
       showNotification(NotificationStatus.Success, `Logged in to ${web3ProviderInfo.name}`);
     }
+    */
   } catch(err) {
     console.log(err);
     msg = err.message;
