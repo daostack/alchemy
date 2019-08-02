@@ -173,6 +173,15 @@ async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
 }
 
 /**
+ * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
+ * Does not know about the default read-only providers.
+ */
+export function getWeb3ProviderInfo(provider?: any): IWeb3ProviderInfo {
+  provider = provider ? provider : selectedProvider;
+  return provider ? Web3Connect.getProviderInfo(provider) : null;
+}
+
+/**
  * initialize Arc.  
  * @param provider Optional web3Provider
  */
@@ -299,6 +308,7 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
     try {
       // brings up the provider UI as needed
       await provider.enable();
+      console.log(`logged in to provider ${getWeb3ProviderInfo(provider).name}`);
     } catch (ex) {
       console.log(`Unable to enable provider: ${ex.message}`);
       throw new Error("Unable to enable provider");
@@ -498,14 +508,6 @@ export function getAccountIsEnabled(): boolean {
    * easy proxy for the presence of an account. selectedProvider cannot be set without an account.
    */
   return !!getWeb3Provider();
-}
-
-/**
- * Returns a IWeb3ProviderInfo when a provider has been selected and is fully available.
- * Does not know about the default read-only providers.
- */
-export function getWeb3ProviderInfo(): IWeb3ProviderInfo {
-  return selectedProvider ? Web3Connect.getProviderInfo(selectedProvider) : null;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
