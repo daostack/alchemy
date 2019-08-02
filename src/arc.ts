@@ -199,10 +199,10 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   }
 
   if (success) {
-    console.log(`Connected Arc to ${readonly ? provider : await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
     provider = arc.web3.currentProvider; // won't be a string, but the actual provider
     // save for future reference
     provider.__networkId = await getNetworkId(provider);
+    console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
   }
 
   (window as any).arc = success ? arc : null;
