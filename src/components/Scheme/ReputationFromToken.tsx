@@ -75,7 +75,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     await this._loadReputationBalance();
   }
 
-  public async componentDidUpdate(prevProps: IProps, prevState: IState) {
+  public async componentDidUpdate(prevProps: IProps) {
     if (this.props.currentAccountAddress !== prevProps.currentAccountAddress) {
       await this._loadReputationBalance();
     }
