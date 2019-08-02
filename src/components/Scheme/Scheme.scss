@@ -12,17 +12,15 @@
 }
 
 .schemeName {
-  margin-top: 0;
-  font-weight: bold;
+  font-size: 28px;
+  color: #689ad6;
   padding: 0;
-  font-size: 45px;
-  position: relative;
-  color: rgba(104, 155, 214, 1.000);
-  z-index: 0;
-  padding-bottom: 20px;
+  margin: 0;
+  border-bottom: 1px solid #c3d4e7;
+  margin-bottom: 15px;
+  padding-bottom: 3px;
+  background-color: #e5ebf2;
   padding-top: 10px;
-  margin-bottom: 0;
-  background-color: rgba(229, 235, 242, 1.000);
 }
 
 .createProposal {
@@ -82,7 +80,97 @@
   .info:hover, .proposals:hover {
      border-bottom: 2px solid rgba(34, 128, 254, .5);
   }
+}
 
+.schemeRedemptionContainer {
+  max-width: 610px;
+  margin: 80px auto;
+  background-color: $white;
+  border-radius: 15px;
+
+  .fields {
+    padding: 50px;
+  }
+
+  h3 {
+    font-size: 28px;
+    text-align: center;
+    font-family: "AccordBold";
+    margin-top: 0;
+    margin-bottom: 50px;
+  }
+
+  b {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-family: "Open Sans";
+    font-size: 13px;
+    margin-left: 5px;
+  }
+
+  div div {
+    margin-bottom: 15px;
+  }
+
+  .redemptionAddress {
+    display: block;
+    margin-top: 40px;
+
+    label {
+      display: block;
+      font-size: 16px;
+      font-weight: bold;
+      font-family: "AccordBold";
+      margin-bottom: 18px;
+    }
+
+    input {
+      width: 90%;
+      width: -webkit-fill-available;
+      border: 1px solid rgba(191, 203, 213, 1.000);
+      padding: 10px 15px;
+      color: rgba(0, 29, 53, 1.000);
+      font-size: 13px;
+    }
+  }
+
+  .redemptionButton {
+    padding: 20px;
+    border-top: 1px solid rgba(233, 238, 244, 1.000);
+    text-align: right;
+
+    button img {
+      width: 15px;
+    }
+
+    button:disabled {
+      background-color: rgba(200,200,200,.5);
+      border: 1px solid rgba(200,200,200,1);
+      color: rgba(75,75,75,1);
+      cursor: not-allowed;
+    }
+  }
+
+  button {
+    background-color: rgba(0, 118, 255, 1.000);
+    color: $white;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Open Sans";
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    border-radius: 20px;
+    padding: 0 30px;
+
+    img {
+      margin-right: 5px;
+    }
+  }
 }
 
 @media only screen and (max-width: 425px) {
@@ -95,6 +183,12 @@
   .schemeName {
     font-size: 18px;
     padding-left: 15px;
+  }
+
+  .schemeRedemptionContainer {
+    width: 90%;
+    margin: 30px auto;
+    padding: 20px;
   }
 
 }

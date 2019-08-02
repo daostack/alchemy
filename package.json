@@ -58,7 +58,7 @@
     "start-dev-profiling": "cross-env NODE_ENV=dev-profiling API_URL=https://daostack-alchemy.herokuapp.com S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-docker": "webpack-dev-server --config webpack.docker.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
-    "start-staging": "cross-env NODE_ENV=production webpack-dev-server --config webpack.dev.config.js",
+    "start-staging": "cross-env NODE_ENV=staging webpack-dev-server --config webpack.dev.config.js",
     "storybook": "start-storybook",
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",

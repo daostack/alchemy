@@ -53,7 +53,7 @@ interface IInternalProps {
   scheme: ISchemeState;
 }
 
-const SchemeCard = (props: IInternalProps) => {
+const ProposalSchemeCard = (props: IInternalProps) => {
 
   const { dao, scheme, boostedProposals, preBoostedProposals, queuedProposals } = props;
 
@@ -122,7 +122,7 @@ export default (props: IExternalProps) => {
       } else if (state.error) {
         throw state.error;
       } else {
-        return <SchemeCard {...props} scheme={state.data[0]} boostedProposals={state.data[3]} preBoostedProposals={state.data[2]} queuedProposals={state.data[1]} />;
+        return <ProposalSchemeCard {...props} scheme={state.data[0]} boostedProposals={state.data[3]} preBoostedProposals={state.data[2]} queuedProposals={state.data[1]} />;
       }
     }
   }</Subscribe>;
