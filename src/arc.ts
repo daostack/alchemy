@@ -179,7 +179,6 @@ export async function initializeArc(): Promise<Arc> {
 
   try {
     arcSettings.web3Provider = await checkWeb3Provider();
-
   } catch (err) {
     // metamask is not correctly configured or available, so we use the default (read-only) web3 provider
     console.log(err);

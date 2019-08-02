@@ -139,7 +139,19 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
 }
 
 
-export const KNOWN_SCHEME_NAMES = ["ContributionReward", "SchemeRegistrar", "GenericScheme"];
+export const KNOWN_SCHEME_NAMES = [
+  "ContributionReward",
+  "GenericScheme",
+  "ReputationFromToken",
+  "SchemeRegistrar",
+];
+
+export const PROPOSAL_SCHEME_NAMES = [
+  "ContributionReward",
+  "GenericScheme",
+  "SchemeRegistrar",
+];
+
 /**
  * return true if the address is the address of a known scheme (which we know how to represent)
  * @param  address [description]
@@ -184,7 +196,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     // add spaces before capital letters to approximate a human-readable title
     name = scheme.name.replace(/([A-Z])/g, " $1");
   } else {
-    name =  fallback;
+    name = fallback;
   }
   return name;
 }

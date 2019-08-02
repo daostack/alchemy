@@ -58,14 +58,14 @@
     "start-dev-profiling": "cross-env NODE_ENV=dev-profiling API_URL=https://daostack-alchemy.herokuapp.com S3_BUCKET=daostack-alchemy-staging webpack-dev-server --config webpack.dev.config.js",
     "start-docker": "webpack-dev-server --config webpack.docker.config.js",
     "start-prod": "cross-env NODE_ENV=production webpack-dev-server --config webpack.prod.config.js",
-    "start-staging": "cross-env NODE_ENV=production webpack-dev-server --config webpack.dev.config.js",
+    "start-staging": "cross-env NODE_ENV=staging webpack-dev-server --config webpack.dev.config.js",
     "storybook": "start-storybook",
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
     "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js"
   },
   "dependencies": {
-    "@daostack/client": "0.2.2",
+    "@daostack/client": "0.2.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",

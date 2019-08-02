@@ -6,6 +6,7 @@ interface IProps {
   children: any;
 }
 
+
 export interface IObservableState<IData> {
   isLoading: boolean;
   data: IData;
@@ -25,14 +26,14 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     complete: null,
   };
 
-  public id: string;
   constructor(props: IProps) {
     super(props);
-    this.id =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    this.observable = this.props.observable;
+    this.setupSubscription(props.observable);
   }
-  public setupSubscription() {
-    this.subscription = this.observable.subscribe(
+
+  public setupSubscription(observable: Observable<any>) {
+    this.observable = observable;
+    this.subscription = observable.subscribe(
       (next: object) => {
         this.setState({
           data: next,
@@ -55,9 +56,6 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     }
   }
 
-  public componentWillMount() {
-    this.setupSubscription();
-  }
 
   public componentWillUnmount() {
     this.teardownSubscription();
@@ -65,6 +63,9 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
 
   public render() {
     const { children } = this.props;
+    if (this.observable !== this.props.observable) {
+      this.setupSubscription(this.props.observable);
+    }
 
     if (typeof children === "function") {
       return children(this.state);
@@ -82,8 +83,8 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
         return oldState.concat(newData);
       };
     }
-    this.observable = combineLatest(this.observable, options.observable, options.combine);
-    this.setupSubscription();
+    const observable = combineLatest(this.observable, options.observable, options.combine);
+    this.setupSubscription(observable);
 
   }
 }

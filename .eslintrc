@@ -28,7 +28,7 @@
          * convert to error when all have been manually fixed
          */
         "no-console": "warn",
-        "@typescript-eslint/explicit-function-return-type": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
         "react/jsx-no-bind": "warn",
         /**
          * outright errors
