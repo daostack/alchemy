@@ -1,8 +1,7 @@
 import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
+import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
-
-import BN = require("bn.js");
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName, fromWei } from "lib/util";
 import * as React from "react";
@@ -13,6 +12,8 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as schemeCss from "./Scheme.scss";
 import * as css from "./ReputationFromToken.scss";
+
+import BN = require("bn.js");
 
 interface IExternalProps {
   daoAvatarAddress: Address;
@@ -73,8 +74,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
     // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
     const alreadyRedeemed = await schemeContract.methods.redeems(this.props.currentAccountAddress).call();
+    let redemptionAmount;
+    if (alreadyRedeemed) {
+      redemptionAmount = new BN(0);
+    } else {
+      redemptionAmount = balance;
+    }
     this.setState({
-      redemptionAmount: balance,
+      redemptionAmount,
       alreadyRedeemed,
     });
   }
@@ -92,7 +99,15 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   public async handleSubmit(values: IFormValues, { _props, _setSubmitting, _setErrors }: any): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-    this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
+    const state = await this.props.scheme.fetchStaticState();
+    const schemeAddress = state.address;
+    const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
+    const alreadyRedeemed = await schemeContract.methods.redeems(values.accountAddress).call();
+    if (alreadyRedeemed) {
+      this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
+    } else {
+      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
+    }
   }
 
   public render() {
@@ -200,7 +215,10 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   </div>
                 </div>
                 <div className={schemeCss.redemptionButton}>
-                  <button type="submit" disabled={isSubmitting || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()}>
+                  <button type="submit" disabled={isSubmitting /*
+                    // not sure about next lines, they make is hard to claim rep for other accounts if the current account has 0 to claim
+                    || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()
+                    */}>
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
