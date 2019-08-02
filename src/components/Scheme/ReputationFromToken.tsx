@@ -130,7 +130,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             {schemeName(schemeState, schemeState.address)}
           </h2>
         </Sticky>
-        { this.state.alreadyRedeemed ? <div>Account  {this.props.currentAccountAddress} has already redeemed her reputation</div> : <div />  }
+        { this.state.alreadyRedeemed ? <div>Reputation for account {this.props.currentAccountAddress} has already been redeemed</div> : <div />  }
         <div className={schemeCss.schemeRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
