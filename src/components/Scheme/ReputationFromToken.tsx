@@ -215,10 +215,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   </div>
                 </div>
                 <div className={schemeCss.redemptionButton}>
-                  <button type="submit" disabled={isSubmitting /*
-                    // not sure about next lines, they make is hard to claim rep for other accounts if the current account has 0 to claim
-                    || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()
-                    */}>
+                  <button type="submit" disabled={isSubmitting || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()}>
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
