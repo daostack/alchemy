@@ -247,7 +247,15 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 
     const web3Connect = new Web3Connect.Core({
       modal: false,
-      providerOptions: web3ConnectProviderOptions,
+      providerOptions: Object.assign(
+        /**
+         * This will hide the web3connect fallback ("Web3") button which currently
+         * doesn't behave well when there is no available extension.  The fallback is 
+         * apparently "for injected providers that haven't been added to the library or
+         * that don't support the normal specification. Opera is an example of it."
+         */
+        { disableInjectedProvider: !((window as any).web3 || (window as any).ethereum) },
+        web3ConnectProviderOptions),
     });
 
     let resolveOnClosePromise: () => void;
