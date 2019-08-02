@@ -44,6 +44,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 interface IState {
   redemptionAmount: BN;
+  alreadyRedeemed: boolean;
 }
 
 interface IFormValues {
@@ -56,7 +57,10 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = { redemptionAmount: null };
+    this.state = {
+      redemptionAmount: null,
+      alreadyRedeemed: false,
+    };
   }
 
   private async _loadReputationBalance() {
@@ -68,7 +72,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const tokenContract = new Token(tokenContractAddress, arc);
     const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
     // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
-    this.setState({ redemptionAmount: balance });
+    const alreadyRedeemed = await schemeContract.methods.redeems(this.props.currentAccountAddress).call();
+    this.setState({
+      redemptionAmount: balance,
+      alreadyRedeemed,
+    });
   }
 
   public async componentDidMount() {
@@ -100,7 +108,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             {schemeName(schemeState, schemeState.address)}
           </h2>
         </Sticky>
-
+        { this.state.alreadyRedeemed ? <div>Account  {this.props.currentAccountAddress} has already redeemed her reputation</div> : <div />  }
         <div className={schemeCss.schemeRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
