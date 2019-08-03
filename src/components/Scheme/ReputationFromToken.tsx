@@ -109,6 +109,8 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       return;
     }
 
+    // TODO: next line is a quick firx, but it basically turns of the "submititng" disabled button
+    setSubmitting(false);
     const state = await this.props.scheme.fetchStaticState();
     const schemeAddress = state.address;
     const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
@@ -116,7 +118,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     if (alreadyRedeemed) {
       this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
     } else {
-      await this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
+      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
     }
     setSubmitting(false);
   }
