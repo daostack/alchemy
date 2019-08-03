@@ -109,8 +109,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       return;
     }
 
-    // TODO: next line is a quick firx, but it basically turns of the "submititng" disabled button
-    setSubmitting(false);
     const state = await this.props.scheme.fetchStaticState();
     const schemeAddress = state.address;
     const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
@@ -228,7 +226,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   </div>
                 </div>
                 <div className={schemeCss.redemptionButton}>
-                  <button type="submit" disabled={isSubmitting || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()}>
+                  <button type="submit"
+                    { /*
+                      // TODO: disabled the disabling for emergeny reasons
+                      disabled={isSubmitting || !this.state.redemptionAmount || this.state.redemptionAmount.isZero()} */ }
+                    >
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
