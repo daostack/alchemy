@@ -103,8 +103,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     }
   }
 
-  public async handleSubmit(values: IFormValues, { _props, _setSubmitting, _setErrors }: any): Promise<void> {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+  public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
+    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+      setSubmitting(false);
+      return;
+    }
 
     const state = await this.props.scheme.fetchStaticState();
     const schemeAddress = state.address;
@@ -113,8 +116,9 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     if (alreadyRedeemed) {
       this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
     } else {
-      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
+      await this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
     }
+    setSubmitting(false);
   }
 
   public render() {
