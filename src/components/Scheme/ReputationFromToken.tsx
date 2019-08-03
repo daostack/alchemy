@@ -1,8 +1,7 @@
 import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
+import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn, getArc } from "arc";
-
-import BN = require("bn.js");
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName, fromWei } from "lib/util";
 import * as React from "react";
@@ -13,6 +12,8 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as schemeCss from "./Scheme.scss";
 import * as css from "./ReputationFromToken.scss";
+
+import BN = require("bn.js");
 
 interface IExternalProps {
   daoAvatarAddress: Address;
@@ -44,6 +45,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 interface IState {
   redemptionAmount: BN;
+  alreadyRedeemed: boolean;
 }
 
 interface IFormValues {
@@ -56,19 +58,39 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = { redemptionAmount: null };
+    this.state = {
+      redemptionAmount: null,
+      alreadyRedeemed: false,
+    };
   }
 
   private async _loadReputationBalance() {
-    const state = await this.props.scheme.fetchStaticState();
-    const schemeAddress = state.address;
-    const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
-    const tokenContractAddress = await schemeContract.methods.tokenContract().call();
-    const arc = getArc();
-    const tokenContract = new Token(tokenContractAddress, arc);
-    const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
-    // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
-    this.setState({ redemptionAmount: balance });
+    if (this.props.currentAccountAddress) {
+      const state = await this.props.scheme.fetchStaticState();
+      const schemeAddress = state.address;
+      const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
+      const tokenContractAddress = await schemeContract.methods.tokenContract().call();
+      const arc = getArc();
+      const tokenContract = new Token(tokenContractAddress, arc);
+      const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
+      // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
+      const alreadyRedeemed = await schemeContract.methods.redeems(this.props.currentAccountAddress).call();
+      let redemptionAmount;
+      if (alreadyRedeemed) {
+        redemptionAmount = new BN(0);
+      } else {
+        redemptionAmount = balance;
+      }
+      this.setState({
+        redemptionAmount,
+        alreadyRedeemed,
+      });
+    } else {
+      this.setState({
+        redemptionAmount: new BN(0),
+        alreadyRedeemed: false,
+      });
+    }
   }
 
   public async componentDidMount() {
@@ -84,7 +106,15 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   public async handleSubmit(values: IFormValues, { _props, _setSubmitting, _setErrors }: any): Promise<void> {
     if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-    this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
+    const state = await this.props.scheme.fetchStaticState();
+    const schemeAddress = state.address;
+    const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
+    const alreadyRedeemed = await schemeContract.methods.redeems(values.accountAddress).call();
+    if (alreadyRedeemed) {
+      this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
+    } else {
+      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
+    }
   }
 
   public render() {
@@ -100,7 +130,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             {schemeName(schemeState, schemeState.address)}
           </h2>
         </Sticky>
-
+        { this.state.alreadyRedeemed ? <div>Reputation for account {this.props.currentAccountAddress} has already been redeemed</div> : <div />  }
         <div className={schemeCss.schemeRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
