@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
-import { checkWeb3ProviderAndWarn } from "arc";
+import { enableWeb3ProviderAndWarn } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -71,7 +71,7 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public async handleClickExecute(_event: any): Promise<void> {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 

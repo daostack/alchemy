@@ -50,7 +50,11 @@ body {
   opacity: 1;
 }
 
-.metaMaskLogin {
+.web3ProviderLogin {
+  display: inline-block;
+}
+
+.web3ProviderLogin button {
   width: 120px;
   height: 30px;
   line-height: 30px;
@@ -66,8 +70,14 @@ body {
 
   img {
     height: 12px;
-    margin-right: 5px;
+    position: relative;
+    top: 2px;
+    padding-left: 2px;
   }
+}
+
+.web3ProviderLogin button:focus {
+  outline: none;
 }
 
 .fadeExit.fadeExitActive {
@@ -147,6 +157,12 @@ body {
     text-align: right;
   }
 
+  .accountInfoContainer {
+    display: inline-block;
+    padding: 0 15px;
+    height: 50px;
+  }
+
   .accountInfo {
     position: relative;
     display: inline-block;
@@ -154,15 +170,15 @@ body {
     width: auto;
     padding: 0 20px;
     transition: all .25s ease;
+    height: 50px;
 
     .accountImage {
       border: none;
       background: transparent;
       padding: 0;
       margin: 0 0 0 0;
-      height: 50px;
       position: relative;
-      top: 12px;
+      top: 14px;
 
       &:hover {
         cursor: pointer;
@@ -240,6 +256,7 @@ body {
       .balances {
         text-align: left;
         padding: 25px;
+        border-bottom: 1px solid rgba(229, 235, 242, 1.000);
 
         h2 {
           font-size: 13px;
@@ -320,10 +337,6 @@ body {
         }
       }
 
-      .holdingsLabel {
-        color: rgba(0, 29, 53, 1.000);
-      }
-
       .testAccounts {
         padding: 12px;
         position: relative;
@@ -352,10 +365,16 @@ body {
         z-index: 0;
         width: 100%;
       }
+
+      .logoutButtonContainer {
+        padding-top: 5px;
+      }
     }
   }
 
-  .accountInfo:hover{
+  .accountInfoContainer:hover{
+    background-color: rgba(10, 28, 61, 1.000);
+
     .wallet {
       width: 270px;
       opacity: 1;
@@ -552,6 +571,28 @@ body {
 
 }
 
+.web3ProviderLogout {
+  float: right;
+  color: $accent-1;
+  margin-right: 12px;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  .text {
+    margin-right: 4px;
+    position: relative;
+    bottom: 2px;
+    display: inline-block;
+  }
+
+  img {
+    height: 12px;
+    margin-right: 5px;
+  }
+}
+
 .cookieDisclaimerContainer {
   padding-left: 12%;
   padding-right: 12%;
@@ -617,3 +658,4 @@ body {
     }
   }
 }
+

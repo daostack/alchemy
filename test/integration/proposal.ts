@@ -16,6 +16,9 @@ describe("Proposals", () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
+    const loginButton = await $("*[data-test-id=\"loginButton\"]");
+    await loginButton.click();
+
     const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
     await schemeCard.click();
 
@@ -91,6 +94,6 @@ describe("Proposals", () => {
     await stakeButton.click();
     launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
     await launchMetaMaskButton.click();
-  }, 60000);
+  });
 
 });

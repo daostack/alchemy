@@ -26,6 +26,14 @@
   button:hover {
     width: auto;
   }
+
+  button.boostButton:hover {
+    width: 67px;
+  }
+
+  button.executeButton:hover {
+    width: 75px;
+  }
 }
 
 .preboostButton, .unboostButton, .boostButton, .executeButton {
@@ -41,6 +49,7 @@
 .redeemButton {
   img {
     margin-left: -1px;
+    margin-right: 1px;
   }
 
   &.pending {

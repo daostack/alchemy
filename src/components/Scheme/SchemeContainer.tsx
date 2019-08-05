@@ -12,6 +12,7 @@ import * as Sticky from "react-stickynode";
 import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
+import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
@@ -49,7 +50,8 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
     };
 
     const arc = getArc();
-    const schemeObservable = arc.scheme(schemeId).state();
+    const scheme = arc.scheme(schemeId);
+    const schemeObservable = scheme.state();
 
     return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>): any => {
       if (state.isLoading) {
@@ -59,7 +61,11 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
         throw state.error;
       }
 
-      const scheme = state.data;
+      const schemeState = state.data;
+
+      if (schemeState.name === "ReputationFromToken") {
+        return <ReputationFromToken daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} scheme={scheme}/>;
+      }
 
       const proposalsTabClass = classNames({
         [css.proposals]: true,
@@ -71,11 +77,11 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
       });
 
       return <div className={css.schemeContainer}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.schemeName}>
-            {schemeName(scheme, scheme.address)}
+            {schemeName(schemeState, schemeState.address)}
           </h2>
 
           <div className={css.schemeMenu}>
@@ -91,10 +97,10 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
 
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={scheme} />} />
+            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={scheme} />} />
+            render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
         </Switch>
       </div>;
     }}</Subscribe>;
