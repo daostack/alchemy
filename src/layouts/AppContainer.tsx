@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { checkWeb3Provider, getCurrentAccountAddress, pollForAccountChanges, initializeArc } from "arc";
+import { getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3ProviderAndWarn } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -27,7 +27,7 @@ interface IStateProps {
   sortedNotifications: INotificationsState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => ({
+const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => ({
   currentAccountAddress: state.web3.currentAccountAddress,
   history: ownProps.history,
   sortedNotifications: sortedNotifications()(state),
@@ -55,6 +55,8 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
 
+  private static accountStorageKey = "currentAddress";
+  private static providerStorageKey = "currentWeb3ProviderInfo";
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
   constructor(props: IProps) {
@@ -64,13 +66,15 @@ class AppContainer extends React.Component<IProps, IState> {
       sentryEventId: null,
       notificationsMinimized: false,
     };
+
+    this.loadCachedWeb3Provider = this.loadCachedWeb3Provider.bind(this);
   }
 
-  public componentDidCatch(error: Error, errorInfo: any) {
+  public componentDidCatch(error: Error, errorInfo: any): void {
     this.setState({ error });
 
-    if (process.env.NODE_ENV === "PRODUCTION") {
-      Sentry.withScope((scope) => {
+    if (process.env.NODE_ENV === "production") {
+      Sentry.withScope((scope): void => {
         scope.setExtras(errorInfo);
         const sentryEventId = Sentry.captureException(error);
         this.setState({ sentryEventId });
@@ -78,45 +82,62 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async componentWillMount() {
-    let metamask: any;
-    let currentAddress = await getCurrentAccountAddress();
-    const storageKey = "currentAddress";
-
-    if (currentAddress)  {
-      console.log(`using address from web3 connection: ${currentAddress}`);
-      localStorage.setItem(storageKey, currentAddress);
-    } else {
-      currentAddress = localStorage.getItem(storageKey);
-      if (currentAddress) {
-        console.log(`using address from local storage: ${currentAddress}`);
-      } else {
-        localStorage.setItem(storageKey, "");
-      }
+  public async componentWillMount(): Promise<void> {
+    /**
+     * Heads up that there is a chance this cached account may differ from an account
+     * that the user has already selected in a provider but have
+     * not yet made available to the app.
+     */
+    const currentAddress = this.getCachedAccount();
+    let accountWasCached = false;
+    if (currentAddress) {
+      accountWasCached = true;
+      console.log(`using account from local storage: ${currentAddress}`);
     }
 
     this.props.setCurrentAccount(currentAddress);
-
-    try {
-      metamask = await checkWeb3Provider();
-    } catch (err) {
-      console.log("MM not available or not set correctly: using default web3 provider: ", err.message);
-    }
-
-    if (metamask) {
-      pollForAccountChanges(currentAddress).subscribe(
-        (newAddress: Address) => {
-          if (newAddress && checkWeb3Provider()) {
-            this.props.setCurrentAccount(newAddress);
-            localStorage.setItem(storageKey, newAddress);
-
-            initializeArc();
-          }
-        });
-    }
+    /**
+     * Only supply currentAddress if it was obtained from a provider.  The poll
+     * is only comparing changes with respect to the provider state.  Passing it a cached state
+     * will only cause it to get the wrong impression and misbehave.
+     */
+    pollForAccountChanges(accountWasCached ? null : currentAddress).subscribe(
+      (newAddress: Address | null): void => {
+        console.log(`new account: ${newAddress}`);
+        this.props.setCurrentAccount(newAddress);
+        if (newAddress) {
+          this.cacheWeb3Info(newAddress);
+        } else {
+          this.uncacheWeb3Info();
+        }
+      });
   }
 
-  public render() {
+  private async loadCachedWeb3Provider(showNotification: any): Promise<boolean> {
+    const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
+    if (web3ProviderInfo) {
+      let success = false;
+      /**
+       * If successful, this will result in setting the current account which
+       * we'll pick up below.
+       */
+      try {
+        if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification)) {
+          console.log("using cached web3Provider");
+          success = true;
+        }
+      // eslint-disable-next-line no-empty
+      } catch(ex) { }
+      if (!success) {
+        console.log("failed to instantiate cached web3Provider");
+        this.uncacheWeb3Info();
+      }
+      return success;
+    }
+    return false;
+  }
+
+  public render(): any {
     const {
       // connectionStatus,
       dismissNotification,
@@ -128,7 +149,7 @@ class AppContainer extends React.Component<IProps, IState> {
       // Render error fallback UI
       console.log(this.state.error);
       return <div>
-        <a onClick={() => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
+        <a onClick={(): void => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
         <pre>{ this.state.error.toString() }</pre>
       </div>;
     } else {
@@ -140,7 +161,7 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/" render={( props ) => <Header {...props} />} />
+            <Route path="/" render={( props ): any => <Header loadCachedWeb3Provider={this.loadCachedWeb3Provider} {...props} />} />
 
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
@@ -162,7 +183,7 @@ class AppContainer extends React.Component<IProps, IState> {
                 notifications={sortedNotifications.length}
                 unminimize={() => this.setState({notificationsMinimized: false})}
               /> :
-              sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}) => (
+              sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}): any => (
                 <div key={id}>
                   <Notification
                     title={(title || status).toUpperCase()}
@@ -200,7 +221,35 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  private handleAccept() {
+  private cacheWeb3Info(account: Address): void {
+    if (account) {
+      localStorage.setItem(AppContainer.accountStorageKey, account);
+    } else {
+      localStorage.removeItem(AppContainer.accountStorageKey);
+    }
+    const providerInfo = getWeb3ProviderInfo();
+    if (providerInfo) {
+      localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
+    } else {
+      localStorage.removeItem(AppContainer.providerStorageKey);
+    }
+  }
+
+  private uncacheWeb3Info(): void {
+    localStorage.removeItem(AppContainer.accountStorageKey);
+    localStorage.removeItem(AppContainer.providerStorageKey);
+  }
+
+  private getCachedAccount(): Address | null {
+    return localStorage.getItem(AppContainer.accountStorageKey);
+  }
+
+  private getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
+    const cached = localStorage.getItem(AppContainer.providerStorageKey);
+    return cached ? JSON.parse(cached) : null;
+  }
+
+  private handleAccept(): void {
     localStorage.setItem(AppContainer.hasAcceptedCookiesKey, "1");
   }
 }

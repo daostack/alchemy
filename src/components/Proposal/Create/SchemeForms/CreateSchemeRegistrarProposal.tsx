@@ -1,6 +1,6 @@
 import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { checkWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -72,8 +72,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.state = { currentTab: "addScheme" };
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     let permissions = 1;
     if (values.permissions.registerSchemes) {
