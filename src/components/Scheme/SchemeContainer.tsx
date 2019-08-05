@@ -8,6 +8,7 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
+import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
@@ -25,7 +26,8 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
     const daoAvatarAddress = match.params.daoAvatarAddress;
 
     const arc = getArc();
-    const schemeObservable = arc.scheme(schemeId).state();
+    const scheme = arc.scheme(schemeId);
+    const schemeObservable = scheme.state();
 
     return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>) => {
       if (state.isLoading) {
@@ -35,7 +37,11 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
         throw state.error;
       }
 
-      const scheme = state.data;
+      const schemeState = state.data;
+
+      if (schemeState.name === "ReputationFromToken") {
+        return <ReputationFromToken daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} scheme={scheme}/>;
+      }
 
       const proposalsTabClass = classNames({
         [css.proposals]: true,
@@ -47,11 +53,11 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
       });
 
       return <div className={css.schemeContainer}>
-        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
           <h2 className={css.schemeName}>
-            {schemeName(scheme, scheme.address)}
+            {schemeName(schemeState, schemeState.address)}
           </h2>
 
           <div className={css.schemeMenu}>
@@ -65,10 +71,10 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
 
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={scheme} />} />
+            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={scheme} />} />
+            render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
         </Switch>
       </div>;
     }}</Subscribe>;

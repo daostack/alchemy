@@ -1,4 +1,4 @@
-import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate } from "@daostack/client";
+import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -132,5 +132,18 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
     const observer = operationNotifierObserver(dispatch, "Reward");
     // @ts-ignore
     await proposalObj.claimRewards(accountAddress).subscribe(...observer);
+  };
+}
+
+export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string) {
+  return async (dispatch: Redux.Dispatch<any, any>) => {
+    const observer = operationNotifierObserver(dispatch, "Redeem reputation");
+    const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
+
+    // send the transaction and get notifications
+    if (reputationFromTokenScheme) {
+      // @ts-ignore
+      reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
+    }
   };
 }

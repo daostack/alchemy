@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
-import { KNOWN_SCHEME_NAMES } from "lib/util";
+import { KNOWN_SCHEME_NAMES, PROPOSAL_SCHEME_NAMES } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
@@ -11,7 +11,8 @@ import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
 import * as css from "./DaoSchemesPage.scss";
-import SchemeCard from "./SchemeCard";
+import ProposalSchemeCard from "./ProposalSchemeCard";
+import SimpleSchemeCard from "./SimpleSchemeCard";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -40,7 +41,10 @@ const DaoSchemesPage = (props: IProps) => {
     <TransitionGroup>
       {knownSchemes.map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.id}>
-          <SchemeCard dao={dao} scheme={scheme} />
+          {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
+            ? <ProposalSchemeCard dao={dao} scheme={scheme} />
+            : <SimpleSchemeCard dao={dao} scheme={scheme} />
+          }
         </Fade>
       ))
       }

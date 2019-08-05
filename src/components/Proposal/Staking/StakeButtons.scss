@@ -161,18 +161,21 @@
   text-align: center;
 
   button {
-    width: 120px;
+    width: auto;
     display: block;
-    margin-left: 16px;
-    margin-right: 2px;
     border-radius: 3px;
     opacity: .5;
     position: relative;
     top: 3px;
-    height: 16px;
-    padding-left: 2px;
-    padding-right: 2px;
+    height: auto;
+    padding-left: 5px;
+    padding-right: 6px;
     font-size: 11px;
+    line-height: initial;
+    padding-top: 5px;
+    padding-bottom: 7px;
+    margin: 0 auto;
+    font-weight: normal;
   }
 
   span {

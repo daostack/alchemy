@@ -11,6 +11,9 @@
     },
     "DISQUS_SITE": {
       "required": true
+    },
+    "NODE_MODULES_CACHE": {
+      "required": true
     }
   },
   "formation": {
