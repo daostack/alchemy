@@ -1,6 +1,6 @@
 import * as H from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
-import { getArc, checkWeb3ProviderAndWarn } from "arc";
+import { getArc, enableWeb3ProviderAndWarn } from "arc";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { schemeName} from "lib/util";
@@ -50,7 +50,7 @@ interface IProps {
 class SchemeProposals extends React.Component<IProps, null> {
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
-    if ((await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
       this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
     }
   }

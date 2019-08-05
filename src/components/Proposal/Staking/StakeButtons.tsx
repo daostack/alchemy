@@ -73,7 +73,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if ((await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { 
+    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { 
       this.setState({ showApproveModal: true });
     }
   }
