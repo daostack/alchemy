@@ -166,11 +166,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             render={({
               errors,
               touched,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              handleSubmit,
-              isSubmitting,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              setFieldTouched,
               setFieldValue,
               values,
             }: FormikProps<IFormValues>) => {
