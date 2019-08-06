@@ -17,7 +17,6 @@
   padding: 0;
   margin: 0;
   border-bottom: 1px solid #c3d4e7;
-  margin-bottom: 15px;
   padding-bottom: 3px;
   background-color: #e5ebf2;
   padding-top: 10px;
@@ -34,7 +33,7 @@
   position: absolute;
   z-index: 100;
   right: 0;
-  top: 90px;
+  top: 13px;
   padding: 0 15px;
 }
 
@@ -47,6 +46,8 @@
   width: 100%;
   background-color: rgba(229, 235, 242, 1.000);
   border-bottom: 1px solid rgba(212,220,228,1);
+  padding-top: 15px;
+  position: relative;
 
   a {
      color: rgba(0, 29, 53, 1.000);
