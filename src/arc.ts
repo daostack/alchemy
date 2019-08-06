@@ -212,6 +212,10 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     provider = arc.web3.currentProvider; // won't be a string, but the actual provider
     // save for future reference
     provider.__networkId = await getNetworkId(provider);
+    if ((window as any).ethereum) {
+      // if this is metamask this should prevent a browser refresh when the network changes
+      (window as any).ethereum.autoRefreshOnNetworkChange = false;
+    }
     console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
   }
 
@@ -346,10 +350,6 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
   }
 
   if (success) {
-    if ((window as any).ethereum) {
-      // if this is metamask this should prevent a browser refresh when the network changes
-      (window as any).ethereum.autoRefreshOnNetworkChange = false;
-    }
     selectedProvider = provider;
   }
 
