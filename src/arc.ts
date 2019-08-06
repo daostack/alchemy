@@ -398,27 +398,31 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
  * switch to readonly mode (effectively a logout)
  */
 export async function gotoReadonly(showNotification?: any): Promise<boolean> {
-  // clearing this, initializeArc will be made to use the default web3Provider
-  const networkName = await getNetworkName();
-  selectedProvider = undefined;
   let success = false;
-  try {
-    success = await initializeArc();
-    /* hold off on this for now: 
-    if (success && showNotification) {
-      showNotification(NotificationStatus.Success, `Logged out from ${networkName}`);
+  if (selectedProvider) {
+    // clearing this, initializeArc will be made to use the default web3Provider
+    const networkName = await getNetworkName();
+    selectedProvider = undefined;
+    try {
+      success = await initializeArc();
+      /* hold off on this for now: 
+      if (success && showNotification) {
+        showNotification(NotificationStatus.Success, `Logged out from ${networkName}`);
+      }
+      */
+    } catch(err) {
+      console.log(err);
     }
-    */
-  } catch(err) {
-    console.log(err);
-  }
 
-  if (!success) {
-    const msg =  `Unable to log out from : ${networkName}`;
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
+    if (!success) {
+      const msg =  `Unable to log out from : ${networkName}`;
+      if (showNotification) {
+        showNotification(NotificationStatus.Failure, msg);
+      } else {
+        alert(msg);
+      }
     } else {
-      alert(msg);
+      success = true;
     }
   }
 
