@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
@@ -203,14 +204,18 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     arc = new Arc(arcSettings);
     const contractInfos = await arc.fetchContractInfos();
     success = !!contractInfos;
-  } catch (ex) {
-    console.log(ex.message);
+  } catch (reason) {
+    console.log(reason.message);
   }
 
   if (success) {
     provider = arc.web3.currentProvider; // won't be a string, but the actual provider
     // save for future reference
     provider.__networkId = await getNetworkId(provider);
+    if ((window as any).ethereum) {
+      // if this is metamask this should prevent a browser refresh when the network changes
+      (window as any).ethereum.autoRefreshOnNetworkChange = false;
+    }
     console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
   }
 
@@ -222,19 +227,21 @@ export async function initializeArc(provider?: any): Promise<boolean> {
  * Prompt user to select a web3Provider and enable their account.
  * Initializes Arc with the newly-selected web3Provider.
  * Is a no-op if already done.
- * @param provider Optional web3Provider
+ * @param provider Optional web3Provider, supplied when using a cached provider
+ * @param blockOnWrongNetwork if true, throw exception if is wrong network
  * @returns whether Arc has been successfully initialized.
  */
-async function enableWeb3Provider(provider?: any): Promise<boolean> {
+async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): Promise<boolean> {
+  let success = false;
+
   /**
    * Already got an already-selected provider?
    * We'll replace it if provider has been supplied.
    */
   if (selectedProvider && !provider) {
-    return true;
-  }
-
-  if (!provider) {
+    provider = selectedProvider;
+    success = true;
+  } else if (!provider) {
     /**
      * if no provider then use web3Connect to obtain one
      */
@@ -286,15 +293,17 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 
     try {
       web3Connect.toggleModal();
-
+      // assuming reject will result in a throw exception caught below
       await onClosePromise;
 
     } catch (error) {
-      console.log(`web3Connect closed on error:  ${error.message}`);
+      console.log(`Unable to connect to web3 provider:  ${error.message}`);
+      throw new Error("Unable to connect to web3 provider");
     }
 
     if (!provider) {
-      console.log("error or user cancelled out");
+      // should only be cancelled, errors should have been handled above
+      console.log("uncaught error or user cancelled out");
       return false;
     }
   }
@@ -302,37 +311,38 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
   /**
    * note the thrown exceptions will be reported as notifications to the user
    */
-  const correctNetwork = await checkWeb3ProviderIsForNetwork(provider);
+  const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
 
-  if (correctNetwork) {
-    provider = null;
-    console.log(`connected to the wrong provider, should be ${correctNetwork}`);
-    throw new Error(`Please connect to ${correctNetwork}`);
-  } else {
+  if (correctNetworkErrorMsg) {
+    console.log(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
+    if (blockOnWrongNetwork) {
+      throw new Error(`Please connect to ${correctNetworkErrorMsg}`);
+    }
+  }
+  
+  if (provider !== selectedProvider) {
     /**
-     * now ensure that the user has logged in and enabled access to the account,
+     * now ensure that the user has connected to a network and enabled access to the account,
      * whatever the provider requires....
      */
     try {
       // brings up the provider UI as needed
       await provider.enable();
-      console.log(`logged in to provider ${getWeb3ProviderInfo(provider).name}`);
+      console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
     } catch (ex) {
       console.log(`Unable to enable provider: ${ex.message}`);
       throw new Error("Unable to enable provider");
     }
-  }
 
-  let success = false;
-  
-  if (provider !== selectedProvider) {
     try {
       success = await initializeArc(provider);
+
       if (!_getCurrentAccountFromProvider()) {
-        // then something went wrong
+      // then something went wrong
         console.log("Unable to obtain an account from the provider");
         throw new Error("Unable to obtain an account from the provider");
       }
+
     } catch (ex) {
       console.log(`Unable to initialize Arc: ${ex.message}`);
       throw new Error("Unable to initialize Arc");
@@ -341,7 +351,6 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
 
   if (success) {
     selectedProvider = provider;
-    console.log("enabled provider and account");
   }
 
   return success;
@@ -353,17 +362,17 @@ async function enableWeb3Provider(provider?: any): Promise<boolean> {
  * @param provider Optional web3Provider
  * @return boolean whether Arc is successfully initialized.
  */
-export async function enableWeb3ProviderAndWarn(showNotification?: any): Promise<boolean> {
+export async function enableWeb3ProviderAndWarn(showNotification?: any, blockOnWrongNetwork = true): Promise<boolean> {
   let success = false;
   let msg: string;
   try {
-    success = await enableWeb3Provider();
+    success = await enableWeb3Provider(null, blockOnWrongNetwork);
   } catch(err) {
     msg = err.message;
   }
 
   if (!success  && msg) {
-    msg = msg ? msg : "Unable to log in to the web3 provider";
+    msg = msg ? msg : "Unable to connect to the web3 provider";
     if (showNotification) {
       showNotification(NotificationStatus.Failure, msg);
     } else {
@@ -405,15 +414,16 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
     }
 
     if (!success) {
-      const msg =  `Unable to log out from : ${networkName}`;
+      const msg =  `Unable to disconnect from : ${networkName}`;
       if (showNotification) {
         showNotification(NotificationStatus.Failure, msg);
       } else {
         alert(msg);
       }
-    } else {
-      success = true;
     }
+  }
+  else {
+    success = true;
   }
 
   return success;
@@ -429,8 +439,6 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
  */
 export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo, showNotification?: any): Promise<boolean> {
   let provider: any;
-
-  console.log(`connecting to provider: ${web3ProviderInfo.name}`);
 
   /**
    * note the thrown exceptions will be reported as notifications to the user
@@ -479,7 +487,7 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
       throw new Error("Unable to instantiate provider");
     }
 
-    success = provider ? await enableWeb3Provider(provider) : false;
+    success = provider ? await enableWeb3Provider(provider, false) : false;
 
   } catch(err) {
     console.log(err);
@@ -487,7 +495,7 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
   }
 
   if (!success && msg) {
-    msg =  msg ? msg : `Unable to log in to: ${web3ProviderInfo.name}`;
+    msg =  msg ? msg : `Unable to connect to: ${web3ProviderInfo.name}`;
     if (showNotification) {
       showNotification(NotificationStatus.Failure, msg);
     } else {
