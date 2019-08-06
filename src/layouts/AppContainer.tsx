@@ -2,7 +2,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3ProviderAndWarn } from "arc";
+import { getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3ProviderAndWarn, gotoReadonly } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -109,6 +109,7 @@ class AppContainer extends React.Component<IProps, IState> {
           this.cacheWeb3Info(newAddress);
         } else {
           this.uncacheWeb3Info();
+          gotoReadonly(this.props.showNotification);
         }
       });
   }

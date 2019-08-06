@@ -367,11 +367,6 @@ export async function enableWeb3ProviderAndWarn(showNotification?: any, blockOnW
   let msg: string;
   try {
     success = await enableWeb3Provider(null, blockOnWrongNetwork);
-    /* hold off on this for now: 
-    if (success && showNotification) {
-      showNotification(NotificationStatus.Success, `Connected to ${await getNetworkName()}`);
-    }
-    */
   } catch(err) {
     msg = err.message;
   }
@@ -407,28 +402,28 @@ async function getCurrentAccountFromProvider(): Promise<Address | null> {
  * switch to readonly mode (effectively a logout)
  */
 export async function gotoReadonly(showNotification?: any): Promise<boolean> {
-  // clearing this, initializeArc will be made to use the default web3Provider
-  const networkName = await getNetworkName();
-  selectedProvider = undefined;
   let success = false;
-  try {
-    success = await initializeArc();
-    /* hold off on this for now: 
-    if (success && showNotification) {
-      showNotification(NotificationStatus.Success, `Logged out from ${networkName}`);
+  if (selectedProvider) {
+    // clearing this, initializeArc will be made to use the default web3Provider
+    const networkName = await getNetworkName();
+    selectedProvider = undefined;
+    try {
+      success = await initializeArc();
+    } catch(err) {
+      console.log(err);
     }
-    */
-  } catch(err) {
-    console.log(err);
-  }
 
-  if (!success) {
-    const msg =  `Unable to disconnect from : ${networkName}`;
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
-    } else {
-      alert(msg);
+    if (!success) {
+      const msg =  `Unable to disconnect from : ${networkName}`;
+      if (showNotification) {
+        showNotification(NotificationStatus.Failure, msg);
+      } else {
+        alert(msg);
+      }
     }
+  }
+  else {
+    success = true;
   }
 
   return success;
@@ -494,11 +489,6 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
 
     success = provider ? await enableWeb3Provider(provider, false) : false;
 
-    /* hold off on this for now: 
-    if (success && showNotification) {
-      showNotification(NotificationStatus.Success, `Connected to ${web3ProviderInfo.name}`);
-    }
-    */
   } catch(err) {
     console.log(err);
     msg = err.message;
