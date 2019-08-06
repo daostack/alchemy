@@ -168,7 +168,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
               touched,
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
               handleSubmit,
-              isSubmitting,
+              // isSubmitting,
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
               setFieldTouched,
               setFieldValue,
