@@ -30,14 +30,9 @@ const mapStateToProps = (state: IRootState, ownProps: any): IProps => {
 
 class CreateProposalPage extends React.Component<IProps, null> {
 
-  public goBack(): void {
+  public handleClose(): void {
     const { daoAvatarAddress, history, schemeId } = this.props;
-
-    if (history.length > 0) {
-      history.goBack();
-    } else {
-      history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
-    }
+    history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
   }
 
   public render(): any {
@@ -61,7 +56,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
         let createSchemeComponent = <div />;
         const props = {
           daoAvatarAddress,
-          handleClose: this.goBack.bind(this),
+          handleClose: this.handleClose.bind(this),
           scheme,
         };
 
