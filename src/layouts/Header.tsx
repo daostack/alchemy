@@ -67,7 +67,7 @@ class Header extends React.Component<IProps, null> {
 
   public handleClickLogin = async (): Promise<void> => {
     if (!await this.props.loadCachedWeb3Provider(this.props.showNotification)) {
-      await enableWeb3ProviderAndWarn(this.props.showNotification);
+      await enableWeb3ProviderAndWarn(this.props.showNotification, false);
     }
   }
 
