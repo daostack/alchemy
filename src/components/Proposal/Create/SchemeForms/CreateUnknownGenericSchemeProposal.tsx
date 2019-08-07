@@ -179,7 +179,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                       className={touched.url && errors.url ? css.error : null}
                     />
 
-                    <div>
+                    <div className={css.encodedData}>
                       <div>
                         <label htmlFor="callData">
                           Encoded function call data
