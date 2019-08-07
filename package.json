@@ -16,23 +16,24 @@
   "jest": {
     "testURL": "http://127.0.0.1:3000/",
     "transform": {
-      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      ".(ts|tsx)$": "ts-jest"
     },
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/lib/",
       "/test/integration/"
     ],
-    "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testRegex": "(/test/.*(spec).*|\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
       "js",
       "jsx",
-      "json"
+      "json",
+      "node"
     ],
     "moduleNameMapper": {
-      "\\.(scss|css|less)$": "identity-obj-proxy",
+      "\\.(scss|css|less|svg|png|jpg)$": "identity-obj-proxy",
       "^arc": "<rootDir>/src/arc",
       "^actions(.*)$": "<rootDir>/src/actions$1",
       "^components(.*)$": "<rootDir>/src/components$1",
@@ -62,7 +63,8 @@
     "storybook": "start-storybook",
     "test": "wdio ./test/integration/wdio.conf.js",
     "test:integration": "wdio ./test/integration/wdio.conf.js --inspect",
-    "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js"
+    "test:integration:headless": "wdio ./test/integration/wdio-headless.conf.js",
+    "test:unit": "jest"
   },
   "dependencies": {
     "@daostack/web3connect": "^1.0.0-beta.17.2",

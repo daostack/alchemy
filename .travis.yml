@@ -34,6 +34,8 @@ script:
 
   # check lint
   - npm run lint -- --quiet
+  # unit tests
+  - npm run test:unit
   # run integration tests
   - npm run test:integration:headless
 
