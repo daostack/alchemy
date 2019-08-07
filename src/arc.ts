@@ -80,6 +80,10 @@ const settings = {
 function getArcSettings(): any {
   let arcSettings: any;
   switch (process.env.NODE_ENV || "development") {
+    case "test": {
+      arcSettings = settings.dev;
+      break;
+    }
     case "development": {
       arcSettings = settings.dev;
       break;
@@ -183,7 +187,7 @@ export function getWeb3ProviderInfo(provider?: any): IWeb3ProviderInfo {
 }
 
 /**
- * initialize Arc.  
+ * initialize Arc.
  * @param provider Optional web3Provider
  */
 export async function initializeArc(provider?: any): Promise<boolean> {
@@ -257,7 +261,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
       providerOptions: Object.assign(
         /**
          * This will hide the web3connect fallback ("Web3") button which currently
-         * doesn't behave well when there is no available extension.  The fallback is 
+         * doesn't behave well when there is no available extension.  The fallback is
          * apparently "for injected providers that haven't been added to the library or
          * that don't support the normal specification. Opera is an example of it."
          */
@@ -319,7 +323,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
       throw new Error(`Please connect to ${correctNetworkErrorMsg}`);
     }
   }
-  
+
   if (provider !== selectedProvider) {
     /**
      * now ensure that the user has connected to a network and enabled access to the account,
@@ -358,7 +362,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
 
 /**
  * See `enableWeb3Provider`.  If that fails then issue a warning to the user.
- * 
+ *
  * @param provider Optional web3Provider
  * @return boolean whether Arc is successfully initialized.
  */
@@ -431,7 +435,7 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
 
 /**
  * Given IWeb3ProviderInfo, get a web3Provider and InitializeArc with it.
- * 
+ *
  * This is meant to be used to bypass allowing the user to select a provider in the
  * case where we are initializing the app from a previously-cached (selected) provider.
  * @param web3ProviderInfo required IWeb3ProviderInfo
@@ -446,7 +450,7 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
 
   let success = false;
   let msg: string;
-  
+
   try {
 
     try {
