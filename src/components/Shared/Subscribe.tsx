@@ -56,6 +56,9 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     }
   }
 
+  public componentDidMount() {
+    this.setupSubscription(this.props.observable);
+  }
 
   public componentWillUnmount() {
     this.teardownSubscription();
@@ -64,7 +67,7 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
   public render() {
     const { children } = this.props;
     if (this.observable !== this.props.observable) {
-      this.setupSubscription(this.props.observable);
+      return null;
     }
 
     if (typeof children === "function") {
