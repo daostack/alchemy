@@ -37,7 +37,7 @@
 
 .ellipsis {
   position: relative;
-  width: 83%;
+  width: 75%;
 
   span {
     position: absolute;
@@ -54,9 +54,4 @@
     top:0;
     cursor: pointer;
   }
-}
-
-.ellipsis:before {
-  content: '&nbsp;';
-  visibility: hidden;
 }
