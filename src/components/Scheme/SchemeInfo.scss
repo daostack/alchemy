@@ -55,3 +55,11 @@
     cursor: pointer;
   }
 }
+
+@media only screen and (max-width: 425px) {
+
+.ellipsis {
+  position: relative;
+  width: 35%;
+}
+}
