@@ -106,7 +106,7 @@ class SchemeProposals extends React.Component<IProps, null> {
                 <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
               </Link>
               <a className={css.blueButton}
-                href="#"
+                href="javascript:void(0)"
                 onClick={_handleNewProposal}
                 data-test-id="createProposal"
               >+ New Proposal</a>

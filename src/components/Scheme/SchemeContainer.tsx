@@ -89,7 +89,7 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
             <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info/`}>Info</Link>
             <a className={css.createProposal}
               data-test-id="createProposal"
-              href="#"
+              href="javascript:void(0)"
               onClick={handleNewProposal}
             >+ New proposal</a>
           </div>
