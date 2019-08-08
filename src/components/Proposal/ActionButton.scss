@@ -36,6 +36,12 @@
   }
 }
 
+.wrapper.detailView {
+  button.boostButton:hover {
+    width: auto;
+  }
+}
+
 .preboostButton, .unboostButton, .boostButton, .executeButton {
   position: relative;
 }
