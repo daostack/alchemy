@@ -37,7 +37,7 @@
 
 .ellipsis {
   position: relative;
-  width: 83%;
+  width: 75%;
 
   span {
     position: absolute;
@@ -56,7 +56,10 @@
   }
 }
 
-.ellipsis:before {
-  content: '&nbsp;';
-  visibility: hidden;
+@media only screen and (max-width: 425px) {
+
+.ellipsis {
+  position: relative;
+  width: 35%;
+}
 }

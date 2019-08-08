@@ -545,16 +545,72 @@ div.description {
 }
 
 @media only screen and (max-width: 425px) {
+
+  .createWrapperWithSidebar {
+    width: 100%;
+
+    .sidebar {
+      width: 100%;
+      float: none;
+      padding-top: 0;
+    }
+
+    .formWrapper {
+      width: 100%;
+      float: none;
+    }
+
+    .schemeSelect {
+      width: 90%;
+    }
+  }
+
+  .downV {
+    right: -3px;
+  }
+
   .createProposalWrapper {
     top: 0;
     left: 0;
     transform: translate(0,0);
 
+    .header {
+      border-radius: 0 0 0 0;
+    }
+
     form {
-      padding: 15px 15px 15px 15px;
+      padding: 15px 15px 155px 15px;
 
       input, textarea, label {
-        width: 255px;
+        width: 90%;
+      }
+
+      textarea {
+        border: none;
+        width: 100%;
+      }
+
+      .encodedData textarea {
+        border: $gray-border-2;
+        padding: 9px 15px 12px 15px;
+        width: 90%;
+      }
+
+      .reward {
+        width: 42%;
+
+        input {
+          width: 88%;
+        }
+
+        .externalTokenSelect {
+          right: -17px;
+          padding: 0 18px 0 8px;
+        }
+      }
+
+      .reward:nth-child(even) {
+        margin-right: 30px;
       }
     }
   }
