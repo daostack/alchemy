@@ -26,7 +26,7 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
       isLoading: true,
       data: null,
       error: null,
-      complete: null
+      complete: null,
     };
   }
 
