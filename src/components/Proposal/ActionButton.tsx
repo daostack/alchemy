@@ -1,7 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { checkWeb3ProviderAndWarn } from "arc";
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -20,6 +19,8 @@ import { map, mergeMap } from "rxjs/operators";
 import * as css from "./ActionButton.scss";
 /* import RedemptionsString from "./RedemptionsString"; */
 import RedemptionsTip from "./RedemptionsTip";
+
+import BN = require("bn.js");
 
 interface IStateProps {
   beneficiaryProfile: IProfileState;
@@ -111,7 +112,7 @@ class ActionButton extends React.Component<IProps, IState> {
       beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
     }
 
-    const redeemable = proposalState.executedAt && proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase())
+    const redeemable = proposalState.executedAt && proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase());
     const redemptionsTip = RedemptionsTip({
       beneficiaryHasRewards,
       currentAccountAddress,
