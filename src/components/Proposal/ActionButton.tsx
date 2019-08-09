@@ -67,6 +67,7 @@ class ActionButton extends React.Component<IProps, IState> {
     this.state = {
       preRedeemModalOpen: false,
     };
+    this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
   public async handleClickExecute(_event: any): Promise<void> {
@@ -74,7 +75,8 @@ class ActionButton extends React.Component<IProps, IState> {
     await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  public handleClickRedeem(_event: any): void {
+  public async handleClickRedeem(_event: any): Promise<void> {
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
     this.setState({ preRedeemModalOpen: true });
   }
 
@@ -90,7 +92,6 @@ class ActionButton extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       proposalState,
-      redeemProposal,
       rewardsForCurrentUser,
     } = this.props;
 
@@ -138,7 +139,7 @@ class ActionButton extends React.Component<IProps, IState> {
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
             actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
-            action={redeemProposal.bind(null, dao.address, proposalState.id, currentAccountAddress)}
+            action={this.handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
             dao={dao}
@@ -197,7 +198,23 @@ class ActionButton extends React.Component<IProps, IState> {
       </div>
     );
   }
+
+  private async handleRedeemProposal(): Promise<void> {
+
+    // may not be required, but just in case
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+
+    const {
+      currentAccountAddress,
+      dao,
+      proposalState,
+      redeemProposal,
+    } = this.props;
+
+    await redeemProposal(dao.address, proposalState.id, currentAccountAddress);
+  }
 }
+
 
 interface IMyProps {
   currentAccountAddress?: Address;
@@ -209,19 +226,19 @@ interface IMyProps {
 
 const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
 
-export default (props: IMyProps) => {
+export default (props: IMyProps): any => {
 
   const proposalState = props.proposalState;
-  let observable: Observable<IRewardState>;
+  let observable: Observable<IRewardState|null>;
   if (props.currentAccountAddress) {
     observable = proposalState.proposal.rewards({ where: {beneficiary: props.currentAccountAddress}})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
-      .pipe(mergeMap(((reward) => reward ? reward.state() : of(null))));
+      .pipe(mergeMap(((reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
   } else {
     observable = of(null);
   }
 
-  return <Subscribe observable={observable}>{(state: IObservableState<any>) => {
+  return <Subscribe observable={observable}>{(state: IObservableState<any>): any => {
     if (state.isLoading) {
       return <div>Loading proposal {props.proposalState.id.substr(0, 6)} ...</div>;
     } else if (state.error) {
