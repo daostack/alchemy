@@ -73,19 +73,26 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       showVotersModal: false,
     };
 
+    this.handleShare = this.handleShare.bind(this);
+    this.showVotersModal = this.showVotersModal.bind(this);
+    this.closeVotersModal = this.closeVotersModal.bind(this);
+    this.countdownEnded = this.countdownEnded.bind(this);
   }
 
-  public showVotersModal(_event: any): void {
+  private handleShare(_event: any): void {
+  }
+
+  private showVotersModal(_event: any): void {
     if (this.props.proposal.votesCount > 0) {
       this.setState({ showVotersModal: true });
     }
   }
 
-  public closeVotersModal(_event: any): void {
+  private closeVotersModal(_event: any): void {
     this.setState({ showVotersModal: false });
   }
 
-  public countdownEnded(): void {
+  private countdownEnded(): void {
     this.setState({ expired: true });
   }
 
@@ -154,7 +161,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               {!proposalEnded(proposal) ?
                 <span className={css.content}>
                   {!expired ?
-                    <Countdown toDate={closingTime(proposal)} detailView onEnd={this.countdownEnded.bind(this)} /> :
+                    <Countdown toDate={closingTime(proposal)} detailView onEnd={this.countdownEnded} /> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
                         proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
@@ -197,6 +204,10 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 expired={expired}
                 proposal={proposal}
               />
+              <button onClick={this.handleShare} className={css.shareButton} data-test-id="share">
+                <img src={"/assets/images/Icon/vote/for-btn-selected-w.svg"} />
+                <span>Share</span>
+              </button>
             </div>
           </div>
 
@@ -205,7 +216,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               <div>
                 <div className={css.statusTitle}>
                   <h3>Votes</h3>
-                  <span onClick={this.showVotersModal.bind(this)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
+                  <span onClick={this.showVotersModal} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
                     {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
                   </span>
                 </div>
@@ -259,7 +270,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
         {this.state.showVotersModal ?
           <VotersModal
-            closeAction={this.closeVotersModal.bind(this)}
+            closeAction={this.closeVotersModal(this)}
             currentAccountAddress={this.props.currentAccountAddress}
             dao={dao}
             proposal={proposal}

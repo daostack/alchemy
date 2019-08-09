@@ -300,3 +300,36 @@ button.disabled {
   margin-right: 16px;
   display: inline-block;
 }
+
+button.shareButton {
+  height: 30px;
+  line-height: 30px;
+  width: auto;
+  margin-right: 5px;
+  border-radius: 30px;
+  background-color: #0071ff;
+  padding: 0 15px;
+  font-weight: 700;
+  color: #0376ff;
+  transition: all .25s ease;
+  position: relative;
+  border: 0;
+  margin: 0 1px;
+  display: inline-block;
+  font-size: 11px;
+
+  img {
+    margin-right: 4px;
+    position: relative;
+    top: 4px;
+    height: 14px;
+  }
+
+  span {
+    font-weight: bold;
+    font-size: 13px;
+    display: inline-block;
+    color: white;
+  }
+}
+
