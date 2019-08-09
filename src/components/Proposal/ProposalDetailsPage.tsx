@@ -17,6 +17,7 @@ import { proposalEnded } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
+import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -61,6 +62,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
 interface IState {
   expired: boolean;
   showVotersModal: boolean;
+  showShareModal: boolean;
 }
 
 class ProposalDetailsPage extends React.Component<IProps, IState> {
@@ -70,16 +72,23 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     this.state = {
       expired: closingTime(props.proposal).isSameOrBefore(moment()),
+      showShareModal: false,
       showVotersModal: false,
     };
 
-    this.handleShare = this.handleShare.bind(this);
+    this.showShareModal = this.showShareModal.bind(this);
+    this.closeShareModal = this.closeShareModal.bind(this);
     this.showVotersModal = this.showVotersModal.bind(this);
     this.closeVotersModal = this.closeVotersModal.bind(this);
     this.countdownEnded = this.countdownEnded.bind(this);
   }
 
-  private handleShare(_event: any): void {
+  private showShareModal(_event: any): void {
+    this.setState({ showShareModal: true });
+  }
+
+  private closeShareModal(_event: any): void {
+    this.setState({ showShareModal: false });
   }
 
   private showVotersModal(_event: any): void {
@@ -204,7 +213,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 expired={expired}
                 proposal={proposal}
               />
-              <button onClick={this.handleShare} className={css.shareButton} data-test-id="share">
+              <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
                 <img src={"/assets/images/Icon/vote/for-btn-selected-w.svg"} />
                 <span>Share</span>
               </button>
@@ -270,10 +279,17 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
         {this.state.showVotersModal ?
           <VotersModal
-            closeAction={this.closeVotersModal(this)}
+            closeAction={this.closeVotersModal}
             currentAccountAddress={this.props.currentAccountAddress}
             dao={dao}
             proposal={proposal}
+          /> : ""
+        }
+
+        {this.state.showShareModal ?
+          <SocialShareModal
+            closeHandler={this.closeShareModal}
+            url="a url"
           /> : ""
         }
       </div>
