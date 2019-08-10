@@ -4,13 +4,16 @@ import { Modal } from "react-router-modal";
 import { copyToClipboard } from "lib/util";
 import * as css from "./SocialShareModal.scss";
 
+interface IState {
+  showCopiedFeedback: boolean;
+}
 
 interface IProps {
   closeHandler: (event: any) => void;
   url: string;
 }
 
-export default class SocialShareModal extends React.Component<IProps, null> {
+export default class SocialShareModal extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -20,6 +23,19 @@ export default class SocialShareModal extends React.Component<IProps, null> {
     this.selectFacebook = this.selectFacebook.bind(this);
     this.selectTelegram = this.selectTelegram.bind(this);
     this.copyUrl = this.copyUrl.bind(this);
+
+    this.state = {
+      showCopiedFeedback: false,
+    };
+  }
+
+  private showCopiedFeedback(): void {
+    this.setState({ showCopiedFeedback: true });
+    setTimeout(() => this.hideCopiedFeedback(), 5000);
+  }
+
+  private hideCopiedFeedback(): void {
+    this.setState({ showCopiedFeedback: false });
   }
 
   private handleSelectSocialSite(siteName: string): void {
@@ -40,6 +56,7 @@ export default class SocialShareModal extends React.Component<IProps, null> {
   }
   private copyUrl(_event: any) {
     copyToClipboard(this.props.url);
+    this.showCopiedFeedback();
   }
 
   public render() {
@@ -54,7 +71,11 @@ export default class SocialShareModal extends React.Component<IProps, null> {
           <div className={css.content}>
             <div className={css.link}>
               <div className={css.title}>Link</div>
-              <div className={css.url}>{this.props.url}</div>
+              { this.state.showCopiedFeedback ? 
+                <div className={css.copied}>copied</div>
+                : ""
+              }
+              <div className={css.url} title={this.props.url}>{this.props.url}</div>
               <div onClick={this.copyUrl} className={css.copyButton} title="Copy Link"><img src={"/assets/images/Icon/Copy-blue.svg"}/></div>
             </div>
             <hr/>

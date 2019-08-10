@@ -48,9 +48,10 @@
   background-color: white;
 
   .link {
-    padding: 22px 30px 22px 30px;
+    padding: 24px 30px 24px 30px;
   
     .title {
+      display: inline-block;
       height: 18px;
       font-size: 16px;
       font-weight: normal;
@@ -67,7 +68,6 @@
       width:240px;
       overflow: hidden;
       text-overflow: ellipsis;
-      height: 13px;
       font-family: "Open Sans";
       font-size: 13px;
       font-weight: normal;
@@ -85,6 +85,20 @@
       img {
         height: 13px;
       }
+    }
+
+    .copied {
+      display: inline-block;
+      position: fixed;
+      right: 20px;
+      font-family: "Open Sans";
+      font-size: 11px;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      color: #0071ff;
     }
   }
 
