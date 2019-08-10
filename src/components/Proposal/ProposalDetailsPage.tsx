@@ -204,15 +204,17 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
             <div className={css.voteButtonsBottom}>
               <span className={css.voteLabel}>Vote:</span>
-              <VoteButtons
-                altStyle
-                currentAccountAddress={currentAccountAddress}
-                currentVote={currentAccountVote}
-                dao={dao}
-                detailView
-                expired={expired}
-                proposal={proposal}
-              />
+              <div className={css.altVoteButtons}>
+                <VoteButtons
+                  altStyle
+                  currentAccountAddress={currentAccountAddress}
+                  currentVote={currentAccountVote}
+                  dao={dao}
+                  detailView
+                  expired={expired}
+                  proposal={proposal}
+                />
+              </div>
               <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
                 <img src={"/assets/images/Icon/vote/for-btn-selected-w.svg"} />
                 <span>Share</span>
