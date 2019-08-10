@@ -38,26 +38,30 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
     this.setState({ showCopiedFeedback: false });
   }
 
-  private handleSelectSocialSite(siteName: string): void {
-    console.log(`selected ${siteName}`);
-  }
+  private sharingMsg = "Checkout%20this%20proposal%20in%20Alchemy!";
 
   private selectTwitter(_event: any): void {
-    this.handleSelectSocialSite("Twitter");
+    const sharingUrl = `https://twitter.com/intent/tweet/?text=${this.sharingMsg}&url=${this.props.url}`;
+    window.open(sharingUrl, "_blank");   
   }
   private selectReddit(_event: any): void {
-    this.handleSelectSocialSite("Reddit");
+    const sharingUrl = `https://reddit.com/submit/?url=${this.props.url}&resubmit=true&title=${this.sharingMsg}`;
+    window.open(sharingUrl, "_blank");   
   }
   private selectFacebook(_event: any): void {
-    this.handleSelectSocialSite("Facebook");
+    const sharingUrl = `https://facebook.com/sharer/sharer.php?u=${this.props.url}`;
+    window.open(sharingUrl, "_blank");
   }
   private selectTelegram(_event: any): void {
-    this.handleSelectSocialSite("Telegram");
+    const sharingUrl = `https://telegram.me/share/url?text=${this.sharingMsg}&url=${this.props.url}`;
+    window.open(sharingUrl, "_blank");   
   }
   private copyUrl(_event: any) {
     copyToClipboard(this.props.url);
     this.showCopiedFeedback();
   }
+
+
 
   public render() {
     return (
