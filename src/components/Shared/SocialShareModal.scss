@@ -48,7 +48,7 @@
   background-color: white;
 
   .link {
-    padding: 30px;
+    padding: 22px 30px 22px 30px;
   
     .title {
       height: 18px;
@@ -89,16 +89,19 @@
   }
 
   hr {
-    color: #9aa9b5;
-    margin: 0;
+    color: #e5ebf2;
+    margin: 0 0 12px 0;
   }
 
   .socialSitesList {
+    margin-bottom: 12px;
+
     .socialSite {
       padding-left: 30px;
       padding-right: 30px;
       padding-top: 10px;
       padding-bottom: 10px;
+      cursor: pointer;
 
       .icon {
         display: inline-block;
@@ -113,7 +116,6 @@
         position: relative;
         bottom: 12px;
         display: inline-block;
-        cursor: pointer;
         font-family: "Open Sans";
         font-size: 16px;
         font-weight: normal;
