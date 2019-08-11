@@ -326,6 +326,7 @@ export function hasClaimableRewards(reward: IRewardState) {
       return true;
     }
   }
+  return false;
 }
 
 /**

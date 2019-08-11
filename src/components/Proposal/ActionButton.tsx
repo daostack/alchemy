@@ -113,6 +113,8 @@ class ActionButton extends React.Component<IProps, IState> {
     }
 
     const redeemable = proposalState.executedAt && proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase());
+    // hack to work around https://github.com/daostack/subgraph/issues/304
+    const reallyRedeemable = redeemable && (beneficiaryHasRewards || accountHasGPRewards);
     const redemptionsTip = RedemptionsTip({
       beneficiaryHasRewards,
       currentAccountAddress,
@@ -134,7 +136,7 @@ class ActionButton extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
-            actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
+            actionType={executable && !reallyRedeemable ? ActionTypes.Execute : ActionTypes.Redeem}
             action={redeemProposal.bind(null, dao.address, proposalState.id, currentAccountAddress)}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
@@ -166,7 +168,7 @@ class ActionButton extends React.Component<IProps, IState> {
                   { /* space after <span> is there on purpose */ }
                   <span> Execute</span>
                 </button>
-                : redeemable ?
+                : reallyRedeemable ?
                   <div>
                     {/* !detailView ?
                   <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposalState} rewards={rewardsForCurrentUser} />
