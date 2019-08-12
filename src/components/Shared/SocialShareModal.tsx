@@ -39,7 +39,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
     this.setState({ showCopiedFeedback: false });
   }
 
-  private sharingMsg = "Checkout%20this%20proposal%20in%20Alchemy!";
+  private sharingMsg = "Check%20out%20this%20proposal%20in%20Alchemy!";
 
   private selectTwitter(_event: any): void {
     const sharingUrl = `https://twitter.com/intent/tweet/?text=${this.sharingMsg}&url=${this.props.url}`;
