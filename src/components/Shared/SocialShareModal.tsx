@@ -2,6 +2,7 @@ import * as React from "react";
 // @ts-ignore
 import { Modal } from "react-router-modal";
 import { copyToClipboard } from "lib/util";
+import Tooltip from "rc-tooltip";
 import * as css from "./SocialShareModal.scss";
 
 interface IState {
@@ -70,7 +71,9 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
           <div className={css.header}>
             <div className={css.icon}><img src={"/assets/images/Icon/vote/for-btn-selected-w.svg"} /></div>
             <div className={css.title}>Share</div>
-            <div className={css.closeButton} onClick={this.props.closeHandler}><img src={"/assets/images/Icon/close-grey.svg"} /></div>
+            <Tooltip overlay="Close" placement="left">
+              <div className={css.closeButton} onClick={this.props.closeHandler}><img src={"/assets/images/Icon/close-grey.svg"} /></div>
+            </Tooltip>
           </div>
           <div className={css.content}>
             <div className={css.link}>
@@ -79,8 +82,12 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
                 <div className={css.copied}>copied</div>
                 : ""
               }
-              <div className={css.url} title={this.props.url}>{this.props.url}</div>
-              <div onClick={this.copyUrl} className={css.copyButton} title="Copy Link"><img src={"/assets/images/Icon/Copy-blue.svg"}/></div>
+              <Tooltip overlay={this.props.url} placement="bottom">
+                <div className={css.url}>{this.props.url}</div>
+              </Tooltip>
+              <Tooltip overlay="Copy Link" placement="right">
+                <div onClick={this.copyUrl} className={css.copyButton}><img src={"/assets/images/Icon/Copy-blue.svg"}/></div>
+              </Tooltip>
             </div>
             <hr/>
             <div  className={css.socialSitesList}>
