@@ -215,11 +215,13 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   proposal={proposal}
                 />
               </div>
-              <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
-                <img src={"/assets/images/Icon/share-white.svg"} />
-                <span>Share</span>
-              </button>
             </div>
+
+            <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
+              <img src={"/assets/images/Icon/share-white.svg"} />
+              <span>Share</span>
+            </button>
+
           </div>
 
           <div className={css.proposalActions + " clearfix"}>

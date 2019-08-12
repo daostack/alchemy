@@ -146,7 +146,6 @@ button.disabled {
 .altVoteButtons {
   display: inline-block;
   margin-bottom: 8px;
-  margin-right: 8px;
 }
 
 .voteStatus {
@@ -204,6 +203,8 @@ button.disabled {
   // font-size: 12px;
   position: relative;
   top: 20px;
+  display: inline-block;
+  margin-right: 4px;
   // right: 0;
 
   .voteLabel {
@@ -322,6 +323,8 @@ button.shareButton {
   display: inline-block;
   font-size: 11px;
   outline: none;
+  top: 20px;
+  margin-bottom: 12px;
 
   img {
     margin-right: 6px;
