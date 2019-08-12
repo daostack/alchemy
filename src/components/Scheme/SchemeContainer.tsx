@@ -1,5 +1,6 @@
+import * as H from "history";
 import { Address, ISchemeState } from "@daostack/client";
-import { getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -8,28 +9,51 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
 import * as Sticky from "react-stickynode";
+import { showNotification } from "reducers/notifications";
+import { IRootState } from "reducers";
+import { connect } from "react-redux";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
 
-
-interface IProps {
-  currentAccountAddress: Address;
+interface IDispatchProps {
+  showNotification: typeof showNotification;
 }
 
-export default class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>, null> {
+interface IExternalProps {
+  currentAccountAddress: Address;
+  history: H.History;
+}
 
-  public render() {
+type IProps = IExternalProps & IDispatchProps;
+
+const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExternalProps => {
+  return ownProps;
+};
+
+const mapDispatchToProps = {
+  showNotification,
+};
+
+class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>, IExternalProps> {
+
+  public render(): any {
     const { currentAccountAddress, match } = this.props;
     const schemeId = match.params.schemeId;
     const daoAvatarAddress = match.params.daoAvatarAddress;
+    const handleNewProposal = async (e: any): Promise<void> => {
+      if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+        this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
+      }
+      e.preventDefault();
+    };
 
     const arc = getArc();
     const scheme = arc.scheme(schemeId);
     const schemeObservable = scheme.state();
 
-    return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>) => {
+    return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><Loading/></div>;
       }
@@ -63,9 +87,11 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/`}>Proposals</Link>
             <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info/`}>Info</Link>
-            <Link className={css.createProposal} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/create`} data-test-id="createProposal">
-              + New proposal
-            </Link>
+            <a className={css.createProposal}
+              data-test-id="createProposal"
+              href="javascript:void(0)"
+              onClick={handleNewProposal}
+            >+ New proposal</a>
           </div>
         </Sticky>
 
@@ -80,3 +106,5 @@ export default class SchemeContainer extends React.Component<IProps & RouteCompo
     }}</Subscribe>;
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(SchemeContainer);

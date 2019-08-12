@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { checkWeb3ProviderAndWarn, getArc, getMetaMask } from "arc";
+import { enableWeb3ProviderAndWarn, getArc, getWeb3Provider } from "arc";
 
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
@@ -95,9 +95,9 @@ class AccountProfilePage extends React.Component<IProps, null> {
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
 
-    const web3Provider = await getMetaMask();
+    const web3Provider = await getWeb3Provider();
     try {
 
       const timestamp = new Date().getTime().toString();

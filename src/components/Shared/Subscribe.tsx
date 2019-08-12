@@ -19,20 +19,22 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
   public subscription: Subscription;
   public observable: Observable<any>;
 
-  public state: IObservableState<object> = {
-    isLoading: true,
-    data: null,
-    error: null,
-    complete: null,
-  };
-
   constructor(props: IProps) {
     super(props);
-    this.setupSubscription(props.observable);
+
+    this.state = {
+      isLoading: true,
+      data: null,
+      error: null,
+      complete: null,
+    };
   }
 
   public setupSubscription(observable: Observable<any>) {
     this.observable = observable;
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
     this.subscription = observable.subscribe(
       (next: object) => {
         this.setState({
@@ -56,6 +58,15 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     }
   }
 
+  public componentDidMount() {
+    this.setupSubscription(this.props.observable);
+  }
+
+  public componentDidUpdate(prevProps: IProps) {
+    if (this.props.observable !== prevProps.observable) {
+      this.setupSubscription(this.props.observable);
+    }
+  }
 
   public componentWillUnmount() {
     this.teardownSubscription();
@@ -63,10 +74,6 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
 
   public render() {
     const { children } = this.props;
-    if (this.observable !== this.props.observable) {
-      this.setupSubscription(this.props.observable);
-    }
-
     if (typeof children === "function") {
       return children(this.state);
     }
@@ -85,6 +92,5 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     }
     const observable = combineLatest(this.observable, options.observable, options.combine);
     this.setupSubscription(observable);
-
   }
 }

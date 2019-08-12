@@ -21,7 +21,7 @@ describe("Proposals", () => {
     daoAddress = addresses.dutchx.Avatar.toLowerCase();
   });
 
-  it("Create a Generic Scheme proposal, vote for it, stake on it", async () => {
+  it.skip("Create a Generic Scheme proposal, vote for it, stake on it", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
