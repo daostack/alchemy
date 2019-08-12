@@ -69,7 +69,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
       <Modal onBackdropClick={this.props.closeHandler}>
         <div className={css.modalWindow}>
           <div className={css.header}>
-            <div className={css.icon}><img src={"/assets/images/Icon/vote/for-btn-selected-w.svg"} /></div>
+            <div className={css.icon}><img src={"/assets/images/Icon//share-blue.svg"} /></div>
             <div className={css.title}>Share</div>
             <Tooltip overlay="Close" placement="left">
               <div className={css.closeButton} onClick={this.props.closeHandler}><img src={"/assets/images/Icon/close-grey.svg"} /></div>

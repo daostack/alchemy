@@ -324,9 +324,9 @@ button.shareButton {
   outline: none;
 
   img {
-    margin-right: 4px;
+    margin-right: 6px;
     position: relative;
-    top: 4px;
+    top: 2px;
     height: 14px;
   }
 
@@ -337,10 +337,3 @@ button.shareButton {
     color: white;
   }
 }
-
-// @media only screen and (max-width: 1008px) {
-//   button.shareButton {
-//       margin-top: 8px;
-//   }
-// }
-

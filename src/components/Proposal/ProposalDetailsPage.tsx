@@ -216,7 +216,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 />
               </div>
               <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
-                <img src={"/assets/images/Icon/vote/for-btn-selected-w.svg"} />
+                <img src={"/assets/images/Icon/share-white.svg"} />
                 <span>Share</span>
               </button>
             </div>
