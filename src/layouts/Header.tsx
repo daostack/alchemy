@@ -154,7 +154,7 @@ class Header extends React.Component<IProps, null> {
               }
               {!currentAccountAddress ?
                 <div className={css.web3ProviderLogin}>
-                  <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a web3 provider"}>
+                  <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
                     <button onClick={this.handleClickLogin} data-test-id="loginButton">
                       Log in <img src="/assets/images/Icon/login-white.svg"/>
                     </button>
@@ -162,7 +162,7 @@ class Header extends React.Component<IProps, null> {
                 </div>
                 : (!accountIsEnabled) ?
                   <div className={css.web3ProviderLogin}>
-                    <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a web3 provider"}>
+                    <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
                       <button onClick={this.handleConnect} data-test-id="connectButton">
                           Connect <img src="/assets/images/Icon/login-white.svg"/>
                       </button>
