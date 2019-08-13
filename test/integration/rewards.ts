@@ -12,6 +12,10 @@ describe("Redemptions page", () => {
 
   it("should exist", async () => {
     await browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/redemptions`);
+
+    const loginButton = await $("*[data-test-id=\"loginButton\"]");
+    await loginButton.click();
+
     const pageTitle = await browser.getTitle();
     pageTitle.should.be.equal("Alchemy | DAOstack");
 
@@ -23,13 +27,10 @@ describe("Redemptions page", () => {
     const redeemButton = await $("[data-test-id=\"button-redeem\"]");
     // console.log(Object.keys(proposalCard));
     // const redeemButton = proposalCard
-    const html = await redeemButton.getHTML();
-    console.log(html);
-    // browser.debug();
+    // const html = await redeemButton.getHTML();
     await redeemButton.click();
     const launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
     await launchMetaMaskButton.click();
-    browser.debug();
 
   });
 });

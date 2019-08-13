@@ -17,6 +17,7 @@ import { proposalEnded } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of } from "rxjs";
+import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -61,6 +62,7 @@ const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps =
 interface IState {
   expired: boolean;
   showVotersModal: boolean;
+  showShareModal: boolean;
 }
 
 class ProposalDetailsPage extends React.Component<IProps, IState> {
@@ -70,22 +72,36 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     this.state = {
       expired: closingTime(props.proposal).isSameOrBefore(moment()),
+      showShareModal: false,
       showVotersModal: false,
     };
 
+    this.showShareModal = this.showShareModal.bind(this);
+    this.closeShareModal = this.closeShareModal.bind(this);
+    this.showVotersModal = this.showVotersModal.bind(this);
+    this.closeVotersModal = this.closeVotersModal.bind(this);
+    this.countdownEnded = this.countdownEnded.bind(this);
   }
 
-  public showVotersModal(_event: any): void {
+  private showShareModal(_event: any): void {
+    this.setState({ showShareModal: true });
+  }
+
+  private closeShareModal(_event: any): void {
+    this.setState({ showShareModal: false });
+  }
+
+  private showVotersModal(_event: any): void {
     if (this.props.proposal.votesCount > 0) {
       this.setState({ showVotersModal: true });
     }
   }
 
-  public closeVotersModal(_event: any): void {
+  private closeVotersModal(_event: any): void {
     this.setState({ showVotersModal: false });
   }
 
-  public countdownEnded(): void {
+  private countdownEnded(): void {
     this.setState({ expired: true });
   }
 
@@ -154,7 +170,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               {!proposalEnded(proposal) ?
                 <span className={css.content}>
                   {!expired ?
-                    <Countdown toDate={closingTime(proposal)} detailView onEnd={this.countdownEnded.bind(this)} /> :
+                    <Countdown toDate={closingTime(proposal)} detailView onEnd={this.countdownEnded} /> :
                     <span className={css.closedTime}>
                       {proposal.stage === IProposalStage.Queued ? "Expired" :
                         proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
@@ -188,16 +204,24 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
             <div className={css.voteButtonsBottom}>
               <span className={css.voteLabel}>Vote:</span>
-              <VoteButtons
-                altStyle
-                currentAccountAddress={currentAccountAddress}
-                currentVote={currentAccountVote}
-                dao={dao}
-                detailView
-                expired={expired}
-                proposal={proposal}
-              />
+              <div className={css.altVoteButtons}>
+                <VoteButtons
+                  altStyle
+                  currentAccountAddress={currentAccountAddress}
+                  currentVote={currentAccountVote}
+                  dao={dao}
+                  detailView
+                  expired={expired}
+                  proposal={proposal}
+                />
+              </div>
             </div>
+
+            <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
+              <img src={"/assets/images/Icon/share-white.svg"} />
+              <span>Share</span>
+            </button>
+
           </div>
 
           <div className={css.proposalActions + " clearfix"}>
@@ -205,7 +229,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               <div>
                 <div className={css.statusTitle}>
                   <h3>Votes</h3>
-                  <span onClick={this.showVotersModal.bind(this)} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
+                  <span onClick={this.showVotersModal} className={classNames({ [css.clickable]: proposal.votesCount > 0 })}>
                     {proposal.votesCount} Vote{proposal.votesCount === 1 ? "" : "s"} &gt;
                   </span>
                 </div>
@@ -259,10 +283,17 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
         {this.state.showVotersModal ?
           <VotersModal
-            closeAction={this.closeVotersModal.bind(this)}
+            closeAction={this.closeVotersModal}
             currentAccountAddress={this.props.currentAccountAddress}
             dao={dao}
             proposal={proposal}
+          /> : ""
+        }
+
+        {this.state.showShareModal ?
+          <SocialShareModal
+            closeHandler={this.closeShareModal}
+            url={`https://alchemy.daostack.io/dao/${dao.address}/proposal/${proposal.id}`}
           /> : ""
         }
       </div>

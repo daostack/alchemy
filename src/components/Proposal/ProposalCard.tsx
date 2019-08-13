@@ -66,11 +66,11 @@ class ProposalCard extends React.Component<IProps, IState> {
     };
   }
 
-  public countdownEnded() {
+  public countdownEnded(): void {
     this.setState({ expired: true });
   }
 
-  public render() {
+  public render(): any {
     const {
       beneficiaryProfile,
       creatorProfile,
@@ -220,7 +220,7 @@ interface IExternalProps {
   proposal: Proposal;
 }
 
-export default (props: IExternalProps) => {
+export default (props: IExternalProps): any => {
 
   const arc = getArc();
   const dao = arc.dao(props.dao.address);

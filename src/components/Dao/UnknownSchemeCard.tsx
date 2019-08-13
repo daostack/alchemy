@@ -28,7 +28,7 @@ const UnknownSchemeCard = (props: IInternalProps) => {
               return <Subscribe observable={scheme.state()} key={scheme.id}>{
                 (state: IObservableState<ISchemeState>): any => {
                   if (state.isLoading) {
-                    return  <div>Loading..</div>;
+                    return  <tr><td>Loading...</td></tr>;
                   } else if (state.error) {
                     throw state.error;
                   } else {

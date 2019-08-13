@@ -143,6 +143,11 @@ button.disabled {
   position: relative;
 }
 
+.altVoteButtons {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
 .voteStatus {
   height: 140px;
   padding-top: 70px;
@@ -198,6 +203,9 @@ button.disabled {
   // font-size: 12px;
   position: relative;
   top: 20px;
+  display: inline-block;
+  margin-right: 6px;
+  white-space: nowrap;
   // right: 0;
 
   .voteLabel {
@@ -299,4 +307,37 @@ button.disabled {
 .statusContainer {
   margin-right: 16px;
   display: inline-block;
+}
+
+button.shareButton {
+  height: 30px;
+  line-height: 30px;
+  width: auto;
+  border-radius: 30px;
+  background-color: #0071ff;
+  padding: 0 15px;
+  font-weight: 700;
+  color: #0376ff;
+  transition: all .25s ease;
+  position: relative;
+  border: 0;
+  display: inline-block;
+  font-size: 11px;
+  outline: none;
+  top: 20px;
+  margin-bottom: 12px;
+
+  img {
+    margin-right: 6px;
+    position: relative;
+    top: 2px;
+    height: 14px;
+  }
+
+  span {
+    font-weight: bold;
+    font-size: 13px;
+    display: inline-block;
+    color: white;
+  }
 }

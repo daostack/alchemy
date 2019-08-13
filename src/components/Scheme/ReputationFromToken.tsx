@@ -1,7 +1,7 @@
 import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
-import { checkWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName, fromWei } from "lib/util";
 import * as React from "react";
@@ -104,7 +104,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   }
 
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
-    if (!(await checkWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
       setSubmitting(false);
       return;
     }
@@ -166,11 +166,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             render={({
               errors,
               touched,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              handleSubmit,
-              // isSubmitting,
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              setFieldTouched,
               setFieldValue,
               values,
             }: FormikProps<IFormValues>) => {
