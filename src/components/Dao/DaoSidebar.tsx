@@ -10,7 +10,6 @@ import gql from "graphql-tag";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
 import { of } from "rxjs";
 import * as css from "./Dao.scss";
 
@@ -120,7 +119,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                 </Link>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>
+                <Link to={"/dao/" + dao.address + "/history/"}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -130,10 +129,10 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }></span>
                   <img src="/assets/images/Icon/menu/history.svg" />
                   History
-                </NavLink>
+                </Link>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
+                <Link to={"/dao/" + dao.address + "/redemptions/"}>
                   <span className={
                     classNames({
                       [css.menuDot]: true,
@@ -148,10 +147,10 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }></span>
                   <img src="/assets/images/Icon/menu/redemption.svg" />
                   Redemptions ({proposalCount || "0"})
-                </NavLink>
+                </Link>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/discussion/"}>
+                <Link to={"/dao/" + dao.address + "/discussion/"}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -161,7 +160,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }></span>
                   <img src="/assets/images/Icon/menu/chat.svg" />
                   DAO Wall
-                </NavLink>
+                </Link>
               </li>
             </ul>
           </div>
