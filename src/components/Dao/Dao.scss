@@ -328,7 +328,7 @@ button:hover {
 
 
 .daoSidebar {
-  min-width: 250px;
+  min-width: 48px;
   position: relative;
   max-width: 250px;
   height: 100%;
@@ -705,12 +705,13 @@ a {
   }
 
   .daoSidebar {
-    width: 50px;
+    width: 48px;
     max-width: 100%;
     height: auto;
     flex-grow: unset;
     z-index: 100000;
     background-color: rgba(49, 120, 202, 0);
+    transition: height .25s ease, width 0s .25s;
 
     &:hover {
       z-index: 100000;
@@ -747,6 +748,7 @@ a {
       width: 100%;
       background-color: rgba(49, 120, 202, 1.000);
       padding-bottom: 50px;
+      transition: width 0s 0s, height .25s ease;
 
       .daoNavigation {
         height: 520px;

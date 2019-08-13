@@ -1,5 +1,27 @@
+import * as chai from "chai";
 import { Address } from "@daostack/client";
 import { getContractAddresses } from "./utils";
+
+chai.should();
+
+describe("Header redemptions button", () => {
+  it("shouldn't be there if the user isn't logged in", async () => {
+    await browser.url("http://127.0.0.1:3000");
+
+    const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
+    (await redemptionsButton.isDisplayed()).should.equal(false);
+  });
+
+  it("should redirect us to the redemptions page", async () => {
+    (await $("[data-test-id=\"loginButton\"]")).click();
+
+    const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
+    await redemptionsButton.waitForDisplayed();
+    await redemptionsButton.click();
+
+    (await browser.getUrl()).should.equal("http://127.0.0.1:3000/redemptions");
+  });
+});
 
 describe("DAO redemptions page", () => {
   let testAddresses;
@@ -12,9 +34,6 @@ describe("DAO redemptions page", () => {
 
   it("should exist", async () => {
     await browser.url(`http://127.0.0.1:3000/dao/${daoAddress}/redemptions`);
-
-    const loginButton = await $("*[data-test-id=\"loginButton\"]");
-    await loginButton.click();
 
     const pageTitle = await browser.getTitle();
     pageTitle.should.be.equal("Alchemy | DAOstack");
