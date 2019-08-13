@@ -50,10 +50,6 @@ body {
   opacity: 1;
 }
 
-.withWeb3ProviderConnect {
-  margin-right: 8px;
-}
-
 .web3ProviderLogin {
   display: inline-block;
 }
@@ -372,7 +368,58 @@ body {
       }
 
       .logoutButtonContainer {
-        padding-top: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 15px;
+        padding-bottom: 12px;
+        text-align: right;
+
+        .web3ProviderLogoutSection {
+
+          .provider {
+            text-align: left;
+            padding-left: 18px;
+            float: left;
+            margin-bottom: 12px;
+
+            .title {
+              font-weight: bold;
+              font-size: 13px;
+              color: #001d35;
+              margin-bottom: 2px;
+            }
+            
+            .name {
+              font-size: 11px;
+              color: #4e6176;
+              font-weight: normal;
+              font-family: "Open Sans";
+              display: inline-block;
+            }
+          }
+
+          .web3ProviderLogInOut {
+            position: relative;
+            top: 14px;
+          }
+        }
+      }
+
+      .web3ProviderLogInOut {
+        display: inline-block;
+        padding-right: 14px;
+
+        .text {
+          color: $accent-1;
+          white-space: nowrap;
+          cursor: pointer;
+          display: inline-block;
+        }
+
+        img {
+          height: 12px;
+          margin-right: 5px;
+        }
       }
     }
   }
@@ -415,6 +462,11 @@ body {
       position: relative;
       top: -6px;
       right: 12px;
+    }
+
+    &.noAccount {
+      margin-right: 10px;
+      opacity: .5;
     }
   }
 }
@@ -586,28 +638,6 @@ body {
     display: none;
   }
 
-}
-
-.web3ProviderLogout {
-  float: right;
-  color: $accent-1;
-  margin-right: 12px;
-  margin-top: 10px;
-  margin-bottom: 12px;
-  white-space: nowrap;
-  cursor: pointer;
-
-  .text {
-    margin-right: 4px;
-    position: relative;
-    bottom: 2px;
-    display: inline-block;
-  }
-
-  img {
-    height: 12px;
-    margin-right: 5px;
-  }
 }
 
 .cookieDisclaimerContainer {

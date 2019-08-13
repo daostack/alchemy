@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly } from "arc";
+import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly, IWeb3ProviderInfo, getWeb3ProviderInfo } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -8,13 +8,14 @@ import Subscribe, { IObservableState } from "components/Shared/Subscribe";
 import { copyToClipboard } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
-import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
+import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import * as classNames from "classnames";
+import Tooltip from "rc-tooltip";
 import * as css from "./App.scss";
 
 
@@ -25,6 +26,7 @@ interface IStateProps {
   currentAccountAddress: string | null;
   networkId: number;
   loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
+  getCachedWeb3ProviderInfo: () => IWeb3ProviderInfo | null;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): any => {
@@ -85,6 +87,8 @@ class Header extends React.Component<IProps, null> {
 
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
+    const web3ProviderInfo = getWeb3ProviderInfo();
+    // const cachedWeb3ProviderInfo = this.props.getCachedWeb3ProviderInfo();
 
     return(
       <div className={css.headerContainer}>
@@ -103,9 +107,9 @@ class Header extends React.Component<IProps, null> {
           <div className={css.headerRight}>
             <div className={css.accountInfo}>
               { currentAccountAddress ?
-                <div className={classNames({ [css.accountInfoContainer]: true, [css.withWeb3ProviderConnect]: !accountIsEnabled })}>
+                <div className={css.accountInfoContainer}>
                   <div className={css.accountImage}>
-                    <div className={css.profileLink}>
+                    <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !accountIsEnabled })}>
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                       <AccountImage accountAddress={currentAccountAddress} />
@@ -134,23 +138,33 @@ class Header extends React.Component<IProps, null> {
                     <AccountBalances dao={dao} address={currentAccountAddress} />
                     <div className={css.logoutButtonContainer}>
                       { accountIsEnabled ?
-                        <div className={css.web3ProviderLogout}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
-                        <div className={css.web3ProviderLogout}  onClick={this.handleClickLogin}><div className={css.text}>Log in</div> <img src="/assets/images/Icon/login.svg"/></div> }
+                        <div className={css.web3ProviderLogoutSection}>
+                          <div className={css.provider}>
+                            <div className={css.title}>Provider</div>
+                            <div className={css.name}>{web3ProviderInfo.name}</div>
+                          </div>
+                          <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
+                        </div> :
+                        <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogin}><div className={css.text}>Log in</div> <img src="/assets/images/Icon/login.svg"/></div> }
                     </div>
                   </div>
                 </div> : ""
               }
               {!currentAccountAddress ?
                 <div className={css.web3ProviderLogin}>
-                  <button onClick={this.handleClickLogin} data-test-id="loginButton">
-                    Log in <img src="/assets/images/Icon/login-white.svg"/>
-                  </button>
+                  <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a web3 provider"}>
+                    <button onClick={this.handleClickLogin} data-test-id="loginButton">
+                      Log in <img src="/assets/images/Icon/login-white.svg"/>
+                    </button>
+                  </Tooltip>
                 </div>
                 : (!accountIsEnabled) ?
                   <div className={css.web3ProviderLogin}>
-                    <button onClick={this.handleConnect} data-test-id="connectButton">
-                        Connect <img src="/assets/images/Icon/login-white.svg"/>
-                    </button>
+                    <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a web3 provider"}>
+                      <button onClick={this.handleConnect} data-test-id="connectButton">
+                          Connect <img src="/assets/images/Icon/login-white.svg"/>
+                      </button>
+                    </Tooltip>
                   </div>
                   : ""
               }
@@ -166,6 +180,7 @@ const ConnectedHeader = connect(mapStateToProps, mapDispatchToProps)(Header);
 
 interface IExternalProps extends RouteComponentProps<any> {
   loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
+  getCachedWeb3ProviderInfo: () => IWeb3ProviderInfo | null;
 }
 
 export default (props: IExternalProps): any => {
