@@ -241,6 +241,12 @@ body {
         border-bottom: 1px solid rgba(229, 235, 242, 1.000);
         padding: 25px;
 
+        .walletImage {
+          &.greyscale img {
+            filter: grayscale(100%);
+          }
+        }
+
         .fullProfile {
           text-align: left;
 
@@ -455,6 +461,12 @@ body {
 
   .profileLink {
     display: inline-block;
+
+    .walletImage {
+      &.greyscale img {
+        filter: grayscale(100%);
+      }
+    }
 
     a {
       color: white;

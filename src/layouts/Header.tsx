@@ -112,13 +112,15 @@ class Header extends React.Component<IProps, null> {
                     <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !accountIsEnabled })}>
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                      <AccountImage accountAddress={currentAccountAddress} />
+                      <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
+                        <AccountImage accountAddress={currentAccountAddress} />
+                      </span>
                     </div>
                   </div>
                   <div className={css.wallet}>
                     <div className={css.pointer}></div>
                     <div className={css.walletDetails}>
-                      <div className={css.walletImage}>
+                      <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
                         <AccountImage accountAddress={currentAccountAddress} />
                       </div>
                       <div className={css.profileName}>
