@@ -4,6 +4,7 @@ import { combineLatest, Observable, Subscription } from "rxjs";
 interface IProps {
   observable: Observable<any>;
   children: any;
+  name?: string;
 }
 
 
@@ -35,8 +36,10 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+    console.log(this.props.name, "setting up sub", observable);
     this.subscription = observable.subscribe(
       (next: object) => {
+        console.log(this.props.name, "Got data", next);
         this.setState({
           data: next,
           isLoading: false,
@@ -44,11 +47,12 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
         });
       },
       (error: Error) => {
+        console.log(this.props.name, "error", error);
         this.setState({
           isLoading: false,
           error });
       },
-      () => { this.setState({complete: true}); }
+      () => { console.log(this.props.name, "complete"); this.setState({complete: true}); }
     );
   }
 
@@ -63,7 +67,9 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
   }
 
   public componentDidUpdate(prevProps: IProps) {
+    console.log("did update?");
     if (this.props.observable !== prevProps.observable) {
+      console.log("yes did update");
       this.setupSubscription(this.props.observable);
     }
   }

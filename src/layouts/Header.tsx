@@ -171,7 +171,7 @@ export default (props: IExternalProps): any => {
   const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
 
   if (daoAddress) {
-    return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>): any => {
+    return <Subscribe observable={arc.dao(daoAddress).state()} name="Header">{(state: IObservableState<IDAOState>): any => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {

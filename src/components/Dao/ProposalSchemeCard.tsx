@@ -13,7 +13,7 @@ import * as css from "./SchemeCard.scss";
 
 const ProposalDetail = (props: { proposal: Proposal; dao: IDAOState }) => {
   const { proposal, dao } = props;
-  return <Subscribe key={proposal.id} observable={proposal.state()}>{
+  return <Subscribe key={proposal.id} observable={proposal.state()} name="Proposal Detail">{
     (state: IObservableState<IProposalState>): any => {
       if (state.isLoading) {
         return <div>Loading...</div>;
@@ -115,7 +115,7 @@ export default (props: IExternalProps) => {
     }}) // the list of boosted proposals
   );
 
-  return <Subscribe observable={observable}>{
+  return <Subscribe observable={observable} name="Proposal Scheme Card">{
     (state: IObservableState<[ISchemeState, Proposal[], Proposal[], Proposal[]]>): any => {
       if (state.isLoading) {
         return  <div><Loading/></div>;

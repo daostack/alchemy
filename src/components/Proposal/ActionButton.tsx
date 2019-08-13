@@ -238,7 +238,7 @@ export default (props: IMyProps): any => {
     observable = of(null);
   }
 
-  return <Subscribe observable={observable}>{(state: IObservableState<any>): any => {
+  return <Subscribe observable={observable} name="ActionButton">{(state: IObservableState<any>): any => {
     if (state.isLoading) {
       return <div>Loading proposal {props.proposalState.id.substr(0, 6)} ...</div>;
     } else if (state.error) {

@@ -290,7 +290,7 @@ export default (props: IContainerProps) => {
       of([]),
     );
   }
-  return <Subscribe observable={observable}>{
+  return <Subscribe observable={observable} name="Staking BUttons">{
     (state: IObservableState<[BN, any, Stake[]]>): any => {
       if (state.isLoading) {
         return <div>Loading PredictionBox</div>;

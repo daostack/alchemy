@@ -251,7 +251,7 @@ class SchemeProposalsSubscription extends React.Component<IPropsSubscription & R
     const setState = this.setState.bind(this);
     const parentState = this.state;
 
-    return <Subscribe observable={observable}>{
+    return <Subscribe observable={observable} name="SchemeProposals">{
       (state: IObservableState<[Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
         if (state.isLoading) {
           return  <div className={css.loading}><Loading/></div>;

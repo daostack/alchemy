@@ -140,7 +140,7 @@ export default (props: RouteComponentProps<any>) => {
   const daoAddress = props.match.params.daoAvatarAddress;
   const arc = getArc();
   const dao = arc.dao(daoAddress);
-  return <Subscribe observable={dao.state()}>{(state: IObservableState<IDAOState>) => {
+  return <Subscribe observable={dao.state()} name="DAOContainer">{(state: IObservableState<IDAOState>) => {
     if (state.error) {
       return <div>{state.error.message}</div>;
     } else if (state.data) {

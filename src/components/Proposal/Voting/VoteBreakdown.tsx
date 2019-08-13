@@ -121,7 +121,7 @@ export default (props: IProps) => {
   const dao = arc.dao(props.dao.address);
   const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
 
-  return <Subscribe observable={observable}>{
+  return <Subscribe observable={observable} name="Vot Breakdown">{
     (state: IObservableState<IMemberState>): any => {
       if (state.isLoading) {
         return <div>Loading votebox...</div>;

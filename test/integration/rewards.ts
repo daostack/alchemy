@@ -18,22 +18,22 @@ describe("Redemptions page", () => {
 
     const pageTitle = await browser.getTitle();
     pageTitle.should.be.equal("Alchemy | DAOstack");
+  });
 
-    // we expect the
+  it("should allow redeeming a proposal", async () => {
     const proposalId = testAddresses.test.executedProposalId;
     const proposalCard = await $(`[data-test-id="proposal-${proposalId}"]`);
     await proposalCard.waitForExist();
 
     const redeemButton = await $("[data-test-id=\"button-redeem\"]");
-    // console.log(Object.keys(proposalCard));
-    // const redeemButton = proposalCard
+
     const html = await redeemButton.getHTML();
-    console.log(html);
-    // browser.debug();
+
     await redeemButton.click();
     const launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
     await launchMetaMaskButton.click();
-    browser.debug();
 
+    // The proposal card should disappear
+    await proposalCard.waitForExist(undefined, true);
   });
 });

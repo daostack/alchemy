@@ -89,7 +89,7 @@ export default (props: {} & RouteComponentProps<any>) => {
     // eslint-disable-next-line
     arc.dao(daoAvatarAddress).schemes({where: { name_not_in: KNOWN_SCHEME_NAMES}})
   );
-  return <Subscribe observable={observable}>{
+  return <Subscribe observable={observable} name="DAOSchemesPage">{
     (state: IObservableState<[IDAOState, Scheme[], Scheme[]]>): any => {
       if (state.isLoading) {
         return <div className={css.loading}><Loading/></div>;

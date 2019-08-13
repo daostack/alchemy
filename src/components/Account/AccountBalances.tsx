@@ -62,7 +62,7 @@ export default (props: { dao: IDAOState; address: Address}): any => {
     arc.GENToken().balanceOf(props.address),
   );
 
-  return <Subscribe observable={observable}>{(state: IObservableState<[IMemberState, BN, BN]>) => {
+  return <Subscribe observable={observable} name="Account Balances">{(state: IObservableState<[IMemberState, BN, BN]>) => {
     if (state.isLoading) {
       return <div>loading..</div>;
     } else if (state.error) {

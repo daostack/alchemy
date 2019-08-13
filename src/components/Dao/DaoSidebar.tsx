@@ -151,7 +151,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
               </a>
             </span>
             <ul>
-              <Subscribe observable={arc.dao(dao.address).ethBalance()}>{
+              <Subscribe observable={arc.dao(dao.address).ethBalance()} name="DAOSidebar ETH Balance">{
                 (state: IObservableState<BN>) => {
                   if (state.isLoading) {
                     return <li key="ETH">... ETH</li>;
@@ -166,7 +166,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
               {Object.keys(supportedTokens()).map((tokenAddress) => {
                 const token = new Token(tokenAddress, arc);
                 const tokenData = supportedTokens()[tokenAddress];
-                return <Subscribe key={tokenAddress} observable={token.balanceOf(dao.address)}>{
+                return <Subscribe key={tokenAddress} observable={token.balanceOf(dao.address)} name="DAOSidebar Token Balance">{
                   (state: IObservableState<BN>) => {
                     if (state.isLoading || state.error || (state.data.isZero() && tokenData.symbol !== "GEN")) {
                       return "";
@@ -240,7 +240,8 @@ export default (props: { dao: IDAOState; currentAccountAddress?: Address }) => {
     `;
     const arc = getArc();
 
-    return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
+    console.log("re-rendering sidebar");
+    return <Subscribe observable={arc.getObservable(query)} name="DAOSidebar">{(state: IObservableState<any>) => {
       if (state.error) {
         return <div>{state.error.message}</div>;
       } else if (state.data) {

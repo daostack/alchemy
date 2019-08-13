@@ -273,6 +273,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           autoFocus
                           type="number"
                           min="1"
+                          id="predictionInput"
                           ref={(input) => { this.stakeInput = input; }}
                           className={css.predictionAmount}
                           onChange={(e) => this.setState({stakeAmount: Number(e.target.value)})}

@@ -112,7 +112,7 @@ export default (props: IOwnProps) => {
     arc.dao(props.dao.address).state(),
     arc.dao(props.dao.address).member(props.accountAddress).state()
   );
-  return <Subscribe observable={observable}>{
+  return <Subscribe observable={observable} name="Account Popup">{
     (state: IObservableState<[IDAOState, IMemberState]>) => {
       if (state.error) {
         return <div>{state.error.message}</div>;

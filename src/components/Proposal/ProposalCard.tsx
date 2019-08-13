@@ -231,7 +231,7 @@ export default (props: IExternalProps): any => {
     props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
     concat(of(new BN("0")), dao.ethBalance())
   );
-  return <Subscribe observable={observable}>{
+  return <Subscribe observable={observable} name="ProposalCard">{
     (state: IObservableState<[IProposalState, Vote[], BN]>): any => {
       if (state.isLoading) {
         return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;

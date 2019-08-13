@@ -53,7 +53,7 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
     const scheme = arc.scheme(schemeId);
     const schemeObservable = scheme.state();
 
-    return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>): any => {
+    return <Subscribe observable={schemeObservable} name="SchemeContainer">{(state: IObservableState<ISchemeState>): any => {
       if (state.isLoading) {
         return  <div className={css.loading}><Loading/></div>;
       }
