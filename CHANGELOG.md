@@ -7,6 +7,7 @@
 ### Unreleased
   - Features Added
     - Started a changelog
+    - Tweaks to the wallet provider UI
   - Bugs Fixed
   - Maintenence / Refactor
   - Misc
