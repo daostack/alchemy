@@ -202,7 +202,7 @@ class VoteButtons extends React.Component<IContainerProps, IState> {
                 </div>
                 :
                 <div className={css.votingDisabled}>
-                  <Tooltip overlay={tipContent}>
+                  <Tooltip placement="bottom" overlay={tipContent}>
                     <span>Voting disabled</span>
                   </Tooltip>
                 </div>
