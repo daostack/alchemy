@@ -14,7 +14,9 @@ import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom"
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import * as classNames from "classnames";
 import * as css from "./App.scss";
+
 
 interface IStateProps {
   accounts: string[];
@@ -60,18 +62,17 @@ class Header extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public handleClickTour = (): void => {
-    const { showTour } = this.props;
-    showTour();
-  }
-
-  public handleClickLogin = async (): Promise<void> => {
+  public handleClickLogin = async (_event: any): Promise<void> => {
     if (!await this.props.loadCachedWeb3Provider(this.props.showNotification)) {
       await enableWeb3ProviderAndWarn(this.props.showNotification, false);
     }
   }
 
-  public handleClickLogout = async (): Promise<void> => {
+  public handleConnect = async (_event: any): Promise<void> => {
+    await enableWeb3ProviderAndWarn(this.props.showNotification, false);
+  }
+
+  public handleClickLogout = async (_event: any): Promise<void> => {
     await gotoReadonly(this.props.showNotification);
   }
 
@@ -102,7 +103,7 @@ class Header extends React.Component<IProps, null> {
           <div className={css.headerRight}>
             <div className={css.accountInfo}>
               { currentAccountAddress ?
-                <div className={css.accountInfoContainer}>
+                <div className={classNames({ [css.accountInfoContainer]: true, [css.withWeb3ProviderConnect]: !accountIsEnabled })}>
                   <div className={css.accountImage}>
                     <div className={css.profileLink}>
                       <AccountProfileName accountAddress={currentAccountAddress}
@@ -133,19 +134,25 @@ class Header extends React.Component<IProps, null> {
                     <AccountBalances dao={dao} address={currentAccountAddress} />
                     <div className={css.logoutButtonContainer}>
                       { accountIsEnabled ?
-                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
-                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/Icon/login.svg"/></div> }
+                        <div className={css.web3ProviderLogout}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
+                        <div className={css.web3ProviderLogout}  onClick={this.handleClickLogin}><div className={css.text}>Log in</div> <img src="/assets/images/Icon/login.svg"/></div> }
                     </div>
                   </div>
                 </div> : ""
               }
               {!currentAccountAddress ?
                 <div className={css.web3ProviderLogin}>
-                  <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">
-                    Please log in! <img src="/assets/images/Icon/login-white.svg"/>
+                  <button onClick={this.handleClickLogin} data-test-id="loginButton">
+                    Log in <img src="/assets/images/Icon/login-white.svg"/>
                   </button>
                 </div>
-                : ""
+                : (!accountIsEnabled) ?
+                  <div className={css.web3ProviderLogin}>
+                    <button onClick={this.handleConnect} data-test-id="connectButton">
+                        Connect <img src="/assets/images/Icon/login-white.svg"/>
+                    </button>
+                  </div>
+                  : ""
               }
             </div>
           </div>

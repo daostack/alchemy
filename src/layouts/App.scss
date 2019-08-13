@@ -50,13 +50,18 @@ body {
   opacity: 1;
 }
 
+.withWeb3ProviderConnect {
+  margin-right: 8px;
+}
+
 .web3ProviderLogin {
   display: inline-block;
 }
 
 .web3ProviderLogin button {
-  width: 120px;
   height: 30px;
+  padding-left: 14px;
+  padding-right: 14px;
   line-height: 30px;
   font-weight: bold;
   font-size: 12px;
