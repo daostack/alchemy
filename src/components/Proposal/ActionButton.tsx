@@ -1,8 +1,6 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWeb3ProviderAndWarn } from "arc";
-
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -21,6 +19,8 @@ import { map, mergeMap } from "rxjs/operators";
 import * as css from "./ActionButton.scss";
 /* import RedemptionsString from "./RedemptionsString"; */
 import RedemptionsTip from "./RedemptionsTip";
+
+import BN = require("bn.js");
 
 interface IStateProps {
   beneficiaryProfile: IProfileState;
@@ -113,10 +113,9 @@ class ActionButton extends React.Component<IProps, IState> {
       beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
     }
 
-    const redeemable = proposalState.executedAt
-                       && (accountHasGPRewards
-                           || (proposalState.winningOutcome === IProposalOutcome.Pass && beneficiaryHasRewards));
-
+    const redeemable = proposalState.executedAt && proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase());
+    // hack to work around https://github.com/daostack/subgraph/issues/304
+    const reallyRedeemable = redeemable && (beneficiaryHasRewards || accountHasGPRewards);
     const redemptionsTip = RedemptionsTip({
       beneficiaryHasRewards,
       currentAccountAddress,
@@ -138,7 +137,7 @@ class ActionButton extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
-            actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
+            actionType={executable && !reallyRedeemable ? ActionTypes.Execute : ActionTypes.Redeem}
             action={this.handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
@@ -170,7 +169,7 @@ class ActionButton extends React.Component<IProps, IState> {
                   { /* space after <span> is there on purpose */ }
                   <span> Execute</span>
                 </button>
-                : redeemable ?
+                : reallyRedeemable ?
                   <div>
                     {/* !detailView ?
                   <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposalState} rewards={rewardsForCurrentUser} />

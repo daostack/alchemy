@@ -326,6 +326,7 @@ export function hasClaimableRewards(reward: IRewardState) {
       return true;
     }
   }
+  return false;
 }
 
 /**
@@ -346,7 +347,7 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   }
 
   if (
-    !reward.reputationReward &&
+    reward.reputationReward &&
     !reward.reputationReward.isZero()
     && (daoBalances["rep"] === undefined || daoBalances["rep"].gte(reward.reputationReward))
     && Number(reward.alreadyRedeemedReputationPeriods) < Number(reward.periods)
@@ -355,7 +356,7 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   }
 
   if (
-    !reward.nativeTokenReward &&
+    reward.nativeTokenReward &&
     !reward.nativeTokenReward.isZero()
     && (daoBalances["nativeToken"] === undefined || daoBalances["nativeToken"].gte(reward.nativeTokenReward))
     && Number(reward.alreadyRedeemedNativeTokenPeriods) < Number(reward.periods)
@@ -363,7 +364,8 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
     result["nativeToken"] = reward.nativeTokenReward;
   }
 
-  if (reward.externalTokenReward &&
+  if (
+    reward.externalTokenReward &&
     !reward.externalTokenReward.isZero()
     && (daoBalances["externalToken"] === undefined || daoBalances["externalToken"].gte(reward.externalTokenReward))
     && Number(reward.alreadyRedeemedExternalTokenPeriods) < Number(reward.periods)

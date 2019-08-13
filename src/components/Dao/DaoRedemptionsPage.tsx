@@ -1,7 +1,6 @@
 import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
-
-import BN = require("bn.js");
+import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
 import Reputation from "components/Account/Reputation";
 import Loading from "components/Shared/Loading";
 import Subscribe, { IObservableState } from "components/Shared/Subscribe";
@@ -13,6 +12,8 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./Dao.scss";
+
+import BN = require("bn.js");
 
 interface IProps {
   currentAccountAddress: string;
@@ -28,6 +29,59 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
     const arc = getArc();
     const proposalsHTML = proposals.map((proposalData: any) => {
       const proposal = new Proposal(proposalData.id, arc);
+
+      // hack to work around https://github.com/daostack/subgraph/issues/304
+      let beneficiaryHasRewards = false;
+      const proposalState = proposalData;
+      const massagedRewardsForCurrentUser = proposalData.gpRewards
+        .filter((r: any) => r.beneficiary === currentAccountAddress.toLowerCase())
+        .map((r: any) => { return {
+          id: r.id,
+          beneficiary: r.beneficiary,
+          tokensForStaker: r.tokensForStaker && new BN(r.tokensForStaker) || new BN(0),
+          tokensForStakerRedeemedAt: Number(r.tokensForStakerRedeemedAt),
+          daoBountyForStaker: r.daoBountyForStaker && new BN(r.daoBountyForStaker) || new BN(0),
+          daoBountyForStakerRedeemedAt: Number(r.daoBountyForStakerRedeemedAt),
+          reputationForVoter: r.reputationForVoter && new BN(r.reputationForVoter) || new BN(0),
+          reputationForVoterRedeemedAt: Number(r.reputationForVoterRedeemedAt),
+          reputationForProposer: r.reputationForProposer && new BN(r.reputationForProposer) || new BN(0),
+          reputationForProposerRedeemedAt: Number(r.reputationForProposerRedeemedAt),
+        };});
+      const rewardsForCurrentUser = massagedRewardsForCurrentUser && massagedRewardsForCurrentUser[0] || undefined;
+      const accountHasGPRewards = rewardsForCurrentUser && hasClaimableRewards(rewardsForCurrentUser) || false;
+      if (proposalState.contributionReward) {
+        const daoBalances: {[key: string]: BN} = {
+          eth: undefined,
+          nativeToken: undefined,
+          rep: undefined,
+          externalToken: undefined,
+        };
+        const cr = proposalState.contributionReward;
+        const contributionRewards = claimableContributionRewards({
+          // id: cr.id,
+          beneficiary: cr.beneficiary,
+          ethReward: cr.ethReward && new BN(cr.ethReward) || new BN(0),
+          externalToken: cr.externalToken,
+          externalTokenReward: new BN(cr.externalTokenReward || 0),
+          nativeTokenReward: new BN(cr.nativeTokenReward || 0),
+          periods: Number(cr.periods),
+          periodLength: Number(cr.periodLength),
+          reputationReward: new BN(cr.reputationReward || 0),
+          alreadyRedeemedReputationPeriods: Number(cr.alreadyRedeemedReputationPeriods),
+          alreadyRedeemedExternalTokenPeriods: Number(cr.alreadyRedeemedExternalTokenPeriods),
+          alreadyRedeemedEthPeriods: Number(cr.alreadyRedeemedEthPeriods),
+          alreadyRedeemedNativeTokenPeriods: Number(cr.alreadyRedeemedNativeTokenPeriods),
+
+        }, daoBalances);
+
+        beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
+      }
+
+      if (!accountHasGPRewards && !beneficiaryHasRewards) {
+        return null;
+      }
+      // end of ahck to work around https://github.com/daostack/subgraph/issues/30
+
 
       return <ProposalCard
         key={"proposal_" + proposal.id}

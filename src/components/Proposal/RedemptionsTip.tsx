@@ -83,9 +83,13 @@ export default (props: IProps) => {
             </li> : ""
           }
           {contributionRewards["rep"] ? <li><Reputation reputation={contributionRewards["rep"]} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li> : ""}
-          { /*
-            TOOD: add native token
-          */ }
+
+          {contributionRewards["nativeToken"] ?
+            <li>
+              {formatTokens(contributionRewards["nativeToken"], dao.tokenSymbol)}
+            </li> : ""
+          }
+
         </ul>
       </div>;
     }
