@@ -56,9 +56,6 @@ export default class SchemeInfo extends React.Component<IProps, null> {
   
       const activationTime = moment(params.activationTime);
 
-      params.boostedVotePeriodLimit = 12345789060987;
-      params.preBoostedVotePeriodLimit = 86400;
-
       return <tbody>
         <tr><th>Activation Time:</th><td className={css.ellipsis}>{
           `${ activationTime.format("MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
