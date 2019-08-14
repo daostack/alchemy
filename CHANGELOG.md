@@ -6,10 +6,7 @@
 
 ### Unreleased
   - Features Added
-    - Started a changelog
-  - Bugs Fixed
-  - Maintenence / Refactor
-  - Misc
+    - Allow to RedeemFromToken by passing a private key in the URL
 
 ### version 0.9.3
   - Misc

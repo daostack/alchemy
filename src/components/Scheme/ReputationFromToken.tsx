@@ -73,7 +73,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       } catch(err) {
         throw Error(`Invalide private key: ${pk}`);
       }
-      // redeemerAddress = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1";
     } else {
       redeemerAddress = this.props.currentAccountAddress;
     }
