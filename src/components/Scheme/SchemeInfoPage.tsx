@@ -16,14 +16,6 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
   private copyToClipboardHandler = (str: string) => (_event: any) => { copyToClipboard(str); };
 
-  private addLeadingZeros(value: string | number) {
-    value = String(value);
-    while (value.length < 2) {
-      value = "0" + value;
-    }
-    return value;
-  }
-
   public render() {
     const { daoAvatarAddress, scheme } = this.props;
 
@@ -35,10 +27,10 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
       const duration = moment.duration(durationSeconds * 1000);
 
-      const days = duration.days() ? <strong>{this.addLeadingZeros(duration.days())}d</strong> : "";
-      const hours = duration.hours() ? <strong>{this.addLeadingZeros(duration.hours())}h</strong> : "";
-      const minutes = duration.minutes() ? <strong>{this.addLeadingZeros(duration.minutes())}m</strong> : "";
-      const seconds = duration.seconds() ? <strong>{this.addLeadingZeros(duration.seconds())}s</strong> : "";
+      const days = duration.days() ? <strong>{duration.days()}d</strong> : "";
+      const hours = duration.hours() ? <strong>{duration.hours()}h</strong> : "";
+      const minutes = duration.minutes() ? <strong>{duration.minutes()}m</strong> : "";
+      const seconds = duration.seconds() ? <strong>{duration.seconds()}s</strong> : "";
       // there won't ever be milliseconds
       const colon = <span className={css.colon}>:</span>;
 
@@ -63,6 +55,9 @@ export default class SchemeInfo extends React.Component<IProps, null> {
     const renderGpParams = (params: IGenesisProtocolParams): any => {
   
       const activationTime = moment(params.activationTime);
+
+      params.boostedVotePeriodLimit = 12345789060987;
+      params.preBoostedVotePeriodLimit = 86400;
 
       return <tbody>
         <tr><th>Activation Time:</th><td className={css.ellipsis}>{
