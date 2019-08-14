@@ -31,16 +31,15 @@ const Fade = ({ children, ...props }: any) => (
 
 interface IProps {
   dao: IDAOState;
-  contributionRewardScheme: Scheme[];
-  otherKnownSchemes: Scheme[];
+  knownSchemes: Scheme[];
   unknownSchemes: Scheme[];
 }
 
 const DaoSchemesPage = (props: IProps) => {
-  const { dao, contributionRewardScheme, otherKnownSchemes, unknownSchemes } = props;
+  const { dao, knownSchemes, unknownSchemes } = props;
   const schemeCardsHTML = (
     <TransitionGroup>
-      {[...contributionRewardScheme, ...otherKnownSchemes].map((scheme: Scheme) => (
+      { knownSchemes.map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.id}>
           {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
             ? <ProposalSchemeCard dao={dao} scheme={scheme} />
@@ -65,7 +64,7 @@ const DaoSchemesPage = (props: IProps) => {
       <Sticky enabled top={50} innerZ={10000}>
         <h1>All Schemes</h1>
       </Sticky>
-      {(otherKnownSchemes.length + unknownSchemes.length) === 0
+      {(knownSchemes.length + unknownSchemes.length) === 0
         ? <div>
           <img src="/assets/images/meditate.svg" />
           <div>
@@ -99,8 +98,7 @@ export default (props: {} & RouteComponentProps<any>) => {
         throw state.error;
       } else {
         return <DaoSchemesPage dao={state.data[0]}
-          contributionRewardScheme={state.data[1]}
-          otherKnownSchemes={state.data[2]}
+          knownSchemes={[...state.data[1], ...state.data[2]]}
           unknownSchemes={state.data[3]}
         />;
       }
