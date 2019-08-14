@@ -1,4 +1,4 @@
-import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
+import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -135,15 +135,38 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   };
 }
 
-export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string) {
+export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, redeemerAddress: Address, privateKey: string|undefined) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const observer = operationNotifierObserver(dispatch, "Redeem reputation");
-    const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
+    const arc = getArc();
+    if (privateKey) {
+      console.log("SIGNING WITH PK");
+      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
+      const state = await reputationFromTokenScheme.scheme.fetchStaticState();
+      const contract =  arc.getContract(state.address);
+      const block = await arc.web3.eth.getBlock("latest");
+      const gas = block.gasLimit - 100000;
+      const redeemMethod = contract.methods.redeem(addressToRedeem);
+      redeemMethod.gas = gas;
+      const signedTransaction = await arc.web3.eth.accounts.signTransaction(redeemMethod, privateKey);
+      dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
+      console.log("Sending transaction");
+      try {
+        const receipt = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        console.log(`Transaction sent: ${receipt}`);
+        dispatch(showNotification(NotificationStatus.Success, "Transaction was succesfull!"));
+      } catch(err) {
+        console.log(err);
+        dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
+      }
+    } else {
+      const observer = operationNotifierObserver(dispatch, "Redeem reputation");
+      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
 
-    // send the transaction and get notifications
-    if (reputationFromTokenScheme) {
-      // @ts-ignore
-      reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
+      // send the transaction and get notifications
+      if (reputationFromTokenScheme) {
+        // @ts-ignore
+        reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
+      }
     }
   };
 }
