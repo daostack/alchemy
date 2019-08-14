@@ -31,15 +31,16 @@ const Fade = ({ children, ...props }: any) => (
 
 interface IProps {
   dao: IDAOState;
-  knownSchemes: Scheme[];
+  contributionRewardScheme: Scheme[];
+  otherKnownSchemes: Scheme[];
   unknownSchemes: Scheme[];
 }
 
 const DaoSchemesPage = (props: IProps) => {
-  const { dao, knownSchemes, unknownSchemes } = props;
+  const { dao, contributionRewardScheme, otherKnownSchemes, unknownSchemes } = props;
   const schemeCardsHTML = (
     <TransitionGroup>
-      {knownSchemes.map((scheme: Scheme) => (
+      {[...contributionRewardScheme, ...otherKnownSchemes].map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.id}>
           {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
             ? <ProposalSchemeCard dao={dao} scheme={scheme} />
@@ -64,7 +65,7 @@ const DaoSchemesPage = (props: IProps) => {
       <Sticky enabled top={50} innerZ={10000}>
         <h1>All Schemes</h1>
       </Sticky>
-      {(knownSchemes.length + unknownSchemes.length) === 0
+      {(otherKnownSchemes.length + unknownSchemes.length) === 0
         ? <div>
           <img src="/assets/images/meditate.svg" />
           <div>
@@ -84,21 +85,23 @@ export default (props: {} & RouteComponentProps<any>) => {
 
   const observable = combineLatest(
     arc.dao(daoAvatarAddress).state(), // DAO state
-    // eslint-disable-next-line
-    arc.dao(daoAvatarAddress).schemes({where: { name_in: KNOWN_SCHEME_NAMES}}),
-    // eslint-disable-next-line
-    arc.dao(daoAvatarAddress).schemes({where: { name_not_in: KNOWN_SCHEME_NAMES}})
+    arc.dao(daoAvatarAddress).schemes({where: { name: "ContributionReward"}}),
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    arc.dao(daoAvatarAddress).schemes({where: { name_not: "ContributionReward", name_in: KNOWN_SCHEME_NAMES}, orderBy: "name", orderDirection: "asc"}),
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    arc.dao(daoAvatarAddress).schemes({where: { name_not_in: KNOWN_SCHEME_NAMES}, orderBy: "name", orderDirection: "asc"})
   );
   return <Subscribe observable={observable}>{
-    (state: IObservableState<[IDAOState, Scheme[], Scheme[]]>): any => {
+    (state: IObservableState<[IDAOState, Scheme[], Scheme[], Scheme[]]>): any => {
       if (state.isLoading) {
         return <div className={css.loading}><Loading/></div>;
       } else if (state.error) {
         throw state.error;
       } else {
         return <DaoSchemesPage dao={state.data[0]}
-          knownSchemes={state.data[1]}
-          unknownSchemes={state.data[2]}
+          contributionRewardScheme={state.data[1]}
+          otherKnownSchemes={state.data[2]}
+          unknownSchemes={state.data[3]}
         />;
       }
     }
