@@ -153,7 +153,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       try {
         const receipt = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         console.log(`Transaction sent: ${receipt}`);
-        dispatch(showNotification(NotificationStatus.Success, "Transaction was succesfull!"));
+        dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
       } catch(err) {
         console.log(err);
         dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
