@@ -59,23 +59,19 @@ export default class Notification extends React.Component<IProps, null> {
 
     return (
       <div className={transactionClass}>
-        <div className={css.statusIcon}>
-          <img className={css.pending} src="/assets/images/Icon/Loading-white.svg" />
-          <img className={css.success} src="/assets/images/Icon/Success-notification.svg" />
-          <img className={css.error} src="/assets/images/Icon/Error-notification.svg" />
-        </div>
+        <div className={css.transactionBorder}></div>
         <div className={css.transactionMessage}>
-          <div className="clearfix">
-            <div className={css.left}>
-              <span className={css.pending}>{title}</span>
-              <span className={css.success}>{title}</span>
-              <span className={css.error}>{title}</span>
-            </div>
-            <div className={css.right}>
-              <span className={css.error}>ERROR</span>
-            </div>
-          </div>
-          <div className={css.notificationMessage}>
+          <span className={css.statusIcon}>
+            <span className={css.pending}></span>
+            <span className={css.success}></span>
+            <span className={css.error}></span>
+          </span>
+          <span className={css.transactionTitle}>
+            <span className={css.pending}>{title}</span>
+            <span className={css.success}>{title}</span>
+            <span className={css.error}>{title}</span>
+          </span>
+          <span className={css.notificationMessage}>
             <Linkify>{message}</Linkify>
             {
               fullErrorMessage ?
@@ -84,16 +80,16 @@ export default class Notification extends React.Component<IProps, null> {
             }
             {
               url ?
-                <span><br/><a href={url} target="_blank" rel="noopener noreferrer">See in etherscan</a></span>
+                <span><a href={url} target="_blank" rel="noopener noreferrer">See in etherscan</a></span>
                 : ""
             }
-          </div>
+          </span>
         </div>
         <div className={css.notificationControls}>
           <button className={css.pending} onClick={() => minimize()}><img style={{width: "18px", height: "18px"}} src="/assets/images/Icon/Minimize-notification.svg" /></button>
-          <button className={css.pending} onClick={(e) => this.handleClose(e)} data-test-id="button-notification-close"><img src="/assets/images/Icon/Close.svg" /></button>
-          <button className={css.success} onClick={(e) => this.handleClose(e)}  data-test-id="button-notification-close"><img src="/assets/images/Icon/Close.svg" /></button>
-          <button className={css.error} onClick={(e) => this.handleClose(e)}  data-test-id="button-notification-close"><img src="/assets/images/Icon/Close.svg" /></button>
+          <button className={css.pending} onClick={(e) => this.handleClose(e)} data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
+          <button className={css.success} onClick={(e) => this.handleClose(e)}  data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
+          <button className={css.error} onClick={(e) => this.handleClose(e)}  data-test-id="button-notification-close"><img src="/assets/images/Icon/x-grey.svg" /></button>
         </div>
       </div>
     );
