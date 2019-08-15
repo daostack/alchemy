@@ -7,6 +7,7 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
+import Select from 'react-select';
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
@@ -199,7 +200,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       name="description"
                       className={touched.description && errors.description ? css.error : null}
                     />
-
+                    <Select options={[{ value: 1, label: "hello"}]} />
                     <label htmlFor="urlInput">
                       URL
                       <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
