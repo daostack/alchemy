@@ -62,7 +62,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         }</td></tr>
         <tr><th>Boosted Vote Period Limit:</th><td>{duration(params.boostedVotePeriodLimit)} ({params.boostedVotePeriodLimit} seconds)</td></tr>
         <tr><th>DAO Bounty Constant:</th><td>{params.daoBountyConst}</td></tr>
-        <tr><th>Proposal Reputation Reward:</th><td>{fromWei(params.proposingRepReward)} GEN</td></tr>
+        <tr><th>Proposal Reputation Reward:</th><td>{fromWei(params.proposingRepReward)} REP</td></tr>
         <tr><th>Minimum DAO Bounty:</th><td>{fromWei(params.minimumDaoBounty)} GEN</td></tr>
         <tr><th>Pre-Boosted Vote Period Limit:</th><td>{duration(params.preBoostedVotePeriodLimit)} ({params.preBoostedVotePeriodLimit} seconds)</td></tr>
         <tr><th>Queued Vote Period Limit:</th><td>{duration(params.queuedVotePeriodLimit)} ({params.queuedVotePeriodLimit} seconds)</td></tr>
