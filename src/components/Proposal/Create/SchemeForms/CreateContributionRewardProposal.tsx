@@ -55,6 +55,36 @@ interface IFormValues {
   [key: string]: any;
 }
 
+const customStyles = {
+  option: (provided: any, state: any) => ({
+    ...provided,
+    borderBottom: '1px dotted purple',
+    color: state.isSelected ? 'red' : 'blue',
+    padding: 20,
+  }),
+  control: () => ({
+    // none of react-select's styles are passed to <Control />
+    width: 200,
+  }),
+  singleValue: (provided: any, state: any) => {
+    const opacity = state.isDisabled ? 0.5 : 1;
+    const transition = 'opacity 300ms';
+
+    return { ...provided, opacity, transition };
+  }
+}
+
+export const SelectField: React.SFC<any> = ({options, field, form }) => (
+  <Select
+    options={options}
+    name={field.name}
+    value={options ? options.find((option: any) => option.value === field.value) : ''}
+    onChange={(option: any) => form.setFieldValue(field.name, option.value)}
+    onBlur={field.onBlur}
+    styles={customStyles}
+  />
+);
+
 class CreateContributionReward extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
@@ -200,7 +230,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
                       name="description"
                       className={touched.description && errors.description ? css.error : null}
                     />
-                    <Select options={[{ value: 1, label: "hello"}]} />
                     <label htmlFor="urlInput">
                       URL
                       <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -278,14 +307,13 @@ class CreateContributionReward extends React.Component<IProps, null> {
                         <Field
                           id="externalTokenInput"
                           name="externalTokenAddress"
-                          component="select"
+                          component={SelectField}
                           className={css.externalTokenSelect}
-                        >
-                          { Object.keys(supportedTokens()).map((tokenAddress) => {
+                          options={Object.keys(supportedTokens()).map((tokenAddress) => {
                             const token = supportedTokens()[tokenAddress];
-                            return <option key={tokenAddress} value={tokenAddress}>{token["symbol"]}</option>;
+                            return { value: tokenAddress, label: token["symbol"] };
                           })}
-                        </Field>
+                        />
                       </div>
 
                       <div className={css.reward}>
