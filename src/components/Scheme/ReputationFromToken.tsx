@@ -1,4 +1,4 @@
-import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
+import { Address, ISchemeState, Token } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";

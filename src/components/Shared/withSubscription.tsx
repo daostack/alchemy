@@ -52,8 +52,8 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       if (this.subscription) {
         this.subscription.unsubscribe();
       }
-      console.log(getDisplayName(WrappedComponent), "setting up sub", this._getQueryData());
-      this.observable = createObservable(this._getQueryData());
+      console.log(getDisplayName(WrappedComponent), "setting up sub", this.props);
+      this.observable = createObservable(this.props);
       console.log("got oserv =", this.observable);
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
@@ -87,8 +87,8 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     public componentDidUpdate(prevProps: InputProps) {
       console.log(getDisplayName(WrappedComponent), "did updatexx?", checkForUpdate);
       let shouldUpdate = false;
-
-      if (typeof(checkForUpdate) == "function") {
+      console.log(checkForUpdate, typeof(checkForUpdate));
+      if (typeof(checkForUpdate) === "function") {
         shouldUpdate = checkForUpdate(prevProps, this.props);
       } else {
         checkForUpdate.forEach((prop: keyof InputProps) => {
@@ -128,10 +128,6 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       }
       // const observable = combineLatest(this.observable, options.observable, options.combine);
       this.setupSubscription();
-    }
-
-    private _getQueryData(): Props {
-      return (checkForUpdate as (keyof InputProps)[]).reduce((accum: {[key: string]: any}, prop) => { accum[prop as string] = (this.props as Props)[prop]; return accum }, {}) as Props;
     }
   };
 }
