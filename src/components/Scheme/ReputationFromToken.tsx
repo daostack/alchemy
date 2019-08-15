@@ -194,8 +194,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             render={({
               errors,
               touched,
-              setFieldValue,
-              values,
             }: FormikProps<IFormValues>) => {
               return <Form noValidate>
                 <div className={schemeCss.fields}>
