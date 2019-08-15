@@ -108,20 +108,18 @@ class AccountPopup extends React.Component<IProps, null> {
 
 const ConnectedAccountPopup = connect(mapStateToProps, mapDispatchToProps)(AccountPopup);
 
-const SubscribedAccountPopup = withSubscription(
-  ConnectedAccountPopup,
+const SubscribedAccountPopup = withSubscription({
+  wrappedComponent: ConnectedAccountPopup,
 
-  // Update subscription?
-  (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.dao.address !== newProps.dao.address; },
+  checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.dao.address !== newProps.dao.address; },
 
-  // Generate observables
-  (props: IProps) => {
+  createObservable: (props: IProps) => {
     const arc = getArc();
     return combineLatest(
       arc.dao(props.dao.address).state(),
       arc.dao(props.dao.address).member(props.accountAddress).state()
     );
   }
-);
+});
 
 export default SubscribedAccountPopup;

@@ -221,14 +221,12 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedActionButton = withSubscription(
-  ActionButton,
+const SubscribedActionButton = withSubscription({
+  wrappedComponent: ActionButton,
 
-  // Update subscriptions?
-  (oldProps, newProps) => { return oldProps.proposalState.id !== newProps.proposalState.id || oldProps.currentAccountAddress !== newProps.currentAccountAddress },
+  checkForUpdate: (oldProps, newProps) => { return oldProps.proposalState.id !== newProps.proposalState.id || oldProps.currentAccountAddress !== newProps.currentAccountAddress },
 
-  // Generate Observable
-  (props: IProps) => {
+  createObservable: (props: IProps) => {
     const proposalState = props.proposalState;
 
     if (props.currentAccountAddress) {
@@ -239,6 +237,6 @@ const SubscribedActionButton = withSubscription(
       return of(null);
     }
   }
-);
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedActionButton);

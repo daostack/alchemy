@@ -117,18 +117,14 @@ class SchemeContainer extends React.Component<IProps, null> {
   }
 }
 
-const SubscribedSchemeContainer = withSubscription(
-  SchemeContainer,
-
-  // Update subscriptions when schemeId changes
-  ["schemeId"],
-
-  // Generate Observable
-  (props: IProps) => {
+const SubscribedSchemeContainer = withSubscription({
+  wrappedComponent: SchemeContainer,
+  checkForUpdate: ["schemeId"],
+  createObservable: (props: IProps) => {
     const arc = getArc();
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
   }
-);
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedSchemeContainer);

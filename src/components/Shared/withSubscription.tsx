@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Observable, Subscription } from "rxjs";
+import { combineLatest, Observable, Subscription } from "rxjs";
 import { Subtract } from "utility-types";
 
 export interface IObservableState<ObservableType> {
@@ -10,23 +10,30 @@ export interface IObservableState<ObservableType> {
 }
 
 export interface ISubscriptionProps<ObservableType> {
-  isLoading: boolean;
   data: ObservableType;
   error: Error;
+  fetchMore: () => void;
+  isLoading: boolean;
+}
+
+interface withSubscriptionOptions<Props extends ISubscriptionProps<ObservableType>, ObservableType extends Object> {
+  wrappedComponent: React.ComponentType<Props>,
+  checkForUpdate: (keyof Props)[] | ((oldProps: Subtract<Props, ISubscriptionProps<ObservableType>>, newProps: Subtract<Props, ISubscriptionProps<ObservableType>>) => boolean),
+  createObservable: (props: Subtract<Props, ISubscriptionProps<ObservableType>>) => Observable<ObservableType>,
+  getFetchMoreObservable?: (props: Subtract<Props, ISubscriptionProps<ObservableType>>, currentData: ObservableType) => Observable<ObservableType>,
+  fetchMoreCombine?: (oldState: ObservableType, newData: any) => ObservableType
 }
 
  /**
-   * Higher Order Component that subscribes to the observables required by the WrappedComponent and passes along the data observed as it comes in
-   * @param {React.ComponentType}: The component to render with the subscribed data
+   * Higher Order Component that subscribes to the observables required by the wrappedComponent and passes along the data observed as it comes in
+   * @param {React.ComponentType} wrappedComponent : The component to render with the subscribed data
    * @param {string[] | ((oldProps, newProps) => boolean)} checkForUpdate :
    *         Either an array of props to check for changes or a function that accepts the props and returns whether to update the subscription or not
    * @param {(props) => Observable} createObservable : A function that given the props returns the observable to subscribe to
+   * @param {(props, currentData) => Observable} getFetchMoreObservable? : A function to call when the component wants to fetch more which should return the updated observable
+   * @param {(oldState, newData) => combinedData} fetchMoreCombine? : A function that combines old data and new data when fetchMore is called
    */
-const withSubscription = <Props extends ISubscriptionProps<ObservableType>, ObservableType extends Object>(
-  WrappedComponent: React.ComponentType<Props>,
-  checkForUpdate: (keyof Props)[] | ((oldProps: Subtract<Props, ISubscriptionProps<ObservableType>>, newProps: Subtract<Props, ISubscriptionProps<ObservableType>>) => boolean),
-  createObservable: (props: Subtract<Props, ISubscriptionProps<ObservableType>>) => Observable<ObservableType>
- ) => {
+const withSubscription = <Props extends ISubscriptionProps<ObservableType>, ObservableType extends Object>(options: withSubscriptionOptions<Props, ObservableType>) => {
 
   // The props that can get passed into the wrapped component, removing the ISubscriptionProps since those get passed down by WithSubscription
   type InputProps = Subtract<Props, ISubscriptionProps<ObservableType>>;
@@ -48,28 +55,29 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       };
     }
 
-    public setupSubscription() {
+    public setupSubscription(observable?: Observable<any>) {
       if (this.subscription) {
         this.subscription.unsubscribe();
       }
-      console.log(getDisplayName(WrappedComponent), "setting up sub", this.props);
-      this.observable = createObservable(this.props);
+      const { createObservable, wrappedComponent } = options;
+      console.log(getDisplayName(wrappedComponent), "setting up sub", this.props);
+      this.observable = observable || createObservable(this.props);
       console.log("got oserv =", this.observable);
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
-          console.log(getDisplayName(WrappedComponent), "Got data", next);
+          console.log(getDisplayName(wrappedComponent), "Got data", next);
           this.setState({
             data: next,
             isLoading: false,
           });
         },
         (error: Error) => {
-          console.log(getDisplayName(WrappedComponent), "error", error);
+          console.log(getDisplayName(wrappedComponent), "error", error);
           this.setState({
             isLoading: false,
             error });
         },
-        () => { console.log(getDisplayName(WrappedComponent), "complete"); this.setState({complete: true}); }
+        () => { console.log(getDisplayName(wrappedComponent), "complete"); this.setState({complete: true}); }
       );
     }
 
@@ -80,12 +88,13 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     }
 
     public componentDidMount() {
-      console.log(getDisplayName(WrappedComponent), "component did mount")
+      console.log(getDisplayName(options.wrappedComponent), "component did mount")
       this.setupSubscription();
     }
 
     public componentDidUpdate(prevProps: InputProps) {
-      console.log(getDisplayName(WrappedComponent), "did updatexx?", checkForUpdate);
+      const { wrappedComponent, checkForUpdate } = options;
+      console.log(getDisplayName(wrappedComponent), "did updatexx?", checkForUpdate);
       let shouldUpdate = false;
       console.log(checkForUpdate, typeof(checkForUpdate));
       if (typeof(checkForUpdate) === "function") {
@@ -98,7 +107,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         });
       }
       if (shouldUpdate) {
-        console.log(getDisplayName(WrappedComponent), "yes did updateyy");
+        console.log(getDisplayName(wrappedComponent), "yes did updateyy");
         this.setupSubscription();
       }
     }
@@ -108,7 +117,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     }
 
     public render() {
-      return <WrappedComponent
+      return <options.wrappedComponent
                data={this.state.data}
                isLoading={this.state.isLoading}
                error={this.state.error}
@@ -116,24 +125,27 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
                {...this.props as Props} />;
     }
 
-    public fetchMore(options: {
-      observable: any; // the observable that will return the data
-      combine: any; // a function that combines the previousState with the results of the observable to return a new state
-    }) {
-      // add more results to the query
-      if (!options.combine) {
-        options.combine = (oldState: any, newData: any) => {
-          return oldState.concat(newData);
-        };
+    public fetchMore(): void {
+      // Do nothing if the wrapped component didn't tell us how to fetch more
+      if (!options.getFetchMoreObservable) {
+        return;
       }
-      // const observable = combineLatest(this.observable, options.observable, options.combine);
-      this.setupSubscription();
+
+      const newObservable = options.getFetchMoreObservable(this.props, this.state.data);
+      const combineFunction = options.fetchMoreCombine || this._fetchMoreCombine;
+      const observable = combineLatest(this.observable, newObservable, combineFunction);
+      this.setupSubscription(observable);
+    }
+
+     // a function that combines the previousState with the results of the new observable from fetchMore
+    private _fetchMoreCombine(oldState: ObservableType, newData: any): ObservableType {
+      return (oldState as any).concat(newData);
     }
   };
 }
 
-function getDisplayName(WrappedComponent: any): string {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+function getDisplayName(wrappedComponent: any): string {
+  return wrappedComponent.displayName || wrappedComponent.name || 'Component';
 }
 
 export default withSubscription;

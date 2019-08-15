@@ -170,14 +170,10 @@ class Header extends React.Component<IProps, null> {
   }
 }
 
-const SubscribedHeader = withSubscription(
-  Header,
-
-  // Update observable if daoAvatarAddress changes
-  ["daoAvatarAddress"],
-
-  // Generate observables
-  (props: IProps) => {
+const SubscribedHeader = withSubscription({
+  wrappedComponent: Header,
+  checkForUpdate: ["daoAvatarAddress"],
+  createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
       const arc = getArc();
       return arc.dao(props.daoAvatarAddress).state();
@@ -185,6 +181,6 @@ const SubscribedHeader = withSubscription(
       return of(null);
     }
   }
-);
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedHeader);

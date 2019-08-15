@@ -401,17 +401,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedCreateSchemeRegistrarProposal = withSubscription(
-  CreateSchemeRegistrarProposal,
-
-  // Update subscriptions if this changes
-  ["daoAvatarAddress"],
-
-  // Generate observables
-  (props: IExternalProps) => {
+const SubscribedCreateSchemeRegistrarProposal = withSubscription({
+  wrappedComponent: CreateSchemeRegistrarProposal,
+  checkForUpdate: ["daoAvatarAddress"],
+  createObservable: (props: IExternalProps) => {
     const arc = getArc();
     return arc.dao(props.daoAvatarAddress).schemes();
   }
-);
+});
 
 export default connect(null, mapDispatchToProps)(SubscribedCreateSchemeRegistrarProposal);

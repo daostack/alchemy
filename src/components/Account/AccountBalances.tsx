@@ -57,14 +57,12 @@ class AccountBalances extends React.Component<IProps, null>  {
   }
 }
 
-export default withSubscription(
-  AccountBalances,
+export default withSubscription({
+  wrappedComponent: AccountBalances,
 
-  // Should update subscriptions?
-  (oldProps, newProps) => { return oldProps.address !== newProps.address || oldProps.dao.address !== newProps.dao.address},
+  checkForUpdate: (oldProps, newProps) => { return oldProps.address !== newProps.address || oldProps.dao.address !== newProps.dao.address},
 
-  // Generate observables
-  ({ dao, address }: IExternalProps) => {
+  createObservable: ({ dao, address }: IExternalProps) => {
     if (!dao) {
       return of(null);
     }
@@ -77,4 +75,4 @@ export default withSubscription(
       arc.GENToken().balanceOf(address),
     );
   }
-);
+});
