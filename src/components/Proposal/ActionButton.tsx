@@ -3,7 +3,7 @@ import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWeb3ProviderAndWarn } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
 import * as moment from "moment";
 import Tooltip from "rc-tooltip";
@@ -22,17 +22,16 @@ import RedemptionsTip from "./RedemptionsTip";
 
 import BN = require("bn.js");
 
-interface IStateProps {
-  beneficiaryProfile: IProfileState;
-}
-
-interface IContainerProps {
+interface IExternalProps {
   currentAccountAddress?: Address;
   dao: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
   proposalState: IProposalState;
-  rewardsForCurrentUser: IRewardState;
+}
+
+interface IStateProps {
+  beneficiaryProfile: IProfileState;
 }
 
 interface IDispatchProps {
@@ -41,7 +40,9 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps & IContainerProps => {
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IRewardState>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const proposalState = ownProps.proposalState;
   return {...ownProps,
     beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
@@ -53,8 +54,6 @@ const mapDispatchToProps = {
   executeProposal,
   showNotification,
 };
-
-type IProps = IStateProps & IContainerProps & IDispatchProps;
 
 interface IState {
   preRedeemModalOpen: boolean;
@@ -85,14 +84,22 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public render(): any {
+    const {data, error, isLoading, proposalState } = this.props;
+
+    if (isLoading) {
+      return <div>Loading proposal {proposalState.id.substr(0, 6)} ...</div>;
+    }
+    if (error) {
+      return <div>{ error.message }</div>;
+    }
+    const rewardsForCurrentUser = data;
+
     const {
       beneficiaryProfile,
       currentAccountAddress,
       dao,
       daoEthBalance,
       detailView,
-      proposalState,
-      rewardsForCurrentUser,
     } = this.props;
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
@@ -214,38 +221,24 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 }
 
+const SubscribedActionButton = withSubscription(
+  ActionButton,
 
-interface IMyProps {
-  currentAccountAddress?: Address;
-  dao: IDAOState;
-  daoEthBalance: BN;
-  detailView?: boolean;
-  proposalState: IProposalState;
-}
+  // Update subscriptions?
+  (oldProps, newProps) => { return oldProps.proposalState.id !== newProps.proposalState.id || oldProps.currentAccountAddress !== newProps.currentAccountAddress },
 
-const ConnectedActionButton = connect(mapStateToProps, mapDispatchToProps)(ActionButton);
+  // Generate Observable
+  (props: IProps) => {
+    const proposalState = props.proposalState;
 
-export default (props: IMyProps): any => {
-
-  const proposalState = props.proposalState;
-  let observable: Observable<IRewardState|null>;
-  if (props.currentAccountAddress) {
-    observable = proposalState.proposal.rewards({ where: {beneficiary: props.currentAccountAddress}})
-      .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
-      .pipe(mergeMap(((reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
-  } else {
-    observable = of(null);
-  }
-
-  return <Subscribe observable={observable}>{(state: IObservableState<any>): any => {
-    if (state.isLoading) {
-      return <div>Loading proposal {props.proposalState.id.substr(0, 6)} ...</div>;
-    } else if (state.error) {
-      return <div>{ state.error.message }</div>;
+    if (props.currentAccountAddress) {
+      return proposalState.proposal.rewards({ where: {beneficiary: props.currentAccountAddress}})
+        .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
+        .pipe(mergeMap(((reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
     } else {
-      const rewardsForCurrentUser = state.data;
-      return <ConnectedActionButton {...props} rewardsForCurrentUser={rewardsForCurrentUser} />;
+      return of(null);
     }
   }
-  }</Subscribe>;
-};
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedActionButton);
