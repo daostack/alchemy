@@ -2,7 +2,7 @@ import * as H from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
 import { getArc, enableWeb3ProviderAndWarn } from "arc";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -11,7 +11,6 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
 import { connect } from "react-redux";
-import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
@@ -34,20 +33,28 @@ const Fade = ({ children, ...props }: any): any => (
   </CSSTransition>
 );
 
-interface IProps {
-  showNotification: typeof showNotification;
+// interface IState {
+//   hasMoreProposalsToLoad: boolean;
+// }
+
+interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  dao: IDAOState;
-  fetchMore: () => void;
-  hasMoreProposalsToLoad: boolean;
-  proposalsBoosted: Proposal[];
-  proposalsPreBoosted: Proposal[];
-  proposalsQueued: Proposal[];
-  scheme: ISchemeState;
   history: H.History;
+  scheme: ISchemeState;
 }
 
-class SchemeProposals extends React.Component<IProps, null> {
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+}
+
+type SubscriptionData = [Proposal[], Proposal[], Proposal[], IDAOState];
+type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
+
+const mapDispatchToProps = {
+  showNotification,
+};
+
+class SchemeProposalsPage extends React.Component<IProps, null> {
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
     if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
@@ -55,9 +62,24 @@ class SchemeProposals extends React.Component<IProps, null> {
     }
   }
 
+  private _handleNewProposal = (e: any): void => {
+    this.handleNewProposal(this.props.data[3].address, this.props.scheme.id);
+    e.preventDefault();
+  };
+
   public render(): any {
-    const { currentAccountAddress, dao, fetchMore, hasMoreProposalsToLoad, proposalsQueued, proposalsBoosted, proposalsPreBoosted, scheme } = this.props;
-    const _handleNewProposal = (e: any): void => { this.handleNewProposal(dao.address, scheme.id); e.preventDefault(); /* e.stopPropagation(); */};
+    const { data, error, isLoading } = this.props;
+
+    if (isLoading) {
+      return <div className={css.loading}><Loading/></div>;
+    }
+    if (error) {
+      // TODO: show error?
+      return null;
+    }
+
+    const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
+    const { currentAccountAddress, fetchMore, scheme } = this.props;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
@@ -107,7 +129,7 @@ class SchemeProposals extends React.Component<IProps, null> {
               </Link>
               <a className={css.blueButton}
                 href="javascript:void(0)"
-                onClick={_handleNewProposal}
+                onClick={this._handleNewProposal}
                 data-test-id="createProposal"
               >+ New Proposal</a>
             </div>
@@ -147,7 +169,7 @@ class SchemeProposals extends React.Component<IProps, null> {
             </div>
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                Regular Proposals ({proposalsQueued.length}{hasMoreProposalsToLoad ? "+" : ""})
+                Regular Proposals ({proposalsQueued.length}{/*hasMoreProposalsToLoad ? "+" : ""*/ ""})
                 {proposalsQueued.length === 0
                   ?
                   <div>
@@ -160,7 +182,7 @@ class SchemeProposals extends React.Component<IProps, null> {
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
-                  hasMore={hasMoreProposalsToLoad}
+                  hasMore={false /*hasMoreProposalsToLoad */}
                   loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
@@ -179,53 +201,124 @@ class SchemeProposals extends React.Component<IProps, null> {
   }
 }
 
-interface IState {
-  hasMoreProposalsToLoad: boolean;
-}
 
-interface IExternalProps {
-  currentAccountAddress: Address;
-  scheme: ISchemeState;
-}
+// class SchemeProposalsSubscription extends React.Component<IPropsSubscription & RouteComponentProps<any>, IState> {
 
-interface IDispatchProps {
-  showNotification: typeof showNotification;
-}
+//   constructor(props: IPropsSubscription & RouteComponentProps<any>) {
+//     super(props);
 
-type IPropsSubscription = IExternalProps & IDispatchProps;
+//     this.state = {
+//       hasMoreProposalsToLoad: true,
+//     };
+//   }
 
-const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExternalProps => {
-  return ownProps;
-};
+//   public render(): any {
 
-const mapDispatchToProps = {
-  showNotification,
-};
 
-class SchemeProposalsSubscription extends React.Component<IPropsSubscription & RouteComponentProps<any>, IState> {
+//     const daoAvatarAddress = this.props.match.params.daoAvatarAddress;
+//     const arc = getArc();
+//     const dao = arc.dao(daoAvatarAddress);
+//     const schemeId = this.props.scheme.id;
 
-  constructor(props: IPropsSubscription & RouteComponentProps<any>) {
-    super(props);
+//     // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
+//     const currentTime = Math.floor(new Date().getTime() / 1000);
 
-    this.state = {
-      hasMoreProposalsToLoad: true,
-    };
-  }
+//     const observable = combineLatest(
 
-  public render(): any {
-    const daoAvatarAddress = this.props.match.params.daoAvatarAddress;
+//       // the list of queued proposals
+//       dao.proposals({
+//       // eslint-disable-next-line @typescript-eslint/camelcase
+//         where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
+//         orderBy: "confidence",
+//         orderDirection: "desc",
+//         first: PAGE_SIZE,
+//         skip: 0,
+//       }),
+
+//       // the list of preboosted proposals
+//       dao.proposals({
+//         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
+//         orderBy: "preBoostedAt",
+//       }), // the list of preboosted proposals
+//       arc.dao(daoAvatarAddress).proposals({
+//       // eslint-disable-next-line @typescript-eslint/camelcase
+//         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
+//         orderBy: "boostedAt",
+//       }), // the list of boosted proposals
+
+//       // DAO state
+//       dao.state()
+//     );
+
+//     const setState = this.setState.bind(this);
+//     const parentState = this.state;
+
+//     return <Subscribe observable={observable}>{
+//       (state: IObservableState<[Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
+//         if (state.isLoading) {
+//           return  <div className={css.loading}><Loading/></div>;
+//         } else if (state.error) {
+//           throw state.error;
+//         } else {
+//           const data = state.data;
+//           let hasMoreProposals = parentState.hasMoreProposalsToLoad;
+//           if (data.length < PAGE_SIZE) {
+//             hasMoreProposals = false;
+//           }
+//           return <SchemeProposals
+//             {...this.props}
+//             hasMoreProposalsToLoad={hasMoreProposals}
+//             scheme={this.props.scheme}
+//             proposalsQueued={data[0]}
+//             proposalsPreBoosted={data[1]}
+//             proposalsBoosted={data[2]}
+//             dao={data[3]}
+//             fetchMore={(): void => {
+//               state.fetchMore({
+//                 observable: dao.proposals({
+//                   // eslint-disable-next-line @typescript-eslint/camelcase
+//                   where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
+//                   orderBy: "confidence",
+//                   orderDirection: "desc",
+//                   first: PAGE_SIZE,
+//                   skip: data[1].length,
+//                 }),
+//                 combine: (prevState: [Proposal[], Proposal[], Proposal[], IDAOState], newData: Proposal[]) => {
+//                   if (newData.length < PAGE_SIZE) {
+//                     setState({ hasMoreProposalsToLoad: false});
+//                   }
+//                   return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
+//                 },
+//               });
+//             }}
+//           />;
+//         }
+//       }
+//     }</Subscribe>;
+//   }
+// }
+
+const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>({
+  wrappedComponent: SchemeProposalsPage,
+
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.match.params.daoAvatarAddress !== oldProps.match.params.daoAvatarAddress
+           || oldProps.scheme.id !== newProps.scheme.id;
+  },
+
+  createObservable: (props: IExternalProps) => {
+    const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
-    const schemeId = this.props.scheme.id;
+    const schemeId = props.scheme.id;
 
     // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
     const currentTime = Math.floor(new Date().getTime() / 1000);
 
-    const observable = combineLatest(
-
+    return combineLatest(
       // the list of queued proposals
       dao.proposals({
-      // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
         orderBy: "confidence",
         orderDirection: "desc",
@@ -237,63 +330,46 @@ class SchemeProposalsSubscription extends React.Component<IPropsSubscription & R
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
         orderBy: "preBoostedAt",
-      }), // the list of preboosted proposals
+      }),
+
+      // the list of boosted proposals
       arc.dao(daoAvatarAddress).proposals({
-      // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }), // the list of boosted proposals
+      }),
 
       // DAO state
       dao.state()
     );
+  },
 
-    const setState = this.setState.bind(this);
-    const parentState = this.state;
+  getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
+    const daoAvatarAddress = props.match.params.daoAvatarAddress;
+    const arc = getArc();
+    const dao = arc.dao(daoAvatarAddress);
 
-    return <Subscribe observable={observable}>{
-      (state: IObservableState<[Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
-        if (state.isLoading) {
-          return  <div className={css.loading}><Loading/></div>;
-        } else if (state.error) {
-          throw state.error;
-        } else {
-          const data = state.data;
-          let hasMoreProposals = parentState.hasMoreProposalsToLoad;
-          if (data.length < PAGE_SIZE) {
-            hasMoreProposals = false;
-          }
-          return <SchemeProposals
-            {...this.props}
-            hasMoreProposalsToLoad={hasMoreProposals}
-            scheme={this.props.scheme}
-            proposalsQueued={data[0]}
-            proposalsPreBoosted={data[1]}
-            proposalsBoosted={data[2]}
-            dao={data[3]}
-            fetchMore={(): void => {
-              state.fetchMore({
-                observable: dao.proposals({
-                  // eslint-disable-next-line @typescript-eslint/camelcase
-                  where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
-                  orderBy: "confidence",
-                  orderDirection: "desc",
-                  first: PAGE_SIZE,
-                  skip: data[1].length,
-                }),
-                combine: (prevState: [Proposal[], Proposal[], Proposal[], IDAOState], newData: Proposal[]) => {
-                  if (newData.length < PAGE_SIZE) {
-                    setState({ hasMoreProposalsToLoad: false});
-                  }
-                  return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
-                },
-              });
-            }}
-          />;
-        }
-      }
-    }</Subscribe>;
+    // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
+    // TODO: where to set this?
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+
+    return dao.proposals({
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      where: { scheme: props.scheme.id, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
+      orderBy: "confidence",
+      orderDirection: "desc",
+      first: PAGE_SIZE,
+      skip: data[1].length,
+    });
+  },
+
+  fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
+    // TODO
+    // if (newData.length < PAGE_SIZE) {
+    //   setState({ hasMoreProposalsToLoad: false});
+    // }
+    return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
   }
-}
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(SchemeProposalsSubscription);
+export default connect(null, mapDispatchToProps)(SubscribedSchemeProposalsPage);

@@ -30,7 +30,7 @@ interface IStateProps {
   profile: IProfileState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<[IDAOState, IMemberState]>): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<[IDAOState, IMemberState]>): IExternalProps & IStateProps & ISubscriptionProps<[IDAOState, IMemberState]> => {
   const account = (ownProps.data ? ownProps.data[1] : null);
 
   return {
