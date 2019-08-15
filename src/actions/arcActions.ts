@@ -139,7 +139,6 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     if (privateKey) {
-      console.log("SIGNING WITH PK");
       const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
       const state = await reputationFromTokenScheme.scheme.fetchStaticState();
       const contract =  arc.getContract(state.address);
@@ -147,15 +146,14 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const gas = block.gasLimit - 100000;
       const redeemMethod = contract.methods.redeem(addressToRedeem);
       redeemMethod.gas = gas;
+      const gasPrice = await arc.web3.eth.getGasPrice();
+      redeemMethod.gasPrice = gasPrice;
       const signedTransaction = await arc.web3.eth.accounts.signTransaction(redeemMethod, privateKey);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
-      console.log("Sending transaction");
       try {
-        const receipt = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-        console.log(`Transaction sent: ${receipt}`);
+        await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
       } catch(err) {
-        console.log(err);
         dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
       }
     } else {

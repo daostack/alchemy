@@ -66,7 +66,6 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const queryValues = queryString.parse(this.props.location.search);
     const pk = queryValues["pk"] as string;
     if (pk) {
-      console.log(`Found private key ${pk}`);
       const arc = getArc();
       try {
         redeemerAddress = arc.web3.eth.accounts.privateKeyToAccount(pk).address;
@@ -201,48 +200,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
               return <Form noValidate>
                 <div className={schemeCss.fields}>
                   <h3>{ this.state.redemptionAmount ? fromWei(this.state.redemptionAmount) : "..." } Rep to redeem </h3>
-                  <b>Which account would you like to receive the reputation?</b>
-                  <div>
-                    <Field
-                      id="thisAccountTrue"
-                      name="thisAcount"
-                      checked={values.thisAccount}
-                      onChange={(_ev: any) => {
-                        setFieldValue("accountAddress", redeemerAddress, false);
-                        setFieldValue("thisAccount", true, false);
-                      }}
-                      type="radio"
-                      value
-                    />
-                    <label htmlFor="thisAccountTrue">
-                      This Account
-                    </label>
-                  </div>
-                  <div>
-                    <Field
-                      id="thisAccountFalse"
-                      name="thisAccount"
-                      checked={!values.thisAccount}
-                      onChange={(_ev: any) => {
-                        setFieldValue("accountAddress", "", false);
-                        setFieldValue("thisAccount", false, false);
-                      }}
-                      type="radio"
-                      value={false}
-                    />
-                    <label htmlFor="thisAccountFalse">
-                      Other Account
-                    </label>
-                  </div>
+                  <b>Redeem reputation to which account?</b>
                   <div className={schemeCss.redemptionAddress}>
                     <label htmlFor="accountAddressInput">
-                      Address
                       <ErrorMessage name="accountAddress">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       id="accountAddressInput"
                       maxLength={120}
-                      disabled={values.thisAccount}
                       placeholder=""
                       name="accountAddress"
                       className={touched.accountAddress && errors.accountAddress ? css.error : null}
