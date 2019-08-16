@@ -103,8 +103,12 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
   const PRECISIONPOWER = 10 ** PRECISION;
   const negative = amountWei.lt(new BN(0));
   const toLocaleString = (amount: number): string =>
-  { return amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION }); };
-  const roundDown = (amount: number): number => { return Math.floor(amount * PRECISIONPOWER) / PRECISIONPOWER; };
+  {
+    return amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION });
+  };
+  const roundDown = (amount: number): number => {
+    return Math.floor(amount * PRECISIONPOWER) / PRECISIONPOWER;
+  };
   
   let returnString;
 
