@@ -150,9 +150,13 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       redeemMethod.gasPrice = gasPrice;
       const signedTransaction = await arc.web3.eth.accounts.signTransaction(redeemMethod, privateKey);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
+      const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
+
+      console.log(`transaction hash: ${txHash}`);
       try {
-        await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        const receipt  = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
+        console.log(receipt);
       } catch(err) {
         dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
       }
