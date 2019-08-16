@@ -33,10 +33,6 @@ const Fade = ({ children, ...props }: any): any => (
   </CSSTransition>
 );
 
-// interface IState {
-//   hasMoreProposalsToLoad: boolean;
-// }
-
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: H.History;
@@ -79,7 +75,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     }
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
-    const { currentAccountAddress, fetchMore, scheme } = this.props;
+    const { currentAccountAddress, fetchMore, hasMoreToLoad, scheme } = this.props;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
@@ -169,7 +165,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             </div>
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                Regular Proposals ({proposalsQueued.length}{/*hasMoreProposalsToLoad ? "+" : ""*/ ""})
+                Regular Proposals ({proposalsQueued.length}{hasMoreToLoad ? "+" : ""})
                 {proposalsQueued.length === 0
                   ?
                   <div>
@@ -182,7 +178,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
-                  hasMore={false /*hasMoreProposalsToLoad */}
+                  hasMore={hasMoreToLoad}
                   loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
@@ -201,103 +197,8 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
   }
 }
 
-
-// class SchemeProposalsSubscription extends React.Component<IPropsSubscription & RouteComponentProps<any>, IState> {
-
-//   constructor(props: IPropsSubscription & RouteComponentProps<any>) {
-//     super(props);
-
-//     this.state = {
-//       hasMoreProposalsToLoad: true,
-//     };
-//   }
-
-//   public render(): any {
-
-
-//     const daoAvatarAddress = this.props.match.params.daoAvatarAddress;
-//     const arc = getArc();
-//     const dao = arc.dao(daoAvatarAddress);
-//     const schemeId = this.props.scheme.id;
-
-//     // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
-//     const currentTime = Math.floor(new Date().getTime() / 1000);
-
-//     const observable = combineLatest(
-
-//       // the list of queued proposals
-//       dao.proposals({
-//       // eslint-disable-next-line @typescript-eslint/camelcase
-//         where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
-//         orderBy: "confidence",
-//         orderDirection: "desc",
-//         first: PAGE_SIZE,
-//         skip: 0,
-//       }),
-
-//       // the list of preboosted proposals
-//       dao.proposals({
-//         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
-//         orderBy: "preBoostedAt",
-//       }), // the list of preboosted proposals
-//       arc.dao(daoAvatarAddress).proposals({
-//       // eslint-disable-next-line @typescript-eslint/camelcase
-//         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
-//         orderBy: "boostedAt",
-//       }), // the list of boosted proposals
-
-//       // DAO state
-//       dao.state()
-//     );
-
-//     const setState = this.setState.bind(this);
-//     const parentState = this.state;
-
-//     return <Subscribe observable={observable}>{
-//       (state: IObservableState<[Proposal[], Proposal[], Proposal[], IDAOState]>): any => {
-//         if (state.isLoading) {
-//           return  <div className={css.loading}><Loading/></div>;
-//         } else if (state.error) {
-//           throw state.error;
-//         } else {
-//           const data = state.data;
-//           let hasMoreProposals = parentState.hasMoreProposalsToLoad;
-//           if (data.length < PAGE_SIZE) {
-//             hasMoreProposals = false;
-//           }
-//           return <SchemeProposals
-//             {...this.props}
-//             hasMoreProposalsToLoad={hasMoreProposals}
-//             scheme={this.props.scheme}
-//             proposalsQueued={data[0]}
-//             proposalsPreBoosted={data[1]}
-//             proposalsBoosted={data[2]}
-//             dao={data[3]}
-//             fetchMore={(): void => {
-//               state.fetchMore({
-//                 observable: dao.proposals({
-//                   // eslint-disable-next-line @typescript-eslint/camelcase
-//                   where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
-//                   orderBy: "confidence",
-//                   orderDirection: "desc",
-//                   first: PAGE_SIZE,
-//                   skip: data[1].length,
-//                 }),
-//                 combine: (prevState: [Proposal[], Proposal[], Proposal[], IDAOState], newData: Proposal[]) => {
-//                   if (newData.length < PAGE_SIZE) {
-//                     setState({ hasMoreProposalsToLoad: false});
-//                   }
-//                   return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
-//                 },
-//               });
-//             }}
-//           />;
-//         }
-//       }
-//     }</Subscribe>;
-//   }
-// }
-
+// For some reason there is a weird maybe bug in TypeScript where adding the functions for fetchingMOre
+//   is causing it to misinterpret the type of the SubscriptionData, so have to manually specificy here
 const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>({
   wrappedComponent: SchemeProposalsPage,
 
@@ -344,6 +245,9 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     );
   },
 
+  // used for hacky pagination tracking
+  pageSize: PAGE_SIZE,
+
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const arc = getArc();
@@ -364,10 +268,6 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
-    // TODO
-    // if (newData.length < PAGE_SIZE) {
-    //   setState({ hasMoreProposalsToLoad: false});
-    // }
     return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
   }
 });

@@ -53,6 +53,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       super(props);
 
       this.fetchMore = this.fetchMore.bind(this);
+      this._fetchMoreCombine = this._fetchMoreCombine.bind(this);
 
       this.state = {
         complete: null,
@@ -71,21 +72,25 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       console.log(getDisplayName(wrappedComponent), "setting up sub", this.props);
       this.observable = observable || createObservable(this.props);
       console.log("got oserv =", this.observable);
+
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
           console.log(getDisplayName(wrappedComponent), "Got data", next);
+
           this.setState({
             data: next,
-            isLoading: false,
+            isLoading: false
           });
         },
         (error: Error) => {
-          console.log(getDisplayName(wrappedComponent), "error", error);
+          console.log(getDisplayName(wrappedComponent), "Error in subscription", error);
+
           this.setState({
             isLoading: false,
-            error });
+            error
+          });
         },
-        () => { console.log(getDisplayName(wrappedComponent), "complete"); this.setState({complete: true}); }
+        () => { this.setState({complete: true}); }
       );
     }
 
@@ -102,9 +107,9 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
 
     public componentDidUpdate(prevProps: InputProps) {
       const { wrappedComponent, checkForUpdate } = options;
-      console.log(getDisplayName(wrappedComponent), "did updatexx?", checkForUpdate);
+
       let shouldUpdate = false;
-      console.log(checkForUpdate, typeof(checkForUpdate));
+
       if (typeof(checkForUpdate) === "function") {
         shouldUpdate = checkForUpdate(prevProps, this.props);
       } else {
@@ -115,7 +120,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         });
       }
       if (shouldUpdate) {
-        console.log(getDisplayName(wrappedComponent), "yes did updateyy");
+        console.log(getDisplayName(wrappedComponent), "Updating subscriptions");
         this.setupSubscription();
       }
     }
@@ -130,23 +135,34 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
                isLoading={this.state.isLoading}
                error={this.state.error}
                fetchMore={this.fetchMore}
+               hasMoreToLoad={this.state.hasMoreToLoad}
                {...this.props as Props} />;
     }
 
     public fetchMore(): void {
+      console.log(getDisplayName(options.wrappedComponent), "trying to getc more");
       // Do nothing if the wrapped component didn't tell us how to fetch more
       if (!options.getFetchMoreObservable) {
         return;
       }
 
       const newObservable = options.getFetchMoreObservable(this.props, this.state.data);
-      const combineFunction = options.fetchMoreCombine || this._fetchMoreCombine;
-      const observable = combineLatest(this.observable, newObservable, combineFunction);
+      const observable = combineLatest(this.observable, newObservable, this._fetchMoreCombine);
       this.setupSubscription(observable);
     }
 
-     // a function that combines the previousState with the results of the new observable from fetchMore
+     // Combine the previousState with the results of the new observable from fetchMore
     private _fetchMoreCombine(oldState: ObservableType, newData: any): ObservableType {
+      // Kind of hacky way of figuring out if there is more data to load
+      if (newData.length < options.pageSize) {
+        this.setState({ hasMoreToLoad: false });
+      }
+
+      if (options.fetchMoreCombine) {
+        return options.fetchMoreCombine(oldState, newData);
+      }
+
+      // Default way of combining
       return (oldState as any).concat(newData);
     }
   };

@@ -9,7 +9,7 @@ import * as React from "react";
 import { combineLatest, of } from "rxjs";
 
 interface IExternalProps {
-  dao: IDAOState;
+  dao?: IDAOState;
   address: Address;
 }
 
@@ -60,7 +60,9 @@ class AccountBalances extends React.Component<IProps, null>  {
 export default withSubscription({
   wrappedComponent: AccountBalances,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.address !== newProps.address || oldProps.dao.address !== newProps.dao.address},
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.address !== newProps.address || (oldProps.dao ? oldProps.dao.address !== newProps.dao.address : !!newProps.dao);
+  },
 
   createObservable: ({ dao, address }: IExternalProps) => {
     if (!dao) {
