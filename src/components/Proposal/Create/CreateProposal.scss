@@ -615,7 +615,12 @@ div.description {
 
         .externalTokenSelect {
           right: -17px;
-          padding: 0 18px 0 8px;
+          width: 50px;
+          padding: 0 18px 0 0px;
+
+          div div div div:first-child {
+            left: 8px;
+          }
         }
       }
 
