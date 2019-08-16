@@ -56,20 +56,22 @@ interface IFormValues {
 }
 
 const customStyles = {
-  option: (provided: any, state: any) => ({
-    ...provided,
-    borderBottom: '1px dotted purple',
-    color: state.isSelected ? 'red' : 'blue',
-    padding: 20,
-  }),
   control: () => ({
     // none of react-select's styles are passed to <Control />
-    width: 200,
+    width: 117,
+    height: 35
+  }),
+  indicatorsContainer: (provided: any, state: any) => ({
+  }),
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  input: () => ({
+    height: 31
   }),
   singleValue: (provided: any, state: any) => {
     const opacity = state.isDisabled ? 0.5 : 1;
     const transition = 'opacity 300ms';
-
     return { ...provided, opacity, transition };
   }
 }
@@ -304,16 +306,18 @@ class CreateContributionReward extends React.Component<IProps, null> {
                           min={0}
                           step={0.1}
                         />
-                        <Field
-                          id="externalTokenInput"
-                          name="externalTokenAddress"
-                          component={SelectField}
-                          className={css.externalTokenSelect}
-                          options={Object.keys(supportedTokens()).map((tokenAddress) => {
-                            const token = supportedTokens()[tokenAddress];
-                            return { value: tokenAddress, label: token["symbol"] };
-                          })}
-                        />
+                        <div className={css.externalTokenSelect}>
+                          <Field
+                            id="externalTokenInput"
+                            name="externalTokenAddress"
+                            component={SelectField}
+                            className={css.externalTokenSelect}
+                            options={Object.keys(supportedTokens()).map((tokenAddress) => {
+                              const token = supportedTokens()[tokenAddress];
+                              return { value: tokenAddress, label: token["symbol"] };
+                            })}
+                          />
+                        </div>
                       </div>
 
                       <div className={css.reward}>
