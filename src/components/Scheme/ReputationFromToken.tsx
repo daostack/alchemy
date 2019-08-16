@@ -166,7 +166,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
           <Formik
             // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
             initialValues={{
-              accountAddress: "redeemerAddress",
+              accountAddress: "",
             } as IFormValues}
 
             validate={(values: IFormValues): void => {
