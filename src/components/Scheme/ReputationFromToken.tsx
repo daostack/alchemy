@@ -141,7 +141,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     if (alreadyRedeemed) {
       this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
     } else {
-      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress, this.state.redeemerAddress, this.state.privateKey);
+      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress, this.state.privateKey);
     }
     setSubmitting(false);
   }

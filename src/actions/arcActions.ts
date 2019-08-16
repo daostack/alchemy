@@ -135,7 +135,7 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   };
 }
 
-export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, redeemerAddress: Address, privateKey: string|undefined) {
+export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     if (privateKey) {
