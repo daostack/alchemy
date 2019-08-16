@@ -108,6 +108,16 @@
         padding: 0 0 0 0;
         right: 0px;
         border: 1px solid #bfcbd5;
+
+        div div div div:first-child {
+          left: 15px;
+        }
+
+        input {
+          margin-top: 0;
+          margin-left: 10px;
+          margin-bottom: 0;
+        }
       }
     }
 

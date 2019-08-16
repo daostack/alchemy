@@ -62,18 +62,26 @@ const customStyles = {
     height: 35
   }),
   indicatorsContainer: (provided: any, state: any) => ({
+    display: 'none'
   }),
   indicatorSeparator: () => ({
-    display: 'none',
+    display: 'none'
   }),
   input: () => ({
-    height: 31
+    height: 31,
+    marginTop: 0,
+    marginBottom: 0
   }),
-  singleValue: (provided: any, state: any) => {
-    const opacity = state.isDisabled ? 0.5 : 1;
-    const transition = 'opacity 300ms';
-    return { ...provided, opacity, transition };
-  }
+  valueContainer: () => ({
+    height: 35
+  }),
+  menu: (provided: any) => ({
+    ... provided,
+    borderTop: 'none',
+    borderRadius: '0 0 5px 5px',
+    marginTop: 1,
+    backgroundColor: 'rgba(255,255,255,1)'
+  })
 }
 
 export const SelectField: React.SFC<any> = ({options, field, form }) => (
