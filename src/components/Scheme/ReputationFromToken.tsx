@@ -1,4 +1,6 @@
 import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
+import * as queryString from "query-string";
+import { RouteComponentProps } from "react-router-dom";
 import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
@@ -15,7 +17,7 @@ import * as css from "./ReputationFromToken.scss";
 
 import BN = require("bn.js");
 
-interface IExternalProps {
+interface IExternalProps extends RouteComponentProps<any> {
   daoAvatarAddress: Address;
   scheme: Scheme;
   schemeState: ISchemeState;
@@ -46,10 +48,11 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 interface IState {
   redemptionAmount: BN;
   alreadyRedeemed: boolean;
+  privateKey: string;
+  redeemerAddress: Address;
 }
 
 interface IFormValues {
-  thisAccount: boolean;
   accountAddress: string;
 }
 
@@ -58,23 +61,41 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    let redeemerAddress: Address;
+    const queryValues = queryString.parse(this.props.location.search);
+    const pk = queryValues["pk"] as string;
+    if (pk) {
+      const arc = getArc();
+      try {
+        redeemerAddress = arc.web3.eth.accounts.privateKeyToAccount(pk).address;
+      } catch(err) {
+        throw Error(`Invalide private key: ${pk}`);
+      }
+    } else {
+      redeemerAddress = this.props.currentAccountAddress;
+    }
+
+
     this.state = {
       redemptionAmount: null,
       alreadyRedeemed: false,
+      privateKey: pk,
+      redeemerAddress,
     };
   }
 
   private async _loadReputationBalance() {
-    if (this.props.currentAccountAddress) {
+    const redeemerAddress = this.state.redeemerAddress;
+    if (redeemerAddress) {
       const state = await this.props.scheme.fetchStaticState();
       const schemeAddress = state.address;
       const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
       const tokenContractAddress = await schemeContract.methods.tokenContract().call();
       const arc = getArc();
       const tokenContract = new Token(tokenContractAddress, arc);
-      const balance = new BN(await tokenContract.contract().methods.balanceOf(this.props.currentAccountAddress).call());
+      const balance = new BN(await tokenContract.contract().methods.balanceOf(redeemerAddress).call());
       // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
-      const alreadyRedeemed = await schemeContract.methods.redeems(this.props.currentAccountAddress).call();
+      const alreadyRedeemed = await schemeContract.methods.redeems(redeemerAddress).call();
       let redemptionAmount;
       if (alreadyRedeemed) {
         redemptionAmount = new BN(0);
@@ -98,13 +119,17 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   }
 
   public async componentDidUpdate(prevProps: IProps) {
-    if (this.props.currentAccountAddress !== prevProps.currentAccountAddress) {
+    if (!this.state.privateKey && this.props.currentAccountAddress !== prevProps.currentAccountAddress) {
+      this.setState({
+        redeemerAddress: this.props.currentAccountAddress,
+      });
       await this._loadReputationBalance();
     }
   }
 
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+    // only connect to wallet if we do not have a private key to sign with
+    if (!this.state.privateKey && !(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
       setSubmitting(false);
       return;
     }
@@ -112,17 +137,19 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const state = await this.props.scheme.fetchStaticState();
     const schemeAddress = state.address;
     const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
-    const alreadyRedeemed = await schemeContract.methods.redeems(values.accountAddress).call();
+    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
       this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
     } else {
-      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress);
+      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress, this.state.privateKey);
     }
     setSubmitting(false);
   }
 
   public render() {
-    const { currentAccountAddress, daoAvatarAddress, schemeState } = this.props;
+    const { daoAvatarAddress, schemeState } = this.props;
+    const redeemerAddress = this.state.redeemerAddress;
+
     const arc = getArc();
 
     return (
@@ -134,13 +161,12 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             {schemeName(schemeState, schemeState.address)}
           </h2>
         </Sticky>
-        { this.state.alreadyRedeemed ? <div>Reputation for account {this.props.currentAccountAddress} has already been redeemed</div> : <div />  }
+        { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div />  }
         <div className={schemeCss.schemeRedemptionContainer}>
           <Formik
             // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
             initialValues={{
-              thisAccount : true,
-              accountAddress: currentAccountAddress,
+              accountAddress: "",
             } as IFormValues}
 
             validate={(values: IFormValues): void => {
@@ -166,59 +192,24 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             render={({
               errors,
               touched,
-              setFieldValue,
-              values,
             }: FormikProps<IFormValues>) => {
               return <Form noValidate>
                 <div className={schemeCss.fields}>
                   <h3>{ this.state.redemptionAmount ? fromWei(this.state.redemptionAmount) : "..." } Rep to redeem </h3>
-                  <b>Which account would you like to receive the reputation?</b>
-                  <div>
-                    <Field
-                      id="thisAccountTrue"
-                      name="thisAcount"
-                      checked={values.thisAccount}
-                      onChange={(_ev: any) => {
-                        setFieldValue("accountAddress", currentAccountAddress, false);
-                        setFieldValue("thisAccount", true, false);
-                      }}
-                      type="radio"
-                      value
-                    />
-                    <label htmlFor="thisAccountTrue">
-                      This Account
-                    </label>
-                  </div>
-                  <div>
-                    <Field
-                      id="thisAccountFalse"
-                      name="thisAccount"
-                      checked={!values.thisAccount}
-                      onChange={(_ev: any) => {
-                        setFieldValue("accountAddress", "", false);
-                        setFieldValue("thisAccount", false, false);
-                      }}
-                      type="radio"
-                      value={false}
-                    />
-                    <label htmlFor="thisAccountFalse">
-                      Other Account
-                    </label>
-                  </div>
+                  <b>Redeem reputation to which account?</b>
                   <div className={schemeCss.redemptionAddress}>
                     <label htmlFor="accountAddressInput">
-                      Address
                       <ErrorMessage name="accountAddress">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     </label>
                     <Field
                       id="accountAddressInput"
                       maxLength={120}
-                      disabled={values.thisAccount}
-                      placeholder=""
+                      placeholder="Account address"
                       name="accountAddress"
                       className={touched.accountAddress && errors.accountAddress ? css.error : null}
                     />
                   </div>
+                  <b>⚠️ After redemption, reputation is not transferable</b>
                 </div>
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit"

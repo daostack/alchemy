@@ -135,15 +135,48 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   };
 }
 
-export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string) {
+export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
-    const observer = operationNotifierObserver(dispatch, "Redeem reputation");
-    const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
+    const arc = getArc();
+    if (privateKey) {
+      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
+      const state = await reputationFromTokenScheme.scheme.fetchStaticState();
+      const contract =  arc.getContract(state.address);
+      const block = await arc.web3.eth.getBlock("latest");
+      const gas = block.gasLimit - 100000;
+      const redeemMethod = contract.methods.redeem(addressToRedeem);
+      const gasPrice = await arc.web3.eth.getGasPrice();
+      // console.log(redeemMethod);
+      // console.log(redeemMethod.encodeABI());
+      const txToSign = {
+        gas,
+        gasPrice,
+        data: redeemMethod.encodeABI(),
+        to: state.address,
+        value: "0",
+      };
+      // console.log(txToSign);
+      const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
+      // console.log(signedTransaction);
+      dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
+      const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
+      console.log(`transaction hash: ${txHash}`);
+      try {
+        const receipt  = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
+        console.log(receipt);
+      } catch(err) {
+        dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
+      }
+    } else {
+      const observer = operationNotifierObserver(dispatch, "Redeem reputation");
+      const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
 
-    // send the transaction and get notifications
-    if (reputationFromTokenScheme) {
-      // @ts-ignore
-      reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
+      // send the transaction and get notifications
+      if (reputationFromTokenScheme) {
+        // @ts-ignore
+        reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
+      }
     }
   };
 }
