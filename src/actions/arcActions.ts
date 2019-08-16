@@ -145,10 +145,19 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const block = await arc.web3.eth.getBlock("latest");
       const gas = block.gasLimit - 100000;
       const redeemMethod = contract.methods.redeem(addressToRedeem);
-      redeemMethod.gas = gas;
       const gasPrice = await arc.web3.eth.getGasPrice();
-      redeemMethod.gasPrice = gasPrice;
-      const signedTransaction = await arc.web3.eth.accounts.signTransaction(redeemMethod, privateKey);
+      console.log(redeemMethod);
+      console.log(redeemMethod.encodeABI());
+      const txToSign = {
+        gas,
+        gasPrice,
+        data: redeemMethod.encodeABI(),
+        to: state.address,
+        value: "0",
+      };
+      console.log(txToSign);
+      const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
+      console.log(signedTransaction);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
       const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
 
