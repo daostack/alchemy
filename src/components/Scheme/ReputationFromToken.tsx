@@ -53,7 +53,6 @@ interface IState {
 }
 
 interface IFormValues {
-  thisAccount: boolean;
   accountAddress: string;
 }
 
@@ -167,8 +166,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
           <Formik
             // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
             initialValues={{
-              thisAccount : true,
-              accountAddress: redeemerAddress,
+              accountAddress: "redeemerAddress",
             } as IFormValues}
 
             validate={(values: IFormValues): void => {
@@ -206,11 +204,12 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                     <Field
                       id="accountAddressInput"
                       maxLength={120}
-                      placeholder=""
+                      placeholder="Account address"
                       name="accountAddress"
                       className={touched.accountAddress && errors.accountAddress ? css.error : null}
                     />
                   </div>
+                  <b>⚠️ After redemption, reputation is not transferable</b>
                 </div>
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit"
