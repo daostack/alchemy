@@ -99,60 +99,50 @@ export function supportedTokens() {
 
 export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
 
+  const negative = amountWei.lt(new BN(0));
+  const toSignedString = (amount: string) => { return  (negative ? "-" : "") + amount + (symbol ? " " + symbol : ""); };
+  
+  if (amountWei.isZero()) {
+    return toSignedString("0");
+  } 
+
   const PRECISION = 2; // number of digits "behind the dot"
   const PRECISIONPOWER = 10 ** PRECISION;
-  const negative = amountWei.lt(new BN(0));
   const toLocaleString = (amount: number): string =>
   {
     return amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION });
   };
-  const roundDown = (amount: number): number => {
-    return Math.floor(amount * PRECISIONPOWER) / PRECISIONPOWER;
-  };
-  
-  let returnString;
+
+  let significantDigits = 0;
+  let units = "";
 
   /**
    * Like converting from WEI where 18 is a variable, not a constant.
    * `abs` because the number can be negative.  We'll convert back to signed at the end.
    * Note this yields a whole number of tokens, not a fraction.
    */
-  const bnAmount = amountWei.div(new BN(10).pow(new BN(decimals))).abs();
+  const tokenAmount = amountWei.mul(new BN(PRECISIONPOWER)).div(new BN(10).pow(new BN(decimals))).abs();
 
-  if (bnAmount.bitLength() > 53) {
-    /**
-     * Reduce this very big number (> MAX_SAFE_INTEGER)) to billions.
-     * Convert to a rounded fractional number using PRECISIONPOWER.
-     */
-    const amount = bnAmount.divn(10000000).toNumber() / PRECISIONPOWER;
-    returnString = `${toLocaleString(amount)}B`;
+  if (tokenAmount.muln(PRECISION).eqn(0)) {
+    return toSignedString("+0");
+  } else if (tokenAmount.bitLength() > 53) {
+    significantDigits = 1000000000;
+    units = "B";
+  }
+  else if (tokenAmount.ltn(1000)) {
+    significantDigits = 1;
+  } else if (tokenAmount.ltn(1000000)) {
+    significantDigits = 1000;
+    units = "k";
   } else {
-
-    /**
-     * get our default amount as a fractional number, rounded to PRECISIONPOWER places.
-     */
-    let amount = Math.abs(amountWei.mul(new BN(PRECISIONPOWER)).div(new BN(10).pow(new BN(decimals))).toNumber()) / PRECISIONPOWER;
-
-    if (amountWei.isZero()) {
-      returnString = "0";
-    } else if (amount < 0.01) {
-      returnString = "+0";
-    } else if (amount < 1000) {
-      returnString = toLocaleString(amount);
-    } else if (amount < 1000000) {
-      amount = amount / 1000;
-      // round again since we divided again
-      amount = roundDown(amount);
-      returnString = `${toLocaleString(amount)}k`;
-    } else {
-      amount = amount / 1000000;
-      // round again since we divided again
-      amount = roundDown(amount);
-      returnString = `${toLocaleString(amount)}M`;
-    }
+    significantDigits = 1000000;
+    units = "M";
   }
 
-  return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
+  const fractionalNumber = tokenAmount.div(new BN(significantDigits)).toNumber() / PRECISIONPOWER;
+  const returnString = `${toLocaleString(fractionalNumber)}${units}`;
+
+  return toSignedString(returnString);
 }
 
 export function tokenDetails(tokenAddress: string) {
