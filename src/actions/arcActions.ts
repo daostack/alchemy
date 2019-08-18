@@ -155,6 +155,9 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
         to: state.address,
         value: "0",
       };
+      const gasEstimate = await arc.web3.eth.estimateGas(txToSign);
+      txToSign.gas = gasEstimate;
+      console.log(`estimated gas cost: ${gasEstimate  * gasPrice}`);
       // console.log(txToSign);
       const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
       // console.log(signedTransaction);

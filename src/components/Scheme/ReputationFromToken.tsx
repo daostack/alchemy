@@ -99,6 +99,8 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       const balance = new BN(await tokenContract.contract().methods.balanceOf(redeemerAddress).call());
       // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
       const alreadyRedeemed = await schemeContract.methods.redeems(redeemerAddress).call();
+      const ethBalance = await arc.web3.eth.getBalance(redeemerAddress);
+      console.log(`balance of ${redeemerAddress}: ${ethBalance}`);
       let redemptionAmount;
       if (alreadyRedeemed) {
         redemptionAmount = new BN(0);
