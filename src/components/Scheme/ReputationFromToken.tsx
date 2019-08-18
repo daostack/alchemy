@@ -63,9 +63,12 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
     let redeemerAddress: Address;
     const queryValues = queryString.parse(this.props.location.search);
-    const pk = queryValues["pk"] as string;
+    let pk = queryValues["pk"] as string;
     if (pk) {
       const arc = getArc();
+      if (!pk.startsWith("0x")) {
+        pk = `0x${pk}`;
+      }
       try {
         redeemerAddress = arc.web3.eth.accounts.privateKeyToAccount(pk).address;
       } catch(err) {
