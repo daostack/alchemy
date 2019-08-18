@@ -10,7 +10,6 @@ import { GenericSchemeRegistry } from "genericSchemeRegistry";
 import { getArc } from "../arc";
 
 import BN = require("bn.js");
-
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -79,9 +78,9 @@ export function toBaseUnit(value: string, decimals: number) {
 
 export function fromWei(amount: BN): number {
   try {
-    return Number(getArc().web3.utils.fromWei(amount.toString(), "ether"));
+    return Number(Web3.utils.fromWei(amount.toString(), "ether"));
   } catch (err) {
-    console.warn(`Invalid number value passed to fromWei: "${amount}"`);
+    console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);
     return 0;
   }
 }
@@ -100,21 +99,30 @@ export function supportedTokens() {
 
 export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
   const negative = amountWei.lt(new BN(0));
-  const amount = Math.abs(decimals === 18 ? fromWei(amountWei) : amountWei.div(new BN(10).pow(new BN(decimals))).toNumber());
+  const PRECISION = 2; // number of digitst "behind the dot"
+  // we multiply the BN * 1000 and then subsequently divide the number by 1000, because BN does not handle fractions
+  let amount = Math.abs(amountWei.mul(new BN(100)).div(new BN(10).pow(new BN(decimals))).toNumber())/ 100;
 
   let returnString;
-  if (amount === 0) {
+  if (amountWei.isZero()) {
     returnString = "0";
   } else if (amount < 0.01) {
     returnString = "+0";
   } else if (amount < 1000) {
-    returnString = amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    // round down
+    amount = Math.floor(amount * 10**PRECISION)/10** PRECISION;
+    returnString = amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION });
   } else if (amount < 1000000) {
-    returnString = (amount / 1000)
-      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "k";
+    amount = amount /1000;
+    // round down
+    amount = Math.floor(amount * 10**PRECISION)/10** PRECISION;
+    returnString = amount
+      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION }) + "k";
   } else {
-    returnString = (amount / 1000000)
-      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + "M";
+    amount = amount /1000000;
+    amount = Math.floor(amount * 10**PRECISION)/10** PRECISION;
+    returnString = amount
+      .toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: PRECISION }) + "M";
   }
 
   return (negative ? "-" : "") + returnString + (symbol ? " " + symbol : "");
@@ -326,6 +334,7 @@ export function hasClaimableRewards(reward: IRewardState) {
       return true;
     }
   }
+  return false;
 }
 
 /**
@@ -346,7 +355,7 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   }
 
   if (
-    !reward.reputationReward &&
+    reward.reputationReward &&
     !reward.reputationReward.isZero()
     && (daoBalances["rep"] === undefined || daoBalances["rep"].gte(reward.reputationReward))
     && Number(reward.alreadyRedeemedReputationPeriods) < Number(reward.periods)
@@ -355,7 +364,7 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
   }
 
   if (
-    !reward.nativeTokenReward &&
+    reward.nativeTokenReward &&
     !reward.nativeTokenReward.isZero()
     && (daoBalances["nativeToken"] === undefined || daoBalances["nativeToken"].gte(reward.nativeTokenReward))
     && Number(reward.alreadyRedeemedNativeTokenPeriods) < Number(reward.periods)
@@ -363,7 +372,8 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
     result["nativeToken"] = reward.nativeTokenReward;
   }
 
-  if (reward.externalTokenReward &&
+  if (
+    reward.externalTokenReward &&
     !reward.externalTokenReward.isZero()
     && (daoBalances["externalToken"] === undefined || daoBalances["externalToken"].gte(reward.externalTokenReward))
     && Number(reward.alreadyRedeemedExternalTokenPeriods) < Number(reward.periods)

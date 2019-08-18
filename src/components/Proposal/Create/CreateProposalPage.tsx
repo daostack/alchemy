@@ -20,7 +20,7 @@ interface IProps {
   schemeId: string;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any): IProps => {
   return {
     daoAvatarAddress : ownProps.match.params.daoAvatarAddress,
     history: ownProps.history,
@@ -30,22 +30,17 @@ const mapStateToProps = (state: IRootState, ownProps: any) => {
 
 class CreateProposalPage extends React.Component<IProps, null> {
 
-  public goBack() {
+  public handleClose(): void {
     const { daoAvatarAddress, history, schemeId } = this.props;
-
-    if (history.length > 0) {
-      history.goBack();
-    } else {
-      history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
-    }
+    history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
   }
 
-  public render() {
+  public render(): any {
     const {  daoAvatarAddress, schemeId } = this.props;
     const arc = getArc();
     const scheme = arc.scheme(schemeId);
     const observable = scheme.state();
-    return <Subscribe observable={observable}>{(state: IObservableState<ISchemeState>) => {
+    return <Subscribe observable={observable}>{(state: IObservableState<ISchemeState>): any => {
 
       if (state.isLoading) {
         return  <div className={css.loading}><Loading/></div>;
@@ -61,7 +56,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
         let createSchemeComponent = <div />;
         const props = {
           daoAvatarAddress,
-          handleClose: this.goBack.bind(this),
+          handleClose: this.handleClose.bind(this),
           scheme,
         };
 

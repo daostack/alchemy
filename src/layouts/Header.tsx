@@ -1,6 +1,6 @@
 import { IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { checkWeb3Provider, enableMetamask, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly } from "arc";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -22,9 +22,10 @@ interface IStateProps {
   dao: IDAOState;
   currentAccountAddress: string | null;
   networkId: number;
+  loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+const mapStateToProps = (state: IRootState, ownProps: any): any => {
   const dao = ownProps.dao;
   return {
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
@@ -52,28 +53,29 @@ class Header extends React.Component<IProps, null> {
     this.copyAddress = this.copyAddress.bind(this);
   }
 
-  public copyAddress(e: any) {
+  public copyAddress(e: any): void {
     const { showNotification, currentAccountAddress } = this.props;
     copyToClipboard(currentAccountAddress);
     showNotification(NotificationStatus.Success, "Copied to clipboard!");
     e.preventDefault();
   }
 
-  public handleClickTour = () => {
+  public handleClickTour = (): void => {
     const { showTour } = this.props;
     showTour();
   }
 
-  public handleClickLogin = async () => {
-    try {
-      await checkWeb3Provider();
-      await enableMetamask();
-    } catch (err) {
-      this.props.showNotification(NotificationStatus.Failure, err.message);
+  public handleClickLogin = async (): Promise<void> => {
+    if (!await this.props.loadCachedWeb3Provider(this.props.showNotification)) {
+      await enableWeb3ProviderAndWarn(this.props.showNotification, false);
     }
   }
 
-  public render() {
+  public handleClickLogout = async (): Promise<void> => {
+    await gotoReadonly(this.props.showNotification);
+  }
+
+  public render(): any {
     const {
       currentAccountProfile,
       dao,
@@ -81,6 +83,7 @@ class Header extends React.Component<IProps, null> {
     } = this.props;
 
     const daoAvatarAddress = dao ? dao.address : null;
+    const accountIsEnabled = getAccountIsEnabled();
 
     return(
       <div className={css.headerContainer}>
@@ -93,43 +96,58 @@ class Header extends React.Component<IProps, null> {
               separator={<b> &gt;   </b>}
               item={NavLink}
               finalItem={"b"}
-              compare={(a: any, b: any) => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
+              compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
           <div className={css.headerRight}>
-            { currentAccountAddress &&
-              <div className={css.accountInfo}>
-                <div className={css.accountImage}>
-                  <div className={css.profileLink}>
-                    <AccountProfileName accountAddress={currentAccountAddress}
-                      accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                    <AccountImage accountAddress={currentAccountAddress} />
-                  </div>
-                </div>
-                <div className={css.wallet}>
-                  <div className={css.pointer}></div>
-                  <div className={css.walletDetails}>
-                    <div className={css.walletImage}>
-                      <AccountImage accountAddress={currentAccountAddress} />
-                    </div>
-                    <div className={css.profileName}>
+            <div className={css.accountInfo}>
+              { currentAccountAddress ?
+                <div className={css.accountInfoContainer}>
+                  <div className={css.accountImage}>
+                    <div className={css.profileLink}>
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                    </div>
-                    <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
-                      <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
-                      <img src="/assets/images/Icon/Copy-blue.svg"/>
-                    </div>
-                    <div className={css.fullProfile}>
-                      <Link className={css.profileLink} to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
-                        Full Profile
-                      </Link>
+                      <AccountImage accountAddress={currentAccountAddress} />
                     </div>
                   </div>
-                  <AccountBalances dao={dao} address={currentAccountAddress} />
+                  <div className={css.wallet}>
+                    <div className={css.pointer}></div>
+                    <div className={css.walletDetails}>
+                      <div className={css.walletImage}>
+                        <AccountImage accountAddress={currentAccountAddress} />
+                      </div>
+                      <div className={css.profileName}>
+                        <AccountProfileName accountAddress={currentAccountAddress}
+                          accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
+                      </div>
+                      <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
+                        <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
+                        <img src="/assets/images/Icon/Copy-blue.svg"/>
+                      </div>
+                      <div className={css.fullProfile}>
+                        <Link className={css.profileLink} to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                        Full Profile
+                        </Link>
+                      </div>
+                    </div>
+                    <AccountBalances dao={dao} address={currentAccountAddress} />
+                    <div className={css.logoutButtonContainer}>
+                      { accountIsEnabled ?
+                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogout()}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div> :
+                        <div className={css.web3ProviderLogout}  onClick={() => this.handleClickLogin()}><div className={css.text}>Log in</div> <img src="/assets/images/Icon/login.svg"/></div> }
+                    </div>
+                  </div>
+                </div> : ""
+              }
+              {!currentAccountAddress ?
+                <div className={css.web3ProviderLogin}>
+                  <button onClick={() => this.handleClickLogin()} data-test-id="loginButton">
+                    Please log in! <img src="/assets/images/Icon/login-white.svg"/>
+                  </button>
                 </div>
-              </div>
-            }
+                : ""
+              }
+            </div>
           </div>
         </nav>
       </div>
@@ -139,7 +157,11 @@ class Header extends React.Component<IProps, null> {
 
 const ConnectedHeader = connect(mapStateToProps, mapDispatchToProps)(Header);
 
-export default (props: RouteComponentProps<any>) => {
+interface IExternalProps extends RouteComponentProps<any> {
+  loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
+}
+
+export default (props: IExternalProps): any => {
   const arc = getArc();
   const match = matchPath(props.location.pathname, {
     path: "/dao/:daoAvatarAddress",
@@ -149,7 +171,7 @@ export default (props: RouteComponentProps<any>) => {
   const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
 
   if (daoAddress) {
-    return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>) => {
+    return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>): any => {
       if (state.isLoading) {
         return null;
       } else if (state.error) {

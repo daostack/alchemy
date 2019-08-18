@@ -18,7 +18,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
     const renderGpParams = (params: any) => {
       return <tbody>
-        <tr><th>Activation Time:</th><td>{params.activationTime} seconds</td></tr>
+        <tr><th>Activation Time:</th><td className={css.ellipsis}>{params.activationTime} seconds</td></tr>
         <tr><th>Boosted Vote Period Limit:</th><td>{params.boostedVotePeriodLimit} seconds</td></tr>
         <tr><th>DAO Bounty Const:</th><td>{params.daoBountyConst}</td></tr>
         <tr><th>Limit Exponent Value:</th><td>{params.limitExponentValue}</td></tr>
