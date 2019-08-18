@@ -11,14 +11,40 @@ describe("Header redemptions button", () => {
     (await redemptionsButton.isDisplayed()).should.equal(false);
   });
 
-  it("should redirect us to the redemptions page", async () => {
-    (await $("[data-test-id=\"loginButton\"]")).click();
+  it("should show a quick menu on desktop devices", async () => {
+    const loginButton = await $("[data-test-id=\"loginButton\"]");
+    await loginButton.click();
 
     const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
     await redemptionsButton.waitForDisplayed();
     await redemptionsButton.click();
 
+    const viewAllRedemptionsLink = await $("[data-test-id=\"viewAllRedemptionsLink\"]");
+    await viewAllRedemptionsLink.click();
+
     (await browser.getUrl()).should.equal("http://127.0.0.1:3000/redemptions");
+  });
+
+  it("should redirect us to the redemptions page on mobile devices", async () => {
+    await browser.setWindowSize(320, 640);
+    const actualWindowSize = await browser.getWindowSize();
+
+    // Skip test if the OS doesn't allow window resizes
+    if (actualWindowSize.width === 320) {
+      await browser.url("http://127.0.0.1:3000");
+      // For some reason, the connect button shows up after refreshing, even
+      // though we're already logged in.
+      const connectButton = await $("[data-test-id=\"connectButton\"]");
+      await connectButton.click();
+      await connectButton.waitForDisplayed(undefined, true);
+
+      const redemptionsButton = await $("[data-test-id=\"redemptionsButton\"]");
+      await redemptionsButton.click();
+
+      (await browser.getUrl()).should.equal("http://127.0.0.1:3000/redemptions");
+    }
+
+    await browser.setWindowSize(1920, 1080);
   });
 });
 

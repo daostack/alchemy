@@ -4,9 +4,11 @@ import { getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import * as React from "react";
+import Tooltip from "rc-tooltip";
 import { Link } from "react-router-dom";
 import { of } from "rxjs";
 import { map } from "rxjs/operators";
+import RedemptionsMenu from "./RedemptionsMenu";
 import * as css from "./RedemptionsButton.scss";
 
 interface IExternalProps {
@@ -16,7 +18,9 @@ interface IExternalProps {
 type IProps = IExternalProps & ISubscriptionProps<any[]>;
 
 class RedemptionsButton extends React.Component<IProps, null> {
-  public render() {
+  private menu = React.createRef<Tooltip>()
+
+  public render(): RenderOutput {
     const { data: redeemableProposals } = this.props;
 
     if (redeemableProposals === null) {
@@ -24,14 +28,55 @@ class RedemptionsButton extends React.Component<IProps, null> {
     }
 
     return <div className={css.button} data-test-id="redemptionsButton">
-      <Link to="/redemptions">
+      { document.documentElement.clientWidth < 640 ?
+        this.renderDirectLink()
+        : this.renderQuickMenuLink()
+      }
+    </div>;
+  }
+
+  private renderDirectLink(): RenderOutput {
+    const { data: redeemableProposals } = this.props;
+    return <Link to="/redemptions">
+      <img src="/assets/images/Icon/menu/redemption.svg" />
+      { redeemableProposals.length > 0 ?
+        <span className={css.notification}></span>
+        : ""}
+    </Link>;
+  }
+
+  private renderQuickMenuLink(): RenderOutput {
+    const { data: redeemableProposals } = this.props;
+    const menu = <RedemptionsMenu
+      redeemableProposals={redeemableProposals}
+      handleClose={this.closeMenu.bind(this)}
+    />;
+    return <Tooltip
+      ref={this.menu}
+      placement="bottom"
+      align={{
+        // Ensure a bit of margin with the right edge
+        targetOffset: [30, 0],
+      }}
+      trigger={["click"]}
+      overlayClassName={css.menuTooltip}
+      overlay={menu}
+    >
+      <div>
         <img src="/assets/images/Icon/menu/redemption.svg" />
         { redeemableProposals.length > 0 ?
           <span className={css.notification}></span>
           : ""}
-      </Link>
-    </div>;
+      </div>
+    </Tooltip>;
   }
+
+  private closeMenu() {
+    if (this.menu.current) {
+      (this.menu.current as any).trigger.close();
+    }
+  }
+
 }
 
 export default withSubscription({
