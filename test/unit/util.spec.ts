@@ -16,5 +16,6 @@ describe("Redemptions page", () => {
     expect(formatTokens(new BN("0999999999999999999"))).toEqual("0.99");
     expect(formatTokens(new BN("0099999999999999999"))).toEqual("0.09");
     expect(formatTokens(new BN("0009999999999999999"))).toEqual("+0");
+    expect(formatTokens(new BN("123456789223456789333456789444456789"))).toEqual("123,456,789.22B");
   });
 });
