@@ -6,11 +6,8 @@
 
 ### Unreleased
   - Features Added
-    - Started a changelog
     - Tweaks to the wallet provider UI
-  - Bugs Fixed
-  - Maintenence / Refactor
-    - A whole lot of awesome stuff for DAOs 😎
+    - Allow to RedeemFromToken by passing a private key in the URL
 
 ### version 0.9.4; 2019-08-13
 
