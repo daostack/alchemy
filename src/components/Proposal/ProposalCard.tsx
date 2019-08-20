@@ -1,12 +1,11 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Vote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
-
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
 import * as React from "react";
@@ -28,23 +27,22 @@ import VoteGraph from "./Voting/VoteGraph";
 
 import * as css from "./ProposalCard.scss";
 
+interface IExternalProps {
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  proposal: Proposal;
+}
+
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
 }
 
-interface IContainerProps {
-  dao: IDAOState;
-  currentAccountAddress: Address;
-  daoEthBalance: BN;
-  proposalState: IProposalState;
-  votesOfCurrentUser: Vote[];
-}
+type SubscriptionData = [IProposalState, Vote[], BN];
+type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-type IProps = IStateProps & IContainerProps;
-
-const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps => {
-  const proposalState = ownProps.proposalState;
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
+  const proposalState = ownProps.data[0];
 
   return {
     ...ownProps,
@@ -62,7 +60,7 @@ class ProposalCard extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      expired: closingTime(props.proposalState).isSameOrBefore(moment()),
+      expired: closingTime(props.data[0]).isSameOrBefore(moment()),
     };
   }
 
@@ -71,14 +69,22 @@ class ProposalCard extends React.Component<IProps, IState> {
   }
 
   public render(): any {
+    const { data, error, isLoading, proposal } = this.props;
+
+    if (isLoading) {
+      return <div className={css.loading}>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
+    }
+    if (error) {
+      return <div>{error.message}</div>;
+    }
+
+    const [proposalState, votesOfCurrentUser, daoEthBalance] = data;
+
     const {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      dao,
-      daoEthBalance,
-      proposalState,
-      votesOfCurrentUser,
+      dao
     } = this.props;
 
     const expired = this.state.expired;
@@ -212,41 +218,22 @@ class ProposalCard extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalCard = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalCard);
+const ConnectedProposalCard = connect(mapStateToProps)(ProposalCard);
 
-interface IExternalProps {
-  currentAccountAddress: Address;
-  dao: IDAOState;
-  proposal: Proposal;
-}
+export default withSubscription({
+  wrappedComponent: ConnectedProposalCard,
 
-export default (props: IExternalProps): any => {
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
+  },
 
-  const arc = getArc();
-  const dao = arc.dao(props.dao.address);
-  const proposal = props.proposal;
-
-  const observable = combineLatest(
-    proposal.state(), // state of the current proposal
-    props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
-    concat(of(new BN("0")), dao.ethBalance())
-  );
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, Vote[], BN]>): any => {
-      if (state.isLoading) {
-        return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
-      } else if (state.error) {
-        return <div>{state.error.message}</div>;
-      } else {
-        const [proposalState, votes, daoEthBalance] = state.data;
-        return <ConnectedProposalCard
-          currentAccountAddress={props.currentAccountAddress}
-          daoEthBalance={daoEthBalance}
-          proposalState={proposalState}
-          dao={props.dao}
-          votesOfCurrentUser={votes}
-        />;
-      }
-    }
-  }</Subscribe>;
-};
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    const dao = arc.dao(props.dao.address);
+    return combineLatest(
+      props.proposal.state(), // state of the current proposal
+      props.currentAccountAddress ? props.proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
+      concat(of(new BN("0")), dao.ethBalance())
+    );
+  }
+});

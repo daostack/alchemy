@@ -5,7 +5,7 @@ import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
 import ProposalDetailsPage from "components/Proposal/ProposalDetailsPage";
 import SchemeContainer from "components/Scheme/SchemeContainer";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -23,34 +23,34 @@ import DaoRedemptionsPage from "./DaoRedemptionsPage";
 import DaoSidebar from "./DaoSidebar";
 import * as css from "./Dao.scss";
 
-interface IStateProps extends RouteComponentProps<any> {
+type IExternalProps = RouteComponentProps<any>;
+
+interface IStateProps  {
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
-  dao: IDAOState;
   daoAvatarAddress: string;
-  lastBlock: number;
 }
-
-const mapStateToProps = (state: IRootState, ownProps: any) => {
-  return {
-    currentAccountAddress: state.web3.currentAccountAddress,
-    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
-    dao: ownProps.dao,
-    daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
-  };
-};
 
 interface IDispatchProps {
   getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
   showNotification: typeof showNotification;
 }
 
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    currentAccountAddress: state.web3.currentAccountAddress,
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
+    daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
+  };
+};
+
 const mapDispatchToProps = {
   getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
   showNotification,
 };
-
-type IProps = IStateProps & IDispatchProps;
 
 interface IState {
   isLoading: boolean;
@@ -79,7 +79,17 @@ class DaoContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { dao, currentAccountAddress } = this.props;
+    const { data, error, isLoading } = this.props;
+
+    if (isLoading) {
+      return (<div className={css.loading}><Loading/></div>);
+    }
+    if (error) {
+      return <div>{error.message}</div>;
+    }
+
+    const dao = data;
+    const { currentAccountAddress } = this.props;
 
     return (
       <div className={css.outer}>
@@ -134,20 +144,14 @@ class DaoContainer extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedDaoContainer = connect(mapStateToProps, mapDispatchToProps)(DaoContainer);
-
-export default (props: RouteComponentProps<any>) => {
-  const daoAddress = props.match.params.daoAvatarAddress;
-  const arc = getArc();
-  const dao = arc.dao(daoAddress);
-  return <Subscribe observable={dao.state()}>{(state: IObservableState<IDAOState>) => {
-    if (state.error) {
-      return <div>{state.error.message}</div>;
-    } else if (state.data) {
-      return <ConnectedDaoContainer {...props} dao={state.data} />;
-    } else {
-      return (<div className={css.loading}><Loading/></div>);
-    }
+const SubscribedDaoContainer = withSubscription({
+  wrappedComponent: DaoContainer,
+  checkForUpdate: ["daoAvatarAddress"],
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
+    const daoAddress = props.match.params.daoAvatarAddress;
+    return arc.dao(daoAddress).state();
   }
-  }</Subscribe>;
-};
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedDaoContainer);

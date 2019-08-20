@@ -105,6 +105,9 @@ const SubscribedDaoMembersPage = withSubscription({
     });
   },
 
+  // used for hacky pagination tracking
+  pageSize: PAGE_SIZE,
+
   getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
     const arc = getArc();
     const dao = new DAO(props.dao.address, arc);

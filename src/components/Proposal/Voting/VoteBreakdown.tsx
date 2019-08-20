@@ -4,22 +4,26 @@ import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import { of } from "rxjs";
 import * as css from "./VoteBreakdown.scss";
 
-interface IContainerProps {
+interface IExternalProps {
   currentAccountAddress: Address;
-  currentAccountState: IMemberState|undefined;
   currentVote: number;
   dao: IDAOState;
   detailView?: boolean;
   proposal: IProposalState;
+}
+
+interface IDispatchProps {
   showNotification: typeof showNotification;
 }
+
+type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<IMemberState>;
 
 interface IState {
   currentVote: number;
@@ -30,9 +34,9 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-class VoteBreakdown extends React.Component<IContainerProps, IState> {
+class VoteBreakdown extends React.Component<IProps, IState> {
 
-  constructor(props: IContainerProps) {
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
@@ -43,7 +47,9 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
 
   public async handleClickVote(vote: number, _event: any): Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
-    const { currentAccountState } = this.props;
+
+    const currentAccountState = this.props.data;
+
     if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
@@ -54,6 +60,15 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
   }
 
   public render(): any {
+    const { error, isLoading } = this.props;
+
+    if (isLoading) {
+      return <div>Loading votebox...</div>;
+    }
+    if (error) {
+      return <div>{ error.message }</div>;
+    }
+
     const {
       currentVote,
       detailView,
@@ -105,31 +120,17 @@ class VoteBreakdown extends React.Component<IContainerProps, IState> {
   }
 }
 
-const ConnectedVoteBreakdown = connect(null, mapDispatchToProps)(VoteBreakdown);
+const SubscribedVoteBreakdown = withSubscription({
+  wrappedComponent: VoteBreakdown,
 
-interface IProps {
-  currentAccountAddress: Address;
-  currentVote: number;
-  dao: IDAOState;
-  detailView?: boolean;
-  proposal: IProposalState;
-}
+  checkForUpdate: ["currentAccountAddress"],
 
-export default (props: IProps) => {
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    const dao = arc.dao(props.dao.address);
+    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
+  }
+});
 
-  const arc = getArc();
-  const dao = arc.dao(props.dao.address);
-  const observable = props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
+export default connect(null, mapDispatchToProps)(SubscribedVoteBreakdown);
 
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<IMemberState>): any => {
-      if (state.isLoading) {
-        return <div>Loading votebox...</div>;
-      } else if (state.error) {
-        return <div>{ state.error.message }</div>;
-      } else {
-        return <ConnectedVoteBreakdown currentAccountState={state.data} {...props} />;
-      }
-    }
-  }</Subscribe>;
-};

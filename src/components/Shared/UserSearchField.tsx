@@ -5,36 +5,41 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { IProfilesState, IProfileState } from "reducers/profilesReducer";
 import { first } from "rxjs/operators";
-
 import { getArc } from "arc";
 import AccountImage from "components/Account/AccountImage";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 
 import * as css from "./UserSearchField.scss";
 
-interface IUserSearchInternalProps {
-  members: Member[];
+interface IExternalProps {
+  daoAvatarAddress: string;
   name?: string;
   onBlur?: (touched: boolean) => any;
   onChange?: (newValue: string) => any;
+}
+
+interface IStateProps {
   profiles: IProfilesState;
 }
 
-interface IUserSearchInternalState {
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
+
+const mapStateToProps = (state: IRootState, _ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ..._ownProps,
+    profiles: state.profiles
+  };
+};
+
+interface IState {
   suggestions: IProfileState[];
   value: string;
 }
 
-const mapStateToProps = (state: IRootState, _ownProps: any) => {
-  return {
-    profiles: state.profiles,
-  };
-};
+class UserSearchField extends React.Component<IProps, IState> {
 
-class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSearchInternalState> {
-
-  constructor(props: IUserSearchInternalProps) {
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
@@ -63,7 +68,7 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
       return [];
     }
 
-    await Promise.all(this.props.members.map(async (member: Member) => {
+    await Promise.all(this.props.data.map(async (member: Member) => {
       const memberState = await member.state().pipe(first()).toPromise();
       const profile = this.props.profiles[memberState.address];
 
@@ -105,6 +110,14 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
   public getSuggestionValue = (suggestion: IProfileState) => suggestion.ethereumAccountAddress;
 
   public render() {
+    const { error, isLoading } = this.props;
+
+    if (isLoading) {
+      return (<div className={css.loading}><Loading/></div>);
+    } else if (error) {
+      return <div>{ error.message }</div>;
+    }
+
     const { value, suggestions } = this.state;
 
     // Autosuggest will pass through all these props to the input.
@@ -132,26 +145,15 @@ class UserSearchField extends React.Component<IUserSearchInternalProps, IUserSea
   }
 }
 
-const ConnectedUserSearchField = connect(mapStateToProps)(UserSearchField);
+const SubscribedUserSearchField = withSubscription({
+  wrappedComponent: UserSearchField,
 
-interface IUserSearchProps {
-  daoAvatarAddress: string;
-  name?: string;
-  onBlur?: (touched: boolean) => any;
-  onChange?: (newValue: string) => any;
-}
+  checkForUpdate: ["daoAvatarAddress"],
 
-export default (props: IUserSearchProps) => {
-  const arc = getArc();
-  const dao = arc.dao(props.daoAvatarAddress);
-  return <Subscribe observable={dao.members()}>{(state: IObservableState<Member[]>) => {
-    if (state.isLoading) {
-      return (<div className={css.loading}><Loading/></div>);
-    } else if (state.error) {
-      return <div>{ state.error.message }</div>;
-    } else {
-      return <ConnectedUserSearchField members={state.data} {...props} />;
-    }
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    return arc.dao(props.daoAvatarAddress).members();
   }
-  }</Subscribe>;
-};
+});
+
+export default connect(mapStateToProps)(SubscribedUserSearchField);

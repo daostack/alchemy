@@ -7,7 +7,7 @@ import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import DaoSidebar from "components/Dao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
@@ -27,30 +27,14 @@ import * as css from "./Account.scss";
 
 const socket = io(process.env.API_URL);
 
-interface IStateProps extends RouteComponentProps<any> {
-  detailView?: boolean;
+type IExternalProps = RouteComponentProps<any>;
+
+interface IStateProps {
   accountAddress: string;
-  accountInfo?: IMemberState;
   accountProfile?: IProfileState;
   currentAccountAddress: string;
-  dao: IDAOState;
-  ethBalance: BN;
-  genBalance: BN;
+  daoAvatarAddress: string;
 }
-
-const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const accountAddress = ownProps.accountAddress ? ownProps.accountAddress.toLowerCase() : null;
-
-  return {
-    accountAddress,
-    accountInfo: ownProps.accountInfo,
-    accountProfile: state.profiles[accountAddress],
-    currentAccountAddress: state.web3.currentAccountAddress,
-    dao: ownProps.dao,
-    ethBalance: ownProps.ethBalance,
-    genBalance: ownProps.genBalance,
-  };
-};
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -59,6 +43,23 @@ interface IDispatchProps {
   verifySocialAccount: typeof profileActions.verifySocialAccount;
 }
 
+type SubscriptionData = [IDAOState, IMemberState, BN, BN];
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  const accountAddress = ownProps.match.params.accountAddress ? ownProps.match.params.accountAddress.toLowerCase() : null;
+  const queryValues = queryString.parse(ownProps.location.search);
+  const daoAvatarAddress = queryValues.daoAvatarAddress as string;
+
+  return {
+    ...ownProps,
+    accountAddress,
+    accountProfile: state.profiles[accountAddress],
+    currentAccountAddress: state.web3.currentAccountAddress,
+    daoAvatarAddress
+  };
+};
+
 const mapDispatchToProps = {
   showNotification,
   getProfile: profileActions.getProfile,
@@ -66,7 +67,6 @@ const mapDispatchToProps = {
   verifySocialAccount: profileActions.verifySocialAccount,
 };
 
-type IProps = IStateProps & IDispatchProps;
 
 interface IFormValues {
   description: string;
@@ -142,8 +142,17 @@ class AccountProfilePage extends React.Component<IProps, null> {
   }
 
   public render(): any {
-    const { accountAddress, accountInfo, accountProfile,
-      currentAccountAddress, dao, ethBalance, genBalance } = this.props;
+    const { data, error, isLoading } = this.props;
+
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
+    if (error) {
+      return <div>{error.message}</div>;
+    }
+    const [dao, accountInfo, ethBalance, genBalance] = data;
+
+    const { accountAddress, accountProfile, currentAccountAddress } = this.props;
 
     const editing = currentAccountAddress && accountAddress === currentAccountAddress;
 
@@ -289,32 +298,27 @@ class AccountProfilePage extends React.Component<IProps, null> {
   }
 }
 
-const ConnectedAccountProfilePage = connect(mapStateToProps, mapDispatchToProps)(AccountProfilePage);
+const SubscribedAccountProfilePage = withSubscription({
+  wrappedComponent: AccountProfilePage,
 
-export default (props: RouteComponentProps<any>) => {
-  const arc = getArc();
-  const queryValues = queryString.parse(props.location.search);
-  const daoAvatarAddress = queryValues.daoAvatarAddress as string;
-  const accountAddress = props.match.params.accountAddress;
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.daoAvatarAddress !== newProps.daoAvatarAddress || oldProps.accountAddress !== newProps.accountAddress;
+  },
 
-  const observable = combineLatest(
-    daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
-    daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),
-    arc.ethBalance(accountAddress),
-    arc.GENToken().balanceOf(accountAddress)
-  );
+  createObservable: (props: IProps) => {
+    const arc = getArc();
 
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<[IDAOState, IMemberState, BN, BN]>) => {
-      if (state.error) {
-        return <div>{state.error.message}</div>;
-      } else if (state.data) {
-        const dao = state.data[0];
-        return <ConnectedAccountProfilePage dao={dao} accountAddress={accountAddress} accountInfo={state.data[1]} {...props} ethBalance={state.data[2]} genBalance={state.data[3]} />;
-      } else {
-        return <div>Loading...</div>;
-      }
-    }
-  }</Subscribe>;
+    const queryValues = queryString.parse(props.location.search);
+    const daoAvatarAddress = queryValues.daoAvatarAddress as string;
+    const accountAddress = props.match.params.accountAddress;
 
-};
+    return combineLatest(
+      daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
+      daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),
+      arc.ethBalance(accountAddress),
+      arc.GENToken().balanceOf(accountAddress)
+    );
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedAccountProfilePage);
