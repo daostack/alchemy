@@ -86,7 +86,11 @@ export function fromWei(amount: BN): number {
 }
 
 export function toWei(amount: number): BN {
-  return new BN(getArc().web3.utils.toWei(amount.toString(), "ether"));
+  /** 
+   * toFixed to avoid the sci notation that javascript creates for large and small numbers.
+   * toWei barfs on it.
+   */
+  return new BN(getArc().web3.utils.toWei(amount.toFixed(18).toString(), "ether"));
 }
 
 export function supportedTokens() {
