@@ -171,7 +171,6 @@ class AppContainer extends React.Component<IProps, IState> {
             </Switch>
 
             <ModalContainer
-              modalClassName={css.modal}
               backdropClassName={css.backdrop}
               containerClassName={css.modalContainer}
               bodyModalClassName={css.modalBody}
