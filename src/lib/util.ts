@@ -403,3 +403,13 @@ export function claimableContributionRewards(reward: IContributionReward, daoBal
 export function splitByCamelCase(str: string) {
   return str.replace(/([A-Z])/g, " $1");
 }
+
+/*
+ * to really do this well, should probably use a javascript library devoted to handling all of the crazy cases.
+ */
+// eslint-disable-next-line no-useless-escape
+const pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/);
+
+export function isValidUrl(str: string, emptyOk: boolean = true): boolean {
+  return (emptyOk && (!str || !str.trim())) || (str && pattern.test(str));
+}
