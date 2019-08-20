@@ -42,12 +42,12 @@ type SubscriptionData = [IProposalState, Vote[], BN];
 type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
-  const proposalState = ownProps.data[0];
+  const proposalState = ownProps.data ? ownProps.data[0] : null;
 
   return {
     ...ownProps,
-    beneficiaryProfile: proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
-    creatorProfile: state.profiles[proposalState.proposer],
+    beneficiaryProfile: proposalState && proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
+    creatorProfile: proposalState ? state.profiles[proposalState.proposer] : null,
   };
 };
 
@@ -59,8 +59,9 @@ class ProposalCard extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
+
     this.state = {
-      expired: closingTime(props.data[0]).isSameOrBefore(moment()),
+      expired: props.data ? closingTime(props.data[0]).isSameOrBefore(moment()) : false
     };
   }
 
