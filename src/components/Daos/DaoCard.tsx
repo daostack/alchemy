@@ -76,6 +76,7 @@ export default withSubscription({
 
   createObservable: (props: IExternalProps) => {
     const dao = props.dao;
+
     return combineLatest(
       dao.proposals({ where: {
         // eslint-disable-next-line @typescript-eslint/camelcase

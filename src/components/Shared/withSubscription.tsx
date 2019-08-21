@@ -136,14 +136,14 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     }
 
     public render() {
-      if (this.state.isLoading && options.loadingComponent) {
+      if (this.state.isLoading && typeof options.loadingComponent !== "undefined") {
         if (typeof options.loadingComponent === "function") {
           return <options.loadingComponent {...this.props as Props} />;
         }
         return options.loadingComponent;
       }
 
-      if (this.state.error && options.errorComponent) {
+      if (this.state.error && typeof options.errorComponent !== "undefined") {
         if (typeof options.errorComponent === "function") {
           return <options.errorComponent error={this.state.error} />;
         }
