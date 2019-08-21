@@ -168,7 +168,6 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
         txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
       }
       console.log(`estimated gas cost after adjusting: ${gasEstimate  * txToSign.gasPrice}`);
-      console.log(txToSign);
       const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
       // console.log(signedTransaction);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
