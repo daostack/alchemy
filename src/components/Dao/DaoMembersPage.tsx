@@ -23,7 +23,6 @@ interface IStateProps {
 }
 
 type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
-  //members: Member[]
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -37,20 +36,13 @@ const PAGE_SIZE = 100;
 class DaoMembersPage extends React.Component<IProps, null> {
 
   public render() {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return (<div className={css.loading}><Loading/></div>);
-    }
-    if (error) {
-      return <div>{ error.message }</div>;
-    }
+    const { data } = this.props;
 
     const members = data;
     const { dao, profiles } = this.props;
 
     // TODO: member static state address? or need to pass in all profiles and wait for state?
-    const membersHTML = members.map((member) => <DaoMember dao={dao} member={member} profile={profiles[member.id]} />);
+    const membersHTML = members.map((member) => <DaoMember key={member.id} dao={dao} member={member} profile={profiles[member.id]} />);
 
     return (
       <div className={css.membersContainer}>
@@ -89,6 +81,8 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
 const SubscribedDaoMembersPage = withSubscription({
   wrappedComponent: DaoMembersPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
 
@@ -117,7 +111,7 @@ const SubscribedDaoMembersPage = withSubscription({
       first: PAGE_SIZE,
       skip: data.length,
     });
-  }
+  },
 });
 
 export default connect(mapStateToProps)(SubscribedDaoMembersPage);

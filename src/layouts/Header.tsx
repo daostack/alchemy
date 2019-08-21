@@ -85,15 +85,9 @@ class Header extends React.Component<IProps, null> {
   }
 
   public render(): any {
-    if (this.props.isLoading) {
-      return null;
-    } else if (this.props.error) {
-      return <div>{this.props.error.message}</div>;
-    }
-
     const {
       currentAccountProfile,
-      currentAccountAddress
+      currentAccountAddress,
     } = this.props;
     const dao = this.props.data;
 
@@ -172,6 +166,8 @@ class Header extends React.Component<IProps, null> {
 
 const SubscribedHeader = withSubscription({
   wrappedComponent: Header,
+  loadingComponent: null,
+  errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
@@ -180,7 +176,7 @@ const SubscribedHeader = withSubscription({
     } else {
       return of(null);
     }
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedHeader);

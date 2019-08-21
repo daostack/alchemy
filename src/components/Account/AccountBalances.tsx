@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
 import Reputation from "components/Account/Reputation";
@@ -18,13 +19,9 @@ type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN, BN]>
 class AccountBalances extends React.Component<IProps, null>  {
 
   public render(): any {
-    const { dao, data, isLoading, error } = this.props;
+    const { dao, data } = this.props;
 
-    if (isLoading) {
-      return <div>Loading..</div>;
-    } else if (error) {
-      return <div>{error.message}</div>;
-    } else if (!data) {
+    if (!data) {
       return null;
     }
 
@@ -59,6 +56,8 @@ class AccountBalances extends React.Component<IProps, null>  {
 
 export default withSubscription({
   wrappedComponent: AccountBalances,
+  loadingComponent: <div>Loading..</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.address !== newProps.address || (oldProps.dao ? oldProps.dao.address !== newProps.dao.address : !!newProps.dao);
@@ -76,5 +75,5 @@ export default withSubscription({
       arc.ethBalance(address),
       arc.GENToken().balanceOf(address),
     );
-  }
+  },
 });

@@ -17,7 +17,7 @@ import * as css from "./Dao.scss";
 import BN = require("bn.js");
 
 interface IExternalProps extends RouteComponentProps<any> {
-  currentAccountAddress?: Address
+  currentAccountAddress?: Address;
   dao: IDAOState;
 }
 
@@ -26,14 +26,8 @@ type IProps = IExternalProps & ISubscriptionProps<any>;
 class DaoRedemptionsPage extends React.Component<IProps, null> {
 
   public render() {
-    const { data, error, isLoading } = this.props;
+    const { data } = this.props;
 
-    if (isLoading) {
-      return (<div className={css.loading}><Loading/></div>);
-    }
-    if (error) {
-      return <div>{ error.message }</div>;
-    }
     if (data === null) {
       return <div>Please log in to see your rewards</div>;
     }
@@ -199,6 +193,8 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaoRedemptionsPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps) => {
     if (!props.currentAccountAddress) {
@@ -255,5 +251,5 @@ export default withSubscription({
     }
     `;
     return arc.getObservable(query);
-  }
+  },
 });

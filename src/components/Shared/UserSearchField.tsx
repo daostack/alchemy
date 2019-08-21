@@ -28,7 +28,7 @@ type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
 const mapStateToProps = (state: IRootState, _ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
     ..._ownProps,
-    profiles: state.profiles
+    profiles: state.profiles,
   };
 };
 
@@ -110,14 +110,6 @@ class UserSearchField extends React.Component<IProps, IState> {
   public getSuggestionValue = (suggestion: IProfileState) => suggestion.ethereumAccountAddress;
 
   public render() {
-    const { error, isLoading } = this.props;
-
-    if (isLoading) {
-      return (<div className={css.loading}><Loading/></div>);
-    } else if (error) {
-      return <div>{ error.message }</div>;
-    }
-
     const { value, suggestions } = this.state;
 
     // Autosuggest will pass through all these props to the input.
@@ -147,13 +139,14 @@ class UserSearchField extends React.Component<IProps, IState> {
 
 const SubscribedUserSearchField = withSubscription({
   wrappedComponent: UserSearchField,
-
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["daoAvatarAddress"],
 
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
     return arc.dao(props.daoAvatarAddress).members();
-  }
+  },
 });
 
 export default connect(mapStateToProps)(SubscribedUserSearchField);

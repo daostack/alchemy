@@ -15,20 +15,7 @@ type IProps = ISubscriptionProps<SubscriptionData>;
 class DaosPage extends React.Component<IProps, null> {
 
   public render() {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return (
-        <div className={css.wrapper}>
-          <div className={css.loading}><Loading/>
-          </div>
-        </div>
-      );
-    }
-    if (error) {
-      // TODO: dont throw the error
-      throw error;
-    }
+    const { data } = this.props;
 
     const daos = data[1];
     if (data[0].length > 0) {
@@ -57,6 +44,8 @@ class DaosPage extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaosPage,
+  loadingComponent: <div className={css.wrapper}><div className={css.loading}><Loading/></div></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
   // Don't ever update the subscription
   checkForUpdate: () => { return false; },
@@ -68,5 +57,5 @@ export default withSubscription({
       // eslint-disable-next-line
       arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" }, orderBy: "name", orderDirection: "asc"}),
     );
-  }
+  },
 });

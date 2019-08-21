@@ -22,7 +22,7 @@ import BN = require("bn.js");
 interface IExternalProps {
   proposal: Proposal;
   dao: IDAOState;
-  currentAccountAddress: Address
+  currentAccountAddress: Address;
 }
 
 interface IStateProps {
@@ -42,7 +42,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 
   return {
     ...ownProps,
-    creatorProfile: state.profiles[proposal.proposer]
+    creatorProfile: state.profiles[proposal.proposer],
   };
 };
 
@@ -66,23 +66,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { data, error, isLoading, proposal } = this.props;
-
-    if (isLoading) {
-      return <div>Loading proposal {proposal.id.substr(0, 6)}...</div>;
-    }
-
-    if (error) {
-      return <div>{ error.message }</div>;
-    }
-
+    const { creatorProfile, currentAccountAddress, data, dao, proposal } = this.props;
     const [proposalState, stakesOfCurrentUser, votesOfCurrentUser] = data;
-
-    const {
-      creatorProfile,
-      currentAccountAddress,
-      dao
-    } = this.props;
 
     const proposalClass = classNames({
       [css.wrapper]: true,
@@ -205,6 +190,8 @@ const ConnectedProposalHistoryRow = connect(mapStateToProps, mapDispatchToProps)
 // In this case we wrap the Connected component because mapStateToProps requires the subscribed proposal state
 export default withSubscription({
   wrappedComponent: ConnectedProposalHistoryRow,
+  loadingComponent: (props) => <div>Loading proposal {props.proposal.id.substr(0, 6)}...</div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps) => {
     const proposal = props.proposal;
@@ -221,6 +208,6 @@ export default withSubscription({
         proposal.votes({ where: { voter: props.currentAccountAddress }})
       );
     }
-  }
+  },
 });
 

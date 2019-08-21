@@ -60,15 +60,6 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { error, isLoading } = this.props;
-
-    if (isLoading) {
-      return <div>Loading votebox...</div>;
-    }
-    if (error) {
-      return <div>{ error.message }</div>;
-    }
-
     const {
       currentVote,
       detailView,
@@ -122,6 +113,8 @@ class VoteBreakdown extends React.Component<IProps, IState> {
 
 const SubscribedVoteBreakdown = withSubscription({
   wrappedComponent: VoteBreakdown,
+  loadingComponent: <div>Loading...</div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: ["currentAccountAddress"],
 
@@ -129,7 +122,7 @@ const SubscribedVoteBreakdown = withSubscription({
     const arc = getArc();
     const dao = arc.dao(props.dao.address);
     return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
-  }
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SubscribedVoteBreakdown);

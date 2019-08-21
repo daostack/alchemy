@@ -37,7 +37,7 @@ const ReactMarkdown = require("react-markdown");
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   dao: IDAOState;
-  detailView?: boolean
+  detailView?: boolean;
   proposalId: string;
 }
 
@@ -106,16 +106,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { data, error, isLoading, proposalId } = this.props;
-
-    if (isLoading) {
-      return <div className={css.loading}>Loading proposal {proposalId.substr(0, 6)} ...</div>;
-    }
-    if (error) {
-      return <div>{error.message}</div>;
-    }
-
-    const [proposal, votesOfCurrentUser, daoEthBalance] = data;
+    const [proposal, votesOfCurrentUser, daoEthBalance] = this.props.data;
 
     const {
       beneficiaryProfile,
@@ -313,6 +304,8 @@ const ConnectedProposalDetailsPage = connect(mapStateToProps)(ProposalDetailsPag
 
 export default withSubscription({
   wrappedComponent: ConnectedProposalDetailsPage,
+  loadingComponent: <div className={css.loading}>Loading proposal...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposalId !== newProps.proposalId;
@@ -327,5 +320,5 @@ export default withSubscription({
       props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
       concat(of(new BN("0")), dao.ethBalance())
     );
-  }
+  },
 });

@@ -20,15 +20,7 @@ type SubscriptionData = [ISchemeState, Proposal[], Proposal[], Proposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalSchemeCard = (props: IProps) => {
-  const { data, dao, error, isLoading } = props;
-
-  if (isLoading) {
-    return  <div><Loading/></div>;
-  }
-  if (error) {
-    // TODO: something else
-    throw error;
-  }
+  const { data, dao} = props;
 
   const [scheme, queuedProposals, preBoostedProposals, boostedProposals] = data;
 
@@ -68,9 +60,11 @@ const ProposalSchemeCard = (props: IProps) => {
 
 export default withSubscription({
   wrappedComponent: ProposalSchemeCard,
+  loadingComponent: <div><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.dao.address != newProps.dao.address;
+    return oldProps.dao.address !== newProps.dao.address;
   },
 
   createObservable: (props: IExternalProps) => {
@@ -94,25 +88,17 @@ export default withSubscription({
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
       }}) // the list of boosted proposals
     );
-  }
+  },
 });
 
 
 /***** ProposalDetail Component *****/
 interface IProposalDetailProps extends ISubscriptionProps<IProposalState> {
-  dao: IDAOState
+  dao: IDAOState;
   proposal: Proposal;
 }
 const ProposalDetail = (props: IProposalDetailProps) => {
-  const { data, dao, error, isLoading, proposal } = props;
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    // TODO: something else
-    throw error;
-  }
+  const { data, dao, proposal } = props;
 
   const proposalState = data;
   return (
@@ -132,10 +118,12 @@ const ProposalDetail = (props: IProposalDetailProps) => {
 
 const SubscribedProposalDetail = withSubscription({
   wrappedComponent: ProposalDetail,
+  loadingComponent: <div>Loading...</div>,
+  errorComponent: null,
   checkForUpdate: (oldProps: IProposalDetailProps, newProps: IProposalDetailProps) => {
-    return oldProps.proposal.id != newProps.proposal.id;
+    return oldProps.proposal.id !== newProps.proposal.id;
   },
   createObservable: (props: IProposalDetailProps) => {
     return props.proposal.state();
-  }
+  },
 });

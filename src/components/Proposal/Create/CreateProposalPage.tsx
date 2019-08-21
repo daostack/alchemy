@@ -29,7 +29,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   return {
     ...ownProps,
     daoAvatarAddress: ownProps.match.params.daoAvatarAddress,
-    schemeId: ownProps.match.params.schemeId
+    schemeId: ownProps.match.params.schemeId,
   };
 };
 
@@ -41,17 +41,8 @@ class CreateProposalPage extends React.Component<IProps, null> {
   }
 
   public render(): any {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return  <div className={css.loading}><Loading/></div>;
-    }
-    if (error) {
-      return null
-    }
-
     const { daoAvatarAddress } = this.props;
-    const scheme = data;
+    const scheme = this.props.data;
 
     const arc = getArc();
     const schemeName = arc.getContractInfo(scheme.address).name;
@@ -94,12 +85,14 @@ class CreateProposalPage extends React.Component<IProps, null> {
 
 const SubscribedCreateProposalPage = withSubscription({
   wrappedComponent: CreateProposalPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IStateProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
-  }
+  },
 });
 
 export default connect(mapStateToProps)(SubscribedCreateProposalPage);

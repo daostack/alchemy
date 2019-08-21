@@ -62,16 +62,8 @@ class VotersModal extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { data, error, isLoading, proposal } = this.props;
-
-    if (isLoading) {
-      return <div>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
-    } else if (error) {
-      return <div>{error.message}</div>;
-    }
-
-    const votes = data;
-    const { dao } = this.props;
+    const votes = this.props.data;
+    const { dao, proposal } = this.props;
 
     const currentAccountVote = votes[0];
 
@@ -148,6 +140,8 @@ class VotersModal extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: VotersModal,
+  loadingComponent: <div>Loading ...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.proposal.id !== newProps.proposal.id || oldProps.dao.address !== newProps.dao.address;
@@ -160,5 +154,5 @@ export default withSubscription({
     const proposal = dao.proposal(proposalId);
 
     return proposal.votes();
-  }
+  },
 });

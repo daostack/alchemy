@@ -317,8 +317,8 @@ const SubscribedCreateContributionReward = withSubscription({
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
-    return arc.dao(props.daoAvatarAddress).state()
-  }
+    return arc.dao(props.daoAvatarAddress).state();
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SubscribedCreateContributionReward);

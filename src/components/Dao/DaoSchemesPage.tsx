@@ -33,17 +33,7 @@ type IExternalProps = RouteComponentProps<any>;
 type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[], Scheme[]]>;
 
 const DaoSchemesPage = (props: IProps) => {
-  const { data, error, isLoading } = props;
-
-  if (isLoading) {
-    return <div className={css.loading}><Loading/></div>;
-  }
-  if (error) {
-    // TODO: something else?
-    throw error;
-  }
-
-  const [dao, knownSchemes, unknownSchemes ] = data;
+  const [dao, knownSchemes, unknownSchemes ] = props.data;
 
   const schemeCardsHTML = (
     <TransitionGroup>
@@ -88,8 +78,10 @@ const DaoSchemesPage = (props: IProps) => {
 
 export default withSubscription({
   wrappedComponent: DaoSchemesPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <span>{props.error.message}</span>,
   checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.match.params.daoAvatarAddress != newProps.match.params.daoAvatarAddress;
+    return oldProps.match.params.daoAvatarAddress !== newProps.match.params.daoAvatarAddress;
   },
   createObservable: (props: IExternalProps) => {
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
@@ -102,5 +94,5 @@ export default withSubscription({
       // eslint-disable-next-line
       dao.schemes({where: { name_not_in: KNOWN_SCHEME_NAMES}})
     );
-  }
+  },
 });

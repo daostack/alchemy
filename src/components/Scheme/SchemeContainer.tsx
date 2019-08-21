@@ -41,7 +41,7 @@ const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExterna
     daoAvatarAddress: match.params.daoAvatarAddress,
     schemeId: match.params.schemeId,
   };
-}
+};
 
 const mapDispatchToProps = {
   showNotification,
@@ -59,18 +59,8 @@ class SchemeContainer extends React.Component<IProps, null> {
   };
 
   public render(): any {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return <div className={css.loading}><Loading/></div>;
-    }
-    if (error) {
-      // TODO
-      throw error;
-    }
-
     const { currentAccountAddress, daoAvatarAddress, schemeId } = this.props;
-    const schemeState = data;
+    const schemeState = this.props.data;
 
     if (schemeState.name === "ReputationFromToken") {
       return <ReputationFromToken daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
@@ -119,12 +109,14 @@ class SchemeContainer extends React.Component<IProps, null> {
 
 const SubscribedSchemeContainer = withSubscription({
   wrappedComponent: SchemeContainer,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: null,
   checkForUpdate: ["schemeId"],
   createObservable: (props: IProps) => {
     const arc = getArc();
     const scheme = arc.scheme(props.schemeId);
     return scheme.state();
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedSchemeContainer);

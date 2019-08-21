@@ -24,15 +24,7 @@ type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 class DaoHistoryPage extends React.Component<IProps, null> {
 
   public render() {
-    const { data, error, hasMoreToLoad, isLoading, fetchMore } = this.props;
-
-    if (isLoading) {
-      return (<div className={css.loading}><Loading/></div>);
-    }
-
-    if (error) {
-      return <div>{ error.message }</div>;
-    }
+    const { data, hasMoreToLoad, fetchMore } = this.props;
 
     const [proposals, dao] = data;
     const { currentAccountAddress } = this.props;
@@ -86,6 +78,8 @@ class DaoHistoryPage extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaoHistoryPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps, newProps) => { return oldProps.match.params.daoAvatarAddress !== newProps.match.params.daoAvatarAddress; },
 
@@ -131,10 +125,10 @@ export default withSubscription({
       orderDirection: "desc",
       first: PAGE_SIZE,
       skip: data[0].length,
-    })
+    });
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
     return [prevState[0].concat(newData), prevState[1]];
-  }
+  },
 });

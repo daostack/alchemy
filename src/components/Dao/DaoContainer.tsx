@@ -52,43 +52,16 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-interface IState {
-  isLoading: boolean;
-  dao: IDAOState;
-  error: Error;
-  complete: boolean;
-}
-
-class DaoContainer extends React.Component<IProps, IState> {
+class DaoContainer extends React.Component<IProps, null> {
   public daoSubscription: any;
   public subscription: Subscription;
-
-  constructor(props: IProps) {
-    super(props);
-
-    this.state = {
-      isLoading: true,
-      dao: undefined,
-      error: undefined,
-      complete: false,
-    };
-  }
 
   public async componentWillMount() {
     this.props.getProfilesForAllAccounts();
   }
 
   public render() {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return (<div className={css.loading}><Loading/></div>);
-    }
-    if (error) {
-      return <div>{error.message}</div>;
-    }
-
-    const dao = data;
+    const dao = this.props.data;
     const { currentAccountAddress } = this.props;
 
     return (
@@ -146,12 +119,14 @@ class DaoContainer extends React.Component<IProps, IState> {
 
 const SubscribedDaoContainer = withSubscription({
   wrappedComponent: DaoContainer,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const daoAddress = props.match.params.daoAvatarAddress;
     return arc.dao(daoAddress).state();
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedDaoContainer);

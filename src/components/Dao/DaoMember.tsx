@@ -18,17 +18,8 @@ interface IProps extends ISubscriptionProps<IMemberState> {
 class DaoMember extends React.Component<IProps, null> {
 
   public render() {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return (<div className={css.loading}>Loading...</div>);
-    }
-    if (error) {
-      return <div>{ error.message }</div>;
-    }
-
     const { dao, profile } = this.props;
-    const memberState = data;
+    const memberState = this.props.data;
 
     return (
       <div className={css.member + " clearfix"}
@@ -81,8 +72,10 @@ class DaoMember extends React.Component<IProps, null> {
 
 export default withSubscription({
   wrappedComponent: DaoMember,
+  loadingComponent: <div className={css.loading}>Loading...</div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: (oldProps, newProps) => { return oldProps.member.id !== newProps.member.id; },
   createObservable: (props: IProps) => {
-    return props.member.state()
+    return props.member.state();
   },
 });

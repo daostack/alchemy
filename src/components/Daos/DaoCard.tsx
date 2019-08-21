@@ -18,16 +18,8 @@ interface IExternalProps {
 type IProps = IExternalProps & ISubscriptionProps<[Proposal[], Proposal[], IDAOState]>
 
 const DaoCard = (props: IProps) => {
-  const { data, dao, error, isLoading } = props;
-
-  if (isLoading) {
-    return null;
-  }
-  if (error) {
-    return <div>{ error.message }</div>;
-  }
-
-  const [regularProposals, boostedProposals, daoState] = data;
+  const { dao } = props;
+  const [regularProposals, boostedProposals, daoState] = props.data;
   const bgPattern = GeoPattern.generate(dao.id + daoState.name);
   const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
   const inActive = (daoState.name === "dxDAO") && dxDaoActivationDate.isSameOrAfter(moment());
@@ -74,6 +66,8 @@ const DaoCard = (props: IProps) => {
 
 export default withSubscription({
   wrappedComponent: DaoCard,
+  loadingComponent: null,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps, newProps) => {
     // TODO: does dao.id work here or do we need to load the static state?
@@ -95,5 +89,5 @@ export default withSubscription({
       }}),
       dao.state()
     );
-  }
+  },
 });

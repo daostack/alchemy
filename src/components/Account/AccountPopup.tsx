@@ -35,7 +35,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 
   return {
     ...ownProps,
-    profile: account ? state.profiles[account.address] : null
+    profile: account ? state.profiles[account.address] : null,
   };
 };
 
@@ -59,16 +59,7 @@ class AccountPopup extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return <div>Loading...</div>;
-    }
-    if (error) {
-      return <div>{error.message}</div>;
-    }
-
-    const [dao, accountInfo] = data;
+    const [dao, accountInfo] = this.props.data;
     const { accountAddress, profile } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
@@ -110,6 +101,8 @@ const ConnectedAccountPopup = connect(mapStateToProps, mapDispatchToProps)(Accou
 
 const SubscribedAccountPopup = withSubscription({
   wrappedComponent: ConnectedAccountPopup,
+  loadingComponent: <div>Loading...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.dao.address !== newProps.dao.address; },
 
@@ -119,7 +112,7 @@ const SubscribedAccountPopup = withSubscription({
       arc.dao(props.dao.address).state(),
       arc.dao(props.dao.address).member(props.accountAddress).state()
     );
-  }
+  },
 });
 
 export default SubscribedAccountPopup;

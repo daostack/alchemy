@@ -1,5 +1,6 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Vote, Proposal } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
@@ -61,7 +62,7 @@ class ProposalCard extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      expired: props.data ? closingTime(props.data[0]).isSameOrBefore(moment()) : false
+      expired: props.data ? closingTime(props.data[0]).isSameOrBefore(moment()) : false,
     };
   }
 
@@ -70,22 +71,13 @@ class ProposalCard extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { data, error, isLoading, proposal } = this.props;
-
-    if (isLoading) {
-      return <div className={css.loading}>Loading proposal {proposal.id.substr(0, 6)} ...</div>;
-    }
-    if (error) {
-      return <div>{error.message}</div>;
-    }
-
-    const [proposalState, votesOfCurrentUser, daoEthBalance] = data;
+    const [proposalState, votesOfCurrentUser, daoEthBalance] = this.props.data;
 
     const {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      dao
+      dao,
     } = this.props;
 
     const expired = this.state.expired;
@@ -223,6 +215,8 @@ const ConnectedProposalCard = connect(mapStateToProps)(ProposalCard);
 
 export default withSubscription({
   wrappedComponent: ConnectedProposalCard,
+  loadingComponent: (props) => <div className={css.loading}>Loading proposal {props.proposal.id.substr(0, 6)} ...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
@@ -236,5 +230,5 @@ export default withSubscription({
       props.currentAccountAddress ? props.proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
       concat(of(new BN("0")), dao.ethBalance())
     );
-  }
+  },
 });

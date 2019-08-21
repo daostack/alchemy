@@ -1,6 +1,7 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
@@ -68,15 +69,7 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const {data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return <div>Loading votebox...</div>;
-    }
-    if (error) {
-       return <div>{ error.message }</div>;
-    }
-    const currentAccountState = data;
+    const currentAccountState = this.props.data;
 
     const {
       altStyle,
@@ -240,12 +233,14 @@ class VoteButtons extends React.Component<IProps, IState> {
 
 const SubscribedVoteButtons = withSubscription({
   wrappedComponent: VoteButtons,
-  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress },
+  loadingComponent: <div>Loading...</div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
+  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress; },
   createObservable: (props: IProps) => {
     const arc = getArc();
     const dao = arc.dao(props.dao.address);
     return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
-  }
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SubscribedVoteButtons);

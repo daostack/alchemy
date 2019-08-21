@@ -64,15 +64,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
   };
 
   public render(): any {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return <div className={css.loading}><Loading/></div>;
-    }
-    if (error) {
-      // TODO: show error?
-      return null;
-    }
+    const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
     const { currentAccountAddress, fetchMore, hasMoreToLoad, scheme } = this.props;
@@ -201,6 +193,8 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 //   is causing it to misinterpret the type of the SubscriptionData, so have to manually specificy here
 const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>({
   wrappedComponent: SchemeProposalsPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: null,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.match.params.daoAvatarAddress !== oldProps.match.params.daoAvatarAddress
@@ -269,7 +263,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
     return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
-  }
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SubscribedSchemeProposalsPage);

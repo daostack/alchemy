@@ -15,7 +15,7 @@ import { of } from "rxjs";
 import * as css from "./Dao.scss";
 
 interface IExternalProps {
-  currentAccountAddress?: Address
+  currentAccountAddress?: Address;
   dao: IDAOState;
 }
 
@@ -39,23 +39,14 @@ class DaoSidebar extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return (<div className={css.loading}><Loading /></div>);
-    }
-    if (error) {
-      return <div>{error.message}</div>;
-    }
-    if (data === null) {
+    if (this.props.data === null) {
       return null;
     }
 
+    const proposals = this.props.data;
     const dao = this.props.dao;
-    const proposalCount = this.props.data.length;
-
+    const proposalCount = proposals.length;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
-
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
     const menuClass = classNames({
@@ -212,9 +203,11 @@ class DaoSidebar extends React.Component<IProps, IState> {
 
 export default withSubscription({
   wrappedComponent: DaoSidebar,
+  loadingComponent: <div className={css.loading}><Loading /></div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.dao.address != newProps.dao.address || oldProps.currentAccountAddress != newProps.currentAccountAddress;
+    return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress;
   },
 
   createObservable: (props: IExternalProps) => {
@@ -237,7 +230,7 @@ export default withSubscription({
       `;
     const arc = getArc();
     return arc.getObservable(query);
-  }
+  },
 });
 
 /***** DAO ETH Balance *****/
@@ -245,32 +238,27 @@ interface IEthProps extends ISubscriptionProps<any> {
   dao: IDAOState;
 }
 const ETHBalance = (props: IEthProps) => {
-  const { data, error, isLoading } = props;
-
-  if (isLoading) {
-    return <li key="ETH">... ETH</li>;
-  }
-  if (error) {
-    return null;
-  }
+  const { data } = props;
 
   return <li key="ETH"><strong>{formatTokens(new BN(data))}</strong> ETH</li>;
 };
 
 const SubscribedEthBalance = withSubscription({
   wrappedComponent: ETHBalance,
+  loadingComponent: <li key="ETH">... ETH</li>,
+  errorComponent: null,
   checkForUpdate: (oldProps: IEthProps, newProps: IEthProps) => {
-    return oldProps.dao.address != newProps.dao.address;
+    return oldProps.dao.address !== newProps.dao.address;
   },
   createObservable: (props: IEthProps) => {
     const arc = getArc();
     return arc.dao(props.dao.address).ethBalance();
-  }
+  },
 });
 
 /***** Token Balance *****/
 interface ITokenProps extends ISubscriptionProps<any> {
-  dao: IDAOState
+  dao: IDAOState;
   tokenAddress: string;
 }
 const TokenBalance = (props: ITokenProps) => {
@@ -291,11 +279,11 @@ const TokenBalance = (props: ITokenProps) => {
 const SubscribedTokenBalance = withSubscription({
   wrappedComponent: TokenBalance,
   checkForUpdate: (oldProps: ITokenProps, newProps: ITokenProps) => {
-    return oldProps.dao.address != newProps.dao.address || oldProps.tokenAddress != newProps.tokenAddress;
+    return oldProps.dao.address !== newProps.dao.address || oldProps.tokenAddress !== newProps.tokenAddress;
   },
   createObservable: (props: ITokenProps) => {
     const arc = getArc();
     const token = new Token(props.tokenAddress, arc);
     return token.balanceOf(props.dao.address);
-  }
+  },
 });

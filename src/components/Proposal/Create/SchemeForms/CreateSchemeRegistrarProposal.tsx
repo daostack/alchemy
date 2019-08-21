@@ -111,16 +111,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return <div className={css.loading}><Loading/></div>;
-    } else if (error) {
-      return null;
-    }
-
     // "schemes" are the schemes registered in this DAO
-    const schemes = data;
+    const schemes = this.props.data;
     const { handleClose } = this.props;
 
     const currentTab = this.state.currentTab;
@@ -403,11 +395,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
 const SubscribedCreateSchemeRegistrarProposal = withSubscription({
   wrappedComponent: CreateSchemeRegistrarProposal,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: null,
   checkForUpdate: ["daoAvatarAddress"],
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
     return arc.dao(props.daoAvatarAddress).schemes();
-  }
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SubscribedCreateSchemeRegistrarProposal);

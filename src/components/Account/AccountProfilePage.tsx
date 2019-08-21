@@ -56,7 +56,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     accountAddress,
     accountProfile: state.profiles[accountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
-    daoAvatarAddress
+    daoAvatarAddress,
   };
 };
 
@@ -142,15 +142,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
   }
 
   public render(): any {
-    const { data, error, isLoading } = this.props;
-
-    if (isLoading) {
-      return <div>Loading...</div>;
-    }
-    if (error) {
-      return <div>{error.message}</div>;
-    }
-    const [dao, accountInfo, ethBalance, genBalance] = data;
+    const [dao, accountInfo, ethBalance, genBalance] = this.props.data;
 
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
 
@@ -300,6 +292,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
 
 const SubscribedAccountProfilePage = withSubscription({
   wrappedComponent: AccountProfilePage,
+  loadingComponent: <div>Loading...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.daoAvatarAddress !== newProps.daoAvatarAddress || oldProps.accountAddress !== newProps.accountAddress;
@@ -318,7 +312,7 @@ const SubscribedAccountProfilePage = withSubscription({
       arc.ethBalance(accountAddress),
       arc.GENToken().balanceOf(accountAddress)
     );
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedAccountProfilePage);

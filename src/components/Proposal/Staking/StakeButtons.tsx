@@ -2,6 +2,7 @@ import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daos
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -93,14 +94,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { data, error, isLoading } = this.props;
-    if (isLoading) {
-      return <div>Loading PredictionBox</div>;
-    } else if (error) {
-      return <div>{error.message}</div>;
-    }
-
-    const [currentAccountGens, currentAccountGenStakingAllowance, stakesOfCurrentUser] = data;
+    const [currentAccountGens, currentAccountGenStakingAllowance, stakesOfCurrentUser] = this.props.data;
 
     const {
       beneficiaryProfile,
@@ -267,6 +261,8 @@ class StakeButtons extends React.Component<IProps, IState> {
 
 const SubscribedStakeButtons = withSubscription({
   wrappedComponent: StakeButtons,
+  loadingComponent: <div>Loading PredictionBox</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
@@ -290,7 +286,7 @@ const SubscribedStakeButtons = withSubscription({
         of([]),
       );
     }
-  }
+  },
 });
 
 export default connect(null, mapDispatchToProps)(SubscribedStakeButtons);

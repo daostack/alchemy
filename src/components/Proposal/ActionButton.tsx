@@ -84,15 +84,7 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const {data, error, isLoading, proposalState } = this.props;
-
-    if (isLoading) {
-      return <div>Loading proposal {proposalState.id.substr(0, 6)} ...</div>;
-    }
-    if (error) {
-      return <div>{ error.message }</div>;
-    }
-    const rewardsForCurrentUser = data;
+    const rewardsForCurrentUser = this.props.data;
 
     const {
       beneficiaryProfile,
@@ -100,6 +92,7 @@ class ActionButton extends React.Component<IProps, IState> {
       dao,
       daoEthBalance,
       detailView,
+      proposalState,
     } = this.props;
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
@@ -223,8 +216,10 @@ class ActionButton extends React.Component<IProps, IState> {
 
 const SubscribedActionButton = withSubscription({
   wrappedComponent: ActionButton,
+  loadingComponent: <div>Loading...</div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.proposalState.id !== newProps.proposalState.id || oldProps.currentAccountAddress !== newProps.currentAccountAddress },
+  checkForUpdate: (oldProps, newProps) => { return oldProps.proposalState.id !== newProps.proposalState.id || oldProps.currentAccountAddress !== newProps.currentAccountAddress; },
 
   createObservable: (props: IProps) => {
     const proposalState = props.proposalState;
@@ -236,7 +231,7 @@ const SubscribedActionButton = withSubscription({
     } else {
       return of(null);
     }
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedActionButton);

@@ -18,28 +18,18 @@ export default (props: IExternalProps) => {
           <h2>{schemes.length} Unsupported Schemes</h2>
         </div>
         <table><tbody>
-          { schemes.map((scheme: Scheme) => <SubscribedUnknownSchemeRow scheme={scheme} />) }
+          { schemes.map((scheme: Scheme) => <SubscribedUnknownSchemeRow key={scheme.id} scheme={scheme} />) }
         </tbody></table>
       </div>
     );
 };
 
 interface IRowProps extends ISubscriptionProps<ISchemeState> {
-  scheme: Scheme
+  scheme: Scheme;
 }
 
 const UnknownSchemeRow = (props: IRowProps) => {
-  const { data, error, isLoading } = props;
-
-  if (isLoading) {
-    return  <tr><td>Loading...</td></tr>;
-  }
-  if (error) {
-    // TODO: something else?
-    return null;
-  }
-
-  const schemeState = data;
+  const schemeState = props.data;
   return <tr key={schemeState.address}>
     <td className={css.left}>&nbsp;</td>
     <td>
@@ -54,6 +44,8 @@ const UnknownSchemeRow = (props: IRowProps) => {
 
 const SubscribedUnknownSchemeRow = withSubscription({
   wrappedComponent: UnknownSchemeRow,
+  loadingComponent: <tr><td>Loading...</td></tr>,
+  errorComponent: null,
 
   checkForUpdate: (oldProps, newProps) => {
     return oldProps.scheme.id !== newProps.scheme.id;
@@ -61,5 +53,5 @@ const SubscribedUnknownSchemeRow = withSubscription({
 
   createObservable: (props: IRowProps) => {
     return props.scheme.state();
-  }
+  },
 });
