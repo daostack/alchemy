@@ -8,6 +8,8 @@
   - Features Added
     - Tweaks to the wallet provider UI
     - Allow to RedeemFromToken by passing a private key in the URL
+    - Use subgraph version 26
+    - Allow for setting subgraph connection with environment variables
 
 ### version 0.9.4; 2019-08-13
 
