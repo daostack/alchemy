@@ -50,7 +50,6 @@ describe("isValidUrl", () => {
     expect(isValidUrl(" http://toot.com")).toEqual(false);
     expect(isValidUrl("httpb://toot.com")).toEqual(false);
     expect(isValidUrl("http://toot^com")).toEqual(false);
-    // expect(isValidUrl("http://toot.com:4000?m=1&n$flarg")).toEqual(false);
     // the caller is responsible for trimming
     expect(isValidUrl("http://toot.com ")).toEqual(false);
   });
