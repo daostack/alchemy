@@ -41,8 +41,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
     const members = data;
     const { dao, profiles } = this.props;
 
-    // TODO: member static state address? or need to pass in all profiles and wait for state?
-    const membersHTML = members.map((member) => <DaoMember key={member.id} dao={dao} member={member} profile={profiles[member.id]} />);
+    const membersHTML = members.map((member) => <DaoMember key={member.staticState.address} dao={dao} member={member} profile={profiles[member.staticState.address]} />);
 
     return (
       <div className={css.membersContainer}>
