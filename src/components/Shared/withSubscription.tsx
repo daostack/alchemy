@@ -75,21 +75,18 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         this.subscription.unsubscribe();
       }
       const { createObservable, wrappedComponent } = options;
-      console.log(getDisplayName(wrappedComponent), "setting up sub", this.props);
+
       this.observable = observable || createObservable(this.props);
-      console.log("got oserv =", this.observable);
 
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
-          console.log(getDisplayName(wrappedComponent), "Got data", next);
-
           this.setState({
             data: next,
             isLoading: false,
           });
         },
         (error: Error) => {
-          console.log(getDisplayName(wrappedComponent), "Error in subscription", error);
+          console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
 
           this.setState({
             isLoading: false,
@@ -107,12 +104,11 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     }
 
     public componentDidMount() {
-      console.log(getDisplayName(options.wrappedComponent), "component did mount");
       this.setupSubscription();
     }
 
     public componentDidUpdate(prevProps: InputProps) {
-      const { wrappedComponent, checkForUpdate } = options;
+      const { checkForUpdate } = options;
 
       let shouldUpdate = false;
 
@@ -126,7 +122,6 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         });
       }
       if (shouldUpdate) {
-        console.log(getDisplayName(wrappedComponent), "Updating subscriptions");
         this.setupSubscription();
       }
     }
@@ -160,7 +155,6 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     }
 
     public fetchMore(): void {
-      console.log(getDisplayName(options.wrappedComponent), "trying to getc more");
       // Do nothing if the wrapped component didn't tell us how to fetch more
       if (!options.getFetchMoreObservable) {
         return;
