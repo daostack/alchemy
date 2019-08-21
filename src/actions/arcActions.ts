@@ -1,4 +1,4 @@
-import { DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
+import { Address, DAO, IProposalCreateOptions, IProposalOutcome, ITransactionState, ITransactionUpdate, ReputationFromTokenScheme, Scheme } from "@daostack/client";
 import { IAsyncAction } from "actions/async";
 import { getArc } from "arc";
 import { toWei } from "lib/util";
@@ -135,7 +135,7 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
   };
 }
 
-export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined) {
+export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
     if (privateKey) {
@@ -145,10 +145,12 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const block = await arc.web3.eth.getBlock("latest");
       const gas = block.gasLimit - 100000;
       const redeemMethod = contract.methods.redeem(addressToRedeem);
-      const gasPrice = await arc.web3.eth.getGasPrice();
+      let gasPrice = await arc.web3.eth.getGasPrice();
+      gasPrice = gasPrice * 1.2;
       // console.log(redeemMethod);
       // console.log(redeemMethod.encodeABI());
-      const txToSign = {
+      const txToSign
+      = {
         gas,
         gasPrice,
         data: redeemMethod.encodeABI(),
@@ -157,8 +159,15 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       };
       const gasEstimate = await arc.web3.eth.estimateGas(txToSign);
       txToSign.gas = gasEstimate;
-      console.log(`estimated gas cost: ${gasEstimate  * gasPrice}`);
+      console.log(`estimated gas cost           : ${gasEstimate  * gasPrice}`);
       // console.log(txToSign);
+      // if the gas cost is higher then the users balance, we lower it to fit
+      const userBalance = await arc.web3.eth.getBalance(redeemerAddress);
+      console.log(`balance of ${redeemerAddress}: ${userBalance}`);
+      if (userBalance < gasEstimate * gasPrice) {
+        txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
+      }
+      console.log(`estimated gas cost after adjusting: ${gasEstimate  * txToSign.gasPrice}`);
       const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
       // console.log(signedTransaction);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
