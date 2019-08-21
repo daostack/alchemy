@@ -7,6 +7,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
+import { isValidUrl } from "lib/util";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -108,8 +109,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                     errors.title = "Title is too long (max 120 characters)";
                   }
 
-                  const pattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
-                  if (values.url && !pattern.test(values.url)) {
+                  if (!isValidUrl(values.url)) {
                     errors.url = "Invalid URL";
                   }
 
