@@ -99,6 +99,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     const {
       beneficiaryProfile,
       contextMenu,
+      currentAccountAddress,
       dao,
       detailView,
       expired,
@@ -158,8 +159,8 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     const hasGens = currentAccountGens.gt(new BN(0));
     // show staking buttons when !this.props.currentAccountAddress, even if no GENs
-    const disableStakePass = (this.props.currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
-    const disableStakeFail = (this.props.currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
+    const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
+    const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
 
     const passButtonClass = classNames({
       [css.pendingPrediction]: pendingPrediction === VoteOptions.Yes,
@@ -195,7 +196,7 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     // If don't have any staking allowance, replace with button to pre-approve
     // show staking buttons when !this.props.currentAccountAddress, even if no allowance
-    if (stakingEnabled && (this.props.currentAccountAddress && currentAccountGenStakingAllowance.eq(new BN(0)))) {
+    if (stakingEnabled && (currentAccountAddress && currentAccountGenStakingAllowance && currentAccountGenStakingAllowance.eq(new BN(0)))) {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
@@ -235,14 +236,14 @@ class StakeButtons extends React.Component<IProps, IState> {
           {stakingEnabled ?
             <div>
               {
-                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
+                (!currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
                     {passButton}
                   </Tooltip> :
                   passButton
               }
               {
-                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
+                (!currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
                     {failButton}
                   </Tooltip> :
