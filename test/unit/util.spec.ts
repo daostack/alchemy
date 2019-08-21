@@ -23,6 +23,8 @@ describe("Redemptions page", () => {
 describe("isValidUrl", () => {
 
   it("isValidUrl should work as expected", async () => {
+    expect(isValidUrl("toot.com")).toEqual(true);
+    expect(isValidUrl("www.toot.com")).toEqual(true);
     expect(isValidUrl("http://toot.com")).toEqual(true);
     expect(isValidUrl("http://www.tank.com")).toEqual(true);
     expect(isValidUrl("https://toot.com")).toEqual(true);
@@ -32,11 +34,14 @@ describe("isValidUrl", () => {
     expect(isValidUrl("http://toot.com:4000?m=1")).toEqual(true);
     expect(isValidUrl("http://toot.com:4000?m=1&n")).toEqual(true);
     expect(isValidUrl("http://toot.com:4000?m=1&n=flarg")).toEqual(true);
-    expect(isValidUrl("http://toot.com:4000?m=1&n.flarg")).toEqual(true);
-    expect(isValidUrl("http://toot.com:4000?m=1&n$flarg")).toEqual(true);
-    expect(isValidUrl("http://toot.com:4000?m=1&n,flarg")).toEqual(true);
     expect(isValidUrl("http://t.ca")).toEqual(true);
     expect(isValidUrl("http://t.amsterdam")).toEqual(true);
+    expect(isValidUrl("http://t.ca?")).toEqual(true);
+    expect(isValidUrl("http://t.ca/flank")).toEqual(true);
+    expect(isValidUrl("http://t.ca/flank/tank")).toEqual(true);
+    expect(isValidUrl("http://t.ca/flank/tank.html")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m=1&n,flarg")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m=1&n#20flarg")).toEqual(true);
 
     expect(isValidUrl("http://t.c")).toEqual(false);
     expect(isValidUrl("http://t,c")).toEqual(false);
@@ -45,6 +50,7 @@ describe("isValidUrl", () => {
     expect(isValidUrl(" http://toot.com")).toEqual(false);
     expect(isValidUrl("httpb://toot.com")).toEqual(false);
     expect(isValidUrl("http://toot^com")).toEqual(false);
+    // expect(isValidUrl("http://toot.com:4000?m=1&n$flarg")).toEqual(false);
     // the caller is responsible for trimming
     expect(isValidUrl("http://toot.com ")).toEqual(false);
   });
