@@ -7,7 +7,7 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
-import Select from 'react-select';
+import Select from "react-select";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
@@ -59,36 +59,36 @@ const customStyles = {
   control: () => ({
     // none of react-select's styles are passed to <Control />
     width: 117,
-    height: 35
+    height: 35,
   }),
   indicatorsContainer: (provided: any, state: any) => ({
-    display: 'none'
+    display: "none",
   }),
   indicatorSeparator: () => ({
-    display: 'none'
+    display: "none",
   }),
   input: () => ({
     height: 31,
     marginTop: 0,
-    marginBottom: 0
+    marginBottom: 0,
   }),
   valueContainer: () => ({
-    height: 35
+    height: 35,
   }),
   menu: (provided: any) => ({
     ... provided,
-    borderTop: 'none',
-    borderRadius: '0 0 5px 5px',
+    borderTop: "none",
+    borderRadius: "0 0 5px 5px",
     marginTop: 1,
-    backgroundColor: 'rgba(255,255,255,1)'
-  })
-}
+    backgroundColor: "rgba(255,255,255,1)",
+  }),
+};
 
 export const SelectField: React.SFC<any> = ({options, field, form }) => (
   <Select
     options={options}
     name={field.name}
-    value={options ? options.find((option: any) => option.value === field.value) : ''}
+    value={options ? options.find((option: any) => option.value === field.value) : ""}
     onChange={(option: any) => form.setFieldValue(field.name, option.value)}
     onBlur={field.onBlur}
     styles={customStyles}
