@@ -210,7 +210,6 @@ class AppContainer extends React.Component<IProps, IState> {
                     showNotification={showNotification}
                     minimize={() => this.setState({notificationsMinimized: true})}
                   />
-                  <br/>
                 </div>
               ))
             }
