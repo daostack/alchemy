@@ -3,29 +3,20 @@ import * as arcActions from "actions/arcActions";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeNameAndAddress, isValidUrl } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
-import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
-interface IContainerProps {
-  scheme: ISchemeState;
-}
-
-interface IStateProps {
+interface IExternalProps {
   daoAvatarAddress: string;
   handleClose: () => any;
-  schemes?: Scheme[];
+  scheme: ISchemeState;
 }
-
-const mapStateToProps = (state: IRootState, ownProps: IStateProps) => {
-  return ownProps;
-};
 
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
@@ -37,7 +28,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IContainerProps & IStateProps & IDispatchProps;
+type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<Scheme[]>;
 
 interface IFormValues {
   description: string;
@@ -120,8 +111,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { handleClose, schemes } = this.props;
     // "schemes" are the schemes registered in this DAO
+    const schemes = this.props.data;
+    const { handleClose } = this.props;
+
     const currentTab = this.state.currentTab;
 
     const arc = getArc();
@@ -399,20 +392,15 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedCreateSchemeRegistrarProposal = connect(mapStateToProps, mapDispatchToProps)(CreateSchemeRegistrarProposal);
+const SubscribedCreateSchemeRegistrarProposal = withSubscription({
+  wrappedComponent: CreateSchemeRegistrarProposal,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: null,
+  checkForUpdate: ["daoAvatarAddress"],
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    return arc.dao(props.daoAvatarAddress).schemes();
+  },
+});
 
-export default(props: IContainerProps & IStateProps) => {
-  const arc = getArc();
-  const observable = arc.dao(props.daoAvatarAddress).schemes();
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<Scheme[]>): any => {
-      if (state.isLoading) {
-        return  <div className={css.loading}><Loading/></div>;
-      } else if (state.error) {
-        throw state.error;
-      } else {
-        return <ConnectedCreateSchemeRegistrarProposal {...props} schemes={state.data} />;
-      }
-    }
-  }</Subscribe>;
-};
+export default connect(null, mapDispatchToProps)(SubscribedCreateSchemeRegistrarProposal);

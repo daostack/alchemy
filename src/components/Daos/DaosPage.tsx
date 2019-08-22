@@ -1,21 +1,27 @@
 import { DAO } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
 import { combineLatest} from "rxjs";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
-interface IProps {
-  daos: DAO[];
-}
+type SubscriptionData = [DAO[], DAO[]];
+
+type IProps = ISubscriptionProps<SubscriptionData>;
 
 class DaosPage extends React.Component<IProps, null> {
 
   public render() {
-    const { daos } = this.props;
+    const { data } = this.props;
+
+    const daos = data[1];
+    if (data[0].length > 0) {
+      daos.unshift(data[0][0]);
+    }
+
     const daoNodes = daos.map((dao: DAO) => {
       return (
         <DaoCard key={dao.id}  dao={dao}/>
@@ -36,31 +42,20 @@ class DaosPage extends React.Component<IProps, null> {
   }
 }
 
-export default () => {
-  const arc = getArc();
-  const observable = combineLatest(
-    arc.daos({ where: { name: "Genesis Alpha" }}),
-    // eslint-disable-next-line
-    arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" }, orderBy: "name", orderDirection: "asc"}),
-  );
-  return <Subscribe observable={observable}>{(state: IObservableState<[DAO[], DAO[]]>) => {
-    if (state.isLoading) {
-      return (
-        <div className={css.wrapper}>
-          <div className={css.loading}><Loading/>
-          </div>
-        </div>
-      );
-    } else if (state.error) {
-      throw state.error;
-    } else {
-      const daos = state.data[1];
-      if (state.data[0].length > 0) {
-        daos.unshift(state.data[0][0]);
-      }
-      return <DaosPage daos={daos} />;
-    }
-  }
+export default withSubscription({
+  wrappedComponent: DaosPage,
+  loadingComponent: <div className={css.wrapper}><div className={css.loading}><Loading/></div></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
-  }</Subscribe>;
-};
+  // Don't ever update the subscription
+  checkForUpdate: () => { return false; },
+
+  createObservable: () => {
+    const arc = getArc();
+    return combineLatest(
+      arc.daos({ where: { name: "Genesis Alpha" }}),
+      // eslint-disable-next-line
+      arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" }, orderBy: "name", orderDirection: "asc"}),
+    );
+  },
+});

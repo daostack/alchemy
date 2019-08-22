@@ -1,12 +1,7 @@
-import { DAO, IDAOState, IMemberState, Member } from "@daostack/client";
+import { DAO, IDAOState, Member } from "@daostack/client";
 import { getArc } from "arc";
-import AccountImage from "components/Account/AccountImage";
-import AccountProfileName from "components/Account/AccountProfileName";
-import OAuthLogin from "components/Account/OAuthLogin";
-import Reputation from "components/Account/Reputation";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
-import { fromWei } from "lib/util";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -15,86 +10,38 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
+
+import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";
 
-interface IProps extends RouteComponentProps<any> {
+interface IExternalProps extends RouteComponentProps<any> {
   dao: IDAOState;
-  members: Member[];
-  profiles: IProfilesState;
-  fetchMore: () => void;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
+interface IStateProps {
+  profiles: IProfilesState;
+}
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
-    dao: ownProps.dao,
-    members: ownProps.members,
+    ...ownProps,
     profiles: state.profiles,
   };
 };
 
+const PAGE_SIZE = 100;
+
 class DaoMembersPage extends React.Component<IProps, null> {
 
   public render() {
-    const { dao, members, profiles } = this.props;
+    const { data } = this.props;
 
-    const membersHTML = members.map((member) => {
-      return <Subscribe observable={member.state()} key={member.staticState.address}>{(state: IObservableState<IMemberState>) => {
-        if (state.error) {
-          return <div>{state.error.message}</div>;
-        } else if (state.data) {
-          const memberState = state.data;
-          const profile = profiles[memberState.address];
-          return (
-            <div className={css.member + " clearfix"}
-              key={"member_" + memberState.address}
-              data-test-id={"member_" + memberState.address}>
-              <table className={css.memberTable}>
-                <tbody>
-                  <tr>
-                    <td className={css.memberAvatar}>
-                      <AccountImage
-                        accountAddress={memberState.address}
-                        className="membersPage"
-                      />
-                    </td>
-                    <td className={css.memberName}>
-                      { profile ?
-                        <div>
-                          <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={dao.address} />
-                          <br/>
-                        </div>
-                        : <div className={css.noProfile}>No Profile</div>
-                      }
-                    </td>
-                    <td className={css.memberAddress}>
-                      {memberState.address}
-                    </td>
-                    <td className={css.memberReputation}>
-                      <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
-                      <div className={css.reputationAmounts}>
-                        (<Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
-                      </div>
-                    </td>
-                    <td className={css.memberSocial}>
-                      {profile && Object.keys(profile.socialURLs).length > 0 ?
-                        <span>
-                          <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
-                          <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                          <OAuthLogin editing={false} provider="github" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                        </span>
-                        : ""
-                      }
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          );
-        } else {
-          return <div>...loading..</div>;
-        }
-      }}</Subscribe>;
-    });
+    const members = data;
+    const { dao, profiles } = this.props;
+
+    const membersHTML = members.map((member) => <DaoMember key={member.staticState.address} dao={dao} member={member} profile={profiles[member.staticState.address]} />);
 
     return (
       <div className={css.membersContainer}>
@@ -129,43 +76,41 @@ class DaoMembersPage extends React.Component<IProps, null> {
       </div>
     );
   }
-
 }
 
-const ConnectedDaoMembersPage = connect(mapStateToProps)(DaoMembersPage);
+const SubscribedDaoMembersPage = withSubscription({
+  wrappedComponent: DaoMembersPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
-export default (props: { dao: IDAOState } & RouteComponentProps<any>) => {
-  const arc = getArc();
+  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
 
-  const dao = new DAO(props.dao.address, arc);
-  const PAGE_SIZE = 100;
-  const observable = dao.members({
-    orderBy: "balance",
-    orderDirection: "desc",
-    first: PAGE_SIZE,
-    skip: 0,
-  });
-  return <Subscribe observable={observable}>{(state: IObservableState<Member[]>) => {
-    if (state.isLoading) {
-      return (<div className={css.loading}><Loading/></div>);
-    } else if (state.error) {
-      return <div>{ state.error.message }</div>;
-    } else {
-      return <ConnectedDaoMembersPage
-        members={state.data}
-        dao={props.dao}
-        fetchMore={() => {
-          state.fetchMore({
-            observable: dao.members({
-              orderBy: "balance",
-              orderDirection: "desc",
-              first: PAGE_SIZE,
-              skip: state.data.length,
-            }),
-          });
-        }}
-      />;
-    }
-  }
-  }</Subscribe>;
-};
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+
+    const dao = new DAO(props.dao.address, arc);
+
+    return dao.members({
+      orderBy: "balance",
+      orderDirection: "desc",
+      first: PAGE_SIZE,
+      skip: 0,
+    });
+  },
+
+  // used for hacky pagination tracking
+  pageSize: PAGE_SIZE,
+
+  getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
+    const arc = getArc();
+    const dao = new DAO(props.dao.address, arc);
+    return dao.members({
+      orderBy: "balance",
+      orderDirection: "desc",
+      first: PAGE_SIZE,
+      skip: data.length,
+    });
+  },
+});
+
+export default connect(mapStateToProps)(SubscribedDaoMembersPage);
