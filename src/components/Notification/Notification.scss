@@ -17,7 +17,7 @@
   &.pending {
     .transactionBorder {
       width: 60%;
-      color: rgba(0, 118, 255, 1.000);
+      background-color: rgba(0, 118, 255, 1.000);
     }
 
     .statusIcon .pending {
@@ -41,7 +41,7 @@
   &.error {
     .transactionBorder {
       width: 30%;
-      color: rgba(246, 80, 80, 1.000);
+      background-color: rgba(246, 80, 80, 1.000);
     }
 
     .statusIcon .error {
@@ -53,7 +53,7 @@
   .transactionBorder {
     height: 1px;
     position: absolute;
-    top: 0;
+    top: -1px;
     left: 0;
   }
 
@@ -92,6 +92,7 @@
   }
 
   button {
+    outline: none;
     border: none;
     background: none;
     opacity: .6;
