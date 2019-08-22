@@ -61,7 +61,7 @@ const customStyles = {
     width: 117,
     height: 35,
   }),
-  indicatorsContainer: (provided: any, state: any) => ({
+  indicatorsContainer: () => ({
     display: "none",
   }),
   indicatorSeparator: () => ({
