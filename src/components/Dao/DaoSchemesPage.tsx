@@ -33,13 +33,13 @@ type IExternalProps = RouteComponentProps<any>;
 type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[], Scheme[], Scheme[]]>;
 
 const DaoSchemesPage = (props: IProps) => {
-  let [dao, contributionReward, knownSchemes, unknownSchemes ] = props.data;
+  const [dao, contributionReward, knownSchemes, unknownSchemes ] = props.data;
 
-  knownSchemes.unshift(...contributionReward);
+  const allKnownSchemes = [...contributionReward, ...knownSchemes];
 
   const schemeCardsHTML = (
     <TransitionGroup>
-      { knownSchemes.map((scheme: Scheme) => (
+      { allKnownSchemes.map((scheme: Scheme) => (
         <Fade key={"scheme " + scheme.id}>
           {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
             ? <ProposalSchemeCard dao={dao} scheme={scheme} />
@@ -64,7 +64,7 @@ const DaoSchemesPage = (props: IProps) => {
       <Sticky enabled top={50} innerZ={10000}>
         <h1>All Schemes</h1>
       </Sticky>
-      {(knownSchemes.length + unknownSchemes.length) === 0
+      {(allKnownSchemes.length + unknownSchemes.length) === 0
         ? <div>
           <img src="/assets/images/meditate.svg" />
           <div>
