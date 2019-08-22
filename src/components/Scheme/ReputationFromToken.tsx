@@ -97,10 +97,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       const arc = getArc();
       const tokenContract = new Token(tokenContractAddress, arc);
       const balance = new BN(await tokenContract.contract().methods.balanceOf(redeemerAddress).call());
-      // const redemptionAmount = (await this.props.scheme.ReputationFromToken.redemptionAmount(this.props.currentAccountAddress)) });
       const alreadyRedeemed = await schemeContract.methods.redeems(redeemerAddress).call();
-      const ethBalance = await arc.web3.eth.getBalance(redeemerAddress);
-      console.log(`balance of ${redeemerAddress}: ${ethBalance}`);
       let redemptionAmount;
       if (alreadyRedeemed) {
         redemptionAmount = new BN(0);
@@ -146,7 +143,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     if (alreadyRedeemed) {
       this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
     } else {
-      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress, this.state.privateKey);
+      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
     }
     setSubmitting(false);
   }
