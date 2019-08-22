@@ -113,7 +113,7 @@ class ActionButton extends React.Component<IProps, IState> {
       beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
     }
 
-    const redeemable = proposalState.executedAt && proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase());
+    const redeemable = currentAccountAddress ? proposalState.executedAt && proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase()) : false;
     // hack to work around https://github.com/daostack/subgraph/issues/304
     const reallyRedeemable = redeemable && (beneficiaryHasRewards || accountHasGPRewards);
     const redemptionsTip = RedemptionsTip({

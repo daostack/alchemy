@@ -56,6 +56,21 @@
   }
 }
 
+.timeSection {
+  display: inline-block;
+
+  strong {
+  	font-weight: normal;
+  	font-family: $body-font;
+  }
+
+  .colon {
+    display: inline-block;
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+}
+
 @media only screen and (max-width: 425px) {
 
 .ellipsis {

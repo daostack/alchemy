@@ -63,7 +63,7 @@ class SchemeContainer extends React.Component<IProps, null> {
     const schemeState = this.props.data;
 
     if (schemeState.name === "ReputationFromToken") {
-      return <ReputationFromToken daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
+      return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
 
     const proposalsTabClass = classNames({

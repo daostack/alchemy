@@ -60,7 +60,7 @@ export default withSubscription({
   errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {
-    return oldProps.address !== newProps.address || (oldProps.dao ? oldProps.dao.address !== newProps.dao.address : !!newProps.dao);
+    return oldProps.address !== newProps.address || (oldProps.dao && oldProps.dao.address) !== (newProps.dao && newProps.dao.address);
   },
 
   createObservable: ({ dao, address }: IExternalProps) => {

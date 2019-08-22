@@ -1,16 +1,25 @@
 ### template
-  - Fetures Added
+  - Features Added
   - Bugs Fixed
   - Maintenence / Refactor
   - Misc
 
 ### Unreleased
   - Features Added
-    - Started a changelog
-  - Bugs Fixed
-  - Maintenence / Refactor
-  - Misc
+    - Tweaks to the wallet provider UI
+    - Allow to RedeemFromToken by passing a private key in the URL
+  - correct URL form validation
+  - fix handling of very small amounts when staking
+  - fix handling of very large amounts when displaying proposals
+  - fix crash in display of proposals' redeemables when account is readonly
+  - show proposals as failing when the vote is tied
+  - improvements, bug fixes on the Scheme Information page
 
-### version 0.9.3
-  - Misc
-    - A whole lot of awesome stuff for DAOs 😎
+### version 0.9.4; 2019-08-13
+
+  - Improve wallet UX
+  - Sharing buttons
+  - Fix several redeemer bugs
+  - Add unit tests
+  - UI fixes
+  - Added a change log!

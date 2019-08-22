@@ -162,7 +162,15 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/" render={( props ): any => <Header loadCachedWeb3Provider={this.loadCachedWeb3Provider} {...props} />} />
+            <Route path="/"
+            // eslint-disable react/jsx-no-bind
+              render={( props ): any => {
+                return <Header
+                  getCachedWeb3ProviderInfo={this.getCachedWeb3ProviderInfo}
+                  loadCachedWeb3Provider={this.loadCachedWeb3Provider}
+                  {...props} />;
+              }
+              } />
 
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
@@ -171,7 +179,6 @@ class AppContainer extends React.Component<IProps, IState> {
             </Switch>
 
             <ModalContainer
-              modalClassName={css.modal}
               backdropClassName={css.backdrop}
               containerClassName={css.modalContainer}
               bodyModalClassName={css.modalBody}
@@ -203,7 +210,6 @@ class AppContainer extends React.Component<IProps, IState> {
                     showNotification={showNotification}
                     minimize={() => this.setState({notificationsMinimized: true})}
                   />
-                  <br/>
                 </div>
               ))
             }

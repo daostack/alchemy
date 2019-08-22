@@ -5,7 +5,7 @@ import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeNameAndAddress } from "lib/util";
+import { schemeNameAndAddress, isValidUrl } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
@@ -205,8 +205,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                 errors.parametersHash = "Invalid parameters hash";
               }
 
-              const urlPattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
-              if (values.url && !urlPattern.test(values.url)) {
+              if (!isValidUrl(values.url)) {
                 errors.url = "Invalid URL";
               }
 

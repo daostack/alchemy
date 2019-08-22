@@ -4,7 +4,7 @@ import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei } from "lib/util";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
@@ -127,8 +127,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
               errors.beneficiary = "Invalid address";
             }
 
-            const pattern = new RegExp("(https?://(?:www.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9].[^s]{2,}|https?://(?:www.|(?!www))[a-zA-Z0-9].[^s]{2,}|www.[a-zA-Z0-9].[^s]{2,})");
-            if (values.url && !pattern.test(values.url)) {
+            if (!isValidUrl(values.url)) {
               errors.url = "Invalid URL";
             }
 
