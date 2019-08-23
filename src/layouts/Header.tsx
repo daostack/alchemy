@@ -172,7 +172,7 @@ class Header extends React.Component<IProps, null> {
                   <div className={css.web3ProviderLogin}>
                     <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
                       <button onClick={this.handleConnect} data-test-id="connectButton">
-                          Connect <img src="/assets/images/Icon/login-white.svg"/>
+                        <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg"/>
                       </button>
                     </Tooltip>
                   </div>
