@@ -1,0 +1,119 @@
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Proposal, Reward, Stake, Vote } from "@daostack/client";
+import { getArc } from "arc";
+import BN = require("bn.js");
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import * as React from "react";
+import { connect } from "react-redux";
+import { IRootState } from "reducers";
+import { IProfileState } from "reducers/profilesReducer";
+import { combineLatest, concat, of, Observable } from "rxjs";
+import { map, mergeMap } from "rxjs/operators";
+
+import * as css from "./ProposalCard.scss";
+
+interface IInjectedProps {
+  expired: boolean;
+  proposal: IProposalState;
+  votes: Vote[],
+  stakes: Stake[],
+  rewards: IRewardState,
+  member: IMemberState,
+  daoEthBalance: BN;
+  currentAccountGenBalance: BN;
+  currentAccountGenAllowance: BN;
+}
+
+interface IExternalProps {
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  proposal: Proposal;
+  children(props: IInjectedProps): JSX.Element;
+}
+
+interface IStateProps {
+  beneficiaryProfile?: IProfileState;
+  creatorProfile?: IProfileState;
+}
+
+type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
+type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
+  const proposalState = ownProps.data ? ownProps.data[0] : null;
+
+  return {
+    ...ownProps,
+    beneficiaryProfile: proposalState && proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
+    creatorProfile: proposalState ? state.profiles[proposalState.proposer] : null,
+  };
+};
+
+interface IState {
+  expired: boolean;
+}
+
+class ProposalData extends React.Component<IProps, IState> {
+
+  render() {
+    const [proposal, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
+
+    return this.props.children({
+      expired: this.state.expired,
+      proposal,
+      votes,
+      stakes,
+      rewards,
+      member,
+      daoEthBalance,
+      currentAccountGenBalance,
+      currentAccountGenAllowance
+    });
+  };
+}
+
+
+const ConnectedProposalData = connect(mapStateToProps)(ProposalData);
+
+export default withSubscription({
+    wrappedComponent: ConnectedProposalData,
+    // TODO: how do we pass this in?
+    loadingComponent: (props) => <div className={css.loading}>Loading proposal {props.proposal.id.substr(0, 6)} ...</div>,
+    errorComponent: (props) => <div>{props.error.message}</div>,
+
+    checkForUpdate: (oldProps, newProps) => {
+      return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
+    },
+
+    createObservable: (props) => {
+      const arc = getArc();
+      const { currentAccountAddress, dao, proposal } = props;
+      const arcDao = arc.dao(dao.address);
+
+      const spender = proposal.staticState.votingMachine;
+
+      if (currentAccountAddress) {
+        return combineLatest(
+          proposal.state(), // state of the current proposal
+          proposal.votes({where: { voter: currentAccountAddress }}),
+          proposal.stakes({where: { staker: currentAccountAddress }}),
+          proposal.rewards({ where: {beneficiary: currentAccountAddress}})
+            .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
+            .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
+          arcDao.member(currentAccountAddress).state(),
+          concat(of(new BN("0")), arcDao.ethBalance()),
+          arc.GENToken().balanceOf(currentAccountAddress),
+          arc.allowance(currentAccountAddress, spender),
+        );
+      } else {
+        return combineLatest(
+          proposal.state(), // state of the current proposal
+          of([]), // votes
+          of([]), // stakes
+          of(null), // rewards
+          of(null), // member
+          concat(of(new BN("0")), arcDao.ethBalance()), // dao eth balance
+          of(new BN("0")), // current account gen balance
+          of(null), // current account GEN allowance
+        );
+      }
+    },
