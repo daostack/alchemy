@@ -49,7 +49,7 @@
 
   .link {
     padding: 24px 30px 24px 30px;
-  
+
     .title {
       display: inline-block;
       height: 18px;
@@ -142,7 +142,22 @@
     }
 
     .socialSite:hover {
-      background-color: #e1ebf7;        
+      background-color: #e1ebf7;
     }
+  }
+}
+
+
+
+@media only screen and (max-width: 425px) {
+  .modalWindow {
+    width: 318px;
+    position: absolute;
+    left: 50%;
+    top: 20px;
+    transform: translate(-50%, 0);
+    transition: all .25s ease;
+    border-radius: 15px 15px 0 0;
+    z-index: 99999999999999999;
   }
 }
