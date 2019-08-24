@@ -1,9 +1,7 @@
-/* tslint:disable:max-classes-per-file */
-
 import { Address, IDAOState, IProposalStage, Proposal } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -13,21 +11,26 @@ import { combineLatest } from "rxjs";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./Dao.scss";
 
-interface IProps {
-  proposals: Proposal[];
-  dao: IDAOState;
+const PAGE_SIZE = 100;
+
+interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  fetchMore: () => void;
-  hasMoreProposalsToLoad: boolean;
 }
+
+type SubscriptionData = [Proposal[], IDAOState];
+type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
+
 
 class DaoHistoryPage extends React.Component<IProps, null> {
 
   public render() {
-    const { currentAccountAddress, dao, fetchMore, hasMoreProposalsToLoad, proposals } = this.props;
+    const { data, hasMoreToLoad, fetchMore } = this.props;
+
+    const [proposals, dao] = data;
+    const { currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     return(
@@ -55,7 +58,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
             <InfiniteScroll
               dataLength={proposals.length} //This is important field to render the next data
               next={fetchMore}
-              hasMore={hasMoreProposalsToLoad}
+              hasMore={hasMoreToLoad}
               loader={<h4>Loading...</h4>}
               style={{overflow: "visible"}}
               endMessage={
@@ -73,33 +76,19 @@ class DaoHistoryPage extends React.Component<IProps, null> {
   }
 }
 
-interface IExternalProps {
-  currentAccountAddress: Address;
-}
+export default withSubscription({
+  wrappedComponent: DaoHistoryPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
 
-interface IState {
-  hasMoreProposalsToLoad: boolean;
-}
+  checkForUpdate: (oldProps, newProps) => { return oldProps.match.params.daoAvatarAddress !== newProps.match.params.daoAvatarAddress; },
 
-export default class DaoHistory extends React.Component<IExternalProps & RouteComponentProps<any>, IState> {
-
-  constructor(props: IExternalProps & RouteComponentProps<any>) {
-    super(props);
-
-    this.state = {
-      hasMoreProposalsToLoad: true,
-    };
-  }
-
-  public render() {
+  createObservable: (props: IExternalProps) => {
     const arc = getArc();
-    const daoAvatarAddress = this.props.match.params.daoAvatarAddress;
+    const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAvatarAddress);
-    const currentAccountAddress = this.props.currentAccountAddress;
 
-    const PAGE_SIZE = 100;
-
-    const observable = combineLatest(
+    return combineLatest(
       dao.proposals({
         where: {
           // eslint-disable-next-line @typescript-eslint/camelcase
@@ -115,46 +104,31 @@ export default class DaoHistory extends React.Component<IExternalProps & RouteCo
       dao.state()
     );
 
-    const setState = this.setState.bind(this);
-    const parentState = this.state;
+  },
 
-    return <Subscribe observable={observable}>{
-      (state: IObservableState<[Proposal[], IDAOState]>): any => {
-        if (state.isLoading) {
-          return (<div className={css.loading}><Loading/></div>);
-        } else if (state.error) {
-          return <div>{ state.error.message }</div>;
-        } else  {
-          return <DaoHistoryPage
-            currentAccountAddress={currentAccountAddress}
-            dao={state.data[1]}
-            hasMoreProposalsToLoad={parentState.hasMoreProposalsToLoad}
-            proposals={state.data[0]}
-            fetchMore={() => {
-              state.fetchMore({
-                observable: dao.proposals({
-                  where: {
-                    // eslint-disable-next-line @typescript-eslint/camelcase
-                    stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
-                    // eslint-disable-next-line @typescript-eslint/camelcase
-                    closingAt_lte: Math.floor(new Date().getTime() / 1000),
-                  },
-                  orderBy: "closingAt",
-                  orderDirection: "desc",
-                  first: PAGE_SIZE,
-                  skip: state.data[0].length,
-                }),
-                combine: (prevState: [Proposal[], IDAOState], newData: Proposal[]) => {
-                  if (newData.length < PAGE_SIZE) {
-                    setState({ hasMoreProposalsToLoad: false});
-                  }
-                  return [prevState[0].concat(newData), prevState[1]];
-                },
-              });
-            }}
-          />;
-        }
-      }}
-    </Subscribe>;
-  }
-}
+  // used for hacky pagination tracking
+  pageSize: PAGE_SIZE,
+
+  getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
+    const arc = getArc();
+    const daoAvatarAddress = props.match.params.daoAvatarAddress;
+    const dao = arc.dao(daoAvatarAddress);
+
+    return dao.proposals({
+      where: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        stage_in: [IProposalStage.ExpiredInQueue, IProposalStage.Executed, IProposalStage.Queued],
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        closingAt_lte: Math.floor(new Date().getTime() / 1000),
+      },
+      orderBy: "closingAt",
+      orderDirection: "desc",
+      first: PAGE_SIZE,
+      skip: data[0].length,
+    });
+  },
+
+  fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
+    return [prevState[0].concat(newData), prevState[1]];
+  },
+});

@@ -1,12 +1,14 @@
-import { IDAOState } from "@daostack/client";
+import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
 import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly, IWeb3ProviderInfo, getWeb3ProviderInfo } from "arc";
+import * as classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard } from "lib/util";
 import * as queryString from "query-string";
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
@@ -14,27 +16,33 @@ import { Breadcrumbs } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import * as classNames from "classnames";
-import Tooltip from "rc-tooltip";
+import { of } from "rxjs";
+
 import * as css from "./App.scss";
 
-
-interface IStateProps {
-  accounts: string[];
-  currentAccountProfile: IProfileState;
-  dao: IDAOState;
-  currentAccountAddress: string | null;
-  networkId: number;
+interface IExternalProps extends RouteComponentProps<any> {
   loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
   getCachedWeb3ProviderInfo: () => IWeb3ProviderInfo | null;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any): any => {
-  const dao = ownProps.dao;
+interface IStateProps {
+  currentAccountProfile: IProfileState;
+  currentAccountAddress: string | null;
+  daoAvatarAddress: Address;
+}
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  const match = matchPath(ownProps.location.pathname, {
+    path: "/dao/:daoAvatarAddress",
+    strict: false,
+  });
+  const queryValues = queryString.parse(ownProps.location.search);
+
   return {
+    ...ownProps,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
-    dao,
     currentAccountAddress: state.web3.currentAccountAddress,
+    daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
   };
 };
 
@@ -48,7 +56,7 @@ const mapDispatchToProps = {
   showTour: uiActions.showTour,
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
 class Header extends React.Component<IProps, null> {
 
@@ -81,9 +89,9 @@ class Header extends React.Component<IProps, null> {
   public render(): any {
     const {
       currentAccountProfile,
-      dao,
       currentAccountAddress,
     } = this.props;
+    const dao = this.props.data;
 
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
@@ -164,7 +172,7 @@ class Header extends React.Component<IProps, null> {
                   <div className={css.web3ProviderLogin}>
                     <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
                       <button onClick={this.handleConnect} data-test-id="connectButton">
-                          Connect <img src="/assets/images/Icon/login-white.svg"/>
+                        <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg"/>
                       </button>
                     </Tooltip>
                   </div>
@@ -178,34 +186,19 @@ class Header extends React.Component<IProps, null> {
   }
 }
 
-const ConnectedHeader = connect(mapStateToProps, mapDispatchToProps)(Header);
-
-interface IExternalProps extends RouteComponentProps<any> {
-  loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
-  getCachedWeb3ProviderInfo: () => IWeb3ProviderInfo | null;
-}
-
-export default (props: IExternalProps): any => {
-  const arc = getArc();
-  const match = matchPath(props.location.pathname, {
-    path: "/dao/:daoAvatarAddress",
-    strict: false,
-  });
-  const queryValues = queryString.parse(props.location.search);
-  const daoAddress = match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress;
-
-  if (daoAddress) {
-    return <Subscribe observable={arc.dao(daoAddress).state()}>{(state: IObservableState<IDAOState>): any => {
-      if (state.isLoading) {
-        return null;
-      } else if (state.error) {
-        return <div>{state.error.message}</div>;
-      } else {
-        return <ConnectedHeader {...props} dao={state.data} />;
-      }
+const SubscribedHeader = withSubscription({
+  wrappedComponent: Header,
+  loadingComponent: null,
+  errorComponent: (props) => <div>{props.error.message}</div>,
+  checkForUpdate: ["daoAvatarAddress"],
+  createObservable: (props: IProps) => {
+    if (props.daoAvatarAddress) {
+      const arc = getArc();
+      return arc.dao(props.daoAvatarAddress).state();
+    } else {
+      return of(null);
     }
-    }</Subscribe>;
-  } else {
-    return <ConnectedHeader dao={undefined} {...props}/>;
-  }
-};
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedHeader);

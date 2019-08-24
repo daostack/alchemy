@@ -73,8 +73,9 @@ body {
     height: 12px;
     position: relative;
     top: 2px;
-    padding-left: 2px;
+    padding-left: 8px;
   }
+
 }
 
 .web3ProviderLogin button:focus {
@@ -651,6 +652,16 @@ body {
     display: none;
   }
 
+
+.web3ProviderLogin button {
+    span.connectButtonText {
+      display: none;
+    }
+
+    img {
+      padding-left: 0;
+    }
+  }
 }
 
 .cookieDisclaimerContainer {

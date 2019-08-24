@@ -3,7 +3,7 @@ import { Address, ISchemeState } from "@daostack/client";
 import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -21,62 +21,62 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-interface IExternalProps {
+interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: H.History;
 }
 
-type IProps = IExternalProps & IDispatchProps;
+interface IStateProps {
+  daoAvatarAddress: Address;
+  schemeId: Address;
+}
 
-const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExternalProps => {
-  return ownProps;
+type IProps = IExternalProps & IDispatchProps & IStateProps & ISubscriptionProps<ISchemeState>;
+
+const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  const match = ownProps.match;
+
+  return {
+    ...ownProps,
+    daoAvatarAddress: match.params.daoAvatarAddress,
+    schemeId: match.params.schemeId,
+  };
 };
 
 const mapDispatchToProps = {
   showNotification,
 };
 
-class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>, IExternalProps> {
+class SchemeContainer extends React.Component<IProps, null> {
+
+  public handleNewProposal = async (e: any): Promise<void> => {
+    const { daoAvatarAddress, schemeId, showNotification } = this.props;
+
+    if ((await enableWeb3ProviderAndWarn(showNotification.bind(this)))) {
+      this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
+    }
+    e.preventDefault();
+  };
 
   public render(): any {
-    const { currentAccountAddress, match } = this.props;
-    const schemeId = match.params.schemeId;
-    const daoAvatarAddress = match.params.daoAvatarAddress;
-    const handleNewProposal = async (e: any): Promise<void> => {
-      if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
-        this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
-      }
-      e.preventDefault();
-    };
+    const { currentAccountAddress, daoAvatarAddress, schemeId } = this.props;
+    const schemeState = this.props.data;
 
-    const arc = getArc();
-    const scheme = arc.scheme(schemeId);
-    const schemeObservable = scheme.state();
+    if (schemeState.name === "ReputationFromToken") {
+      return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
+    }
 
-    return <Subscribe observable={schemeObservable}>{(state: IObservableState<ISchemeState>): any => {
-      if (state.isLoading) {
-        return  <div className={css.loading}><Loading/></div>;
-      }
-      if (state.error) {
-        throw state.error;
-      }
+    const proposalsTabClass = classNames({
+      [css.proposals]: true,
+      [css.active]: !this.props.location.pathname.includes("info"),
+    });
+    const infoTabClass = classNames({
+      [css.info]: true,
+      [css.active]: this.props.location.pathname.includes("info"),
+    });
 
-      const schemeState = state.data;
-
-      if (schemeState.name === "ReputationFromToken") {
-        return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} scheme={scheme}/>;
-      }
-
-      const proposalsTabClass = classNames({
-        [css.proposals]: true,
-        [css.active]: !this.props.location.pathname.includes("info"),
-      });
-      const infoTabClass = classNames({
-        [css.info]: true,
-        [css.active]: this.props.location.pathname.includes("info"),
-      });
-
-      return <div className={css.schemeContainer}>
+    return (
+      <div className={css.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
 
         <Sticky enabled top={50} innerZ={10000}>
@@ -85,12 +85,12 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
           </h2>
 
           <div className={css.schemeMenu}>
-            <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/proposals/`}>Proposals</Link>
-            <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info/`}>Info</Link>
+            <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
+            <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
             <a className={css.createProposal}
               data-test-id="createProposal"
               href="javascript:void(0)"
-              onClick={handleNewProposal}
+              onClick={this.handleNewProposal}
             >+ New proposal</a>
           </div>
         </Sticky>
@@ -102,9 +102,21 @@ class SchemeContainer extends React.Component<IProps & RouteComponentProps<any>,
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
             render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
         </Switch>
-      </div>;
-    }}</Subscribe>;
+      </div>
+    );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SchemeContainer);
+const SubscribedSchemeContainer = withSubscription({
+  wrappedComponent: SchemeContainer,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: null,
+  checkForUpdate: ["schemeId"],
+  createObservable: (props: IProps) => {
+    const arc = getArc();
+    const scheme = arc.scheme(props.schemeId);
+    return scheme.state();
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedSchemeContainer);

@@ -1,4 +1,4 @@
-import { Address, ISchemeState, Scheme, Token } from "@daostack/client";
+import { Address, ISchemeState, Token } from "@daostack/client";
 import * as queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { NotificationStatus } from "reducers/notifications";
@@ -19,7 +19,6 @@ import BN = require("bn.js");
 
 interface IExternalProps extends RouteComponentProps<any> {
   daoAvatarAddress: Address;
-  scheme: Scheme;
   schemeState: ISchemeState;
 }
 
@@ -90,11 +89,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   private async _loadReputationBalance() {
     const redeemerAddress = this.state.redeemerAddress;
     if (redeemerAddress) {
-      const state = await this.props.scheme.fetchStaticState();
-      const schemeAddress = state.address;
-      const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
-      const tokenContractAddress = await schemeContract.methods.tokenContract().call();
+      const schemeState = this.props.schemeState;
+      const schemeAddress = schemeState.address;
       const arc = getArc();
+      const schemeContract = await arc.getContract(schemeAddress);
+      const tokenContractAddress = await schemeContract.methods.tokenContract().call();
       const tokenContract = new Token(tokenContractAddress, arc);
       const balance = new BN(await tokenContract.contract().methods.balanceOf(redeemerAddress).call());
       const alreadyRedeemed = await schemeContract.methods.redeems(redeemerAddress).call();
@@ -136,14 +135,15 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       return;
     }
 
-    const state = await this.props.scheme.fetchStaticState();
+    const state = this.props.schemeState;
     const schemeAddress = state.address;
-    const schemeContract = await this.props.scheme.context.getContract(schemeAddress);
-    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
+    const arc = getArc();
+    const schemeContract = await arc.getContract(schemeAddress);    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
       this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
     } else {
-      this.props.redeemReputationFromToken(this.props.scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
+      const scheme = arc.scheme(state.id);
+      this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
     }
     setSubmitting(false);
   }

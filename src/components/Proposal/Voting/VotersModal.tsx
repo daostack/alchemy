@@ -6,33 +6,24 @@ import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 //@ts-ignore
 import { Modal } from "react-router-modal";
-import { combineLatest } from "rxjs";
 import VoteGraph from "./VoteGraph";
 
 import * as css from "./VotersModal.scss";
 
-interface IProps {
-  closeAction: any;
-  currentAccountAddress: Address;
-  dao: IDAOState;
-  proposalState: IProposalState;
-  votes: Vote[];
-}
-
+/*** VoteRow Component ***/
 interface IVoteRowProps {
   dao: IDAOState;
-  proposalState: IProposalState;
+  proposal: IProposalState;
   vote: Vote;
 }
 
 class VoteRow extends React.Component<IVoteRowProps, null> {
-
   public render() {
-    const {dao, proposalState, vote} = this.props;
+    const {dao, proposal, vote} = this.props;
     const voteState = vote.staticState;
     return (
       <div className={css.voteRow}>
@@ -44,7 +35,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
             </span>
           </div>
           <div className={css.reputationAmount}>
-            <Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={voteState.amount} hideSymbol />
+            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={voteState.amount} hideSymbol />
           </div>
           <div className={css.reputationLine}></div>
         </div>
@@ -52,6 +43,17 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
     );
   }
 }
+/*** EO VoteRow Component ***/
+
+interface IExternalProps {
+  closeAction: any;
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  proposal: IProposalState;
+}
+
+type SubscriptionData = Vote[];
+type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 class VotersModal extends React.Component<IProps, null> {
 
@@ -60,7 +62,8 @@ class VotersModal extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { dao, proposalState, votes } = this.props;
+    const votes = this.props.data;
+    const { dao, proposal } = this.props;
 
     const currentAccountVote = votes[0];
 
@@ -97,11 +100,11 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.upvoted} src="/assets/images/Icon/vote/for-fill.svg"/>
                   <span className={css.reputationTitle}>For</span>
                   <br/>
-                  <p><Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesFor} hideSymbol /> Rep</p>
+                  <p><Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol /> Rep</p>
                 </span>
               </div>
               <div className={css.graphContainer}>
-                <VoteGraph size={90} proposal={proposalState} />
+                <VoteGraph size={90} proposal={proposal} />
               </div>
               <div className={voteDownClass}>
                 <span className={css.reputation}>
@@ -109,17 +112,17 @@ class VotersModal extends React.Component<IProps, null> {
                   <img className={css.downvoted} src="/assets/images/Icon/vote/against-fill.svg"/>
                   <span className={css.reputationTitle}>Against</span>
                   <br />
-                  <p><Reputation daoName={dao.name} totalReputation={proposalState.totalRepWhenCreated} reputation={proposalState.votesAgainst} hideSymbol /> Rep</p>
+                  <p><Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol /> Rep</p>
                 </span>
               </div>
             </div>
 
             <div className={css.voters}>
               <div>
-                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposalState={proposalState} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
               <div>
-                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposalState={proposalState} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} />)}</div>
               </div>
             </div>
           </div>
@@ -135,38 +138,21 @@ class VotersModal extends React.Component<IProps, null> {
   }
 }
 
-interface IExternalProps {
-  closeAction: any;
-  currentAccountAddress: Address;
-  dao: IDAOState;
-  proposal: IProposalState;
-}
+export default withSubscription({
+  wrappedComponent: VotersModal,
+  loadingComponent: <div>Loading ...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
-export default (props: IExternalProps) => {
-  const arc = getArc();
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.proposal.id !== newProps.proposal.id || oldProps.dao.address !== newProps.dao.address;
+  },
 
-  const dao = arc.dao(props.dao.address);
-  const proposalId = props.proposal.id;
-  const proposal = dao.proposal(proposalId);
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    const dao = arc.dao(props.dao.address);
+    const proposalId = props.proposal.id;
+    const proposal = dao.proposal(proposalId);
 
-  const observable = combineLatest(
-    proposal.state(), // state of the current proposal
-    proposal.votes()
-  );
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, Vote[]]>): any => {
-      if (state.isLoading) {
-        return <div>Loading proposal {proposalId.substr(0, 6)} ...</div>;
-      } else if (state.error) {
-        return <div>{state.error.message}</div>;
-      } else {
-        const [proposalState, votes] = state.data;
-        return <VotersModal
-          {...props}
-          proposalState={proposalState}
-          votes={votes}
-        />;
-      }
-    }
-  }</Subscribe>;
-};
+    return proposal.votes();
+  },
+});
