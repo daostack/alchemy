@@ -133,8 +133,8 @@
         },
         {
           "name": "_beneficiary",
-          "defaultValue": "0x0000000000000000000000000000000000000000",
-          "label": "Beneficiary address (0x0000…)"
+          "defaultValue": "_avatar",
+          "label": "Beneficiary address (starting with current avatar)"
         }
       ],
       "abi": {
