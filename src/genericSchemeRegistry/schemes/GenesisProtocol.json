@@ -134,7 +134,7 @@
         {
           "name": "_beneficiary",
           "defaultValue": "_avatar",
-          "label": "Beneficiary address (starting with current avatar)"
+          "label": "Beneficiary address (this DAO is given as the default)"
         }
       ],
       "abi": {
