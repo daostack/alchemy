@@ -6,7 +6,7 @@ import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard  } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -19,31 +19,23 @@ import { Address, IDAOState, IMemberState } from "@daostack/client";
 import * as css from "./Account.scss";
 
 
-interface IStateProps {
-  accountAddress: string;
-  dao: IDAOState;
-  detailView?: boolean;
-  historyView?: boolean;
-  profile: IProfileState;
-  reputation: BN;
-}
-
-interface IOwnProps {
+interface IExternalProps {
   accountAddress: Address;
   dao: IDAOState;
   detailView?: boolean;
   historyView?: boolean;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any) => {
-  const dao = ownProps.dao;
-  const account = ownProps.accountInfo as IMemberState;
+interface IStateProps {
+  profile: IProfileState;
+}
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<[IDAOState, IMemberState]>): IExternalProps & IStateProps & ISubscriptionProps<[IDAOState, IMemberState]> => {
+  const account = (ownProps.data ? ownProps.data[1] : null);
 
   return {
-    accountAddress: ownProps.accountAddress,
-    dao,
-    profile: state.profiles[account.address],
-    reputation: account ? account.reputation : new BN(0),
+    ...ownProps,
+    profile: account ? state.profiles[account.address] : null,
   };
 };
 
@@ -55,7 +47,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, IMemberState]>;
 
 class AccountPopup extends React.Component<IProps, null> {
 
@@ -67,7 +59,9 @@ class AccountPopup extends React.Component<IProps, null> {
   }
 
   public render() {
-    const { accountAddress, dao, profile, reputation } = this.props;
+    const [dao, accountInfo] = this.props.data;
+    const { accountAddress, profile } = this.props;
+    const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const targetAccountClass = classNames({
       [css.detailView]: this.props.detailView,
@@ -105,23 +99,20 @@ class AccountPopup extends React.Component<IProps, null> {
 
 const ConnectedAccountPopup = connect(mapStateToProps, mapDispatchToProps)(AccountPopup);
 
-export default (props: IOwnProps) => {
-  const arc = getArc();
+const SubscribedAccountPopup = withSubscription({
+  wrappedComponent: ConnectedAccountPopup,
+  loadingComponent: <div>Loading...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
-  const observable = combineLatest(
-    arc.dao(props.dao.address).state(),
-    arc.dao(props.dao.address).member(props.accountAddress).state()
-  );
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<[IDAOState, IMemberState]>) => {
-      if (state.error) {
-        return <div>{state.error.message}</div>;
-      } else if (state.data) {
-        const dao = state.data[0];
-        return <ConnectedAccountPopup dao={dao} accountAddress={props.accountAddress} accountInfo={state.data[1]} {...props} />;
-      } else {
-        return <div>Loading...</div>;
-      }
-    }
-  }</Subscribe>;
-};
+  checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.dao.address !== newProps.dao.address; },
+
+  createObservable: (props: IProps) => {
+    const arc = getArc();
+    return combineLatest(
+      arc.dao(props.dao.address).state(),
+      arc.dao(props.dao.address).member(props.accountAddress).state()
+    );
+  },
+});
+
+export default SubscribedAccountPopup;

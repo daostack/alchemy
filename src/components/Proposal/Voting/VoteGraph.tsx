@@ -27,7 +27,7 @@ export default class VoteGraph extends React.Component<IProps, null> {
     const noPercentage = totalReputationSupply && votesAgainst ? Math.max(2, +(votesAgainst / totalReputationSupply * 100).toFixed(2)) : 0;
 
     const yesWinning = yesPercentage > noPercentage;
-    const noWinning = noPercentage > yesPercentage;
+    const noWinning = noPercentage >= yesPercentage;
 
     const containerClass = classNames({
       [css.container]: true,

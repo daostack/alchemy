@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, ISchemeState } from "@daostack/client";
+import { Address, ISchemeState, IGenesisProtocolParams } from "@daostack/client";
 import { copyToClipboard, fromWei, linkToEtherScan, schemeName } from "lib/util";
+import * as moment from "moment";
 import * as css from "./SchemeInfo.scss";
 
 interface IProps {
@@ -13,22 +14,62 @@ interface IProps {
 
 export default class SchemeInfo extends React.Component<IProps, null> {
 
+  private copyToClipboardHandler = (str: string) => (_event: any) => { copyToClipboard(str); };
+
   public render() {
     const { daoAvatarAddress, scheme } = this.props;
 
-    const renderGpParams = (params: any) => {
+    const duration = (durationSeconds: number): any => {
+
+      if (!durationSeconds) {
+        return "";
+      }
+
+      const duration = moment.duration(durationSeconds * 1000);
+
+      const days = duration.days() ? <strong>{duration.days()}d</strong> : "";
+      const hours = duration.hours() ? <strong>{duration.hours()}h</strong> : "";
+      const minutes = duration.minutes() ? <strong>{duration.minutes()}m</strong> : "";
+      const seconds = duration.seconds() ? <strong>{duration.seconds()}s</strong> : "";
+      // there won't ever be milliseconds
+      const colon = <span className={css.colon}>:</span>;
+
+      const first = days ? days : hours ? hours : minutes ? minutes : seconds ? seconds : null;
+
+      return <span>
+        { 
+          days ? <span className={css.timeSection}>{days}</span> : ""
+        }
+        {
+          hours ? <span className={css.timeSection}><span>{first !== hours ? colon : ""} {hours}</span></span> : ""
+        }  
+        {
+          minutes ? <span className={css.timeSection}><span>{first !== minutes ? colon : ""} {minutes}</span></span> : ""
+        }  
+        {
+          seconds ? <span className={css.timeSection}><span>{first !== seconds ? colon : ""} {seconds}</span></span> : ""
+        }  
+      </span>;
+    };
+
+    const renderGpParams = (params: IGenesisProtocolParams): any => {
+  
+      const activationTime = moment(params.activationTime);
+
       return <tbody>
-        <tr><th>Activation Time:</th><td className={css.ellipsis}>{params.activationTime} seconds</td></tr>
-        <tr><th>Boosted Vote Period Limit:</th><td>{params.boostedVotePeriodLimit} seconds</td></tr>
-        <tr><th>DAO Bounty Const:</th><td>{params.daoBountyConst}</td></tr>
-        <tr><th>Limit Exponent Value:</th><td>{params.limitExponentValue}</td></tr>
+        <tr><th>Activation Time:</th><td className={css.ellipsis}>{
+          `${ activationTime.format("MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
+        }</td></tr>
+        <tr><th>Boosted Vote Period Limit:</th><td>{duration(params.boostedVotePeriodLimit)} ({params.boostedVotePeriodLimit} seconds)</td></tr>
+        <tr><th>DAO Bounty Constant:</th><td>{params.daoBountyConst}</td></tr>
+        <tr><th>Proposal Reputation Reward:</th><td>{fromWei(params.proposingRepReward)} REP</td></tr>
         <tr><th>Minimum DAO Bounty:</th><td>{fromWei(params.minimumDaoBounty)} GEN</td></tr>
-        <tr><th>Pre-Boosted Vote Period Limit:</th><td>{params.preBoostedVotePeriodLimit} seconds</td></tr>
-        <tr><th>Queued Vote Period Limit:</th><td>{params.queuedVotePeriodLimit} seconds</td></tr>
-        <tr><th>Queued Vote Required Percentage:</th><td>{params.queuedVoteRequiredPercentage}%</td></tr>
-        <tr><th>Quiet Ending Period:</th><td>{params.quietEndingPeriod} seconds</td></tr>
-        <tr><th>Threshold Const:</th><td>{params.thresholdConst.toString()}</td></tr>
-        <tr><th>Voters Reputation Loss Ratio:</th><td>{params.votersReputationLossRatio}</td></tr>
+        <tr><th>Pre-Boosted Vote Period Limit:</th><td>{duration(params.preBoostedVotePeriodLimit)} ({params.preBoostedVotePeriodLimit} seconds)</td></tr>
+        <tr><th>Queued Vote Period Limit:</th><td>{duration(params.queuedVotePeriodLimit)} ({params.queuedVotePeriodLimit} seconds)</td></tr>
+        <tr><th>Queued Vote Required:</th><td>{params.queuedVoteRequiredPercentage}%</td></tr>
+        <tr><th>Quiet Ending Period:</th><td>{duration(params.quietEndingPeriod)} ({params.quietEndingPeriod} seconds)</td></tr>
+        <tr><th>Threshold Constant</th><td>{params.thresholdConst.toString()}</td></tr>
+        <tr><th>Voters Reputation Loss:</th><td>{params.votersReputationLossRatio}%</td></tr>
       </tbody>;
     };
 
@@ -45,7 +86,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                 <span>{scheme.address}</span>
               </td>
               <td>
-                <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => copyToClipboard(scheme.address)} />
+                <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
               </td>
             </tr>
             <tr>
@@ -54,7 +95,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                 <span>{scheme.paramsHash}</span>
               </td>
               <td>
-                <img src="/assets/images/Icon/Copy-blue.svg" onClick={() => copyToClipboard(scheme.paramsHash)} />
+                <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.paramsHash)} />
               </td>
             </tr>
             <tr>

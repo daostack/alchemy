@@ -4,7 +4,7 @@ import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle } from "lib/util";
 import * as moment from "moment";
@@ -34,23 +34,23 @@ import BN = require("bn.js");
 
 const ReactMarkdown = require("react-markdown");
 
+interface IExternalProps extends RouteComponentProps<any> {
+  currentAccountAddress: Address;
+  dao: IDAOState;
+  detailView?: boolean;
+  proposalId: string;
+}
+
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
 }
 
-interface IContainerProps extends RouteComponentProps<any> {
-  dao: IDAOState;
-  currentAccountAddress: Address;
-  daoEthBalance: BN;
-  proposal: IProposalState;
-  votesOfCurrentUser: Vote[];
-}
+type SubscriptionData = [IProposalState, Vote[], BN];
+type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-type IProps = IStateProps & IContainerProps;
-
-const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IProps => {
-  const proposal = ownProps.proposal;
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
+  const proposal = ownProps.data[0];
 
   return {
     ...ownProps,
@@ -71,7 +71,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      expired: closingTime(props.proposal).isSameOrBefore(moment()),
+      expired: closingTime(props.data[0]).isSameOrBefore(moment()),
       showShareModal: false,
       showVotersModal: false,
     };
@@ -92,7 +92,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 
   private showVotersModal(_event: any): void {
-    if (this.props.proposal.votesCount > 0) {
+    if (this.props.data[0].votesCount > 0) {
       this.setState({ showVotersModal: true });
     }
   }
@@ -106,14 +106,13 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 
   public render(): any {
+    const [proposal, votesOfCurrentUser, daoEthBalance] = this.props.data;
+
     const {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
       dao,
-      daoEthBalance,
-      proposal,
-      votesOfCurrentUser,
     } = this.props;
 
     const expired = this.state.expired;
@@ -301,35 +300,25 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalDetailsPage = connect<IStateProps, IContainerProps>(mapStateToProps)(ProposalDetailsPage);
+const ConnectedProposalDetailsPage = connect(mapStateToProps)(ProposalDetailsPage);
 
-export default (props: { proposalId: string; dao: IDAOState; currentAccountAddress: Address; detailView?: boolean } & RouteComponentProps<any>) => {
+export default withSubscription({
+  wrappedComponent: ConnectedProposalDetailsPage,
+  loadingComponent: <div className={css.loading}>Loading proposal...</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
-  const arc = getArc();
-  const dao = arc.dao(props.dao.address);
-  const proposalId = props.match.params.proposalId;
-  const proposal = dao.proposal(proposalId);
-  const observable = combineLatest(
-    proposal.state(), // state of the current proposal
-    props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
-    concat(of(new BN("0")), dao.ethBalance())
-  );
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, Vote[], BN]>): any => {
-      if (state.isLoading) {
-        return <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>;
-      } else if (state.error) {
-        return <div>{state.error.message}</div>;
-      } else {
-        const [proposal, votes, daoEthBalance] = state.data;
-        return <ConnectedProposalDetailsPage
-          {...props}
-          daoEthBalance={daoEthBalance}
-          proposal={proposal}
-          dao={props.dao}
-          votesOfCurrentUser={votes}
-        />;
-      }
-    }
-  }</Subscribe>;
-};
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposalId !== newProps.proposalId;
+  },
+
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    const dao = arc.dao(props.dao.address);
+    const proposal = dao.proposal(props.proposalId);
+    return combineLatest(
+      proposal.state(), // state of the current proposal
+      props.currentAccountAddress ? proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3
+      concat(of(new BN("0")), dao.ethBalance())
+    );
+  },
+});

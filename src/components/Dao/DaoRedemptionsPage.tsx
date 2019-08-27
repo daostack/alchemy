@@ -1,87 +1,42 @@
 import { Address, IDAOState, Proposal } from "@daostack/client";
 import { getArc } from "arc";
-import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
 import Reputation from "components/Account/Reputation";
 import Loading from "components/Shared/Loading";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
+import { of } from "rxjs";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./Dao.scss";
 
 import BN = require("bn.js");
 
-interface IProps {
-  currentAccountAddress: string;
+interface IExternalProps extends RouteComponentProps<any> {
+  currentAccountAddress?: Address;
   dao: IDAOState;
-  proposals: any[];
 }
+
+type IProps = IExternalProps & ISubscriptionProps<any>;
 
 class DaoRedemptionsPage extends React.Component<IProps, null> {
 
   public render() {
-    const { dao, proposals, currentAccountAddress } = this.props;
+    const { data } = this.props;
+
+    if (data === null) {
+      return <div>Please log in to see your rewards</div>;
+    }
+
+    const proposals = data.data.proposals;
+    const { dao, currentAccountAddress } = this.props;
 
     const arc = getArc();
     const proposalsHTML = proposals.map((proposalData: any) => {
       const proposal = new Proposal(proposalData.id, arc);
-
-      // hack to work around https://github.com/daostack/subgraph/issues/304
-      let beneficiaryHasRewards = false;
-      const proposalState = proposalData;
-      const massagedRewardsForCurrentUser = proposalData.gpRewards
-        .filter((r: any) => r.beneficiary === currentAccountAddress.toLowerCase())
-        .map((r: any) => { return {
-          id: r.id,
-          beneficiary: r.beneficiary,
-          tokensForStaker: r.tokensForStaker && new BN(r.tokensForStaker) || new BN(0),
-          tokensForStakerRedeemedAt: Number(r.tokensForStakerRedeemedAt),
-          daoBountyForStaker: r.daoBountyForStaker && new BN(r.daoBountyForStaker) || new BN(0),
-          daoBountyForStakerRedeemedAt: Number(r.daoBountyForStakerRedeemedAt),
-          reputationForVoter: r.reputationForVoter && new BN(r.reputationForVoter) || new BN(0),
-          reputationForVoterRedeemedAt: Number(r.reputationForVoterRedeemedAt),
-          reputationForProposer: r.reputationForProposer && new BN(r.reputationForProposer) || new BN(0),
-          reputationForProposerRedeemedAt: Number(r.reputationForProposerRedeemedAt),
-        };});
-      const rewardsForCurrentUser = massagedRewardsForCurrentUser && massagedRewardsForCurrentUser[0] || undefined;
-      const accountHasGPRewards = rewardsForCurrentUser && hasClaimableRewards(rewardsForCurrentUser) || false;
-      if (proposalState.contributionReward) {
-        const daoBalances: {[key: string]: BN} = {
-          eth: undefined,
-          nativeToken: undefined,
-          rep: undefined,
-          externalToken: undefined,
-        };
-        const cr = proposalState.contributionReward;
-        const contributionRewards = claimableContributionRewards({
-          // id: cr.id,
-          beneficiary: cr.beneficiary,
-          ethReward: cr.ethReward && new BN(cr.ethReward) || new BN(0),
-          externalToken: cr.externalToken,
-          externalTokenReward: new BN(cr.externalTokenReward || 0),
-          nativeTokenReward: new BN(cr.nativeTokenReward || 0),
-          periods: Number(cr.periods),
-          periodLength: Number(cr.periodLength),
-          reputationReward: new BN(cr.reputationReward || 0),
-          alreadyRedeemedReputationPeriods: Number(cr.alreadyRedeemedReputationPeriods),
-          alreadyRedeemedExternalTokenPeriods: Number(cr.alreadyRedeemedExternalTokenPeriods),
-          alreadyRedeemedEthPeriods: Number(cr.alreadyRedeemedEthPeriods),
-          alreadyRedeemedNativeTokenPeriods: Number(cr.alreadyRedeemedNativeTokenPeriods),
-
-        }, daoBalances);
-
-        beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
-      }
-
-      if (!accountHasGPRewards && !beneficiaryHasRewards) {
-        return null;
-      }
-      // end of ahck to work around https://github.com/daostack/subgraph/issues/30
-
 
       return <ProposalCard
         key={"proposal_" + proposal.id}
@@ -96,7 +51,7 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
     const externalTokenRewards: { [symbol: string]: BN } = {};
 
     // calculate the total rewards from the genesisprotocol
-    proposals.forEach((proposal) => {
+    proposals.forEach((proposal: any) => {
       proposal.gpRewards.forEach((reward: any) => {
         if (reward.beneficiary === currentAccountAddress) {
           if (reward.tokensForStaker && Number(reward.tokensForStakerRedeemedAt) === 0) {
@@ -182,67 +137,65 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
 
 }
 
-export default (props: { dao: IDAOState; currentAccountAddress?: Address } & RouteComponentProps<any>) => {
-  if (!props.currentAccountAddress) {
-    return <div>Please log in to see your rewards</div>;
-  }
-  const arc = getArc();
-  const query = gql`       {
-    proposals(
-      where: {
-        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-        dao: "${props.dao.address}"
-      },
-      orderBy: "closingAt"
-    ) {
-      id
-      dao {
+export default withSubscription({
+  wrappedComponent: DaoRedemptionsPage,
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
+  checkForUpdate: ["currentAccountAddress"],
+  createObservable: (props: IExternalProps) => {
+    if (!props.currentAccountAddress) {
+      return of(null);
+    }
+
+    const arc = getArc();
+    const query = gql`       {
+      proposals(
+        where: {
+          accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
+          dao: "${props.dao.address}"
+        },
+        orderBy: "closingAt"
+      ) {
         id
-      }
-      scheme {
-        id
-        address
-      }
-      votingMachine
-      # next line does not work anymore, apparently...
-      # gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
-      gpRewards {
-        id
-        beneficiary
-        tokensForStaker
-        tokensForStakerRedeemedAt
-        daoBountyForStaker
-        daoBountyForStakerRedeemedAt
-        reputationForVoter
-        reputationForVoterRedeemedAt
-        reputationForProposer
-        reputationForProposerRedeemedAt
-      }
-      contributionReward {
-        id
-        beneficiary
-        ethReward
-        externalToken
-        externalTokenReward
-        nativeTokenReward
-        periods
-        periodLength
-        reputationReward
-        alreadyRedeemedReputationPeriods
-        alreadyRedeemedExternalTokenPeriods
-        alreadyRedeemedEthPeriods
+        dao {
+          id
+        }
+        scheme {
+          id
+          address
+        }
+        votingMachine
+        # next line does not work anymore, apparently...
+        # gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
+        gpRewards {
+          id
+          beneficiary
+          tokensForStaker
+          tokensForStakerRedeemedAt
+          daoBountyForStaker
+          daoBountyForStakerRedeemedAt
+          reputationForVoter
+          reputationForVoterRedeemedAt
+          reputationForProposer
+          reputationForProposerRedeemedAt
+        }
+        contributionReward {
+          id
+          beneficiary
+          ethReward
+          externalToken
+          externalTokenReward
+          nativeTokenReward
+          periods
+          periodLength
+          reputationReward
+          alreadyRedeemedReputationPeriods
+          alreadyRedeemedExternalTokenPeriods
+          alreadyRedeemedEthPeriods
+        }
       }
     }
-  }
-  `;
-  return <Subscribe observable={arc.getObservable(query)}>{(state: IObservableState<any>) => {
-    if (state.error) {
-      return <div>{ state.error.message }</div>;
-    } else if (state.data) {
-      return <DaoRedemptionsPage {...props} currentAccountAddress={props.currentAccountAddress as Address} proposals={state.data.data.proposals}/>;
-    } else {
-      return (<div className={css.loading}><Loading/></div>);
-    }
-  }
-  }</Subscribe>;
-};
+    `;
+    return arc.getObservable(query);
+  },
+});

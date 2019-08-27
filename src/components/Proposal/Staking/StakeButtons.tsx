@@ -6,14 +6,13 @@ import { enableWeb3ProviderAndWarn, getArc } from "arc";
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 //@ts-ignore
 import { Modal } from "react-router-modal";
-import { IRootState } from "reducers";
 import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -27,7 +26,7 @@ interface IState {
   showPreStakeModal: boolean;
 }
 
-interface IContainerProps {
+interface IExternalProps {
   proposal: IProposalState;
   beneficiaryProfile?: IProfileState;
   contextMenu?: boolean;
@@ -50,15 +49,8 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IDispatchProps & IContainerProps & {
-  currentAccountGens: BN;
-  currentAccountGenStakingAllowance: BN;
-  stakesOfCurrentUser: Stake[];
-};
-
-const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IContainerProps => {
-  return ownProps;
-};
+type SubscriptionData = [BN, BN, Stake[]];
+type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 class StakeButtons extends React.Component<IProps, IState> {
 
@@ -73,7 +65,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { 
+    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
       this.setState({ showApproveModal: true });
     }
   }
@@ -102,18 +94,18 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public render(): any {
+    const [currentAccountGens, currentAccountGenStakingAllowance, stakesOfCurrentUser] = this.props.data;
+
     const {
       beneficiaryProfile,
       contextMenu,
-      currentAccountGens,
-      currentAccountGenStakingAllowance,
+      currentAccountAddress,
       dao,
       detailView,
       expired,
       historyView,
       proposal,
       stakeProposal,
-      stakesOfCurrentUser,
     } = this.props;
 
     const {
@@ -167,8 +159,8 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     const hasGens = currentAccountGens.gt(new BN(0));
     // show staking buttons when !this.props.currentAccountAddress, even if no GENs
-    const disableStakePass = (this.props.currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
-    const disableStakeFail = (this.props.currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
+    const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
+    const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
 
     const passButtonClass = classNames({
       [css.pendingPrediction]: pendingPrediction === VoteOptions.Yes,
@@ -204,7 +196,7 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     // If don't have any staking allowance, replace with button to pre-approve
     // show staking buttons when !this.props.currentAccountAddress, even if no allowance
-    if (stakingEnabled && (this.props.currentAccountAddress && currentAccountGenStakingAllowance.eq(new BN(0)))) {
+    if (stakingEnabled && (currentAccountAddress && currentAccountGenStakingAllowance && currentAccountGenStakingAllowance.eq(new BN(0)))) {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
@@ -244,14 +236,14 @@ class StakeButtons extends React.Component<IProps, IState> {
           {stakingEnabled ?
             <div>
               {
-                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
+                (!currentAccountAddress ? "" : tip(VoteOptions.No) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.No)}>
                     {passButton}
                   </Tooltip> :
                   passButton
               }
               {
-                (!this.props.currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
+                (!currentAccountAddress ? "" : tip(VoteOptions.Yes) !== "") ?
                   <Tooltip placement="left" trigger={["hover"]} overlay={tip(VoteOptions.Yes)}>
                     {failButton}
                   </Tooltip> :
@@ -268,44 +260,34 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedStakeButtons = connect(mapStateToProps, mapDispatchToProps)(StakeButtons);
+const SubscribedStakeButtons = withSubscription({
+  wrappedComponent: StakeButtons,
+  loadingComponent: <div>Loading PredictionBox</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
-export default (props: IContainerProps) => {
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
+  },
 
-  const arc = getArc();
-  let observable;
+  createObservable: (props: IExternalProps) => {
+    const arc = getArc();
+    const spender = props.proposal.votingMachine;
+    const currentAccountAddress = props.currentAccountAddress;
 
-  const spender = props.proposal.votingMachine;
-  const currentAccountAddress = props.currentAccountAddress;
-  if (currentAccountAddress) {
-    observable = combineLatest(
-      arc.GENToken().balanceOf(currentAccountAddress),
-      arc.allowance(currentAccountAddress, spender),
-      props.proposal.proposal.stakes({where: { staker: currentAccountAddress }})
-    );
-  } else {
-    observable = combineLatest(
-      of(new BN("0")),
-      of(undefined),
-      of([]),
-    );
-  }
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<[BN, any, Stake[]]>): any => {
-      if (state.isLoading) {
-        return <div>Loading PredictionBox</div>;
-      } else if (state.error) {
-        return <div>{state.error.message}</div>;
-      } else {
-        const currentAccountGens = state.data[0] || new BN(0);
-        const currentAccountGenStakingAllowance = new BN(state.data[1]);
-        const stakes = state.data[2];
-        return <ConnectedStakeButtons {...props}
-          currentAccountGens={currentAccountGens}
-          currentAccountGenStakingAllowance={currentAccountGenStakingAllowance}
-          stakesOfCurrentUser={stakes}
-        />;
-      }
+    if (currentAccountAddress) {
+      return combineLatest(
+        arc.GENToken().balanceOf(currentAccountAddress),
+        arc.allowance(currentAccountAddress, spender),
+        props.proposal.proposal.stakes({where: { staker: currentAccountAddress }})
+      );
+    } else {
+      return combineLatest(
+        of(new BN("0")),
+        of(undefined),
+        of([]),
+      );
     }
-  }</Subscribe>;
-};
+  },
+});
+
+export default connect(null, mapDispatchToProps)(SubscribedStakeButtons);

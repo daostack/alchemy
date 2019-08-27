@@ -3,7 +3,7 @@ import * as arcActions from "actions/arcActions";
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { formatTokens, humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -19,48 +19,37 @@ import * as css from "./ProposalHistoryRow.scss";
 
 import BN = require("bn.js");
 
+interface IExternalProps {
+  proposal: Proposal;
+  dao: IDAOState;
+  currentAccountAddress: Address;
+}
+
 interface IStateProps {
   creatorProfile?: IProfileState;
-  currentAccountAddress: Address;
-  stakesOfCurrentUser: Stake[];
-  votesOfCurrentUser: Vote[];
-  dao: IDAOState;
-  proposal: IProposalState;
 }
-
-interface IContainerProps {
-  dao: IDAOState;
-  currentAccountAddress: Address;
-  proposal: IProposalState;
-  stakesOfCurrentUser: Stake[];
-  votesOfCurrentUser: Vote[];
-}
-
-const mapStateToProps = (state: IRootState, ownProps: IContainerProps): IStateProps => {
-  const proposal = ownProps.proposal;
-  const dao = ownProps.dao;
-
-  return {
-    creatorProfile: state.profiles[proposal.proposer],
-    currentAccountAddress: ownProps.currentAccountAddress,
-    dao,
-    proposal,
-    stakesOfCurrentUser: ownProps.stakesOfCurrentUser,
-    votesOfCurrentUser: ownProps.votesOfCurrentUser,
-  };
-};
 
 interface IDispatchProps {
   redeemProposal: typeof arcActions.redeemProposal;
   executeProposal: typeof arcActions.executeProposal;
 }
 
+type SubscriptionData = [IProposalState, Stake[], Vote[]];
+type IProps = IStateProps & IDispatchProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps &  ISubscriptionProps<SubscriptionData> & IStateProps => {
+  const proposal = ownProps.data[0];
+
+  return {
+    ...ownProps,
+    creatorProfile: state.profiles[proposal.proposer],
+  };
+};
+
 const mapDispatchToProps = {
   redeemProposal: arcActions.redeemProposal,
   executeProposal: arcActions.executeProposal,
 };
-
-type IProps = IStateProps & IDispatchProps & IContainerProps;
 
 interface IState {
   preRedeemModalOpen: boolean;
@@ -77,14 +66,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const {
-      creatorProfile,
-      currentAccountAddress,
-      dao,
-      proposal,
-      stakesOfCurrentUser,
-      votesOfCurrentUser,
-    } = this.props;
+    const { creatorProfile, currentAccountAddress, data, dao, proposal } = this.props;
+    const [proposalState, stakesOfCurrentUser, votesOfCurrentUser] = data;
 
     const proposalClass = classNames({
       [css.wrapper]: true,
@@ -121,12 +104,12 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
 
     const closeReasonClass = classNames({
       [css.closeReason]: true,
-      [css.decisionPassed]: proposalPassed(proposal),
-      [css.decisionFailed]: proposalFailed(proposal),
+      [css.decisionPassed]: proposalPassed(proposalState),
+      [css.decisionFailed]: proposalFailed(proposalState),
     });
 
     let closeReason = "Time out";
-    switch (proposal.executionState) {
+    switch (proposalState.executionState) {
       case IExecutionState.BoostedBarCrossed:
       case IExecutionState.QueueBarCrossed:
       case IExecutionState.PreBoostedBarCrossed:
@@ -145,27 +128,27 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     return (
       <div className={proposalClass}>
         <div className={css.proposalCreator}>
-          <AccountPopup accountAddress={proposal.proposer} dao={dao} historyView/>
-          <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
+          <AccountPopup accountAddress={proposalState.proposer} dao={dao} historyView/>
+          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
         </div>
         <div className={css.endDate}>
-          {closingTime(proposal).format("MMM D, YYYY")}
+          {closingTime(proposalState).format("MMM D, YYYY")}
         </div>
         <div className={css.scheme}>
-          <div>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</div>
+          <div>{proposalState.queue.name.replace(/([A-Z])/g, " $1")}</div>
         </div>
         <div className={css.title}>
-          <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link></div>
+          <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link></div>
         </div>
         <div className={css.votes}>
           <div className={voteControls}>
-            <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} />
+            <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposalState} />
           </div>
         </div>
 
         <div className={css.predictions}>
           <StakeGraph
-            proposal={proposal}
+            proposal={proposalState}
             historyView
           />
         </div>
@@ -202,44 +185,29 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalHistoryRow = connect<IStateProps, IDispatchProps, IContainerProps>(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
+const ConnectedProposalHistoryRow = connect(mapStateToProps, mapDispatchToProps)(ProposalHistoryRow);
 
-export default (props: { proposal: Proposal; daoState: IDAOState; currentAccountAddress: Address}) => {
-  const proposal = props.proposal;
-  let observable;
-  if (!props.currentAccountAddress) {
-    observable = combineLatest(
-      proposal.state(),
-      of([]),
-      of([])
-    );
-
-  } else {
-    observable = combineLatest(
-      proposal.state(),
-      proposal.stakes({ where: { staker: props.currentAccountAddress}}),
-      proposal.votes({ where: { voter: props.currentAccountAddress }})
-    );
-
-  }
-  return <Subscribe observable={observable}>{
-    (state: IObservableState<[IProposalState, Stake[], Vote[]]>): any => {
-      if (state.isLoading) {
-        return <div>Loading proposal {proposal.id.substr(0, 6)}...</div>;
-      } else if (state.error) {
-        return <div>{ state.error.message }</div>;
-      } else {
-        const proposal = state.data[0];
-        const stake = state.data[1];
-        const vote = state.data[2];
-        return <ConnectedProposalHistoryRow
-          currentAccountAddress={props.currentAccountAddress}
-          proposal={proposal}
-          dao={props.daoState}
-          stakesOfCurrentUser={stake}
-          votesOfCurrentUser={vote}
-        />;
-      }
+// In this case we wrap the Connected component because mapStateToProps requires the subscribed proposal state
+export default withSubscription({
+  wrappedComponent: ConnectedProposalHistoryRow,
+  loadingComponent: (props) => <div>Loading proposal {props.proposal.id.substr(0, 6)}...</div>,
+  errorComponent: (props) => <div>{ props.error.message }</div>,
+  checkForUpdate: ["currentAccountAddress"],
+  createObservable: (props: IExternalProps) => {
+    const proposal = props.proposal;
+    if (!props.currentAccountAddress) {
+      return combineLatest(
+        proposal.state(),
+        of([]),
+        of([])
+      );
+    } else {
+      return combineLatest(
+        proposal.state(),
+        proposal.stakes({ where: { staker: props.currentAccountAddress}}),
+        proposal.votes({ where: { voter: props.currentAccountAddress }})
+      );
     }
-  }</Subscribe>;
-};
+  },
+});
+

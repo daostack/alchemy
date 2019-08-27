@@ -1,4 +1,4 @@
-import { formatTokens } from "lib/util";
+import { formatTokens, isValidUrl } from "lib/util";
 
 const BN = require("bn.js");
 
@@ -16,5 +16,41 @@ describe("Redemptions page", () => {
     expect(formatTokens(new BN("0999999999999999999"))).toEqual("0.99");
     expect(formatTokens(new BN("0099999999999999999"))).toEqual("0.09");
     expect(formatTokens(new BN("0009999999999999999"))).toEqual("+0");
+    expect(formatTokens(new BN("123456789223456789333456789444456789"))).toEqual("123,456,789.22B");
+  });
+});
+
+describe("isValidUrl", () => {
+
+  it("isValidUrl should work as expected", async () => {
+    expect(isValidUrl("toot.com")).toEqual(true);
+    expect(isValidUrl("www.toot.com")).toEqual(true);
+    expect(isValidUrl("http://toot.com")).toEqual(true);
+    expect(isValidUrl("http://www.tank.com")).toEqual(true);
+    expect(isValidUrl("https://toot.com")).toEqual(true);
+    expect(isValidUrl("http://toot.com:3000")).toEqual(true);
+    expect(isValidUrl("http://toot.com?m=1")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m=1")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m=1&n")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m=1&n=flarg")).toEqual(true);
+    expect(isValidUrl("http://t.ca")).toEqual(true);
+    expect(isValidUrl("http://t.amsterdam")).toEqual(true);
+    expect(isValidUrl("http://t.ca?")).toEqual(true);
+    expect(isValidUrl("http://t.ca/flank")).toEqual(true);
+    expect(isValidUrl("http://t.ca/flank/tank")).toEqual(true);
+    expect(isValidUrl("http://t.ca/flank/tank.html")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m=1&n,flarg")).toEqual(true);
+    expect(isValidUrl("http://toot.com:4000?m=1&n#20flarg")).toEqual(true);
+
+    expect(isValidUrl("http://t.c")).toEqual(false);
+    expect(isValidUrl("http://t,c")).toEqual(false);
+    expect(isValidUrl("http://toot com")).toEqual(false);
+    expect(isValidUrl(" http://toot com")).toEqual(false);
+    expect(isValidUrl(" http://toot.com")).toEqual(false);
+    expect(isValidUrl("httpb://toot.com")).toEqual(false);
+    expect(isValidUrl("http://toot^com")).toEqual(false);
+    // the caller is responsible for trimming
+    expect(isValidUrl("http://toot.com ")).toEqual(false);
   });
 });
