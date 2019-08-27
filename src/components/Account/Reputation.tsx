@@ -26,7 +26,7 @@ export default class Reputation extends React.Component<IProps, null> {
       const percentageBn = reputation.muln(10000).div(totalReputation);
       if (percentageBn.bitLength() > 53) {
         // eslint-disable-next-line no-console
-        console.log("");
+        console.log("percentage is too large to be computed as a number");
         percentageString = "NaN";
       } else {
         percentage = percentageBn.toNumber() / 100;
@@ -39,7 +39,7 @@ export default class Reputation extends React.Component<IProps, null> {
 
     if (!percentageString) {
       percentageString = percentage.toLocaleString(undefined, {minimumFractionDigits: PRECISION, maximumFractionDigits: PRECISION});
-      
+
       if ((percentage === 0) && !reputation.isZero()) {
         percentageString = `+${percentageString}`;
       }
