@@ -77,12 +77,17 @@ class DaoSidebar extends React.Component<IProps, IState> {
               </p>
               : dao.name === "Meme" ?
                 <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank" rel="noopener noreferrer">Learn how to MemeDAO</a></p>
-                : dao.name === "Identity" ?
-                  <p>
+              : dao.name === "ETHBerlin dHack.io" ?
+                <p>
+                  For more info join our TG group - 
+                  <a href="https://t.me/dhack0" target="_blank" rel="noopener noreferrer">t.me/dhack0</a>
+                </p>
+              : dao.name === "Identity" ?
+                <p>
                   A curated registry of identities on the Ethereum blockchain.&nbsp;
-                    <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
-                  </p>
-                  : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
+                  <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
+                </p>
+              : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
             }
           </div>
           <div className={css.navigation}>
