@@ -397,11 +397,12 @@ button:hover {
   }
 
   a {
-    color: silver;
+    text-decoration: underline;
+    color: white;
   }
 
   a:hover {
-    color: white;
+    color: silver;
   }
 }
 

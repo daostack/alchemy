@@ -138,6 +138,10 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
 export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
+    
+    // ensure that scheme.ReputationFromToken is set
+    await scheme.fetchStaticState();
+
     if (privateKey) {
       const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
       const state = await reputationFromTokenScheme.scheme.fetchStaticState();
