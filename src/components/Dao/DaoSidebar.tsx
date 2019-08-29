@@ -43,7 +43,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
       return null;
     }
 
-    const proposals = this.props.data.data.proposals;
+    const proposals = this.props.data.data ? this.props.data.data.proposals : [];
     const dao = this.props.dao;
     const proposalCount = proposals.length;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
