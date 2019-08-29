@@ -19,7 +19,7 @@ interface IExternalProps {
   dao: IDAOState;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<any[]>;
+type IProps = IExternalProps & ISubscriptionProps<any>;
 
 interface IState {
   openMenu: boolean;
@@ -43,7 +43,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
       return null;
     }
 
-    const proposals = this.props.data;
+    const proposals = this.props.data.data.proposals;
     const dao = this.props.dao;
     const proposalCount = proposals.length;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
@@ -147,7 +147,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/redemption.svg" />
-                  Redemptions ({proposalCount})
+                  Redemptions ({proposalCount || "0"})
                 </NavLink>
               </li>
             </ul>
