@@ -17,11 +17,35 @@
         "label":"acceptFulfillment",
         "description":"acceptFulfillment",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"acceptFulfillment",
-          "name":"acceptFulfillment",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillmentId",
+              "name":"_fulfillmentId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_approverId",
+              "name":"_approverId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_tokenAmounts",
+              "name":"_tokenAmounts"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -60,11 +84,50 @@
         "label":"issueAndContribute",
         "description":"issueAndContribute",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"issueAndContribute",
-          "name":"issueAndContribute",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          },
+          {
+              "label":"_deadline",
+              "name":"_deadline",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_token",
+              "name":"_token",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_tokenVersion",
+              "name":"_tokenVersion",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_depositAmount",
+              "name":"_depositAmount",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -118,11 +181,36 @@
         "label":"changeApprover",
         "description":"changeApprover",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"changeApprover",
-          "name":"changeApprover",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_approverId",
+              "name":"_approverId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_approver",
+              "name":"_approver",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -161,11 +249,29 @@
         "label":"drainBounty",
         "description":"drainBounty",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"drainBounty",
-          "name":"drainBounty",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_amounts",
+              "name":"_amounts"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -200,11 +306,23 @@
         "label":"performAction",
         "description":"performAction",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"performAction",
-          "name":"performAction",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -235,11 +353,30 @@
         "label":"addApprovers",
         "description":"addApprovers",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"addApprovers",
-          "name":"addApprovers",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -274,11 +411,44 @@
         "label":"issueBounty",
         "description":"issueBounty",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"issueBounty",
-          "name":"issueBounty",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          },
+          {
+              "label":"_deadline",
+              "name":"_deadline",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_token",
+              "name":"_token",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_tokenVersion",
+              "name":"_tokenVersion",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -328,11 +498,13 @@
         "label":"setMetaTxRelayer",
         "description":"setMetaTxRelayer",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"setMetaTxRelayer",
-          "name":"setMetaTxRelayer",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_relayer",
+              "name":"_relayer",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -355,11 +527,30 @@
         "label":"replaceApprovers",
         "description":"replaceApprovers",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"replaceApprovers",
-          "name":"replaceApprovers",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -394,11 +585,9 @@
         "label":"callStarted",
         "description":"callStarted",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"callStarted",
-          "name":"callStarted",
-          "placeholder":""
-        },
+        "fields":[
+
+        ],
         "abi":{
           "constant":true,
           "inputs":[
@@ -421,11 +610,29 @@
         "label":"changeData",
         "description":"changeData",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"changeData",
-          "name":"changeData",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -460,11 +667,9 @@
         "label":"numBounties",
         "description":"numBounties",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"numBounties",
-          "name":"numBounties",
-          "placeholder":""
-        },
+        "fields":[
+
+        ],
         "abi":{
           "constant":true,
           "inputs":[
@@ -487,11 +692,9 @@
         "label":"owner",
         "description":"owner",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"owner",
-          "name":"owner",
-          "placeholder":""
-        },
+        "fields":[
+
+        ],
         "abi":{
           "constant":true,
           "inputs":[
@@ -514,11 +717,25 @@
         "label":"refundContribution",
         "description":"refundContribution",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"refundContribution",
-          "name":"refundContribution",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_contributionId",
+              "name":"_contributionId",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -549,11 +766,28 @@
         "label":"fulfillBounty",
         "description":"fulfillBounty",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"fulfillBounty",
-          "name":"fulfillBounty",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillers",
+              "name":"_fulfillers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -588,11 +822,30 @@
         "label":"replaceIssuers",
         "description":"replaceIssuers",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"replaceIssuers",
-          "name":"replaceIssuers",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -627,11 +880,36 @@
         "label":"changeIssuer",
         "description":"changeIssuer",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"changeIssuer",
-          "name":"changeIssuer",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerIdToChange",
+              "name":"_issuerIdToChange",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_newIssuer",
+              "name":"_newIssuer",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -670,11 +948,29 @@
         "label":"refundContributions",
         "description":"refundContributions",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"refundContributions",
-          "name":"refundContributions",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_contributionIds",
+              "name":"_contributionIds"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -709,11 +1005,25 @@
         "label":"contribute",
         "description":"contribute",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"contribute",
-          "name":"contribute",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_amount",
+              "name":"_amount",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -744,11 +1054,31 @@
         "label":"changeDeadline",
         "description":"changeDeadline",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"changeDeadline",
-          "name":"changeDeadline",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_deadline",
+              "name":"_deadline",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -783,11 +1113,45 @@
         "label":"changeBounty",
         "description":"changeBounty",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"changeBounty",
-          "name":"changeBounty",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          },
+          {
+              "label":"_deadline",
+              "name":"_deadline",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -834,11 +1198,9 @@
         "label":"metaTxRelayer",
         "description":"metaTxRelayer",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"metaTxRelayer",
-          "name":"metaTxRelayer",
-          "placeholder":""
-        },
+        "fields":[
+
+        ],
         "abi":{
           "constant":true,
           "inputs":[
@@ -861,11 +1223,38 @@
         "label":"fulfillAndAccept",
         "description":"fulfillAndAccept",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"fulfillAndAccept",
-          "name":"fulfillAndAccept",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillers",
+              "name":"_fulfillers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          },
+          {
+              "label":"_approverId",
+              "name":"_approverId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_tokenAmounts",
+              "name":"_tokenAmounts"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -908,11 +1297,34 @@
         "label":"updateFulfillment",
         "description":"updateFulfillment",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"updateFulfillment",
-          "name":"updateFulfillment",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillmentId",
+              "name":"_fulfillmentId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillers",
+              "name":"_fulfillers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -951,11 +1363,30 @@
         "label":"addIssuers",
         "description":"addIssuers",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"addIssuers",
-          "name":"addIssuers",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuerId",
+              "name":"_issuerId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -990,11 +1421,14 @@
         "label":"bounties",
         "description":"bounties",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"bounties",
-          "name":"bounties",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"",
+              "name":"",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":true,
           "inputs":[
@@ -1036,11 +1470,20 @@
         "label":"tokenBalances",
         "description":"tokenBalances",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"tokenBalances",
-          "name":"tokenBalances",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"",
+              "name":"",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"",
+              "name":"",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":true,
           "inputs":[
@@ -1070,11 +1513,23 @@
         "label":"refundMyContributions",
         "description":"refundMyContributions",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"refundMyContributions",
-          "name":"refundMyContributions",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_sender",
+              "name":"_sender",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_contributionIds",
+              "name":"_contributionIds"
+          }
+        ],
         "abi":{
           "constant":false,
           "inputs":[
@@ -1105,11 +1560,14 @@
         "label":"getBounty",
         "description":"getBounty",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"getBounty",
-          "name":"getBounty",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "constant":true,
           "inputs":[
@@ -1194,9 +1652,9 @@
     },
     {
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "placeholder":""
-        },
+        "fields":[
+
+        ],
         "abi":{
           "inputs":[
 
@@ -1211,11 +1669,50 @@
         "label":"BountyIssued",
         "description":"BountyIssued",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyIssued",
-          "name":"BountyIssued",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_creator",
+              "name":"_creator",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          },
+          {
+              "label":"_deadline",
+              "name":"_deadline",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_token",
+              "name":"_token",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_tokenVersion",
+              "name":"_tokenVersion",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1269,11 +1766,31 @@
         "label":"ContributionAdded",
         "description":"ContributionAdded",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"ContributionAdded",
-          "name":"ContributionAdded",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_contributionId",
+              "name":"_contributionId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_contributor",
+              "name":"_contributor",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_amount",
+              "name":"_amount",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1307,11 +1824,20 @@
         "label":"ContributionRefunded",
         "description":"ContributionRefunded",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"ContributionRefunded",
-          "name":"ContributionRefunded",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_contributionId",
+              "name":"_contributionId",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1335,11 +1861,23 @@
         "label":"ContributionsRefunded",
         "description":"ContributionsRefunded",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"ContributionsRefunded",
-          "name":"ContributionsRefunded",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuer",
+              "name":"_issuer",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_contributionIds",
+              "name":"_contributionIds"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1368,11 +1906,23 @@
         "label":"BountyDrained",
         "description":"BountyDrained",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyDrained",
-          "name":"BountyDrained",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_issuer",
+              "name":"_issuer",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_amounts",
+              "name":"_amounts"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1401,11 +1951,23 @@
         "label":"ActionPerformed",
         "description":"ActionPerformed",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"ActionPerformed",
-          "name":"ActionPerformed",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfiller",
+              "name":"_fulfiller",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1434,11 +1996,34 @@
         "label":"BountyFulfilled",
         "description":"BountyFulfilled",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyFulfilled",
-          "name":"BountyFulfilled",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillmentId",
+              "name":"_fulfillmentId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillers",
+              "name":"_fulfillers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          },
+          {
+              "label":"_submitter",
+              "name":"_submitter",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1477,11 +2062,29 @@
         "label":"FulfillmentUpdated",
         "description":"FulfillmentUpdated",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"FulfillmentUpdated",
-          "name":"FulfillmentUpdated",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillmentId",
+              "name":"_fulfillmentId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillers",
+              "name":"_fulfillers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1515,11 +2118,29 @@
         "label":"FulfillmentAccepted",
         "description":"FulfillmentAccepted",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"FulfillmentAccepted",
-          "name":"FulfillmentAccepted",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_fulfillmentId",
+              "name":"_fulfillmentId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_approver",
+              "name":"_approver",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_tokenAmounts",
+              "name":"_tokenAmounts"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1553,11 +2174,39 @@
         "label":"BountyChanged",
         "description":"BountyChanged",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyChanged",
-          "name":"BountyChanged",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_changer",
+              "name":"_changer",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          },
+          {
+              "label":"_deadline",
+              "name":"_deadline",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1601,11 +2250,24 @@
         "label":"BountyIssuersUpdated",
         "description":"BountyIssuersUpdated",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyIssuersUpdated",
-          "name":"BountyIssuersUpdated",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_changer",
+              "name":"_changer",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_issuers",
+              "name":"_issuers",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1634,11 +2296,24 @@
         "label":"BountyApproversUpdated",
         "description":"BountyApproversUpdated",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyApproversUpdated",
-          "name":"BountyApproversUpdated",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_changer",
+              "name":"_changer",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_approvers",
+              "name":"_approvers",
+              "placeholder":"Address (0x0000…)"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1667,11 +2342,23 @@
         "label":"BountyDataChanged",
         "description":"BountyDataChanged",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyDataChanged",
-          "name":"BountyDataChanged",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_changer",
+              "name":"_changer",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_data",
+              "name":"_data"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1700,11 +2387,25 @@
         "label":"BountyDeadlineChanged",
         "description":"BountyDeadlineChanged",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":{
-          "label":"BountyDeadlineChanged",
-          "name":"BountyDeadlineChanged",
-          "placeholder":""
-        },
+        "fields":[
+          {
+              "label":"_bountyId",
+              "name":"_bountyId",
+              "decimals":18,
+              "unit":"ETH"
+          },
+          {
+              "label":"_changer",
+              "name":"_changer",
+              "placeholder":"Address (0x0000…)"
+          },
+          {
+              "label":"_deadline",
+              "name":"_deadline",
+              "decimals":18,
+              "unit":"ETH"
+          }
+        ],
         "abi":{
           "anonymous":false,
           "inputs":[
