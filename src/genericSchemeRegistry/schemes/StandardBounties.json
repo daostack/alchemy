@@ -25,21 +25,15 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfillmentId",
-              "name":"_fulfillmentId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_fulfillmentId"
           },
           {
               "label":"_approverId",
-              "name":"_approverId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_approverId"
           },
           {
               "label":"_tokenAmounts",
@@ -106,9 +100,7 @@
           },
           {
               "label":"_deadline",
-              "name":"_deadline",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_deadline"
           },
           {
               "label":"_token",
@@ -117,15 +109,11 @@
           },
           {
               "label":"_tokenVersion",
-              "name":"_tokenVersion",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_tokenVersion"
           },
           {
               "label":"_depositAmount",
-              "name":"_depositAmount",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_depositAmount"
           }
         ],
         "abi":{
@@ -189,21 +177,15 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_approverId",
-              "name":"_approverId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_approverId"
           },
           {
               "label":"_approver",
@@ -257,15 +239,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_amounts",
@@ -314,9 +292,7 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_data",
@@ -361,15 +337,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_approvers",
@@ -433,9 +405,7 @@
           },
           {
               "label":"_deadline",
-              "name":"_deadline",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_deadline"
           },
           {
               "label":"_token",
@@ -444,9 +414,7 @@
           },
           {
               "label":"_tokenVersion",
-              "name":"_tokenVersion",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_tokenVersion"
           }
         ],
         "abi":{
@@ -535,15 +503,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_approvers",
@@ -618,15 +582,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_data",
@@ -725,15 +685,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_contributionId",
-              "name":"_contributionId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_contributionId"
           }
         ],
         "abi":{
@@ -774,9 +730,7 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfillers",
@@ -830,15 +784,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_issuers",
@@ -888,21 +838,15 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_issuerIdToChange",
-              "name":"_issuerIdToChange",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerIdToChange"
           },
           {
               "label":"_newIssuer",
@@ -956,15 +900,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_contributionIds",
@@ -1013,15 +953,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_amount",
-              "name":"_amount",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_amount"
           }
         ],
         "abi":{
@@ -1062,21 +998,15 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_deadline",
-              "name":"_deadline",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_deadline"
           }
         ],
         "abi":{
@@ -1121,15 +1051,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_issuers",
@@ -1147,9 +1073,7 @@
           },
           {
               "label":"_deadline",
-              "name":"_deadline",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_deadline"
           }
         ],
         "abi":{
@@ -1231,9 +1155,7 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfillers",
@@ -1246,9 +1168,7 @@
           },
           {
               "label":"_approverId",
-              "name":"_approverId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_approverId"
           },
           {
               "label":"_tokenAmounts",
@@ -1305,15 +1225,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfillmentId",
-              "name":"_fulfillmentId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_fulfillmentId"
           },
           {
               "label":"_fulfillers",
@@ -1371,15 +1287,11 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuerId",
-              "name":"_issuerId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_issuerId"
           },
           {
               "label":"_issuers",
@@ -1424,9 +1336,7 @@
         "fields":[
           {
               "label":"",
-              "name":"",
-              "decimals":18,
-              "unit":"ETH"
+              "name":""
           }
         ],
         "abi":{
@@ -1473,15 +1383,11 @@
         "fields":[
           {
               "label":"",
-              "name":"",
-              "decimals":18,
-              "unit":"ETH"
+              "name":""
           },
           {
               "label":"",
-              "name":"",
-              "decimals":18,
-              "unit":"ETH"
+              "name":""
           }
         ],
         "abi":{
@@ -1521,9 +1427,7 @@
           },
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_contributionIds",
@@ -1563,9 +1467,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           }
         ],
         "abi":{
@@ -1672,9 +1574,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_creator",
@@ -1697,9 +1597,7 @@
           },
           {
               "label":"_deadline",
-              "name":"_deadline",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_deadline"
           },
           {
               "label":"_token",
@@ -1708,9 +1606,7 @@
           },
           {
               "label":"_tokenVersion",
-              "name":"_tokenVersion",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_tokenVersion"
           }
         ],
         "abi":{
@@ -1769,15 +1665,11 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_contributionId",
-              "name":"_contributionId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_contributionId"
           },
           {
               "label":"_contributor",
@@ -1786,9 +1678,7 @@
           },
           {
               "label":"_amount",
-              "name":"_amount",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_amount"
           }
         ],
         "abi":{
@@ -1827,15 +1717,11 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_contributionId",
-              "name":"_contributionId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_contributionId"
           }
         ],
         "abi":{
@@ -1864,9 +1750,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuer",
@@ -1909,9 +1793,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_issuer",
@@ -1954,9 +1836,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfiller",
@@ -1999,15 +1879,11 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfillmentId",
-              "name":"_fulfillmentId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_fulfillmentId"
           },
           {
               "label":"_fulfillers",
@@ -2065,15 +1941,11 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfillmentId",
-              "name":"_fulfillmentId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_fulfillmentId"
           },
           {
               "label":"_fulfillers",
@@ -2121,15 +1993,11 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_fulfillmentId",
-              "name":"_fulfillmentId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_fulfillmentId"
           },
           {
               "label":"_approver",
@@ -2177,9 +2045,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_changer",
@@ -2202,9 +2068,7 @@
           },
           {
               "label":"_deadline",
-              "name":"_deadline",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_deadline"
           }
         ],
         "abi":{
@@ -2253,9 +2117,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_changer",
@@ -2299,9 +2161,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_changer",
@@ -2345,9 +2205,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_changer",
@@ -2390,9 +2248,7 @@
         "fields":[
           {
               "label":"_bountyId",
-              "name":"_bountyId",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_bountyId"
           },
           {
               "label":"_changer",
@@ -2401,9 +2257,7 @@
           },
           {
               "label":"_deadline",
-              "name":"_deadline",
-              "decimals":18,
-              "unit":"ETH"
+              "name":"_deadline"
           }
         ],
         "abi":{
