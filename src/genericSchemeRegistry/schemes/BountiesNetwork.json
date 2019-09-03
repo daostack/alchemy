@@ -13,6 +13,15 @@
   },
   "actions": [
     {
+        "id":"acceptFulfillment",
+        "label":"acceptFulfillment",
+        "description":"acceptFulfillment",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"acceptFulfillment",
+          "name":"acceptFulfillment",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -47,6 +56,15 @@
         }
     },
     {
+        "id":"issueAndContribute",
+        "label":"issueAndContribute",
+        "description":"issueAndContribute",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"issueAndContribute",
+          "name":"issueAndContribute",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -96,6 +114,15 @@
         }
     },
     {
+        "id":"changeApprover",
+        "label":"changeApprover",
+        "description":"changeApprover",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"changeApprover",
+          "name":"changeApprover",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -130,6 +157,15 @@
         }
     },
     {
+        "id":"drainBounty",
+        "label":"drainBounty",
+        "description":"drainBounty",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"drainBounty",
+          "name":"drainBounty",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -160,6 +196,15 @@
         }
     },
     {
+        "id":"performAction",
+        "label":"performAction",
+        "description":"performAction",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"performAction",
+          "name":"performAction",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -186,6 +231,15 @@
         }
     },
     {
+        "id":"addApprovers",
+        "label":"addApprovers",
+        "description":"addApprovers",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"addApprovers",
+          "name":"addApprovers",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -216,6 +270,15 @@
         }
     },
     {
+        "id":"issueBounty",
+        "label":"issueBounty",
+        "description":"issueBounty",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"issueBounty",
+          "name":"issueBounty",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -261,6 +324,15 @@
         }
     },
     {
+        "id":"setMetaTxRelayer",
+        "label":"setMetaTxRelayer",
+        "description":"setMetaTxRelayer",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"setMetaTxRelayer",
+          "name":"setMetaTxRelayer",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -279,6 +351,15 @@
         }
     },
     {
+        "id":"replaceApprovers",
+        "label":"replaceApprovers",
+        "description":"replaceApprovers",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"replaceApprovers",
+          "name":"replaceApprovers",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -309,6 +390,15 @@
         }
     },
     {
+        "id":"callStarted",
+        "label":"callStarted",
+        "description":"callStarted",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"callStarted",
+          "name":"callStarted",
+          "placeholder":""
+        },
         "abi":{
           "constant":true,
           "inputs":[
@@ -327,6 +417,15 @@
         }
     },
     {
+        "id":"changeData",
+        "label":"changeData",
+        "description":"changeData",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"changeData",
+          "name":"changeData",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -357,6 +456,15 @@
         }
     },
     {
+        "id":"numBounties",
+        "label":"numBounties",
+        "description":"numBounties",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"numBounties",
+          "name":"numBounties",
+          "placeholder":""
+        },
         "abi":{
           "constant":true,
           "inputs":[
@@ -375,6 +483,15 @@
         }
     },
     {
+        "id":"owner",
+        "label":"owner",
+        "description":"owner",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"owner",
+          "name":"owner",
+          "placeholder":""
+        },
         "abi":{
           "constant":true,
           "inputs":[
@@ -393,6 +510,15 @@
         }
     },
     {
+        "id":"refundContribution",
+        "label":"refundContribution",
+        "description":"refundContribution",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"refundContribution",
+          "name":"refundContribution",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -419,6 +545,15 @@
         }
     },
     {
+        "id":"fulfillBounty",
+        "label":"fulfillBounty",
+        "description":"fulfillBounty",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"fulfillBounty",
+          "name":"fulfillBounty",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -449,6 +584,15 @@
         }
     },
     {
+        "id":"replaceIssuers",
+        "label":"replaceIssuers",
+        "description":"replaceIssuers",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"replaceIssuers",
+          "name":"replaceIssuers",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -479,6 +623,15 @@
         }
     },
     {
+        "id":"changeIssuer",
+        "label":"changeIssuer",
+        "description":"changeIssuer",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"changeIssuer",
+          "name":"changeIssuer",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -513,6 +666,15 @@
         }
     },
     {
+        "id":"refundContributions",
+        "label":"refundContributions",
+        "description":"refundContributions",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"refundContributions",
+          "name":"refundContributions",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -543,6 +705,15 @@
         }
     },
     {
+        "id":"contribute",
+        "label":"contribute",
+        "description":"contribute",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"contribute",
+          "name":"contribute",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -569,6 +740,15 @@
         }
     },
     {
+        "id":"changeDeadline",
+        "label":"changeDeadline",
+        "description":"changeDeadline",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"changeDeadline",
+          "name":"changeDeadline",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -599,6 +779,15 @@
         }
     },
     {
+        "id":"changeBounty",
+        "label":"changeBounty",
+        "description":"changeBounty",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"changeBounty",
+          "name":"changeBounty",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -641,6 +830,15 @@
         }
     },
     {
+        "id":"metaTxRelayer",
+        "label":"metaTxRelayer",
+        "description":"metaTxRelayer",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"metaTxRelayer",
+          "name":"metaTxRelayer",
+          "placeholder":""
+        },
         "abi":{
           "constant":true,
           "inputs":[
@@ -659,6 +857,15 @@
         }
     },
     {
+        "id":"fulfillAndAccept",
+        "label":"fulfillAndAccept",
+        "description":"fulfillAndAccept",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"fulfillAndAccept",
+          "name":"fulfillAndAccept",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -697,6 +904,15 @@
         }
     },
     {
+        "id":"updateFulfillment",
+        "label":"updateFulfillment",
+        "description":"updateFulfillment",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"updateFulfillment",
+          "name":"updateFulfillment",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -731,6 +947,15 @@
         }
     },
     {
+        "id":"addIssuers",
+        "label":"addIssuers",
+        "description":"addIssuers",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"addIssuers",
+          "name":"addIssuers",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -761,6 +986,15 @@
         }
     },
     {
+        "id":"bounties",
+        "label":"bounties",
+        "description":"bounties",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"bounties",
+          "name":"bounties",
+          "placeholder":""
+        },
         "abi":{
           "constant":true,
           "inputs":[
@@ -798,6 +1032,15 @@
         }
     },
     {
+        "id":"tokenBalances",
+        "label":"tokenBalances",
+        "description":"tokenBalances",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"tokenBalances",
+          "name":"tokenBalances",
+          "placeholder":""
+        },
         "abi":{
           "constant":true,
           "inputs":[
@@ -823,6 +1066,15 @@
         }
     },
     {
+        "id":"refundMyContributions",
+        "label":"refundMyContributions",
+        "description":"refundMyContributions",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"refundMyContributions",
+          "name":"refundMyContributions",
+          "placeholder":""
+        },
         "abi":{
           "constant":false,
           "inputs":[
@@ -849,6 +1101,15 @@
         }
     },
     {
+        "id":"getBounty",
+        "label":"getBounty",
+        "description":"getBounty",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"getBounty",
+          "name":"getBounty",
+          "placeholder":""
+        },
         "abi":{
           "constant":true,
           "inputs":[
@@ -932,6 +1193,10 @@
         }
     },
     {
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "placeholder":""
+        },
         "abi":{
           "inputs":[
 
@@ -942,6 +1207,15 @@
         }
     },
     {
+        "id":"BountyIssued",
+        "label":"BountyIssued",
+        "description":"BountyIssued",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyIssued",
+          "name":"BountyIssued",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -991,6 +1265,15 @@
         }
     },
     {
+        "id":"ContributionAdded",
+        "label":"ContributionAdded",
+        "description":"ContributionAdded",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"ContributionAdded",
+          "name":"ContributionAdded",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1020,6 +1303,15 @@
         }
     },
     {
+        "id":"ContributionRefunded",
+        "label":"ContributionRefunded",
+        "description":"ContributionRefunded",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"ContributionRefunded",
+          "name":"ContributionRefunded",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1039,6 +1331,15 @@
         }
     },
     {
+        "id":"ContributionsRefunded",
+        "label":"ContributionsRefunded",
+        "description":"ContributionsRefunded",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"ContributionsRefunded",
+          "name":"ContributionsRefunded",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1063,6 +1364,15 @@
         }
     },
     {
+        "id":"BountyDrained",
+        "label":"BountyDrained",
+        "description":"BountyDrained",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyDrained",
+          "name":"BountyDrained",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1087,6 +1397,15 @@
         }
     },
     {
+        "id":"ActionPerformed",
+        "label":"ActionPerformed",
+        "description":"ActionPerformed",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"ActionPerformed",
+          "name":"ActionPerformed",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1111,6 +1430,15 @@
         }
     },
     {
+        "id":"BountyFulfilled",
+        "label":"BountyFulfilled",
+        "description":"BountyFulfilled",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyFulfilled",
+          "name":"BountyFulfilled",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1145,6 +1473,15 @@
         }
     },
     {
+        "id":"FulfillmentUpdated",
+        "label":"FulfillmentUpdated",
+        "description":"FulfillmentUpdated",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"FulfillmentUpdated",
+          "name":"FulfillmentUpdated",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1174,6 +1511,15 @@
         }
     },
     {
+        "id":"FulfillmentAccepted",
+        "label":"FulfillmentAccepted",
+        "description":"FulfillmentAccepted",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"FulfillmentAccepted",
+          "name":"FulfillmentAccepted",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1203,6 +1549,15 @@
         }
     },
     {
+        "id":"BountyChanged",
+        "label":"BountyChanged",
+        "description":"BountyChanged",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyChanged",
+          "name":"BountyChanged",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1242,6 +1597,15 @@
         }
     },
     {
+        "id":"BountyIssuersUpdated",
+        "label":"BountyIssuersUpdated",
+        "description":"BountyIssuersUpdated",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyIssuersUpdated",
+          "name":"BountyIssuersUpdated",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1266,6 +1630,15 @@
         }
     },
     {
+        "id":"BountyApproversUpdated",
+        "label":"BountyApproversUpdated",
+        "description":"BountyApproversUpdated",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyApproversUpdated",
+          "name":"BountyApproversUpdated",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1290,6 +1663,15 @@
         }
     },
     {
+        "id":"BountyDataChanged",
+        "label":"BountyDataChanged",
+        "description":"BountyDataChanged",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyDataChanged",
+          "name":"BountyDataChanged",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
@@ -1314,6 +1696,15 @@
         }
     },
     {
+        "id":"BountyDeadlineChanged",
+        "label":"BountyDeadlineChanged",
+        "description":"BountyDeadlineChanged",
+        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+        "fields":{
+          "label":"BountyDeadlineChanged",
+          "name":"BountyDeadlineChanged",
+          "placeholder":""
+        },
         "abi":{
           "anonymous":false,
           "inputs":[
