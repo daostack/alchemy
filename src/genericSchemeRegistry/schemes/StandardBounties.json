@@ -2,13 +2,13 @@
   "name": "DutchX",
   "addresses": {
     "main": [
-      "0xb9812e2fa995ec53b5b6df34d21f9304762c5497"
+      "0xe7f69ea2a79521136ee0bf3c50f6b5f1ea0ab0cd"
     ],
     "rinkeby": [
-      "0xaaeb2035ff394fdb2c879190f95e7676f1a9444b"
+      "0xa53aadb09bd0612ee810ab8b4605c9ee45892169"
     ],
     "private": [
-      "0x70ee878d560d7e17a986872f54b7c58f564b2784"
+      "0xa53aadb09bd0612ee810ab8b4605c9ee45892169"
     ]
   },
   "actions": [
