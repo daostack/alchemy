@@ -3,8 +3,8 @@ import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 
-import Web3Connect from "@daostack/web3connect";
-import { IProviderInfo } from "@daostack/web3connect/lib/helpers/types";
+import Web3Connect from "web3connect";
+import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
 
 const Web3 = require("web3");
@@ -17,13 +17,15 @@ let selectedProvider: any;
 
 const web3ConnectProviderOptions =
     Object.assign({
-      disableWalletConnect: true,
     },
     (process.env.NODE_ENV === "production") ?
       {
+        network: "mainnet",
+        walletconnect: {
+          infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+        },
         portis: {
           id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-          network: "mainnet",
         },
         fortmatic: {
           key: "pk_live_38A2BD2B1D4E9912",
@@ -31,9 +33,12 @@ const web3ConnectProviderOptions =
       }
       : (process.env.NODE_ENV === "staging") ?
         {
+          network: "rinkeby",
+          walletconnect: {
+            infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+          },
           portis: {
             id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-            network: "rinkeby",
           },
           fortmatic: {
             key: "pk_test_659B5B486EF199E4",
@@ -466,7 +471,7 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
           provider = await Web3Connect.ConnectToInjected();
           break;
         case "qrcode":
-          provider = await Web3Connect.ConnectToWalletConnect({});
+          provider = await Web3Connect.ConnectToWalletConnect(web3ConnectProviderOptions.walletconnect);
           break;
         case "web":
           switch (web3ProviderInfo.name) {
