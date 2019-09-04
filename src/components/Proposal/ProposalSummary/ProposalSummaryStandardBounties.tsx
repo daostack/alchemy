@@ -29,29 +29,29 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
     });
 
     switch (action.id) {
-      case "updateMasterCopy":
+      case "issueAndContribute":
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
               {action.label}
             </span>
-            { detailView ?
+            {detailView ?
               <div className={css.summaryDetails}>
-                { action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                {action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
           </div>
         );
-      case "changeETHUSDOracle":
+      case "contribute":
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
               {action.label}
             </span>
-            { detailView ?
+            {detailView ?
               <div className={css.summaryDetails}>
                 New oracle address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
@@ -59,14 +59,14 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             }
           </div>
         );
-      case "updateAuctioneer":
+      case "refundContributions":
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
               {action.label}
             </span>
-            { detailView ?
+            {detailView ?
               <div className={css.summaryDetails}>
                 New owner address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
@@ -74,14 +74,119 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             }
           </div>
         );
-      case "updateApprovalOfToken":
+      case "drainBounty":
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
               {decodedCallData.values[1] ? "+" : "-"}&nbsp;
               {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
             </span>
-            { detailView ?
+            {detailView ?
+              <ul className={css.summaryDetails}>
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+              </ul>
+              : ""
+            }
+          </div>
+        );
+      case "acceptFulfillment":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+            </span>
+            {detailView ?
+              <ul className={css.summaryDetails}>
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+              </ul>
+              : ""
+            }
+          </div>
+        );
+      case "changeBounty":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+            </span>
+            {detailView ?
+              <ul className={css.summaryDetails}>
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+              </ul>
+              : ""
+            }
+          </div>
+        );
+      case "changeData":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+            </span>
+            {detailView ?
+              <ul className={css.summaryDetails}>
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+              </ul>
+              : ""
+            }
+          </div>
+        );
+      case "changeDeadline":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+            </span>
+            {detailView ?
+              <ul className={css.summaryDetails}>
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+              </ul>
+              : ""
+            }
+          </div>
+        );
+      case "fulfillAndAccept":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+            </span>
+            {detailView ?
+              <ul className={css.summaryDetails}>
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+              </ul>
+              : ""
+            }
+          </div>
+        );
+      case "replaceApprovers":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+            </span>
+            {detailView ?
+              <ul className={css.summaryDetails}>
+                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+              </ul>
+              : ""
+            }
+          </div>
+        );
+      case "replaceIssuers":
+        return (
+          <div className={proposalSummaryClass}>
+            <span className={css.summaryTitle}>
+              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
+              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+            </span>
+            {detailView ?
               <ul className={css.summaryDetails}>
                 {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
               </ul>
@@ -91,18 +196,18 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         );
       case "updateThresholdNewTokenPair":
       case "updateThresholdNewAuction":
-      {
-        const field = action.fields[0];
-        const value = decodedCallData.values[0];
-        return (
-          <div className={proposalSummaryClass}>
-            <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg"/>&nbsp;
-              { field.label }: {formatTokens(new BN(value), field.unit, field.decimals)}
-            </span>
-          </div>
-        );
-      }
+        {
+          const field = action.fields[0];
+          const value = decodedCallData.values[0];
+          return (
+            <div className={proposalSummaryClass}>
+              <span className={css.summaryTitle}>
+                <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
+              {field.label}: {formatTokens(new BN(value), field.unit, field.decimals)}
+              </span>
+            </div>
+          );
+        }
       default:
         return "";
     }
