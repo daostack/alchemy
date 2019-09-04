@@ -8,7 +8,6 @@ import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "li
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
