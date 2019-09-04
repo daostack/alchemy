@@ -4,22 +4,28 @@ import { getArc } from "arc";
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
 import Reputation from "components/Account/Reputation";
-import Subscribe, { IObservableState } from "components/Shared/Subscribe";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as css from "layouts/App.scss";
 import * as React from "react";
 import { combineLatest, of } from "rxjs";
 
-interface IProps {
-  dao: IDAOState;
-  ethBalance: BN;
-  genBalance: BN;
-  currentAccountState: IMemberState;
+interface IExternalProps {
+  dao?: IDAOState;
+  address: Address;
 }
+
+type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN, BN]>
 
 class AccountBalances extends React.Component<IProps, null>  {
 
   public render(): any {
-    const { dao, ethBalance, genBalance, currentAccountState } = this.props;
+    const { dao, data } = this.props;
+
+    if (!data) {
+      return null;
+    }
+
+    const [currentAccountState, ethBalance, genBalance] = data;
 
     return (
       <div className={css.balances}>
@@ -48,30 +54,26 @@ class AccountBalances extends React.Component<IProps, null>  {
   }
 }
 
-export default (props: { dao: IDAOState; address: Address}): any => {
-  //  if no DAO is given, it is unclear which token balances to show
-  if (!props.dao) {
-    return null;
-  }
-  const arc = getArc();
-  const dao = arc.dao(props.dao.address);
+export default withSubscription({
+  wrappedComponent: AccountBalances,
+  loadingComponent: <div>Loading..</div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
 
-  const observable = combineLatest(
-    props.address && dao.member(props.address).state() || of(null),
-    arc.ethBalance(props.address),
-    arc.GENToken().balanceOf(props.address),
-  );
+  checkForUpdate: (oldProps, newProps) => {
+    return oldProps.address !== newProps.address || (oldProps.dao && oldProps.dao.address) !== (newProps.dao && newProps.dao.address);
+  },
 
-  return <Subscribe observable={observable}>{(state: IObservableState<[IMemberState, BN, BN]>) => {
-    if (state.isLoading) {
-      return <div>loading..</div>;
-    } else if (state.error) {
-      return <div>{state.error.message}</div>;
-    } else {
-      const [currentAccountState,  ethBalance, genBalance] = state.data ;
-      return <AccountBalances
-        dao={props.dao} currentAccountState={currentAccountState} ethBalance={ethBalance} genBalance={genBalance} />;
+  createObservable: ({ dao, address }: IExternalProps) => {
+    if (!dao) {
+      return of(null);
     }
-  }
-  }</Subscribe>;
-};
+
+    const arc = getArc();
+    const arcDAO = arc.dao(dao.address);
+    return combineLatest(
+      address && arcDAO.member(address).state() || of(null),
+      arc.ethBalance(address),
+      arc.GENToken().balanceOf(address),
+    );
+  },
+});
