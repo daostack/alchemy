@@ -33,11 +33,13 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              New Bounty Created {decodedCallData.values[7].toString() === '0' && `funded at ${decodedCallData.values[7]} ETH}`}
+              New Bounty Created
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
-                Deadline set at { new Date(decodedCallData.values[4]) }
+                Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>. <br/>
+                Deadline set at {new Date(decodedCallData.values[4])}. <br />
+                Amount funded at {decodedCallData.values[7]} {decodedCallData.values[6].toString() === '0' ?  'ETH'  : 'tokens'}.
               </div>
               : ""
             }
@@ -47,12 +49,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
-              {action.label}
+              Adding Contribution to a Bounty
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                New oracle address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                Contribution of amount {decodedCallData.values[2]}
               </div>
               : ""
             }
@@ -67,7 +68,7 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                New owner address: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                Refund for contribution IDs {decodedCallData.values[3]}
               </div>
               : ""
             }
@@ -77,13 +78,12 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              {action.label}
             </span>
             {detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                Draining {decodedCallData.values[3]} amount of tokens.
+              </div>
               : ""
             }
           </div>
@@ -92,13 +92,12 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              Accept Submission
             </span>
             {detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                Accepting submission ID {decodedCallData.values[2]} for {decodedCallData.values[4]} tokens. 
+              </div>
               : ""
             }
           </div>
@@ -107,13 +106,22 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              {action.label}
             </span>
             {detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                For Bounty ID {decodedCallData.values[1]}, <br/>
+                Change issuers to: {decodedCallData.values[3].forEach((addr: string) => {
+                  <br />
+                  { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                })}<br />
+                Change approvers to: {decodedCallData.values[4].forEach((addr: string) => {
+                  <br />
+                  { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                })}<br />
+                Change bounty details to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[5]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a><br/>
+                Change bounty deadline to {new Date(decodedCallData.values[6])}
+              </div>
               : ""
             }
           </div>
@@ -122,13 +130,12 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              {action.label}
             </span>
             {detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                Change details of bounty ID  {decodedCallData.values[1]} to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>
+              </div>
               : ""
             }
           </div>
@@ -137,13 +144,12 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              Change Bounty Deadline
             </span>
             {detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                Change bounty deadline to {new Date(decodedCallData.values[3])}
+              </div>
               : ""
             }
           </div>
@@ -152,12 +158,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              Fulfill and Accept Bounty
             </span>
             {detailView ?
               <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
+                Accept submission of and send {decodedCallData.values[5]} tokens to <a href={linkToEtherScan(decodedCallData.values[2])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[2]}</a>
               </ul>
               : ""
             }
@@ -167,13 +172,15 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              {action.label}
             </span>
             {detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                Change approvers to: {decodedCallData.values[3].forEach((addr: string) => {
+                  <br />
+                  { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                })}
+              </div>
               : ""
             }
           </div>
@@ -182,31 +189,19 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {decodedCallData.values[1] ? "+" : "-"}&nbsp;
-              {decodedCallData.values[1] ? "Whitelist" : "Delist"} {decodedCallData.values[0].length} token{decodedCallData.values[0].length !== 1 ? "s" : ""}
+              {action.label}
             </span>
             {detailView ?
-              <ul className={css.summaryDetails}>
-                {decodedCallData.values[0].map((token: string) => <li key={token}><a href={linkToEtherScan(token)} target="_blank" rel="noopener noreferrer">{token}</a></li>)}
-              </ul>
+              <div className={css.summaryDetails}>
+                Change issuers to: {decodedCallData.values[3].forEach((addr: string) => {
+                  <br />
+                  { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                })}<br />
+              </div>
               : ""
             }
           </div>
         );
-      case "updateThresholdNewTokenPair":
-      case "updateThresholdNewAuction":
-        {
-          const field = action.fields[0];
-          const value = decodedCallData.values[0];
-          return (
-            <div className={proposalSummaryClass}>
-              <span className={css.summaryTitle}>
-                <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
-              {field.label}: {formatTokens(new BN(value), field.unit, field.decimals)}
-              </span>
-            </div>
-          );
-        }
       default:
         return "";
     }
