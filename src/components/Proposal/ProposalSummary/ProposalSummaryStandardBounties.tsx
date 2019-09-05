@@ -33,12 +33,11 @@ export default class ProposalSummaryDutchX extends React.Component<IProps, null>
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
-              {action.label}
+              New Bounty Created {decodedCallData.values[7].toString() === '0' && `funded at ${decodedCallData.values[7]} ETH}`}
             </span>
-            {detailView ?
+            { detailView ?
               <div className={css.summaryDetails}>
-                {action.fields[0].label}: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
+                Deadline set at { new Date(decodedCallData.values[4]) }
               </div>
               : ""
             }
