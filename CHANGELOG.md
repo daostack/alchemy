@@ -16,6 +16,9 @@
     - fix crash in display of proposals' redeemables when account is readonly
     - show proposals as failing when the vote is tied
     - improvements, bug fixes on the Scheme Information page
+  - Bugs Fixed
+    - Fix number formatting
+
 
 ### version 0.9.4; 2019-08-13
 

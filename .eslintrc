@@ -34,6 +34,7 @@
          * outright errors
         */
         "no-useless-escape": "error",
+        "react/prop-types": "off",
         "react/no-unescaped-entities": "error",
         "indent": "off", // to not interfere with @typescript just below
         "@typescript-eslint/indent": ["error", 2],
@@ -46,7 +47,6 @@
         "no-var": "error",
         "react/jsx-boolean-value": "error",
         "react/jsx-curly-spacing": "error",
-        "react/prop-types": "off",
         "no-bitwise": "error",
         "@typescript-eslint/interface-name-prefix": ["error", "always"],
         "prefer-const": "error",

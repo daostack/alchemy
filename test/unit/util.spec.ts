@@ -8,8 +8,11 @@ describe("Redemptions page", () => {
     expect(formatTokens(new BN(0))).toEqual("0");
     expect(formatTokens(new BN(1))).toEqual("+0");
     expect(formatTokens(new BN("1000000000000000000"))).toEqual("1");
+    expect(formatTokens(new BN("10000000000000000000"))).toEqual("10");
+    expect(formatTokens(new BN("100000000000000000000"))).toEqual("100");
     expect(formatTokens(new BN("1100000000000000000"))).toEqual("1.1");
     expect(formatTokens(new BN("2345000000000000000"))).toEqual("2.34");
+    expect(formatTokens(new BN("10000000000000000000000"))).toEqual("10k");
     expect(formatTokens(new BN("2345000000000000000000"))).toEqual("2.34k");
     expect(formatTokens(new BN("2345000000000000000000000"))).toEqual("2.34M");
     expect(formatTokens(new BN("2222345000000000000000000000"))).toEqual("2,222.34M");
