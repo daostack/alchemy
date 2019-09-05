@@ -87,6 +87,11 @@ class SchemeContainer extends React.Component<IProps, null> {
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
             <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
+            { // if Bounties Scheme, create new tab
+              (schemeId == '0xe7f69ea2a79521136ee0bf3c50f6b5f1ea0ab0cd' || schemeId == '0xa53aadb09bd0612ee810ab8b4605c9ee45892169' ) && 
+              <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/open/`}>Open Bounties</Link>
+            }
+            
             <a className={css.createProposal}
               data-test-id="createProposal"
               href="javascript:void(0)"
@@ -101,6 +106,9 @@ class SchemeContainer extends React.Component<IProps, null> {
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
             render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
+
+          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId/open"
+            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
         </Switch>
       </div>
     );
