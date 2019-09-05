@@ -104,10 +104,20 @@
         background-color: #fff;
         position: absolute;
         bottom: 5px;
-        height: 37px;
-        padding: 0 30px 0 15px;
+        height: 35px;
+        padding: 0 0 0 0;
         right: 0px;
         border: 1px solid #bfcbd5;
+
+        div div div div:first-child {
+          left: 15px;
+        }
+
+        input {
+          margin-top: 0;
+          margin-left: 10px;
+          margin-bottom: 0;
+        }
       }
     }
 
@@ -605,7 +615,12 @@ div.description {
 
         .externalTokenSelect {
           right: -17px;
-          padding: 0 18px 0 8px;
+          width: 50px;
+          padding: 0 18px 0 0px;
+
+          div div div div:first-child {
+            left: 8px;
+          }
         }
       }
 
