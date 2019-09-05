@@ -123,7 +123,8 @@ export default withSubscription({
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
         arcDao.member(currentAccountAddress).state(),
         // TODO: also need the member state for the proposal proposer and beneficiary
-        //      but since we need the proposal state first to get those addresses we will need to update the client query to load them inline
+        //      but since we need the proposal state first to get those addresses we will need to
+        //      update the client query to load them inline
         concat(of(new BN("0")), arcDao.ethBalance()),
         arc.GENToken().balanceOf(currentAccountAddress),
         arc.allowance(currentAccountAddress, spender),
