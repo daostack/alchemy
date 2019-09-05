@@ -2,6 +2,7 @@ import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daos
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
 import { enableWeb3ProviderAndWarn } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
@@ -105,7 +106,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       historyView,
       proposal,
       stakeProposal,
-      stakes
+      stakes,
     } = this.props;
 
     const {

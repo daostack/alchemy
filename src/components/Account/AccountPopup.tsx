@@ -1,6 +1,5 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { getArc } from "arc";
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -13,6 +12,8 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+
+import BN = require("bn.js");
 
 import * as css from "./Account.scss";
 

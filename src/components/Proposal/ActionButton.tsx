@@ -89,7 +89,7 @@ class ActionButton extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       proposalState,
-      rewards
+      rewards,
     } = this.props;
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;

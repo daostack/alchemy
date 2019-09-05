@@ -7,7 +7,7 @@ import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-const ReactMarkdown = require("react-markdown");
+
 import { Link, RouteComponentProps } from "react-router-dom";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
@@ -24,6 +24,8 @@ import VoteButtons from "./Voting/VoteButtons";
 import VoteGraph from "./Voting/VoteGraph";
 import VotersModal from "./Voting/VotersModal";
 import * as css from "./ProposalDetails.scss";
+
+const ReactMarkdown = require("react-markdown");
 
 interface IProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
@@ -81,7 +83,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           proposal,
           rewards,
           stakes,
-          votes
+          votes,
         } = props;
 
         const proposalClass = classNames({

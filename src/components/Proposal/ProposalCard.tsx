@@ -35,7 +35,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
     const {
       currentAccountAddress,
       dao,
-      proposal
+      proposal,
     } = this.props;
 
     return <ProposalData currentAccountAddress={currentAccountAddress} dao={dao} proposalId={proposal.id}>
@@ -200,9 +200,9 @@ export default class ProposalCard extends React.Component<IProps, null> {
               </div>
             </div>
           </div>
-        )
+        );
       }
-    }
-    </ProposalData>
+      }
+    </ProposalData>;
   }
 }

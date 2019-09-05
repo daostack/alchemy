@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
 import { getArc } from "arc";
+
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as moment from "moment";
@@ -35,11 +36,11 @@ interface IInjectedProposalProps {
   currentAccountGenAllowance: BN;
   daoEthBalance: BN;
   expired: boolean;
-  member: IMemberState,
+  member: IMemberState;
   proposal: IProposalState;
-  rewards: IRewardState,
-  stakes: Stake[],
-  votes: Vote[],
+  rewards: IRewardState;
+  stakes: Stake[];
+  votes: Vote[];
 }
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
@@ -69,7 +70,7 @@ class ProposalData extends React.Component<IProps, IState> {
   componentDidMount() {
     // Expire proposal in real time
     if (!this.state.expired) {
-      setTimeout(() => { this.setState({ expired: true })}, closingTime(this.props.data[0]).diff(moment()));
+      setTimeout(() => { this.setState({ expired: true });}, closingTime(this.props.data[0]).diff(moment()));
     }
   }
 
@@ -90,7 +91,7 @@ class ProposalData extends React.Component<IProps, IState> {
       stakes,
       votes,
     });
-  };
+  }
 }
 
 const ConnectedProposalData = connect(mapStateToProps)(ProposalData);
