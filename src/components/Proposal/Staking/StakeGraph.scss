@@ -26,6 +26,10 @@
     margin-bottom: 3px;
   }
 
+  .stakesFor, .stakesAgainst {
+    white-space: nowrap;
+  }
+
   .stakesFor, .forBar, .stakesAgainst, .againstBar {
     font-weight: bold;
     color: rgba(104, 154, 214, 1.000);
