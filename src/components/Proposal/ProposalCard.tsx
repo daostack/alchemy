@@ -38,15 +38,20 @@ export default class ProposalCard extends React.Component<IProps, null> {
       proposal
     } = this.props;
 
-    return <ProposalData currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposal}>
+    return <ProposalData currentAccountAddress={currentAccountAddress} dao={dao} proposalId={proposal.id}>
       { props => {
         const {
           beneficiaryProfile,
           creatorProfile,
-          expired,
-          proposal,
-          votes,
+          currentAccountGenBalance,
+          currentAccountGenAllowance,
           daoEthBalance,
+          expired,
+          member,
+          proposal,
+          rewards,
+          stakes,
+          votes,
         } = props;
 
         let currentAccountVote = 0;
@@ -97,6 +102,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     dao={dao}
                     daoEthBalance={daoEthBalance}
                     proposalState={proposal}
+                    rewards={rewards}
                   />
 
                   <div className={css.contextMenu} data-test-id="proposalContextMenu">
@@ -106,18 +112,23 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     <div className={css.menu}>
                       <VoteButtons
                         currentAccountAddress={currentAccountAddress}
+                        currentAccountState={member}
                         currentVote={currentAccountVote}
                         dao={dao}
                         expired={expired}
                         proposal={proposal}
                         contextMenu/>
+
                       <StakeButtons
                         beneficiaryProfile={beneficiaryProfile}
+                        contextMenu
                         currentAccountAddress={currentAccountAddress}
+                        currentAccountGens={currentAccountGenBalance}
+                        currentAccountGenStakingAllowance={currentAccountGenAllowance}
                         dao={dao}
                         expired={expired}
                         proposal={proposal}
-                        contextMenu
+                        stakes={stakes}
                       />
                     </div>
                   </div>
@@ -148,11 +159,23 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     <VoteGraph size={40} proposal={proposal} />
                   </div>
 
-                  <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} detailView={false} />
+                  <VoteBreakdown
+                    currentAccountAddress={currentAccountAddress}
+                    currentAccountState={member}
+                    currentVote={currentAccountVote}
+                    dao={dao}
+                    proposal={proposal}
+                    detailView={false} />
                 </div>
 
                 <div className={css.voteButtons}>
-                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} proposal={proposal} />
+                  <VoteButtons
+                    currentAccountAddress={currentAccountAddress}
+                    currentAccountState={member}
+                    currentVote={currentAccountVote}
+                    dao={dao}
+                    expired={expired}
+                    proposal={proposal} />
                 </div>
               </div>
 
@@ -166,9 +189,12 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   <StakeButtons
                     beneficiaryProfile={beneficiaryProfile}
                     currentAccountAddress={currentAccountAddress}
+                    currentAccountGens={currentAccountGenBalance}
+                    currentAccountGenStakingAllowance={currentAccountGenAllowance}
                     dao={dao}
                     expired={expired}
                     proposal={proposal}
+                    stakes={stakes}
                   />
                 </div>
               </div>

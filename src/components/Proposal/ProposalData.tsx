@@ -1,4 +1,4 @@
-import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Proposal, Reward, Stake, Vote } from "@daostack/client";
+import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
 import { getArc } from "arc";
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -16,7 +16,7 @@ import * as css from "./ProposalCard.scss";
 interface IExternalProps {
   currentAccountAddress: Address;
   dao: IDAOState;
-  proposal: Proposal;
+  proposalId: string;
   children(props: IInjectedProposalProps): JSX.Element;
 }
 
@@ -98,18 +98,16 @@ const ConnectedProposalData = connect(mapStateToProps)(ProposalData);
 export default withSubscription({
   wrappedComponent: ConnectedProposalData,
   // TODO: how do we pass this in?
-  loadingComponent: (props) => <div className={css.loading}>Loading proposal {props.proposal.id.substr(0, 6)} ...</div>,
+  loadingComponent: (props) => <div className={css.loading}>Loading proposal {props.proposalId.substr(0, 6)} ...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
-  checkForUpdate: (oldProps, newProps) => {
-    return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
-  },
+  checkForUpdate: ["currentAccountAddress", "proposalId"],
 
   createObservable: async (props) => {
     const arc = getArc();
-    const { currentAccountAddress, dao, proposal } = props;
+    const { currentAccountAddress, dao, proposalId } = props;
     const arcDao = arc.dao(dao.address);
-
+    const proposal = arc.proposal(proposalId);
     await proposal.fetchStaticState();
     const spender = proposal.staticState.votingMachine;
 
@@ -122,6 +120,8 @@ export default withSubscription({
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
         arcDao.member(currentAccountAddress).state(),
+        // TODO: also need the member state for the proposal proposer and beneficiary
+        //      but since we need the proposal state first to get those addresses we will need to update the client query to load them inline
         concat(of(new BN("0")), arcDao.ethBalance()),
         arc.GENToken().balanceOf(currentAccountAddress),
         arc.allowance(currentAccountAddress, spender),
@@ -132,7 +132,7 @@ export default withSubscription({
         of([]), // votes
         of([]), // stakes
         of(null), // rewards
-        of(null), // member
+        of(null), // current account member state
         concat(of(new BN("0")), arcDao.ethBalance()), // dao eth balance
         of(new BN("0")), // current account gen balance
         of(null), // current account GEN allowance
