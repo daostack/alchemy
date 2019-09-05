@@ -14,30 +14,32 @@
   "actions": [
     {
         "id":"acceptFulfillment",
-        "label":"acceptFulfillment",
-        "description":"acceptFulfillment",
+        "label":"Accept Fulfillment",
+        "description":" Allows any of the approvers to accept a given submission",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_fulfillmentId",
+              "label":"Fulfillment Id",
               "name":"_fulfillmentId"
           },
           {
-              "label":"_approverId",
+              "label":"Approver Id",
               "name":"_approverId"
           },
           {
-              "label":"_tokenAmounts",
-              "name":"_tokenAmounts"
+              "label":"Amount",
+              "name":"_tokenAmounts",
+              "placeholder":"Token Amount",
+              "decimals": 18
           }
         ],
         "abi":{
@@ -75,45 +77,49 @@
     },
     {
         "id":"issueAndContribute",
-        "label":"issueAndContribute",
-        "description":"issueAndContribute",
+        "label":"Issue And Contribute",
+        "description":"Create a new bounty and contribute tokens to the bounty.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_issuers",
+              "label":"Issuer Address",
               "name":"_issuers",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_approvers",
+              "label":"Approver Address",
               "name":"_approvers",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_data",
-              "name":"_data"
+              "label":"Bounty Details",
+              "name":"_data",
+              "placeholder":"IPFS Hash (Qmd0...)"
           },
           {
-              "label":"_deadline",
-              "name":"_deadline"
+              "label":"Deadline",
+              "name":"_deadline",
+              "placeholder":"Timestamp"
           },
           {
-              "label":"_token",
+              "label":"Bounty Token Address",
               "name":"_token",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_tokenVersion",
-              "name":"_tokenVersion"
+              "label":"Token Version",
+              "name":"_tokenVersion",
+              "placeholder":"0 for ETH, 20 for ERC20"
           },
           {
-              "label":"_depositAmount",
-              "name":"_depositAmount"
+              "label":"Contribution Amount",
+              "name":"_depositAmount",
+              "decimals": 18
           }
         ],
         "abi":{
@@ -228,26 +234,28 @@
     },
     {
         "id":"drainBounty",
-        "label":"drainBounty",
-        "description":"drainBounty",
+        "label":"Drain Bounty",
+        "description":" Allows an issuer to drain the funds from the bounty.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_issuerId",
+              "label":"Issuer Id",
               "name":"_issuerId"
           },
           {
-              "label":"_amounts",
-              "name":"_amounts"
+              "label":"Amount",
+              "name":"_amounts",
+              "placeholder": "Token Amount to be Sent",
+              "decimals": 18
           }
         ],
         "abi":{
@@ -492,25 +500,25 @@
     },
     {
         "id":"replaceApprovers",
-        "label":"replaceApprovers",
-        "description":"replaceApprovers",
+        "label":"Replace Approvers",
+        "description":"Allows any of the issuers to replace the approvers of the bounty.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_issuerId",
+              "label":"Issuer Id",
               "name":"_issuerId"
           },
           {
-              "label":"_approvers",
+              "label":"New Approver Address",
               "name":"_approvers",
               "placeholder":"Address (0x0000…)"
           }
@@ -571,26 +579,27 @@
     },
     {
         "id":"changeData",
-        "label":"changeData",
-        "description":"changeData",
+        "label":"Change Bounty Details",
+        "description":"Allows any of the issuers to change the bounty's details.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_issuerId",
+              "label":"Issuer Id",
               "name":"_issuerId"
           },
           {
-              "label":"_data",
-              "name":"_data"
+              "label":"Bounty Details",
+              "name":"_data",
+              "placeholder":"IPFS Hash (Qmd0...)"
           }
         ],
         "abi":{
@@ -773,25 +782,25 @@
     },
     {
         "id":"replaceIssuers",
-        "label":"replaceIssuers",
-        "description":"replaceIssuers",
+        "label":"Replace Issuers",
+        "description":"Allows any of the issuers to replace the issuers of the bounty",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_issuerId",
+              "label":"Issuer Id",
               "name":"_issuerId"
           },
           {
-              "label":"_issuers",
+              "label":"New Issuers Address",
               "name":"_issuers",
               "placeholder":"Address (0x0000…)"
           }
@@ -889,25 +898,25 @@
     },
     {
         "id":"refundContributions",
-        "label":"refundContributions",
-        "description":"refundContributions",
+        "label":"Refund Contributions",
+        "description":"Allows users to refund their contributions in bulk.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_issuerId",
+              "label":"Issuer Id",
               "name":"_issuerId"
           },
           {
-              "label":"_contributionIds",
+              "label":"Contribution Id",
               "name":"_contributionIds"
           }
         ],
@@ -942,22 +951,25 @@
     },
     {
         "id":"contribute",
-        "label":"contribute",
-        "description":"contribute",
+        "label":"Allows users to contribute tokens to a given bounty. ",
+        "description":"Contributing merits no privelages to administer the funds in the bounty or accept submissions. Contributions are refundable but only on the condition that the deadline has elapsed, and the bounty has not yet paid out any funds. All funds deposited in a bounty are at the mercy of a bounty's issuers and approvers.",
+
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_amount",
-              "name":"_amount"
+              "label":"Contribution Amount",
+              "name":"_amount",
+              "placeholder": "Token Amount",
+              "decimals": 18
           }
         ],
         "abi":{
@@ -987,26 +999,27 @@
     },
     {
         "id":"changeDeadline",
-        "label":"changeDeadline",
-        "description":"changeDeadline",
+        "label":"Change Deadline",
+        "description":"Allows any of the issuers to change the deadline the bounty.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_issuerId",
+              "label":"Issuer Id",
               "name":"_issuerId"
           },
           {
-              "label":"_deadline",
-              "name":"_deadline"
+              "label":"Deadline",
+              "name":"_deadline",
+              "placeholder":"Timestamp"
           }
         ],
         "abi":{
@@ -1040,40 +1053,43 @@
     },
     {
         "id":"changeBounty",
-        "label":"changeBounty",
-        "description":"changeBounty",
+        "label":"Change Bounty",
+        "description":"Allows any of the issuers to change the bounty.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_issuerId",
-              "name":"_issuerId"
+              "label":"Issuer Id",
+              "name":"_issuerId",
+              "placeholder":"Index of issuer calling this action"
           },
           {
-              "label":"_issuers",
+              "label":"New Issuer Address",
               "name":"_issuers",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_approvers",
+              "label":"New Approver Address",
               "name":"_approvers",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_data",
-              "name":"_data"
+              "label":"Bounty Details",
+              "name":"_data",
+              "placeholder":"IPFS Hash (Qmd0...)"
           },
           {
-              "label":"_deadline",
-              "name":"_deadline"
+              "label":"Deadline",
+              "name":"_deadline",
+              "placeholder":"Timestamp"
           }
         ],
         "abi":{
@@ -1144,35 +1160,38 @@
     },
     {
         "id":"fulfillAndAccept",
-        "label":"fulfillAndAccept",
-        "description":"fulfillAndAccept",
+        "label":"Fulfill And Accept",
+        "description":"Allows any of the approvers to both fulfill and accept a submission.",
         "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
         "fields":[
           {
-              "label":"_sender",
+              "label":"Sender Address",
               "name":"_sender",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_bountyId",
+              "label":"Bounty Id",
               "name":"_bountyId"
           },
           {
-              "label":"_fulfillers",
+              "label":"Fulfiller Address",
               "name":"_fulfillers",
               "placeholder":"Address (0x0000…)"
           },
           {
-              "label":"_data",
-              "name":"_data"
+              "label":"Submission Details",
+              "name":"_data",
+              "placeholder":"IPFS Hash (Qmd0...)"
           },
           {
-              "label":"_approverId",
+              "label":"Approver Id",
               "name":"_approverId"
           },
           {
-              "label":"_tokenAmounts",
-              "name":"_tokenAmounts"
+              "label":"Amount",
+              "name":"_tokenAmounts",
+              "placeholder":"Token Amount to be Paid",
+              "decimals": 18
           }
         ],
         "abi":{
