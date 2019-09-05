@@ -1,9 +1,8 @@
 import { IProposalState } from "@daostack/client";
 
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import { GenericSchemeInfo } from "genericSchemeRegistry";
-import { formatTokens, linkToEtherScan } from "lib/util";
+import { linkToEtherScan } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
 

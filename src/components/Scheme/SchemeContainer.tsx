@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
+import SchemeOpenBountyPage from "./SchemeOpenBountyPage";
 import * as css from "./Scheme.scss";
 
 interface IDispatchProps {
@@ -108,7 +109,7 @@ class SchemeContainer extends React.Component<IProps, null> {
             render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId/open"
-            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
+            render={(props) => <SchemeOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
         </Switch>
       </div>
     );
