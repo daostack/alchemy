@@ -18,6 +18,7 @@
     - improvements, bug fixes on the Scheme Information page
   - Bugs Fixed
     - Fix number formatting
+    - Fix crashing of scheme page
 
 
 ### version 0.9.4; 2019-08-13
