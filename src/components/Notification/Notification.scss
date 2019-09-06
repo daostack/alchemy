@@ -14,6 +14,12 @@
     }
   }
 
+  .transactionBorder {
+    animation: disappear 10s 1;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
   &.pending {
     .transactionBorder {
       width: 60%;
@@ -163,4 +169,8 @@
 
 .transactionWrapper {
   display: inline;
+}
+
+@keyframes disappear {
+  to {width: 0%;}
 }

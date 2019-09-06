@@ -16,6 +16,12 @@
     - fix crash in display of proposals' redeemables when account is readonly
     - show proposals as failing when the vote is tied
     - improvements, bug fixes on the Scheme Information page
+  - Bugs Fixed
+    - Fix number formatting
+    - Fix crashing of scheme page
+    - Hide notifications after 10 seconds
+    - Add dao address as default value for Cross-DAO redemptions
+
 
 ### version 0.9.4; 2019-08-13
 
