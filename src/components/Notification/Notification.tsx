@@ -57,6 +57,9 @@ export default class Notification extends React.Component<IProps, null> {
       [css.success]: status === NotificationViewStatus.Success,
     });
 
+    // start the countdown to close after displaying
+    setTimeout((): void => { setTimeout( this.handleClose, 10000 ); }, 0);
+
     return (
       <div className={transactionClass}>
         <div className={css.transactionBorder}></div>
