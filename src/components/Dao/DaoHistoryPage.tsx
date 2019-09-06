@@ -9,6 +9,7 @@ import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { combineLatest } from "rxjs";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
+import ProposalData from "../Proposal/ProposalData";
 import * as css from "./Dao.scss";
 
 const PAGE_SIZE = 100;
@@ -30,7 +31,21 @@ class DaoHistoryPage extends React.Component<IProps, null> {
     const { currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return <ProposalData currentAccountAddress={currentAccountAddress} dao={dao} proposalId={proposal.id} key={proposal.id}>
+        { props => {
+          const {
+            member,
+            stakes,
+            votes,
+          } = props;
+          return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} dao={dao}
+            currentAccountAddress={currentAccountAddress}
+            currentAccountState={member}
+            stakes={stakes}
+            votes={votes}
+            proposalState={props.proposal}
+          />);
+        }}</ProposalData>;
     });
 
     return(
