@@ -5,6 +5,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState } from "@daostack/client";
 import { schemeName } from "lib/util";
 import * as css from "./SchemeInfo.scss";
+const ReactMarkdown = require('react-markdown');
 
 interface IProps {
   daoAvatarAddress: Address;
@@ -79,7 +80,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
           <div className={css.schemeInfoContainer}>
             <h3>{bounty.title} [{parseFloat(bounty.calculated_fulfillment_amount).toFixed(2)} {bounty.token_symbol}]</h3>
             <div className={css.infoCardContent}>
-              {bounty.description}
+              <ReactMarkdown source={bounty.description} />
             </div>
           </div>
         </a>
