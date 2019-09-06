@@ -89,7 +89,7 @@
           {
               "label":"Issuer Address",
               "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
+              "placeholder":"DAO Address (0x0000…)"
           },
           {
               "label":"Approver Address",
@@ -1074,7 +1074,7 @@
           {
               "label":"New Issuer Address",
               "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
+              "placeholder":"DAO Address (0x0000…)"
           },
           {
               "label":"New Approver Address",
