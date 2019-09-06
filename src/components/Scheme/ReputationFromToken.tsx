@@ -140,7 +140,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const arc = getArc();
     const schemeContract = await arc.getContract(schemeAddress);    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
-      this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${values.accountAddress} was already redeemed`);
+      this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${this.state.redeemerAddress} was already redeemed`);
     } else {
       const scheme = arc.scheme(state.id);
       this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
