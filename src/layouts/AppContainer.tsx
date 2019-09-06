@@ -231,7 +231,7 @@ class AppContainer extends React.Component<IProps, IState> {
 
   private cacheWeb3Info(account: Address): void {
     if (account) {
-      localStorage.setItem(AppContainer.accountStorageKey, account);4;
+      localStorage.setItem(AppContainer.accountStorageKey, account);
     } else {
       localStorage.removeItem(AppContainer.accountStorageKey);
     }
