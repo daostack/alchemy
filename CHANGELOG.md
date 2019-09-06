@@ -20,6 +20,8 @@
     - Fix number formatting
     - Fix crashing of scheme page
     - Hide notifications after 10 seconds
+    - Add dao address as default value for Cross-DAO redemptions
+    - Fix redemptions count
 
 
 ### version 0.9.4; 2019-08-13
