@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
+import gql from "graphql-tag";
 import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-
 import Web3Connect from "@daostack/web3connect";
 import { IProviderInfo } from "@daostack/web3connect/lib/helpers/types";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
@@ -224,6 +224,166 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   }
 
   (window as any).arc = success ? arc : null;
+  const reputationHoldersQuery = gql`
+    {
+      reputationHolders {
+        id
+        address
+        dao {
+          id
+          __typename
+        }
+        balance
+        __typename
+      }
+    }
+  `;
+  const daosQuery = gql`{
+      daos {
+        id
+        name
+        nativeReputation {
+          id
+          totalSupply
+          __typename
+        }
+        nativeToken {
+          id
+          name
+          symbol
+          totalSupply
+          __typename
+        }
+        reputationHoldersCount
+        __typename
+      }
+    }
+  `;
+  const proposalsQuery = gql`{
+    proposals (where: { dao:  "0x294f999356ed03347c7a23bcbcf8d33fa41dc830", stage_in: ["Boosted", "Queued", "Preboosted"]}){
+      id
+      accountsWithUnclaimedRewards
+      boostedAt
+      confidenceThreshold
+      contributionReward {
+        id
+        beneficiary
+        ethReward
+        externalToken
+        externalTokenReward
+        externalToken
+        nativeTokenReward
+        periods
+        periodLength
+        reputationReward
+        alreadyRedeemedReputationPeriods
+        alreadyRedeemedExternalTokenPeriods
+        alreadyRedeemedNativeTokenPeriods
+        alreadyRedeemedEthPeriods
+        __typename
+      }
+      createdAt
+      dao {
+        id
+        schemes {
+          id
+          address
+          __typename
+        }
+        __typename
+      }
+      description
+      descriptionHash
+      executedAt
+      executionState
+      expiresInQueueAt
+      genericScheme {
+        id
+        contractToCall
+        callData
+        executed
+        returnValue
+        __typename
+      }
+      genesisProtocolParams {
+        id
+        activationTime
+        boostedVotePeriodLimit
+        daoBountyConst
+        limitExponentValue
+        minimumDaoBounty
+        preBoostedVotePeriodLimit
+        proposingRepReward
+        queuedVotePeriodLimit
+        queuedVoteRequiredPercentage
+        quietEndingPeriod
+        thresholdConst
+        votersReputationLossRatio
+        __typename
+      }
+      gpRewards {
+        id
+        __typename
+      }
+      scheme {
+        id
+        paramsHash
+        name
+        address
+        canDelegateCall
+        canManageGlobalConstraints
+        canRegisterSchemes
+        canUpgradeController
+        name
+        __typename
+      }
+      gpQueue {
+        id
+        threshold
+        votingMachine
+        __typename
+      }
+      organizationId
+      preBoostedAt
+      proposer
+      quietEndingPeriodBeganAt
+      schemeRegistrar {
+        id
+        schemeToRegister
+        schemeToRegisterParamsHash
+        schemeToRegisterPermission
+        schemeToRemove
+        decision
+        schemeRegistered
+        schemeRemoved
+        __typename
+      }
+      stage
+      stakes {
+        id
+        __typename
+      }
+      stakesFor
+      stakesAgainst
+      totalRepWhenCreated
+      totalRepWhenExecuted
+      title
+      url
+      votes {
+        id
+        __typename
+      }
+      votesAgainst
+      votesFor
+      votingMachine
+      winningOutcome
+      __typename
+    }
+  }`;
+  await arc.sendQuery(reputationHoldersQuery);
+  await arc.sendQuery(daosQuery);
+  await arc.sendQuery(proposalsQuery);
+
   return success;
 }
 
