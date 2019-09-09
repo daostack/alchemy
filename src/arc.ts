@@ -224,20 +224,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   }
 
   (window as any).arc = success ? arc : null;
-  const reputationHoldersQuery = gql`
-    {
-      reputationHolders {
-        id
-        address
-        dao {
-          id
-          __typename
-        }
-        balance
-        __typename
-      }
-    }
-  `;
+
   const daosQuery = gql`{
       daos {
         id
@@ -260,7 +247,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
   `;
   const proposalsQuery = gql`{
-    proposals (where: { dao:  "0x294f999356ed03347c7a23bcbcf8d33fa41dc830", stage_in: ["Boosted", "Queued", "Preboosted"]}){
+    proposals (where: { dao:  "0x294f999356ed03347c7a23bcbcf8d33fa41dc830", stage_in: ["Boosted", "Queued", "PreBoosted"]}){
       id
       accountsWithUnclaimedRewards
       boostedAt
@@ -380,9 +367,24 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       __typename
     }
   }`;
-  await arc.sendQuery(reputationHoldersQuery);
+
+  const reputationHoldersQuery = gql`
+    {
+      reputationHolders {
+        id
+        address
+        dao {
+          id
+          __typename
+        }
+        balance
+        __typename
+      }
+    }
+  `;
   await arc.sendQuery(daosQuery);
   await arc.sendQuery(proposalsQuery);
+  await arc.sendQuery(reputationHoldersQuery);
 
   return success;
 }
