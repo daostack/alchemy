@@ -427,12 +427,8 @@ button:hover {
 
 }
 
-.homeNotification, .holdersNotification, .historyNotification, .redemptionNoticication {
+.homeNotification, .holdersNotification, .historyNotification, .discussionNotification {
   opacity: 0;
-}
-
-.redemptionNoticication {
-  opacity: 1;
 }
 
 .daoNavigation {
@@ -516,7 +512,7 @@ button:hover {
       img {
         margin-left: 2px;
         position: relative;
-        top: 2px;
+        top: 3px;
         margin-right: 8px;
       }
 

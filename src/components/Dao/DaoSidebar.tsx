@@ -150,6 +150,19 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   Redemptions ({proposalCount || "0"})
                 </NavLink>
               </li>
+              <li>
+                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/discussion/"}>
+                  <span className={css.menuDot} />
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.discussionNotification]: true,
+                    })
+                  }></span>
+                  <img src="/assets/images/Icon/menu/chat.svg" />
+                  DAO Discussion
+                </NavLink>
+              </li>
             </ul>
           </div>
           <div className={css.daoHoldings}>
