@@ -16,6 +16,7 @@
     - fix crash in display of proposals' redeemables when account is readonly
     - show proposals as failing when the vote is tied
     - improvements, bug fixes on the Scheme Information page
+    - DAO Discussion page
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page

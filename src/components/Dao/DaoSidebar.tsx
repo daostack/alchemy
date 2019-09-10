@@ -79,7 +79,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                 <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank" rel="noopener noreferrer">Learn how to MemeDAO</a></p>
                 : dao.name === "ETHBerlin dHack.io" ?
                   <p>
-                  For more info join our TG group - 
+                  For more info join our TG group -
                     <a href="https://t.me/dhack0" target="_blank" rel="noopener noreferrer">t.me/dhack0</a>
                   </p>
                   : dao.name === "Identity" ?
@@ -148,6 +148,19 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }></span>
                   <img src="/assets/images/Icon/menu/redemption.svg" />
                   Redemptions ({proposalCount || "0"})
+                </NavLink>
+              </li>
+              <li>
+                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/discussion/"}>
+                  <span className={css.menuDot} />
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.discussionNotification]: true,
+                    })
+                  }></span>
+                  <img src="/assets/images/Icon/menu/chat.svg" />
+                  DAO Discussion
                 </NavLink>
               </li>
             </ul>
