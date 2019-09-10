@@ -66,7 +66,10 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { creatorProfile, currentAccountAddress, data, dao, proposal } = this.props;
+    const {
+      creatorProfile,
+      currentAccountAddress,
+      data, dao, proposal } = this.props;
     const [proposalState, stakesOfCurrentUser, votesOfCurrentUser] = data;
 
     const proposalClass = classNames({
@@ -142,7 +145,9 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         </div>
         <div className={css.votes}>
           <div className={voteControls}>
-            <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposalState} />
+            <VoteBreakdown
+              currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao}
+              proposal={proposalState} historyView />
           </div>
         </div>
 
@@ -203,11 +208,10 @@ export default withSubscription({
       );
     } else {
       return combineLatest(
-        proposal.state(),
-        proposal.stakes({ where: { staker: props.currentAccountAddress}}),
-        proposal.votes({ where: { voter: props.currentAccountAddress }})
+        proposal.state({ subscribe: false}),
+        proposal.stakes({ where: { staker: props.currentAccountAddress}}, {subscribe: false}),
+        proposal.votes({ where: { voter: props.currentAccountAddress }}, {subscribe: false})
       );
     }
   },
 });
-
