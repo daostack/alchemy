@@ -183,7 +183,6 @@ class DaoSidebar extends React.Component<IProps, IState> {
           <div className={css.menuWrapper}>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank" rel="noopener noreferrer">FAQ</a></li>
               <li>
                 <a>Buy GEN</a>
                 <ul>
@@ -202,9 +201,8 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }
                 </ul>
               </li>
-              <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank" rel="noopener noreferrer">Alchemy 101</a></li>
-              <li><a href="https://www.daostack.io/" target="_blank" rel="noopener noreferrer">About DAOstack</a></li>
-              <li><a href="https://www.daostack.io/community" target="_blank" rel="noopener noreferrer">Get involved</a></li>
+              <li><a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
+              <li><a href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
               <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
               <li className={css.daoStack}>
                 <a href="http://daostack.io" target="_blank" rel="noopener noreferrer">
