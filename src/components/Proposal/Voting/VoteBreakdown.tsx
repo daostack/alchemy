@@ -17,6 +17,7 @@ interface IExternalProps {
   dao: IDAOState;
   detailView?: boolean;
   proposal: IProposalState;
+  historyView?: boolean;
 }
 
 interface IDispatchProps {
@@ -121,9 +122,9 @@ const SubscribedVoteBreakdown = withSubscription({
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
     const dao = arc.dao(props.dao.address);
-    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
+    const subscribe = props.historyView !== true;
+    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state({subscribe}) : of(null);
   },
 });
 
 export default connect(null, mapDispatchToProps)(SubscribedVoteBreakdown);
-
