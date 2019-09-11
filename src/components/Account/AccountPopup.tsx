@@ -1,5 +1,3 @@
-import { getArc } from "arc";
-
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -13,8 +11,6 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest } from "rxjs";
-
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import * as css from "./Account.scss";
 
@@ -30,8 +26,8 @@ interface IStateProps {
   profile: IProfileState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<[IDAOState, IMemberState]>): IExternalProps & IStateProps & ISubscriptionProps<[IDAOState, IMemberState]> => {
-  const account = (ownProps.data ? ownProps.data[1] : null);
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<IMemberState>): IExternalProps & IStateProps & ISubscriptionProps<IMemberState> => {
+  const account = ownProps.data;
 
   return {
     ...ownProps,
@@ -47,7 +43,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, IMemberState]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
 
 class AccountPopup extends React.Component<IProps, null> {
 
@@ -59,8 +55,8 @@ class AccountPopup extends React.Component<IProps, null> {
   }
 
   public render() {
-    const [dao, accountInfo] = this.props.data;
-    const { accountAddress, profile } = this.props;
+    const accountInfo = this.props.data;
+    const { dao, accountAddress, profile } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const targetAccountClass = classNames({
@@ -108,11 +104,7 @@ const SubscribedAccountPopup = withSubscription({
 
   createObservable: (props: IProps) => {
     const subscribe = props.historyView !== true;
-    const arc = getArc();
-    return combineLatest(
-      arc.dao(props.dao.address).state({ subscribe }),
-      arc.dao(props.dao.address).member(props.accountAddress).state({subscribe})
-    );
+    return props.dao.dao.member(props.accountAddress).state({subscribe});
   },
 });
 

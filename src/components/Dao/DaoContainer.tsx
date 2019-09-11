@@ -95,7 +95,7 @@ class DaoContainer extends React.Component<IProps, null> {
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>
                 <ProposalDetailsPage {...props}
-                  dao={dao}
+                  daoState={dao}
                   currentAccountAddress={currentAccountAddress}
                   proposalId={props.match.params.proposalId}
                 />

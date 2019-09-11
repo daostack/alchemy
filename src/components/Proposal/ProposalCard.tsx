@@ -180,8 +180,8 @@ class ProposalCard extends React.Component<IProps, IState> {
               <div className={css.voteDivider}>
                 <VoteGraph size={40} proposal={proposalState} />
               </div>
-
-              <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposalState} detailView={false} />
+              <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote}
+                daoState={dao} proposal={proposalState} detailView={false} />
             </div>
 
             <div className={css.voteButtons}>

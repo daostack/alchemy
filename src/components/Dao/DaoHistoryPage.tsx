@@ -100,7 +100,9 @@ export default withSubscription({
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }),
+      },
+      { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+      ),
       dao.state()
     );
 
@@ -125,7 +127,9 @@ export default withSubscription({
       orderDirection: "desc",
       first: PAGE_SIZE,
       skip: data[0].length,
-    });
+    },
+    { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+    );
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {

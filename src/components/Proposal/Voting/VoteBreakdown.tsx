@@ -1,5 +1,5 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/client";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -14,7 +14,7 @@ import * as css from "./VoteBreakdown.scss";
 interface IExternalProps {
   currentAccountAddress: Address;
   currentVote: number;
-  dao: IDAOState;
+  daoState: IDAOState;
   detailView?: boolean;
   proposal: IProposalState;
   historyView?: boolean;
@@ -65,7 +65,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
       currentVote,
       detailView,
       proposal,
-      dao,
+      daoState,
     } = this.props;
 
     const wrapperClass = classNames({
@@ -93,7 +93,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>For</span>
             <br className={css.label}/>
-            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -103,7 +103,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>Against</span>
             <br className={css.label}/>
-            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -120,10 +120,8 @@ const SubscribedVoteBreakdown = withSubscription({
   checkForUpdate: ["currentAccountAddress"],
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
     const subscribe = props.historyView !== true;
-    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state({subscribe}) : of(null);
+    return props.currentAccountAddress ? props.daoState.dao.member(props.currentAccountAddress).state({subscribe}) : of(null);
   },
 });
 

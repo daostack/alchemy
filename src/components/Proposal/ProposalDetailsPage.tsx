@@ -1,5 +1,4 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Vote } from "@daostack/client";
-import { getArc } from "arc";
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -36,7 +35,7 @@ const ReactMarkdown = require("react-markdown");
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   detailView?: boolean;
   proposalId: string;
 }
@@ -112,7 +111,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      dao,
+      daoState,
     } = this.props;
 
     const expired = this.state.expired;
@@ -145,8 +144,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
 
     return (
       <div className={css.wrapper}>
-        <BreadcrumbsItem weight={1} to={`/dao/${dao.address}/scheme/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
-        <BreadcrumbsItem weight={2} to={`/dao/${dao.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
+        <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+        <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
         <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
           <div className={css.proposalInfo}>
             <div>
@@ -155,14 +154,14 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               </div>
               <ActionButton
                 currentAccountAddress={currentAccountAddress}
-                dao={dao}
+                dao={daoState}
                 daoEthBalance={daoEthBalance}
                 detailView
                 proposalState={proposal}
               />
             </div>
             <h3 className={css.proposalTitleTop}>
-              <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
+              <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
             </h3>
 
             <div className={css.timer + " clearfix"}>
@@ -183,8 +182,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.createdBy}>
-              <AccountPopup accountAddress={proposal.proposer} dao={dao} detailView />
-              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView />
+              <AccountPopup accountAddress={proposal.proposer} dao={daoState} detailView />
+              <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
             </div>
 
             <div className={css.description}>
@@ -199,7 +198,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               : " "
             }
 
-            <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView />
+            <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
 
             <div className={css.voteButtonsBottom}>
               <span className={css.voteLabel}>Vote:</span>
@@ -208,7 +207,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   altStyle
                   currentAccountAddress={currentAccountAddress}
                   currentVote={currentAccountVote}
-                  dao={dao}
+                  dao={daoState}
                   detailView
                   expired={expired}
                   proposal={proposal}
@@ -234,7 +233,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 </div>
 
                 <div className={css.voteButtons}>
-                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} detailView expired={expired} proposal={proposal} />
+                  <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={daoState} detailView expired={expired} proposal={proposal} />
                 </div>
               </div>
 
@@ -243,7 +242,8 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                   <VoteGraph size={90} proposal={proposal} />
                 </div>
 
-                <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} proposal={proposal} detailView />
+                <VoteBreakdown
+                  currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} daoState={daoState} proposal={proposal} detailView />
               </div>
             </div>
 
@@ -256,7 +256,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
                 <StakeButtons
                   beneficiaryProfile={beneficiaryProfile}
                   currentAccountAddress={currentAccountAddress}
-                  dao={dao}
+                  dao={daoState}
                   expired={expired}
                   proposal={proposal}
                   detailView
@@ -284,7 +284,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
           <VotersModal
             closeAction={this.closeVotersModal}
             currentAccountAddress={this.props.currentAccountAddress}
-            dao={dao}
+            dao={daoState}
             proposal={proposal}
           /> : ""
         }
@@ -292,7 +292,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
         {this.state.showShareModal ?
           <SocialShareModal
             closeHandler={this.closeShareModal}
-            url={`https://alchemy.daostack.io/dao/${dao.address}/proposal/${proposal.id}`}
+            url={`https://alchemy.daostack.io/dao/${daoState.address}/proposal/${proposal.id}`}
           /> : ""
         }
       </div>
@@ -312,8 +312,7 @@ export default withSubscription({
   },
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
+    const dao = props.daoState.dao;
     const proposal = dao.proposal(props.proposalId);
     return combineLatest(
       proposal.state(), // state of the current proposal

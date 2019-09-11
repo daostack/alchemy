@@ -1,6 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -237,9 +237,7 @@ const SubscribedVoteButtons = withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress; },
   createObservable: (props: IProps) => {
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
-    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
+    return props.currentAccountAddress ? props.dao.dao.member(props.currentAccountAddress).state() : of(null);
   },
 });
 

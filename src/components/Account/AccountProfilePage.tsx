@@ -305,7 +305,6 @@ const SubscribedAccountProfilePage = withSubscription({
     const queryValues = queryString.parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
-
     return combineLatest(
       daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
       daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),

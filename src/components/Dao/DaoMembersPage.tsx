@@ -41,7 +41,8 @@ class DaoMembersPage extends React.Component<IProps, null> {
     const members = data;
     const { dao, profiles } = this.props;
 
-    const membersHTML = members.map((member) => <DaoMember key={member.staticState.address} dao={dao} member={member} profile={profiles[member.staticState.address]} />);
+    const membersHTML = members.map((member) =>
+      <DaoMember key={member.staticState.address} dao={dao} member={member} profile={profiles[member.staticState.address]} />);
 
     return (
       <div className={css.membersContainer}>
@@ -86,10 +87,7 @@ const SubscribedDaoMembersPage = withSubscription({
   checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-
-    const dao = new DAO(props.dao.address, arc);
-
+    const dao = props.dao.dao;
     return dao.members({
       orderBy: "balance",
       orderDirection: "desc",

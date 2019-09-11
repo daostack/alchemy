@@ -146,7 +146,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         <div className={css.votes}>
           <div className={voteControls}>
             <VoteBreakdown
-              currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao}
+              currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} daoState={dao}
               proposal={proposalState} historyView />
           </div>
         </div>
