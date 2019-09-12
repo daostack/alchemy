@@ -17,7 +17,6 @@ a.historyView {
 
 a.detailView {
   position: relative;
-  top: -6px;
   font-size: 13px;
   color: rgba(85, 85, 85, 1.000);
   left: 17px;
@@ -56,6 +55,7 @@ a.detailView {
   transition: all .25s ease;
   margin-right: 13px;
   left: 7px;
+  vertical-align: middle;
 
   .avatar {
     width: 12px;
@@ -163,6 +163,10 @@ a.detailView {
       padding: 8px 10px;
     }
   }
+}
+
+.accountName {
+  vertical-align: middle;
 }
 
 .historyView.targetAccount {
