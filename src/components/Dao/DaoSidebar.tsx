@@ -19,7 +19,7 @@ interface IExternalProps {
   dao: IDAOState;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<any[]>;
+type IProps = IExternalProps & ISubscriptionProps<any>;
 
 interface IState {
   openMenu: boolean;
@@ -43,7 +43,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
       return null;
     }
 
-    const proposals = this.props.data;
+    const proposals = this.props.data.data ? this.props.data.data.proposals : [];
     const dao = this.props.dao;
     const proposalCount = proposals.length;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
@@ -79,7 +79,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                 <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank" rel="noopener noreferrer">Learn how to MemeDAO</a></p>
                 : dao.name === "ETHBerlin dHack.io" ?
                   <p>
-                  For more info join our TG group - 
+                  For more info join our TG group -
                     <a href="https://t.me/dhack0" target="_blank" rel="noopener noreferrer">t.me/dhack0</a>
                   </p>
                   : dao.name === "Identity" ?
@@ -147,7 +147,20 @@ class DaoSidebar extends React.Component<IProps, IState> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/redemption.svg" />
-                  Redemptions ({proposalCount})
+                  Redemptions ({proposalCount || "0"})
+                </NavLink>
+              </li>
+              <li>
+                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/discussion/"}>
+                  <span className={css.menuDot} />
+                  <span className={
+                    classNames({
+                      [css.notification]: true,
+                      [css.discussionNotification]: true,
+                    })
+                  }></span>
+                  <img src="/assets/images/Icon/menu/chat.svg" />
+                  DAO Discussion
                 </NavLink>
               </li>
             </ul>
@@ -170,7 +183,6 @@ class DaoSidebar extends React.Component<IProps, IState> {
           <div className={css.menuWrapper}>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank" rel="noopener noreferrer">FAQ</a></li>
               <li>
                 <a>Buy GEN</a>
                 <ul>
@@ -189,9 +201,8 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }
                 </ul>
               </li>
-              <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank" rel="noopener noreferrer">Alchemy 101</a></li>
-              <li><a href="https://www.daostack.io/" target="_blank" rel="noopener noreferrer">About DAOstack</a></li>
-              <li><a href="https://www.daostack.io/community" target="_blank" rel="noopener noreferrer">Get involved</a></li>
+              <li><a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
+              <li><a href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
               <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
               <li className={css.daoStack}>
                 <a href="http://daostack.io" target="_blank" rel="noopener noreferrer">

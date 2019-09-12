@@ -133,9 +133,9 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
     significantDigits = 1000000000;
     units = "B";
   }
-  else if (tokenAmount.ltn(1000)) {
+  else if (tokenAmount.ltn(100000)) {
     significantDigits = 1;
-  } else if (tokenAmount.ltn(1000000)) {
+  } else if (tokenAmount.lt(new BN(100000000))) {
     significantDigits = 1000;
     units = "k";
   } else {

@@ -187,7 +187,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { handleClose } = this.props;
+    const { handleClose, daoAvatarAddress } = this.props;
     const arc = getArc();
 
     const actions = this.state.actions;
@@ -201,7 +201,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
       if (typeof(field.defaultValue) !== "undefined") {
-        initialFormValues[field.name] = field.defaultValue;
+        if (field.defaultValue === "_avatar") {
+          initialFormValues[field.name] = daoAvatarAddress;
+        } else {
+          initialFormValues[field.name] = field.defaultValue;
+        }
       } else {
         switch (field.type) {
           case "uint256":

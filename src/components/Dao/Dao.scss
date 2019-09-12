@@ -283,7 +283,7 @@ button:hover {
       ul {
         left: 50px;
         top: -80px;
-        width: 130px;
+        width: 120px;
         opacity: 0;
         transform: scale(0);
         transition: all .25s ease;
@@ -333,9 +333,9 @@ button:hover {
         }
       }
       &:hover ul {
-        left: 10px;
+        left: -8px;
         opacity: 1;
-        top: -90px;
+        top: -160px;
         transform: translateX(100%) scale(1);
         background-color: rgba(255,255,255,1);
       }
@@ -427,12 +427,8 @@ button:hover {
 
 }
 
-.homeNotification, .holdersNotification, .historyNotification, .redemptionNoticication {
+.homeNotification, .holdersNotification, .historyNotification, .discussionNotification {
   opacity: 0;
-}
-
-.redemptionNoticication {
-  opacity: 1;
 }
 
 .daoNavigation {
@@ -516,7 +512,7 @@ button:hover {
       img {
         margin-left: 2px;
         position: relative;
-        top: 2px;
+        top: 3px;
         margin-right: 8px;
       }
 
@@ -1227,7 +1223,7 @@ a.navItem:hover {
   }
 
   .wrapper {
-    padding: 0px 0 100px 0;
+    padding: 50px 0 100px 0;
   }
 
   .noticeWrapper {
@@ -1262,12 +1258,11 @@ a.navItem:hover {
   .queueType {
     font-size: 18px;
     padding-left: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 33px;
   }
 
   .createProposal {
-    top: 8px;
+    top: 28px;
     right: 15px;
     height: 26px;
     line-height: 26px;
@@ -1303,23 +1298,12 @@ a.navItem:hover {
     position: relative;
   }
 
-  .membersContainer {
-    margin: 0px auto 10px auto;
-
-    h2 {
-      padding-left: 15px;
-      font-size: 18px;
-      padding-bottom: 10px;
-      padding-top: 10px;
-      margin: 0;
-    }
+  .membersContainer h2 {
+    padding-left: 10px;
   }
 
     .daoHistoryHeader {
-      padding-left: 15px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      font-size: 18px;
+      padding-left: 10px;
     }
 
     .closedProposalsHeader {

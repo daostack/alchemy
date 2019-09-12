@@ -45,7 +45,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
     const scheme = this.props.data;
 
     const arc = getArc();
-    const schemeName = arc.getContractInfo(scheme.address).name;
+    let schemeName = arc.getContractInfo(scheme.address).name;
     if (!schemeName) {
       throw Error(`Unknown Scheme: ${scheme}`);
     }
@@ -66,6 +66,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.genericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
+        schemeName = genericSchemeInfo.specs.name;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }
