@@ -64,6 +64,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
     const {
       currentVote,
       detailView,
+      historyView,
       proposal,
       dao,
     } = this.props;
@@ -71,6 +72,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
     const wrapperClass = classNames({
       [css.wrapper]: true,
       [css.detailView]: detailView,
+      [css.historyView]: historyView
     });
 
     const voteUpClass = classNames({
