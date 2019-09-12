@@ -5,6 +5,15 @@
   - Misc
 
 ### Unreleased
+
+  - Features Added
+    - ..
+  - Bugs Fixed
+    - ..
+
+
+### 2019-09-12 [actually two releses]
+
   - Features Added
     - Tweaks to the wallet provider UI
     - Allow to RedeemFromToken by passing a private key in the URL
@@ -24,7 +33,6 @@
     - Hide notifications after 10 seconds
     - Add dao address as default value for Cross-DAO redemptions
     - Fix redemptions count
-
 
 
 ### version 0.9.4; 2019-08-13
