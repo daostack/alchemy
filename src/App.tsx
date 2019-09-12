@@ -22,13 +22,14 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
-    initializeArc()
-      .then((): void => {
-        this.setState({ arcIsInitialized: true });
-      })
-      .catch ((err): void => {
+    const initialized = await initializeArc()
+      .catch ((err): boolean => {
+        // eslint-disable-next-line no-console
         console.log(err);
+        return false;
       });
+
+    this.setState({ arcIsInitialized: initialized });
 
     let GOOGLE_ANALYTICS_ID: string;
     switch (process.env.NODE_ENV) {
