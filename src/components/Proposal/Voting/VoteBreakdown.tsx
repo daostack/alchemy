@@ -1,14 +1,12 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalState } from "@daostack/client";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
-import { of } from "rxjs";
 import * as css from "./VoteBreakdown.scss";
 
 interface IExternalProps {
@@ -16,6 +14,7 @@ interface IExternalProps {
   currentVote: number;
   dao: IDAOState;
   detailView?: boolean;
+  currentAccountState: IMemberState;
   proposal: IProposalState;
   historyView?: boolean;
 }
@@ -24,7 +23,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<IMemberState>;
+type IProps = IExternalProps & IDispatchProps;
 
 interface IState {
   currentVote: number;
@@ -49,9 +48,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   public async handleClickVote(vote: number, _event: any): Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
-    const currentAccountState = this.props.data;
-
-    if (currentAccountState.reputation.gt(new BN(0))) {
+    if (this.props.currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
   }
@@ -114,19 +111,4 @@ class VoteBreakdown extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedVoteBreakdown = withSubscription({
-  wrappedComponent: VoteBreakdown,
-  loadingComponent: <div>Loading...</div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
-
-  checkForUpdate: ["currentAccountAddress"],
-
-  createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
-    const subscribe = props.historyView !== true;
-    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state({subscribe}) : of(null);
-  },
-});
-
-export default connect(null, mapDispatchToProps)(SubscribedVoteBreakdown);
+export default connect(null, mapDispatchToProps)(VoteBreakdown);

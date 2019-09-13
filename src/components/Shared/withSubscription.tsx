@@ -27,7 +27,7 @@ type OnlyWrappedComponentProps<T extends ISubscriptionProps<any>> = Subtract<T, 
 
 interface IWithSubscriptionOptions<Props extends ISubscriptionProps<ObservableType>, ObservableType extends Record<string, any>> {
   checkForUpdate: (keyof Props)[] | ((oldProps: OnlyWrappedComponentProps<Props>, newProps: OnlyWrappedComponentProps<Props>) => boolean);
-  createObservable: (props: OnlyWrappedComponentProps<Props>) => Observable<ObservableType>;
+  createObservable: (props: OnlyWrappedComponentProps<Props>) => Promise<Observable<ObservableType>> | Observable<ObservableType>;
   errorComponent?: React.ReactElement<any> | React.ComponentType<{error: Error}>;
   fetchMoreCombine?: (oldState: ObservableType, newData: any) => ObservableType;
   getFetchMoreObservable?: (props: OnlyWrappedComponentProps<Props>, currentData: ObservableType) => Observable<any>;
@@ -70,13 +70,13 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       };
     }
 
-    public setupSubscription(observable?: Observable<any>) {
+    public async setupSubscription(observable?: Observable<any>) {
       if (this.subscription) {
         this.subscription.unsubscribe();
       }
       const { createObservable, wrappedComponent } = options;
 
-      this.observable = observable || createObservable(this.props);
+      this.observable = observable || await createObservable(this.props);
 
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
@@ -103,11 +103,11 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       }
     }
 
-    public componentDidMount() {
-      this.setupSubscription();
+    public async componentDidMount() {
+      await this.setupSubscription();
     }
 
-    public componentDidUpdate(prevProps: InputProps) {
+    public async componentDidUpdate(prevProps: InputProps) {
       const { checkForUpdate } = options;
 
       let shouldUpdate = false;
@@ -122,7 +122,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         });
       }
       if (shouldUpdate) {
-        this.setupSubscription();
+        await this.setupSubscription();
       }
     }
 
