@@ -188,7 +188,11 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.description}>
-              <ReactMarkdown source={proposal.description} />
+              <ReactMarkdown source={proposal.description}
+                renderers={{link: (props: { href: string; children: React.ReactNode }) => {
+                  return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
+                }}}
+              />
             </div>
 
             {url ?
