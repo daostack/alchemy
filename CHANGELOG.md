@@ -9,6 +9,8 @@
   - Features Added
     - ..
   - Bugs Fixed
+    - Align headers of table in proposal history
+    - Re-add redeem for beneficiary button to proposal details page
     - ..
 
 
@@ -27,6 +29,8 @@
     - improvements, bug fixes on the Scheme Information page
     - DAO Discussion page
     - Add link to help center
+    - Reduce number of subscriptions from DAO history page
+    - add breadcrums to mobile
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page
