@@ -16,6 +16,7 @@ interface IExternalProps {
   detailView?: boolean;
   currentAccountState: IMemberState;
   proposal: IProposalState;
+  historyView?: boolean;
 }
 
 interface IDispatchProps {
