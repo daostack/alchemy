@@ -12,13 +12,11 @@ a.historyView {
   overflow: hidden;
   height: 20px;
   position: relative;
-  top: -3px;
   left: 5px;
 }
 
 a.detailView {
   position: relative;
-  top: -6px;
   font-size: 13px;
   color: rgba(85, 85, 85, 1.000);
   left: 17px;
@@ -44,18 +42,6 @@ a.detailView {
   }
 }
 
-.historyView.targetAccount {
-  width: 40px;
-  height: 40px;
-  margin-top: 7px;
-  margin-left: 7px;
-
-  .avatar img {
-    width: 40px;
-    height: 40px;
-  }
-}
-
 .socialProof {
   display: block;
 }
@@ -66,11 +52,10 @@ a.detailView {
   width: 22px;
   height: 22px;
   overflow: visible;
-  margin-top: -14px;
   transition: all .25s ease;
-  top: 6px;
   margin-right: 13px;
   left: 7px;
+  vertical-align: middle;
 
   .avatar {
     width: 12px;
@@ -178,6 +163,25 @@ a.detailView {
       padding: 8px 10px;
     }
   }
+}
+
+.accountName {
+  vertical-align: middle;
+}
+
+.historyView.targetAccount {
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+
+  .avatar img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.historyView.accountName {
+  vertical-align: middle;
 }
 
 .targetAccount:hover {
@@ -410,7 +414,7 @@ input {
 
 @media only screen and (max-width: 1280px) {
   a.historyView {
-    width: 50%;
+    width: 55px;
     font-size: 12px;
   }
 }
@@ -482,6 +486,6 @@ input {
 
   a.historyView {
     font-size: 11px;
-    top: 10px;
+    width: auto;
   }
 }

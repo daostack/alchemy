@@ -61,9 +61,6 @@ export default (props: IProps) => {
   let ContributionRewardDiv = <div />;
   if (proposal.winningOutcome === IProposalOutcome.Pass && proposal.contributionReward) {
     const contributionRewards = claimableContributionRewards(contributionReward);
-    // const hasEthReward = contributionReward.ethReward.gt(new BN(0));
-    // const hasExternalReward = contributionReward.externalTokenReward.gt(new BN(0));
-    // const hasReputationReward = !contributionReward.reputationReward.isZero();
     if (Object.keys(contributionRewards).length > 0) {
       ContributionRewardDiv = <div>
         <strong>
