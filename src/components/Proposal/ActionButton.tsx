@@ -24,7 +24,7 @@ import BN = require("bn.js");
 
 interface IExternalProps {
   currentAccountAddress?: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
   proposalState: IProposalState;
@@ -71,7 +71,7 @@ class ActionButton extends React.Component<IProps, IState> {
 
   public async handleClickExecute(_event: any): Promise<void> {
     if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
-    await this.props.executeProposal(this.props.dao.address, this.props.proposalState.id, this.props.currentAccountAddress);
+    await this.props.executeProposal(this.props.daoState.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
   public async handleClickRedeem(_event: any): Promise<void> {
@@ -89,7 +89,7 @@ class ActionButton extends React.Component<IProps, IState> {
     const {
       beneficiaryProfile,
       currentAccountAddress,
-      dao,
+      daoState,
       daoEthBalance,
       detailView,
       proposalState,
@@ -118,7 +118,7 @@ class ActionButton extends React.Component<IProps, IState> {
     const redemptionsTip = RedemptionsTip({
       beneficiaryHasRewards,
       currentAccountAddress,
-      dao,
+      dao: daoState,
       proposal: proposalState,
       rewardsForCurrentUser,
     });
@@ -140,7 +140,7 @@ class ActionButton extends React.Component<IProps, IState> {
             action={this.handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
-            dao={dao}
+            dao={daoState}
             effectText={redemptionsTip}
             proposal={proposalState}
           /> : ""
@@ -171,7 +171,7 @@ class ActionButton extends React.Component<IProps, IState> {
                 : redeemable ?
                   <div>
                     {/* !detailView ?
-                  <RedemptionsString currentAccountAddress={currentAccountAddress} dao={dao} proposal={proposalState} rewards={rewardsForCurrentUser} />
+                  <RedemptionsString currentAccountAddress={currentAccountAddress} dao={daoState} proposal={proposalState} rewards={rewardsForCurrentUser} />
                   : ""
               */}
                     <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
@@ -204,12 +204,12 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const {
       currentAccountAddress,
-      dao,
+      daoState,
       proposalState,
       redeemProposal,
     } = this.props;
 
-    await redeemProposal(dao.address, proposalState.id, currentAccountAddress);
+    await redeemProposal(daoState.address, proposalState.id, currentAccountAddress);
   }
 }
 

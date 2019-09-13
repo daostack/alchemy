@@ -1,5 +1,4 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Vote, Proposal } from "@daostack/client";
-import { getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -30,7 +29,7 @@ import * as css from "./ProposalCard.scss";
 
 interface IExternalProps {
   currentAccountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   proposal: Proposal;
 }
 
@@ -77,7 +76,7 @@ class ProposalCard extends React.Component<IProps, IState> {
       beneficiaryProfile,
       creatorProfile,
       currentAccountAddress,
-      dao,
+      daoState,
     } = this.props;
 
     const expired = this.state.expired;
@@ -127,7 +126,7 @@ class ProposalCard extends React.Component<IProps, IState> {
             <div className={css.actionButton}>
               <ActionButton
                 currentAccountAddress={currentAccountAddress}
-                dao={dao}
+                daoState={daoState}
                 daoEthBalance={daoEthBalance}
                 proposalState={proposalState}
               />
@@ -140,14 +139,14 @@ class ProposalCard extends React.Component<IProps, IState> {
                   <VoteButtons
                     currentAccountAddress={currentAccountAddress}
                     currentVote={currentAccountVote}
-                    dao={dao}
+                    dao={daoState}
                     expired={expired}
                     proposal={proposalState}
                     contextMenu/>
                   <StakeButtons
                     beneficiaryProfile={beneficiaryProfile}
                     currentAccountAddress={currentAccountAddress}
-                    dao={dao}
+                    dao={daoState}
                     expired={this.state.expired}
                     proposal={proposalState}
                     contextMenu
@@ -157,20 +156,20 @@ class ProposalCard extends React.Component<IProps, IState> {
             </div>
           </div>
           <div className={css.createdBy}>
-            <AccountPopup accountAddress={proposalState.proposer} dao={dao} detailView={false} />
-            <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false} />
+            <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} detailView={false} />
+            <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
           </div>
           <div className={css.description}>
             {proposalState.description}
           </div>
 
           <h3>
-            <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposalState.id} data-test-id="proposal-title">
+            <Link className={css.detailLink} to={"/dao/" + daoState.address + "/proposal/" + proposalState.id} data-test-id="proposal-title">
               <span>{humanProposalTitle(proposalState)}</span>
               <img src="/assets/images/Icon/Open.svg" />
             </Link>
           </h3>
-          <ProposalSummary proposal={proposalState} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false} />
+          <ProposalSummary proposal={proposalState} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
 
         </div>
 
@@ -181,11 +180,11 @@ class ProposalCard extends React.Component<IProps, IState> {
                 <VoteGraph size={40} proposal={proposalState} />
               </div>
               <VoteBreakdown currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote}
-                daoState={dao} proposal={proposalState} detailView={false} />
+                daoState={daoState} proposal={proposalState} detailView={false} />
             </div>
 
             <div className={css.voteButtons}>
-              <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao} expired={expired} proposal={proposalState} />
+              <VoteButtons currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={daoState} expired={expired} proposal={proposalState} />
             </div>
           </div>
 
@@ -199,7 +198,7 @@ class ProposalCard extends React.Component<IProps, IState> {
               <StakeButtons
                 beneficiaryProfile={beneficiaryProfile}
                 currentAccountAddress={currentAccountAddress}
-                dao={dao}
+                dao={daoState}
                 expired={this.state.expired}
                 proposal={proposalState}
               />
@@ -223,8 +222,7 @@ export default withSubscription({
   },
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
+    const dao = props.daoState.dao;
     return combineLatest(
       props.proposal.state(), // state of the current proposal
       props.currentAccountAddress ? props.proposal.votes({where: { voter: props.currentAccountAddress }}) : of([]), //3

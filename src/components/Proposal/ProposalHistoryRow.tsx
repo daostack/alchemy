@@ -131,7 +131,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     return (
       <div className={proposalClass}>
         <div className={css.proposalCreator}>
-          <AccountPopup accountAddress={proposalState.proposer} dao={dao} historyView/>
+          <AccountPopup accountAddress={proposalState.proposer} daoState={dao} historyView/>
           <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
         </div>
         <div className={css.endDate}>

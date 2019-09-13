@@ -154,7 +154,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
               </div>
               <ActionButton
                 currentAccountAddress={currentAccountAddress}
-                dao={daoState}
+                daoState={daoState}
                 daoEthBalance={daoEthBalance}
                 detailView
                 proposalState={proposal}
@@ -182,7 +182,7 @@ class ProposalDetailsPage extends React.Component<IProps, IState> {
             </div>
 
             <div className={css.createdBy}>
-              <AccountPopup accountAddress={proposal.proposer} dao={daoState} detailView />
+              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView />
               <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
             </div>
 

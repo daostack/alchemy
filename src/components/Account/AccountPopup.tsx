@@ -17,7 +17,7 @@ import * as css from "./Account.scss";
 
 interface IExternalProps {
   accountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   detailView?: boolean;
   historyView?: boolean;
 }
@@ -56,7 +56,7 @@ class AccountPopup extends React.Component<IProps, null> {
 
   public render() {
     const accountInfo = this.props.data;
-    const { dao, accountAddress, profile } = this.props;
+    const { daoState, accountAddress, profile } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const targetAccountClass = classNames({
@@ -71,7 +71,7 @@ class AccountPopup extends React.Component<IProps, null> {
           <AccountImage accountAddress={accountAddress} />
         </div>
         <div className={css.accountInfo}>
-          <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={dao.address} /></div>
+          <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={daoState.address} /></div>
           {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
             <div>
               <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
@@ -85,7 +85,7 @@ class AccountPopup extends React.Component<IProps, null> {
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>
-            <div><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputation}/></div>
+            <div><Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={reputation}/></div>
           </div>
         </div>
       </div>
@@ -100,11 +100,11 @@ const SubscribedAccountPopup = withSubscription({
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.dao.address !== newProps.dao.address; },
+  checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.daoState.address !== newProps.daoState.address; },
 
   createObservable: (props: IProps) => {
     const subscribe = props.historyView !== true;
-    return props.dao.dao.member(props.accountAddress).state({subscribe});
+    return props.daoState.dao.member(props.accountAddress).state({subscribe});
   },
 });
 
