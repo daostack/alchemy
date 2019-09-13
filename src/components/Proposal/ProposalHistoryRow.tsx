@@ -1,4 +1,5 @@
-import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
+import { getArc } from "arc";
 import * as arcActions from "actions/arcActions";
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
@@ -34,7 +35,7 @@ interface IDispatchProps {
   executeProposal: typeof arcActions.executeProposal;
 }
 
-type SubscriptionData = [IProposalState, Stake[], Vote[]];
+type SubscriptionData = [IProposalState, Stake[], Vote[], IMemberState];
 type IProps = IStateProps & IDispatchProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps &  ISubscriptionProps<SubscriptionData> & IStateProps => {
@@ -70,7 +71,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
       creatorProfile,
       currentAccountAddress,
       data, dao, proposal } = this.props;
-    const [proposalState, stakesOfCurrentUser, votesOfCurrentUser] = data;
+    const [proposalState, stakesOfCurrentUser, votesOfCurrentUser, currentMemberState] = data;
 
     const proposalClass = classNames({
       [css.wrapper]: true,
@@ -146,7 +147,9 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
         <div className={css.votes}>
           <div className={voteControls}>
             <VoteBreakdown
-              currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} dao={dao}
+              currentAccountAddress={currentAccountAddress}
+              currentAccountState={currentMemberState}
+              currentVote={currentAccountVote} dao={dao}
               proposal={proposalState} historyView />
           </div>
         </div>
@@ -200,17 +203,21 @@ export default withSubscription({
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps) => {
     const proposal = props.proposal;
+    const arc = getArc();
+    const dao = arc.dao(props.dao.address);
     if (!props.currentAccountAddress) {
       return combineLatest(
         proposal.state(),
         of([]),
-        of([])
+        of([]),
+        of(null),
       );
     } else {
       return combineLatest(
         proposal.state({ subscribe: false}),
         proposal.stakes({ where: { staker: props.currentAccountAddress}}, {subscribe: false}),
-        proposal.votes({ where: { voter: props.currentAccountAddress }}, {subscribe: false})
+        proposal.votes({ where: { voter: props.currentAccountAddress }}, {subscribe: false}),
+        dao.member(props.currentAccountAddress).state(),
       );
     }
   },
