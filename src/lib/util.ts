@@ -158,7 +158,7 @@ export function tokenSymbol(tokenAddress: string) {
   return token ? token["symbol"] : "?";
 }
 
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000) {
   return new Promise((resolve, reject) => {
     const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
@@ -414,6 +414,6 @@ export function splitByCamelCase(str: string) {
 // eslint-disable-next-line no-useless-escape
 const pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/);
 
-export function isValidUrl(str: string, emptyOk: boolean = true): boolean {
+export function isValidUrl(str: string, emptyOk = true): boolean {
   return (emptyOk && (!str || !str.trim())) || (str && pattern.test(str));
 }

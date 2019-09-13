@@ -21,14 +21,19 @@
     "noUnusedLocals": true
   },
   "include": [
-    "./src/*",
-    "./src/**/*",
-    "./test/**/*",
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
     "./typings/*"
   ],
   "exclude": [
     "node_modules",
     "build",
-    "scripts"
+    "scripts",
+    "src/*.js",
+    "./src/*.js",
+    "./test/**/*",
+    "./test/*",
+    "test/*",
+    "test/**/*"
   ]
 }

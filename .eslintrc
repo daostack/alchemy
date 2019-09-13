@@ -27,7 +27,9 @@
         /**
          * convert to error when all have been manually fixed
          */
+        "require-atomic-updates": "warn",
         "no-console": "warn",
+        "@typescript-eslint/ban-ts-ignore": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",
         "react/jsx-no-bind": "warn",
         /**
