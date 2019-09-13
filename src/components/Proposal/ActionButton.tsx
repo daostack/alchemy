@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWeb3ProviderAndWarn } from "arc";
 import * as classNames from "classnames";
@@ -113,7 +113,10 @@ class ActionButton extends React.Component<IProps, IState> {
       beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
     }
 
-    const redeemable = currentAccountAddress ? proposalState.executedAt && proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase()) : false;
+    const redeemable = proposalState.executedAt &&
+                       ((currentAccountAddress ? proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase()) : false)
+                        || (proposalState.winningOutcome === IProposalOutcome.Pass && beneficiaryHasRewards));
+
     // hack to work around https://github.com/daostack/subgraph/issues/304
     const redemptionsTip = RedemptionsTip({
       beneficiaryHasRewards,
