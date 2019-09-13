@@ -15,7 +15,7 @@ export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarA
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
-const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription: string = "") => {
+const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescription = ""): [(update: ITransactionUpdate<any>) => void, (err: Error) => void] => {
   return [
     (update: ITransactionUpdate<any>) => {
       let msg: string;
@@ -47,7 +47,6 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
       const dao = new DAO(proposalOptions.dao, arc);
 
       const observer = operationNotifierObserver(dispatch, "Create proposal");
-      // @ts-ignore
       await dao.createProposal(proposalOptions).subscribe(...observer);
     } catch (err) {
       console.error(err);
@@ -64,7 +63,6 @@ export function executeProposal(avatarAddress: string, proposalId: string, _acco
 
     // Call claimRewards to both execute the proposal and redeem the ContributionReward rewards,
     //   pass in null to not redeem any GenesisProtocol rewards
-    // @ts-ignore
     await proposalObj.claimRewards(null).subscribe(...observer);
   };
 }
@@ -86,7 +84,6 @@ export function voteOnProposal(daoAvatarAddress: string, proposalId: string, vot
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Vote");
-    // @ts-ignore
     await proposalObj.vote(voteOption).subscribe(...observer);
   };
 }
@@ -107,7 +104,6 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Stake");
-    // @ts-ignore
     await proposalObj.stake(prediction, toWei(stakeAmount)).subscribe(...observer);
   };
 }
@@ -130,7 +126,6 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
     const arc = getArc();
     const proposalObj = await arc.dao(daoAvatarAddress).proposal(proposalId);
     const observer = operationNotifierObserver(dispatch, "Reward");
-    // @ts-ignore
     await proposalObj.claimRewards(accountAddress).subscribe(...observer);
   };
 }
@@ -138,7 +133,7 @@ export function redeemProposal(daoAvatarAddress: string, proposalId: string, acc
 export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: string, privateKey: string|undefined, redeemerAddress: Address|undefined) {
   return async (dispatch: Redux.Dispatch<any, any>) => {
     const arc = getArc();
-    
+
     // ensure that scheme.ReputationFromToken is set
     await scheme.fetchStaticState();
 
@@ -190,7 +185,6 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
 
       // send the transaction and get notifications
       if (reputationFromTokenScheme) {
-        // @ts-ignore
         reputationFromTokenScheme.redeem(addressToRedeem).subscribe(...observer);
       }
     }

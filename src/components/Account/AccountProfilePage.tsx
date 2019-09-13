@@ -161,7 +161,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
           { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
               enableReinitialize
-              // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               initialValues={{
                 description: accountProfile ? accountProfile.description || "" : "",
                 name: accountProfile ? accountProfile.name || "" : "",

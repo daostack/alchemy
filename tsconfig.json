@@ -21,7 +21,9 @@
     "noUnusedLocals": true
   },
   "include": [
+    "./src/*",
     "./src/**/*",
+    "./test/**/*",
     "./typings/*"
   ],
   "exclude": [

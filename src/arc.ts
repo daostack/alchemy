@@ -523,7 +523,7 @@ export function getAccountIsEnabled(): boolean {
 // Polling is Evil!
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
-export function pollForAccountChanges(currentAccountAddress: Address | null, interval: number = 2000): Observable<Address> {
+export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
   console.log(`start polling for account changes from: ${currentAccountAddress}`);
   return Observable.create((observer: any): () => void  => {
     let prevAccount = currentAccountAddress;
