@@ -107,7 +107,9 @@ class Header extends React.Component<IProps, null> {
           [css.hasHamburger]: location.pathname.startsWith("/dao/"),
         })}>
           <div className={css.menu}>
-            <img src="/assets/images/alchemy-logo-white.svg"/>
+            <Link to="/">
+              <img src="/assets/images/alchemy-logo-white.svg"/>
+            </Link>
           </div>
           <div className={css.topInfo}>
             <Breadcrumbs
