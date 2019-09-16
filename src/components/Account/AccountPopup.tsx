@@ -1,6 +1,5 @@
+import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { getArc } from "arc";
-
-import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -13,9 +12,9 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest } from "rxjs";
 
-import { Address, IDAOState, IMemberState } from "@daostack/client";
+import BN = require("bn.js");
+
 import * as css from "./Account.scss";
 
 
@@ -30,8 +29,8 @@ interface IStateProps {
   profile: IProfileState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<[IDAOState, IMemberState]>): IExternalProps & IStateProps & ISubscriptionProps<[IDAOState, IMemberState]> => {
-  const account = (ownProps.data ? ownProps.data[1] : null);
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<IMemberState>): IExternalProps & IStateProps & ISubscriptionProps<IMemberState> => {
+  const account = ownProps.data;
 
   return {
     ...ownProps,
@@ -47,7 +46,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, IMemberState]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
 
 class AccountPopup extends React.Component<IProps, null> {
 
@@ -59,8 +58,8 @@ class AccountPopup extends React.Component<IProps, null> {
   }
 
   public render() {
-    const [dao, accountInfo] = this.props.data;
-    const { accountAddress, profile } = this.props;
+    const accountInfo = this.props.data;
+    const { accountAddress, dao, profile } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const targetAccountClass = classNames({
@@ -99,6 +98,9 @@ class AccountPopup extends React.Component<IProps, null> {
 
 const ConnectedAccountPopup = connect(mapStateToProps, mapDispatchToProps)(AccountPopup);
 
+// TODO: move this subscription to ProposalData.
+//  Can't do that right now because need to get the proposal state first to get the proposer and beneficiary
+//  before we can load the member data for those addresses
 const SubscribedAccountPopup = withSubscription({
   wrappedComponent: ConnectedAccountPopup,
   loadingComponent: <div>Loading...</div>,
@@ -109,10 +111,7 @@ const SubscribedAccountPopup = withSubscription({
   createObservable: (props: IProps) => {
     const subscribe = props.historyView !== true;
     const arc = getArc();
-    return combineLatest(
-      arc.dao(props.dao.address).state({ subscribe }),
-      arc.dao(props.dao.address).member(props.accountAddress).state({subscribe})
-    );
+    return arc.dao(props.dao.address).member(props.accountAddress).state({subscribe});
   },
 });
 
