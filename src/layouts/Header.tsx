@@ -79,7 +79,9 @@ class Header extends React.Component<IProps, null> {
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
-    await enableWeb3ProviderAndWarn(this.props.showNotification, false);
+    if (!await this.props.loadCachedWeb3Provider(this.props.showNotification)) {
+      await enableWeb3ProviderAndWarn(this.props.showNotification, false);
+    }
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
@@ -155,7 +157,7 @@ class Header extends React.Component<IProps, null> {
                           </div>
                           <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
                         </div> :
-                        <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogin}><div className={css.text}>Log in</div> <img src="/assets/images/Icon/login.svg"/></div> }
+                        <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                     </div>
                   </div>
                 </div> : ""

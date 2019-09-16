@@ -240,7 +240,7 @@ class AppContainer extends React.Component<IProps, IState> {
       localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
     } else {
       localStorage.removeItem(AppContainer.providerStorageKey);
-      // hack until fixed by WalletConnect
+      // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
       localStorage.removeItem(AppContainer.walletConnectStorageKey);
     }
   }
@@ -248,7 +248,7 @@ class AppContainer extends React.Component<IProps, IState> {
   private uncacheWeb3Info(): void {
     localStorage.removeItem(AppContainer.accountStorageKey);
     localStorage.removeItem(AppContainer.providerStorageKey);
-    // hack until fixed by WalletConnect
+    // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
     localStorage.removeItem(AppContainer.walletConnectStorageKey);
   }
 
