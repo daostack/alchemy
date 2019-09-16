@@ -16,7 +16,7 @@ interface IProps {
   transactionModal?: boolean;
 }
 
-export default class ProposalSummary extends React.Component<IProps> {
+export default class ProposalSummaryContributionReward extends React.Component<IProps> {
 
   constructor(props: IProps) {
     super(props);

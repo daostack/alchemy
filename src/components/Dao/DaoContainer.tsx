@@ -16,6 +16,7 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
+import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
@@ -88,6 +89,8 @@ class DaoContainer extends React.Component<IProps, null> {
                 <DaoRedemptionsPage {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
               }
             />
+            <Route exact path="/dao/:daoAvatarAddress/discussion"
+              render={(props) => <DaoDiscussionPage {...props} dao={dao} />} />
 
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>

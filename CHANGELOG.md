@@ -5,6 +5,18 @@
   - Misc
 
 ### Unreleased
+
+  - Features Added
+    - Links in proposal description open in new tab
+    - Show a message on startup when waiting for subgraph
+  - Bugs Fixed
+    - Align headers of table in proposal history
+    - Re-add redeem for beneficiary button to proposal details page
+    - Fix error on initializing arc
+
+
+### 2019-09-12 [actually two releses]
+
   - Features Added
     - Tweaks to the wallet provider UI
     - Allow to RedeemFromToken by passing a private key in the URL
@@ -16,6 +28,10 @@
     - fix crash in display of proposals' redeemables when account is readonly
     - show proposals as failing when the vote is tied
     - improvements, bug fixes on the Scheme Information page
+    - DAO Discussion page
+    - Add link to help center
+    - Reduce number of subscriptions from DAO history page
+    - add breadcrums to mobile
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page

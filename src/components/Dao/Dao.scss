@@ -30,10 +30,6 @@ button:hover {
   position: relative;
 }
 
-.proposalHistory {
-  display: block;
-}
-
 .outer {
   display: flex;
   height: 100%;
@@ -135,53 +131,16 @@ button:hover {
 
 }
 
-.closedProposalsHeader {
-  display: block;
+.proposalHistoryTable {
   width: 100%;
-  margin: 0 auto 10px auto;
-  display: flex;
+  border-collapse: collapse;
+}
+
+.proposalHistoryTableHeader {
   font-size: 12px;
   font-weight: bold;
   text-align: left;
-
-  .votes {
-    width: 103px;
-  }
-
-  .predictions {
-    width: 110px;
-  }
-
-  .proposalCreator {
-    width: 180px;
-  }
-
-  .endDate {
-    width: 60px;
-    padding-right: 10px;
-  }
-
-  .scheme {
-    width: 80px;
-  }
-
-  .title {
-    width: 250px;
-    padding: 0 15px;
-    flex-grow: 1;
-  }
-
-  .closeReason {
-    width: 150px;
-    position: relative;
-  }
-
-  .myActions {
-    text-align: left;
-    width: 130px;
-  }
 }
-
 
 .noticeWrapper {
   width: 100%;
@@ -283,7 +242,7 @@ button:hover {
       ul {
         left: 50px;
         top: -80px;
-        width: 130px;
+        width: 120px;
         opacity: 0;
         transform: scale(0);
         transition: all .25s ease;
@@ -333,9 +292,9 @@ button:hover {
         }
       }
       &:hover ul {
-        left: 10px;
+        left: -8px;
         opacity: 1;
-        top: -90px;
+        top: -160px;
         transform: translateX(100%) scale(1);
         background-color: rgba(255,255,255,1);
       }
@@ -427,12 +386,8 @@ button:hover {
 
 }
 
-.homeNotification, .holdersNotification, .historyNotification, .redemptionNoticication {
+.homeNotification, .holdersNotification, .historyNotification, .discussionNotification {
   opacity: 0;
-}
-
-.redemptionNoticication {
-  opacity: 1;
 }
 
 .daoNavigation {
@@ -516,7 +471,7 @@ button:hover {
       img {
         margin-left: 2px;
         position: relative;
-        top: 2px;
+        top: 3px;
         margin-right: 8px;
       }
 
@@ -598,25 +553,6 @@ button:hover {
     bottom: 0;
     left: 0;
     opacity: .4;
-  }
-}
-
-.columnHeader {
-  width: 100%;
-  font-size: $small;
-  text-transform: uppercase;
-  opacity: 0.5;
-
-  .votes {
-    float: left;
-    width: 55px;
-    text-align: center;
-  }
-
-  .predictions {
-    width: 140px;
-    text-align: center;
-    float: right;
   }
 }
 
@@ -1227,7 +1163,7 @@ a.navItem:hover {
   }
 
   .wrapper {
-    padding: 0px 0 100px 0;
+    padding: 50px 0 100px 0;
   }
 
   .noticeWrapper {
@@ -1262,12 +1198,11 @@ a.navItem:hover {
   .queueType {
     font-size: 18px;
     padding-left: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 33px;
   }
 
   .createProposal {
-    top: 8px;
+    top: 28px;
     right: 15px;
     height: 26px;
     line-height: 26px;
@@ -1303,26 +1238,15 @@ a.navItem:hover {
     position: relative;
   }
 
-  .membersContainer {
-    margin: 0px auto 10px auto;
-
-    h2 {
-      padding-left: 15px;
-      font-size: 18px;
-      padding-bottom: 10px;
-      padding-top: 10px;
-      margin: 0;
-    }
+  .membersContainer h2 {
+    padding-left: 10px;
   }
 
-    .daoHistoryHeader {
-      padding-left: 15px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      font-size: 18px;
-    }
+  .daoHistoryHeader {
+    padding-left: 10px;
+  }
 
-    .closedProposalsHeader {
-      display: none;
-    }
+  .proposalHistoryTableHeader {
+    display: none;
+  }
 }
