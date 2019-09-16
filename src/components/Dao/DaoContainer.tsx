@@ -83,7 +83,7 @@ class DaoContainer extends React.Component<IProps, null> {
             <Route exact path="/dao/:daoAvatarAddress/history"
               render={(props) => <DaoHistoryPage {...props} currentAccountAddress={currentAccountAddress} />} />
             <Route exact path="/dao/:daoAvatarAddress/members"
-              render={(props) => <DaoMembersPage {...props} dao={daoState} />} />
+              render={(props) => <DaoMembersPage {...props} daoState={daoState} />} />
             <Route exact path="/dao/:daoAvatarAddress/redemptions"
               render={(props) =>
                 <DaoRedemptionsPage {...props} daoState={daoState} currentAccountAddress={currentAccountAddress} />
