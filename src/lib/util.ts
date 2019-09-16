@@ -167,6 +167,9 @@ export async function waitUntilTrue(test: () => Promise<boolean> | boolean, time
   });
 }
 
+export function sleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve: () => void): any => setTimeout(resolve, milliseconds));
+}
 
 export const KNOWN_SCHEME_NAMES = [
   "ContributionReward",
