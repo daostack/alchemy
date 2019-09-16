@@ -8,10 +8,11 @@
 
   - Features Added
     - Links in proposal description open in new tab
+    - Show a message on startup when waiting for subgraph
   - Bugs Fixed
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page
-    - ..
+    - Fix error on initializing arc
 
 
 ### 2019-09-12 [actually two releses]
