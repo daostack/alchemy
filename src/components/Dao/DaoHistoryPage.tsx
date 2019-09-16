@@ -20,7 +20,6 @@ interface IExternalProps extends RouteComponentProps<any> {
 type SubscriptionData = [Proposal[], IDAOState];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-
 class DaoHistoryPage extends React.Component<IProps, null> {
 
   public render() {
@@ -30,7 +29,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
     const { currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     return(
@@ -103,7 +102,9 @@ export default withSubscription({
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }),
+      },
+      { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+      ),
       dao.state()
     );
 
@@ -128,7 +129,9 @@ export default withSubscription({
       orderDirection: "desc",
       first: PAGE_SIZE,
       skip: data[0].length,
-    });
+    },
+    { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+    );
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {

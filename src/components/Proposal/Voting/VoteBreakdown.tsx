@@ -12,7 +12,7 @@ import * as css from "./VoteBreakdown.scss";
 interface IExternalProps {
   currentAccountAddress: Address;
   currentVote: number;
-  dao: IDAOState;
+  daoState: IDAOState;
   detailView?: boolean;
   currentAccountState: IMemberState;
   proposal: IProposalState;
@@ -63,7 +63,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
       detailView,
       historyView,
       proposal,
-      dao,
+      daoState,
     } = this.props;
 
     const wrapperClass = classNames({
@@ -92,7 +92,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>For</span>
             <br className={css.label}/>
-            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesFor} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>
@@ -102,7 +102,7 @@ class VoteBreakdown extends React.Component<IProps, IState> {
           <span className={css.reputation}>
             <span className={css.label}>Against</span>
             <br className={css.label}/>
-            <Reputation daoName={dao.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
+            <Reputation daoName={daoState.name} totalReputation={proposal.totalRepWhenCreated} reputation={proposal.votesAgainst} hideSymbol hideTooltip={!detailView} />
             <b className={css.label}> Rep</b>
           </span>
         </div>

@@ -22,7 +22,7 @@ import * as css from "./ProposalCard.scss";
 
 interface IExternalProps {
   currentAccountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   proposal: Proposal;
 }
 
@@ -34,11 +34,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
 
     const {
       currentAccountAddress,
-      dao,
+      daoState,
       proposal,
     } = this.props;
 
-    return <ProposalData currentAccountAddress={currentAccountAddress} dao={dao} proposalId={proposal.id}>
+    return <ProposalData currentAccountAddress={currentAccountAddress} dao={daoState} proposalId={proposal.id}>
       { props => {
         const {
           beneficiaryProfile,
@@ -99,7 +99,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                 <div className={css.actionButton}>
                   <ActionButton
                     currentAccountAddress={currentAccountAddress}
-                    dao={dao}
+                    daoState={daoState}
                     daoEthBalance={daoEthBalance}
                     proposalState={proposal}
                     rewards={rewards}
@@ -114,7 +114,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                         currentAccountAddress={currentAccountAddress}
                         currentAccountState={member}
                         currentVote={currentAccountVote}
-                        dao={dao}
+                        dao={daoState}
                         expired={expired}
                         proposal={proposal}
                         contextMenu/>
@@ -125,7 +125,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                         currentAccountAddress={currentAccountAddress}
                         currentAccountGens={currentAccountGenBalance}
                         currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                        dao={dao}
+                        dao={daoState}
                         expired={expired}
                         proposal={proposal}
                         stakes={stakes}
@@ -135,20 +135,20 @@ export default class ProposalCard extends React.Component<IProps, null> {
                 </div>
               </div>
               <div className={css.createdBy}>
-                <AccountPopup accountAddress={proposal.proposer} dao={dao} detailView={false} />
-                <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView={false} />
+                <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView={false} />
+                <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
               </div>
               <div className={css.description}>
                 {proposal.description}
               </div>
 
               <h3>
-                <Link className={css.detailLink} to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+                <Link className={css.detailLink} to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
                   <span>{humanProposalTitle(proposal)}</span>
                   <img src="/assets/images/Icon/Open.svg" />
                 </Link>
               </h3>
-              <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView={false} />
+              <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
 
             </div>
 
@@ -163,7 +163,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     currentAccountAddress={currentAccountAddress}
                     currentAccountState={member}
                     currentVote={currentAccountVote}
-                    dao={dao}
+                    daoState={daoState}
                     proposal={proposal}
                     detailView={false} />
                 </div>
@@ -173,7 +173,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     currentAccountAddress={currentAccountAddress}
                     currentAccountState={member}
                     currentVote={currentAccountVote}
-                    dao={dao}
+                    dao={daoState}
                     expired={expired}
                     proposal={proposal} />
                 </div>
@@ -191,7 +191,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     currentAccountAddress={currentAccountAddress}
                     currentAccountGens={currentAccountGenBalance}
                     currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                    dao={dao}
+                    dao={daoState}
                     expired={expired}
                     proposal={proposal}
                     stakes={stakes}

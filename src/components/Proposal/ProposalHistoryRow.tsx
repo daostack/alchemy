@@ -1,5 +1,4 @@
 import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
-import { getArc } from "arc";
 import * as arcActions from "actions/arcActions";
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
@@ -22,7 +21,7 @@ import BN = require("bn.js");
 
 interface IExternalProps {
   proposal: Proposal;
-  dao: IDAOState;
+  daoState: IDAOState;
   currentAccountAddress: Address;
 }
 
@@ -70,7 +69,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     const {
       creatorProfile,
       currentAccountAddress,
-      data, dao, proposal } = this.props;
+      data, daoState, proposal } = this.props;
     const [proposalState, stakesOfCurrentUser, votesOfCurrentUser, currentMemberState] = data;
 
     const proposalClass = classNames({
@@ -132,8 +131,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     return (
       <tr className={proposalClass}>
         <td className={css.proposalCreator}>
-          <AccountPopup accountAddress={proposalState.proposer} dao={dao} historyView/>
-          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
+          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} historyView/>
+          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView/>
         </td>
         <td className={css.endDate}>
           {closingTime(proposalState).format("MMM D, YYYY")}
@@ -142,14 +141,14 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
           {proposalState.queue.name.replace(/([A-Z])/g, " $1")}
         </td>
         <td className={css.title}>
-          <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
+          <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
         </td>
         <td className={css.votes}>
           <div className={voteControls}>
             <VoteBreakdown
               currentAccountAddress={currentAccountAddress}
               currentAccountState={currentMemberState}
-              currentVote={currentAccountVote} dao={dao}
+              currentVote={currentAccountVote} daoState={daoState}
               proposal={proposalState} historyView />
           </div>
         </td>
@@ -202,8 +201,6 @@ export default withSubscription({
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps) => {
     const proposal = props.proposal;
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
     if (!props.currentAccountAddress) {
       return combineLatest(
         proposal.state(),
@@ -216,7 +213,7 @@ export default withSubscription({
         proposal.state({ subscribe: false}),
         proposal.stakes({ where: { staker: props.currentAccountAddress}}, {subscribe: false}),
         proposal.votes({ where: { voter: props.currentAccountAddress }}, {subscribe: false}),
-        dao.member(props.currentAccountAddress).state(),
+        props.daoState.dao.member(props.currentAccountAddress).state(),
       );
     }
   },

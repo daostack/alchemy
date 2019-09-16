@@ -30,11 +30,15 @@ const Fade = ({ children, ...props }: any) => (
 );
 
 type IExternalProps = RouteComponentProps<any>;
-type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[], Scheme[], Scheme[]]>;
+type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[]]>;
 
 const DaoSchemesPage = (props: IProps) => {
-  const [dao, contributionReward, knownSchemes, unknownSchemes ] = props.data;
-
+  // const [dao, allSchemes, knownSchemes, unknownSchemes ] = props.data;
+  const dao = props.data[0];
+  const allSchemes = props.data[1];
+  const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
+  const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
+  const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
   const allKnownSchemes = [...contributionReward, ...knownSchemes];
 
   const schemeCardsHTML = (
@@ -90,12 +94,8 @@ export default withSubscription({
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
     return combineLatest(
-      dao.state(), // DAO state
-      arc.dao(daoAvatarAddress).schemes({where: { name: "ContributionReward"}}),
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      arc.dao(daoAvatarAddress).schemes({where: { name_not: "ContributionReward", name_in: KNOWN_SCHEME_NAMES}, orderBy: "name", orderDirection: "asc"}),
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      arc.dao(daoAvatarAddress).schemes({where: { name_not_in: KNOWN_SCHEME_NAMES}, orderBy: "name", orderDirection: "asc"})
+      dao.state({ fetchAllData: true }), // DAO state
+      arc.dao(daoAvatarAddress).schemes({}, { fetchAllData: true }),
     );
   },
 });

@@ -88,7 +88,7 @@ export default withSubscription({
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod],
       }}),
-      dao.state()
+      dao.state({ subscribe: false }) // subscriptions taken care of by parent compnent
     );
   },
 });
