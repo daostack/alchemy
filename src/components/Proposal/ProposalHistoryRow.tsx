@@ -1,4 +1,4 @@
-import { Address, IDAOState, IExecutionState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
+import { Address, IDAOState, IExecutionState, IMemberState, IProposalOutcome, IProposalState, Stake, Vote, Proposal } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
@@ -21,7 +21,7 @@ import BN = require("bn.js");
 
 interface IExternalProps {
   proposal: Proposal;
-  dao: IDAOState;
+  daoState: IDAOState;
   currentAccountAddress: Address;
 }
 
@@ -34,7 +34,7 @@ interface IDispatchProps {
   executeProposal: typeof arcActions.executeProposal;
 }
 
-type SubscriptionData = [IProposalState, Stake[], Vote[]];
+type SubscriptionData = [IProposalState, Stake[], Vote[], IMemberState];
 type IProps = IStateProps & IDispatchProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IExternalProps &  ISubscriptionProps<SubscriptionData> & IStateProps => {
@@ -69,8 +69,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     const {
       creatorProfile,
       currentAccountAddress,
-      data, dao, proposal } = this.props;
-    const [proposalState, stakesOfCurrentUser, votesOfCurrentUser] = data;
+      data, daoState, proposal } = this.props;
+    const [proposalState, stakesOfCurrentUser, votesOfCurrentUser, currentMemberState] = data;
 
     const proposalClass = classNames({
       [css.wrapper]: true,
@@ -129,35 +129,36 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     });
 
     return (
-      <div className={proposalClass}>
-        <div className={css.proposalCreator}>
-          <AccountPopup accountAddress={proposalState.proposer} daoState={dao} historyView/>
-          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} historyView/>
-        </div>
-        <div className={css.endDate}>
+      <tr className={proposalClass}>
+        <td className={css.proposalCreator}>
+          <AccountPopup accountAddress={proposalState.proposer} daoState={daoState} historyView/>
+          <AccountProfileName accountAddress={proposalState.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} historyView/>
+        </td>
+        <td className={css.endDate}>
           {closingTime(proposalState).format("MMM D, YYYY")}
-        </div>
-        <div className={css.scheme}>
-          <div>{proposalState.queue.name.replace(/([A-Z])/g, " $1")}</div>
-        </div>
-        <div className={css.title}>
-          <div><Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link></div>
-        </div>
-        <div className={css.votes}>
+        </td>
+        <td className={css.scheme}>
+          {proposalState.queue.name.replace(/([A-Z])/g, " $1")}
+        </td>
+        <td className={css.title}>
+          <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposalState)}</Link>
+        </td>
+        <td className={css.votes}>
           <div className={voteControls}>
             <VoteBreakdown
-              currentAccountAddress={currentAccountAddress} currentVote={currentAccountVote} daoState={dao}
+              currentAccountAddress={currentAccountAddress}
+              currentAccountState={currentMemberState}
+              currentVote={currentAccountVote} daoState={daoState}
               proposal={proposalState} historyView />
           </div>
-        </div>
-
-        <div className={css.predictions}>
+        </td>
+        <td className={css.predictions}>
           <StakeGraph
             proposal={proposalState}
             historyView
           />
-        </div>
-        <div className={closeReasonClass}>
+        </td>
+        <td className={closeReasonClass}>
           <div className={css.decisionPassed}>
             <img src="/assets/images/Icon/vote/for.svg"/>
             <span>Passed</span>
@@ -172,8 +173,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
               <span>{closeReason}</span>
             </div>
           </div>
-        </div>
-        <div className={myActionsClass}>
+        </td>
+        <td className={myActionsClass}>
           <div className={css.myVote}>
             <span>{formatTokens(currentAccountVoteAmount, "Rep")}</span>
             <img className={css.passVote} src="/assets/images/Icon/vote/for-fill.svg"/>
@@ -184,8 +185,8 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
             <img className={css.forStake} src="/assets/images/Icon/v-small-fill.svg"/>
             <img className={css.againstStake} src="/assets/images/Icon/x-small-fill.svg"/>
           </div>
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   }
 }
@@ -195,8 +196,8 @@ const ConnectedProposalHistoryRow = connect(mapStateToProps, mapDispatchToProps)
 // In this case we wrap the Connected component because mapStateToProps requires the subscribed proposal state
 export default withSubscription({
   wrappedComponent: ConnectedProposalHistoryRow,
-  loadingComponent: (props) => <div>Loading proposal {props.proposal.id.substr(0, 6)}...</div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
+  loadingComponent: (props) => <tr><td>Loading proposal {props.proposal.id.substr(0, 6)}...</td></tr>,
+  errorComponent: (props) => <tr><td>{ props.error.message }</td></tr>,
   checkForUpdate: ["currentAccountAddress"],
   createObservable: (props: IExternalProps) => {
     const proposal = props.proposal;
@@ -204,13 +205,15 @@ export default withSubscription({
       return combineLatest(
         proposal.state(),
         of([]),
-        of([])
+        of([]),
+        of(null),
       );
     } else {
       return combineLatest(
         proposal.state({ subscribe: false}),
         proposal.stakes({ where: { staker: props.currentAccountAddress}}, {subscribe: false}),
-        proposal.votes({ where: { voter: props.currentAccountAddress }}, {subscribe: false})
+        proposal.votes({ where: { voter: props.currentAccountAddress }}, {subscribe: false}),
+        props.daoState.dao.member(props.currentAccountAddress).state(),
       );
     }
   },

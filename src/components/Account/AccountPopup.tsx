@@ -1,4 +1,4 @@
-import BN = require("bn.js");
+import { Address, IDAOState, IMemberState } from "@daostack/client";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -11,7 +11,9 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { Address, IDAOState, IMemberState } from "@daostack/client";
+
+import BN = require("bn.js");
+
 import * as css from "./Account.scss";
 
 
@@ -56,7 +58,7 @@ class AccountPopup extends React.Component<IProps, null> {
 
   public render() {
     const accountInfo = this.props.data;
-    const { daoState, accountAddress, profile } = this.props;
+    const { accountAddress, daoState, profile } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const targetAccountClass = classNames({
@@ -95,6 +97,9 @@ class AccountPopup extends React.Component<IProps, null> {
 
 const ConnectedAccountPopup = connect(mapStateToProps, mapDispatchToProps)(AccountPopup);
 
+// TODO: move this subscription to ProposalData.
+//  Can't do that right now because need to get the proposal state first to get the proposer and beneficiary
+//  before we can load the member data for those addresses
 const SubscribedAccountPopup = withSubscription({
   wrappedComponent: ConnectedAccountPopup,
   loadingComponent: <div>Loading...</div>,
