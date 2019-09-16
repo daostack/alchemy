@@ -1,9 +1,8 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Reward } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWeb3ProviderAndWarn } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
 import * as moment from "moment";
 import Tooltip from "rc-tooltip";
@@ -14,8 +13,6 @@ import { closingTime } from "reducers/arcReducer";
 import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { Observable, of} from "rxjs";
-import { map, mergeMap } from "rxjs/operators";
 import * as css from "./ActionButton.scss";
 /* import RedemptionsString from "./RedemptionsString"; */
 import RedemptionsTip from "./RedemptionsTip";
@@ -28,6 +25,7 @@ interface IExternalProps {
   daoEthBalance: BN;
   detailView?: boolean;
   proposalState: IProposalState;
+  rewards: IRewardState;
 }
 
 interface IStateProps {
@@ -40,7 +38,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IRewardState>;
+type IProps = IExternalProps & IStateProps & IDispatchProps;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const proposalState = ownProps.proposalState;
@@ -84,8 +82,6 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const rewardsForCurrentUser = this.props.data;
-
     const {
       beneficiaryProfile,
       currentAccountAddress,
@@ -93,6 +89,7 @@ class ActionButton extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       proposalState,
+      rewards,
     } = this.props;
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
@@ -100,7 +97,7 @@ class ActionButton extends React.Component<IProps, IState> {
 
     let beneficiaryHasRewards;
 
-    const accountHasGPRewards = hasClaimableRewards(rewardsForCurrentUser);
+    const accountHasGPRewards = hasClaimableRewards(rewards);
     if (proposalState.contributionReward) {
       const daoBalances: {[key: string]: BN} = {
         eth: daoEthBalance,
@@ -123,7 +120,7 @@ class ActionButton extends React.Component<IProps, IState> {
       currentAccountAddress,
       dao,
       proposal: proposalState,
-      rewardsForCurrentUser,
+      rewardsForCurrentUser: rewards,
     });
 
     const redeemButtonClass = classNames({
@@ -216,24 +213,4 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedActionButton = withSubscription({
-  wrappedComponent: ActionButton,
-  loadingComponent: <div>Loading...</div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
-
-  checkForUpdate: (oldProps, newProps) => { return oldProps.proposalState.id !== newProps.proposalState.id || oldProps.currentAccountAddress !== newProps.currentAccountAddress; },
-
-  createObservable: (props: IProps) => {
-    const proposalState = props.proposalState;
-
-    if (props.currentAccountAddress) {
-      return proposalState.proposal.rewards({ where: {beneficiary: props.currentAccountAddress}})
-        .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
-        .pipe(mergeMap(((reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
-    } else {
-      return of(null);
-    }
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SubscribedActionButton);
+export default connect(mapStateToProps, mapDispatchToProps)(ActionButton);

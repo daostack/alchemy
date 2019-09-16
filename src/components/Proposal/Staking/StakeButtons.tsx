@@ -1,12 +1,11 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
@@ -16,7 +15,6 @@ import { Modal } from "react-router-modal";
 import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest, of } from "rxjs";
 
 import * as css from "./StakeButtons.scss";
 
@@ -31,10 +29,13 @@ interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   contextMenu?: boolean;
   currentAccountAddress?: Address;
+  currentAccountGens: BN;
+  currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
   detailView?: boolean;
   expired?: boolean;
   historyView?: boolean;
+  stakes: Stake[];
 }
 
 interface IDispatchProps {
@@ -49,8 +50,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type SubscriptionData = [BN, BN, Stake[]];
-type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IExternalProps & IDispatchProps;
 
 class StakeButtons extends React.Component<IProps, IState> {
 
@@ -94,18 +94,19 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const [currentAccountGens, currentAccountGenStakingAllowance, stakesOfCurrentUser] = this.props.data;
-
     const {
       beneficiaryProfile,
       contextMenu,
       currentAccountAddress,
+      currentAccountGens,
+      currentAccountGenStakingAllowance,
       dao,
       detailView,
       expired,
       historyView,
       proposal,
       stakeProposal,
+      stakes,
     } = this.props;
 
     const {
@@ -116,8 +117,8 @@ class StakeButtons extends React.Component<IProps, IState> {
 
     let currentStake: Stake;
     let currentAccountPrediction = 0;
-    if (stakesOfCurrentUser.length > 0) {
-      currentStake = stakesOfCurrentUser[0];
+    if (stakes.length > 0) {
+      currentStake = stakes[0];
     }
     if (currentStake) {
       currentAccountPrediction = currentStake.staticState.outcome;
@@ -260,34 +261,4 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedStakeButtons = withSubscription({
-  wrappedComponent: StakeButtons,
-  loadingComponent: <div>Loading PredictionBox</div>,
-  errorComponent: (props) => <div>{props.error.message}</div>,
-
-  checkForUpdate: (oldProps, newProps) => {
-    return oldProps.currentAccountAddress !== newProps.currentAccountAddress || oldProps.proposal.id !== newProps.proposal.id;
-  },
-
-  createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-    const spender = props.proposal.votingMachine;
-    const currentAccountAddress = props.currentAccountAddress;
-
-    if (currentAccountAddress) {
-      return combineLatest(
-        arc.GENToken().balanceOf(currentAccountAddress),
-        arc.allowance(currentAccountAddress, spender),
-        props.proposal.proposal.stakes({where: { staker: currentAccountAddress }})
-      );
-    } else {
-      return combineLatest(
-        of(new BN("0")),
-        of(undefined),
-        of([]),
-      );
-    }
-  },
-});
-
-export default connect(null, mapDispatchToProps)(SubscribedStakeButtons);
+export default connect(null, mapDispatchToProps)(StakeButtons);

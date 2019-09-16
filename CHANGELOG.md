@@ -7,7 +7,7 @@
 ### Unreleased
 
   - Features Added
-    - ..
+    - Links in proposal description open in new tab
   - Bugs Fixed
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page
