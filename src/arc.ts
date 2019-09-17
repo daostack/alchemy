@@ -215,14 +215,13 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   if (success) {
     provider = arc.web3.currentProvider; // won't be a string, but the actual provider
     // save for future reference
-    const networkId = await getNetworkId(provider);
     // eslint-disable-next-line require-atomic-updates
-    provider.__networkId = networkId;
+    provider.__networkId = await getNetworkId(provider);
     if ((window as any).ethereum) {
       // if this is metamask this should prevent a browser refresh when the network changes
       (window as any).ethereum.autoRefreshOnNetworkChange = false;
     }
-    console.log(`Connected Arc to ${await getNetworkName(networkId)}${readonly ? " (readonly)" : ""} `);
+    console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
   }
 
   (window as any).arc = success ? arc : null;
