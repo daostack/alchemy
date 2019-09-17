@@ -19,7 +19,7 @@ export default (props: IProps) => {
   const claimableRewards = getClaimableRewards(rewardsForCurrentUser);
   let c = null;
   if (claimableRewards.reputationForProposer) {
-    c = <div key={rewardsForCurrentUser.id}>
+    c = <div key={rewardsForCurrentUser.id + "_proposer"}>
       <strong>For creating the proposal you will receive:</strong>
       <ul>
         <li><Reputation reputation={claimableRewards.reputationForProposer} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
@@ -28,7 +28,7 @@ export default (props: IProps) => {
     rewardComponents.push(c);
   }
   if (claimableRewards.reputationForVoter) {
-    c = <div key={rewardsForCurrentUser.id}>
+    c = <div key={rewardsForCurrentUser.id + "_voter"}>
       <strong>For voting on the proposal you will receive:</strong>
       <ul>
         <li><Reputation reputation={claimableRewards.reputationForVoter} totalReputation={dao.reputationTotalSupply} daoName={dao.name} /></li>
@@ -37,7 +37,7 @@ export default (props: IProps) => {
     rewardComponents.push(c);
   }
   if (claimableRewards.tokensForStaker) {
-    c = <div key={rewardsForCurrentUser.id}>
+    c = <div key={rewardsForCurrentUser.id + "_staker_tokens"}>
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
         <li>{fromWei(claimableRewards.tokensForStaker)} GEN</li>
@@ -46,7 +46,7 @@ export default (props: IProps) => {
     rewardComponents.push(c);
   }
   if (claimableRewards.daoBountyForStaker) {
-    c = <div key={rewardsForCurrentUser.id}>
+    c = <div key={rewardsForCurrentUser.id + "_staker_bounty"}>
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
         <li>{fromWei(claimableRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
