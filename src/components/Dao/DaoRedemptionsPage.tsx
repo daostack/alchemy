@@ -17,7 +17,7 @@ import BN = require("bn.js");
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress?: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
 }
 
 type IProps = IExternalProps & ISubscriptionProps<any>;
@@ -32,7 +32,7 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
     }
 
     const proposals = data.data.proposals;
-    const { dao, currentAccountAddress } = this.props;
+    const { daoState, currentAccountAddress } = this.props;
 
     const arc = getArc();
     const proposalsHTML = proposals.map((proposalData: any) => {
@@ -40,7 +40,8 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
 
       return <ProposalCard
         key={"proposal_" + proposal.id}
-        proposal={proposal} dao={dao}
+        proposal={proposal}
+        daoState={daoState}
         currentAccountAddress={currentAccountAddress}
       />;
     });
@@ -98,7 +99,7 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
     });
     if (!reputationReward.isZero()) {
       totalRewards.push(
-        <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputationReward}/>
+        <Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={reputationReward}/>
       );
     }
 
@@ -110,7 +111,7 @@ class DaoRedemptionsPage extends React.Component<IProps, null> {
 
     return (
       <div>
-        <BreadcrumbsItem to={"/dao/" + dao.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + daoState.address + "/redemptions"}>Redemptions</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.redemptionsHeader}>
             Redemptions
@@ -152,7 +153,7 @@ export default withSubscription({
       proposals(
         where: {
           accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-          dao: "${props.dao.address}"
+          dao: "${props.daoState.address}"
         },
         orderBy: "closingAt"
       ) {

@@ -29,7 +29,8 @@ const ReactMarkdown = require("react-markdown");
 
 interface IProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
+  detailView?: boolean;
   proposalId: string;
 }
 
@@ -68,9 +69,9 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
   }
 
   public render(): any {
-    const { currentAccountAddress, dao, proposalId } = this.props;
+    const { currentAccountAddress, daoState, proposalId } = this.props;
 
-    return <ProposalData currentAccountAddress={currentAccountAddress} dao={dao} proposalId={proposalId}>
+    return <ProposalData currentAccountAddress={currentAccountAddress} dao={daoState} proposalId={proposalId}>
       { props => {
         const {
           beneficiaryProfile,
@@ -114,8 +115,8 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
         return (
           <div className={css.wrapper}>
-            <BreadcrumbsItem weight={1} to={`/dao/${dao.address}/scheme/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
-            <BreadcrumbsItem weight={2} to={`/dao/${dao.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
+            <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+            <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
             <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
               <div className={css.proposalInfo}>
                 <div>
@@ -124,7 +125,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   </div>
                   <ActionButton
                     currentAccountAddress={currentAccountAddress}
-                    dao={dao}
+                    daoState={daoState}
                     daoEthBalance={daoEthBalance}
                     detailView
                     proposalState={proposal}
@@ -132,7 +133,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   />
                 </div>
                 <h3 className={css.proposalTitleTop}>
-                  <Link to={"/dao/" + dao.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
+                  <Link to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">{humanProposalTitle(proposal)}</Link>
                 </h3>
 
                 <div className={css.timer + " clearfix"}>
@@ -153,8 +154,8 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                 </div>
 
                 <div className={css.createdBy}>
-                  <AccountPopup accountAddress={proposal.proposer} dao={dao} detailView />
-                  <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={dao.address} detailView />
+                  <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView />
+                  <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
                 </div>
 
                 <div className={css.description}>
@@ -173,7 +174,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   : " "
                 }
 
-                <ProposalSummary proposal={proposal} dao={dao} beneficiaryProfile={beneficiaryProfile} detailView />
+                <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
 
                 <div className={css.voteButtonsBottom}>
                   <span className={css.voteLabel}>Vote:</span>
@@ -182,7 +183,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                       altStyle
                       currentAccountAddress={currentAccountAddress}
                       currentVote={currentAccountVote}
-                      dao={dao}
+                      dao={daoState}
                       detailView
                       expired={expired}
                       currentAccountState={member}
@@ -213,7 +214,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                         currentAccountAddress={currentAccountAddress}
                         currentAccountState={member}
                         currentVote={currentAccountVote}
-                        dao={dao}
+                        dao={daoState}
                         detailView
                         expired={expired}
                         proposal={proposal} />
@@ -229,7 +230,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                       currentAccountAddress={currentAccountAddress}
                       currentAccountState={member}
                       currentVote={currentAccountVote}
-                      dao={dao}
+                      daoState={daoState}
                       detailView
                       proposal={proposal} />
                   </div>
@@ -246,7 +247,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                       currentAccountAddress={currentAccountAddress}
                       currentAccountGens={currentAccountGenBalance}
                       currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                      dao={dao}
+                      dao={daoState}
                       detailView
                       expired={expired}
                       proposal={proposal}
@@ -275,7 +276,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
               <VotersModal
                 closeAction={this.closeVotersModal}
                 currentAccountAddress={this.props.currentAccountAddress}
-                dao={dao}
+                dao={daoState}
                 proposal={proposal}
               /> : ""
             }
@@ -283,7 +284,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
             {this.state.showShareModal ?
               <SocialShareModal
                 closeHandler={this.closeShareModal}
-                url={`https://alchemy.daostack.io/dao/${dao.address}/proposal/${proposal.id}`}
+                url={`https://alchemy.daostack.io/dao/${daoState.address}/proposal/${proposal.id}`}
               /> : ""
             }
           </div>
