@@ -215,12 +215,14 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   if (success) {
     provider = arc.web3.currentProvider; // won't be a string, but the actual provider
     // save for future reference
-    provider.__networkId = await getNetworkId(provider);
+    const networkId = await getNetworkId(provider);
+    // eslint-disable-next-line require-atomic-updates
+    provider.__networkId = networkId;
     if ((window as any).ethereum) {
       // if this is metamask this should prevent a browser refresh when the network changes
       (window as any).ethereum.autoRefreshOnNetworkChange = false;
     }
-    console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
+    console.log(`Connected Arc to ${await getNetworkName(networkId)}${readonly ? " (readonly)" : ""} `);
   }
 
   (window as any).arc = success ? arc : null;
@@ -354,6 +356,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
   }
 
   if (success) {
+    // eslint-disable-next-line require-atomic-updates
     selectedProvider = provider;
   }
 
@@ -410,6 +413,7 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
   if (selectedProvider) {
     // clearing this, initializeArc will be made to use the default web3Provider
     const networkName = await getNetworkName();
+    // eslint-disable-next-line require-atomic-updates
     selectedProvider = undefined;
     try {
       success = await initializeArc();

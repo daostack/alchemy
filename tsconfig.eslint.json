@@ -1,0 +1,20 @@
+{
+  // extend your base config so you don't have to redefine your compilerOptions
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "test/**/*.ts",
+    "test/**/*.js",
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "typings/**/*.d.ts"
+  ],
+  "exclude": [
+    "src/**/*.scss.d.ts"
+  ]
+  }

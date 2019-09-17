@@ -11,7 +11,6 @@ import { getExchangesList, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-//@ts-ignore
 import { Modal } from "react-router-modal";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";

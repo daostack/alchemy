@@ -113,7 +113,6 @@ class AccountProfilePage extends React.Component<IProps, null> {
       const params = [msg, currentAccountAddress];
       const result = await send({ method, params, from: currentAccountAddress });
       if (result.error) {
-        console.error("Signing canceled, data was not saved");
         showNotification(NotificationStatus.Failure, "Saving profile was canceled");
         setSubmitting(false);
         return;
@@ -128,7 +127,6 @@ class AccountProfilePage extends React.Component<IProps, null> {
       }
     } catch (error) {
       if (web3Provider.isSafe) {
-        console.log(error.message);
         showNotification(NotificationStatus.Failure, "We're very sorry, but Gnosis Safe does not support message signing :-(");
       } else {
         showNotification(NotificationStatus.Failure, error.message);

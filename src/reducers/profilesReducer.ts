@@ -74,7 +74,8 @@ const profilesReducer = (state = initialState, action: any) => {
           return state;
         }
         case AsyncActionSequence.Failure: {
-          console.log(`ERROR: ${payload}`);
+          // eslint-disable-next-line no-console
+          console.error(`ERROR: ${payload}`);
           return state;
         }
       }

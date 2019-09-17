@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "outDir": "./dist/",
+    "outDir": "dist",
     "lib": [
       "es2017",
       "dom",
@@ -21,19 +21,8 @@
     "noUnusedLocals": true
   },
   "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx",
-    "./typings/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "build",
-    "scripts",
-    "src/*.js",
-    "./src/*.js",
-    "./test/**/*",
-    "./test/*",
-    "test/*",
-    "test/**/*"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "typings/**/*.d.ts"
   ]
 }

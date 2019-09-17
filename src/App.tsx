@@ -27,6 +27,7 @@ export class App extends React.Component<{}, {arcIsInitialized: boolean}> {
         this.setState({ arcIsInitialized: true });
       })
       .catch ((err): void => {
+        // eslint-disable-next-line no-console
         console.log(err);
       });
 

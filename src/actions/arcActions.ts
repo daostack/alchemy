@@ -32,7 +32,9 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescrip
     },
     (err: Error) => {
       const msg = `${txDescription}: transaction failed :-(`;
+      // eslint-disable-next-line no-console
       console.warn(msg);
+      // eslint-disable-next-line no-console
       console.warn(err.message);
       dispatch(showNotification(NotificationStatus.Failure, msg));
     },
@@ -49,6 +51,7 @@ export function createProposal(proposalOptions: IProposalCreateOptions): ThunkAc
       const observer = operationNotifierObserver(dispatch, "Create proposal");
       await dao.createProposal(proposalOptions).subscribe(...observer);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err);
       throw err;
     }
@@ -146,8 +149,6 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const redeemMethod = contract.methods.redeem(addressToRedeem);
       let gasPrice = await arc.web3.eth.getGasPrice();
       gasPrice = gasPrice * 1.2;
-      // console.log(redeemMethod);
-      // console.log(redeemMethod.encodeABI());
       const txToSign
       = {
         gas,
@@ -158,24 +159,17 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       };
       const gasEstimate = await arc.web3.eth.estimateGas(txToSign);
       txToSign.gas = gasEstimate;
-      console.log(`estimated gas cost           : ${gasEstimate  * gasPrice}`);
-      // console.log(txToSign);
       // if the gas cost is higher then the users balance, we lower it to fit
       const userBalance = await arc.web3.eth.getBalance(redeemerAddress);
-      console.log(`balance of ${redeemerAddress}: ${userBalance}`);
       if (userBalance < gasEstimate * gasPrice) {
         txToSign.gasPrice = Math.floor(userBalance/gasEstimate);
       }
-      console.log(`estimated gas cost after adjusting: ${gasEstimate  * txToSign.gasPrice}`);
-      const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
-      // console.log(signedTransaction);
+      // const signedTransaction = await arc.web3.eth.accounts.signTransaction(txToSign, privateKey);
       dispatch(showNotification(NotificationStatus.Success, "Sending redeem transaction, please wait for it to be mined"));
-      const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
-      console.log(`transaction hash: ${txHash}`);
+      // const txHash = await arc.web3.utils.sha3(signedTransaction.rawTransaction);
       try {
-        const receipt  = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        // const receipt  = await arc.web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         dispatch(showNotification(NotificationStatus.Success, "Transaction was succesful!"));
-        console.log(receipt);
       } catch(err) {
         dispatch(showNotification(NotificationStatus.Failure, `Transaction failed: ${err.message}`));
       }

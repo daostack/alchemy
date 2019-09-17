@@ -80,6 +80,7 @@ export function fromWei(amount: BN): number {
   try {
     return Number(Web3.utils.fromWei(amount.toString(), "ether"));
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);
     return 0;
   }
@@ -208,11 +209,9 @@ export function isKnownScheme(address: Address) {
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
   if (scheme.name === "GenericScheme") {
-    // @ts-ignore
-    if (scheme.genericSchemeParams) {
+    if ((scheme as any).genericSchemeParams) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      // @ts-ignore
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericSchemeParams.contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo((scheme as any).genericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
