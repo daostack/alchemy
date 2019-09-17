@@ -32,6 +32,7 @@
     - Add link to help center
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
+    - add support fo WalletConnect web3 providers
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page
