@@ -32,7 +32,7 @@
     - Add link to help center
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
-    - avoid duplicate Genesis Alpha card cards
+    - avoid duplicate Genesis Alpha cards
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page
