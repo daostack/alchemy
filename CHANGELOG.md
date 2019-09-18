@@ -38,7 +38,7 @@
     - Hide notifications after 10 seconds
     - Add dao address as default value for Cross-DAO redemptions
     - Fix redemptions count
-
+    - Display proper message when no history
 
 ### version 0.9.4; 2019-08-13
 
