@@ -54,6 +54,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
             </p>
           }
         >
+        { proposals.length === 0 ? "There has been no activity to date" : 
           <table className={css.proposalHistoryTable}>
             <thead>
               <tr className={css.proposalHistoryTableHeader}>
@@ -71,6 +72,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
               {proposalsHTML}
             </tbody>
           </table>
+        }
         </InfiniteScroll>
 
       </div>
