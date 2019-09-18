@@ -14,7 +14,7 @@ type IProps = ISubscriptionProps<SubscriptionData>;
 
 class DaosPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data } = this.props;
 
     const daos = data[1];

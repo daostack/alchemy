@@ -110,7 +110,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({ currentTab: tab });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
     const schemes = this.props.data;
     const { handleClose } = this.props;

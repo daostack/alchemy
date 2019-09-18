@@ -32,7 +32,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({

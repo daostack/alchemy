@@ -17,7 +17,7 @@ interface IProps {
 
 export default class AccountProfileName extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { accountAddress, accountProfile, daoAvatarAddress, historyView, detailView } = this.props;
 
     const accountNameClass = classNames({

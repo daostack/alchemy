@@ -16,7 +16,7 @@ interface IProps {
 
 export default class ProposalSummaryDutchX extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
     const decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
     const action = decodedCallData.action;

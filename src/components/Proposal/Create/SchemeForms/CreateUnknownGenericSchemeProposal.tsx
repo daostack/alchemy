@@ -55,7 +55,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { handleClose } = this.props;
 
     return (

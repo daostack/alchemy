@@ -77,7 +77,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     this.setState({ instructionsOpen: !this.state.instructionsOpen });
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, proposal, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 

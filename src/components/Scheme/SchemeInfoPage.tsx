@@ -16,7 +16,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
   private copyToClipboardHandler = (str: string) => (_event: any) => { copyToClipboard(str); };
 
-  public render() {
+  public render(): RenderOutput {
     const { daoAvatarAddress, scheme } = this.props;
 
     const duration = (durationSeconds: number): any => {

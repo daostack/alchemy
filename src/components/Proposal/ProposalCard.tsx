@@ -30,7 +30,7 @@ type IProps = IExternalProps;
 
 export default class ProposalCard extends React.Component<IProps, null> {
 
-  public render(): any {
+  public render(): RenderOutput {
 
     const {
       currentAccountAddress,

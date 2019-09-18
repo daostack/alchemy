@@ -131,7 +131,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       this.teardownSubscription();
     }
 
-    public render() {
+    public render(): RenderOutput {
       if (this.state.isLoading && typeof options.loadingComponent !== "undefined") {
         if (typeof options.loadingComponent === "function") {
           return <options.loadingComponent {...this.props as Props} />;

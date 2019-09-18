@@ -5,3 +5,5 @@ declare module "*.scss" {
   const classNames: IClassNames;
   export = classNames;
 }
+
+type RenderOutput = React.ReactElement<any> | string;

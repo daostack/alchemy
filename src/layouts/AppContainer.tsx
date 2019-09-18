@@ -140,7 +140,7 @@ class AppContainer extends React.Component<IProps, IState> {
     return false;
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const {
       // connectionStatus,
       dismissNotification,
