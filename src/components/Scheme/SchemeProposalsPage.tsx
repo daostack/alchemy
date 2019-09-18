@@ -73,7 +73,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -83,7 +83,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsPreBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -93,7 +93,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>

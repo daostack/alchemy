@@ -494,7 +494,7 @@ body {
 }
 
 .loading {
-  padding-top: 100px;
+  padding-top: 4rem;
   text-align: center;
 }
 
@@ -730,3 +730,12 @@ body {
   }
 }
 
+.waitingToInitContainer {
+  padding-top: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.waitingToInitMessage {
+  text-align: center; 
+}

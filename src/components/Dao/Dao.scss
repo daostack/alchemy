@@ -30,10 +30,6 @@ button:hover {
   position: relative;
 }
 
-.proposalHistory {
-  display: block;
-}
-
 .outer {
   display: flex;
   height: 100%;
@@ -135,53 +131,16 @@ button:hover {
 
 }
 
-.closedProposalsHeader {
-  display: block;
+.proposalHistoryTable {
   width: 100%;
-  margin: 0 auto 10px auto;
-  display: flex;
+  border-collapse: collapse;
+}
+
+.proposalHistoryTableHeader {
   font-size: 12px;
   font-weight: bold;
   text-align: left;
-
-  .votes {
-    width: 103px;
-  }
-
-  .predictions {
-    width: 110px;
-  }
-
-  .proposalCreator {
-    width: 180px;
-  }
-
-  .endDate {
-    width: 60px;
-    padding-right: 10px;
-  }
-
-  .scheme {
-    width: 80px;
-  }
-
-  .title {
-    width: 250px;
-    padding: 0 15px;
-    flex-grow: 1;
-  }
-
-  .closeReason {
-    width: 150px;
-    position: relative;
-  }
-
-  .myActions {
-    text-align: left;
-    width: 130px;
-  }
 }
-
 
 .noticeWrapper {
   width: 100%;
@@ -594,25 +553,6 @@ button:hover {
     bottom: 0;
     left: 0;
     opacity: .4;
-  }
-}
-
-.columnHeader {
-  width: 100%;
-  font-size: $small;
-  text-transform: uppercase;
-  opacity: 0.5;
-
-  .votes {
-    float: left;
-    width: 55px;
-    text-align: center;
-  }
-
-  .predictions {
-    width: 140px;
-    text-align: center;
-    float: right;
   }
 }
 
@@ -1302,11 +1242,11 @@ a.navItem:hover {
     padding-left: 10px;
   }
 
-    .daoHistoryHeader {
-      padding-left: 10px;
-    }
+  .daoHistoryHeader {
+    padding-left: 10px;
+  }
 
-    .closedProposalsHeader {
-      display: none;
-    }
+  .proposalHistoryTableHeader {
+    display: none;
+  }
 }
