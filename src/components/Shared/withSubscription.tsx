@@ -27,7 +27,7 @@ type OnlyWrappedComponentProps<T extends ISubscriptionProps<any>> = Subtract<T, 
 
 interface IWithSubscriptionOptions<Props extends ISubscriptionProps<ObservableType>, ObservableType extends Record<string, any>> {
   checkForUpdate: (keyof Props)[] | ((oldProps: OnlyWrappedComponentProps<Props>, newProps: OnlyWrappedComponentProps<Props>) => boolean);
-  createObservable: (props: OnlyWrappedComponentProps<Props>) => Promise<Observable<ObservableType>> | Observable<ObservableType>;
+  createObservable: (props: OnlyWrappedComponentProps<Props>) => Observable<ObservableType>;
   errorComponent?: React.ReactElement<any> | React.ComponentType<{error: Error}>;
   fetchMoreCombine?: (oldState: ObservableType, newData: any) => ObservableType;
   getFetchMoreObservable?: (props: OnlyWrappedComponentProps<Props>, currentData: ObservableType) => Observable<any>;
@@ -70,13 +70,13 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       };
     }
 
-    public async setupSubscription(observable?: Observable<any>) {
+    public setupSubscription(observable?: Observable<any>) {
       if (this.subscription) {
         this.subscription.unsubscribe();
       }
       const { createObservable, wrappedComponent } = options;
 
-      this.observable = observable || await createObservable(this.props);
+      this.observable = observable || createObservable(this.props);
 
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {
@@ -86,6 +86,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           });
         },
         (error: Error) => {
+          // eslint-disable-next-line no-console
           console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
 
           this.setState({
@@ -93,7 +94,11 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
             error,
           });
         },
-        () => { this.setState({complete: true}); }
+        () => {
+          this.setState({
+            complete: true,
+            isLoading: false,
+          }); }
       );
     }
 
@@ -103,11 +108,11 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       }
     }
 
-    public async componentDidMount() {
-      await this.setupSubscription();
+    public componentDidMount() {
+      this.setupSubscription();
     }
 
-    public async componentDidUpdate(prevProps: InputProps) {
+    public componentDidUpdate(prevProps: InputProps) {
       const { checkForUpdate } = options;
 
       let shouldUpdate = false;
@@ -122,7 +127,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         });
       }
       if (shouldUpdate) {
-        await this.setupSubscription();
+        this.setupSubscription();
       }
     }
 
@@ -130,8 +135,8 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       this.teardownSubscription();
     }
 
-    public render() {
-      if (this.state.isLoading && typeof options.loadingComponent !== "undefined") {
+    public render(): RenderOutput {
+      if (!this.state.complete && this.state.isLoading && typeof options.loadingComponent !== "undefined") {
         if (typeof options.loadingComponent === "function") {
           return <options.loadingComponent {...this.props as Props} />;
         }
