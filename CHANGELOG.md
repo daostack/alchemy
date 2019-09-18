@@ -32,14 +32,13 @@
     - Add link to help center
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
-    - avoid duplicate Genesis Alpha cards
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page
     - Hide notifications after 10 seconds
     - Add dao address as default value for Cross-DAO redemptions
     - Fix redemptions count
-
+    - avoid duplicate Genesis Alpha cards
 
 ### version 0.9.4; 2019-08-13
 
