@@ -32,6 +32,7 @@
     - Add link to help center
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
+    - add static mint and burn permission 
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page
@@ -39,6 +40,8 @@
     - Add dao address as default value for Cross-DAO redemptions
     - Fix redemptions count
     - Display proper message when no history
+    - avoid duplicate Genesis Alpha cards
+
 
 ### version 0.9.4; 2019-08-13
 
