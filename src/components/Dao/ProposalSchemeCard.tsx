@@ -71,7 +71,7 @@ export default withSubscription({
     const arc = getArc();
     const dao = arc.dao(props.dao.address);
     return combineLatest(
-      props.scheme.state({ subscribe: false }), // no need to subscribe to scheme state, as there is not updateable data
+      props.scheme.state(), // no need to subscribe to scheme state, as there is not updateable data
       // TODO QUERIES: combine these 3 queries, if possible, into 1
       dao.proposals({where: {
         scheme:  props.scheme.id,
@@ -128,8 +128,6 @@ const SubscribedProposalDetail = withSubscription({
     return oldProps.proposal.id !== newProps.proposal.id;
   },
   createObservable: (props: IProposalDetailProps) => {
-    return props.proposal.state( {
-      subscribe: false, // no need to subscribe to updates - the parent component takes care of that
-    });
+    return props.proposal.state(); // no need to subscribe to updates - the parent component takes care of that
   },
 });

@@ -235,17 +235,20 @@ export default withSubscription({
       return of([]);
     }
 
-    const query = gql`       {
-      proposals(where: {
-        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-        dao: "${props.dao.address}"
+    const query = gql`query countProposalsWithUnclaimedRewards
+      {
+        proposals(where: {
+          accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
+          dao: "${props.dao.address}"
       }) {
         id
         }
       }
       `;
     const arc = getArc();
-    return arc.getObservable(query);
+    // we are subscribing to this query so alchemy will get updates.
+    // we probably show this number in other components
+    return arc.getObservable(query, { subscribe: true });
   },
 });
 

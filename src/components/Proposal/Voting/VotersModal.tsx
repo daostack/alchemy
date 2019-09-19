@@ -153,6 +153,6 @@ export default withSubscription({
     const proposalId = props.proposal.id;
     const proposal = dao.proposal(proposalId);
 
-    return proposal.votes();
+    return proposal.votes({}, { subscribe: true });
   },
 });

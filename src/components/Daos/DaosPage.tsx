@@ -53,9 +53,10 @@ export default withSubscription({
   createObservable: () => {
     const arc = getArc();
     return combineLatest(
-      arc.daos({ where: { name: "Genesis Alpha" }}, { fetchAllData: true }),
+      arc.daos({ where: { name: "Genesis Alpha" }}, { fetchAllData: true, subscribe: true }),
       // eslint-disable-next-line
-      arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true }),
+      arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" },
+        orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }),
     );
   },
 });
