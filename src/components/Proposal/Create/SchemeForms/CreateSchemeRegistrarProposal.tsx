@@ -156,7 +156,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
         <div className={schemeRegistrarFormClass}>
           <Formik
-            // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={{
               description: "",
               otherScheme: "",

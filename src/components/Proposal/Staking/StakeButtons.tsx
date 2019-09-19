@@ -10,7 +10,6 @@ import { formatTokens } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-//@ts-ignore
 import { Modal } from "react-router-modal";
 import { VoteOptions } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";

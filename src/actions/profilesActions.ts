@@ -54,7 +54,8 @@ export function getProfile(accountAddress: string) {
         });
       }
     } catch (e) {
-      console.log(`Error getting ${url} (${e.message})`);
+      // eslint-disable-next-line no-console
+      console.error(`Error getting ${url} (${e.message})`);
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
@@ -84,6 +85,7 @@ export function updateProfile(accountAddress: string, name: string, description:
       });
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
+      // eslint-disable-next-line no-console
       console.error("Error saving profile to server: ", errorMsg);
 
       dispatch({

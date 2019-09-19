@@ -65,6 +65,7 @@ export function approveStakingGens(spender: Address) {
     try {
       await arc.approveForStaking(spender, toWei(100000)).send();
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err);
       dispatch({
         type: ActionTypes.APPROVE_STAKING_GENS,

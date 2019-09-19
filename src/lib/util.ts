@@ -80,6 +80,7 @@ export function fromWei(amount: BN): number {
   try {
     return Number(Web3.utils.fromWei(amount.toString(), "ether"));
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.warn(`Invalid number value passed to fromWei: "${amount}": ${err.message}`);
     return 0;
   }
@@ -158,7 +159,7 @@ export function tokenSymbol(tokenAddress: string) {
   return token ? token["symbol"] : "?";
 }
 
-export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut: number = 1000) {
+export async function waitUntilTrue(test: () => Promise<boolean> | boolean, timeOut = 1000) {
   return new Promise((resolve, reject) => {
     const timerId = setInterval(async () => {
       if (await test()) { return resolve(); }
@@ -211,11 +212,9 @@ export function isKnownScheme(address: Address) {
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
   if (scheme.name === "GenericScheme") {
-    // @ts-ignore
-    if (scheme.genericSchemeParams) {
+    if ((scheme as any).genericSchemeParams) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      // @ts-ignore
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(scheme.genericSchemeParams.contractToCall);
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo((scheme as any).genericSchemeParams.contractToCall);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
@@ -417,6 +416,6 @@ export function splitByCamelCase(str: string) {
 // eslint-disable-next-line no-useless-escape
 const pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/);
 
-export function isValidUrl(str: string, emptyOk: boolean = true): boolean {
+export function isValidUrl(str: string, emptyOk = true): boolean {
   return (emptyOk && (!str || !str.trim())) || (str && pattern.test(str));
 }
