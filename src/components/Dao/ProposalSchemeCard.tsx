@@ -79,18 +79,25 @@ export default withSubscription({
         // eslint-disable-next-line @typescript-eslint/camelcase
         expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
       }},
-      { fetchAllData: true } // fetch all data early, so we do not need to query/subscribe when showing individal propsoal info
+      { fetchAllData: true, // fetch all data early, so we do not need to query/subscribe when showing individal propsoal info
+        subscribe: true // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+       }
       ), // the list of queued proposals
       dao.proposals({ where: {
         scheme:  props.scheme.id,
         stage: IProposalStage.PreBoosted,
-      }}, { fetchAllData: true}
-      ), // the list of preboosted proposals
+      }}, {
+        fetchAllData: true,
+        subscribe: true // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      }), // the list of preboosted proposals
       dao.proposals({ where: {
         scheme:  props.scheme.id,
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
-      }}, { fetchAllData: true}) // the list of boosted proposals
+      }}, {
+        fetchAllData: true,
+        subscribe: true // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      }) // the list of boosted proposals
     );
   },
 });

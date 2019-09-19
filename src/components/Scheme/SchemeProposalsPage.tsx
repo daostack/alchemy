@@ -228,7 +228,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       }, { subscribe: true, fetchAllData: true }),
 
       // the list of boosted proposals
-      arc.dao(daoAvatarAddress).proposals({
+      dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",

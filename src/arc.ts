@@ -247,29 +247,32 @@ export async function initializeArc(provider?: any): Promise<boolean> {
         // @ts-ignore
           window.networkQueries.push(definition);
         }
+
+        // @ts-ignore
+        console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
+
+        // function printQueries(queries: any[]) {
+        //   const rs: {[ key: string]: number } = {};
+        //   rs.undefined = 0;
+        //   for (const q of queries) {
+        //     if (q.name) {
+        //       if (!rs[q.name.value]) {
+        //         rs[q.name.value] = 1;
+        //       } else {
+        //         rs[q.name.value] += 1;
+        //       }
+        //     } else {
+        //       rs["undefined"] += 1;
+        //     }
+        //     for (const key in rs) {
+        //       console.log(key, rs[key]);
+        //     }
+        //   }
+        // }
         // @ts-ignore
         console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
-
-        function printQueries(queries: any[]) {
-          const rs: {[ key: string]: number } = {};
-          rs.undefined = 0;
-          for (const q of queries) {
-            if (q.name) {
-              if (!rs[q.name.value]) {
-                rs[q.name.value] = 1;
-              } else {
-                rs[q.name.value] += 1;
-              }
-            } else {
-              rs["undefined"] += 1;
-            }
-            for (const key in rs) {
-              console.log(key, rs[key]);
-            }
-          }
-        }
         // @ts-ignore
-        printQueries(window.networkSubscriptions);
+        // printQueries(window.networkSubscriptions);
       },
     });
   }

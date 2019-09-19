@@ -86,7 +86,7 @@ class Header extends React.Component<IProps, null> {
     await gotoReadonly(this.props.showNotification);
   }
 
-  public render(): any {
+  public render() {
     const {
       currentAccountProfile,
       currentAccountAddress,
