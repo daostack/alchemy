@@ -80,15 +80,15 @@ export default withSubscription({
         expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
       }},
       { fetchAllData: true, // fetch all data early, so we do not need to query/subscribe when showing individal propsoal info
-        subscribe: true // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
-       }
+        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      }
       ), // the list of queued proposals
       dao.proposals({ where: {
         scheme:  props.scheme.id,
         stage: IProposalStage.PreBoosted,
       }}, {
         fetchAllData: true,
-        subscribe: true // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
       }), // the list of preboosted proposals
       dao.proposals({ where: {
         scheme:  props.scheme.id,
@@ -96,7 +96,7 @@ export default withSubscription({
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
       }}, {
         fetchAllData: true,
-        subscribe: true // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
       }) // the list of boosted proposals
     );
   },

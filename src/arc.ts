@@ -238,18 +238,18 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       graphqlWsProvider: arcSettings.graphqlWsProvider,
       graphqlPrefetchHook: (query: any) => {
         const definition = getMainDefinition(query);
-        // console.log(query)
         // @ts-ignore
         if (definition.operation === "subscription") {
-        // @ts-ignore
+          // @ts-ignore
           window.networkSubscriptions.push(definition);
+          // @ts-ignore
+          console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
         } else {
-        // @ts-ignore
+          // @ts-ignore
           window.networkQueries.push(definition);
+          // @ts-ignore
+          // console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
         }
-
-        // @ts-ignore
-        console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
 
         // function printQueries(queries: any[]) {
         //   const rs: {[ key: string]: number } = {};

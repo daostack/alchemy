@@ -35,7 +35,7 @@ type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[]]>;
 class DaoSchemesPage extends React.Component<IProps, null> {
 
   public render() {
-    const props = this.props
+    const props = this.props;
     const dao = props.data[0];
     const allSchemes = props.data[1];
     const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
@@ -83,7 +83,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
       </div>
     );
   }
-};
+}
 
 export default withSubscription({
   wrappedComponent: DaoSchemesPage,
