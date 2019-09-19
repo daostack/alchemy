@@ -215,6 +215,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   if (success) {
     provider = arc.web3.currentProvider; // won't be a string, but the actual provider
     // save for future reference
+    // eslint-disable-next-line require-atomic-updates
     provider.__networkId = await getNetworkId(provider);
     if ((window as any).ethereum) {
       // if this is metamask this should prevent a browser refresh when the network changes
@@ -354,6 +355,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
   }
 
   if (success) {
+    // eslint-disable-next-line require-atomic-updates
     selectedProvider = provider;
   }
 
@@ -410,6 +412,7 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
   if (selectedProvider) {
     // clearing this, initializeArc will be made to use the default web3Provider
     const networkName = await getNetworkName();
+    // eslint-disable-next-line require-atomic-updates
     selectedProvider = undefined;
     try {
       success = await initializeArc();
@@ -523,7 +526,7 @@ export function getAccountIsEnabled(): boolean {
 // Polling is Evil!
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
-export function pollForAccountChanges(currentAccountAddress: Address | null, interval: number = 2000): Observable<Address> {
+export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
   console.log(`start polling for account changes from: ${currentAccountAddress}`);
   return Observable.create((observer: any): () => void  => {
     let prevAccount = currentAccountAddress;

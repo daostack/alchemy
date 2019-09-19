@@ -120,6 +120,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                             // eslint-disable-next-line no-bitwise
                             permissions & 16 ? <div>Call genericCall on behalf of</div> : ""
                           }
+                          {
+                            <div>Mint or burn reputation</div>
+                          }
                         </td>
                       </tr>
                     </tbody>

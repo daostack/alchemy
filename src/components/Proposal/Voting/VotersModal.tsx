@@ -1,5 +1,3 @@
-/* tslint:disable:max-classes-per-file */
-
 import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/client";
 import { getArc } from "arc";
 import * as classNames from "classnames";
@@ -8,7 +6,6 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
-//@ts-ignore
 import { Modal } from "react-router-modal";
 import VoteGraph from "./VoteGraph";
 

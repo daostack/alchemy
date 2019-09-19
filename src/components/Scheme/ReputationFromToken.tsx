@@ -166,7 +166,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
         { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div />  }
         <div className={schemeCss.schemeRedemptionContainer}>
           <Formik
-            // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={{
               accountAddress: "",
             } as IFormValues}
