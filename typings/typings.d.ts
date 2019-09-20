@@ -7,3 +7,4 @@ declare module "*.scss" {
 }
 
 type RenderOutput = React.ReactElement<any> | string;
+

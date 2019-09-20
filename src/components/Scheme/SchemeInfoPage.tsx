@@ -130,6 +130,12 @@ export default class SchemeInfo extends React.Component<IProps, null> {
               <td>
               </td>
             </tr>
+            <tr>
+              <th>Can Mint or Burn Reputation?</th>
+              <td>Yes</td>
+              <td>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
