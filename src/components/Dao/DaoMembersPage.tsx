@@ -35,7 +35,7 @@ const PAGE_SIZE = 100;
 
 class DaoMembersPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data } = this.props;
 
     const members = data;

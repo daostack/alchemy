@@ -46,7 +46,7 @@ export default class Notification extends React.Component<IProps, null> {
     showNotification(NotificationStatus.Success, "Copied to clipboard!");
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { title, message, status, url, fullErrorMessage } = this.props;
 
     const transactionClass = classNames({

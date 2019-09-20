@@ -63,7 +63,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
 
 
 
-  public render() {
+  public render(): RenderOutput {
     return (
       <Modal onBackdropClick={this.props.closeHandler}>
         <div className={css.modalWindow}>

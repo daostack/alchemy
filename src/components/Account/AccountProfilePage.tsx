@@ -139,7 +139,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     this.props.verifySocialAccount(this.props.accountAddress, account);
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const [dao, accountInfo, ethBalance, genBalance] = this.props.data;
 
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;

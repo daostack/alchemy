@@ -121,7 +121,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { data, daoAvatarAddress, handleClose } = this.props;
 
     if (!data) {

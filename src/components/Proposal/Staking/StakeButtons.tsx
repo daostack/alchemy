@@ -92,7 +92,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showApproveModal: false });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const {
       beneficiaryProfile,
       contextMenu,

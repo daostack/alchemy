@@ -81,7 +81,7 @@ class ActionButton extends React.Component<IProps, IState> {
     this.setState({ preRedeemModalOpen: false });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const {
       beneficiaryProfile,
       currentAccountAddress,
