@@ -61,7 +61,7 @@ class DaoContainer extends React.Component<IProps, null> {
     this.props.getProfilesForAllAccounts();
   }
 
-  public render() {
+  public render(): RenderOutput {
     const daoState = this.props.data;
     const { currentAccountAddress } = this.props;
 

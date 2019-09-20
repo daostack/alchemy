@@ -19,7 +19,7 @@ interface IVoteRowProps {
 }
 
 class VoteRow extends React.Component<IVoteRowProps, null> {
-  public render() {
+  public render(): RenderOutput {
     const {dao, proposal, vote} = this.props;
     const voteState = vote.staticState;
     return (
@@ -58,7 +58,7 @@ class VotersModal extends React.Component<IProps, null> {
     this.props.closeAction();
   }
 
-  public render() {
+  public render(): RenderOutput {
     const votes = this.props.data;
     const { dao, proposal } = this.props;
 

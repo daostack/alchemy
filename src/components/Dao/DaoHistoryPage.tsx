@@ -22,7 +22,7 @@ type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 class DaoHistoryPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data, hasMoreToLoad, fetchMore } = this.props;
 
     const [proposals, dao] = data;

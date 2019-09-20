@@ -186,7 +186,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     />;
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { handleClose, daoAvatarAddress } = this.props;
     const arc = getArc();
 

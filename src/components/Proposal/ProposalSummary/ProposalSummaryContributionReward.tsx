@@ -22,7 +22,7 @@ export default class ProposalSummaryContributionReward extends React.Component<I
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
 
     const { beneficiaryProfile, proposal, dao, detailView, transactionModal } = this.props;
 

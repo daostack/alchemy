@@ -12,7 +12,7 @@ interface IProps {
 }
 
 export default class Reputation extends React.Component<IProps, null> {
-  public render() {
+  public render(): RenderOutput {
     /**
      * totalReputation is a BN in WEI
      * reputation is a BN in WEI

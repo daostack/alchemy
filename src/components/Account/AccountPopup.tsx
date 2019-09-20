@@ -56,7 +56,7 @@ class AccountPopup extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public render() {
+  public render(): RenderOutput {
     const accountInfo = this.props.data;
     const { accountAddress, daoState, profile } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);

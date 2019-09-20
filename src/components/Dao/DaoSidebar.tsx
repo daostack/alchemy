@@ -38,7 +38,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
     this.setState({ openMenu: !this.state.openMenu });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     if (this.props.data === null) {
       return null;
     }

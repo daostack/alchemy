@@ -24,7 +24,7 @@ type IProps = IExternalProps & ISubscriptionProps<any>;
 
 class DaoRedemptionsPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data } = this.props;
 
     if (data === null) {

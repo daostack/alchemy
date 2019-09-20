@@ -65,7 +65,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     };
   }
 
-  public render() {
+  public render(): RenderOutput {
     const {
       creatorProfile,
       currentAccountAddress,

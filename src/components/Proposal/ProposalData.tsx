@@ -74,7 +74,7 @@ class ProposalData extends React.Component<IProps, IState> {
     }
   }
 
-  render() {
+  render(): RenderOutput {
     const [proposal, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
     const { beneficiaryProfile, creatorProfile } = this.props;
 

@@ -148,7 +148,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     setSubmitting(false);
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { daoAvatarAddress, schemeState } = this.props;
     const redeemerAddress = this.state.redeemerAddress;
 

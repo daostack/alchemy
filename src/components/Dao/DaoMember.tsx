@@ -17,7 +17,7 @@ interface IProps extends ISubscriptionProps<IMemberState> {
 
 class DaoMember extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { dao, profile } = this.props;
     const memberState = this.props.data;
 

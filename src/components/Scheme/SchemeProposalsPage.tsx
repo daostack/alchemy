@@ -63,7 +63,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     e.preventDefault();
   };
 
-  public render(): any {
+  public render(): RenderOutput {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;

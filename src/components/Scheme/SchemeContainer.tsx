@@ -60,7 +60,7 @@ class SchemeContainer extends React.Component<IProps, null> {
     e.preventDefault();
   };
 
-  public render(): any {
+  public render(): RenderOutput {
     const { currentAccountAddress, daoAvatarAddress, schemeId } = this.props;
     const schemeState = this.props.data;
 
