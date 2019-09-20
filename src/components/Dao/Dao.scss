@@ -7,15 +7,10 @@
 }
 
 .menuDot {
-    height: 8px;
-    width: 8px;
-    margin-left: 0;
-    display: inline-block;
-
-  &.red {
-    background-color: #f65050;
-    border-radius: 50%;
-  }
+  height: 8px;
+  width: 8px;
+  margin-left: 0;
+  display: inline-block;
 }
 
 button:hover {
@@ -34,31 +29,6 @@ button:hover {
   display: flex;
   height: 100%;
   width: 100%;
-}
-
-.emptyRedemptions {
-  padding: 100px 0;
-  text-align: center;
-
-  img {
-    margin-right: -35px;
-  }
-
-  h2 {
-    height: 55px;
-    font-size: 45px;
-    color: rgba(104, 155, 214, 1.000);
-  }
-
-  p {
-    color: $gray-1;
-    font-size: 21px;
-    padding-top: 0;
-    margin-top: 0;
-    font-family: "AccordBold", sans-serif;
-    width: 602px;
-    margin: 0 auto;
-  }
 }
 
 .memberTable, .memberTableHeading {
@@ -644,43 +614,10 @@ a {
     padding-top: 10px;
 }
 
-.redemptionsHeader {
-  font-size: 28px;
-  font-weight: bold;
-  color: rgba(104, 155, 214, 1);
-  padding-bottom: 5px;
-  border-bottom: 1px solid rgba(191, 203, 213, 1);
-  padding-top: 10px;
-  background-color: rgba(229, 235, 242, 1.000);
-
-  span {
-    font-size: 13px;
-    font-weight: bold;
-    color: rgba(104, 155, 214, 1.000);
-    border-left: 1px solid rgba( 191, 203, 213, 1);
-    display: inline-block;
-    margin-left: 15px;
-    padding-left: 15px;
-
-
-    span {
-      border-left: none;
-      margin-left: 0;
-      padding-left: 0;
-    }
-  }
-
-}
-
 @media only screen and (max-width: 425px) {
   .outer {
     display: block;
     position: relative;
-  }
-
-  .redemptionsHeader {
-    padding: 10px 0 10px 15px;
-    font-size: 18px;
   }
 
   .memberTable {
