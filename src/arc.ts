@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { Address, Arc, createApolloClient } from "@daostack/client";
+import { ApolloClient } from "apollo-client";
 import { getMainDefinition } from "apollo-utilities";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
@@ -274,7 +275,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
         // @ts-ignore
         // printQueries(window.networkSubscriptions);
       },
-    });
+    }) as ApolloClient<object>;
   }
   // TODO: End debugging stuff -- remove this when done
 
