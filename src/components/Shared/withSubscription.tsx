@@ -94,7 +94,10 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
             error,
           });
         },
-        () => { this.setState({complete: true}); }
+        () => { this.setState({
+          complete: true,
+          isLoading: false,
+        }); }
       );
     }
 
@@ -132,7 +135,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     }
 
     public render() {
-      if (this.state.isLoading && typeof options.loadingComponent !== "undefined") {
+      if (!this.state.complete && this.state.isLoading && typeof options.loadingComponent !== "undefined") {
         if (typeof options.loadingComponent === "function") {
           return <options.loadingComponent {...this.props as Props} />;
         }
