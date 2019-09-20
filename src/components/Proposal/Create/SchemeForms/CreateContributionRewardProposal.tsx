@@ -133,7 +133,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
     return (
       <div className={css.contributionReward}>
         <Formik
-          // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{
             beneficiary: "",
             description: "",

@@ -160,7 +160,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/chat.svg" />
-                  DAO Discussion
+                  DAO Wall
                 </NavLink>
               </li>
             </ul>

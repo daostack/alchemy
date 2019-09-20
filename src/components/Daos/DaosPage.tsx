@@ -17,10 +17,7 @@ class DaosPage extends React.Component<IProps, null> {
   public render() {
     const { data } = this.props;
 
-    const daos = data[1];
-    if (data[0].length > 0) {
-      daos.unshift(data[0][0]);
-    }
+    const daos = [...data[0], ...data[1]];
 
     const daoNodes = daos.map((dao: DAO) => {
       return (
