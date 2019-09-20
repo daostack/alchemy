@@ -76,6 +76,6 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: (oldProps, newProps) => { return oldProps.member.id !== newProps.member.id; },
   createObservable: (props: IProps) => {
-    return props.member.state(); // subscribing is being taken care of by the parent component
+    return props.member.state(); 
   },
 });

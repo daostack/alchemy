@@ -108,7 +108,7 @@ const SubscribedAccountPopup = withSubscription({
   checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.daoState.address !== newProps.daoState.address; },
 
   createObservable: (props: IProps) => {
-    return props.daoState.dao.member(props.accountAddress).state({subscribe: false});
+    return props.daoState.dao.member(props.accountAddress).state();
   },
 });
 

@@ -119,7 +119,8 @@ const SubscribedSchemeContainer = withSubscription({
     const scheme = arc.scheme(props.schemeId);
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up
-    // prime the cache: get all members fo this DAO
+    // prime the cache: get all members fo this DAO -
+    // TODO: make one single query once https://github.com/daostack/subgraph/issues/331 is resolved
     await props.daoState.dao.members({ first: 100, skip: 0 }).pipe(first()).toPromise();
     await props.daoState.dao.members({ first: 100, skip: 100}).pipe(first()).toPromise();
     await props.daoState.dao.members({ first: 100, skip: 200}).pipe(first()).toPromise();
