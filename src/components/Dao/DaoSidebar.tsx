@@ -8,27 +8,33 @@ import * as GeoPattern from "geopattern";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { of } from "rxjs";
+import { IRootState } from "reducers";
+import { connect } from 'react-redux';
 import * as css from "./Dao.scss";
 
 interface IProps {
   dao: IDAOState;
 }
 
-interface IState {
-  openMenu: boolean;
+interface IStateProps {
+  menuOpen: boolean;
 }
 
-export default class DaoSidebar extends React.Component<IProps, IState> {
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<any>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    menuOpen: state.ui.menuOpen,
+  };
+};
+
+class DaoSidebar extends React.Component<IProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = {
-      openMenu: false,
-    };
-  }
-
-  public handleOpenMenu(_event: any): void {
-    this.setState({ openMenu: !this.state.openMenu });
   }
 
   public render(): RenderOutput {
@@ -37,17 +43,13 @@ export default class DaoSidebar extends React.Component<IProps, IState> {
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
     const menuClass = classNames({
-      [css.openMenu]: this.state.openMenu,
+      [css.menuOpen]: this.props.menuOpen,
       [css.daoSidebar]: true,
       clearfix: true,
     });
 
     return (
       <div className={menuClass}>
-        <div className={css.menuToggle} onClick={this.handleOpenMenu.bind(this)}>
-          <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
-          <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
-        </div>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address}>
@@ -68,7 +70,25 @@ export default class DaoSidebar extends React.Component<IProps, IState> {
                   <p>
                   For more info join our TG group -
                     <a href="https://t.me/dhack0" target="_blank" rel="noopener noreferrer">t.me/dhack0</a>
-                  </p>
+                  </p>interface IExternalProps {
+  currentAccountAddress?: Address;
+  dao: IDAOState;
+}
+
+interface IStateProps {
+  menuOpen: boolean;
+}
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<any>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    menuOpen: state.ui.menuOpen,
+  };
+};
+
+class DaoSidebar extends React.Component<IProps> {
                   : dao.name === "Identity" ?
                     <p>
                   A curated registry of identities on the Ethereum blockchain.&nbsp;
@@ -186,6 +206,38 @@ export default class DaoSidebar extends React.Component<IProps, IState> {
   }
 }
 
+const SubscribedSidebar = withSubscription({
+  wrappedComponent: DaoSidebar,
+  loadingComponent: <div className={css.loading}><Loading /></div>,
+  errorComponent: (props) => <div>{props.error.message}</div>,
+
+  checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
+    return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress;
+  },
+
+  createObservable: (props: IExternalProps) => {
+    if (!props.dao) {
+      return of(null);
+    }
+
+    if (!props.currentAccountAddress) {
+      return of([]);
+    }
+
+    const query = gql`       {
+      proposals(where: {
+        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
+        dao: "${props.dao.address}"
+      }) {
+        id
+        }
+      }
+      `;
+    const arc = getArc();
+    return arc.getObservable(query);
+  },
+});
+
 /***** DAO ETH Balance *****/
 interface IEthProps extends ISubscriptionProps<any> {
   dao: IDAOState;
@@ -240,3 +292,5 @@ const SubscribedTokenBalance = withSubscription({
     return token.balanceOf(props.dao.address);
   },
 });
+
+export default connect(mapStateToProps)(SubscribedSidebar);

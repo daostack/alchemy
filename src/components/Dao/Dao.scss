@@ -19,7 +19,7 @@ button:hover {
 
 .wrapper {
   flex-grow: 2;
-  padding: 30px 50px 100px 300px;
+  padding: 30px 50px 100px 100px;
   overflow: auto;
   z-index: 0;
   position: relative;
@@ -27,8 +27,8 @@ button:hover {
 
 .outer {
   display: flex;
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
 
 .memberTable, .memberTableHeading {
@@ -168,7 +168,6 @@ button:hover {
 .menuWrapper {
   bottom: 0;
   position: absolute;
-  height: 270px;
   left: 0;
   width: 100%;
   border-top: 2px solid rgba(78, 137, 208, 1.000);
@@ -298,18 +297,12 @@ button:hover {
 
 
 .daoSidebar {
-  min-width: 48px;
-  position: relative;
-  max-width: 250px;
-  height: 100%;
   background-color: $sky;
   color: $white;
-  flex-grow: 1;
   overflow-y: auto;
-  position: fixed;
-  top: 0;
-  padding-top: 50px;
   z-index: 1000;
+  position: relative; /* so bottom menu can be fixed at bottom */
+  min-width: 250px;
 
   &:hover {
     z-index: 1000;
@@ -318,6 +311,7 @@ button:hover {
 
 .daoDescription {
   padding: 0px 20px 0px 20px;
+  max-width: 250px;
 
   p {
     padding: 0;
@@ -362,11 +356,8 @@ button:hover {
 
 .daoNavigation {
   position: relative;
-  height: 100%;
-  min-height: 780px;
+  height: 100vh;
   background-color: rgba(48, 120, 202, 1.000);
-  height: -webkit-fill-available;
-  height: -opera-fill-available;
 
   .daoName {
     padding: 20px;
@@ -493,12 +484,6 @@ button:hover {
       list-style: none;
     }
   }
-}
-
-
-
-.menuToggle {
-  display: none;
 }
 
 .loading img {
@@ -680,7 +665,7 @@ a {
     }
   }
 
-  .daoSidebar.openMenu {
+  .daoSidebar.menuOpen {
       z-index: 1000000;
       width: 100%;
       background-color: rgba(49, 120, 202, 1.000);
@@ -703,7 +688,7 @@ a {
   .menuWrapper {
     position: relative;
     height: auto;
-    padding-bottom: 20px;
+    padding-bottom: 0px;
 
     ul li {
       height: auto;
@@ -736,22 +721,6 @@ a {
 
   .daoHoldings ul li {
     display: inline-block;
-  }
-
-  .menuToggle {
-    display: block;
-    position: absolute;
-    top: -30px;
-    top: 16px;
-    left: 12px;
-
-    .menuClosed {
-      display: block;
-    }
-
-    .menuOpen {
-      display: none;
-    }
   }
 
   .wrapper {

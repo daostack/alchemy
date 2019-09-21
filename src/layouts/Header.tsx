@@ -32,7 +32,7 @@ interface IStateProps {
   daoAvatarAddress: Address;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const match = matchPath(ownProps.location.pathname, {
     path: "/dao/:daoAvatarAddress",
     strict: false,
@@ -49,17 +49,17 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
-  showTour: typeof uiActions.showTour;
+  toggleMenu: typeof uiActions.toggleMenu;
 }
 
 const mapDispatchToProps = {
   showNotification,
-  showTour: uiActions.showTour,
+  toggleMenu: uiActions.toggleMenu,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
-class Header extends React.Component<IProps, null> {
+class Header extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
@@ -89,6 +89,10 @@ class Header extends React.Component<IProps, null> {
     await gotoReadonly(this.props.showNotification);
   }
 
+  private handleToggleMenu = () => (_event: any): void => {
+    this.props.toggleMenu();
+  }
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
@@ -104,10 +108,11 @@ class Header extends React.Component<IProps, null> {
 
     return(
       <div className={css.headerContainer}>
-        <nav className={classNames({
-          [css.header]: true,
-          [css.hasHamburger]: location.pathname.startsWith("/dao/"),
-        })}>
+        <nav className={css.header}>
+          <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
+            <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
+            <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
+          </div>
           <div className={css.menu}>
             <Link to="/">
               <img src="/assets/images/alchemy-logo-white.svg"/>
