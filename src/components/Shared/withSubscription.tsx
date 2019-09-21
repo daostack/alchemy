@@ -71,9 +71,9 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
     }
 
     public async setupSubscription(observable?: Observable<any>) {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
+
+      this.teardownSubscription();
+
       const { createObservable, wrappedComponent } = options;
 
       this.observable = observable || await createObservable(this.props);
