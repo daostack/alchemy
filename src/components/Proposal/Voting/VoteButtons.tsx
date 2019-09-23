@@ -67,7 +67,7 @@ class VoteButtons extends React.Component<IProps, IState> {
     this.setState({ showPreVoteModal: false });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const {
       altStyle,
       contextMenu,

@@ -15,7 +15,7 @@ interface IProps {
 
 export default class RedemptionsString extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { currentAccountAddress, dao, proposal, rewards, separator } = this.props;
 
     const zero = new BN(0);

@@ -54,7 +54,7 @@ export const showNotification =
     fullErrorMessage?: string,
     title?: string,
     url?: string,
-    id: string = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
+    id = `${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`,
     timestamp: number = +moment(),
   ): (dispatch: Dispatch<any, any>) => IShowNotification =>
     (dispatch: Dispatch<any, any>): IShowNotification =>

@@ -22,7 +22,7 @@ type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 class DaoHistoryPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data, hasMoreToLoad, fetchMore } = this.props;
 
     const [proposals, dao] = data;
@@ -54,23 +54,25 @@ class DaoHistoryPage extends React.Component<IProps, null> {
             </p>
           }
         >
-          <table className={css.proposalHistoryTable}>
-            <thead>
-              <tr className={css.proposalHistoryTableHeader}>
-                <th>Proposed by</th>
-                <th>End date</th>
-                <th>Scheme</th>
-                <th>Title</th>
-                <th>Votes</th>
-                <th>Predictions</th>
-                <th>Status</th>
-                <th>My actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {proposalsHTML}
-            </tbody>
-          </table>
+          { proposals.length === 0 ? "There has been no activity to date" : 
+            <table className={css.proposalHistoryTable}>
+              <thead>
+                <tr className={css.proposalHistoryTableHeader}>
+                  <th>Proposed by</th>
+                  <th>End date</th>
+                  <th>Scheme</th>
+                  <th>Title</th>
+                  <th>Votes</th>
+                  <th>Predictions</th>
+                  <th>Status</th>
+                  <th>My actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {proposalsHTML}
+              </tbody>
+            </table>
+          }
         </InfiniteScroll>
 
       </div>

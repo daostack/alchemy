@@ -9,7 +9,7 @@ interface IProps {
 
 export default class Notification extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { notifications, unminimize } = this.props;
 
     const transactionClass = classNames({

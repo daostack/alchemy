@@ -86,6 +86,7 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
           });
         },
         (error: Error) => {
+          // eslint-disable-next-line no-console
           console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
 
           this.setState({
@@ -93,7 +94,10 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
             error,
           });
         },
-        () => { this.setState({complete: true}); }
+        () => { this.setState({
+          complete: true,
+          isLoading: false,
+        }); }
       );
     }
 
@@ -130,8 +134,10 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
       this.teardownSubscription();
     }
 
-    public render() {
-      if (this.state.isLoading && typeof options.loadingComponent !== "undefined") {
+
+    public render(): RenderOutput {
+      if (!this.state.complete && this.state.isLoading && typeof options.loadingComponent !== "undefined") {
+
         if (typeof options.loadingComponent === "function") {
           return <options.loadingComponent {...this.props as Props} />;
         }

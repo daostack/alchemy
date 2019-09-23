@@ -33,12 +33,15 @@
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
     - add support for WalletConnect web3 providers
+    - add static mint and burn permission 
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page
     - Hide notifications after 10 seconds
     - Add dao address as default value for Cross-DAO redemptions
     - Fix redemptions count
+    - Display proper message when no history
+    - avoid duplicate Genesis Alpha cards
 
 
 ### version 0.9.4; 2019-08-13

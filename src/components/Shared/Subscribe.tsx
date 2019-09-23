@@ -72,7 +72,7 @@ export default class Subscribe extends React.Component<IProps, IObservableState<
     this.teardownSubscription();
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { children } = this.props;
     if (typeof children === "function") {
       return children(this.state);

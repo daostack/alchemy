@@ -1,5 +1,4 @@
 import * as React from "react";
-// @ts-ignore
 import { Modal } from "react-router-modal";
 import { copyToClipboard } from "lib/util";
 import Tooltip from "rc-tooltip";
@@ -64,7 +63,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
 
 
 
-  public render() {
+  public render(): RenderOutput {
     return (
       <Modal onBackdropClick={this.props.closeHandler}>
         <div className={css.modalWindow}>

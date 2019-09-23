@@ -110,7 +110,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({ currentTab: tab });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
     const schemes = this.props.data;
     const { handleClose } = this.props;
@@ -156,7 +156,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
         <div className={schemeRegistrarFormClass}>
           <Formik
-            // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={{
               description: "",
               otherScheme: "",
@@ -347,6 +347,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         <Field id="genericCallInput" type="checkbox" name="permissions.genericCall" />
                         <label htmlFor="genericCallInput">
                           Call genericCall on behalf of
+                        </label>
+                      </div>
+
+                      <div className={css.permissionCheckbox}>
+                        <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
+                        <label htmlFor="mintBurnReputation">
+                          Mint or burn reputation
                         </label>
                       </div>
                     </div>

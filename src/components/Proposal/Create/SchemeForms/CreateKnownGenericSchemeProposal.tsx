@@ -84,7 +84,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
       // alert(err.message);
-      console.log(err.message);
+      console.error(err.message);
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
       return;
@@ -186,7 +186,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     />;
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { handleClose, daoAvatarAddress } = this.props;
     const arc = getArc();
 

@@ -55,13 +55,13 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { handleClose } = this.props;
 
     return (
       <div className={css.contributionReward}>
         <Formik
-          // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{
             callData: "",
             title: "",

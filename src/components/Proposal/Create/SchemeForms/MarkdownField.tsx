@@ -24,7 +24,7 @@ export default class MarkdownField extends React.Component<Props, IState> {
     };
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { field, onChange } = this.props;
 
     // Hacky way to turn off tab selection of buttons in the toolbar

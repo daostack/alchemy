@@ -1,5 +1,3 @@
-/* tslint:disable:max-classes-per-file */
-
 import { Address, IDAOState, IProposalOutcome, IProposalState, Vote } from "@daostack/client";
 import { getArc } from "arc";
 import * as classNames from "classnames";
@@ -8,7 +6,6 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
-//@ts-ignore
 import { Modal } from "react-router-modal";
 import VoteGraph from "./VoteGraph";
 
@@ -22,7 +19,7 @@ interface IVoteRowProps {
 }
 
 class VoteRow extends React.Component<IVoteRowProps, null> {
-  public render() {
+  public render(): RenderOutput {
     const {dao, proposal, vote} = this.props;
     const voteState = vote.staticState;
     return (
@@ -61,7 +58,7 @@ class VotersModal extends React.Component<IProps, null> {
     this.props.closeAction();
   }
 
-  public render() {
+  public render(): RenderOutput {
     const votes = this.props.data;
     const { dao, proposal } = this.props;
 
