@@ -126,6 +126,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
         showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error.message);
       const providerName = getWeb3ProviderInfo(web3Provider).name;
       showNotification(NotificationStatus.Failure, `We're very sorry, but saving the profile failed.  Your wallet (${providerName}) may not support message signing.`);
     }
