@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { enableWeb3ProviderAndWarn, getArc, getWeb3Provider } from "arc";
+import { enableWeb3ProviderAndWarn, getArc, getWeb3Provider, getWeb3ProviderInfo } from "arc";
 
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
@@ -126,11 +126,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
         showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
       }
     } catch (error) {
-      if (web3Provider.isSafe) {
-        showNotification(NotificationStatus.Failure, "We're very sorry, but Gnosis Safe does not support message signing :-(");
-      } else {
-        showNotification(NotificationStatus.Failure, error.message);
-      }
+      const providerName = getWeb3ProviderInfo(web3Provider).name;
+      showNotification(NotificationStatus.Failure, `We're very sorry, but saving the profile failed.  Your wallet (${providerName}) may not support message signing.`);
     }
     setSubmitting(false);
   }
