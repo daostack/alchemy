@@ -155,7 +155,8 @@ class Header extends React.Component<IProps, null> {
                       Full Profile
                       </Link>
                     </div>
-                  </div>                    <AccountBalances dao={dao} address={currentAccountAddress} />
+                  </div>                    
+                  <AccountBalances dao={dao} address={currentAccountAddress} />
                   <div className={css.logoutButtonContainer}>
                     { accountIsEnabled ?
                       <div className={css.web3ProviderLogoutSection}>
