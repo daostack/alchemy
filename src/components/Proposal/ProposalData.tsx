@@ -69,8 +69,11 @@ class ProposalData extends React.Component<IProps, IState> {
 
   componentDidMount() {
     // Expire proposal in real time
-    if (!this.state.expired) {
-      setTimeout(() => { this.setState({ expired: true });}, closingTime(this.props.data[0]).diff(moment()));
+
+    // Don't schedule timeout if its too long to wait, because browser will fail and trigger the timeout immediately
+    const millisecondsUntilExpires = closingTime(this.props.data[0]).diff(moment());
+    if (!this.state.expired && millisecondsUntilExpires < 2147483647) {
+      setTimeout(() => { this.setState({ expired: true });}, millisecondsUntilExpires);
     }
   }
 
