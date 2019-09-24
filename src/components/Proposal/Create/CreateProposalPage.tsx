@@ -40,7 +40,7 @@ class CreateProposalPage extends React.Component<IProps, null> {
     history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { daoAvatarAddress } = this.props;
     const scheme = this.props.data;
 

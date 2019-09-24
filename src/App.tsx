@@ -59,7 +59,7 @@ export class App extends React.Component<{}, {
     });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     if (!this.state.arcIsInitialized) {
       return (
         <div className={css.waitingToInitContainer}>

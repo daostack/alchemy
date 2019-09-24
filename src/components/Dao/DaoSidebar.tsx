@@ -38,7 +38,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
     this.setState({ openMenu: !this.state.openMenu });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     if (this.props.data === null) {
       return null;
     }
@@ -160,7 +160,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/chat.svg" />
-                  DAO Discussion
+                  DAO Wall
                 </NavLink>
               </li>
             </ul>

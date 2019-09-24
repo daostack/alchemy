@@ -68,7 +68,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
     this.setState({ showVotersModal: false });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { currentAccountAddress, daoState, proposalId } = this.props;
 
     return <ProposalData currentAccountAddress={currentAccountAddress} dao={daoState} proposalId={proposalId}>

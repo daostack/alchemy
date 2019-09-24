@@ -13,7 +13,7 @@ interface IProps {
 }
 
 export default class RewardsString extends React.Component<IProps, null> {
-  public render() {
+  public render(): RenderOutput {
     const { dao, proposal, separator } = this.props;
 
     const contributionReward = proposal.contributionReward;
