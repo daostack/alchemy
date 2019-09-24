@@ -1,20 +1,22 @@
-import { IDAOState, Token } from "@daostack/client";
+import { IDAOState, Token, Address } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
+import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import gql from "graphql-tag";
 import * as GeoPattern from "geopattern";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
-import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
 import { of } from "rxjs";
+import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import * as css from "./Dao.scss";
 
-interface IProps {
+interface IExternalProps {
+  currentAccountAddress?: Address;
   dao: IDAOState;
 }
 
@@ -31,7 +33,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
   };
 };
 
-class DaoSidebar extends React.Component<IProps> {
+class DaoSidebar extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
@@ -70,25 +72,7 @@ class DaoSidebar extends React.Component<IProps> {
                   <p>
                   For more info join our TG group -
                     <a href="https://t.me/dhack0" target="_blank" rel="noopener noreferrer">t.me/dhack0</a>
-                  </p>interface IExternalProps {
-  currentAccountAddress?: Address;
-  dao: IDAOState;
-}
-
-interface IStateProps {
-  menuOpen: boolean;
-}
-
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<any>;
-
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
-  return {
-    ...ownProps,
-    menuOpen: state.ui.menuOpen,
-  };
-};
-
-class DaoSidebar extends React.Component<IProps> {
+                  </p>
                   : dao.name === "Identity" ?
                     <p>
                   A curated registry of identities on the Ethereum blockchain.&nbsp;

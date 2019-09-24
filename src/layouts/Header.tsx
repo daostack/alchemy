@@ -97,7 +97,6 @@ class Header extends React.Component<IProps, IStateProps> {
     const {
       currentAccountProfile,
       currentAccountAddress,
-      location,
     } = this.props;
     const dao = this.props.data;
 
@@ -108,11 +107,15 @@ class Header extends React.Component<IProps, IStateProps> {
 
     return(
       <div className={css.headerContainer}>
-        <nav className={css.header}>
-          <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
-            <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
-            <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
-          </div>
+        <nav className={classNames({
+          [css.header]: true,
+          [css.hasHamburger]: !!daoAvatarAddress,
+        })}>
+          { daoAvatarAddress ? 
+            <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
+              <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
+              <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
+            </div> : "" }
           <div className={css.menu}>
             <Link to="/">
               <img src="/assets/images/alchemy-logo-white.svg"/>
