@@ -5,6 +5,7 @@ import * as classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
+import RedemptionsButton from "components/Redemptions/RedemptionsButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard } from "lib/util";
 import * as queryString from "query-string";
@@ -92,6 +93,7 @@ class Header extends React.Component<IProps, null> {
     const {
       currentAccountProfile,
       currentAccountAddress,
+      location,
     } = this.props;
     const dao = this.props.data;
 
@@ -102,9 +104,14 @@ class Header extends React.Component<IProps, null> {
 
     return(
       <div className={css.headerContainer}>
-        <nav className={css.header}>
+        <nav className={classNames({
+          [css.header]: true,
+          [css.hasHamburger]: location.pathname.startsWith("/dao/"),
+        })}>
           <div className={css.menu}>
-            <img src="/assets/images/alchemy-logo-white.svg"/>
+            <Link to="/">
+              <img src="/assets/images/alchemy-logo-white.svg"/>
+            </Link>
           </div>
           <div className={css.topInfo}>
             <Breadcrumbs
@@ -114,73 +121,73 @@ class Header extends React.Component<IProps, null> {
               compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
-          <div className={css.headerRight}>
-            <div className={css.accountInfo}>
-              { currentAccountAddress ?
-                <div className={css.accountInfoContainer}>
-                  <div className={css.accountImage}>
-                    <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !accountIsEnabled })}>
+          <div className={css.redemptionsButton}>
+            <RedemptionsButton currentAccountAddress={currentAccountAddress} />
+          </div>
+          <div className={css.accountInfo}>
+            { currentAccountAddress ?
+              <div className={css.accountInfoContainer}>
+                <div className={css.accountImage}>
+                  <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !accountIsEnabled })}>
+                    <AccountProfileName accountAddress={currentAccountAddress}
+                      accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
+                    <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
+                      <AccountImage accountAddress={currentAccountAddress} />
+                    </span>
+                  </div>
+                </div>
+                <div className={css.wallet}>
+                  <div className={css.pointer}></div>
+                  <div className={css.walletDetails}>
+                    <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
+                      <AccountImage accountAddress={currentAccountAddress} />
+                    </div>
+                    <div className={css.profileName}>
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                      <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                        <AccountImage accountAddress={currentAccountAddress} />
-                      </span>
                     </div>
+                    <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
+                      <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
+                      <img src="/assets/images/Icon/Copy-blue.svg"/>
+                    </div>
+                    <div className={css.fullProfile}>
+                      <Link className={css.profileLink} to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
+                      Full Profile
+                      </Link>
+                    </div>
+                  </div>                    <AccountBalances dao={dao} address={currentAccountAddress} />
+                  <div className={css.logoutButtonContainer}>
+                    { accountIsEnabled ?
+                      <div className={css.web3ProviderLogoutSection}>
+                        <div className={css.provider}>
+                          <div className={css.title}>Provider</div>
+                          <div className={css.name}>{web3ProviderInfo.name}</div>
+                        </div>
+                        <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
+                      </div> :
+                      <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                   </div>
-                  <div className={css.wallet}>
-                    <div className={css.pointer}></div>
-                    <div className={css.walletDetails}>
-                      <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                        <AccountImage accountAddress={currentAccountAddress} />
-                      </div>
-                      <div className={css.profileName}>
-                        <AccountProfileName accountAddress={currentAccountAddress}
-                          accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                      </div>
-                      <div className={css.copyAddress} style={{cursor: "pointer"}} onClick={this.copyAddress}>
-                        <span>{currentAccountAddress ? currentAccountAddress.slice(0, 40) : "No account known"}</span>
-                        <img src="/assets/images/Icon/Copy-blue.svg"/>
-                      </div>
-                      <div className={css.fullProfile}>
-                        <Link className={css.profileLink} to={"/profile/" + currentAccountAddress + (daoAvatarAddress ? "?daoAvatarAddress=" + daoAvatarAddress : "")}>
-                        Full Profile
-                        </Link>
-                      </div>
-                    </div>
-                    <AccountBalances dao={dao} address={currentAccountAddress} />
-                    <div className={css.logoutButtonContainer}>
-                      { accountIsEnabled ?
-                        <div className={css.web3ProviderLogoutSection}>
-                          <div className={css.provider}>
-                            <div className={css.title}>Provider</div>
-                            <div className={css.name}>{web3ProviderInfo.name}</div>
-                          </div>
-                          <div className={css.web3ProviderLogInOut}  onClick={this.handleClickLogout}><div className={css.text}>Log out</div> <img src="/assets/images/Icon/logout.svg"/></div>
-                        </div> :
-                        <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
-                    </div>
-                  </div>
-                </div> : ""
-              }
-              {!currentAccountAddress ?
+                </div>
+              </div> : ""
+            }
+            {!currentAccountAddress ?
+              <div className={css.web3ProviderLogin}>
+                <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
+                  <button onClick={this.handleClickLogin} data-test-id="loginButton">
+                    Log in <img src="/assets/images/Icon/login-white.svg"/>
+                  </button>
+                </Tooltip>
+              </div>
+              : (!accountIsEnabled) ?
                 <div className={css.web3ProviderLogin}>
                   <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
-                    <button onClick={this.handleClickLogin} data-test-id="loginButton">
-                      Log in <img src="/assets/images/Icon/login-white.svg"/>
+                    <button onClick={this.handleConnect} data-test-id="connectButton">
+                      <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg"/>
                     </button>
                   </Tooltip>
                 </div>
-                : (!accountIsEnabled) ?
-                  <div className={css.web3ProviderLogin}>
-                    <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
-                      <button onClick={this.handleConnect} data-test-id="connectButton">
-                        <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg"/>
-                      </button>
-                    </Tooltip>
-                  </div>
-                  : ""
-              }
-            </div>
+                : ""
+            }
           </div>
         </nav>
       </div>
