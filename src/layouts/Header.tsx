@@ -30,6 +30,7 @@ interface IStateProps {
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
+  menuOpen: boolean;
 }
 
 const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
@@ -44,6 +45,7 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
+    menuOpen: state.ui.menuOpen,
   };
 };
 
@@ -113,8 +115,9 @@ class Header extends React.Component<IProps, IStateProps> {
         })}>
           { daoAvatarAddress ? 
             <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
-              <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
-              <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
+              {this.props.menuOpen ?
+                <img className={css.menuClosed} src="/assets/images/Icon/Close.svg"/> :
+                <img className={css.menuOpen} src="/assets/images/Icon/Menu.svg"/>}
             </div> : "" }
           <div className={css.menu}>
             <Link to="/">

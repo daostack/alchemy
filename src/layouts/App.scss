@@ -22,7 +22,7 @@ body {
 
 .outer {
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 50px);
 }
 
 .container {
@@ -692,14 +692,6 @@ body {
     position: absolute;
     top: 16px;
     left: 12px;
-
-    .menuClosed {
-      display: block;
-    }
-
-    .menuOpen {
-      display: none;
-    }
   }
 }
 
