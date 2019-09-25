@@ -23,6 +23,7 @@ body {
 .outer {
   width: 100%;
   height: 100%;
+  padding-top: 50px;
 }
 
 .container {
@@ -562,13 +563,8 @@ body {
   }
 }
 
-
 .menuToggle {
   display: none;
-}
-
-.headerContainer {
-  height: 50px;
 }
 
 @media only screen and (max-device-width: 1024px) {
@@ -663,7 +659,7 @@ body {
       margin-left: 60px;
     }
 
-  .accountInfo {
+    .accountInfo {
       margin-left: auto;
     }
   }
@@ -677,7 +673,7 @@ body {
   }
 
 
-  .web3ProviderLogin button {
+.web3ProviderLogin button {
     span.connectButtonText {
       display: none;
     }
@@ -693,7 +689,7 @@ body {
     top: 16px;
     left: 12px;
   }
-}
+ }
 
 .cookieDisclaimerContainer {
   padding-left: 12%;
