@@ -87,8 +87,8 @@ const settings = {
     ipfsProvider: "localhost",
   },
   staging: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/explorer/subgraph/daostack/v28_0_rinkeby",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/explorer/subgraph/daostack/v28_0_rinkeby",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v28_0_rinkeby",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v28_0_rinkeby",
     web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || {
@@ -99,8 +99,8 @@ const settings = {
     },
   },
   production: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/explorer/subgraph/daostack/v28_0",
-    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "https://thegraph.com/explorer/subgraph/daostack/v28_0",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v28_0",
+    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "https://thegraph.com/subgraphs/name/daostack/v28_0",
     web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || {
