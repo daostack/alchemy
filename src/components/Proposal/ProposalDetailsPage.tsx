@@ -130,6 +130,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                     detailView
                     proposalState={proposal}
                     rewards={rewards}
+                    expired={expired}
                   />
                 </div>
                 <h3 className={css.proposalTitleTop}>
