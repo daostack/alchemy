@@ -100,7 +100,6 @@ class Header extends React.Component<IProps, null> {
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
-    // const cachedWeb3ProviderInfo = this.props.getCachedWeb3ProviderInfo();
 
     return(
       <div className={css.headerContainer}>

@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
-import { Address, Arc } from "@daostack/client";
+import { Address, Arc, createApolloClient } from "@daostack/client";
+import { ApolloClient } from "apollo-client";
+import { getMainDefinition } from "apollo-utilities";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 
@@ -138,6 +140,9 @@ function getArcSettings(): any {
       throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
     }
   }
+
+  // do not subscribe to any of the queries - we do all subscriptions manually
+  arcSettings.graphqlSubscribeToQueries = false;
   return arcSettings;
 }
 
@@ -261,6 +266,57 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     }
     console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
   }
+
+  // TODO: for debugging, remove this when done
+  if (arc) {
+    // @ts-ignore
+    window.networkSubscriptions = [];
+    // @ts-ignore
+    window.networkQueries = [];
+    arc.apolloClient = createApolloClient({
+      graphqlHttpProvider: arcSettings.graphqlHttpProvider ,
+      graphqlWsProvider: arcSettings.graphqlWsProvider,
+      graphqlPrefetchHook: (query: any) => {
+        const definition = getMainDefinition(query);
+        // @ts-ignore
+        if (definition.operation === "subscription") {
+          // @ts-ignore
+          window.networkSubscriptions.push(definition);
+          // @ts-ignore
+          console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
+        } else {
+          // @ts-ignore
+          window.networkQueries.push(definition);
+          // @ts-ignore
+          // console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
+        }
+
+        // function printQueries(queries: any[]) {
+        //   const rs: {[ key: string]: number } = {};
+        //   rs.undefined = 0;
+        //   for (const q of queries) {
+        //     if (q.name) {
+        //       if (!rs[q.name.value]) {
+        //         rs[q.name.value] = 1;
+        //       } else {
+        //         rs[q.name.value] += 1;
+        //       }
+        //     } else {
+        //       rs["undefined"] += 1;
+        //     }
+        //     for (const key in rs) {
+        //       console.log(key, rs[key]);
+        //     }
+        //   }
+        // }
+        // @ts-ignore
+        console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
+        // @ts-ignore
+        // printQueries(window.networkSubscriptions);
+      },
+    }) as ApolloClient<object>;
+  }
+  // TODO: End debugging stuff -- remove this when done
 
   (window as any).arc = success ? arc : null;
   return success;

@@ -251,7 +251,7 @@ const SubscribedRedemptionsPage = withSubscription({
         }
       }
     `;
-    const proposals = arc.getObservable(query)
+    const proposals = arc.getObservable(query, { subscribe: true })
       .pipe(map((result: any) => result.data.proposals));
     const daos = proposals
       .pipe(mergeMap((proposals: any[]): Observable<IDAOState[]> => {
