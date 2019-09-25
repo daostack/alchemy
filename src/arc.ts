@@ -3,9 +3,14 @@ import { Address, Arc } from "@daostack/client";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 
-import Web3Connect from "@daostack/web3connect";
-import { IProviderInfo } from "@daostack/web3connect/lib/helpers/types";
+import Web3Connect from "web3connect";
+import { IProviderInfo } from "web3connect/lib/helpers/types";
+// @ts-ignore
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
+
+const Portis = require("@portis/web3");
+const Fortmatic = require("fortmatic");
 
 const Web3 = require("web3");
 
@@ -17,26 +22,59 @@ let selectedProvider: any;
 
 const web3ConnectProviderOptions =
     Object.assign({
-      disableWalletConnect: true,
     },
     (process.env.NODE_ENV === "production") ?
       {
+        network: "mainnet",
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+          },
+        },
         portis: {
-          id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-          network: "mainnet",
+          package: Portis,
+          options: {
+            id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+          },
         },
         fortmatic: {
-          key: "pk_live_38A2BD2B1D4E9912",
+          package: Fortmatic,
+          options: {
+            key: "pk_live_38A2BD2B1D4E9912",
+          },
+        },
+        squarelink: {
+          options: {
+            id: null,
+          },
         },
       }
       : (process.env.NODE_ENV === "staging") ?
         {
+          network: "rinkeby",
+          walletconnect: {
+            package: WalletConnectProvider,
+            options: {
+              infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
+            },
+          },
           portis: {
-            id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
-            network: "rinkeby",
+            package: Portis,
+            options: {
+              id: "aae9cff5-6e61-4b68-82dc-31a5a46c4a86",
+            },
           },
           fortmatic: {
-            key: "pk_test_659B5B486EF199E4",
+            package: Fortmatic,
+            options: {
+              key: "pk_test_659B5B486EF199E4",
+            },
+          },
+          squarelink: {
+            options: {
+              id: null,
+            },
           },
         } : {});
 
@@ -232,7 +270,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
  * Prompt user to select a web3Provider and enable their account.
  * Initializes Arc with the newly-selected web3Provider.
  * Is a no-op if already done.
- * @param provider Optional web3Provider, supplied when using a cached provider
+ * @param provider Optional web3 provider, supplied when using a cached provider
  * @param blockOnWrongNetwork if true, throw exception if is wrong network
  * @returns whether Arc has been successfully initialized.
  */
@@ -267,7 +305,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
          * that don't support the normal specification. Opera is an example of it."
          */
         { disableInjectedProvider: !((window as any).web3 || (window as any).ethereum) },
-        web3ConnectProviderOptions),
+        web3ConnectProviderOptions) as any,
     });
 
     let resolveOnClosePromise: () => void;
@@ -469,15 +507,21 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
           provider = await Web3Connect.ConnectToInjected();
           break;
         case "qrcode":
-          provider = await Web3Connect.ConnectToWalletConnect({});
+          provider = await Web3Connect.ConnectToWalletConnect(
+            web3ConnectProviderOptions.walletconnect.package,
+            Object.assign(web3ConnectProviderOptions.walletconnect.options, { network: web3ConnectProviderOptions.network }));
           break;
         case "web":
           switch (web3ProviderInfo.name) {
             case "Portis":
-              provider = await Web3Connect.ConnectToPortis(web3ConnectProviderOptions.portis);
+              provider = await Web3Connect.ConnectToPortis(
+                web3ConnectProviderOptions.portis.package,
+                Object.assign(web3ConnectProviderOptions.portis.options, { network: web3ConnectProviderOptions.network }));
               break;
             case "Fortmatic":
-              provider = await Web3Connect.ConnectToFortmatic(web3ConnectProviderOptions.fortmatic);
+              provider = await Web3Connect.ConnectToFortmatic(
+                web3ConnectProviderOptions.fortmatic.package,
+                Object.assign(web3ConnectProviderOptions.fortmatic.options, { network: web3ConnectProviderOptions.network }));
               break;
           }
           break;

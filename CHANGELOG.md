@@ -35,7 +35,8 @@
     - Add link to help center
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
-    - add static mint and burn permission
+    - add support for WalletConnect web3 providers
+    - add static mint and burn permission 
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page

@@ -55,6 +55,7 @@ interface IState {
 class AppContainer extends React.Component<IProps, IState> {
 
   private static accountStorageKey = "currentAddress";
+  private static walletConnectStorageKey = "walletconnect";
   private static providerStorageKey = "currentWeb3ProviderInfo";
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
@@ -244,12 +245,16 @@ class AppContainer extends React.Component<IProps, IState> {
       localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
     } else {
       localStorage.removeItem(AppContainer.providerStorageKey);
+      // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+      localStorage.removeItem(AppContainer.walletConnectStorageKey);
     }
   }
 
   private uncacheWeb3Info(): void {
     localStorage.removeItem(AppContainer.accountStorageKey);
     localStorage.removeItem(AppContainer.providerStorageKey);
+    // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+    localStorage.removeItem(AppContainer.walletConnectStorageKey);
   }
 
   private getCachedAccount(): Address | null {
