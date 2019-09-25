@@ -116,8 +116,8 @@ class Header extends React.Component<IProps, IStateProps> {
           { daoAvatarAddress ? 
             <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
               {this.props.menuOpen ?
-                <img className={css.menuClosed} src="/assets/images/Icon/Close.svg"/> :
-                <img className={css.menuOpen} src="/assets/images/Icon/Menu.svg"/>}
+                <img src="/assets/images/Icon/Close.svg"/> :
+                <img src="/assets/images/Icon/Menu.svg"/>}
             </div> : "" }
           <div className={css.menu}>
             <Link to="/">
