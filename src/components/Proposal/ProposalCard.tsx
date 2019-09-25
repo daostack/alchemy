@@ -103,6 +103,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     daoEthBalance={daoEthBalance}
                     proposalState={proposal}
                     rewards={rewards}
+                    expired={expired}
                   />
 
                   <div className={css.contextMenu} data-test-id="proposalContextMenu">
@@ -148,7 +149,9 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   <img src="/assets/images/Icon/Open.svg" />
                 </Link>
               </h3>
-              <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
+              <div className={css.summary}>
+                <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
+              </div>
 
             </div>
 

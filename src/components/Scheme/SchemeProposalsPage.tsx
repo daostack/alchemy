@@ -18,6 +18,10 @@ import * as css from "./SchemeProposals.scss";
 // For infinite scrolling
 const PAGE_SIZE = 100;
 
+// Have to fix this so that scrolling doesn't load weird different sets of proposals as the time changes
+// TODO: This is somewhat broken, it needs to get set on the initial render and reset/updated over time somehow?
+const currentTime = Math.floor(new Date().getTime() / 1000);
+
 const Fade = ({ children, ...props }: any): any => (
   <CSSTransition
     {...props}
@@ -207,9 +211,6 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const dao = arc.dao(daoAvatarAddress);
     const schemeId = props.scheme.id;
 
-    // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
     return combineLatest(
       // the list of queued proposals
       dao.proposals({
@@ -247,17 +248,13 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
 
-    // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
-    // TODO: where to set this?
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
       where: { scheme: props.scheme.id, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
       orderBy: "confidence",
       orderDirection: "desc",
       first: PAGE_SIZE,
-      skip: data[1].length,
+      skip: data[0].length,
     }, { subscribe: true, fetchAllData: true });
   },
 

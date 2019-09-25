@@ -20,7 +20,6 @@ import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
-import DaoRedemptionsPage from "./DaoRedemptionsPage";
 import DaoSidebar from "./DaoSidebar";
 import * as css from "./Dao.scss";
 
@@ -68,7 +67,7 @@ class DaoContainer extends React.Component<IProps, null> {
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
-        <DaoSidebar currentAccountAddress={this.props.currentAccountAddress} dao={daoState} />
+        <DaoSidebar dao={daoState} />
         <div className={css.wrapper}>
           <div className={css.noticeWrapper}>
             <div className={css.noticeBuffer}></div>
@@ -84,11 +83,6 @@ class DaoContainer extends React.Component<IProps, null> {
               render={(props) => <DaoHistoryPage {...props} currentAccountAddress={currentAccountAddress} />} />
             <Route exact path="/dao/:daoAvatarAddress/members"
               render={(props) => <DaoMembersPage {...props} daoState={daoState} />} />
-            <Route exact path="/dao/:daoAvatarAddress/redemptions"
-              render={(props) =>
-                <DaoRedemptionsPage {...props} daoState={daoState} currentAccountAddress={currentAccountAddress} />
-              }
-            />
             <Route exact path="/dao/:daoAvatarAddress/discussion"
               render={(props) => <DaoDiscussionPage {...props} dao={daoState} />} />
 

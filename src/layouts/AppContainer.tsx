@@ -7,6 +7,7 @@ import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import DaoContainer from "components/Dao/DaoContainer";
+import RedemptionsPage from "components/Redemptions/RedemptionsPage";
 import * as History from "history";
 import Header from "layouts/Header";
 import * as React from "react";
@@ -54,6 +55,7 @@ interface IState {
 class AppContainer extends React.Component<IProps, IState> {
 
   private static accountStorageKey = "currentAddress";
+  private static walletConnectStorageKey = "walletconnect";
   private static providerStorageKey = "currentWeb3ProviderInfo";
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
@@ -178,6 +180,7 @@ class AppContainer extends React.Component<IProps, IState> {
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
               <Route path="/profile/:accountAddress" component={AccountProfilePage} />
+              <Route path="/redemptions" component={RedemptionsPage} />
               <Route path="/" component={DaosPage} />
             </Switch>
 
@@ -242,12 +245,16 @@ class AppContainer extends React.Component<IProps, IState> {
       localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
     } else {
       localStorage.removeItem(AppContainer.providerStorageKey);
+      // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+      localStorage.removeItem(AppContainer.walletConnectStorageKey);
     }
   }
 
   private uncacheWeb3Info(): void {
     localStorage.removeItem(AppContainer.accountStorageKey);
     localStorage.removeItem(AppContainer.providerStorageKey);
+    // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+    localStorage.removeItem(AppContainer.walletConnectStorageKey);
   }
 
   private getCachedAccount(): Address | null {

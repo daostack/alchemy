@@ -7,15 +7,10 @@
 }
 
 .menuDot {
-    height: 8px;
-    width: 8px;
-    margin-left: 0;
-    display: inline-block;
-
-  &.red {
-    background-color: #f65050;
-    border-radius: 50%;
-  }
+  height: 8px;
+  width: 8px;
+  margin-left: 0;
+  display: inline-block;
 }
 
 button:hover {
@@ -34,31 +29,6 @@ button:hover {
   display: flex;
   height: 100%;
   width: 100%;
-}
-
-.emptyRedemptions {
-  padding: 100px 0;
-  text-align: center;
-
-  img {
-    margin-right: -35px;
-  }
-
-  h2 {
-    height: 55px;
-    font-size: 45px;
-    color: rgba(104, 155, 214, 1.000);
-  }
-
-  p {
-    color: $gray-1;
-    font-size: 21px;
-    padding-top: 0;
-    margin-top: 0;
-    font-family: "AccordBold", sans-serif;
-    width: 602px;
-    margin: 0 auto;
-  }
 }
 
 .memberTable, .memberTableHeading {
@@ -328,7 +298,7 @@ button:hover {
 
 
 .daoSidebar {
-  min-width: 250px;
+  min-width: 48px;
   position: relative;
   max-width: 250px;
   height: 100%;
@@ -536,26 +506,6 @@ button:hover {
   display: block;
 }
 
-.nav {
-  padding: 0 30px;
-  position: relative;
-
-  span {
-    padding: 10px;
-  }
-
-  .borderBottom {
-    height: 3px;
-    width: 100%;
-    position: absolute;
-    background-color: rgba(216, 216, 216, 1.000);
-    z-index: 0;
-    bottom: 0;
-    left: 0;
-    opacity: .4;
-  }
-}
-
 .membersContainer {
   margin: 10px auto;
   max-width: 980px;
@@ -607,136 +557,6 @@ a {
   text-decoration: none;
 }
 
-a.navItem {
-  font-size: $body;
-  color: $black-halftone;
-  padding: 10px 0;
-  position: relative;
-  z-index: 100;
-  transition: all .25s ease;
-  display: inline-block;
-  height: 50px;
-  line-height: 50px;
-  vertical-align: middle;
-  margin: 0 30px;
-  border-bottom: 3px solid $accent-4-transparent;
-}
-
-a.navRedemption {
-  font-size: $body;
-  color: rgba(34, 159, 110, 1.000);
-  padding: 10px 0;
-  position: relative;
-  z-index: 100;
-  transition: all .25s ease;
-  display: inline-block;
-  height: 50px;
-  line-height: 50px;
-  vertical-align: middle;
-  margin: 0 0 0 30px;
-  border-bottom: 3px solid $accent-4-transparent;
-}
-
-a.navRedemption:hover {
-  font-size: $headline-2;
-  color: rgba(34, 159, 110, 1.000);
-  border-bottom: 3px solid rgba(34, 159, 110, 1.000);
-}
-
-.nav a.navItem:nth-child(1) {
-  margin-left: 0;
-}
-
-.redeemAllRewardsButton {
-  border: 1px solid $accent-1;
-  font-weight: bold;
-  float: right;
-  color: $accent-1;
-  font-size: $body;
-  padding: 8px 11px;
-  transition: all .25s ease;
-  background-color: rgba(0, 211, 167, 0);
-  vertical-align: middle;
-  float: right;
-  cursor: pointer;
-  position: relative;
-  top: 30px;
-}
-
-.redeemAllContainer {
-  position: absolute;
-  right: 30px;
-}
-
-.pendingRewards {
-  float: right;
-  position: relative;
-  top: 38px;
-  font-size: $body;
-  right: 10px;
-}
-
-
-.nav span.redemptionNotification {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  background: none;
-  border: 1px solid rgba(34, 159, 110, 1.000);
-  color: rgba(34, 159, 110, 1.000);
-  padding: 1px 1px 1px 1px;
-  text-align: center;
-  line-height: 13px;
-  border-radius: 28px;
-  font-size: 10px;
-  position: absolute;
-  top: 51%;
-  transform: translateY(-50%);
-  left: -24px;
-}
-
-.buyGen {
-  font-size: $small;
-}
-
-
-a.navItem.selected {
-  font-size: $headline-2;
-  color: $black;
-  border-bottom: 3px solid rgba(67, 67, 67, 1.000);
-}
-
-a.navItem:hover {
-  font-size: $headline-2;
-  color: $black;
-  border-bottom: 3px solid rgba(67, 67, 67, 1.000);
-}
-
-.daoAvatar {
-  background-color: $white;
-  box-shadow: $shadow-2;
-  width: 50px;
-  height: 50px;
-  text-align: center;
-  transform: rotate(45deg);
-  position: absolute;
-  top: 0;
-  left: 13px;
-
-  img {
-    max-width: 30px;
-    max-height: 30px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%) rotate(-45deg);
-  }
-}
-
-.daoAvatarCircles {
-  background-color: gray;
-}
-
 .holdings {
   float: right;
   width: 180px;
@@ -783,54 +603,6 @@ a.navItem:hover {
 
 }
 
-.daoPrefs {
-  display: inline;
-  background-color: transparent;
-  border: $gray-border-halftone;
-  padding: 5px 5px 4px 5px;
-  border-radius: 50px;
-  position: relative;
-  top: -3px;
-  left: 6px;
-  opacity: .5;
-}
-
-.genTitle {
-    font-weight: 700;
-    font-size: 32px;
-    width: 80px;
-    float: left;
-    text-align: center;
-    position: relative;
-    top: 2px;
-}
-
-.genStats {
-  width: 90px;
-  float: left;
-
-  .caption {
-    padding-top: 10px;
-  }
-}
-
-.small {
-  font-size: $small;
-}
-
-.caption {
-  font-size: $caption;
-}
-
-.leftAlign {
-  text-align: left;
-}
-
-.rightAlign {
-  text-align: right;
-}
-
-
 .daoHistoryHeader {
     font-size: 28px;
     color: rgba(104, 155, 214, 1.000);
@@ -842,192 +614,10 @@ a.navItem:hover {
     padding-top: 10px;
 }
 
-.redemptionsHeader {
-  font-size: 28px;
-  font-weight: bold;
-  color: rgba(104, 155, 214, 1);
-  padding-bottom: 5px;
-  border-bottom: 1px solid rgba(191, 203, 213, 1);
-  padding-top: 10px;
-  background-color: rgba(229, 235, 242, 1.000);
-
-  span {
-    font-size: 13px;
-    font-weight: bold;
-    color: rgba(104, 155, 214, 1.000);
-    border-left: 1px solid rgba( 191, 203, 213, 1);
-    display: inline-block;
-    margin-left: 15px;
-    padding-left: 15px;
-
-
-    span {
-      border-left: none;
-      margin-left: 0;
-      padding-left: 0;
-    }
-  }
-
-}
-
-.hidden {
-  display: none;
-}
-
-.tourModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10000000;
-  width: 100%;
-  height: 100%;
-  overflow: scroll;
-
-  .accessTour {
-    position: absolute;
-    z-index: 100;
-    right: 65px;
-    top: 77px;
-
-    button {
-      position: absolute;
-      right: 0;
-      border: none;
-      background: none;
-      outline: none;
-    }
-
-    div {
-      color: white;
-      position: relative;
-      top: 47px;
-    }
-  }
-
-  .bg {
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.85);
-  }
-
-  .tourStart {
-    h1 {
-      margin-bottom: 0;
-      line-height: 24px;
-      font-size: 34px;
-    }
-    span {
-      font-size: $body;
-      opacity: .7;
-
-      img {
-        position: relative;
-        top: 6px;
-        margin-left: 5px;
-      }
-    }
-  }
-
-  .tourStart, .tourEnd {
-    text-align: center;
-    padding: 30px;
-    position: absolute;
-    width: 480px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    z-index: 100;
-    color: $white;
-
-    button {
-      font-size: $subheader;
-      color: $white;
-      border: 1px solid $white;
-      margin: 0 10px;
-      background-color: rgba(255,255,255,0);
-      padding: 10px 15px;
-      line-height: $subheader;
-      font-family: $body-font;
-
-      img {
-        margin-right: 8px;
-      }
-
-      &:hover {
-        background-color: $white-halftone;
-      }
-    }
-
-    button.startButton {
-      color: $black;
-      background-color: $white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    h1 {
-      font-family: $heading-1-font;
-      font-size: 34px;
-    }
-
-    p {
-      margin: 30px 0;
-    }
-
-    a {
-      color: $white;
-      text-decoration: underline;
-    }
-  }
-}
-
-@media only screen and (min-width: 645px) {
-  .tourModal {
-    .accessTour {
-      right: 66px;
-      top: 61px;
-    }
-  }
-}
-
-@media only screen and (min-width: 768px) {
-  .wrapper {
-  }
-}
-
-
-@media only screen and (min-width: 850px) {
-  .wrapper {
-
-  }
-
-  .tourModal .tourStart h1, .tourModal .tourEnd h1 {
-    font-size: 48px;
-  }
-}
-
-
-@media only screen and (min-width: 1127px) {
-  .tourModal {
-    .accessTour {
-      top: 47px;
-    }
-  }
-}
-
 @media only screen and (max-width: 425px) {
   .outer {
     display: block;
     position: relative;
-  }
-
-  .redemptionsHeader {
-    padding: 10px 0 10px 15px;
-    font-size: 18px;
   }
 
   .memberTable {
@@ -1052,12 +642,13 @@ a.navItem:hover {
   }
 
   .daoSidebar {
-    width: 50px;
+    width: 48px;
     max-width: 100%;
     height: auto;
     flex-grow: unset;
     z-index: 100000;
     background-color: rgba(49, 120, 202, 0);
+    transition: height .25s ease, width 0s .25s;
 
     &:hover {
       z-index: 100000;
@@ -1094,6 +685,7 @@ a.navItem:hover {
       width: 100%;
       background-color: rgba(49, 120, 202, 1.000);
       padding-bottom: 50px;
+      transition: width 0s 0s, height .25s ease;
 
       .daoNavigation {
         height: 520px;
@@ -1193,29 +785,6 @@ a.navItem:hover {
         background-color: transparent;
       }
     }
-  }
-
-  .queueType {
-    font-size: 18px;
-    padding-left: 15px;
-    padding-top: 33px;
-  }
-
-  .createProposal {
-    top: 28px;
-    right: 15px;
-    height: 26px;
-    line-height: 26px;
-    color: #fff;
-  }
-
-  a.createProposal:visited {
-    color: #fff;
-  }
-
-  .proposalsHeader {
-    padding-top: 10px;
-    padding-bottom: 0px;
   }
 
   .reputationAmounts {
