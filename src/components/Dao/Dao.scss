@@ -302,6 +302,7 @@ button:hover {
   z-index: 1000;
   position: relative; /* so bottom menu can be fixed at bottom */
   min-width: 250px;
+  max-width: 250px;
 
   &:hover {
     z-index: 1000;
@@ -310,7 +311,6 @@ button:hover {
 
 .daoDescription {
   padding: 0px 20px 0px 20px;
-  max-width: 250px;
 
   p {
     padding: 0;
