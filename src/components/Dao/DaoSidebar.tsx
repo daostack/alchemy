@@ -1,22 +1,18 @@
-import { IDAOState, Token, Address } from "@daostack/client";
+import { IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import gql from "graphql-tag";
 import * as GeoPattern from "geopattern";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
-import { of } from "rxjs";
 import { Link } from "react-router-dom";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import * as css from "./Dao.scss";
 
 interface IExternalProps {
-  currentAccountAddress?: Address;
   dao: IDAOState;
 }
 
@@ -24,7 +20,7 @@ interface IStateProps {
   menuOpen: boolean;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<any>;
+type IProps = IExternalProps & IStateProps;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -190,38 +186,6 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
   }
 }
 
-const SubscribedSidebar = withSubscription({
-  wrappedComponent: DaoSidebar,
-  loadingComponent: <div className={css.loading}><Loading /></div>,
-  errorComponent: (props) => <div>{props.error.message}</div>,
-
-  checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress;
-  },
-
-  createObservable: (props: IExternalProps) => {
-    if (!props.dao) {
-      return of(null);
-    }
-
-    if (!props.currentAccountAddress) {
-      return of([]);
-    }
-
-    const query = gql`       {
-      proposals(where: {
-        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-        dao: "${props.dao.address}"
-      }) {
-        id
-        }
-      }
-      `;
-    const arc = getArc();
-    return arc.getObservable(query);
-  },
-});
-
 /***** DAO ETH Balance *****/
 interface IEthProps extends ISubscriptionProps<any> {
   dao: IDAOState;
@@ -277,4 +241,4 @@ const SubscribedTokenBalance = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(SubscribedSidebar);
+export default connect(mapStateToProps)(DaoSidebar);
