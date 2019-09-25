@@ -175,6 +175,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
           daoState={dao}
           daoEthBalance={daoEthBalance}
           expanded
+          expired
           proposalState={proposal}
           rewards={reward}
         />
