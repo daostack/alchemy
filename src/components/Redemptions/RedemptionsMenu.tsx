@@ -154,6 +154,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
   public render(): RenderOutput {
     const { beneficiaryProfile, currentAccountAddress, data, proposal } = this.props;
     const [dao, daoEthBalance, reward] = data;
+    const rewards = reward && [reward] || [];
     return <React.Fragment>
       <ProposalSummary
         proposal={proposal}
@@ -166,7 +167,7 @@ class MenuItemContent extends React.Component<IMenuItemContentProps, null> {
           currentAccountAddress={currentAccountAddress}
           dao={dao}
           proposal={proposal}
-          rewards={[reward]}
+          rewards={rewards}
         />
       </div>
       <div className={css.redeemButton}>
