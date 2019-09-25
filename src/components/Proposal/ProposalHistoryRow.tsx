@@ -77,7 +77,10 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
       clearfix: true,
     });
 
-    let currentAccountVote = 0; let currentAccountPrediction = 0; let currentAccountStakeAmount = new BN(0); let currentAccountVoteAmount = new BN(0);
+    let currentAccountVote = 0;
+    let currentAccountPrediction = 0;
+    let currentAccountStakeAmount = new BN(0);
+    let currentAccountVoteAmount = new BN(0);
 
     let currentVote: Vote;
     if (votesOfCurrentUser.length > 0) {
@@ -86,13 +89,13 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
       currentAccountVoteAmount = new BN(currentVote.staticState.amount);
     }
 
-    let currentStake: Stake;
     if (stakesOfCurrentUser.length > 0) {
-      currentStake = stakesOfCurrentUser[0];
-    }
-    if (currentStake) {
-      currentAccountPrediction = currentStake.staticState.outcome;
-      currentAccountStakeAmount = new BN(currentStake.staticState.amount);
+      const totalStakes = stakesOfCurrentUser
+        .map((stake): BN => stake.staticState.amount)
+        .reduce((prev: BN, current: BN)  => { return prev.add(current); });
+      
+      currentAccountPrediction = stakesOfCurrentUser[0].staticState.outcome;
+      currentAccountStakeAmount = totalStakes;
     }
 
     const myActionsClass = classNames({
