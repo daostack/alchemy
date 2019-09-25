@@ -9,10 +9,13 @@
   - Features Added
     - Links in proposal description open in new tab
     - Show a message on startup when waiting for subgraph
+    - Create a single place where all redemptions can be redeemed
   - Bugs Fixed
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page
     - Fix error on initializing arc
+    - Fix infinite scroll loading of queued scheme proposals
+
 
 
 ### 2019-09-12 [actually two releses]
@@ -32,7 +35,7 @@
     - Add link to help center
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
-    - add static mint and burn permission 
+    - add static mint and burn permission
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page

@@ -22,6 +22,7 @@ interface IExternalProps {
   daoState: IDAOState;
   daoEthBalance: BN;
   detailView?: boolean;
+  expanded?: boolean;
   proposalState: IProposalState;
   rewards: IRewardState;
   expired: boolean;
@@ -88,6 +89,7 @@ class ActionButton extends React.Component<IProps, IState> {
       daoEthBalance,
       detailView,
       expired,
+      expanded,
       proposalState,
       rewards,
     } = this.props;
@@ -129,6 +131,7 @@ class ActionButton extends React.Component<IProps, IState> {
     const wrapperClass = classNames({
       [css.wrapper]: true,
       [css.detailView]: detailView,
+      [css.expanded]: expanded,
     });
 
     return (

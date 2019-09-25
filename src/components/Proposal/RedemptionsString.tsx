@@ -37,7 +37,7 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     const contributionReward = proposal.contributionReward;
 
-    if (currentAccountAddress === contributionReward.beneficiary) {
+    if (contributionReward && currentAccountAddress === contributionReward.beneficiary) {
       if (contributionReward.ethReward.gt(zero)) {
         rewardComponents.push(formatTokens(contributionReward.ethReward, "ETH"));
       }
@@ -63,7 +63,6 @@ export default class RedemptionsString extends React.Component<IProps, null> {
 
     const redemptionsStyle = {
       position: "relative" as "relative",
-      right: "5px",
       display: "inline-block",
       color: "rgba(49, 120, 202, 1.000)",
     };
