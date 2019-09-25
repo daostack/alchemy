@@ -46,6 +46,7 @@
     - Display proper message when no history
     - avoid duplicate Genesis Alpha cards
     - fix action button not appearing when proposal card countdown completes
+    - fix display glitch in the DAO sidebar on Firefox
 
 
 ### version 0.9.4; 2019-08-13
