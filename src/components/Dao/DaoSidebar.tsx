@@ -18,7 +18,7 @@ interface IState {
   openMenu: boolean;
 }
 
-export  class DaoSidebar extends React.Component<IProps, IState> {
+export default class DaoSidebar extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -185,41 +185,6 @@ export  class DaoSidebar extends React.Component<IProps, IState> {
     );
   }
 }
-
-export default withSubscription({
-  wrappedComponent: DaoSidebar,
-  loadingComponent: <div className={css.loading}><Loading /></div>,
-  errorComponent: (props) => <div>{props.error.message}</div>,
-
-  checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress;
-  },
-
-  createObservable: (props: IExternalProps) => {
-    if (!props.dao) {
-      return of(null);
-    }
-
-    if (!props.currentAccountAddress) {
-      return of([]);
-    }
-
-    const query = gql`query countProposalsWithUnclaimedRewards
-      {
-        proposals(where: {
-          accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-          dao: "${props.dao.address}"
-      }) {
-        id
-        }
-      }
-      `;
-    const arc = getArc();
-    // we are subscribing to this query so alchemy will get updates.
-    // we probably show this number in other components
-    return arc.getObservable(query, { subscribe: true });
-  },
-});
 
 /***** DAO ETH Balance *****/
 interface IEthProps extends ISubscriptionProps<any> {
