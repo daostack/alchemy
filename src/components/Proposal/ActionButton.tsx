@@ -4,12 +4,10 @@ import { enableWeb3ProviderAndWarn } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
-import * as moment from "moment";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { closingTime } from "reducers/arcReducer";
 import { proposalEnded } from "reducers/arcReducer";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -27,6 +25,7 @@ interface IExternalProps {
   expanded?: boolean;
   proposalState: IProposalState;
   rewards: IRewardState;
+  expired: boolean;
 }
 
 interface IStateProps {
@@ -89,13 +88,13 @@ class ActionButton extends React.Component<IProps, IState> {
       daoState,
       daoEthBalance,
       detailView,
+      expired,
       expanded,
       proposalState,
       rewards,
     } = this.props;
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
-    const expired = closingTime(proposalState).isSameOrBefore(moment());
 
     let beneficiaryHasRewards;
 

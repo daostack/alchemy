@@ -418,9 +418,12 @@ body {
           white-space: nowrap;
           cursor: pointer;
           display: inline-block;
+          margin-right: 4px;
         }
 
         img {
+          top: 2px;
+          position: relative;
           height: 12px;
           margin-right: 5px;
         }
