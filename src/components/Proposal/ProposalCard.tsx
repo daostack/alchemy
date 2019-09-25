@@ -103,6 +103,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     daoEthBalance={daoEthBalance}
                     proposalState={proposal}
                     rewards={rewards}
+                    expired={expired}
                   />
 
                   <div className={css.contextMenu} data-test-id="proposalContextMenu">
