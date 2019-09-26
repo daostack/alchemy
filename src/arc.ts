@@ -566,6 +566,68 @@ export function getAccountIsEnabled(): boolean {
   return !!getWeb3Provider();
 }
 
+const ACCOUNTSTORAGEKEY = "currentAddress";
+const WALLETCONNECTSTORAGEKEY = "walletconnect";
+const PROVIDERSTORAGEKEY = "currentWeb3ProviderInfo";
+
+export function cacheWeb3Info(account: Address): void {
+  if (account) {
+    localStorage.setItem(ACCOUNTSTORAGEKEY, account);
+  } else {
+    localStorage.removeItem(ACCOUNTSTORAGEKEY);
+  }
+  const providerInfo = getWeb3ProviderInfo();
+  if (providerInfo) {
+    localStorage.setItem(PROVIDERSTORAGEKEY, JSON.stringify(providerInfo));
+  } else {
+    localStorage.removeItem(PROVIDERSTORAGEKEY);
+    // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+    localStorage.removeItem(WALLETCONNECTSTORAGEKEY);
+  }
+}
+
+export function uncacheWeb3Info(): void {
+  localStorage.removeItem(ACCOUNTSTORAGEKEY);
+  localStorage.removeItem(PROVIDERSTORAGEKEY);
+  // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+  localStorage.removeItem(WALLETCONNECTSTORAGEKEY);
+}
+
+export function getCachedAccount(): Address | null {
+  return localStorage.getItem(ACCOUNTSTORAGEKEY);
+}
+
+export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
+  const cached = localStorage.getItem(PROVIDERSTORAGEKEY);
+  return cached ? JSON.parse(cached) : null;
+}
+
+export async function loadCachedWeb3Provider(showNotification: any): Promise<boolean> {
+  const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
+  if (web3ProviderInfo) {
+    let success = false;
+    /**
+     * If successful, this will result in setting the current account which
+     * we'll pick up below.
+     */
+    try {
+      if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification)) {
+        // eslint-disable-next-line no-console
+        console.log("using cached web3Provider");
+        success = true;
+      }
+    // eslint-disable-next-line no-empty
+    } catch(ex) { }
+    if (!success) {
+      // eslint-disable-next-line no-console
+      console.error("failed to instantiate cached web3Provider");
+      uncacheWeb3Info();
+    }
+    return success;
+  }
+  return false;
+}
+
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
 // Polling is Evil!
 // TODO: check if this (new?) function can replace polling:

@@ -1,6 +1,6 @@
 import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly, IWeb3ProviderInfo, getWeb3ProviderInfo } from "arc";
+import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo, loadCachedWeb3Provider } from "arc";
 import * as classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
@@ -22,8 +22,6 @@ import { of } from "rxjs";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
-  loadCachedWeb3Provider: (showNotification: any) => Promise<boolean>;
-  getCachedWeb3ProviderInfo: () => IWeb3ProviderInfo | null;
 }
 
 interface IStateProps {
@@ -74,13 +72,13 @@ class Header extends React.Component<IProps, null> {
   }
 
   public handleClickLogin = async (_event: any): Promise<void> => {
-    if (!await this.props.loadCachedWeb3Provider(this.props.showNotification)) {
+    if (!await loadCachedWeb3Provider(this.props.showNotification)) {
       await enableWeb3ProviderAndWarn(this.props.showNotification, false);
     }
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
-    if (!await this.props.loadCachedWeb3Provider(this.props.showNotification)) {
+    if (!await loadCachedWeb3Provider(this.props.showNotification)) {
       await enableWeb3ProviderAndWarn(this.props.showNotification, false);
     }
   }
