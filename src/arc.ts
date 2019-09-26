@@ -206,7 +206,7 @@ async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
     }
     default: {
       const msg = `Unknown NODE_ENV: ${process.env.NODE_ENV}`;
-      console.log(msg);
+      console.error(msg);
       throw new Error(msg);
     }
   }
@@ -255,7 +255,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
       if (!initializedAccount) {
       // then something went wrong
-        console.log("Unable to obtain an account from the provider");
+        console.error("Unable to obtain an account from the provider");
         success = false;
       }
     } else {
@@ -339,7 +339,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
       });
 
     web3Connect.on("error", (error: Error): any => {
-      console.log(`web3Connect closed on error:  ${error.message}`);
+      console.error(`web3Connect closed on error:  ${error.message}`);
       return rejectOnClosePromise(error);
     });
 
@@ -358,13 +358,13 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
       await onClosePromise;
 
     } catch (error) {
-      console.log(`Unable to connect to web3 provider:  ${error.message}`);
+      console.error(`Unable to connect to web3 provider:  ${error.message}`);
       throw new Error("Unable to connect to web3 provider");
     }
 
     if (!provider) {
       // should only be cancelled, errors should have been handled above
-      console.log("uncaught error or user cancelled out");
+      console.warn("uncaught error or user cancelled out");
       return false;
     }
   }
@@ -375,7 +375,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
   const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
 
   if (correctNetworkErrorMsg) {
-    console.log(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
+    console.warn(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
     if (blockOnWrongNetwork) {
       throw new Error(`Please connect to ${correctNetworkErrorMsg}`);
     }
@@ -391,7 +391,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
       await provider.enable();
       console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
     } catch (ex) {
-      console.log(`Unable to enable provider: ${ex.message}`);
+      console.error(`Unable to enable provider: ${ex.message}`);
       throw new Error("Unable to enable provider");
     }
 
@@ -535,21 +535,21 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
           break;
       }
     } catch (ex) {
-      console.log(`Unable to instantiate provider: ${ex.message}`);
+      console.error(`Unable to instantiate provider: ${ex.message}`);
       throw new Error("Unable to instantiate provider");
     }
     /**
    * make sure the injected provider is the one we're looking for
    */
     if (provider && !provider[web3ProviderInfo.check]) {
-      console.log(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
+      console.error(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
       throw new Error("Unable to instantiate provider");
     }
 
     success = provider ? await enableWeb3Provider(provider, false) : false;
 
   } catch(err) {
-    console.log(err);
+    console.error(err);
     msg = err.message;
   }
 
