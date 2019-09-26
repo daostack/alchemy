@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/client";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as arcActions from "actions/arcActions";
 
 import BN = require("bn.js");

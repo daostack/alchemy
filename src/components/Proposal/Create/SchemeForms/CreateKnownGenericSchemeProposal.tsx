@@ -1,7 +1,7 @@
 // const BN = require("bn.js");
 import { IProposalType, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";

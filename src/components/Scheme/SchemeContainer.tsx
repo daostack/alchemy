@@ -1,6 +1,6 @@
 import * as H from "history";
 import { Address, ISchemeState } from "@daostack/client";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";

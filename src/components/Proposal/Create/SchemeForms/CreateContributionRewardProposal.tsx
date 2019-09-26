@@ -1,6 +1,6 @@
 import { IDAOState, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";

@@ -1,6 +1,6 @@
 import * as H from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName} from "lib/util";

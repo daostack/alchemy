@@ -1,6 +1,6 @@
 import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { getArc, enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
