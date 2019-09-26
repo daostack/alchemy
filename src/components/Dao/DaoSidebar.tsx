@@ -1,31 +1,24 @@
-import { Address, IDAOState, Token } from "@daostack/client";
+import { IDAOState, Token } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
-import gql from "graphql-tag";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
-import { of } from "rxjs";
 import * as css from "./Dao.scss";
 
-interface IExternalProps {
-  currentAccountAddress?: Address;
+interface IProps {
   dao: IDAOState;
 }
-
-type IProps = IExternalProps & ISubscriptionProps<any>;
 
 interface IState {
   openMenu: boolean;
 }
 
-class DaoSidebar extends React.Component<IProps, IState> {
+export default class DaoSidebar extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
@@ -38,14 +31,8 @@ class DaoSidebar extends React.Component<IProps, IState> {
     this.setState({ openMenu: !this.state.openMenu });
   }
 
-  public render(): any {
-    if (this.props.data === null) {
-      return null;
-    }
-
-    const proposals = this.props.data.data ? this.props.data.data.proposals : [];
+  public render(): RenderOutput {
     const dao = this.props.dao;
-    const proposalCount = proposals.length;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
@@ -120,7 +107,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                 </Link>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>
+                <Link to={"/dao/" + dao.address + "/history/"}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -130,28 +117,10 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }></span>
                   <img src="/assets/images/Icon/menu/history.svg" />
                   History
-                </NavLink>
+                </Link>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
-                  <span className={
-                    classNames({
-                      [css.menuDot]: true,
-                      [css.red]: !!proposalCount,
-                    })
-                  } />
-                  <span className={
-                    classNames({
-                      [css.notification]: true,
-                      [css.redemptionNotification]: true,
-                    })
-                  }></span>
-                  <img src="/assets/images/Icon/menu/redemption.svg" />
-                  Redemptions ({proposalCount || "0"})
-                </NavLink>
-              </li>
-              <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/discussion/"}>
+                <Link to={"/dao/" + dao.address + "/discussion/"}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -160,8 +129,8 @@ class DaoSidebar extends React.Component<IProps, IState> {
                     })
                   }></span>
                   <img src="/assets/images/Icon/menu/chat.svg" />
-                  DAO Discussion
-                </NavLink>
+                  DAO Wall
+                </Link>
               </li>
             </ul>
           </div>
@@ -216,38 +185,6 @@ class DaoSidebar extends React.Component<IProps, IState> {
     );
   }
 }
-
-export default withSubscription({
-  wrappedComponent: DaoSidebar,
-  loadingComponent: <div className={css.loading}><Loading /></div>,
-  errorComponent: (props) => <div>{props.error.message}</div>,
-
-  checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress;
-  },
-
-  createObservable: (props: IExternalProps) => {
-    if (!props.dao) {
-      return of(null);
-    }
-
-    if (!props.currentAccountAddress) {
-      return of([]);
-    }
-
-    const query = gql`       {
-      proposals(where: {
-        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-        dao: "${props.dao.address}"
-      }) {
-        id
-        }
-      }
-      `;
-    const arc = getArc();
-    return arc.getObservable(query);
-  },
-});
 
 /***** DAO ETH Balance *****/
 interface IEthProps extends ISubscriptionProps<any> {

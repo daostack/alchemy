@@ -27,3 +27,10 @@
 :global div#WEB3_CONNECT_MODAL_ID > div {
   z-index: 10000000;
 }
+
+/**
+ * the Wallet Connect QR code popup
+ */
+:global div#walletconnect-qrcode-modal {
+  z-index: 10000001 !important;
+}

@@ -22,7 +22,7 @@ export default class ProposalSummary extends React.Component<IProps> {
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
     if (genericSchemeInfo.specs.name === "DutchX") {
       return <ProposalSummaryDutchX {...this.props} />;

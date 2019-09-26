@@ -8,7 +8,7 @@ interface IProps {
 
 export default class AccountImage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { accountAddress, className } = this.props;
 
     const dataURL = blockies.createDataURL({

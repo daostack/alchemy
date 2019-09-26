@@ -14,13 +14,10 @@ type IProps = ISubscriptionProps<SubscriptionData>;
 
 class DaosPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data } = this.props;
 
-    const daos = data[1];
-    if (data[0].length > 0) {
-      daos.unshift(data[0][0]);
-    }
+    const daos = [...data[0], ...data[1]];
 
     const daoNodes = daos.map((dao: DAO) => {
       return (
@@ -53,9 +50,9 @@ export default withSubscription({
   createObservable: () => {
     const arc = getArc();
     return combineLatest(
-      arc.daos({ where: { name: "Genesis Alpha" }}),
+      arc.daos({ where: { name: "Genesis Alpha" }}, { fetchAllData: true }),
       // eslint-disable-next-line
-      arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" }, orderBy: "name", orderDirection: "asc"}),
+      arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" }, orderBy: "name", orderDirection: "asc"}, { fetchAllData: true }),
     );
   },
 });

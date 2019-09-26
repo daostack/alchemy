@@ -17,7 +17,7 @@ interface IProps extends ISubscriptionProps<IMemberState> {
 
 class DaoMember extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { dao, profile } = this.props;
     const memberState = this.props.data;
 
@@ -76,6 +76,8 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
   checkForUpdate: (oldProps, newProps) => { return oldProps.member.id !== newProps.member.id; },
   createObservable: (props: IProps) => {
-    return props.member.state();
+    return props.member.state(
+      { subscribe: false} // subscribing is being taken care of by the parent component
+    );
   },
 });

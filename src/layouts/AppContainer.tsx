@@ -1,4 +1,3 @@
-// const Web3 = require("web3");
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
@@ -8,13 +7,13 @@ import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import DaoContainer from "components/Dao/DaoContainer";
+import RedemptionsPage from "components/Redemptions/RedemptionsPage";
 import * as History from "history";
 import Header from "layouts/Header";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
-//@ts-ignore
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
@@ -56,6 +55,7 @@ interface IState {
 class AppContainer extends React.Component<IProps, IState> {
 
   private static accountStorageKey = "currentAddress";
+  private static walletConnectStorageKey = "walletconnect";
   private static providerStorageKey = "currentWeb3ProviderInfo";
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
@@ -92,6 +92,7 @@ class AppContainer extends React.Component<IProps, IState> {
     let accountWasCached = false;
     if (currentAddress) {
       accountWasCached = true;
+      // eslint-disable-next-line no-console
       console.log(`using account from local storage: ${currentAddress}`);
     }
 
@@ -103,6 +104,7 @@ class AppContainer extends React.Component<IProps, IState> {
      */
     pollForAccountChanges(accountWasCached ? null : currentAddress).subscribe(
       (newAddress: Address | null): void => {
+        // eslint-disable-next-line no-console
         console.log(`new account: ${newAddress}`);
         this.props.setCurrentAccount(newAddress);
         if (newAddress) {
@@ -124,13 +126,15 @@ class AppContainer extends React.Component<IProps, IState> {
        */
       try {
         if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification)) {
+          // eslint-disable-next-line no-console
           console.log("using cached web3Provider");
           success = true;
         }
       // eslint-disable-next-line no-empty
       } catch(ex) { }
       if (!success) {
-        console.log("failed to instantiate cached web3Provider");
+        // eslint-disable-next-line no-console
+        console.error("failed to instantiate cached web3Provider");
         this.uncacheWeb3Info();
       }
       return success;
@@ -138,7 +142,7 @@ class AppContainer extends React.Component<IProps, IState> {
     return false;
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const {
       // connectionStatus,
       dismissNotification,
@@ -148,7 +152,8 @@ class AppContainer extends React.Component<IProps, IState> {
 
     if (this.state.error) {
       // Render error fallback UI
-      console.log(this.state.error);
+      // eslint-disable-next-line no-console
+      console.error(this.state.error);
       return <div>
         <a onClick={(): void => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
         <pre>{ this.state.error.toString() }</pre>
@@ -175,6 +180,7 @@ class AppContainer extends React.Component<IProps, IState> {
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
               <Route path="/profile/:accountAddress" component={AccountProfilePage} />
+              <Route path="/redemptions" component={RedemptionsPage} />
               <Route path="/" component={DaosPage} />
             </Switch>
 
@@ -239,12 +245,16 @@ class AppContainer extends React.Component<IProps, IState> {
       localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
     } else {
       localStorage.removeItem(AppContainer.providerStorageKey);
+      // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+      localStorage.removeItem(AppContainer.walletConnectStorageKey);
     }
   }
 
   private uncacheWeb3Info(): void {
     localStorage.removeItem(AppContainer.accountStorageKey);
     localStorage.removeItem(AppContainer.providerStorageKey);
+    // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
+    localStorage.removeItem(AppContainer.walletConnectStorageKey);
   }
 
   private getCachedAccount(): Address | null {

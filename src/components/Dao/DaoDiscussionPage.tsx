@@ -11,7 +11,7 @@ interface IProps {
 
 export default class DaoDiscussionPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const dao = this.props.dao;
 
     const disqusConfig = {

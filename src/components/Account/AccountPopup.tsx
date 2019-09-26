@@ -1,6 +1,4 @@
-import { getArc } from "arc";
-
-import BN = require("bn.js");
+import { Address, IDAOState, IMemberState } from "@daostack/client";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -13,15 +11,15 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { combineLatest } from "rxjs";
 
-import { Address, IDAOState, IMemberState } from "@daostack/client";
+import BN = require("bn.js");
+
 import * as css from "./Account.scss";
 
 
 interface IExternalProps {
   accountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   detailView?: boolean;
   historyView?: boolean;
 }
@@ -30,8 +28,8 @@ interface IStateProps {
   profile: IProfileState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<[IDAOState, IMemberState]>): IExternalProps & IStateProps & ISubscriptionProps<[IDAOState, IMemberState]> => {
-  const account = (ownProps.data ? ownProps.data[1] : null);
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<IMemberState>): IExternalProps & IStateProps & ISubscriptionProps<IMemberState> => {
+  const account = ownProps.data;
 
   return {
     ...ownProps,
@@ -47,7 +45,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, IMemberState]>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
 
 class AccountPopup extends React.Component<IProps, null> {
 
@@ -58,9 +56,9 @@ class AccountPopup extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public render() {
-    const [dao, accountInfo] = this.props.data;
-    const { accountAddress, profile } = this.props;
+  public render(): RenderOutput {
+    const accountInfo = this.props.data;
+    const { accountAddress, daoState, profile } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const targetAccountClass = classNames({
@@ -75,7 +73,7 @@ class AccountPopup extends React.Component<IProps, null> {
           <AccountImage accountAddress={accountAddress} />
         </div>
         <div className={css.accountInfo}>
-          <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={dao.address} /></div>
+          <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={daoState.address} /></div>
           {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
             <div>
               <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
@@ -89,7 +87,7 @@ class AccountPopup extends React.Component<IProps, null> {
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>
-            <div><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={reputation}/></div>
+            <div><Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={reputation}/></div>
           </div>
         </div>
       </div>
@@ -99,20 +97,19 @@ class AccountPopup extends React.Component<IProps, null> {
 
 const ConnectedAccountPopup = connect(mapStateToProps, mapDispatchToProps)(AccountPopup);
 
+// TODO: move this subscription to ProposalData.
+//  Can't do that right now because need to get the proposal state first to get the proposer and beneficiary
+//  before we can load the member data for those addresses
 const SubscribedAccountPopup = withSubscription({
   wrappedComponent: ConnectedAccountPopup,
   loadingComponent: <div>Loading...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.dao.address !== newProps.dao.address; },
+  checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.daoState.address !== newProps.daoState.address; },
 
   createObservable: (props: IProps) => {
     const subscribe = props.historyView !== true;
-    const arc = getArc();
-    return combineLatest(
-      arc.dao(props.dao.address).state({ subscribe }),
-      arc.dao(props.dao.address).member(props.accountAddress).state({subscribe})
-    );
+    return props.daoState.dao.member(props.accountAddress).state({subscribe});
   },
 });
 

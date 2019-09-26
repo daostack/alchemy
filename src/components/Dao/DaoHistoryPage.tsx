@@ -20,17 +20,16 @@ interface IExternalProps extends RouteComponentProps<any> {
 type SubscriptionData = [Proposal[], IDAOState];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
-
 class DaoHistoryPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data, hasMoreToLoad, fetchMore } = this.props;
 
     const [proposals, dao] = data;
     const { currentAccountAddress } = this.props;
 
     const proposalsHTML = proposals.map((proposal: Proposal) => {
-      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress}/>);
+      return (<ProposalHistoryRow key={"proposal_" + proposal.id} proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}/>);
     });
 
     return(
@@ -43,34 +42,39 @@ class DaoHistoryPage extends React.Component<IProps, null> {
           </div>
         </Sticky>
 
-        <div>
-          <div className={css.closedProposalsHeader}>
-            <div className={css.proposalCreator}>Proposed by</div>
-            <div className={css.endDate}>End date</div>
-            <div className={css.scheme}>Scheme</div>
-            <div className={css.title}>Title</div>
-            <div className={css.votes}>Votes</div>
-            <div className={css.predictions}>Predictions</div>
-            <div className={css.closeReason}>Status</div>
-            <div className={css.myActions}>My actions</div>
-          </div>
-          <div className={css.proposalHistory}>
-            <InfiniteScroll
-              dataLength={proposals.length} //This is important field to render the next data
-              next={fetchMore}
-              hasMore={hasMoreToLoad}
-              loader={<h4>Loading...</h4>}
-              style={{overflow: "visible"}}
-              endMessage={
-                <p style={{textAlign: "center"}}>
-                  <b>&mdash;</b>
-                </p>
-              }
-            >
-              {proposalsHTML}
-            </InfiniteScroll>
-          </div>
-        </div>
+        <InfiniteScroll
+          dataLength={proposals.length} //This is important field to render the next data
+          next={fetchMore}
+          hasMore={hasMoreToLoad}
+          loader=""
+          style={{overflow: "visible"}}
+          endMessage={
+            <p style={{textAlign: "center"}}>
+              <b>&mdash;</b>
+            </p>
+          }
+        >
+          { proposals.length === 0 ? "There has been no activity to date" : 
+            <table className={css.proposalHistoryTable}>
+              <thead>
+                <tr className={css.proposalHistoryTableHeader}>
+                  <th>Proposed by</th>
+                  <th>End date</th>
+                  <th>Scheme</th>
+                  <th>Title</th>
+                  <th>Votes</th>
+                  <th>Predictions</th>
+                  <th>Status</th>
+                  <th>My actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {proposalsHTML}
+              </tbody>
+            </table>
+          }
+        </InfiniteScroll>
+
       </div>
     );
   }
@@ -100,7 +104,9 @@ export default withSubscription({
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }),
+      },
+      { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+      ),
       dao.state()
     );
 
@@ -125,7 +131,9 @@ export default withSubscription({
       orderDirection: "desc",
       first: PAGE_SIZE,
       skip: data[0].length,
-    });
+    },
+    { fetchAllData: true } // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+    );
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
