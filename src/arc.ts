@@ -181,6 +181,13 @@ export function getWeb3Provider(): any | undefined {
   return selectedProvider;
 }
 
+async function getProviderNetworkName(provider?: any): Promise<string> {
+  provider = provider || selectedProvider;
+  if (!provider) { return null; }
+  const networkId = await getNetworkId(provider);
+  return getNetworkName(networkId);
+}
+
 /**
  * Checks if the web3 provider is set to the required network.
  * Does not ensure we have access to the user's account.
@@ -210,8 +217,7 @@ async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
     }
   }
 
-  const networkId = await getNetworkId(provider);
-  const networkName = await getNetworkName(networkId);
+  const networkName = await getProviderNetworkName(provider);
   return (networkName === expectedNetworkName) ?  null : expectedNetworkName;
 }
 
@@ -540,6 +546,10 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
 
     success = provider ? await enableWeb3Provider(provider, false) : false;
 
+    if (success && showNotification) {
+      showNotification(NotificationStatus.Success, `Connected to ${web3ProviderInfo.name}`);
+    }
+
   } catch(err) {
     console.log(err);
     msg = err.message;
@@ -603,8 +613,17 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
 }
 
 export async function loadCachedWeb3Provider(showNotification: any): Promise<boolean> {
-  const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
+  const web3ProviderInfo = getCachedWeb3ProviderInfo();
   if (web3ProviderInfo) {
+    /**
+     * do nothing if already connected to this provider
+     */
+    const providerInfo = await getWeb3ProviderInfo();
+    const providerName = providerInfo ? await providerInfo.name : null;
+    if (web3ProviderInfo.name === providerName) {
+      return true;
+    }
+   
     let success = false;
     /**
      * If successful, this will result in setting the current account which
