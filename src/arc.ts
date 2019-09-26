@@ -412,7 +412,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
  * @param provider Optional web3Provider
  * @return boolean whether Arc is successfully initialized.
  */
-export async function enableWeb3ProviderAndWarn(showNotification?: any, blockOnWrongNetwork = true): Promise<boolean> {
+async function enableWeb3ProviderAndWarn(showNotification?: any, blockOnWrongNetwork = true): Promise<boolean> {
   let success = false;
   let msg: string;
   try {
@@ -645,6 +645,22 @@ export async function loadCachedWeb3Provider(showNotification: any, notifyOnSucc
     return success;
   }
   return false;
+}
+
+export interface IEnableWWalletProviderParams {
+  blockOnWrongNetwork?: boolean;
+  notifyOnSuccess?: boolean;
+  showNotification: any;
+}
+
+/**
+ * load web3 wallet provider, first trying from cache, otherwise prompting
+ * @param options `IEnableWWalletProviderParams`
+ * @returns Promise of true on success
+ */
+export async function enableWalletProvider(options: IEnableWWalletProviderParams): Promise<boolean> {
+  return await loadCachedWeb3Provider(options.showNotification, options.notifyOnSuccess) ||
+         await enableWeb3ProviderAndWarn(options.showNotification, options.blockOnWrongNetwork);
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes

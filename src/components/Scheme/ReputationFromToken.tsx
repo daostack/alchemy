@@ -3,7 +3,7 @@ import * as queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc, loadCachedWeb3Provider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName, fromWei } from "lib/util";
 import * as React from "react";
@@ -131,8 +131,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     // only connect to wallet if we do not have a private key to sign with
     if (!this.state.privateKey && 
-      !await loadCachedWeb3Provider(this.props.showNotification) &&
-      !await enableWeb3ProviderAndWarn(this.props.showNotification)) {
+      !await enableWalletProvider({ showNotification: this.props.showNotification })) {
       setSubmitting(false);
       return;
     }

@@ -1,5 +1,5 @@
 import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
-import { enableWeb3ProviderAndWarn, loadCachedWeb3Provider } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -63,8 +63,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
 
   public async handleClickAction() {
     const { actionType, showNotification } = this.props;
-    if (!await loadCachedWeb3Provider(showNotification) &&
-        !await enableWeb3ProviderAndWarn(showNotification)) { return; }
+    if (!await enableWalletProvider({ showNotification })) { return; }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
       this.props.action(this.state.stakeAmount);

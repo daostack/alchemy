@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { enableWeb3ProviderAndWarn, getArc, getWeb3Provider, getWeb3ProviderInfo, loadCachedWeb3Provider } from "arc";
+import { getArc, getWeb3Provider, getWeb3ProviderInfo, enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
@@ -95,8 +95,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!await loadCachedWeb3Provider(showNotification) &&
-        !await enableWeb3ProviderAndWarn(showNotification)) { return; }
+    if (!await enableWalletProvider({ showNotification })) { return; }
 
     const web3Provider = await getWeb3Provider();
     try {
