@@ -588,25 +588,26 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
 
       if (!running) {
         running = true;
-        getCurrentAccountFromProvider()
-          .then(async (account: Address | null): Promise<void> => {
-            if (prevAccount !== account) {
-              if (account && initializedAccount && (account !== initializedAccount)) {
+        try {
+          getCurrentAccountFromProvider()
+            .then(async (account: Address | null): Promise<void> => {
+              if (prevAccount !== account) {
+                if (account && initializedAccount && (account !== initializedAccount)) {
                 /**
                  * handle when user changes account in MetaMask while already connected to Alchemy, thus
                  * having bypassed `enableWeb3Provider` and not having called `initializeArc`.
                  */
-                await initializeArc(selectedProvider);
+                  await initializeArc(selectedProvider);
+                }
+                observer.next(account);
+                // eslint-disable-next-line require-atomic-updates
+                prevAccount = account;
               }
-              observer.next(account);
-              // eslint-disable-next-line require-atomic-updates
-              prevAccount = account;
-            }
-          })
-          .catch((err): void => {console.warn(err.message); })
-          .then(() => {
-            running = false;
-          });
+            })
+            .catch((err): void => {console.warn(err.message); });
+        } finally {
+          running = false;
+        }
       }
     }
 
