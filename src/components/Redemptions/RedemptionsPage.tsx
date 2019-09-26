@@ -13,8 +13,8 @@ import { connect } from "react-redux";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import { combineLatest, Observable, of } from "rxjs";
-import { defaultIfEmpty, map, mergeMap } from "rxjs/operators";
+import { combineLatest, of } from "rxjs";
+import { map, mergeMap } from "rxjs/operators";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./RedemptionsPage.scss";
 
@@ -111,24 +111,26 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
     const daosPerId = new Map<Address, IDAOState>();
     const proposalsPerDao = new Map<Address, any[]>();
-    daos.forEach(dao => {
-      daosPerId.set(dao.id, dao);
-      proposalsPerDao.set(dao.id, []);
+    daos.forEach(daoState => {
+      daosPerId.set(daoState.id, daoState);
     });
     proposals.forEach(proposal => {
+      if (proposalsPerDao.get(proposal.dao.id) === undefined) {
+        proposalsPerDao.set(proposal.dao.id, []);
+      }
       proposalsPerDao.get(proposal.dao.id).push(proposal);
     });
 
     return [...proposalsPerDao].map(([daoId, proposals]) => {
-      const dao = daosPerId.get(daoId);
+      const daoState = daosPerId.get(daoId);
       return <div key={"daoProposals_" + daoId} className={css.dao}>
-        <div className={css.daoHeader}>{dao.name}</div>
+        <div className={css.daoHeader}>{daoState.name}</div>
         <div>
           {proposals.map(proposal => {
             return <ProposalCard
               key={"proposal_" + proposal.id}
               currentAccountAddress={currentAccountAddress}
-              daoState={dao}
+              daoState={daoState}
               proposal={new Proposal(proposal.id, arc)}
             />;
           })}
@@ -253,12 +255,13 @@ const SubscribedRedemptionsPage = withSubscription({
     `;
     const proposals = arc.getObservable(query, { subscribe: true })
       .pipe(map((result: any) => result.data.proposals));
-    const daos = proposals
-      .pipe(mergeMap((proposals: any[]): Observable<IDAOState[]> => {
-        const daoIds = new Set(proposals.map((proposal: any) => { return proposal.dao.id; }));
-        return combineLatest(Array.from(daoIds, (id: any) => arc.dao(id).state()))
-          .pipe(defaultIfEmpty([]));
-      }));
+    const daos = arc.daos()
+      .pipe(
+        mergeMap(
+          (daos) => combineLatest(Array.from(daos, (dao) => dao.state())
+          )
+        )
+      );
     return combineLatest(daos, proposals);
   },
 });
