@@ -604,8 +604,11 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                 prevAccount = account;
               }
             })
-            .catch((err): void => {console.warn(err.message); });
-        } finally {
+            .catch((err): void => {console.error(err.message); });
+        } catch (ex) {
+          console.error(ex.message);
+        }
+        finally {
           running = false;
         }
       }
