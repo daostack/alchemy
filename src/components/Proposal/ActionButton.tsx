@@ -1,6 +1,6 @@
 import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { enableWeb3ProviderAndWarn, loadCachedWeb3Provider } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
@@ -68,12 +68,16 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 
   public async handleClickExecute(_event: any): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+
     await this.props.executeProposal(this.props.daoState.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
   public async handleClickRedeem(_event: any): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+
     this.setState({ preRedeemModalOpen: true });
   }
 
@@ -202,7 +206,8 @@ class ActionButton extends React.Component<IProps, IState> {
   private async handleRedeemProposal(): Promise<void> {
 
     // may not be required, but just in case
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
 
     const {
       currentAccountAddress,

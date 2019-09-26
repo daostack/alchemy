@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { enableWeb3ProviderAndWarn, loadCachedWeb3Provider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -64,9 +64,10 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification))) {
-      this.setState({ showApproveModal: true });
-    }
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+
+    this.setState({ showApproveModal: true });
   }
 
   public closeApprovalModal = (_event: any): void => {
@@ -86,7 +87,9 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });

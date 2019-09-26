@@ -1,6 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { enableWeb3ProviderAndWarn, loadCachedWeb3Provider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -55,7 +55,8 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   public async handleClickVote(vote: number, _event: any): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
 
     const currentAccountState = this.props.currentAccountState;
     if (currentAccountState.reputation.gt(new BN(0))) {

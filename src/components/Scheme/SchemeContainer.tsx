@@ -1,6 +1,6 @@
 import * as H from "history";
 import { Address, ISchemeState } from "@daostack/client";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWeb3ProviderAndWarn, getArc, loadCachedWeb3Provider } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -52,10 +52,12 @@ class SchemeContainer extends React.Component<IProps, null> {
   public handleNewProposal = async (e: any): Promise<void> => {
     const { daoAvatarAddress, schemeId, showNotification } = this.props;
 
-    if ((await enableWeb3ProviderAndWarn(showNotification.bind(this)))) {
-      this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
-    }
     e.preventDefault();
+
+    if (!await loadCachedWeb3Provider(showNotification) &&
+        !await enableWeb3ProviderAndWarn(showNotification)) { return; }
+
+    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
   public render(): RenderOutput {

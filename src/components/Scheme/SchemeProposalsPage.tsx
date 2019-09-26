@@ -1,6 +1,6 @@
 import * as H from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
-import { getArc, enableWeb3ProviderAndWarn } from "arc";
+import { getArc, enableWeb3ProviderAndWarn, loadCachedWeb3Provider } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName} from "lib/util";
@@ -57,9 +57,10 @@ const mapDispatchToProps = {
 class SchemeProposalsPage extends React.Component<IProps, null> {
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification))) {
-      this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
-    }
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+
+    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   }
 
   private _handleNewProposal = (e: any): void => {
