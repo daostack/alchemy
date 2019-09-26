@@ -64,7 +64,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+    if ((await enableWeb3ProviderAndWarn(this.props.showNotification))) {
       this.setState({ showApproveModal: true });
     }
   }
@@ -79,14 +79,14 @@ class StakeButtons extends React.Component<IProps, IState> {
 
   public showPreStakeModal = (prediction: number): (_event: any) => void => (_event: any): void => {
     if (!this.props.currentAccountAddress) {
-      enableWeb3ProviderAndWarn(this.props.showNotification.bind(this));
+      enableWeb3ProviderAndWarn(this.props.showNotification);
     } else {
       this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
     }
   }
 
   public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });

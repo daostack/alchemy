@@ -95,7 +95,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
 
     const web3Provider = await getWeb3Provider();
     try {

@@ -57,7 +57,7 @@ const mapDispatchToProps = {
 class SchemeProposalsPage extends React.Component<IProps, null> {
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+    if ((await enableWeb3ProviderAndWarn(this.props.showNotification))) {
       this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
     }
   }
