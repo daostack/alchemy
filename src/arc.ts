@@ -485,15 +485,15 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
  *
  * This is meant to be used to bypass allowing the user to select a provider in the
  * case where we are initializing the app from a previously-cached (selected) provider.
+ * Thrown exceptions will be reported as notifications to the user
  * @param web3ProviderInfo required IWeb3ProviderInfo
  * @returns whether Arc has been successfully initialized.
  */
-export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo, showNotification?: any): Promise<boolean> {
+export async function setWeb3ProviderAndWarn(
+  web3ProviderInfo: IWeb3ProviderInfo,
+  showNotification: any,
+  notifyOnSuccess = true): Promise<boolean> {
   let provider: any;
-
-  /**
-   * note the thrown exceptions will be reported as notifications to the user
-   */
 
   let success = false;
   let msg: string;
@@ -546,7 +546,7 @@ export async function setWeb3ProviderAndWarn(web3ProviderInfo: IWeb3ProviderInfo
 
     success = provider ? await enableWeb3Provider(provider, false) : false;
 
-    if (success && showNotification) {
+    if (success && showNotification && notifyOnSuccess) {
       showNotification(NotificationStatus.Success, `Connected to ${web3ProviderInfo.name}`);
     }
 
@@ -612,7 +612,7 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
   return cached ? JSON.parse(cached) : null;
 }
 
-export async function loadCachedWeb3Provider(showNotification: any): Promise<boolean> {
+export async function loadCachedWeb3Provider(showNotification: any, notifyOnSuccess = true): Promise<boolean> {
   const web3ProviderInfo = getCachedWeb3ProviderInfo();
   if (web3ProviderInfo) {
     /**
@@ -630,7 +630,7 @@ export async function loadCachedWeb3Provider(showNotification: any): Promise<boo
      * we'll pick up below.
      */
     try {
-      if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification)) {
+      if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification, notifyOnSuccess)) {
         // eslint-disable-next-line no-console
         console.log("using cached web3Provider");
         success = true;
