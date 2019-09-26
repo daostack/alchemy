@@ -576,39 +576,39 @@ export function getAccountIsEnabled(): boolean {
   return !!getWeb3Provider();
 }
 
-const ACCOUNTSTORAGEKEY = "currentAddress";
-const WALLETCONNECTSTORAGEKEY = "walletconnect";
-const PROVIDERSTORAGEKEY = "currentWeb3ProviderInfo";
+const ACCOUNT_STORAGEKEY = "currentAddress";
+const WALLETCONNECT_STORAGEKEY = "walletconnect";
+const PROVIDER_STORAGEKEY = "currentWeb3ProviderInfo";
 
 export function cacheWeb3Info(account: Address): void {
   if (account) {
-    localStorage.setItem(ACCOUNTSTORAGEKEY, account);
+    localStorage.setItem(ACCOUNT_STORAGEKEY, account);
   } else {
-    localStorage.removeItem(ACCOUNTSTORAGEKEY);
+    localStorage.removeItem(ACCOUNT_STORAGEKEY);
   }
   const providerInfo = getWeb3ProviderInfo();
   if (providerInfo) {
-    localStorage.setItem(PROVIDERSTORAGEKEY, JSON.stringify(providerInfo));
+    localStorage.setItem(PROVIDER_STORAGEKEY, JSON.stringify(providerInfo));
   } else {
-    localStorage.removeItem(PROVIDERSTORAGEKEY);
+    localStorage.removeItem(PROVIDER_STORAGEKEY);
     // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
-    localStorage.removeItem(WALLETCONNECTSTORAGEKEY);
+    localStorage.removeItem(WALLETCONNECT_STORAGEKEY);
   }
 }
 
 export function uncacheWeb3Info(): void {
-  localStorage.removeItem(ACCOUNTSTORAGEKEY);
-  localStorage.removeItem(PROVIDERSTORAGEKEY);
+  localStorage.removeItem(ACCOUNT_STORAGEKEY);
+  localStorage.removeItem(PROVIDER_STORAGEKEY);
   // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
-  localStorage.removeItem(WALLETCONNECTSTORAGEKEY);
+  localStorage.removeItem(WALLETCONNECT_STORAGEKEY);
 }
 
 export function getCachedAccount(): Address | null {
-  return localStorage.getItem(ACCOUNTSTORAGEKEY);
+  return localStorage.getItem(ACCOUNT_STORAGEKEY);
 }
 
 export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
-  const cached = localStorage.getItem(PROVIDERSTORAGEKEY);
+  const cached = localStorage.getItem(PROVIDER_STORAGEKEY);
   return cached ? JSON.parse(cached) : null;
 }
 
