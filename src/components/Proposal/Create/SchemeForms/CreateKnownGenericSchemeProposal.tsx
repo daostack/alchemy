@@ -208,9 +208,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         }
       } else {
         switch (field.type) {
+          case "uint64":
           case "uint256":
-            initialFormValues[field.name] = "";
-            break;
+          case "bytes32":
           case "address":
           case "string":
             initialFormValues[field.name] = "";
