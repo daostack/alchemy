@@ -63,7 +63,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     };
   }
 
-  public showApprovalModal = async (_event: any): Promise<void> => {
+  public showApprovalModal = () => async (_event: any): Promise<void> => {
     if (!await loadCachedWeb3Provider(this.props.showNotification) &&
         !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
 
@@ -78,15 +78,14 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showPreStakeModal: false });
   }
 
-  public showPreStakeModal = (prediction: number): (_event: any) => void => (_event: any): void => {
-    if (!this.props.currentAccountAddress) {
-      enableWeb3ProviderAndWarn(this.props.showNotification);
-    } else {
-      this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
-    }
+  public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
+    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
+        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+
+    this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
-  public handleClickPreApprove = async (_event: any): Promise<void> => {
+  public handleClickPreApprove = () => async (_event: any): Promise<void> => {
     if (!await loadCachedWeb3Provider(this.props.showNotification) &&
         !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
 
@@ -141,7 +140,7 @@ class StakeButtons extends React.Component<IProps, IState> {
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
               <div>
-                <button onClick={this.handleClickPreApprove} data-test-id="button-preapprove">Preapprove</button>
+                <button onClick={this.handleClickPreApprove()} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
           </div>
@@ -203,7 +202,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predicting</button>
+            <button onClick={this.showApprovalModal()} data-test-id="button-enable-predicting">Enable Predicting</button>
           </div>
         </div>
       );
