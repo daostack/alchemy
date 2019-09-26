@@ -489,7 +489,7 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
  * @param web3ProviderInfo required IWeb3ProviderInfo
  * @returns whether Arc has been successfully initialized.
  */
-export async function setWeb3ProviderAndWarn(
+async function setWeb3ProviderAndWarn(
   web3ProviderInfo: IWeb3ProviderInfo,
   showNotification: any,
   notifyOnSuccess = true): Promise<boolean> {
