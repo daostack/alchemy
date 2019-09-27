@@ -258,7 +258,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       if (!initializedAccount) {
       // then something went wrong
         console.error("Unable to obtain an account from the provider");
-        success = false;
+        // success = false;
       }
     } else {
       initializedAccount = null;
