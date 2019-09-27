@@ -1,19 +1,16 @@
 /* eslint-disable no-console */
 import { Address, Arc, createApolloClient } from "@daostack/client";
-import { ApolloClient } from "apollo-client";
+// @ts-ignore
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { getMainDefinition } from "apollo-utilities";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
-
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-// @ts-ignore
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
-
 const Web3 = require("web3");
 
 /**
@@ -314,7 +311,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
         // @ts-ignore
         // printQueries(window.networkSubscriptions);
       },
-    }) as ApolloClient<object>;
+    });
   }
   // TODO: End debugging stuff -- remove this when done
 
