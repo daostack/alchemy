@@ -15,8 +15,7 @@
     - Re-add redeem for beneficiary button to proposal details page
     - Fix error on initializing arc
     - Fix infinite scroll loading of queued scheme proposals
-
-
+    - handle Metamask account changing
 
 ### 2019-09-12 [actually two releses]
 

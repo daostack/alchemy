@@ -30,9 +30,10 @@ interface IStateProps {
   currentAccountProfile: IProfileState;
   currentAccountAddress: string | null;
   daoAvatarAddress: Address;
+  menuOpen: boolean;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const match = matchPath(ownProps.location.pathname, {
     path: "/dao/:daoAvatarAddress",
     strict: false,
@@ -44,22 +45,23 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
+    menuOpen: state.ui.menuOpen,
   };
 };
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
-  showTour: typeof uiActions.showTour;
+  toggleMenu: typeof uiActions.toggleMenu;
 }
 
 const mapDispatchToProps = {
   showNotification,
-  showTour: uiActions.showTour,
+  toggleMenu: uiActions.toggleMenu,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
 
-class Header extends React.Component<IProps, null> {
+class Header extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
@@ -89,25 +91,33 @@ class Header extends React.Component<IProps, null> {
     await gotoReadonly(this.props.showNotification);
   }
 
+  private handleToggleMenu = () => (_event: any): void => {
+    this.props.toggleMenu();
+  }
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
       currentAccountAddress,
-      location,
     } = this.props;
     const dao = this.props.data;
 
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
-    // const cachedWeb3ProviderInfo = this.props.getCachedWeb3ProviderInfo();
 
     return(
       <div className={css.headerContainer}>
         <nav className={classNames({
           [css.header]: true,
-          [css.hasHamburger]: location.pathname.startsWith("/dao/"),
+          [css.hasHamburger]: !!daoAvatarAddress,
         })}>
+          { daoAvatarAddress ? 
+            <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
+              {this.props.menuOpen ?
+                <img src="/assets/images/Icon/Close.svg"/> :
+                <img src="/assets/images/Icon/Menu.svg"/>}
+            </div> : "" }
           <div className={css.menu}>
             <Link to="/">
               <img src="/assets/images/alchemy-logo-white.svg"/>
