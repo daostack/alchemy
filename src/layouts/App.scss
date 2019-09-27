@@ -563,6 +563,10 @@ body {
   }
 }
 
+.menuToggle {
+  display: none;
+}
+
 @media only screen and (max-device-width: 1024px) {
   .modalBody {
     position: fixed;
@@ -678,7 +682,14 @@ body {
       padding-left: 0;
     }
   }
-}
+
+  .menuToggle {
+    display: block;
+    position: absolute;
+    top: 16px;
+    left: 12px;
+  }
+ }
 
 .cookieDisclaimerContainer {
   padding-left: 12%;
