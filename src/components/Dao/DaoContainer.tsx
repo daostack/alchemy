@@ -97,7 +97,7 @@ class DaoContainer extends React.Component<IProps, null> {
             />
 
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-              render={(props) => <SchemeContainer {...props} currentAccountAddress={currentAccountAddress} />} />
+              render={(props) => <SchemeContainer {...props} daoState={daoState} currentAccountAddress={currentAccountAddress} />} />
 
             <Route path="/dao/:daoAvatarAddress" render={(props) => <DaoSchemesPage {...props} />} />
           </Switch>

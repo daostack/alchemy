@@ -71,7 +71,7 @@ export default withSubscription({
     const arc = getArc();
     const dao = arc.dao(props.dao.address);
     return combineLatest(
-      props.scheme.state({ subscribe: false }), // no need to subscribe to scheme state, as there is not updateable data
+      props.scheme.state(),
       // TODO QUERIES: combine these 3 queries, if possible, into 1
       dao.proposals({where: {
         scheme:  props.scheme.id,
@@ -79,18 +79,25 @@ export default withSubscription({
         // eslint-disable-next-line @typescript-eslint/camelcase
         expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
       }},
-      { fetchAllData: true } // fetch all data early, so we do not need to query/subscribe when showing individal propsoal info
+      { fetchAllData: true, // fetch all data early, so we do not need to query/subscribe when showing individal propsoal info
+        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      }
       ), // the list of queued proposals
       dao.proposals({ where: {
         scheme:  props.scheme.id,
         stage: IProposalStage.PreBoosted,
-      }}, { fetchAllData: true}
-      ), // the list of preboosted proposals
+      }}, {
+        fetchAllData: true,
+        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      }), // the list of preboosted proposals
       dao.proposals({ where: {
         scheme:  props.scheme.id,
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
-      }}, { fetchAllData: true}) // the list of boosted proposals
+      }}, {
+        fetchAllData: true,
+        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      }) // the list of boosted proposals
     );
   },
 });
@@ -128,8 +135,6 @@ const SubscribedProposalDetail = withSubscription({
     return oldProps.proposal.id !== newProps.proposal.id;
   },
   createObservable: (props: IProposalDetailProps) => {
-    return props.proposal.state( {
-      subscribe: false, // no need to subscribe to updates - the parent component takes care of that
-    });
+    return props.proposal.state(); 
   },
 });

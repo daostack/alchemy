@@ -211,9 +211,9 @@ export default withSubscription({
       );
     } else {
       return combineLatest(
-        proposal.state({ subscribe: false}),
-        proposal.stakes({ where: { staker: props.currentAccountAddress}}, {subscribe: false}),
-        proposal.votes({ where: { voter: props.currentAccountAddress }}, {subscribe: false}),
+        proposal.state(),
+        proposal.stakes({ where: { staker: props.currentAccountAddress}}),
+        proposal.votes({ where: { voter: props.currentAccountAddress }}),
         props.daoState.dao.member(props.currentAccountAddress).state(),
       );
     }

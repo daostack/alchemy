@@ -32,55 +32,58 @@ const Fade = ({ children, ...props }: any) => (
 type IExternalProps = RouteComponentProps<any>;
 type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[]]>;
 
-const DaoSchemesPage = (props: IProps) => {
-  // const [dao, allSchemes, knownSchemes, unknownSchemes ] = props.data;
-  const dao = props.data[0];
-  const allSchemes = props.data[1];
-  const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
-  const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
-  const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
-  const allKnownSchemes = [...contributionReward, ...knownSchemes];
+class DaoSchemesPage extends React.Component<IProps, null> {
 
-  const schemeCardsHTML = (
-    <TransitionGroup>
-      { allKnownSchemes.map((scheme: Scheme) => (
-        <Fade key={"scheme " + scheme.id}>
-          {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
-            ? <ProposalSchemeCard dao={dao} scheme={scheme} />
-            : <SimpleSchemeCard dao={dao} scheme={scheme} />
-          }
-        </Fade>
-      ))
-      }
+  public render() {
+    const props = this.props;
+    const dao = props.data[0];
+    const allSchemes = props.data[1];
+    const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
+    const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
+    const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
+    const allKnownSchemes = [...contributionReward, ...knownSchemes];
 
-      {!unknownSchemes ? "" :
-        <Fade key={"schemes unknown"}>
-          <UnknownSchemeCard schemes={unknownSchemes} />
-        </Fade>
-      }
-    </TransitionGroup>
-  );
+    const schemeCardsHTML = (
+      <TransitionGroup>
+        { allKnownSchemes.map((scheme: Scheme) => (
+          <Fade key={"scheme " + scheme.id}>
+            {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
+              ? <ProposalSchemeCard dao={dao} scheme={scheme} />
+              : <SimpleSchemeCard dao={dao} scheme={scheme} />
+            }
+          </Fade>
+        ))
+        }
 
-  return (
-    <div className={css.wrapper}>
-      <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+        {!unknownSchemes ? "" :
+          <Fade key={"schemes unknown"}>
+            <UnknownSchemeCard schemes={unknownSchemes} />
+          </Fade>
+        }
+      </TransitionGroup>
+    );
 
-      <Sticky enabled top={50} innerZ={10000}>
-        <h1>All Schemes</h1>
-      </Sticky>
-      {(allKnownSchemes.length + unknownSchemes.length) === 0
-        ? <div>
-          <img src="/assets/images/meditate.svg" />
-          <div>
-            No schemes registered
+    return (
+      <div className={css.wrapper}>
+        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+
+        <Sticky enabled top={50} innerZ={10000}>
+          <h1>All Schemes</h1>
+        </Sticky>
+        {(allKnownSchemes.length + unknownSchemes.length) === 0
+          ? <div>
+            <img src="/assets/images/meditate.svg" />
+            <div>
+              No schemes registered
+            </div>
           </div>
-        </div>
-        :
-        <div className={css.allSchemes}>{schemeCardsHTML}</div>
-      }
-    </div>
-  );
-};
+          :
+          <div className={css.allSchemes}>{schemeCardsHTML}</div>
+        }
+      </div>
+    );
+  }
+}
 
 export default withSubscription({
   wrappedComponent: DaoSchemesPage,
@@ -95,7 +98,7 @@ export default withSubscription({
     const dao = arc.dao(daoAvatarAddress);
     return combineLatest(
       dao.state({ fetchAllData: true }), // DAO state
-      arc.dao(daoAvatarAddress).schemes({}, { fetchAllData: true }),
+      arc.dao(daoAvatarAddress).schemes({}, { fetchAllData: true })
     );
   },
 });

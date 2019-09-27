@@ -1,17 +1,16 @@
 /* eslint-disable no-console */
-import { Address, Arc } from "@daostack/client";
-import { NotificationStatus } from "reducers/notifications";
-import { Observable } from "rxjs";
-
-import Web3Connect from "web3connect";
-import { IProviderInfo } from "web3connect/lib/helpers/types";
+import { Address, Arc, createApolloClient } from "@daostack/client";
 // @ts-ignore
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { getMainDefinition } from "apollo-utilities";
+import { NotificationStatus } from "reducers/notifications";
+import { Observable } from "rxjs";
+import Web3Connect from "web3connect";
+import { IProviderInfo } from "web3connect/lib/helpers/types";
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
-
 const Web3 = require("web3");
 
 /**
@@ -88,8 +87,8 @@ const settings = {
     ipfsProvider: "localhost",
   },
   staging: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://rinkeby.subgraph.daostack.io/subgraphs/name/v26",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://ws.rinkeby.subgraph.daostack.io/subgraphs/name/v26",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v28_0_rinkeby",
+    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v28_0_rinkeby",
     web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || {
@@ -100,8 +99,8 @@ const settings = {
     },
   },
   production: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://subgraph.daostack.io/subgraphs/name/v24",
-    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://ws.subgraph.daostack.io/subgraphs/name/v24",
+    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v28_0",
+    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "https://thegraph.com/subgraphs/name/daostack/v28_0",
     web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || {
@@ -139,6 +138,9 @@ function getArcSettings(): any {
       throw Error(`Unknown NODE_ENV environment: "${process.env.NODE_ENV}"`);
     }
   }
+
+  // do not subscribe to any of the queries - we do all subscriptions manually
+  arcSettings.graphqlSubscribeToQueries = false;
   return arcSettings;
 }
 
@@ -277,6 +279,57 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   } catch (reason) {
     console.error(reason.message);
   }
+
+  // TODO: for debugging, remove this when done
+  if (arc) {
+    // @ts-ignore
+    window.networkSubscriptions = [];
+    // @ts-ignore
+    window.networkQueries = [];
+    arc.apolloClient = createApolloClient({
+      graphqlHttpProvider: arcSettings.graphqlHttpProvider ,
+      graphqlWsProvider: arcSettings.graphqlWsProvider,
+      graphqlPrefetchHook: (query: any) => {
+        const definition = getMainDefinition(query);
+        // @ts-ignore
+        if (definition.operation === "subscription") {
+          // @ts-ignore
+          window.networkSubscriptions.push(definition);
+          // @ts-ignore
+          console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
+        } else {
+          // @ts-ignore
+          window.networkQueries.push(definition);
+          // @ts-ignore
+          // console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
+        }
+
+        // function printQueries(queries: any[]) {
+        //   const rs: {[ key: string]: number } = {};
+        //   rs.undefined = 0;
+        //   for (const q of queries) {
+        //     if (q.name) {
+        //       if (!rs[q.name.value]) {
+        //         rs[q.name.value] = 1;
+        //       } else {
+        //         rs[q.name.value] += 1;
+        //       }
+        //     } else {
+        //       rs["undefined"] += 1;
+        //     }
+        //     for (const key in rs) {
+        //       console.log(key, rs[key]);
+        //     }
+        //   }
+        // }
+        // @ts-ignore
+        console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
+        // @ts-ignore
+        // printQueries(window.networkSubscriptions);
+      },
+    });
+  }
+  // TODO: End debugging stuff -- remove this when done
 
   (window as any).arc = success ? arc : null;
    
