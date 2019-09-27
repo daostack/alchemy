@@ -275,19 +275,19 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   valueIsRequired(field.name);
                 }
 
-                if (field.type === "uint256") {
-                  const value = values[field.name];
-                  try {
-                    field.callValue(value);
-                  } catch (error) {
-                    if (error.message === "Assertion failed") {
-                      // thank you BN.js for your helpful error messages
-                      errors[field.name] = "Invalid number value";
-                    } else {
-                      errors[field.name] = error.message;
-                    }
+                // Check if value can be interpreted correctly for this particular field
+                const value = values[field.name];
+                try {
+                  field.callValue(value);
+                } catch (error) {
+                  if (error.message === "Assertion failed") {
+                    // thank you BN.js for your helpful error messages
+                    errors[field.name] = "Invalid number value";
+                  } else {
+                    errors[field.name] = error.message;
                   }
                 }
+
                 if (field.type === "address") {
                   const value = values[field.name];
                   if (!arc.web3.utils.isAddress(value)) {

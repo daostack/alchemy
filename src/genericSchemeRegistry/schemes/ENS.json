@@ -21,7 +21,8 @@
         {
           "name": "node",
           "label": "Node",
-          "placeholder": "e.g. namehash('alice.eth')"
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
         },
         {
           "name": "Owner",
@@ -55,7 +56,8 @@
         {
           "label": "Node",
           "name": "node",
-          "placeholder": "e.g. namehash('alice.eth')"
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
         },
         {
           "name": "Resolver",
@@ -89,7 +91,8 @@
         {
           "name": "node",
           "label": "Node",
-          "placeholder": "e.g. namehash('alice.eth')"
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
         },
         {
           "name": "ttl",
@@ -123,12 +126,14 @@
         {
           "name": "node",
           "label": "Node",
-          "placeholder": "e.g. namehash('alice.eth')"
+          "placeholder": "e.g. alice.eth",
+          "transformation": "namehash"
         },
         {
           "name": "label",
           "label": "Label",
-          "placeholder": "e.g. keccak256('iam')"
+          "placeholder": "e.g. iam",
+          "transformation": "keccak256"
         },
         {
           "name": "owner",
