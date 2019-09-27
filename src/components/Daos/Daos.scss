@@ -217,6 +217,10 @@ table.daoInfoContainer {
   }
 
   table.daoInfoContainer {
+    tr > td {
+      width:45%;
+    }
+
     tr > td:first-child,
     tr > td:last-child {
       width:10%;
