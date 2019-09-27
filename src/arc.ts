@@ -263,7 +263,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     } else {
       initializedAccount = null;
     }
-    
+
     if (success) {
       provider = arc.web3.currentProvider; // won't be a string, but the actual provider
       // save for future reference
@@ -276,63 +276,61 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
     }
 
+    // TODO: for debugging, remove this when done
+    if (arc) {
+      // @ts-ignore
+      window.networkSubscriptions = [];
+      // @ts-ignore
+      window.networkQueries = [];
+      arc.apolloClient = createApolloClient({
+        graphqlHttpProvider: arcSettings.graphqlHttpProvider ,
+        graphqlWsProvider: arcSettings.graphqlWsProvider,
+        graphqlPrefetchHook: (query: any) => {
+          const definition = getMainDefinition(query);
+          // @ts-ignore
+          if (definition.operation === "subscription") {
+            // @ts-ignore
+            window.networkSubscriptions.push(definition);
+            // @ts-ignore
+            console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
+          } else {
+            // @ts-ignore
+            window.networkQueries.push(definition);
+            // @ts-ignore
+            // console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
+          }
+
+          // function printQueries(queries: any[]) {
+          //   const rs: {[ key: string]: number } = {};
+          //   rs.undefined = 0;
+          //   for (const q of queries) {
+          //     if (q.name) {
+          //       if (!rs[q.name.value]) {
+          //         rs[q.name.value] = 1;
+          //       } else {
+          //         rs[q.name.value] += 1;
+          //       }
+          //     } else {
+          //       rs["undefined"] += 1;
+          //     }
+          //     for (const key in rs) {
+          //       console.log(key, rs[key]);
+          //     }
+          //   }
+          // }
+          // @ts-ignore
+          console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
+          // @ts-ignore
+          // printQueries(window.networkSubscriptions);
+        },
+      });
+    }
+    // TODO: End debugging stuff -- remove this when done
   } catch (reason) {
     console.error(reason.message);
   }
 
-  // TODO: for debugging, remove this when done
-  if (arc) {
-    // @ts-ignore
-    window.networkSubscriptions = [];
-    // @ts-ignore
-    window.networkQueries = [];
-    arc.apolloClient = createApolloClient({
-      graphqlHttpProvider: arcSettings.graphqlHttpProvider ,
-      graphqlWsProvider: arcSettings.graphqlWsProvider,
-      graphqlPrefetchHook: (query: any) => {
-        const definition = getMainDefinition(query);
-        // @ts-ignore
-        if (definition.operation === "subscription") {
-          // @ts-ignore
-          window.networkSubscriptions.push(definition);
-          // @ts-ignore
-          console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
-        } else {
-          // @ts-ignore
-          window.networkQueries.push(definition);
-          // @ts-ignore
-          // console.log(`add ${definition.operation} ${definition.name && definition.name.value || "[undefined]"}`);
-        }
-
-        // function printQueries(queries: any[]) {
-        //   const rs: {[ key: string]: number } = {};
-        //   rs.undefined = 0;
-        //   for (const q of queries) {
-        //     if (q.name) {
-        //       if (!rs[q.name.value]) {
-        //         rs[q.name.value] = 1;
-        //       } else {
-        //         rs[q.name.value] += 1;
-        //       }
-        //     } else {
-        //       rs["undefined"] += 1;
-        //     }
-        //     for (const key in rs) {
-        //       console.log(key, rs[key]);
-        //     }
-        //   }
-        // }
-        // @ts-ignore
-        console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
-        // @ts-ignore
-        // printQueries(window.networkSubscriptions);
-      },
-    });
-  }
-  // TODO: End debugging stuff -- remove this when done
-
   (window as any).arc = success ? arc : null;
-   
 
   return success;
 }
