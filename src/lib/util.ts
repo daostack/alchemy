@@ -214,15 +214,15 @@ export function isKnownScheme(address: Address) {
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
-  if (scheme.name === "GenericScheme" || scheme.name === 'UGenericScheme') {
+  if (scheme.name === "GenericScheme" || scheme.name === "UGenericScheme") {
     if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      let contractToCall
-      const schemeState = scheme as ISchemeState
+      let contractToCall;
+      const schemeState = scheme as ISchemeState;
       if (schemeState.genericSchemeParams) {
-        contractToCall = schemeState.genericSchemeParams.contractToCall
+        contractToCall = schemeState.genericSchemeParams.contractToCall;
       } else {
-        contractToCall = schemeState.uGenericSchemeParams.contractToCall
+        contractToCall = schemeState.uGenericSchemeParams.contractToCall;
       }
       const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
