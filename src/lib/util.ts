@@ -87,7 +87,7 @@ export function fromWei(amount: BN): number {
 }
 
 export function toWei(amount: number): BN {
-  /** 
+  /**
    * toFixed to avoid the sci notation that javascript creates for large and small numbers.
    * toWei barfs on it.
    */
@@ -106,10 +106,10 @@ export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): str
 
   const negative = amountWei.lt(new BN(0));
   const toSignedString = (amount: string) => { return  (negative ? "-" : "") + amount + (symbol ? " " + symbol : ""); };
-  
+
   if (amountWei.isZero()) {
     return toSignedString("0");
-  } 
+  }
 
   const PRECISION = 2; // number of digits "behind the dot"
   const PRECISIONPOWER = 10 ** PRECISION;
@@ -172,17 +172,20 @@ export function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve: () => void): any => setTimeout(resolve, milliseconds));
 }
 
+/** schemes that we know how to interpret  */
 export const KNOWN_SCHEME_NAMES = [
   "ContributionReward",
   "GenericScheme",
   "ReputationFromToken",
   "SchemeRegistrar",
+  "UGenericScheme",
 ];
 
 export const PROPOSAL_SCHEME_NAMES = [
   "ContributionReward",
   "GenericScheme",
   "SchemeRegistrar",
+  "UGenericScheme",
 ];
 
 /**
@@ -211,10 +214,17 @@ export function isKnownScheme(address: Address) {
 
 export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string) {
   let name: string;
-  if (scheme.name === "GenericScheme") {
-    if ((scheme as any).genericSchemeParams) {
+  if (scheme.name === "GenericScheme" || scheme.name === 'UGenericScheme') {
+    if ((scheme as any).genericSchemeParams || ((scheme as any).uGenericSchemeParams)) {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo((scheme as any).genericSchemeParams.contractToCall);
+      let contractToCall
+      const schemeState = scheme as ISchemeState
+      if (schemeState.genericSchemeParams) {
+        contractToCall = schemeState.genericSchemeParams.contractToCall
+      } else {
+        contractToCall = schemeState.uGenericSchemeParams.contractToCall
+      }
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
         name = genericSchemeInfo.specs.name;
       } else {
