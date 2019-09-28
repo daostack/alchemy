@@ -1,0 +1,74 @@
+import * as uuid from "uuid";
+import { getContractAddresses } from "./utils";
+
+describe("Proposals ENS", () => {
+  let daoAddress: string;
+  let addresses;
+
+  before(() => {
+    addresses = getContractAddresses();
+    // cf. ./utils.ts to see where this address is from
+    // if this test is failing, query the subgraph with the contractToCall
+    // and set that in ENS.json
+    // { dao (id: "0x68728fe67fb1fbae9076110f98e9ba3f5a00f936")
+    //   {id schemes {
+    //     id
+    //     name
+    //     genericSchemeParams {
+    //       contractToCall
+    // }}}}
+
+    daoAddress = addresses.daos["Nectar DAO"].Avatar.toLowerCase();
+  });
+
+  it("Create a Generic Scheme ENS proposal and check that the data is submitted correctly", async () => {
+    const url = `/dao/${daoAddress}/`;
+    await browser.url(url);
+
+    const schemeCard = await $("[data-test-id=\"schemeCard-GenericScheme\"]");
+    await schemeCard.click();
+
+    const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
+    await createProposalButton.waitForExist();
+
+    await createProposalButton.click();
+
+    const masterCopyTab = await $("*[data-test-id=\"action-tab-setSubnodeOwner\"]");
+    await masterCopyTab.click();
+
+    const titleInput = await $("*[id=\"titleInput\"]");
+    await titleInput.waitForExist();
+
+    const title = uuid();
+    await titleInput.setValue(title);
+
+    // using uuid value so that the test will pass also if there is already a proposal with this description
+    // (which must be unique).
+    const descriptionInput = await $(".mde-text");
+    await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+
+    const nodeInput = await $("*[data-test-id=\"node\"]");
+    await nodeInput.setValue("alice.eth");
+
+    const labelInput = await $("*[data-test-id=\"label\"]");
+    await labelInput.setValue("iam");
+
+    const ownerInput = await $("*[data-test-id=\"owner\"]");
+    await ownerInput.setValue("0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
+
+    const createProposalSubmitButton = await $("*[type=\"submit\"]");
+    await createProposalSubmitButton.click();
+
+    // check that the proposal appears in the list
+    // test for the title
+    const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
+    await titleElement.waitForExist();
+    await titleElement.click();
+
+    const summaryDetailsElement = await $(`[class*="summaryDetails"]`);
+    summaryDetailsElement.should.contain("0x787192fc5378cc32aa956ddfdedbf26b24e8d78e40109add0eea2c1a012c3dec");
+    summaryDetailsElement.should.contain("0x9e348118a83d84175f5051131bbf598fd46bee6bf7d1091296a4b8c3e9d28bae");
+    summaryDetailsElement.should.contain("0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1");
+  });
+
+});
