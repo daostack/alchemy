@@ -53,11 +53,11 @@ class SchemeContainer extends React.Component<IProps, null> {
 
   public handleNewProposal = async (e: any): Promise<void> => {
     const { daoAvatarAddress, schemeId, showNotification } = this.props;
+    e.preventDefault();
 
     if ((await enableWeb3ProviderAndWarn(showNotification.bind(this)))) {
       this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create`);
     }
-    e.preventDefault();
   };
 
   public render(): RenderOutput {
