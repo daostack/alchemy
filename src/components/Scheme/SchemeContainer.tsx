@@ -120,10 +120,8 @@ const SubscribedSchemeContainer = withSubscription({
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up
     // prime the cache: get all members fo this DAO -
-    // TODO: make one single query once https://github.com/daostack/subgraph/issues/331 is resolved
-    await props.daoState.dao.members({ first: 100, skip: 0 }).pipe(first()).toPromise();
-    await props.daoState.dao.members({ first: 100, skip: 100}).pipe(first()).toPromise();
-    await props.daoState.dao.members({ first: 100, skip: 200}).pipe(first()).toPromise();
+    await props.daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
+
     // eslint-disable-next-line @typescript-eslint/camelcase
     await props.daoState.dao.proposals({where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted]}}, { fetchAllData: true }).pipe(first()).toPromise();
     // end cache priming
