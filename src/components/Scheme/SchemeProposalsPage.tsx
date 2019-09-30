@@ -221,20 +221,20 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // the list of preboosted proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
         orderBy: "preBoostedAt",
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // the list of boosted proposals
-      arc.dao(daoAvatarAddress).proposals({
+      dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // DAO state
       dao.state()
@@ -256,7 +256,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       orderDirection: "desc",
       first: PAGE_SIZE,
       skip: data[0].length,
-    });
+    }, { subscribe: true, fetchAllData: true });
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {

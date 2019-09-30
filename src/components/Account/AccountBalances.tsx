@@ -69,7 +69,7 @@ export default withSubscription({
     const daoState = dao;
     const arc = daoState.dao.context;
     return combineLatest(
-      address && daoState.dao.member(address).state() || of(null),
+      address && daoState.dao.member(address).state( { subscribe: true }) || of(null),
       arc.ethBalance(address),
       arc.GENToken().balanceOf(address),
     );

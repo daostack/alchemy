@@ -36,6 +36,8 @@ script:
   - npm run lint -- --quiet
   # unit tests
   - npm run test:unit -- --forceExit
+
+  - docker-compose logs alchemy
   # run integration tests
   - npm run test:integration:headless
 

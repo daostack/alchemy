@@ -299,7 +299,6 @@ button:hover {
 
 .daoSidebar {
   min-width: 48px;
-  position: relative;
   max-width: 250px;
   height: 100%;
   background-color: $sky;
@@ -307,8 +306,7 @@ button:hover {
   flex-grow: 1;
   overflow-y: auto;
   position: fixed;
-  top: 0;
-  padding-top: 50px;
+  top: 50px;
   z-index: 1000;
 
   &:hover {
@@ -495,12 +493,6 @@ button:hover {
   }
 }
 
-
-
-.menuToggle {
-  display: none;
-}
-
 .loading img {
   margin: 0 auto;
   display: block;
@@ -680,7 +672,7 @@ a {
     }
   }
 
-  .daoSidebar.openMenu {
+  .daoSidebar.menuOpen {
       z-index: 1000000;
       width: 100%;
       background-color: rgba(49, 120, 202, 1.000);
@@ -689,14 +681,6 @@ a {
 
       .daoNavigation {
         height: 520px;
-      }
-
-      .menuClosed {
-        display: none;
-      }
-
-      .menuOpen {
-        display: block;
       }
     }
 
@@ -736,22 +720,6 @@ a {
 
   .daoHoldings ul li {
     display: inline-block;
-  }
-
-  .menuToggle {
-    display: block;
-    position: absolute;
-    top: -30px;
-    top: 16px;
-    left: 12px;
-
-    .menuClosed {
-      display: block;
-    }
-
-    .menuOpen {
-      display: none;
-    }
   }
 
   .wrapper {
