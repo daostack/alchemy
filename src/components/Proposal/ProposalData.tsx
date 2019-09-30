@@ -125,7 +125,9 @@ export default withSubscription({
         proposal.rewards({ where: {beneficiary: currentAccountAddress}},{ subscribe: true } )
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
-        arcDao.member(currentAccountAddress).state(),
+
+        // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
+        arcDao.member(currentAccountAddress).state({ fetchPolicy: "cache-only"}),
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline

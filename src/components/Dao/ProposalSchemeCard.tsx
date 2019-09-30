@@ -33,7 +33,7 @@ const ProposalSchemeCard = (props: IProps) => {
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
         <h2>{schemeName(schemeState, "[Unknown]")}</h2>
         <div>
-          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
+          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
         {proposals.length === 0 ?
           <div className={css.loading}>

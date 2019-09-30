@@ -8,6 +8,7 @@ import * as GeoPattern from "geopattern";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { first } from "rxjs/operators";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import * as css from "./Dao.scss";
@@ -234,7 +235,13 @@ const SubscribedTokenBalance = withSubscription({
   checkForUpdate: (oldProps: ITokenProps, newProps: ITokenProps) => {
     return oldProps.dao.address !== newProps.dao.address || oldProps.tokenAddress !== newProps.tokenAddress;
   },
-  createObservable: (props: ITokenProps) => {
+  createObservable: async (props: ITokenProps) => {
+    // General cache priming for the DAO we do here
+    // prime the cache: get all members fo this DAO -
+    const daoState = props.dao;
+    
+    await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
+
     const arc = getArc();
     const token = new Token(props.tokenAddress, arc);
     return token.balanceOf(props.dao.address);
