@@ -4,11 +4,10 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
-import { combineLatest} from "rxjs";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
-type SubscriptionData = [DAO[], DAO[]];
+type SubscriptionData = DAO[];
 
 type IProps = ISubscriptionProps<SubscriptionData>;
 
@@ -17,7 +16,9 @@ class DaosPage extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { data } = this.props;
 
-    const daos = [...data[0], ...data[1]];
+    // put the gensisAlpha dao first
+    const daos = data.filter((d: DAO) => d.staticState.name === "Genesis Alpha")
+      .concat(data.filter((d: DAO) => d.staticState.name !== "Genesis Alpha" && d.staticState.register === "registered"));
 
     const daoNodes = daos.map((dao: DAO) => {
       return (
@@ -49,11 +50,8 @@ export default withSubscription({
 
   createObservable: () => {
     const arc = getArc();
-    return combineLatest(
-      arc.daos({ where: { name: "Genesis Alpha" }}, { fetchAllData: true, subscribe: true }),
-      // eslint-disable-next-line
-      arc.daos({ where: { name_not_contains: "Genesis Alpha", register: "registered" },
-        orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true }),
-    );
+    return arc.daos({
+      // where: { register: "registered" },
+      orderBy: "name", orderDirection: "asc"}, { fetchAllData: true, subscribe: true });
   },
 });
