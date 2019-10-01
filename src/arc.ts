@@ -7,7 +7,7 @@ import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { settings } from "./settings";
+import { settings } from './settings'
 import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
 
 const Portis = require("@portis/web3");
