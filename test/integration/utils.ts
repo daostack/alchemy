@@ -1,3 +1,6 @@
+import { Address, Arc, createApolloClient } from "@daostack/client";
+import { settings } from "../../src/settings";
+
 const chai = require("chai");
 
 global.expect = chai.expect;
@@ -43,3 +46,8 @@ export function getContractAddresses() {
 export const userAddresses = [
   "0x90f8bf6a479f320ead074411a4b0e7944ea8c9c1",
 ];
+
+export function getArc() {
+  const arc = new Arc(settings.dev);
+  return arc;
+}

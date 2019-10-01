@@ -1,12 +1,16 @@
 import * as uuid from "uuid";
-import { getContractAddresses } from "./utils";
+import { first } from 'rxjs/operators'
+import { getContractAddresses, getArc } from "./utils";
 
 describe("Proposals ENS", () => {
   let daoAddress: string;
-  let addresses;
 
-  before(() => {
-    addresses = getContractAddresses();
+  before(async () => {
+    const arc = getArc();
+
+    const daos = await arc.daos({ where: { name: "NectarDAO"}}).pipe(first()).toPromise();
+    const dao = daos[0]
+    daoAddress = dao.id
     // cf. ./utils.ts to see where this address is from
     // if this test is failing, query the subgraph with the contractToCall
     // and set that in ENS.json
@@ -18,14 +22,13 @@ describe("Proposals ENS", () => {
     //       contractToCall
     // }}}}
 
-    daoAddress = addresses.daos["Nectar DAO"].Avatar.toLowerCase();
   });
 
   it("Create a Generic Scheme ENS proposal and check that the data is submitted correctly", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
-    const schemeCard = await $("[data-test-id=\"schemeCard-GenericScheme\"]");
+    const schemeCard = await $("[data-test-id=\"schemeCard-UGenericScheme\"]");
     await schemeCard.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
