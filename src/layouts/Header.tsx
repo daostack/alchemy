@@ -1,6 +1,6 @@
 import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { enableWeb3ProviderAndWarn, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo, loadCachedWeb3Provider } from "arc";
+import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
 import * as classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
 import AccountImage from "components/Account/AccountImage";
@@ -74,15 +74,19 @@ class Header extends React.Component<IProps, IStateProps> {
   }
 
   public handleClickLogin = async (_event: any): Promise<void> => {
-    if (!await loadCachedWeb3Provider(this.props.showNotification, false)) {
-      await enableWeb3ProviderAndWarn(this.props.showNotification, false);
-    }
+    enableWalletProvider({
+      blockOnWrongNetwork: false,
+      notifyOnSuccess: false,
+      showNotification: this.props.showNotification,
+    });
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
-    if (!await loadCachedWeb3Provider(this.props.showNotification, false)) {
-      await enableWeb3ProviderAndWarn(this.props.showNotification, false);
-    }
+    enableWalletProvider({
+      blockOnWrongNetwork: false,
+      notifyOnSuccess: false,
+      showNotification: this.props.showNotification,
+    });
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {

@@ -1,5 +1,5 @@
 import { Address, IDAOState, IProposalState, IRewardState, Proposal, Reward } from "@daostack/client";
-import { enableWeb3ProviderAndWarn, getArc, loadCachedWeb3Provider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as arcActions from "actions/arcActions";
 
 import BN = require("bn.js");
@@ -93,8 +93,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
       showNotification,
     } = this.props;
 
-    if (!await loadCachedWeb3Provider(showNotification) &&
-        !await enableWeb3ProviderAndWarn(showNotification)) { return; }
+    if (!await enableWalletProvider({ showNotification })) { return; }
 
     redeemableProposals.forEach(proposal => {
       redeemProposal(proposal.dao.id, proposal.id, currentAccountAddress);

@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { enableWeb3ProviderAndWarn, loadCachedWeb3Provider } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -64,8 +64,7 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = () => async (_event: any): Promise<void> => {
-    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
-        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     this.setState({ showApproveModal: true });
   }
@@ -79,15 +78,12 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
-    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
-        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
-
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
   public handleClickPreApprove = () => async (_event: any): Promise<void> => {
-    if (!await loadCachedWeb3Provider(this.props.showNotification) &&
-        !await enableWeb3ProviderAndWarn(this.props.showNotification)) { return; }
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
 
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);

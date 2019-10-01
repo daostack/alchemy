@@ -1,7 +1,9 @@
 import * as H from "history";
 import { first } from "rxjs/operators";
 import { Address, IProposalStage, IDAOState, ISchemeState } from "@daostack/client";
-import { enableWeb3ProviderAndWarn, getArc, loadCachedWeb3Provider  } from "arc";
+import { enableWalletProvider, getArc } from "arc";
+
+
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -56,8 +58,7 @@ class SchemeContainer extends React.Component<IProps, null> {
 
     e.preventDefault();
 
-    if (!await loadCachedWeb3Provider(showNotification) &&
-        !await enableWeb3ProviderAndWarn(showNotification)) { return; }
+    if (!await enableWalletProvider({ showNotification })) { return; }
 
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };

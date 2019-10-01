@@ -474,7 +474,7 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
  * @param provider Optional web3Provider
  * @return boolean whether Arc is successfully initialized.
  */
-export async function enableWeb3ProviderAndWarn(showNotification?: any, blockOnWrongNetwork = true): Promise<boolean> {
+async function enableWeb3ProviderAndWarn(showNotification?: any, blockOnWrongNetwork = true): Promise<boolean> {
   let success = false;
   let msg: string;
   try {
@@ -548,7 +548,7 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
  * @param web3ProviderInfo required IWeb3ProviderInfo
  * @returns whether Arc has been successfully initialized.
  */
-export async function setWeb3ProviderAndWarn(
+async function setWeb3ProviderAndWarn(
   web3ProviderInfo: IWeb3ProviderInfo,
   showNotification: any,
   notifyOnSuccess = true): Promise<boolean> {
@@ -635,39 +635,39 @@ export function getAccountIsEnabled(): boolean {
   return !!getWeb3Provider();
 }
 
-const ACCOUNTSTORAGEKEY = "currentAddress";
-const WALLETCONNECTSTORAGEKEY = "walletconnect";
-const PROVIDERSTORAGEKEY = "currentWeb3ProviderInfo";
+const ACCOUNT_STORAGEKEY = "currentAddress";
+const WALLETCONNECT_STORAGEKEY = "walletconnect";
+const PROVIDER_STORAGEKEY = "currentWeb3ProviderInfo";
 
 export function cacheWeb3Info(account: Address): void {
   if (account) {
-    localStorage.setItem(ACCOUNTSTORAGEKEY, account);
+    localStorage.setItem(ACCOUNT_STORAGEKEY, account);
   } else {
-    localStorage.removeItem(ACCOUNTSTORAGEKEY);
+    localStorage.removeItem(ACCOUNT_STORAGEKEY);
   }
   const providerInfo = getWeb3ProviderInfo();
   if (providerInfo) {
-    localStorage.setItem(PROVIDERSTORAGEKEY, JSON.stringify(providerInfo));
+    localStorage.setItem(PROVIDER_STORAGEKEY, JSON.stringify(providerInfo));
   } else {
-    localStorage.removeItem(PROVIDERSTORAGEKEY);
+    localStorage.removeItem(PROVIDER_STORAGEKEY);
     // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
-    localStorage.removeItem(WALLETCONNECTSTORAGEKEY);
+    localStorage.removeItem(WALLETCONNECT_STORAGEKEY);
   }
 }
 
 export function uncacheWeb3Info(): void {
-  localStorage.removeItem(ACCOUNTSTORAGEKEY);
-  localStorage.removeItem(PROVIDERSTORAGEKEY);
+  localStorage.removeItem(ACCOUNT_STORAGEKEY);
+  localStorage.removeItem(PROVIDER_STORAGEKEY);
   // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
-  localStorage.removeItem(WALLETCONNECTSTORAGEKEY);
+  localStorage.removeItem(WALLETCONNECT_STORAGEKEY);
 }
 
 export function getCachedAccount(): Address | null {
-  return localStorage.getItem(ACCOUNTSTORAGEKEY);
+  return localStorage.getItem(ACCOUNT_STORAGEKEY);
 }
 
 export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
-  const cached = localStorage.getItem(PROVIDERSTORAGEKEY);
+  const cached = localStorage.getItem(PROVIDER_STORAGEKEY);
   return cached ? JSON.parse(cached) : null;
 }
 
@@ -704,6 +704,22 @@ export async function loadCachedWeb3Provider(showNotification: any, notifyOnSucc
     return success;
   }
   return false;
+}
+
+export interface IEnableWWalletProviderParams {
+  blockOnWrongNetwork?: boolean;
+  notifyOnSuccess?: boolean;
+  showNotification: any;
+}
+
+/**
+ * load web3 wallet provider, first trying from cache, otherwise prompting
+ * @param options `IEnableWWalletProviderParams`
+ * @returns Promise of true on success
+ */
+export async function enableWalletProvider(options: IEnableWWalletProviderParams): Promise<boolean> {
+  return await loadCachedWeb3Provider(options.showNotification, options.notifyOnSuccess) ||
+         await enableWeb3ProviderAndWarn(options.showNotification, options.blockOnWrongNetwork);
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
