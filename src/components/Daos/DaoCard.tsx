@@ -50,7 +50,7 @@ const DaoCard = (props: IProps) => {
           </div>
 
           <table className={css.daoInfoContainer}>
-            <tr>
+            <tbody><tr>
               <td></td>
               <td><div className={css.daoInfo}>
                 <b>{daoState.memberCount || "0"}</b>
@@ -63,7 +63,7 @@ const DaoCard = (props: IProps) => {
               </div>
               </td>
               <td></td>
-            </tr>
+            </tr></tbody>
           </table>
         </div>
       </div>
