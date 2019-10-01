@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
-import { first } from 'rxjs/operators'
-import { getContractAddresses, getArc } from "./utils";
+import { first } from "rxjs/operators";
+import { getArc } from "./utils";
 
 describe("Proposals ENS", () => {
   let daoAddress: string;
@@ -9,8 +9,8 @@ describe("Proposals ENS", () => {
     const arc = getArc();
 
     const daos = await arc.daos({ where: { name: "NectarDAO"}}).pipe(first()).toPromise();
-    const dao = daos[0]
-    daoAddress = dao.id
+    const dao = daos[0];
+    daoAddress = dao.id;
 
   });
 
@@ -58,8 +58,8 @@ describe("Proposals ENS", () => {
     await titleElement.waitForExist();
     await titleElement.click();
 
-    const summaryDetailsElement = await $(`[class*="summaryDetails"]`);
-    await summaryDetailsElement.waitForExist()
+    const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
+    await summaryDetailsElement.waitForExist();
 
     // TODO: fix the next statements
     // summaryDetailsElement.should.contain("0x787192fc5378cc32aa956ddfdedbf26b24e8d78e40109add0eea2c1a012c3dec");

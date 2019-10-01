@@ -2,7 +2,7 @@
 /*
  */
 import BN = require("bn.js");
-const namehash = require('eth-ens-namehash');
+const namehash = require("eth-ens-namehash");
 const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
@@ -87,11 +87,13 @@ export class ActionField {
     }
 
     switch (this.transformation) {
-      case "namehash":
+      case "namehash": {
         return namehash.hash(userValue);
-      case "keccak256":
+      }
+      case "keccak256": {
         const web3 = new Web3();
         return web3.utils.keccak256(userValue);
+      }
     }
 
     return userValue;

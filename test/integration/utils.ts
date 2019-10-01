@@ -1,4 +1,4 @@
-import { Address, Arc, createApolloClient } from "@daostack/client";
+import { Arc } from "@daostack/client";
 import { settings } from "../../src/settings";
 
 const chai = require("chai");
