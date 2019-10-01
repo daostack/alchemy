@@ -12,10 +12,10 @@ export const settings = {
     web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || {
-      "host": process.env.ARC_IPFSPROVIDER_HOST || "rinkeby.subgraph.daostack.io",
+      "host": process.env.ARC_IPFSPROVIDER_HOST || "api.thegraph.com",
       "port": process.env.ARC_IPFSPROVIDER_PORT || "443",
       "protocol": process.env.ARC_IPFSPROVIDER_PROTOCOL || "https",
-      "api-path": process.env.ARC_IPFSPROVIDER_API_PATH || "/ipfs/api/v0/",
+      "api-path": process.env.ARC_IPFSPROVIDER_API_PATH || "/ipfs-daostack/api/v0/",
     },
   },
   production: {
@@ -24,10 +24,10 @@ export const settings = {
     web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
     ipfsProvider: process.env.ARC_IPFSPROVIDER || {
-      "host": process.env.ARC_IPFSPROVIDER_HOST || "subgraph.daostack.io",
+      "host": process.env.ARC_IPFSPROVIDER_HOST || "api.thegraph.com",
       "port": process.env.ARC_IPFSPROVIDER_PORT || "443",
       "protocol": process.env.ARC_IPFSPROVIDER_PROTOCOL || "https",
-      "api-path": process.env.ARC_IPFSPROVIDER_API_PATH || "/ipfs/api/v0/",
+      "api-path": process.env.ARC_IPFSPROVIDER_API_PATH || "/ipfs-daostack/api/v0/",
     },
   },
 };
