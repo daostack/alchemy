@@ -10,7 +10,7 @@
     - Links in proposal description open in new tab
     - Show a message on startup when waiting for subgraph
     - Create a single place where all redemptions can be redeemed
-    - Cached provider, when available, is now always used when connecting to one's wallet
+    - Nicer layout of the list of DAO cards on mobile devices
   - Bugs Fixed
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page
