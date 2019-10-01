@@ -1,7 +1,6 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3ProviderAndWarn, gotoReadonly } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -17,6 +16,7 @@ import { Route, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
+import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
@@ -54,9 +54,6 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
 
-  private static accountStorageKey = "currentAddress";
-  private static walletConnectStorageKey = "walletconnect";
-  private static providerStorageKey = "currentWeb3ProviderInfo";
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
   constructor(props: IProps) {
@@ -66,8 +63,6 @@ class AppContainer extends React.Component<IProps, IState> {
       sentryEventId: null,
       notificationsMinimized: false,
     };
-
-    this.loadCachedWeb3Provider = this.loadCachedWeb3Provider.bind(this);
   }
 
   public componentDidCatch(error: Error, errorInfo: any): void {
@@ -88,7 +83,7 @@ class AppContainer extends React.Component<IProps, IState> {
      * that the user has already selected in a provider but have
      * not yet made available to the app.
      */
-    const currentAddress = this.getCachedAccount();
+    const currentAddress = getCachedAccount();
     let accountWasCached = false;
     if (currentAddress) {
       accountWasCached = true;
@@ -108,38 +103,12 @@ class AppContainer extends React.Component<IProps, IState> {
         console.log(`new account: ${newAddress}`);
         this.props.setCurrentAccount(newAddress);
         if (newAddress) {
-          this.cacheWeb3Info(newAddress);
+          cacheWeb3Info(newAddress);
         } else {
-          this.uncacheWeb3Info();
+          uncacheWeb3Info();
           gotoReadonly(this.props.showNotification);
         }
       });
-  }
-
-  private async loadCachedWeb3Provider(showNotification: any): Promise<boolean> {
-    const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
-    if (web3ProviderInfo) {
-      let success = false;
-      /**
-       * If successful, this will result in setting the current account which
-       * we'll pick up below.
-       */
-      try {
-        if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification)) {
-          // eslint-disable-next-line no-console
-          console.log("using cached web3Provider");
-          success = true;
-        }
-      // eslint-disable-next-line no-empty
-      } catch(ex) { }
-      if (!success) {
-        // eslint-disable-next-line no-console
-        console.error("failed to instantiate cached web3Provider");
-        this.uncacheWeb3Info();
-      }
-      return success;
-    }
-    return false;
   }
 
   public render(): RenderOutput {
@@ -171,8 +140,6 @@ class AppContainer extends React.Component<IProps, IState> {
             // eslint-disable react/jsx-no-bind
               render={( props ): any => {
                 return <Header
-                  getCachedWeb3ProviderInfo={this.getCachedWeb3ProviderInfo}
-                  loadCachedWeb3Provider={this.loadCachedWeb3Provider}
                   {...props} />;
               }
               } />
@@ -232,38 +199,6 @@ class AppContainer extends React.Component<IProps, IState> {
         </div>
       );
     }
-  }
-
-  private cacheWeb3Info(account: Address): void {
-    if (account) {
-      localStorage.setItem(AppContainer.accountStorageKey, account);
-    } else {
-      localStorage.removeItem(AppContainer.accountStorageKey);
-    }
-    const providerInfo = getWeb3ProviderInfo();
-    if (providerInfo) {
-      localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
-    } else {
-      localStorage.removeItem(AppContainer.providerStorageKey);
-      // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
-      localStorage.removeItem(AppContainer.walletConnectStorageKey);
-    }
-  }
-
-  private uncacheWeb3Info(): void {
-    localStorage.removeItem(AppContainer.accountStorageKey);
-    localStorage.removeItem(AppContainer.providerStorageKey);
-    // hack until fixed by WalletConnect (so after logging out, can rescan the QR code)
-    localStorage.removeItem(AppContainer.walletConnectStorageKey);
-  }
-
-  private getCachedAccount(): Address | null {
-    return localStorage.getItem(AppContainer.accountStorageKey);
-  }
-
-  private getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
-    const cached = localStorage.getItem(AppContainer.providerStorageKey);
-    return cached ? JSON.parse(cached) : null;
   }
 
   private handleAccept(): void {

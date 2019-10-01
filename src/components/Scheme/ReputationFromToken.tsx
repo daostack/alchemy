@@ -3,7 +3,7 @@ import * as queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { NotificationStatus } from "reducers/notifications";
 import { redeemReputationFromToken } from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName, fromWei } from "lib/util";
 import * as React from "react";
@@ -130,7 +130,8 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     // only connect to wallet if we do not have a private key to sign with
-    if (!this.state.privateKey && !(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
+    if (!this.state.privateKey && 
+      !await enableWalletProvider({ showNotification: this.props.showNotification })) {
       setSubmitting(false);
       return;
     }
@@ -140,7 +141,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     const arc = getArc();
     const schemeContract = await arc.getContract(schemeAddress);    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
-      this.props.showNotification.bind(this)(NotificationStatus.Failure, `Reputation for the account ${this.state.redeemerAddress} was already redeemed`);
+      this.props.showNotification(NotificationStatus.Failure, `Reputation for the account ${this.state.redeemerAddress} was already redeemed`);
     } else {
       const scheme = arc.scheme(state.id);
       this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
