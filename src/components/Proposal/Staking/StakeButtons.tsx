@@ -1,7 +1,7 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
 import * as web3Actions from "actions/web3Actions";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -64,9 +64,9 @@ class StakeButtons extends React.Component<IProps, IState> {
   }
 
   public showApprovalModal = async (_event: any): Promise<void> => {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
-      this.setState({ showApproveModal: true });
-    }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.setState({ showApproveModal: true });
   }
 
   public closeApprovalModal = (_event: any): void => {
@@ -77,16 +77,14 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showPreStakeModal: false });
   }
 
-  public showPreStakeModal = (prediction: number): (_event: any) => void => (_event: any): void => {
-    if (!this.props.currentAccountAddress) {
-      enableWeb3ProviderAndWarn(this.props.showNotification.bind(this));
-    } else {
-      this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
-    }
+  public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
+    this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
   public handleClickPreApprove = async (_event: any): Promise<void> => {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
+
     const { approveStakingGens } = this.props;
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
