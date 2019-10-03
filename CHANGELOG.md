@@ -12,6 +12,8 @@
     - Create a single place where all redemptions can be redeemed
     - Cached provider, when available, is now always used when connecting to one's wallet
     - Nicer layout of the list of DAO cards on mobile devices
+    - Hide WalletConnect provider option on mobile devices
+    - Shrink wallet providers popup window on mobile devices, so can be cancelled
   - Bugs Fixed
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page
