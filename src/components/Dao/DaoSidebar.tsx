@@ -1,6 +1,8 @@
-import axios from "axios";
-import { IDAOState, Token, Member } from "@daostack/client";
+import axios, { AxiosResponse } from "axios";
+import { IDAOState, Token } from "@daostack/client";
+import { from } from "rxjs";
 import { getArc } from "arc";
+import Loading from "components/Shared/Loading";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -23,7 +25,11 @@ interface IStateProps {
   menuOpen: boolean;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
+interface IHasNewPosts {
+  hasNewPosts: boolean;
+}
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<IHasNewPosts>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -40,6 +46,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const dao = this.props.dao;
+    const hasNewPosts = this.props.data.hasNewPosts;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
@@ -48,8 +55,6 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
       [css.daoSidebar]: true,
       clearfix: true,
     });
-
-    const unreadMessages = true;
 
     return (
       <div className={menuClass}>
@@ -129,7 +134,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                   <span className={
                     classNames({
                       [css.menuDot]: true,
-                      [css.red]: unreadMessages,
+                      [css.red]: hasNewPosts,
                     })} />
                   <span className={
                     classNames({
@@ -253,20 +258,28 @@ const SubscribedTokenBalance = withSubscription({
 const SubscribedDaoSidebar = withSubscription({
   wrappedComponent: DaoSidebar,
   checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
-
+  loadingComponent: <div className={css.loading}><Loading/></div>,
   createObservable: (props: IProps) => {
 
-    return axios.get("https://disqus.com/api/docs/forums/listThreads.json", {
-      params: {
-        url: "https://disqus.com/api/3.0/threads/set.jsonp",
-        forum : process.env.DISQUS_SITE,
-        since: moment("2019-07-14T12:00:00.000+0000"),
-      },
-    })
-      .then((response: any): number => {
-        const responseJson = JSON.parse(response);
-        return responseJson.posts;
+    const lastAccessDate = moment("2019-10-02T07:06:40+00:00").unix();
+
+    const promise = axios.get(`https://disqus.com/api/3.0/threads/listPosts.json?api_key=KVISHbDLtTycaGw5eoR8aQpBYN8bcVixONCXifYcih5CXanTLq0PpLh2cGPBkM4v&forum=${process.env.DISQUS_SITE}&thread:ident=${props.dao.address}&since=${lastAccessDate}&limit=1`)
+      .then((response: AxiosResponse<any>): IHasNewPosts => {
+        if (response.status) {
+          const posts = response.data.response;
+          return { hasNewPosts : posts && posts.length };
+        } else {
+          // eslint-disable-next-line no-console
+          console.error(`request for disqus posts failed: ${response.statusText}`);
+          return { hasNewPosts : false };
+        }
+      })
+      .catch((error: Error): IHasNewPosts => {
+        // eslint-disable-next-line no-console
+        console.error(`request for disqus posts failed: ${error.message}`);
+        return { hasNewPosts : false };
       });
+    return from(promise);
   },
 });
 
