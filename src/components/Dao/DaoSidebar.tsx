@@ -1,4 +1,5 @@
-import { IDAOState, Token } from "@daostack/client";
+import axios from "axios";
+import { IDAOState, Token, Member } from "@daostack/client";
 import { getArc } from "arc";
 
 import BN = require("bn.js");
@@ -12,6 +13,8 @@ import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import * as css from "./Dao.scss";
 
+import moment = require("moment");
+
 interface IExternalProps {
   dao: IDAOState;
 }
@@ -20,7 +23,7 @@ interface IStateProps {
   menuOpen: boolean;
 }
 
-type IProps = IExternalProps & IStateProps;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -45,6 +48,8 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
       [css.daoSidebar]: true,
       clearfix: true,
     });
+
+    const unreadMessages = true;
 
     return (
       <div className={menuClass}>
@@ -121,7 +126,11 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
               </li>
               <li>
                 <Link to={"/dao/" + dao.address + "/discussion/"}>
-                  <span className={css.menuDot} />
+                  <span className={
+                    classNames({
+                      [css.menuDot]: true,
+                      [css.red]: unreadMessages,
+                    })} />
                   <span className={
                     classNames({
                       [css.notification]: true,
@@ -241,4 +250,24 @@ const SubscribedTokenBalance = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(DaoSidebar);
+const SubscribedDaoSidebar = withSubscription({
+  wrappedComponent: DaoSidebar,
+  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
+
+  createObservable: (props: IProps) => {
+
+    return axios.get("https://disqus.com/api/docs/forums/listThreads.json", {
+      params: {
+        url: "https://disqus.com/api/3.0/threads/set.jsonp",
+        forum : process.env.DISQUS_SITE,
+        since: moment("2019-07-14T12:00:00.000+0000"),
+      },
+    })
+      .then((response: any): number => {
+        const responseJson = JSON.parse(response);
+        return responseJson.posts;
+      });
+  },
+});
+
+export default connect(mapStateToProps)(SubscribedDaoSidebar);

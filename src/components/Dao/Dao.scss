@@ -11,6 +11,13 @@
   width: 8px;
   margin-left: 0;
   display: inline-block;
+
+  &.red {
+    background-color: #f65050;
+    border-radius: 50%;
+    bottom: 1px;
+    position: relative;
+  }
 }
 
 button:hover {
