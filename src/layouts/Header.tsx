@@ -100,8 +100,7 @@ class Header extends React.Component<IProps, IStateProps> {
   public render(): RenderOutput {
     const {
       currentAccountProfile,
-      currentAccountAddress,
-      location,
+      currentAccountAddress
     } = this.props;
     const dao = this.props.data;
 
@@ -115,7 +114,7 @@ class Header extends React.Component<IProps, IStateProps> {
           [css.header]: true,
           [css.hasHamburger]: !!daoAvatarAddress,
         })}>
-          { daoAvatarAddress ? 
+          { daoAvatarAddress ?
             <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
               {this.props.menuOpen ?
                 <img src="/assets/images/Icon/Close.svg"/> :
@@ -168,7 +167,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       Full Profile
                       </Link>
                     </div>
-                  </div>                    
+                  </div>
                   <AccountBalances dao={dao} address={currentAccountAddress} />
                   <div className={css.logoutButtonContainer}>
                     { accountIsEnabled ?
