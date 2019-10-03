@@ -223,4 +223,4 @@ const SubscribedHeader = withSubscription({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubscribedHeader);
+  export default connect(mapStateToProps, mapDispatchToProps)(SubscribedHeader);
