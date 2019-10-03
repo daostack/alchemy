@@ -100,7 +100,7 @@ class Header extends React.Component<IProps, IStateProps> {
   public render(): RenderOutput {
     const {
       currentAccountProfile,
-      currentAccountAddress
+      currentAccountAddress,
     } = this.props;
     const dao = this.props.data;
 
@@ -223,4 +223,4 @@ const SubscribedHeader = withSubscription({
   },
 });
 
-  export default connect(mapStateToProps, mapDispatchToProps)(SubscribedHeader);
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedHeader);
