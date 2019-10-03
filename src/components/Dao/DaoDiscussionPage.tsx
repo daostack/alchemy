@@ -5,11 +5,17 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as Sticky from "react-stickynode";
 import * as css from "./Dao.scss";
 
+import moment = require("moment");
+
 interface IProps {
   dao: IDAOState;
 }
 
 export default class DaoDiscussionPage extends React.Component<IProps, null> {
+
+  public async componentDidMount() {
+    localStorage.setItem(`daoWallEntryDate_${this.props.dao.address}`, moment().unix().toString());
+  }
 
   public render(): RenderOutput {
     const dao = this.props.dao;
