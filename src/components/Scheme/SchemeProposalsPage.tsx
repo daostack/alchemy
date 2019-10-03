@@ -1,6 +1,6 @@
 import * as H from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
-import { getArc, enableWeb3ProviderAndWarn } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName} from "lib/util";
@@ -57,9 +57,9 @@ const mapDispatchToProps = {
 class SchemeProposalsPage extends React.Component<IProps, null> {
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
-      this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
-    }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   }
 
   private _handleNewProposal = (e: any): void => {
@@ -220,20 +220,20 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // the list of preboosted proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
         orderBy: "preBoostedAt",
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // the list of boosted proposals
-      arc.dao(daoAvatarAddress).proposals({
+      dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // DAO state
       dao.state()
@@ -255,7 +255,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       orderDirection: "desc",
       first: PAGE_SIZE,
       skip: data[0].length,
-    });
+    }, { subscribe: true, fetchAllData: true });
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {

@@ -8,27 +8,31 @@ import * as GeoPattern from "geopattern";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { IRootState } from "reducers";
+import { connect } from "react-redux";
 import * as css from "./Dao.scss";
 
-interface IProps {
+interface IExternalProps {
   dao: IDAOState;
 }
 
-interface IState {
-  openMenu: boolean;
+interface IStateProps {
+  menuOpen: boolean;
 }
 
-export default class DaoSidebar extends React.Component<IProps, IState> {
+type IProps = IExternalProps & IStateProps;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    menuOpen: state.ui.menuOpen,
+  };
+};
+
+class DaoSidebar extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = {
-      openMenu: false,
-    };
-  }
-
-  public handleOpenMenu(_event: any): void {
-    this.setState({ openMenu: !this.state.openMenu });
   }
 
   public render(): RenderOutput {
@@ -37,17 +41,13 @@ export default class DaoSidebar extends React.Component<IProps, IState> {
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
     const menuClass = classNames({
-      [css.openMenu]: this.state.openMenu,
+      [css.menuOpen]: this.props.menuOpen,
       [css.daoSidebar]: true,
       clearfix: true,
     });
 
     return (
       <div className={menuClass}>
-        <div className={css.menuToggle} onClick={this.handleOpenMenu.bind(this)}>
-          <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
-          <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
-        </div>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address}>
@@ -240,3 +240,5 @@ const SubscribedTokenBalance = withSubscription({
     return token.balanceOf(props.dao.address);
   },
 });
+
+export default connect(mapStateToProps)(DaoSidebar);
