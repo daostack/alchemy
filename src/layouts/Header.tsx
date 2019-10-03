@@ -101,6 +101,7 @@ class Header extends React.Component<IProps, IStateProps> {
     const {
       currentAccountProfile,
       currentAccountAddress,
+      location,
     } = this.props;
     const dao = this.props.data;
 
