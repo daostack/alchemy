@@ -1,5 +1,4 @@
 import * as uuid from "uuid";
-import { getContractAddresses } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;

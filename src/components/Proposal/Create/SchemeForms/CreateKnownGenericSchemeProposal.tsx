@@ -83,7 +83,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
-      // alert(err.message);
       console.error(err.message);
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
@@ -278,66 +277,66 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                 // Check if value can be interpreted correctly for this particular field
                 const value = values[field.name];
                 try {
-                    field.callValue(value);
-                  } catch (error) {
-                    if (error.message === "Assertion failed") {
-                      // thank you BN.js for your helpful error messages
-                      errors[field.name] = "Invalid number value";
-                    } else {
-                      errors[field.name] = error.message;
-                    }
+                  field.callValue(value);
+                } catch (error) {
+                  if (error.message === "Assertion failed") {
+                    // thank you BN.js for your helpful error messages
+                    errors[field.name] = "Invalid number value";
+                  } else {
+                    errors[field.name] = error.message;
                   }
+                }
 
-                  if (field.type === "address") {
-                    const value = values[field.name];
+                if (field.type === "address") {
+                  const value = values[field.name];
+                  if (!arc.web3.utils.isAddress(value)) {
+                    errors[field.name] = "Invalid address";
+                  }
+                }
+
+                if (field.type === "address[]") {
+                  for (const value of values[field.name]) {
                     if (!arc.web3.utils.isAddress(value)) {
                       errors[field.name] = "Invalid address";
                     }
                   }
-
-                  if (field.type === "address[]") {
-                    for (const value of values[field.name]) {
-                      if (!arc.web3.utils.isAddress(value)) {
-                        errors[field.name] = "Invalid address";
-                      }
-                    }
-                  }
                 }
-                return errors;
-              }}
-              onSubmit={this.handleSubmit.bind(this)}
-              render={({
-                errors,
-                touched,
-                isSubmitting,
-                setFieldValue,
-                values,
-              }: FormikProps<IFormValues>) => {
-                return (
-                  <Form noValidate>
-                    <label className={css.description}>What to Expect</label>
-                    <div className={css.description}>
-                      <Interweave content={currentAction.description} />
-                    </div>
-                    <label htmlFor="titleInput">
+              }
+              return errors;
+            }}
+            onSubmit={this.handleSubmit.bind(this)}
+            render={({
+              errors,
+              touched,
+              isSubmitting,
+              setFieldValue,
+              values,
+            }: FormikProps<IFormValues>) => {
+              return (
+                <Form noValidate>
+                  <label className={css.description}>What to Expect</label>
+                  <div className={css.description}>
+                    <Interweave content={currentAction.description} />
+                  </div>
+                  <label htmlFor="titleInput">
                       Title
-                      <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                      <div className={css.requiredMarker}>*</div>
-                    </label>
-                    <Field
-                      autoFocus
-                      id="titleInput"
-                      maxLength={120}
-                      placeholder="Summarize your proposal"
-                      name="title"
-                      type="text"
-                      className={touched.title && errors.title ? css.error : null}
-                    />
+                    <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                    <div className={css.requiredMarker}>*</div>
+                  </label>
+                  <Field
+                    autoFocus
+                    id="titleInput"
+                    maxLength={120}
+                    placeholder="Summarize your proposal"
+                    name="title"
+                    type="text"
+                    className={touched.title && errors.title ? css.error : null}
+                  />
 
-                    <label htmlFor="descriptionInput">
+                  <label htmlFor="descriptionInput">
                       Description
-                      <div className={css.requiredMarker}>*</div>
-                      <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                    <div className={css.requiredMarker}>*</div>
+                    <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                   </label>
                   <Field

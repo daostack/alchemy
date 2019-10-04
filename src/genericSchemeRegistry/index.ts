@@ -13,7 +13,7 @@ const KNOWNSCHEMES = [
   dutchXInfo,
   ensInfo,
   gpInfo,
-  registryLookupInfo
+  registryLookupInfo,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {

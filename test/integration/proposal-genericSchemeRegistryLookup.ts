@@ -46,7 +46,7 @@ describe("Proposals ENS", () => {
     await tokens0Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7944");
 
     const tokensAdd = await $("*[data-test-id=\"_tokens.add\"]");
-    await tokensAdd.click()
+    await tokensAdd.click();
     const tokens1Input = await $("*[id=\"_tokens.1\"]");
     await tokens1Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7945");
 
@@ -57,7 +57,7 @@ describe("Proposals ENS", () => {
     // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
-    await titleElement.scrollIntoView()
+    await titleElement.scrollIntoView();
     await titleElement.click();
 
     const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
@@ -83,7 +83,7 @@ describe("Proposals ENS", () => {
     await tokens0Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7944");
 
     const tokensAdd = await $("*[data-test-id=\"_tokens.add\"]");
-    await tokensAdd.click()
+    await tokensAdd.click();
     const tokens1Input = await $("*[id=\"_tokens.1\"]");
     await tokens1Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7945");
     //
@@ -94,7 +94,7 @@ describe("Proposals ENS", () => {
     // // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
-    await titleElement.scrollIntoView()
+    await titleElement.scrollIntoView();
     await titleElement.click();
 
     const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
