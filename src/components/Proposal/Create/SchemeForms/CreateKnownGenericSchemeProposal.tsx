@@ -166,7 +166,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </div>
                 ))
               ) : ""}
-              <button className={css.addItemButton} type="button" onClick={() => arrayHelpers.push("")}>
+              <button className={css.addItemButton} data-test-id={field.name + ".add"} type="button" onClick={() => arrayHelpers.push("")}>
                 Add {field.label}
               </button>
             </div>
