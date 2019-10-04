@@ -3,7 +3,7 @@ import * as uuid from "uuid";
 describe("Proposals", () => {
   let daoAddress: string;
 
-  beforeEch(async () => {
+  beforeEach(async () => {
     const arc = getArc();
     const daos = await arc.daos({ where: { name: "Comely Dragons"}}).pipe(first()).toPromise();
     const dao = daos[0];
