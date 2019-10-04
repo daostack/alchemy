@@ -55,6 +55,7 @@ describe("Proposals ENS", () => {
     // check that the proposal appears in the list
     // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
+    await titleElement.scrollIntoView();
     await titleElement.waitForExist();
     await titleElement.click();
 
