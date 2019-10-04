@@ -7,21 +7,13 @@ describe("Proposals", () => {
 
   before(() => {
     addresses = getContractAddresses();
-    // cf. ./utils.ts to see where this address is from
-    // if this test is failing, query the subgraph with the contractToCall
-    // and set that in DutchX.json
-    // { dao (id: "0x68728fe67fb1fbae9076110f98e9ba3f5a00f936")
-    //   {id schemes {
-    //     id
-    //     name
-    //     genericSchemeParams {
-    //       contractToCall
-    // }}}}
+    const daos = await arc.daos({ where: { name: "Comely Dragons"}}).pipe(first()).toPromise();
+    const dao = daos[0];
+    daoAddress = dao.id;
 
-    daoAddress = addresses.dutchx.Avatar.toLowerCase();
   });
 
-  it.skip("Create a Generic Scheme proposal, vote for it, stake on it", async () => {
+  it("Create a DutchX Generic Scheme proposal, vote for it, stake on it", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 

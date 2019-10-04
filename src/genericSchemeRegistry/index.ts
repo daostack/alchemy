@@ -7,11 +7,13 @@ const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
 const ensInfo = require("./schemes/ENS.json");
+const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
   ensInfo,
   gpInfo,
+  registryLookupInfo
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
@@ -75,15 +77,19 @@ export class ActionField {
    * the value to pass to the contract call (as calculated from the user's input data)
    * @return [description]
    */
-  public callValue(userValue: string) {
-    userValue = userValue.trim();
+  public callValue(userValue: string|string[]) {
+    if (Array.isArray(userValue)) {
+      userValue = userValue.map((val: string) => val.trim());
+    } else {
+      userValue = userValue.trim();
+    }
 
     if (this.type === "bool") {
-      return parseInt(userValue, 10) === 1;
+      return parseInt(userValue as string, 10) === 1;
     }
 
     if (this.decimals) {
-      return (new BN(userValue).mul(new BN(10).pow(new BN(this.decimals)))).toString();
+      return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
     }
 
     switch (this.transformation) {
