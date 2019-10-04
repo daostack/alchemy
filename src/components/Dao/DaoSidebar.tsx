@@ -259,11 +259,7 @@ const SubscribedDaoSidebar = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   createObservable: (props: IProps) => {
 
-    const lastAccessDate = localStorage.getItem(`daoWallEntryDate_${props.dao.address}`);
-
-    if (!lastAccessDate) {
-      return from(Promise.resolve({ hasNewPosts : false }));
-    }
+    const lastAccessDate = localStorage.getItem(`daoWallEntryDate_${props.dao.address}`) || "0";
 
     const promise = axios.get(`https://disqus.com/api/3.0/threads/listPosts.json?api_key=KVISHbDLtTycaGw5eoR8aQpBYN8bcVixONCXifYcih5CXanTLq0PpLh2cGPBkM4v&forum=${process.env.DISQUS_SITE}&thread:ident=${props.dao.address}&since=${lastAccessDate}&limit=1&order=asc`)
       .then((response: AxiosResponse<any>): IHasNewPosts => {
