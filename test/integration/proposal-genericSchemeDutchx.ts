@@ -1,4 +1,6 @@
 import * as uuid from "uuid";
+import { first } from "rxjs/operators";
+import { getArc } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
@@ -15,8 +17,8 @@ describe("Proposals", () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
-    const schemeCard = await $("[data-test-id=\"schemeCard-GenericScheme\"]");
-    await schemeCard.click();
+    const schemeTitle = await $("h2=DutchX");
+    await schemeTitle.click();
 
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();

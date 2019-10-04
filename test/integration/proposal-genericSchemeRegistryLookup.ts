@@ -57,7 +57,7 @@ describe("Proposals ENS", () => {
     // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
-    await titleElement.scrollIntoView();
+    await titleElement.scrollIntoView(false);
     await titleElement.click();
 
     const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
@@ -94,7 +94,7 @@ describe("Proposals ENS", () => {
     // // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
-    await titleElement.scrollIntoView();
+    await titleElement.scrollIntoView(false);
     await titleElement.click();
 
     const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
