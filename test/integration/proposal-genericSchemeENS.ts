@@ -56,11 +56,11 @@ describe("Proposals ENS", () => {
     // test for the title
     const titleElement = await $(`[data-test-id="proposal-title"]=${title}`);
     await titleElement.waitForExist();
-    await titleElement.scrollIntoView(false);
-    await titleElement.click();
-
-    const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
-    await summaryDetailsElement.waitForExist();
+    // await titleElement.scrollIntoView(false);
+    // await titleElement.click();
+    //
+    // const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
+    // await summaryDetailsElement.waitForExist();
 
     // TODO: fix the next statements
     // summaryDetailsElement.should.contain("0x787192fc5378cc32aa956ddfdedbf26b24e8d78e40109add0eea2c1a012c3dec");
