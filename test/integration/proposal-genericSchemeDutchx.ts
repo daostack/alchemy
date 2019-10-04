@@ -3,10 +3,9 @@ import { getContractAddresses } from "./utils";
 
 describe("Proposals", () => {
   let daoAddress: string;
-  let addresses;
 
   before(() => {
-    addresses = getContractAddresses();
+    const arc = getArc();
     const daos = await arc.daos({ where: { name: "Comely Dragons"}}).pipe(first()).toPromise();
     const dao = daos[0];
     daoAddress = dao.id;
