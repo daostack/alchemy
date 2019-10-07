@@ -486,13 +486,6 @@ body {
 
 .header:after { clear: both;  content: ""; display: table; }
 
-.notificationsWrapper {
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  z-index: 999;
-}
-
 .loading {
   padding-top: 4rem;
   text-align: center;
