@@ -14,7 +14,7 @@ interface IProps {
 export default class DaoDiscussionPage extends React.Component<IProps, null> {
 
   public async componentDidMount() {
-    localStorage.setItem(`daoWallEntryDate_${this.props.dao.address}`, moment().unix().toString());
+    localStorage.setItem(`daoWallEntryDate_${this.props.dao.address}`, moment().toISOString());
   }
 
   public render(): RenderOutput {
