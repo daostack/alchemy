@@ -1,4 +1,5 @@
 import { Address, Arc, createApolloClient } from "@daostack/client";
+// @ts-ignore
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { getMainDefinition } from "apollo-utilities";
 import { NotificationStatus } from "reducers/notifications";
