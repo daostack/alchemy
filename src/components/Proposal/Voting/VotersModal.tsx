@@ -7,6 +7,7 @@ import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { Modal } from "react-router-modal";
+import { IProfileState } from "reducers/profilesReducer";
 import VoteGraph from "./VoteGraph";
 
 import * as css from "./VotersModal.scss";
@@ -16,11 +17,12 @@ interface IVoteRowProps {
   dao: IDAOState;
   proposal: IProposalState;
   vote: Vote;
+  accountProfile: IProfileState;
 }
 
 class VoteRow extends React.Component<IVoteRowProps, null> {
   public render(): RenderOutput {
-    const {dao, proposal, vote} = this.props;
+    const {dao, proposal, vote, accountProfile } = this.props;
     const voteState = vote.staticState;
     return (
       <div className={css.voteRow}>
@@ -28,7 +30,7 @@ class VoteRow extends React.Component<IVoteRowProps, null> {
           <div className={css.account}>
             <AccountImage accountAddress={voteState.voter} />
             <span className={css.accountAddress}>
-              <AccountProfileName accountAddress={voteState.voter} accountProfile={null} daoAvatarAddress={dao.address} />
+              <AccountProfileName accountAddress={voteState.voter} accountProfile={accountProfile} daoAvatarAddress={dao.address} />
             </span>
           </div>
           <div className={css.reputationAmount}>
@@ -47,6 +49,7 @@ interface IExternalProps {
   currentAccountAddress: Address;
   dao: IDAOState;
   proposal: IProposalState;
+  accountProfile: IProfileState;
 }
 
 type SubscriptionData = Vote[];
@@ -60,7 +63,7 @@ class VotersModal extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const votes = this.props.data;
-    const { dao, proposal } = this.props;
+    const { dao, proposal, accountProfile } = this.props;
 
     const currentAccountVote = votes[0];
 
@@ -116,10 +119,10 @@ class VotersModal extends React.Component<IProps, null> {
 
             <div className={css.voters}>
               <div>
-                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={accountProfile} />)}</div>
               </div>
               <div>
-                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} />)}</div>
+                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={accountProfile} />)}</div>
               </div>
             </div>
           </div>
