@@ -7,7 +7,7 @@ import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
+import { getNetworkId, getNetworkName, waitUntilTrue, isMobileBrowser } from "./lib/util";
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
@@ -27,7 +27,7 @@ const web3ConnectProviderOptions =
       {
         network: "mainnet",
         walletconnect: {
-          package: WalletConnectProvider,
+          package: isMobileBrowser() ? null : WalletConnectProvider,
           options: {
             infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
           },
@@ -54,7 +54,7 @@ const web3ConnectProviderOptions =
         {
           network: "rinkeby",
           walletconnect: {
-            package: WalletConnectProvider,
+            package: isMobileBrowser() ? null : WalletConnectProvider,
             options: {
               infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
             },
