@@ -14,6 +14,8 @@
     - Nicer layout of the list of DAO cards on mobile devices
     - Hide WalletConnect provider option on mobile devices
     - Shrink wallet providers popup window on mobile devices, so can be cancelled
+    - more friendly display of error conditions (404 and uncaught exception errors)
+    
   - Bugs Fixed
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page

@@ -4,10 +4,11 @@ import AppContainer from "layouts/AppContainer";
 import * as React from "react";
 import ReactGA from "react-ga";
 import { Provider } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import { sleep } from "lib/util";
+import Error404 from "components/Errors/Error404";
 import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
 
@@ -75,7 +76,12 @@ export class App extends React.Component<{}, {
           <ThroughProvider>
             <ConnectedRouter history={history}>
               <Switch>
-                <Route path="/" component={AppContainer}/>
+                <Route path="/" exact component={AppContainer}/>
+                <Route path="/dao" component={AppContainer}/>
+                <Route path="/profile" component={AppContainer}/>
+                <Route path="/redemptions" component={AppContainer}/>
+                <Route component={Error404} />
+                <Redirect from="/*" to="/Error404" />
               </Switch>
             </ConnectedRouter>
           </ThroughProvider>
