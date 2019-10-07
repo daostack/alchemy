@@ -1,18 +1,12 @@
-/* eslint-disable no-console */
 import { Address, Arc, createApolloClient } from "@daostack/client";
-// @ts-ignore
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { getMainDefinition } from "apollo-utilities";
 import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-<<<<<<< HEAD
 import { settings } from "./settings";
-import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
-=======
 import { getNetworkId, getNetworkName, waitUntilTrue, isMobileBrowser } from "./lib/util";
->>>>>>> dev
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
