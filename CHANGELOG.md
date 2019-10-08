@@ -15,6 +15,7 @@
     - Hide WalletConnect provider option on mobile devices
     - Shrink wallet providers popup window on mobile devices, so can be cancelled
     - more friendly display of error conditions (404 and uncaught exception errors)
+    - List of voters in the Voters Popup now shows the user's friendly name, when available.
     
   - Bugs Fixed
     - Align headers of table in proposal history

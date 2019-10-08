@@ -279,6 +279,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                 currentAccountAddress={this.props.currentAccountAddress}
                 dao={daoState}
                 proposal={proposal}
+                accountProfile={creatorProfile}
               /> : ""
             }
 
