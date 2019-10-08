@@ -13,7 +13,7 @@ interface IProps {
   transactionModal?: boolean;
 }
 
-export default class ProposalSummaryDutchX extends React.Component<IProps, null> {
+export default class ProposalSummaryStandardBounties extends React.Component<IProps, null> {
 
   public render() {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
