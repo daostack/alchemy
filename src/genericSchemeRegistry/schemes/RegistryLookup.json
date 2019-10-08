@@ -1,0 +1,73 @@
+{
+  "name": "RegistryLookup",
+  "addresses": {
+    "main": [
+      "0x314159265dd8dbb310642f98f50c066173c1259b"
+    ],
+    "rinkeby": [
+      "0xece51d9ed0169cf8bca09d7a5bedf9198f9838f4",
+      "0xf268dc803924f6d9d06c7ddbfc06bf7cc6daf7d4"
+    ],
+    "private": [
+      "0x09711cb35d15bf8405cb9023a579395d3167d39d"
+    ]
+  },
+  "actions": [
+    {
+      "id": "addNewTokens",
+      "label": "Add new tokens",
+      "description": "Add new tokens.",
+      "notes": "",
+      "fields": [
+        {
+          "name": "_tokens",
+          "label": "Tokens",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_tokens",
+            "type": "address[]"
+          }
+        ],
+        "name": "addNewTokens",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "removeTokens",
+      "label": "Remove tokens",
+      "description": "Remove tokens.",
+      "notes": "",
+      "fields": [
+        {
+          "label": "Tokens to remove",
+          "name": "_tokens",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "_tokens",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeTokens",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    }
+  ]
+}

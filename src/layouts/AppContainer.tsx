@@ -17,6 +17,7 @@ import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
 import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
+import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
@@ -111,6 +112,10 @@ class AppContainer extends React.Component<IProps, IState> {
       });
   }
 
+  private clearError = () => {
+    this.setState({ error: null, sentryEventId: null });
+  }
+
   public render(): RenderOutput {
     const {
       // connectionStatus,
@@ -124,8 +129,7 @@ class AppContainer extends React.Component<IProps, IState> {
       // eslint-disable-next-line no-console
       console.error(this.state.error);
       return <div>
-        <a onClick={(): void => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
-        <pre>{ this.state.error.toString() }</pre>
+        <ErrorUncaught errorMessage={this.state.error.message} sentryEventId={this.state.sentryEventId} goHome={this.clearError}></ErrorUncaught>
       </div>;
     } else {
 
@@ -192,7 +196,7 @@ class AppContainer extends React.Component<IProps, IState> {
             <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
                 <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website. We use this information for analytics in order to improve our website.</div>
-                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton}><img src="/assets/images/Icon/v-white-thick.svg"></img>Accept</a></div>
+                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton} data-test-id="acceptCookiesButton"><img src="/assets/images/Icon/v-white-thick.svg"></img>Accept</a></div>
               </div>
             </div>
           }

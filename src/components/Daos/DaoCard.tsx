@@ -46,20 +46,23 @@ const DaoCard = (props: IProps) => {
           </div>
 
           <table className={css.daoInfoContainer}>
-            <tr>
-              <td></td>
-              <td><div className={css.daoInfo}>
-                <b>{daoState.memberCount || "0"}</b>
-                <span>Reputation Holders</span>
-              </div>
-              </td>
-              <td><div className={css.daoInfo}>
-                <b>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</b>
-                <span>Open Proposals</span>
-              </div>
-              </td>
-              <td></td>
-            </tr>
+            <tbody>
+              <tr>
+                <td></td>
+                <td><div className={css.daoInfo}>
+                  <b>{daoState.memberCount || "0"}</b>
+                  <span>Reputation Holders</span>
+                </div>
+                </td>
+                <td><div className={css.daoInfo}>
+                  <b>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</b>
+                  <b>{regularProposals.length + boostedProposals.length}</b>
+                  <span>Open Proposals</span>
+                </div>
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>

@@ -2,13 +2,18 @@
 /*
  */
 import BN = require("bn.js");
+const namehash = require("eth-ens-namehash");
 const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
+const ensInfo = require("./schemes/ENS.json");
+const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
+  ensInfo,
   gpInfo,
+  registryLookupInfo,
 ];
 
 const SCHEMEADDRESSES: {[network: string]: { [address: string]: any}} = {
@@ -43,9 +48,10 @@ export interface IActionFieldOptions {
   labelFalse?: string;
   type?: string;
   placeholder?: string;
+  transformation?: string;
 }
 
-export  class ActionField {
+export class ActionField {
   public decimals?: number;
   public defaultValue?: any;
   public name: string;
@@ -54,6 +60,7 @@ export  class ActionField {
   public labelFalse?: string;
   public type?: string;
   public placeholder?: string;
+  public transformation?: string;
 
   constructor(options: IActionFieldOptions) {
     this.decimals = options.decimals;
@@ -64,19 +71,37 @@ export  class ActionField {
     this.labelFalse = options.labelFalse;
     this.type = options.type;
     this.placeholder = options.placeholder;
+    this.transformation = options.transformation;
   }
   /**
    * the value to pass to the contract call (as calculated from the user's input data)
    * @return [description]
    */
-  public callValue(userValue: any) {
+  public callValue(userValue: string|string[]) {
+    if (Array.isArray(userValue)) {
+      userValue = userValue.map((val: string) => val.trim());
+    } else {
+      userValue = userValue.trim();
+    }
+
     if (this.type === "bool") {
-      return parseInt(userValue, 10) === 1;
+      return parseInt(userValue as string, 10) === 1;
     }
 
     if (this.decimals) {
-      return (new BN(userValue).mul(new BN(10).pow(new BN(this.decimals)))).toString();
+      return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
     }
+
+    switch (this.transformation) {
+      case "namehash": {
+        return namehash.hash(userValue);
+      }
+      case "keccak256": {
+        const web3 = new Web3();
+        return web3.utils.keccak256(userValue);
+      }
+    }
+
     return userValue;
   }
 }
