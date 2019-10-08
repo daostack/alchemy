@@ -55,6 +55,7 @@ class SchemeContainer extends React.Component<IProps, null> {
 
   public handleNewProposal = async (e: any): Promise<void> => {
     const { daoAvatarAddress, schemeId, showNotification } = this.props;
+    e.preventDefault();
 
     e.preventDefault();
 
