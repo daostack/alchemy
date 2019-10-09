@@ -56,7 +56,6 @@ const DaoCard = (props: IProps) => {
                 </td>
                 <td><div className={css.daoInfo}>
                   <b>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</b>
-                  <b>{regularProposals.length + boostedProposals.length}</b>
                   <span>Open Proposals</span>
                 </div>
                 </td>
