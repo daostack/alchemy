@@ -18,7 +18,14 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./StakeButtons.scss";
 
 interface IState {
+  /**
+   * user is in the modal configuring to submit this prediction
+   */
   pendingPrediction: number;
+  /**
+   * most recent prediction submitted by the user during this app session
+   */
+  initiatedPrediction: number;
   showApproveModal: boolean;
   showPreStakeModal: boolean;
 }
@@ -57,32 +64,39 @@ class StakeButtons extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
+      initiatedPrediction: null,
       pendingPrediction: null,
       showApproveModal: false,
       showPreStakeModal: false,
     };
   }
 
-  public showApprovalModal = () => async (_event: any): Promise<void> => {
+  private handleStakeAction = () => (amount: number) => {
+    this.props.stakeProposal(this.props.proposal.dao.id, this.props.proposal.id, this.state.pendingPrediction, amount);
+  }
+
+  private showApprovalModal = () => async (_event: any): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     this.setState({ showApproveModal: true });
   }
 
-  public closeApprovalModal = (_event: any): void => {
+  private closeApprovalModal = (): void => {
     this.setState({ showApproveModal: false });
   }
 
-  public closePreStakeModal = (_event: any): void => {
-    this.setState({ showPreStakeModal: false });
+  private closePreStakeModal = () => (cancelled: boolean): void => {
+    this.setState(Object.assign({ showPreStakeModal: false },
+      cancelled ? { pendingPrediction: null } : null ,
+      cancelled ? null : { initiatedPrediction: this.state.pendingPrediction }));
   }
 
-  public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
+  private showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
     if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
-  public handleClickPreApprove = () => async (_event: any): Promise<void> => {
+  private handleClickPreApprove = () => async (_event: any): Promise<void> => {
     if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
 
     const { approveStakingGens } = this.props;
@@ -102,11 +116,11 @@ class StakeButtons extends React.Component<IProps, IState> {
       expired,
       historyView,
       proposal,
-      stakeProposal,
       stakes,
     } = this.props;
 
     const {
+      initiatedPrediction,
       pendingPrediction,
       showApproveModal,
       showPreStakeModal,
@@ -121,7 +135,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       currentAccountPrediction = currentStake.staticState.outcome;
     }
 
-    const isPredicting = pendingPrediction !== null;
+    const isPredicting = showPreStakeModal || initiatedPrediction !== null;
 
     if (showApproveModal) {
       return (
@@ -161,24 +175,24 @@ class StakeButtons extends React.Component<IProps, IState> {
     const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;
 
     const passButtonClass = classNames({
-      [css.pendingPrediction]: pendingPrediction === VoteOptions.Yes,
+      [css.pendingPrediction]: showPreStakeModal || initiatedPrediction === VoteOptions.Yes,
       [css.passButton]: true,
     });
 
     const failButtonClass = classNames({
-      [css.pendingPrediction]: pendingPrediction === VoteOptions.No,
+      [css.pendingPrediction]: showPreStakeModal || initiatedPrediction === VoteOptions.No,
       [css.failButton]: true,
     });
 
-    const tip = (prediction: VoteOptions) =>
-      !hasGens ?
+    const tip = (prediction: VoteOptions) => {
+      return !hasGens ?
         "Insufficient GENs" :
         currentAccountPrediction === prediction ?
           "Can't change prediction" :
           isPredicting ?
-            "Warning: Staking on this proposal is already in progress" :
-            ""
-      ;
+            "Warning: If your request to stake on this proposal is still in progress, trying to stake again may fail" :
+            "";
+    };
 
     const passButton = (
       <button className={passButtonClass} onClick={disableStakePass ? null : this.showPreStakeModal(1)} data-test-id="stakePass">
@@ -209,9 +223,9 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); }}
+            action={this.handleStakeAction()}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreStakeModal.bind(this)}
+            closeAction={this.closePreStakeModal()}
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}
