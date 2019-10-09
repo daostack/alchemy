@@ -14,7 +14,7 @@ export type IObservableProps = [Proposal[], Proposal[], IDAOState];
 
 interface IExternalProps {
   /**
-   * The promised results from `DaoCard.getObservable`
+   * The promised results from `DaoCard.createObservable`
    */
   data?: IObservableProps;
 }
@@ -94,18 +94,3 @@ export default class DaoCard extends React.Component<IProps, null> {
     );
   }
 }
-
-// export default withSubscription({
-//   wrappedComponent: DaoCard,
-//   loadingComponent: null,
-//   errorComponent: (props) => <div>{ props.error.message }</div>,
-
-//   checkForUpdate: (oldProps, newProps) => {
-//     // TODO: does dao.id work here or do we need to load the static state?
-//     return oldProps.dao.id !== newProps.dao.id;
-//   },
-
-//   createObservable: (props: IExternalProps) => {
-//     return props.observable;
-//   },
-// });
