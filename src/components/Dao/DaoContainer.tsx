@@ -56,7 +56,7 @@ class DaoContainer extends React.Component<IProps, null> {
   public daoSubscription: any;
   public subscription: Subscription;
 
-  public async componentWillMount() {
+  public async UNSAFE_componentWillMount() {
     this.props.getProfilesForAllAccounts();
   }
 

@@ -75,26 +75,11 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps, newProps) => {
-    // TODO: does dao.id work here or do we need to load the static state?
     return oldProps.dao.id !== newProps.dao.id;
   },
 
   createObservable: (props: IExternalProps) => {
     const dao = props.dao;
     return dao.state();
-    //
-    // return combineLatest(
-    //   dao.proposals({ where: {
-    //     // eslint-disable-next-line @typescript-eslint/camelcase
-    //     stage_in: [IProposalStage.Queued],
-    //     // eslint-disable-next-line @typescript-eslint/camelcase
-    //     expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
-    //   }}),
-    //   dao.proposals({ where: {
-    //     // eslint-disable-next-line @typescript-eslint/camelcase
-    //     stage_in: [IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod],
-    //   }}),
-    //   dao.state() // subscriptions taken care of by parent compnent
-    // );
   },
 });

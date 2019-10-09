@@ -291,7 +291,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
           //   }
           // }
           // @ts-ignore
-          console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
+          // console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
           // @ts-ignore
           // printQueries(window.networkSubscriptions);
         },
