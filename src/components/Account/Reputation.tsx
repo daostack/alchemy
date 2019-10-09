@@ -33,8 +33,8 @@ export default class Reputation extends React.Component<IProps, null> {
       }
     } else {
       // eslint-disable-next-line no-console
-      console.error("totalReputation is <= 0");
-      percentageString = "NaN";
+      // console.error("totalReputation is <= 0");
+      percentageString = "0";
     }
 
     if (!percentageString) {
