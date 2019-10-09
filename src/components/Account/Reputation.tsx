@@ -58,9 +58,9 @@ export default class Reputation extends React.Component<IProps, null> {
         placement="bottom"
         overlay={
           <>
-          <span>{repFormatted} Rep.</span>
-          <br/>
-          <span>{totalRepFormatted} {daoName || ""} Reputation in total</span>
+            <span>{repFormatted} Rep.</span>
+            <br/>
+            <span>{totalRepFormatted} {daoName || ""} Reputation in total</span>
           </>
         }
         trigger={hideTooltip ? [] : ["hover"]}

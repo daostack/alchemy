@@ -24,7 +24,7 @@ export class App extends React.Component<{}, {
     };
   }
 
-  public async componentWillMount(): Promise<void> {
+  public async UNSAFE_componentWillMount(): Promise<void> {
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
@@ -64,7 +64,7 @@ export class App extends React.Component<{}, {
     if (!this.state.arcIsInitialized) {
       return (
         <div className={css.waitingToInitContainer}>
-          { this.state.retryingArc ? 
+          { this.state.retryingArc ?
             <div className={css.waitingToInitMessage}>Waiting to connect to the blockchain.  If this is taking a while, please ensure that you have a good internet connection.</div> : ""
           }
           <div className={css.loading}><Loading/></div>

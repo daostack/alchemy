@@ -78,7 +78,7 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async componentWillMount(): Promise<void> {
+  public async UNSAFE_componentWillMount(): Promise<void> {
     /**
      * Heads up that there is a chance this cached account may differ from an account
      * that the user has already selected in a provider but have
