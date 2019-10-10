@@ -32,8 +32,6 @@ export default class Reputation extends React.Component<IProps, null> {
         percentage = percentageBn.toNumber() / 100;
       }
     } else {
-      // eslint-disable-next-line no-console
-      // console.error("totalReputation is <= 0");
       percentageString = "0";
     }
 
