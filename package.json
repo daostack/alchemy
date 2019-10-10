@@ -37,7 +37,6 @@
       "^arc": "<rootDir>/src/arc",
       "^actions(.*)$": "<rootDir>/src/actions$1",
       "^components(.*)$": "<rootDir>/src/components$1",
-      "^constants(.*)$": "<rootDir>/src/constants$1",
       "^data(.*)$": "<rootDir>/data$1",
       "^genericSchemeRegistry(.*)$": "<rootDir>/src/genericSchemeRegistry$1",
       "^layouts(.*)$": "<rootDir>/src/layouts$1",
@@ -73,7 +72,7 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "@daostack/client": "0.2.16",
+    "@daostack/client": "0.2.17",
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
     "@fortawesome/free-brands-svg-icons": "^5.6.1",
     "@fortawesome/react-fontawesome": "^0.1.3",
