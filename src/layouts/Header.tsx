@@ -1,5 +1,6 @@
 import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
+import { serverLoginByEthSign } from "actions/profilesActions";
 import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
 import * as classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
@@ -48,11 +49,13 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 };
 
 interface IDispatchProps {
+  serverLoginByEthSign: typeof serverLoginByEthSign;
   showNotification: typeof showNotification;
   toggleMenu: typeof uiActions.toggleMenu;
 }
 
 const mapDispatchToProps = {
+  serverLoginByEthSign,
   showNotification,
   toggleMenu: uiActions.toggleMenu,
 };
@@ -79,6 +82,11 @@ class Header extends React.Component<IProps, IStateProps> {
       notifyOnSuccess: false,
       showNotification: this.props.showNotification,
     });
+  }
+
+  public handleClickLoginServer = async (_event: any): Promise<void> => {
+    const result = await this.props.serverLoginByEthSign(this.props.currentAccountAddress);
+    console.log("after server login", result);
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
@@ -201,6 +209,9 @@ class Header extends React.Component<IProps, IStateProps> {
                 </div>
                 : ""
             }
+            <button onClick={this.handleClickLoginServer} data-test-id="loginButton">
+              Log in to server <img src="/assets/images/Icon/login-white.svg"/>
+            </button>
           </div>
         </nav>
       </div>

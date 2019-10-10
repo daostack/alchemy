@@ -1,8 +1,12 @@
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
+import { enableWalletProvider, getWeb3Provider } from "arc";
 import axios from "axios";
+import * as sigUtil from "eth-sig-util";
+import * as ethUtil from "ethereumjs-util";
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, IProfileState, newProfile, profileDbToRedux } from "reducers/profilesReducer";
+import { promisify } from "util";
 
 // Load account profile data from our database for all the "members" of the DAO
 export function getProfilesForAllAccounts() {
@@ -118,5 +122,87 @@ export function verifySocialAccount(accountAddress: string, account: IProfileSta
       meta: { accountAddress },
       payload: profileDbToRedux(account),
     });
+  };
+}
+
+
+export function serverLoginByEthSign(accountAddress: string) {
+  return async (dispatch: any, _getState: any) => {
+    dispatch({
+      type: ActionTypes.LOGIN,
+      sequence: AsyncActionSequence.Pending,
+      meta: { accountAddress },
+    });
+
+    if (!(await enableWalletProvider({ showNotification }))) { return; }
+
+    const response = await axios.get(process.env.API_URL + "/nonce?address=" + accountAddress);
+    const nonce = response.data;
+
+    const web3Provider = await getWeb3Provider();
+    try {
+      const timestamp = new Date().getTime().toString();
+      const text = ("Please sign this message to prove your ownership of this account '" +
+        accountAddress + "'. There's no gas cost to you. " + nonce);
+      const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
+
+      const method = "personal_sign";
+
+      // Create promise-based version of send
+      const send = promisify(web3Provider.sendAsync);
+      const params = [msg, accountAddress];
+      const result = await send({ method, params, from: accountAddress });
+      if (result.error) {
+        console.error("Signing canceled, data was not saved");
+        showNotification(NotificationStatus.Failure, "Saving profile was canceled");
+        return;
+      }
+      const signature = result.result;
+
+      const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
+      if (recoveredAddress.toLowerCase() !== accountAddress) {
+        showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
+        return;
+      }
+
+      try {
+        await axios.post(process.env.API_URL + "/loginByEthSign", {
+          address: accountAddress,
+          signature,
+          nonce,
+          timestamp,
+          payload: text
+        });
+      } catch (e) {
+        const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
+        console.error("Error logging in: ", errorMsg);
+
+        dispatch({
+          type: ActionTypes.LOGIN,
+          sequence: AsyncActionSequence.Failure,
+          meta: { accountAddress },
+        });
+
+        dispatch(showNotification(NotificationStatus.Failure, `Login failed: ${errorMsg}`));
+        return false;
+      }
+
+      dispatch({
+        type: ActionTypes.LOGIN,
+        sequence: AsyncActionSequence.Success,
+        meta: { accountAddress }
+      });
+
+      dispatch(showNotification(NotificationStatus.Success, "Login succeeded!"));
+      return true;
+    } catch (error) {
+      if (web3Provider.isSafe) {
+        console.log(error.message);
+        showNotification(NotificationStatus.Failure, "We're very sorry, but Gnosis Safe does not support message signing :-(");
+      } else {
+        showNotification(NotificationStatus.Failure, error.message);
+      }
+      return false
+    }
   };
 }

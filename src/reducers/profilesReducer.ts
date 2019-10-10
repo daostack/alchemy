@@ -4,7 +4,8 @@ import { AsyncActionSequence } from "actions/async";
 
 export enum ActionTypes {
   GET_PROFILE_DATA = "GET_PROFILE_DATA",
-  UPDATE_PROFILE = "UPDATE_PROFILE"
+  UPDATE_PROFILE = "UPDATE_PROFILE",
+  LOGIN = "LOGIN"
 }
 
 export interface IProfileState {
