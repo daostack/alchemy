@@ -88,7 +88,7 @@ export default withSubscription({
     }
 
     const arc = getArc();
-    const redeemableProposalsQuery = gql`
+    const redeemableProposalsQuery = gql`query proposalsWithUnclaimedRewards
       {
         proposals(where: {
           accountsWithUnclaimedRewards_contains: ["${currentAccountAddress}"]
