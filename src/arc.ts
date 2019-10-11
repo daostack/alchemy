@@ -308,6 +308,18 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   return success;
 }
 
+async function ensureCorrectNetwork(provider: any): Promise<void> {
+  
+  /**
+   * It is required that the provider be the correct one for the current platform
+   */
+  const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
+
+  if (correctNetworkErrorMsg) {
+    console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
+    throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
+  }
+}
 /**
  * Prompt user to select a web3Provider and enable their account.
  * Initializes Arc with the newly-selected web3Provider.
@@ -318,8 +330,8 @@ export async function initializeArc(provider?: any): Promise<boolean> {
  */
 async function enableWeb3Provider(provider?: any): Promise<void> {
   /**
-   * Already got an already-selected provider?
-   * We'll replace it if provider has been supplied.
+   * Already got a selected provider, and is the same as the requested provider?
+   * We'll replace it if a  differen provider has been supplied.
    * Otherwise we'll swing with selectedProvider, and this becomes mostly a no-op.
    */
   if (selectedProvider && (!provider || (selectedProvider === provider))) {
@@ -392,14 +404,9 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
   }
 
   /**
-   * It is required that the provider be the correct one for the current platform
+   * bail if provider is not correct for the current platform
    */
-  const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
-
-  if (correctNetworkErrorMsg) {
-    console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
-    throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
-  }
+  await ensureCorrectNetwork(provider);
 
   /**
    * now ensure that the user has connected to a network and enabled access to the account,
@@ -629,7 +636,23 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
         const web3ProviderInfo = getWeb3ProviderInfo();
         options.showNotification(NotificationStatus.Success, `Connected to ${web3ProviderInfo.name}`);
       }
+    } else {
+      /**
+       * Bail if provider is not correct for the current platform. The user might have redirected
+       * Metamask to a different network without us knowing.  Just in that case, check here.
+       */
+      try {
+      await ensureCorrectNetwork(selectedProvider);
+      } catch (ex) {
+        /**
+         * This will result in completely logging out the user and clearing the cached provider,
+         * thus enabling them to have a choice of providers when they triy to log in again.
+         */
+        await gotoReadonly(options.showNotification);
+        throw new Error(ex);
+      }
     }
+
   } catch(err) {
     msg = err.message || "Unable to connect to the web3 provider";
     if (options.showNotification) {
