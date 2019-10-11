@@ -16,24 +16,24 @@ interface IExternalProps {
   scheme: Scheme;
 }
 
-type SubscriptionData = [ISchemeState, Proposal[], Proposal[], Proposal[]];
+type SubscriptionData = [ISchemeState, Proposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalSchemeCard = (props: IProps) => {
   const { data, dao} = props;
 
-  const [scheme, queuedProposals, preBoostedProposals, boostedProposals] = data;
+  const [schemeState, boostedProposals] = data;
 
-  const numProposals = boostedProposals.length + preBoostedProposals.length + queuedProposals.length;
+  const numProposals =  schemeState.numberOfQueuedProposals + schemeState.numberOfBoostedProposals + schemeState.numberOfQueuedProposals;
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
   return (
-    <div className={css.wrapper} data-test-id={`schemeCard-${scheme.name}`}>
-      <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${scheme.id}`}>
-        <h2>{schemeName(scheme, "[Unknown]")}</h2>
+    <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
+      <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
+        <h2>{schemeName(schemeState, "[Unknown]")}</h2>
         <div>
-          <b>{boostedProposals.length}</b> <span>Boosted</span> <b>{preBoostedProposals.length}</b> <span>Pending</span> <b>{queuedProposals.length}</b> <span>Regular</span>
+          <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
         {proposals.length === 0 ?
           <div className={css.loading}>
@@ -49,7 +49,7 @@ const ProposalSchemeCard = (props: IProps) => {
         <div>
           {proposalsHTML}
           <div className={css.numProposals}>
-            <Link to={`/dao/${dao.address}/scheme/${scheme.id}/proposals`}>View all {numProposals} &gt;</Link>
+            <Link to={`/dao/${dao.address}/scheme/${schemeState.id}/proposals`}>View all {numProposals} &gt;</Link>
           </div>
         </div>
         : " "
@@ -72,21 +72,14 @@ export default withSubscription({
     const dao = arc.dao(props.dao.address);
     return combineLatest(
       props.scheme.state(),
-      dao.proposals({where: {
-        scheme:  props.scheme.id,
-        stage: IProposalStage.Queued,
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
-      }}), // the list of queued proposals
-      dao.proposals({ where: {
-        scheme:  props.scheme.id,
-        stage: IProposalStage.PreBoosted,
-      }}), // the list of preboosted proposals
       dao.proposals({ where: {
         scheme:  props.scheme.id,
         // eslint-disable-next-line @typescript-eslint/camelcase
         stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod],
-      }}) // the list of boosted proposals
+      }}, {
+        fetchAllData: true,
+        subscribe: true, // subscribe to updates of the proposals. We can replace this once https://github.com/daostack/subgraph/issues/326 is done
+      }) // the list of boosted proposals
     );
   },
 });

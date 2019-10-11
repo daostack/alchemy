@@ -1,25 +1,21 @@
-import { DAO, IDAOState,
-  IProposalStage,
-  Proposal,
-} from "@daostack/client";
+import { DAO, IDAOState } from "@daostack/client";
 import classNames from "classnames";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
 import * as moment from "moment";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { combineLatest } from "rxjs";
 import * as css from "./Daos.scss";
 
 interface IExternalProps {
   dao: DAO;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[Proposal[], Proposal[], IDAOState]>
+type IProps = IExternalProps & ISubscriptionProps<IDAOState>
 
 const DaoCard = (props: IProps) => {
   const { dao } = props;
-  const [regularProposals, boostedProposals, daoState] = props.data;
+  const daoState = props.data;
   const bgPattern = GeoPattern.generate(dao.id + daoState.name);
   const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
   const inActive = (daoState.name === "dxDAO") && dxDaoActivationDate.isSameOrAfter(moment());
@@ -49,15 +45,24 @@ const DaoCard = (props: IProps) => {
               Statistics
           </div>
 
-          <div className={css.daoInfo}>
-            <b>{daoState.memberCount || "0"}</b>
-            <span>Reputation Holders</span>
-          </div>
-
-          <div className={css.daoInfo}>
-            <b>{regularProposals.length + boostedProposals.length}</b>
-            <span>Open Proposals</span>
-          </div>
+          <table className={css.daoInfoContainer}>
+            <tbody>
+              <tr>
+                <td></td>
+                <td><div className={css.daoInfo}>
+                  <b>{daoState.memberCount || "0"}</b>
+                  <span>Reputation Holders</span>
+                </div>
+                </td>
+                <td><div className={css.daoInfo}>
+                  <b>{daoState.numberOfQueuedProposals+ daoState.numberOfBoostedProposals + daoState.numberOfPreBoostedProposals}</b>
+                  <span>Open Proposals</span>
+                </div>
+                </td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </Link>
@@ -70,25 +75,11 @@ export default withSubscription({
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
   checkForUpdate: (oldProps, newProps) => {
-    // TODO: does dao.id work here or do we need to load the static state?
     return oldProps.dao.id !== newProps.dao.id;
   },
 
   createObservable: (props: IExternalProps) => {
     const dao = props.dao;
-
-    return combineLatest(
-      dao.proposals({ where: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        stage_in: [IProposalStage.Queued],
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        expiresInQueueAt_gt: Math.floor(new Date().getTime() / 1000),
-      }}),
-      dao.proposals({ where: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        stage_in: [IProposalStage.Boosted, IProposalStage.PreBoosted, IProposalStage.QuietEndingPeriod],
-      }}),
-      dao.state()
-    );
+    return dao.state();
   },
 });

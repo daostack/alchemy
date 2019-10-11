@@ -16,10 +16,10 @@ import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { Subscription } from "rxjs";
+import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
-import DaoRedemptionsPage from "./DaoRedemptionsPage";
 import DaoSidebar from "./DaoSidebar";
 import * as css from "./Dao.scss";
 
@@ -56,18 +56,18 @@ class DaoContainer extends React.Component<IProps, null> {
   public daoSubscription: any;
   public subscription: Subscription;
 
-  public async componentWillMount() {
+  public async UNSAFE_componentWillMount() {
     this.props.getProfilesForAllAccounts();
   }
 
-  public render() {
-    const dao = this.props.data;
+  public render(): RenderOutput {
+    const daoState = this.props.data;
     const { currentAccountAddress } = this.props;
 
     return (
       <div className={css.outer}>
-        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
-        <DaoSidebar currentAccountAddress={this.props.currentAccountAddress} dao={dao} />
+        <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
+        <DaoSidebar dao={daoState} />
         <div className={css.wrapper}>
           <div className={css.noticeWrapper}>
             <div className={css.noticeBuffer}></div>
@@ -82,17 +82,14 @@ class DaoContainer extends React.Component<IProps, null> {
             <Route exact path="/dao/:daoAvatarAddress/history"
               render={(props) => <DaoHistoryPage {...props} currentAccountAddress={currentAccountAddress} />} />
             <Route exact path="/dao/:daoAvatarAddress/members"
-              render={(props) => <DaoMembersPage {...props} dao={dao} />} />
-            <Route exact path="/dao/:daoAvatarAddress/redemptions"
-              render={(props) =>
-                <DaoRedemptionsPage {...props} dao={dao} currentAccountAddress={currentAccountAddress} />
-              }
-            />
+              render={(props) => <DaoMembersPage {...props} daoState={daoState} />} />
+            <Route exact path="/dao/:daoAvatarAddress/discussion"
+              render={(props) => <DaoDiscussionPage {...props} dao={daoState} />} />
 
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
               render={(props) =>
                 <ProposalDetailsPage {...props}
-                  dao={dao}
+                  daoState={daoState}
                   currentAccountAddress={currentAccountAddress}
                   proposalId={props.match.params.proposalId}
                 />
@@ -100,7 +97,7 @@ class DaoContainer extends React.Component<IProps, null> {
             />
 
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-              render={(props) => <SchemeContainer {...props} currentAccountAddress={currentAccountAddress} />} />
+              render={(props) => <SchemeContainer {...props} daoState={daoState} currentAccountAddress={currentAccountAddress} />} />
 
             <Route path="/dao/:daoAvatarAddress" render={(props) => <DaoSchemesPage {...props} />} />
           </Switch>

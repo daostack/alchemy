@@ -6,9 +6,12 @@
       "plugin:react/recommended"
     ],
     "env": {
-      "amd": true,
+      "commonjs": true,
       "node": true,
       "es6": true,
+      "browser": true,
+      "mocha": true,
+      "jest": true
     },
     "settings": {
       "react": {
@@ -27,18 +30,21 @@
         /**
          * convert to error when all have been manually fixed
          */
+        "require-atomic-updates": "warn",
         "no-console": "warn",
+        "@typescript-eslint/ban-ts-ignore": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",
         "react/jsx-no-bind": "warn",
         /**
          * outright errors
         */
         "no-useless-escape": "error",
+        "react/prop-types": "off",
         "react/no-unescaped-entities": "error",
         "indent": "off", // to not interfere with @typescript just below
         "@typescript-eslint/indent": ["error", 2],
         "@typescript-eslint/prefer-for-of": "error",
-        "@typescript-eslint/no-object-literal-type-assertion": [ "error", { "allowAsParameter": true } ],
+        "@typescript-eslint/consistent-type-assertions": ["error", { "assertionStyle": "as", "objectLiteralTypeAssertions": "allow-as-parameter" }],
         "no-empty-function": "off", // to not interfere with @typescript just below
         "@typescript-eslint/no-empty-function": "error",
         "@typescript-eslint/no-empty-interface": ["error", { "allowSingleExtends": true }],
@@ -46,7 +52,6 @@
         "no-var": "error",
         "react/jsx-boolean-value": "error",
         "react/jsx-curly-spacing": "error",
-        "react/prop-types": "off",
         "no-bitwise": "error",
         "@typescript-eslint/interface-name-prefix": ["error", "always"],
         "prefer-const": "error",
@@ -64,6 +69,6 @@
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint", "react", "import"],
     "parserOptions": {
-      "project": "./tsconfig.json"
+      "project": "./tsconfig.eslint.json"
     }
 }

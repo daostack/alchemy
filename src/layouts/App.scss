@@ -96,6 +96,7 @@ body {
   z-index: 100000;
   top: 0;
   color: rgba(255,255,255,1);
+  display: flex;
 
   .logoContainer {
     margin: 0 auto;
@@ -151,12 +152,8 @@ body {
     padding: 2px 0;
   }
 
-  .headerRight {
-    position: absolute;
-    height: 50px;
-    top:0;
-    right: 0;
-    text-align: right;
+  .redemptionsButton {
+    margin: 13px 0 14px auto;
   }
 
   .accountInfoContainer {
@@ -421,9 +418,12 @@ body {
           white-space: nowrap;
           cursor: pointer;
           display: inline-block;
+          margin-right: 4px;
         }
 
         img {
+          top: 2px;
+          position: relative;
           height: 12px;
           margin-right: 5px;
         }
@@ -486,15 +486,8 @@ body {
 
 .header:after { clear: both;  content: ""; display: table; }
 
-.notificationsWrapper {
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  z-index: 999;
-}
-
 .loading {
-  padding-top: 100px;
+  padding-top: 4rem;
   text-align: center;
 }
 
@@ -563,6 +556,10 @@ body {
   }
 }
 
+.menuToggle {
+  display: none;
+}
+
 @media only screen and (max-device-width: 1024px) {
   .modalBody {
     position: fixed;
@@ -613,7 +610,7 @@ body {
   }
 
   .topInfo {
-    display: none;
+    display: block;
     position: absolute;
     color: rgba(0, 28, 52, 1);
     top: 50px;
@@ -639,9 +636,25 @@ body {
     }
   }
 
-  .header .menu {
-    position: relative;
-    margin: 0 auto;
+  .header {
+    .menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+    }
+
+    .redemptionsButton {
+      margin-left: 12px;
+    }
+
+    &.hasHamburger .redemptionsButton {
+      margin-left: 60px;
+    }
+
+    .accountInfo {
+      margin-left: auto;
+    }
   }
 
   .topInfo a, .topInfo a:visited {
@@ -662,7 +675,14 @@ body {
       padding-left: 0;
     }
   }
-}
+
+  .menuToggle {
+    display: block;
+    position: absolute;
+    top: 16px;
+    left: 12px;
+  }
+ }
 
 .cookieDisclaimerContainer {
   padding-left: 12%;
@@ -730,3 +750,12 @@ body {
   }
 }
 
+.waitingToInitContainer {
+  padding-top: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.waitingToInitMessage {
+  text-align: center; 
+}

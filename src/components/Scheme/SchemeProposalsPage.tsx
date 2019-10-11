@@ -1,6 +1,6 @@
 import * as H from "history";
 import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
-import { getArc, enableWeb3ProviderAndWarn } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { schemeName} from "lib/util";
@@ -17,6 +17,10 @@ import * as css from "./SchemeProposals.scss";
 
 // For infinite scrolling
 const PAGE_SIZE = 100;
+
+// Have to fix this so that scrolling doesn't load weird different sets of proposals as the time changes
+// TODO: This is somewhat broken, it needs to get set on the initial render and reset/updated over time somehow?
+const currentTime = Math.floor(new Date().getTime() / 1000);
 
 const Fade = ({ children, ...props }: any): any => (
   <CSSTransition
@@ -53,9 +57,9 @@ const mapDispatchToProps = {
 class SchemeProposalsPage extends React.Component<IProps, null> {
 
   private async handleNewProposal(daoAvatarAddress: Address, schemeId: any): Promise<void> {
-    if ((await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) {
-      this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
-    }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   }
 
   private _handleNewProposal = (e: any): void => {
@@ -63,7 +67,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     e.preventDefault();
   };
 
-  public render(): any {
+  public render(): RenderOutput {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
@@ -73,7 +77,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -83,7 +87,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsPreBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -93,7 +97,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} dao={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
           </Fade>
         ))}
       </TransitionGroup>
@@ -207,9 +211,6 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const dao = arc.dao(daoAvatarAddress);
     const schemeId = props.scheme.id;
 
-    // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
     return combineLatest(
       // the list of queued proposals
       dao.proposals({
@@ -219,23 +220,23 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // the list of preboosted proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
         orderBy: "preBoostedAt",
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // the list of boosted proposals
-      arc.dao(daoAvatarAddress).proposals({
+      dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }),
+      }, { subscribe: true, fetchAllData: true }),
 
       // DAO state
-      dao.state()
+      dao.state(),
     );
   },
 
@@ -247,18 +248,14 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
 
-    // Have to fix this so that scrolling doesnt load weird different sets of proposals as the time changes
-    // TODO: where to set this?
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
       where: { scheme: props.scheme.id, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
       orderBy: "confidence",
       orderDirection: "desc",
       first: PAGE_SIZE,
-      skip: data[1].length,
-    });
+      skip: data[0].length,
+    }, { subscribe: true, fetchAllData: true });
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {

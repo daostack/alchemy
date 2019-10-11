@@ -1,7 +1,7 @@
 // const BN = require("bn.js");
 import { IProposalType, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
@@ -68,7 +68,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
 
@@ -83,8 +83,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
-      // alert(err.message);
-      console.log(err.message);
+      console.error(err.message);
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
       return;
@@ -166,7 +165,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </div>
                 ))
               ) : ""}
-              <button className={css.addItemButton} type="button" onClick={() => arrayHelpers.push("")}>
+              <button className={css.addItemButton} data-test-id={field.name + ".add"} type="button" onClick={() => arrayHelpers.push("")}>
                 Add {field.label}
               </button>
             </div>
@@ -186,8 +185,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     />;
   }
 
-  public render() {
-    const { handleClose } = this.props;
+  public render(): RenderOutput {
+    const { handleClose, daoAvatarAddress } = this.props;
     const arc = getArc();
 
     const actions = this.state.actions;
@@ -201,12 +200,16 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     actions.forEach((action) => action.getFields().forEach((field: ActionField) => {
       if (typeof(field.defaultValue) !== "undefined") {
-        initialFormValues[field.name] = field.defaultValue;
+        if (field.defaultValue === "_avatar") {
+          initialFormValues[field.name] = daoAvatarAddress;
+        } else {
+          initialFormValues[field.name] = field.defaultValue;
+        }
       } else {
         switch (field.type) {
+          case "uint64":
           case "uint256":
-            initialFormValues[field.name] = "";
-            break;
+          case "bytes32":
           case "address":
           case "string":
             initialFormValues[field.name] = "";
@@ -271,19 +274,19 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   valueIsRequired(field.name);
                 }
 
-                if (field.type === "uint256") {
-                  const value = values[field.name];
-                  try {
-                    field.callValue(value);
-                  } catch (error) {
-                    if (error.message === "Assertion failed") {
-                      // thank you BN.js for your helpful error messages
-                      errors[field.name] = "Invalid number value";
-                    } else {
-                      errors[field.name] = error.message;
-                    }
+                // Check if value can be interpreted correctly for this particular field
+                const value = values[field.name];
+                try {
+                  field.callValue(value);
+                } catch (error) {
+                  if (error.message === "Assertion failed") {
+                    // thank you BN.js for your helpful error messages
+                    errors[field.name] = "Invalid number value";
+                  } else {
+                    errors[field.name] = error.message;
                   }
                 }
+
                 if (field.type === "address") {
                   const value = values[field.name];
                   if (!arc.web3.utils.isAddress(value)) {
@@ -316,7 +319,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     <Interweave content={currentAction.description} />
                   </div>
                   <label htmlFor="titleInput">
-                    Title
+                      Title
                     <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
                   </label>
@@ -331,7 +334,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   />
 
                   <label htmlFor="descriptionInput">
-                    Description
+                      Description
                     <div className={css.requiredMarker}>*</div>
                     <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>

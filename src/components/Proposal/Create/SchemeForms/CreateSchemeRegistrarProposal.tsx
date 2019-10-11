@@ -1,6 +1,6 @@
 import { IProposalType, ISchemeState, Scheme } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -64,7 +64,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     let permissions = 1;
     if (values.permissions.registerSchemes) {
@@ -110,7 +110,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({ currentTab: tab });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
     const schemes = this.props.data;
     const { handleClose } = this.props;
@@ -156,7 +156,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
         <div className={schemeRegistrarFormClass}>
           <Formik
-            // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={{
               description: "",
               otherScheme: "",
@@ -347,6 +347,13 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                         <Field id="genericCallInput" type="checkbox" name="permissions.genericCall" />
                         <label htmlFor="genericCallInput">
                           Call genericCall on behalf of
+                        </label>
+                      </div>
+
+                      <div className={css.permissionCheckbox}>
+                        <Field id="mintBurnReputation" type="checkbox" name="mintBurnReputation" disabled="disabled" checked="checked" />
+                        <label htmlFor="mintBurnReputation">
+                          Mint or burn reputation
                         </label>
                       </div>
                     </div>

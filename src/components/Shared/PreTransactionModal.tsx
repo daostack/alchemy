@@ -1,5 +1,5 @@
 import { IDAOState, IMemberState, IProposalState  } from "@daostack/client";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -11,7 +11,6 @@ import { getExchangesList, humanProposalTitle } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
-//@ts-ignore
 import { Modal } from "react-router-modal";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -63,8 +62,8 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   }
 
   public async handleClickAction() {
-    const { actionType } = this.props;
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    const { actionType, showNotification } = this.props;
+    if (!await enableWalletProvider({ showNotification })) { return; }
 
     if (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) {
       this.props.action(this.state.stakeAmount);
@@ -78,7 +77,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     this.setState({ instructionsOpen: !this.state.instructionsOpen });
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, proposal, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 

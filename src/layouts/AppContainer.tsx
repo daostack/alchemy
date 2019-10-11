@@ -1,23 +1,23 @@
-// const Web3 = require("web3");
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
-import { getWeb3ProviderInfo, pollForAccountChanges, IWeb3ProviderInfo, setWeb3ProviderAndWarn, gotoReadonly } from "arc";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
 import Notification, { NotificationViewStatus } from "components/Notification/Notification";
 import DaoContainer from "components/Dao/DaoContainer";
+import RedemptionsPage from "components/Redemptions/RedemptionsPage";
 import * as History from "history";
 import Header from "layouts/Header";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
-//@ts-ignore
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
+import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
+import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
@@ -55,8 +55,6 @@ interface IState {
 
 class AppContainer extends React.Component<IProps, IState> {
 
-  private static accountStorageKey = "currentAddress";
-  private static providerStorageKey = "currentWeb3ProviderInfo";
   private static hasAcceptedCookiesKey = "acceptedCookies";
 
   constructor(props: IProps) {
@@ -66,8 +64,6 @@ class AppContainer extends React.Component<IProps, IState> {
       sentryEventId: null,
       notificationsMinimized: false,
     };
-
-    this.loadCachedWeb3Provider = this.loadCachedWeb3Provider.bind(this);
   }
 
   public componentDidCatch(error: Error, errorInfo: any): void {
@@ -82,16 +78,17 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async componentWillMount(): Promise<void> {
+  public async UNSAFE_componentWillMount(): Promise<void> {
     /**
      * Heads up that there is a chance this cached account may differ from an account
      * that the user has already selected in a provider but have
      * not yet made available to the app.
      */
-    const currentAddress = this.getCachedAccount();
+    const currentAddress = getCachedAccount();
     let accountWasCached = false;
     if (currentAddress) {
       accountWasCached = true;
+      // eslint-disable-next-line no-console
       console.log(`using account from local storage: ${currentAddress}`);
     }
 
@@ -103,42 +100,23 @@ class AppContainer extends React.Component<IProps, IState> {
      */
     pollForAccountChanges(accountWasCached ? null : currentAddress).subscribe(
       (newAddress: Address | null): void => {
+        // eslint-disable-next-line no-console
         console.log(`new account: ${newAddress}`);
         this.props.setCurrentAccount(newAddress);
         if (newAddress) {
-          this.cacheWeb3Info(newAddress);
+          cacheWeb3Info(newAddress);
         } else {
-          this.uncacheWeb3Info();
+          uncacheWeb3Info();
           gotoReadonly(this.props.showNotification);
         }
       });
   }
 
-  private async loadCachedWeb3Provider(showNotification: any): Promise<boolean> {
-    const web3ProviderInfo = this.getCachedWeb3ProviderInfo();
-    if (web3ProviderInfo) {
-      let success = false;
-      /**
-       * If successful, this will result in setting the current account which
-       * we'll pick up below.
-       */
-      try {
-        if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification)) {
-          console.log("using cached web3Provider");
-          success = true;
-        }
-      // eslint-disable-next-line no-empty
-      } catch(ex) { }
-      if (!success) {
-        console.log("failed to instantiate cached web3Provider");
-        this.uncacheWeb3Info();
-      }
-      return success;
-    }
-    return false;
+  private clearError = () => {
+    this.setState({ error: null, sentryEventId: null });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const {
       // connectionStatus,
       dismissNotification,
@@ -148,10 +126,10 @@ class AppContainer extends React.Component<IProps, IState> {
 
     if (this.state.error) {
       // Render error fallback UI
-      console.log(this.state.error);
+      // eslint-disable-next-line no-console
+      console.error(this.state.error);
       return <div>
-        <a onClick={(): void => Sentry.showReportDialog({ eventId: this.state.sentryEventId })}>Report feedback</a>
-        <pre>{ this.state.error.toString() }</pre>
+        <ErrorUncaught errorMessage={this.state.error.message} sentryEventId={this.state.sentryEventId} goHome={this.clearError}></ErrorUncaught>
       </div>;
     } else {
 
@@ -166,8 +144,6 @@ class AppContainer extends React.Component<IProps, IState> {
             // eslint-disable react/jsx-no-bind
               render={( props ): any => {
                 return <Header
-                  getCachedWeb3ProviderInfo={this.getCachedWeb3ProviderInfo}
-                  loadCachedWeb3Provider={this.loadCachedWeb3Provider}
                   {...props} />;
               }
               } />
@@ -175,6 +151,7 @@ class AppContainer extends React.Component<IProps, IState> {
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
               <Route path="/profile/:accountAddress" component={AccountProfilePage} />
+              <Route path="/redemptions" component={RedemptionsPage} />
               <Route path="/" component={DaosPage} />
             </Switch>
 
@@ -219,41 +196,13 @@ class AppContainer extends React.Component<IProps, IState> {
             <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
                 <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website. We use this information for analytics in order to improve our website.</div>
-                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton}><img src="/assets/images/Icon/v-white-thick.svg"></img>Accept</a></div>
+                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton} data-test-id="acceptCookiesButton"><img src="/assets/images/Icon/v-white-thick.svg"></img>Accept</a></div>
               </div>
             </div>
           }
         </div>
       );
     }
-  }
-
-  private cacheWeb3Info(account: Address): void {
-    if (account) {
-      localStorage.setItem(AppContainer.accountStorageKey, account);
-    } else {
-      localStorage.removeItem(AppContainer.accountStorageKey);
-    }
-    const providerInfo = getWeb3ProviderInfo();
-    if (providerInfo) {
-      localStorage.setItem(AppContainer.providerStorageKey, JSON.stringify(providerInfo));
-    } else {
-      localStorage.removeItem(AppContainer.providerStorageKey);
-    }
-  }
-
-  private uncacheWeb3Info(): void {
-    localStorage.removeItem(AppContainer.accountStorageKey);
-    localStorage.removeItem(AppContainer.providerStorageKey);
-  }
-
-  private getCachedAccount(): Address | null {
-    return localStorage.getItem(AppContainer.accountStorageKey);
-  }
-
-  private getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
-    const cached = localStorage.getItem(AppContainer.providerStorageKey);
-    return cached ? JSON.parse(cached) : null;
   }
 
   private handleAccept(): void {

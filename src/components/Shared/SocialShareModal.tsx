@@ -1,5 +1,4 @@
 import * as React from "react";
-// @ts-ignore
 import { Modal } from "react-router-modal";
 import { copyToClipboard } from "lib/util";
 import Tooltip from "rc-tooltip";
@@ -39,10 +38,11 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
     this.setState({ showCopiedFeedback: false });
   }
 
-  private sharingMsg = "Check%20out%20this%20proposal%20in%20Alchemy!";
+  private sharingMsgTwitter = "Check%20out%20this%20proposal%20in%20@DAOstack%20Alchemy!";
+  private sharingMsg = "Check%20out%20this%20proposal%20in%20DAOstack%20Alchemy!";
 
   private selectTwitter(_event: any): void {
-    const sharingUrl = `https://twitter.com/intent/tweet/?text=${this.sharingMsg}&url=${this.props.url}`;
+    const sharingUrl = `https://twitter.com/intent/tweet/?text=${this.sharingMsgTwitter}&url=${this.props.url}`;
     window.open(sharingUrl, "_blank");   
   }
   private selectReddit(_event: any): void {
@@ -64,7 +64,7 @@ export default class SocialShareModal extends React.Component<IProps, IState> {
 
 
 
-  public render() {
+  public render(): RenderOutput {
     return (
       <Modal onBackdropClick={this.props.closeHandler}>
         <div className={css.modalWindow}>

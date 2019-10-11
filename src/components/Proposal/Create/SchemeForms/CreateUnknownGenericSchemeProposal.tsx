@@ -1,6 +1,6 @@
 import { ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn } from "arc";
+import { enableWalletProvider } from "arc";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -44,7 +44,8 @@ class CreateGenericScheme extends React.Component<IProps, null> {
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
     const proposalValues = {...values,
       scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
@@ -55,13 +56,13 @@ class CreateGenericScheme extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { handleClose } = this.props;
 
     return (
       <div className={css.contributionReward}>
         <Formik
-          // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{
             callData: "",
             title: "",

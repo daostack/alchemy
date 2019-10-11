@@ -13,7 +13,7 @@ interface IProps {
 
 export default class StakeGraph extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const {
       detailView,
       historyView,

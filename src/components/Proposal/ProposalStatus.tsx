@@ -10,7 +10,7 @@ export default class ProposalStatus extends React.Component<IProps, null> {
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
     const {
       proposalState,
     } = this.props;

@@ -28,11 +28,11 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   }
 
-  public async componentWillMount(): Promise<void> {
+  public async UNSAFE_componentWillMount(): Promise<void> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { proposal, detailView, transactionModal } = this.props;
 
     const proposalSummaryClass = classNames({
@@ -119,6 +119,9 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
                           {
                             // eslint-disable-next-line no-bitwise
                             permissions & 16 ? <div>Call genericCall on behalf of</div> : ""
+                          }
+                          {
+                            <div>Mint or burn reputation</div>
                           }
                         </td>
                       </tr>

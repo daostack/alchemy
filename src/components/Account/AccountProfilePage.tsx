@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { enableWeb3ProviderAndWarn, getArc, getWeb3Provider } from "arc";
+import { getArc, getWeb3Provider, getWeb3ProviderInfo, enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
@@ -79,7 +79,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     super(props);
   }
 
-  public async componentWillMount(): Promise<void> {
+  public async UNSAFE_componentWillMount(): Promise<void> {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);
@@ -95,7 +95,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification.bind(this)))) { return; }
+    if (!await enableWalletProvider({ showNotification })) { return; }
 
     const web3Provider = await getWeb3Provider();
     try {
@@ -113,7 +113,6 @@ class AccountProfilePage extends React.Component<IProps, null> {
       const params = [msg, currentAccountAddress];
       const result = await send({ method, params, from: currentAccountAddress });
       if (result.error) {
-        console.error("Signing canceled, data was not saved");
         showNotification(NotificationStatus.Failure, "Saving profile was canceled");
         setSubmitting(false);
         return;
@@ -127,12 +126,10 @@ class AccountProfilePage extends React.Component<IProps, null> {
         showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
       }
     } catch (error) {
-      if (web3Provider.isSafe) {
-        console.log(error.message);
-        showNotification(NotificationStatus.Failure, "We're very sorry, but Gnosis Safe does not support message signing :-(");
-      } else {
-        showNotification(NotificationStatus.Failure, error.message);
-      }
+      // eslint-disable-next-line no-console
+      console.error(error.message);
+      const providerName = getWeb3ProviderInfo(web3Provider).name;
+      showNotification(NotificationStatus.Failure, `We're very sorry, but saving the profile failed.  Your wallet (${providerName}) may not support message signing.`);
     }
     setSubmitting(false);
   }
@@ -141,7 +138,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     this.props.verifySocialAccount(this.props.accountAddress, account);
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const [dao, accountInfo, ethBalance, genBalance] = this.props.data;
 
     const { accountAddress, accountProfile, currentAccountAddress } = this.props;
@@ -154,14 +151,14 @@ class AccountProfilePage extends React.Component<IProps, null> {
           {editing ? (accountProfile && accountProfile.name ? "Edit Profile" : "Set Profile") : "View Profile"}
         </BreadcrumbsItem>
 
-        {dao ? <DaoSidebar {...this.props} dao={dao} /> : ""}
+        {dao ? <DaoSidebar dao={dao} /> : ""}
 
         <div className={css.profileContainer} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
           { typeof(accountProfile) === "undefined" ? "Loading..." :
             <Formik
               enableReinitialize
-              // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               initialValues={{
                 description: accountProfile ? accountProfile.description || "" : "",
                 name: accountProfile ? accountProfile.name || "" : "",
@@ -305,7 +302,6 @@ const SubscribedAccountProfilePage = withSubscription({
     const queryValues = queryString.parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
-
     return combineLatest(
       daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
       daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),

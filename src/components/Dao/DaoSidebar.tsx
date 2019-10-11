@@ -1,66 +1,62 @@
-import { Address, IDAOState, Token } from "@daostack/client";
+import axios, { AxiosResponse } from "axios";
+import { IDAOState, Token } from "@daostack/client";
+import { from } from "rxjs";
 import { getArc } from "arc";
+import Loading from "components/Shared/Loading";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
-import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
-import gql from "graphql-tag";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
-import { of } from "rxjs";
+import { first } from "rxjs/operators";
+import { IRootState } from "reducers";
+import { connect } from "react-redux";
 import * as css from "./Dao.scss";
 
 interface IExternalProps {
-  currentAccountAddress?: Address;
   dao: IDAOState;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<any[]>;
-
-interface IState {
-  openMenu: boolean;
+interface IStateProps {
+  menuOpen: boolean;
 }
 
-class DaoSidebar extends React.Component<IProps, IState> {
+interface IHasNewPosts {
+  hasNewPosts: boolean;
+}
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<IHasNewPosts>;
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    menuOpen: state.ui.menuOpen,
+  };
+};
+
+class DaoSidebar extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = {
-      openMenu: false,
-    };
   }
 
-  public handleOpenMenu(_event: any): void {
-    this.setState({ openMenu: !this.state.openMenu });
-  }
-
-  public render(): any {
-    if (this.props.data === null) {
-      return null;
-    }
-
-    const proposals = this.props.data;
+  public render(): RenderOutput {
     const dao = this.props.dao;
-    const proposalCount = proposals.length;
+    const hasNewPosts = this.props.data.hasNewPosts;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
     const menuClass = classNames({
-      [css.openMenu]: this.state.openMenu,
+      [css.menuOpen]: this.props.menuOpen,
       [css.daoSidebar]: true,
       clearfix: true,
     });
 
     return (
       <div className={menuClass}>
-        <div className={css.menuToggle} onClick={this.handleOpenMenu.bind(this)}>
-          <img className={css.menuClosed} src="/assets/images/Icon/Menu.svg"/>
-          <img className={css.menuOpen} src="/assets/images/Icon/Close.svg"/>
-        </div>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address}>
@@ -79,7 +75,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                 <p><a href="https://docs.google.com/document/d/1iJZfjmOK1eZHq-flmVF_44dZWNsN-Z2KAeLqW3pLQo8" target="_blank" rel="noopener noreferrer">Learn how to MemeDAO</a></p>
                 : dao.name === "ETHBerlin dHack.io" ?
                   <p>
-                  For more info join our TG group - 
+                  For more info join our TG group -
                     <a href="https://t.me/dhack0" target="_blank" rel="noopener noreferrer">t.me/dhack0</a>
                   </p>
                   : dao.name === "Identity" ?
@@ -120,7 +116,7 @@ class DaoSidebar extends React.Component<IProps, IState> {
                 </Link>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/history/"}>
+                <Link to={"/dao/" + dao.address + "/history/"}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -130,25 +126,24 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }></span>
                   <img src="/assets/images/Icon/menu/history.svg" />
                   History
-                </NavLink>
+                </Link>
               </li>
               <li>
-                <NavLink activeClassName={css.selected} to={"/dao/" + dao.address + "/redemptions/"}>
+                <Link to={"/dao/" + dao.address + "/discussion/"}>
                   <span className={
                     classNames({
                       [css.menuDot]: true,
-                      [css.red]: !!proposalCount,
-                    })
-                  } />
+                      [css.red]: hasNewPosts,
+                    })} />
                   <span className={
                     classNames({
                       [css.notification]: true,
-                      [css.redemptionNotification]: true,
+                      [css.discussionNotification]: true,
                     })
                   }></span>
-                  <img src="/assets/images/Icon/menu/redemption.svg" />
-                  Redemptions ({proposalCount})
-                </NavLink>
+                  <img src="/assets/images/Icon/menu/chat.svg" />
+                  DAO Wall
+                </Link>
               </li>
             </ul>
           </div>
@@ -170,7 +165,6 @@ class DaoSidebar extends React.Component<IProps, IState> {
           <div className={css.menuWrapper}>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><a href="https://docs.google.com/document/d/1M1erC1TVPPul3V_RmhKbyuFrpFikyOX0LnDfWOqO20Q/" target="_blank" rel="noopener noreferrer">FAQ</a></li>
               <li>
                 <a>Buy GEN</a>
                 <ul>
@@ -189,9 +183,8 @@ class DaoSidebar extends React.Component<IProps, IState> {
                   }
                 </ul>
               </li>
-              <li><a href="https://medium.com/daostack/new-introducing-alchemy-budgeting-for-decentralized-organizations-b81ba8501b23" target="_blank" rel="noopener noreferrer">Alchemy 101</a></li>
-              <li><a href="https://www.daostack.io/" target="_blank" rel="noopener noreferrer">About DAOstack</a></li>
-              <li><a href="https://www.daostack.io/community" target="_blank" rel="noopener noreferrer">Get involved</a></li>
+              <li><a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
+              <li><a href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
               <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
               <li className={css.daoStack}>
                 <a href="http://daostack.io" target="_blank" rel="noopener noreferrer">
@@ -205,38 +198,6 @@ class DaoSidebar extends React.Component<IProps, IState> {
     );
   }
 }
-
-export default withSubscription({
-  wrappedComponent: DaoSidebar,
-  loadingComponent: <div className={css.loading}><Loading /></div>,
-  errorComponent: (props) => <div>{props.error.message}</div>,
-
-  checkForUpdate: (oldProps: IExternalProps, newProps: IExternalProps) => {
-    return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress;
-  },
-
-  createObservable: (props: IExternalProps) => {
-    if (!props.dao) {
-      return of(null);
-    }
-
-    if (!props.currentAccountAddress) {
-      return of([]);
-    }
-
-    const query = gql`       {
-      proposals(where: {
-        accountsWithUnclaimedRewards_contains: ["${props.currentAccountAddress}"]
-        dao: "${props.dao.address}"
-      }) {
-        id
-        }
-      }
-      `;
-    const arc = getArc();
-    return arc.getObservable(query);
-  },
-});
 
 /***** DAO ETH Balance *****/
 interface IEthProps extends ISubscriptionProps<any> {
@@ -286,9 +247,45 @@ const SubscribedTokenBalance = withSubscription({
   checkForUpdate: (oldProps: ITokenProps, newProps: ITokenProps) => {
     return oldProps.dao.address !== newProps.dao.address || oldProps.tokenAddress !== newProps.tokenAddress;
   },
-  createObservable: (props: ITokenProps) => {
+  createObservable: async (props: ITokenProps) => {
+    // General cache priming for the DAO we do here
+    // prime the cache: get all members fo this DAO -
+    const daoState = props.dao;
+    
+    await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
+
     const arc = getArc();
     const token = new Token(props.tokenAddress, arc);
     return token.balanceOf(props.dao.address);
   },
 });
+
+const SubscribedDaoSidebar = withSubscription({
+  wrappedComponent: DaoSidebar,
+  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  createObservable: (props: IProps) => {
+
+    const lastAccessDate = localStorage.getItem(`daoWallEntryDate_${props.dao.address}`) || "0";
+
+    const promise = axios.get(`https://disqus.com/api/3.0/threads/listPosts.json?api_key=KVISHbDLtTycaGw5eoR8aQpBYN8bcVixONCXifYcih5CXanTLq0PpLh2cGPBkM4v&forum=${process.env.DISQUS_SITE}&thread:ident=${props.dao.address}&since=${lastAccessDate}&limit=1&order=asc`)
+      .then((response: AxiosResponse<any>): IHasNewPosts => {
+        if (response.status) {
+          const posts = response.data.response;
+          return { hasNewPosts : posts && posts.length };
+        } else {
+          // eslint-disable-next-line no-console
+          console.error(`request for disqus posts failed: ${response.statusText}`);
+          return { hasNewPosts : false };
+        }
+      })
+      .catch((error: Error): IHasNewPosts => {
+        // eslint-disable-next-line no-console
+        console.error(`request for disqus posts failed: ${error.message}`);
+        return { hasNewPosts : false };
+      });
+    return from(promise);
+  },
+});
+
+export default connect(mapStateToProps)(SubscribedDaoSidebar);

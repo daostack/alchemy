@@ -1,23 +1,22 @@
 import { Address, IDAOState, IMemberState, IProposalOutcome, IProposalStage, IProposalState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
-import { of } from "rxjs";
 import * as css from "./VoteButtons.scss";
 
 interface IExternalProps {
   altStyle?: boolean;
   contextMenu?: boolean;
   currentAccountAddress: Address;
+  currentAccountState: IMemberState;
   currentVote: IProposalOutcome|undefined;
   dao: IDAOState;
   detailView?: boolean;
@@ -30,7 +29,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<IMemberState>;
+type IProps = IExternalProps & IDispatchProps;
 
 interface IState {
   contextMenu?: boolean;
@@ -56,9 +55,9 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   public async handleClickVote(vote: number, _event: any): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-    const currentAccountState = this.props.data;
+    const currentAccountState = this.props.currentAccountState;
     if (currentAccountState.reputation.gt(new BN(0))) {
       this.setState({ showPreVoteModal: true, currentVote: vote });
     }
@@ -68,13 +67,12 @@ class VoteButtons extends React.Component<IProps, IState> {
     this.setState({ showPreVoteModal: false });
   }
 
-  public render(): any {
-    const currentAccountState = this.props.data;
-
+  public render(): RenderOutput {
     const {
       altStyle,
       contextMenu,
       currentVote,
+      currentAccountState,
       detailView,
       proposal,
       dao,
@@ -231,16 +229,4 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 }
 
-const SubscribedVoteButtons = withSubscription({
-  wrappedComponent: VoteButtons,
-  loadingComponent: <div>Loading...</div>,
-  errorComponent: (props) => <div>{ props.error.message }</div>,
-  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address || oldProps.currentAccountAddress !== newProps.currentAccountAddress; },
-  createObservable: (props: IProps) => {
-    const arc = getArc();
-    const dao = arc.dao(props.dao.address);
-    return props.currentAccountAddress ? dao.member(props.currentAccountAddress).state() : of(null);
-  },
-});
-
-export default connect(null, mapDispatchToProps)(SubscribedVoteButtons);
+export default connect(null, mapDispatchToProps)(VoteButtons);

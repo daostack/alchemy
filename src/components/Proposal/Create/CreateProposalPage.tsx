@@ -40,12 +40,12 @@ class CreateProposalPage extends React.Component<IProps, null> {
     history.push("/dao/" + daoAvatarAddress + "/scheme/" + schemeId);
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { daoAvatarAddress } = this.props;
     const scheme = this.props.data;
 
     const arc = getArc();
-    const schemeName = arc.getContractInfo(scheme.address).name;
+    let schemeName = arc.getContractInfo(scheme.address).name;
     if (!schemeName) {
       throw Error(`Unknown Scheme: ${scheme}`);
     }
@@ -63,9 +63,28 @@ class CreateProposalPage extends React.Component<IProps, null> {
       createSchemeComponent = <CreateSchemeRegistrarProposal {...props} />;
     } else if (schemeName === "GenericScheme") {
       const genericSchemeRegistry = new GenericSchemeRegistry();
-      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.genericSchemeParams.contractToCall);
+      let contractToCall: string;
+      if (scheme.genericSchemeParams) {
+        contractToCall  = scheme.genericSchemeParams.contractToCall;
+      } else if (scheme.uGenericSchemeParams) {
+        // TODO: these lins are a workaround because of a  subgraph bug: https://github.com/daostack/subgraph/issues/342
+        contractToCall  = scheme.uGenericSchemeParams.contractToCall;
+      } else {
+        throw Error("No contractToCall for this genericScheme was found!");
+      }
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(contractToCall);
       if (genericSchemeInfo) {
         createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
+        schemeName = genericSchemeInfo.specs.name;
+      } else {
+        createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
+      }
+    } else if (schemeName === "UGenericScheme") {
+      const genericSchemeRegistry = new GenericSchemeRegistry();
+      const genericSchemeInfo = genericSchemeRegistry.getSchemeInfo(props.scheme.uGenericSchemeParams.contractToCall);
+      if (genericSchemeInfo) {
+        createSchemeComponent = <CreateKnownGenericSchemeProposal  {...props} genericSchemeInfo={genericSchemeInfo} />;
+        schemeName = genericSchemeInfo.specs.name;
       } else {
         createSchemeComponent = <CreateUnknownGenericSchemeProposal {...props} />;
       }

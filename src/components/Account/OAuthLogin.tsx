@@ -85,7 +85,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     }
   }
 
-  public render() {
+  public render(): RenderOutput {
     const { className, editing, profile, provider } = this.props;
     const { disabled } = this.state;
 

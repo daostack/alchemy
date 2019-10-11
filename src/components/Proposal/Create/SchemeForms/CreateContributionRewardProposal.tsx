@@ -1,12 +1,13 @@
 import { IDAOState, ISchemeState } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import { enableWeb3ProviderAndWarn, getArc } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UserSearchField from "components/Shared/UserSearchField";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
+import Select from "react-select";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
@@ -43,6 +44,46 @@ interface IFormValues {
   [key: string]: any;
 }
 
+const customStyles = {
+  control: () => ({
+    // none of react-select's styles are passed to <Control />
+    width: 117,
+    height: 35,
+  }),
+  indicatorsContainer: () => ({
+    display: "none",
+  }),
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+  input: () => ({
+    height: 31,
+    marginTop: 0,
+    marginBottom: 0,
+  }),
+  valueContainer: () => ({
+    height: 35,
+  }),
+  menu: (provided: any) => ({
+    ... provided,
+    borderTop: "none",
+    borderRadius: "0 0 5px 5px",
+    marginTop: 1,
+    backgroundColor: "rgba(255,255,255,1)",
+  }),
+};
+
+export const SelectField: React.SFC<any> = ({options, field, form }) => (
+  <Select
+    options={options}
+    name={field.name}
+    value={options ? options.find((option: any) => option.value === field.value) : ""}
+    onChange={(option: any) => form.setFieldValue(field.name, option.value)}
+    onBlur={field.onBlur}
+    styles={customStyles}
+  />
+);
+
 class CreateContributionReward extends React.Component<IProps, null> {
 
   constructor(props: IProps) {
@@ -51,7 +92,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
-    if (!(await enableWeb3ProviderAndWarn(this.props.showNotification))) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
 
@@ -80,7 +121,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  public render(): any {
+  public render(): RenderOutput {
     const { data, daoAvatarAddress, handleClose } = this.props;
 
     if (!data) {
@@ -92,7 +133,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
     return (
       <div className={css.contributionReward}>
         <Formik
-          // eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           initialValues={{
             beneficiary: "",
             description: "",
@@ -187,7 +228,6 @@ class CreateContributionReward extends React.Component<IProps, null> {
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
-
               <label htmlFor="urlInput">
                 URL
                 <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
@@ -262,17 +302,18 @@ class CreateContributionReward extends React.Component<IProps, null> {
                     min={0}
                     step={0.1}
                   />
-                  <Field
-                    id="externalTokenInput"
-                    name="externalTokenAddress"
-                    component="select"
-                    className={css.externalTokenSelect}
-                  >
-                    { Object.keys(supportedTokens()).map((tokenAddress) => {
-                      const token = supportedTokens()[tokenAddress];
-                      return <option key={tokenAddress} value={tokenAddress}>{token["symbol"]}</option>;
-                    })}
-                  </Field>
+                  <div className={css.externalTokenSelect}>
+                    <Field
+                      id="externalTokenInput"
+                      name="externalTokenAddress"
+                      component={SelectField}
+                      className={css.externalTokenSelect}
+                      options={Object.keys(supportedTokens()).map((tokenAddress) => {
+                        const token = supportedTokens()[tokenAddress];
+                        return { value: tokenAddress, label: token["symbol"] };
+                      })}
+                    />
+                  </div>
                 </div>
 
                 <div className={css.reward}>
@@ -292,7 +333,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
 
                 {(touched.ethReward || touched.externalTokenReward || touched.reputationReward || touched.nativeTokenReward)
                     && touched.reputationReward && errors.rewards &&
-                  <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
+                <span className={css.errorMessage + " " + css.someReward}><br/> {errors.rewards}</span>
                 }
               </div>
               <div className={css.createProposalActions}>

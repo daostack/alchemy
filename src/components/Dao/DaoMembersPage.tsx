@@ -15,7 +15,7 @@ import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
-  dao: IDAOState;
+  daoState: IDAOState;
 }
 
 interface IStateProps {
@@ -35,17 +35,18 @@ const PAGE_SIZE = 100;
 
 class DaoMembersPage extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { data } = this.props;
 
     const members = data;
-    const { dao, profiles } = this.props;
+    const { daoState, profiles } = this.props;
 
-    const membersHTML = members.map((member) => <DaoMember key={member.staticState.address} dao={dao} member={member} profile={profiles[member.staticState.address]} />);
+    const membersHTML = members.map((member) =>
+      <DaoMember key={member.staticState.address} dao={daoState} member={member} profile={profiles[member.staticState.address]} />);
 
     return (
       <div className={css.membersContainer}>
-        <BreadcrumbsItem to={"/dao/" + dao.address + "/members"}>Reputation Holders</BreadcrumbsItem>
+        <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>Reputation Holders</BreadcrumbsItem>
         <Sticky enabled top={50} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
@@ -63,7 +64,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
         <InfiniteScroll
           dataLength={members.length} //This is important field to render the next data
           next={this.props.fetchMore}
-          hasMore={members.length < this.props.dao.memberCount}
+          hasMore={members.length < this.props.daoState.memberCount}
           loader={<h4>Loading...</h4>}
           endMessage={
             <p style={{textAlign: "center"}}>
@@ -83,13 +84,10 @@ const SubscribedDaoMembersPage = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
+  checkForUpdate: (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
 
   createObservable: (props: IExternalProps) => {
-    const arc = getArc();
-
-    const dao = new DAO(props.dao.address, arc);
-
+    const dao = props.daoState.dao;
     return dao.members({
       orderBy: "balance",
       orderDirection: "desc",
@@ -103,7 +101,7 @@ const SubscribedDaoMembersPage = withSubscription({
 
   getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
     const arc = getArc();
-    const dao = new DAO(props.dao.address, arc);
+    const dao = new DAO(props.daoState.address, arc);
     return dao.members({
       orderBy: "balance",
       orderDirection: "desc",

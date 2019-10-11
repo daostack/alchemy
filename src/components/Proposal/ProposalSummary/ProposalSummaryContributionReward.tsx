@@ -16,13 +16,13 @@ interface IProps {
   transactionModal?: boolean;
 }
 
-export default class ProposalSummary extends React.Component<IProps> {
+export default class ProposalSummaryContributionReward extends React.Component<IProps> {
 
   constructor(props: IProps) {
     super(props);
   }
 
-  public render() {
+  public render(): RenderOutput {
 
     const { beneficiaryProfile, proposal, dao, detailView, transactionModal } = this.props;
 
@@ -36,7 +36,7 @@ export default class ProposalSummary extends React.Component<IProps> {
         <span className={css.transferType}><RewardsString proposal={proposal} dao={dao} /></span>
         <strong className={css.transferAmount}></strong>
         <img src="/assets/images/Icon/Transfer.svg" />
-        <AccountPopup accountAddress={proposal.contributionReward.beneficiary} dao={dao} />
+        <AccountPopup accountAddress={proposal.contributionReward.beneficiary} daoState={dao} />
         <strong>
           <AccountProfileName accountAddress={proposal.contributionReward.beneficiary} accountProfile={beneficiaryProfile} daoAvatarAddress={dao.address}/>
         </strong>
