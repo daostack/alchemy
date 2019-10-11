@@ -8,6 +8,8 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, IProfileState, newProfile, profileDbToRedux } from "reducers/profilesReducer";
 import { promisify } from "util";
 
+const ACCESS_TOKEN_STORAGEKEY = "accessToken";
+
 // Load account profile data from our database for all the "members" of the DAO
 export function getProfilesForAllAccounts() {
   return async (dispatch: any, getState: () => IRootState) => {
@@ -86,7 +88,7 @@ export function updateProfile(accountAddress: string, name: string, description:
         description,
         timestamp,
         signature,
-      });
+      }, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_STORAGEKEY)} });
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
       // eslint-disable-next-line no-console
@@ -166,13 +168,15 @@ export function serverLoginByEthSign(accountAddress: string) {
       }
 
       try {
-        await axios.post(process.env.API_URL + "/loginByEthSign", {
+        const response = await axios.post(process.env.API_URL + "/loginByEthSign", {
           address: accountAddress,
           signature,
           nonce,
           timestamp,
           payload: text
         });
+        console.log("got response", response);
+        localStorage.setItem(ACCESS_TOKEN_STORAGEKEY, response.data.token);
       } catch (e) {
         const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
         console.error("Error logging in: ", errorMsg);
