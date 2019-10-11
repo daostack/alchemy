@@ -642,7 +642,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
        * Metamask to a different network without us knowing.  Just in that case, check here.
        */
       try {
-      await ensureCorrectNetwork(selectedProvider);
+        await ensureCorrectNetwork(selectedProvider);
       } catch (ex) {
         /**
          * This will result in completely logging out the user and clearing the cached provider,
