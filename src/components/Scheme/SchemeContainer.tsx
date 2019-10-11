@@ -53,6 +53,19 @@ const mapDispatchToProps = {
 
 class SchemeContainer extends React.Component<IProps, null> {
 
+  private getSchemeActivationTime(scheme: ISchemeState): moment.Moment {
+    /**
+     * SchemeRegistrar has two voting machines and must be handled differently, in `CreateSchemeRegistrarProposal`
+     */
+    if (scheme.name === "SchemeRegistrar") return moment();
+    
+    const name = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
+    /**
+     * assumes the voting machine is GP and its params can be found at scheme.<schemeName>Params.voteParams
+     */
+    return moment((scheme as any)[`${name}Params`].voteParams.activationTime);
+  }
+
   public handleNewProposal = async (e: any): Promise<void> => {
     const { daoAvatarAddress, schemeId, showNotification } = this.props;
     e.preventDefault();
