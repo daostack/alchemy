@@ -55,17 +55,21 @@ const mapDispatchToProps = {
 
 class SchemeContainer extends React.Component<IProps, null> {
 
-  private getSchemeActivationTime(scheme: ISchemeState): moment.Moment {
-    /**
-     * SchemeRegistrar has two voting machines and must be handled differently, in `CreateSchemeRegistrarProposal`
-     */
-    if (scheme.name === "SchemeRegistrar") return moment();
-    
-    const name = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
-    /**
+  private getSchemeIsActive(scheme: ISchemeState): boolean {
+    if (scheme.name === "SchemeRegistrar") {
+      /**
+       * If SchemeRegistrar has only one or the other active, then we'll deal with that case in
+       * `CreateSchemeRegistrarProposal`
+       */
+      return moment((scheme as any).schemeRegistrarParams.voteRegisterParams.activationTime).isSameOrBefore(moment()) ||
+             moment((scheme as any).schemeRegistrarParams.voteRemoveParams.activationTime).isSameOrBefore(moment());
+    } else {
+      const name = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
+      /**
      * assumes the voting machine is GP and its params can be found at scheme.<schemeName>Params.voteParams
      */
-    return moment((scheme as any)[`${name}Params`].voteParams.activationTime);
+      return moment((scheme as any)[`${name}Params`].voteParams.activationTime).isSameOrBefore(moment());
+    }
   }
 
   public handleNewProposal = async (e: any): Promise<void> => {
@@ -87,8 +91,7 @@ class SchemeContainer extends React.Component<IProps, null> {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
 
-    const activationTime =  this.getSchemeActivationTime(schemeState);
-    const isActive = activationTime.isSameOrBefore(moment());
+    const isActive =  this.getSchemeIsActive(schemeState);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,

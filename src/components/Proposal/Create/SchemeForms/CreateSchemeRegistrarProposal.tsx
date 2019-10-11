@@ -12,6 +12,8 @@ import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
+import moment = require("moment");
+
 interface IExternalProps {
   daoAvatarAddress: string;
   handleClose: () => any;
@@ -61,6 +63,12 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = { currentTab: "addScheme" };
+  }
+
+  private getIsActive(addScheme: boolean): boolean {
+    return moment((this.props.scheme as any)
+      .schemeRegistrarParams[addScheme ? "voteRegisterParams" : "voteRemoveParams"]
+      .activationTime).isSameOrBefore(moment());
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
@@ -137,21 +145,30 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       [css.editScheme]: currentTab === "editScheme",
     });
 
+    const isAddActive = this.getIsActive(true);
+    const isRemoveActive = this.getIsActive(false);
+
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
-          <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
-            <span></span>
-            Add Scheme
-          </button>
-          <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
-            <span></span>
-            Edit Scheme
-          </button>
-          <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
-            <span></span>
+          { isAddActive ?
+            <span>
+              <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
+                <span></span>
+              Add Scheme
+              </button>
+              <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
+                <span></span>
+              Edit Scheme
+              </button>
+            </span>
+            : "" }
+          { isRemoveActive ?
+            <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
+              <span></span>
             Remove Scheme
-          </button>
+            </button>
+            : "" }
         </div>
 
         <div className={schemeRegistrarFormClass}>
