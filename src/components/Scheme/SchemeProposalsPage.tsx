@@ -12,6 +12,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
+import classNames from "classnames";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
 
@@ -40,6 +41,7 @@ const Fade = ({ children, ...props }: any): any => (
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: H.History;
+  isActive: boolean;
   scheme: ISchemeState;
 }
 
@@ -71,7 +73,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
-    const { currentAccountAddress, fetchMore, hasMoreToLoad, scheme } = this.props;
+    const { currentAccountAddress, fetchMore, hasMoreToLoad, isActive, scheme } = this.props;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
@@ -119,10 +121,13 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
               <Link to={"/dao/" + dao.address}>
                 <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
               </Link>
-              <a className={css.blueButton}
-                href="javascript:void(0)"
-                onClick={this._handleNewProposal}
-                data-test-id="createProposal"
+              <a className={classNames({
+                [css.blueButton]: true,
+                [css.disabled]: !isActive,
+              })}
+              href="javascript:void(0)"
+              onClick={isActive ? this._handleNewProposal : null}
+              data-test-id="createProposal"
               >+ New Proposal</a>
             </div>
           </div>

@@ -20,6 +20,8 @@ import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
 
+import moment = require("moment");
+
 interface IDispatchProps {
   showNotification: typeof showNotification;
 }
@@ -85,6 +87,9 @@ class SchemeContainer extends React.Component<IProps, null> {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
 
+    const activationTime =  this.getSchemeActivationTime(schemeState);
+    const isActive = activationTime.isSameOrBefore(moment());
+
     const proposalsTabClass = classNames({
       [css.proposals]: true,
       [css.active]: !this.props.location.pathname.includes("info"),
@@ -106,10 +111,14 @@ class SchemeContainer extends React.Component<IProps, null> {
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
             <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
-            <a className={css.createProposal}
-              data-test-id="createProposal"
-              href="javascript:void(0)"
-              onClick={this.handleNewProposal}
+            <a className={
+              classNames({
+                [css.createProposal]: true,
+                [css.disabled]: !isActive,
+              })}
+            data-test-id="createProposal"
+            href="javascript:void(0)"
+            onClick={isActive ? this.handleNewProposal : null}
             >+ New proposal</a>
           </div>
         </Sticky>
@@ -119,7 +128,7 @@ class SchemeContainer extends React.Component<IProps, null> {
             render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
+            render={(props) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
         </Switch>
       </div>
     );
