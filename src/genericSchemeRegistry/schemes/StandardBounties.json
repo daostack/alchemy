@@ -2,13 +2,13 @@
   "name": "StandardBounties",
   "addresses": {
     "main": [
-      "0xe7f69ea2a79521136ee0bf3c50f6b5f1ea0ab0cd"
+      "0x43ee232734097B07803Ea605b49C6eE6Bf10f8cc"
     ],
     "rinkeby": [
-      "0xa53aadb09bd0612ee810ab8b4605c9ee45892169"
+      "0x38f1886081759f7d352c28984908d04e8d2205a6"
     ],
     "private": [
-      "0xa53aadb09bd0612ee810ab8b4605c9ee45892169"
+      "0x38f1886081759f7d352c28984908d04e8d2205a6"
     ]
   },
   "actions": [
