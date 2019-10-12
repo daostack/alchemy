@@ -152,16 +152,16 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
           { isAddActive ?
-            <span>
               <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
                 <span></span>
               Add Scheme
               </button>
+            : "" }
+          { isAddActive ?
               <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
                 <span></span>
               Edit Scheme
               </button>
-            </span>
             : "" }
           { isRemoveActive ?
             <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
