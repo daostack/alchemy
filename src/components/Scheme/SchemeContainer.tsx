@@ -64,7 +64,12 @@ class SchemeContainer extends React.Component<IProps, null> {
       return moment((scheme as any).schemeRegistrarParams.voteRegisterParams.activationTime).isSameOrBefore(moment()) ||
              moment((scheme as any).schemeRegistrarParams.voteRemoveParams.activationTime).isSameOrBefore(moment());
     } else {
-      const name = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
+      let name = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
+      if (name === "genericScheme") {
+        if (scheme.uGenericSchemeParams) {
+          name = "uGenericScheme";
+        }
+      }
       /**
      * assumes the voting machine is GP and its params can be found at scheme.<schemeName>Params.voteParams
      */
