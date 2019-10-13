@@ -1,34 +1,35 @@
 import * as uuid from "uuid";
 import { first } from "rxjs/operators";
-import { getArc } from "./utils";
+import { getArc, hideCookieAcceptWindow } from "./utils";
 
 describe("Proposals ENS", () => {
 
-  beforeEach(async () => {
-    const arc = getArc();
+  let url: string;
 
-    const daos = await arc.daos({ where: { name: "Nectar DAO"}}).pipe(first()).toPromise();
-    const dao = daos[0];
-    const url = `/dao/${dao.id}/`;
+  beforeEach(async () => {
     await browser.url(url);
 
+    await hideCookieAcceptWindow();
+    
     const ensTitle = await $("h2=RegistryLookup");
     await ensTitle.waitForExist();
     await ensTitle.click();
 
-    // const acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]")
-    // if (acceptCookiesButton.isExisting()) {
-    //   await acceptCookiesButton.click()
-    // }
-
     const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
     await createProposalButton.waitForExist();
     await createProposalButton.click();
+  });
 
+  before(async () => {
+    const arc = getArc();
+
+    const daos = await arc.daos({ where: { name: "Nectar DAO"}}).pipe(first()).toPromise();
+    const dao = daos[0];
+    url = `/dao/${dao.id}/`;
   });
 
   it("Create a Generic Scheme RegistryLookup proposal to add tokens", async () => {
-  //
+    
     const masterCopyTab = await $("*[data-test-id=\"action-tab-addNewTokens\"]");
     await masterCopyTab.click();
 
@@ -50,6 +51,9 @@ describe("Proposals ENS", () => {
     const tokens1Input = await $("*[id=\"_tokens.1\"]");
     await tokens1Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7945");
 
+    // need if not headless and your default browser zoom is less than 100%
+    const windowSize = await browser.getWindowSize();
+    await browser.setWindowSize(windowSize.width, windowSize.height + 300);
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
 
@@ -86,7 +90,9 @@ describe("Proposals ENS", () => {
     await tokensAdd.click();
     const tokens1Input = await $("*[id=\"_tokens.1\"]");
     await tokens1Input.setValue("0x501eab934f76b876c116cfffb511f5a065ea7945");
-    //
+    
+    const windowSize = await browser.getWindowSize();
+    await browser.setWindowSize(windowSize.width, windowSize.height + 300);
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
     //
@@ -96,11 +102,9 @@ describe("Proposals ENS", () => {
     await titleElement.waitForExist();
     // await titleElement.scrollIntoView(false);
     // await titleElement.click();
-    //
+    
     // const summaryDetailsElement = await $("[class*=\"summaryDetails\"]");
     // await summaryDetailsElement.waitForExist();
 
   });
-
-
 });
