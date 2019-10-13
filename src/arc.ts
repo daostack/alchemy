@@ -320,6 +320,17 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
     throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
   }
 }
+
+function inTesting(): boolean {
+  if (process.env.NODE_ENV === "development" && navigator.webdriver) {
+    // in test mode, we have an unlocked ganache and we are not using any wallet
+    console.log("not using any wallet, because we are in automated test");
+    selectedProvider = new Web3(settings.dev.web3Provider);
+    return true;
+  }
+  return false;
+}
+
 /**
  * Prompt user to select a web3Provider and enable their account.
  * Initializes Arc with the newly-selected web3Provider.
@@ -337,15 +348,6 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
   if (selectedProvider && (!provider || (selectedProvider === provider))) {
     return;
   } else if (!provider) {
-    /**
-     * if no provider then use web3Connect to obtain one
-     */
-    if (process.env.NODE_ENV === "development" && navigator.webdriver) {
-      // in test mode, we have an unlocked ganache and we are not using any wallet
-      console.log("not using any wallet, because we are in automated test");
-      selectedProvider = new Web3(settings.dev.web3Provider);
-      return;
-    }
 
     const web3Connect = new Web3Connect.Core({
       modal: false,
@@ -531,8 +533,7 @@ async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<voi
    * make sure the provider is the one we're looking for
    */
   if (!provider[web3ProviderInfo.check]) {
-    console.error(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
-    throw new Error("Unable to instantiate provider");
+    throw new Error(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
   }
 
   await enableWeb3Provider(provider);
@@ -591,6 +592,7 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
  * @param showNotification 
  */
 async function loadCachedWeb3Provider(): Promise<void> {
+
   const cachedWeb3ProviderInfo = getCachedWeb3ProviderInfo();
   if (cachedWeb3ProviderInfo) {
     try {
@@ -619,6 +621,11 @@ export interface IEnableWalletProviderParams {
 export async function enableWalletProvider(options: IEnableWalletProviderParams): Promise<boolean> {
   let msg: string;
   try {
+
+    if (inTesting()) {
+      return true;
+    }
+
     if (!selectedProvider) {
       await loadCachedWeb3Provider();
       if (!selectedProvider)
