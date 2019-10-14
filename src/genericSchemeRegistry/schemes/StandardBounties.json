@@ -38,7 +38,7 @@
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "decimals": 18
+          "decimals": 18
         }
       ],
       "abi": {
@@ -116,7 +116,7 @@
         {
           "label": "Deposit Amount",
           "name": "_depositAmount",
-          "decimals": 18
+          "decimals": 18
         }
       ],
       "abi": {
@@ -189,7 +189,7 @@
         {
           "label": "Token Amount",
           "name": "_amounts",
-          "decimals": 18
+          "decimals": 18
         }
       ],
       "abi": {
@@ -444,7 +444,7 @@
         {
           "label": "Token Amount",
           "name": "_amount",
-          "decimals": 18
+          "decimals": 18
         }
       ],
       "abi": {
@@ -633,7 +633,7 @@
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "decimals": 18
+          "decimals": 18
         }
       ],
       "abi": {
