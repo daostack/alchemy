@@ -29,7 +29,7 @@ interface IProps {
   action: any;
   actionType: ActionTypes;
   beneficiaryProfile?: IProfileState;
-  closeAction: (cancelled: boolean) => void;
+  closeAction: any;
   currentAccount?: IMemberState;
   currentAccountGens?: BN;
   dao: IDAOState;
@@ -61,11 +61,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     };
   }
 
-  private handleCancelAction = () => async () => {
-    this.props.closeAction(true);
-  }
-
-  private handleClickAction = () => async () => {
+  public async handleClickAction() {
     const { actionType, showNotification } = this.props;
     if (!await enableWalletProvider({ showNotification })) { return; }
 
@@ -74,7 +70,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     } else {
       this.props.action();
     }
-    this.props.closeAction(false);
+    this.props.closeAction();
   }
 
   public toggleInstructions() {
@@ -218,7 +214,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     }
 
     return (
-      <Modal onBackdropClick={this.handleCancelAction()}>
+      <Modal onBackdropClick={this.props.closeAction}>
         <div className={css.metaMaskModal}>
           <div className={modalWindowClass}>
             <div className={css.transactionHeader + " clearfix " + actionTypeClass}>
@@ -348,23 +344,23 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               {
                 <div className={css.preTransactionBottom}>
                   <div className={css.closeTransactionContainer}>
-                    <button onClick={this.handleCancelAction()}>
+                    <button onClick={this.props.closeAction}>
                       Cancel
                     </button>
                   </div>
                   { (actionType === ActionTypes.StakeFail || actionType === ActionTypes.StakePass) && (stakeAmount <= 0 || stakeAmount > accountGens) ?
-                    <Tooltip placement="top" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
+                    <Tooltip placement="left" trigger={["hover"]} overlay={this.state.stakeAmount <= 0 ? "Please enter a positive amount" : "Insufficient GENs"}>
                       <button
                         className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
                         disabled
-                        onClick={this.handleClickAction()}
+                        onClick={this.handleClickAction.bind(this)}
                         data-test-id="launch-metamask"
                       >
                         {transactionType}
                       </button>
                     </Tooltip>
                     :
-                    <button className={css.launchMetaMask} onClick={this.handleClickAction()} data-test-id="launch-metamask">
+                    <button className={css.launchMetaMask} onClick={this.handleClickAction.bind(this)} data-test-id="launch-metamask">
                       {transactionType}
                     </button>
                   }
