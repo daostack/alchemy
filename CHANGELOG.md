@@ -16,6 +16,8 @@
     - Shrink wallet providers popup window on mobile devices, so can be cancelled
     - more friendly display of error conditions (404 and uncaught exception errors)
     - List of voters in the Voters Popup now shows the user's friendly name, when available.
+    - Don't allow connecting to wrong networks
+    - Issue a notification when the user connects to a wrong network
     
   - Bugs Fixed
     - Align headers of table in proposal history
