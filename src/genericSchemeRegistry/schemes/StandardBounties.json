@@ -1,5 +1,5 @@
 {
-  "name": "StandardBounties",
+  "name": "Standard Bounties",
   "addresses": {
     "main": [
       "0x43ee232734097B07803Ea605b49C6eE6Bf10f8cc"
@@ -13,2294 +13,663 @@
   },
   "actions": [
     {
-        "id":"acceptFulfillment",
-        "label":"Accept Fulfillment",
-        "description":" Allows any of the approvers to accept a given submission",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "acceptFulfillment",
+      "label": "Accept Fulfillment",
+      "description": "Allows any of the approvers to accept a given submission",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Fulfillment ID",
+          "name": "_fulfillmentId"
+        },
+        {
+          "label": "Approver ID",
+          "name": "_approverId"
+        },
+        {
+          "label": "Token Amount",
+          "name": "_tokenAmounts",
+          "decimals": 18
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"Bounty Id",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"Fulfillment Id",
-              "name":"_fulfillmentId"
+            "name": "_fulfillmentId",
+            "type": "uint256"
           },
           {
-              "label":"Approver Id",
-              "name":"_approverId"
+            "name": "_approverId",
+            "type": "uint256"
           },
           {
-              "label":"Amount",
-              "name":"_tokenAmounts",
-              "placeholder":"Token Amount",
-              "decimals": 18
+            "name": "_tokenAmounts",
+            "type": "uint256[]"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_fulfillmentId",
-                "type":"uint256"
-              },
-              {
-                "name":"_approverId",
-                "type":"uint256"
-              },
-              {
-                "name":"_tokenAmounts",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"acceptFulfillment",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "acceptFulfillment",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"issueAndContribute",
-        "label":"Issue And Contribute",
-        "description":"Create a new bounty and contribute tokens to the bounty.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "issueAndContribute",
+      "label": "issue and Contribute",
+      "description": "Create a new bounty and contribute tokens to the bounty.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Issuer Addresses",
+          "name": "_issuers",
+          "placeholder": "DAO Avatar Address (0x0000…)"
+        },
+        {
+          "label": "Approver Addresses",
+          "name": "_approvers",
+          "placeholder": "DAO Avatar Address (0x0000…)"
+        },
+        {
+          "label": "Bounty Details",
+          "name": "_data",
+          "placeholder":"IPFS Hash (Qmd0...)"
+        },
+        {
+          "label": "Deadline",
+          "name": "_deadline",
+          "placeholder": "Timestamp"
+        },
+        {
+          "label": "Token",
+          "name": "_token",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Token Version",
+          "name": "_tokenVersion",
+          "placeholder":"0 for ETH, 20 for ERC20 Token"
+        },
+        {
+          "label": "Deposit Amount",
+          "name": "_depositAmount",
+          "decimals": 18
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"Issuer Address",
-              "name":"_issuers",
-              "placeholder":"DAO Address (0x0000…)"
+            "name": "_issuers",
+            "type": "address[]"
           },
           {
-              "label":"Approver Address",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
+            "name": "_approvers",
+            "type": "address[]"
           },
           {
-              "label":"Bounty Details",
-              "name":"_data",
-              "placeholder":"IPFS Hash (Qmd0...)"
+            "name": "_data",
+            "type": "string"
           },
           {
-              "label":"Deadline",
-              "name":"_deadline",
-              "placeholder":"Timestamp"
+            "name": "_deadline",
+            "type": "uint256"
           },
           {
-              "label":"Bounty Token Address",
-              "name":"_token",
-              "placeholder":"Address (0x0000…)"
+            "name": "_token",
+            "type": "address"
           },
           {
-              "label":"Token Version",
-              "name":"_tokenVersion",
-              "placeholder":"0 for ETH, 20 for ERC20"
+            "name": "_tokenVersion",
+            "type": "uint256"
           },
           {
-              "label":"Contribution Amount",
-              "name":"_depositAmount",
-              "decimals": 18
+            "name": "_depositAmount",
+            "type": "uint256"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_issuers",
-                "type":"address[]"
-              },
-              {
-                "name":"_approvers",
-                "type":"address[]"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              },
-              {
-                "name":"_deadline",
-                "type":"uint256"
-              },
-              {
-                "name":"_token",
-                "type":"address"
-              },
-              {
-                "name":"_tokenVersion",
-                "type":"uint256"
-              },
-              {
-                "name":"_depositAmount",
-                "type":"uint256"
-              }
-          ],
-          "name":"issueAndContribute",
-          "outputs":[
-              {
-                "name":"",
-                "type":"uint256"
-              }
-          ],
-          "payable":true,
-          "stateMutability":"payable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"changeApprover",
-        "label":"changeApprover",
-        "description":"changeApprover",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+        "name": "issueAndContribute",
+        "outputs": [
           {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_issuerId",
-              "name":"_issuerId"
-          },
-          {
-              "label":"_approverId",
-              "name":"_approverId"
-          },
-          {
-              "label":"_approver",
-              "name":"_approver",
-              "placeholder":"Address (0x0000…)"
+            "name": "",
+            "type": "uint256"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_approverId",
-                "type":"uint256"
-              },
-              {
-                "name":"_approver",
-                "type":"address"
-              }
-          ],
-          "name":"changeApprover",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      }
     },
     {
-        "id":"drainBounty",
-        "label":"Drain Bounty",
-        "description":" Allows an issuer to drain the funds from the bounty.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "drainBounty",
+      "label": "Drain Bounty",
+      "description": "Allows an issuer to drain the funds from the bounty.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Issuer ID",
+          "name": "_issuerId"
+        },
+        {
+          "label": "Token Amount",
+          "name": "_amounts",
+          "decimals": 18
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"Bounty Id",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"Issuer Id",
-              "name":"_issuerId"
+            "name": "_issuerId",
+            "type": "uint256"
           },
           {
-              "label":"Amount",
-              "name":"_amounts",
-              "placeholder": "Token Amount to be Sent",
-              "decimals": 18
+            "name": "_amounts",
+            "type": "uint256[]"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_amounts",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"drainBounty",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "drainBounty",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"performAction",
-        "label":"performAction",
-        "description":"performAction",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "replaceApprovers",
+      "label": "Replace Approvers",
+      "description": "Allows any of the issuers to replace the approvers of the bounty.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Issuer ID",
+          "name": "_issuerId"
+        },
+        {
+          "label": "New Approver Addresses",
+          "name": "_approvers",
+          "placeholder": "DAO Avatar Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"_bountyId",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"_data",
-              "name":"_data"
+            "name": "_issuerId",
+            "type": "uint256"
+          },
+          {
+            "name": "_approvers",
+            "type": "address[]"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              }
-          ],
-          "name":"performAction",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "replaceApprovers",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"addApprovers",
-        "label":"addApprovers",
-        "description":"addApprovers",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "changeData",
+      "label": "Change Bounty Details",
+      "description": "Allows any of the issuers to change the bounty's details.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Issuer ID",
+          "name": "_issuerId"
+        },
+        {
+          "label": "Bounty Details",
+          "name": "_data",
+          "placeholder":"IPFS Hash (Qmd0...)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"_bountyId",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"_issuerId",
-              "name":"_issuerId"
+            "name": "_issuerId",
+            "type": "uint256"
           },
           {
-              "label":"_approvers",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
+            "name": "_data",
+            "type": "string"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_approvers",
-                "type":"address[]"
-              }
-          ],
-          "name":"addApprovers",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "changeData",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"issueBounty",
-        "label":"issueBounty",
-        "description":"issueBounty",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "replaceIssuers",
+      "label": "Replace Issuers",
+      "description": "Allows any of the issuers to replace the issuers of the bounty",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Issuer ID",
+          "name": "_issuerId"
+        },
+        {
+          "label": "New Issuer Addresses",
+          "name": "_issuers",
+          "placeholder": "DAO Avatar Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"_issuers",
-              "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"_approvers",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
+            "name": "_issuerId",
+            "type": "uint256"
           },
           {
-              "label":"_data",
-              "name":"_data"
-          },
-          {
-              "label":"_deadline",
-              "name":"_deadline"
-          },
-          {
-              "label":"_token",
-              "name":"_token",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_tokenVersion",
-              "name":"_tokenVersion"
+            "name": "_issuers",
+            "type": "address[]"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_issuers",
-                "type":"address[]"
-              },
-              {
-                "name":"_approvers",
-                "type":"address[]"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              },
-              {
-                "name":"_deadline",
-                "type":"uint256"
-              },
-              {
-                "name":"_token",
-                "type":"address"
-              },
-              {
-                "name":"_tokenVersion",
-                "type":"uint256"
-              }
-          ],
-          "name":"issueBounty",
-          "outputs":[
-              {
-                "name":"",
-                "type":"uint256"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "replaceIssuers",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"setMetaTxRelayer",
-        "label":"setMetaTxRelayer",
-        "description":"setMetaTxRelayer",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "refundContributions",
+      "label": "Refund Contributions",
+      "description": "Allows users to refund their contributions in bulk.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Issuer ID",
+          "name": "_issuerId"
+        },
+        {
+          "label": "Contribution IDs",
+          "name": "_contributionIds"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"_relayer",
-              "name":"_relayer",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
+          },
+          {
+            "name": "_bountyId",
+            "type": "uint256"
+          },
+          {
+            "name": "_issuerId",
+            "type": "uint256"
+          },
+          {
+            "name": "_contributionIds",
+            "type": "uint256[]"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_relayer",
-                "type":"address"
-              }
-          ],
-          "name":"setMetaTxRelayer",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "refundContributions",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"replaceApprovers",
-        "label":"Replace Approvers",
-        "description":"Allows any of the issuers to replace the approvers of the bounty.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "contribute",
+      "label": "Add Contribution",
+      "description":"Contributing merits no privelages to administer the funds in the bounty or accept submissions. Contributions are refundable but only on the condition that the deadline has elapsed, and the bounty has not yet paid out any funds. All funds deposited in a bounty are under control of the DAO.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Token Amount",
+          "name": "_amount",
+          "decimals": 18
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"Bounty Id",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"Issuer Id",
-              "name":"_issuerId"
-          },
-          {
-              "label":"New Approver Address",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
+            "name": "_amount",
+            "type": "uint256"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_approvers",
-                "type":"address[]"
-              }
-          ],
-          "name":"replaceApprovers",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "contribute",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "function"
+      }
     },
     {
-        "id":"callStarted",
-        "label":"callStarted",
-        "description":"callStarted",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-
-        ],
-        "abi":{
-          "constant":true,
-          "inputs":[
-
-          ],
-          "name":"callStarted",
-          "outputs":[
-              {
-                "name":"",
-                "type":"bool"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"view",
-          "type":"function"
+      "id": "changeDeadline",
+      "label": "Change Deadline",
+      "description": "Allows any of the issuers to change the deadline the bounty.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Issuer ID",
+          "name": "_issuerId"
+        },
+        {
+          "label": "Deadline",
+          "name": "_deadline",
+          "placeholder": "Timestamp"
         }
-    },
-    {
-        "id":"changeData",
-        "label":"Change Bounty Details",
-        "description":"Allows any of the issuers to change the bounty's details.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"Bounty Id",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"Issuer Id",
-              "name":"_issuerId"
+            "name": "_issuerId",
+            "type": "uint256"
           },
           {
-              "label":"Bounty Details",
-              "name":"_data",
-              "placeholder":"IPFS Hash (Qmd0...)"
+            "name": "_deadline",
+            "type": "uint256"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              }
-          ],
-          "name":"changeData",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "changeDeadline",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"numBounties",
-        "label":"numBounties",
-        "description":"numBounties",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-
-        ],
-        "abi":{
-          "constant":true,
-          "inputs":[
-
-          ],
-          "name":"numBounties",
-          "outputs":[
-              {
-                "name":"",
-                "type":"uint256"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"view",
-          "type":"function"
+      "id": "changeBounty",
+      "label": "Change Bounty",
+      "description": "Allows any of the issuers to change the bounty.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Issuer ID",
+          "name": "_issuerId"
+        },
+        {
+          "label": "Issuer Addresses",
+          "name": "_issuers",
+          "placeholder": "DAO Avatar Address (0x0000…)"
+        },
+        {
+          "label": "Approver Addresses",
+          "name": "_approvers",
+          "placeholder": "DAO Avatar Address (0x0000…)"
+        },
+        {
+          "label": "Bounty Details",
+          "name": "_data",
+          "placeholder":"IPFS Hash (Qmd0...)"
+        },
+        {
+          "label": "Deadline",
+          "name": "_deadline",
+          "placeholder": "Timestamp"
         }
-    },
-    {
-        "id":"owner",
-        "label":"owner",
-        "description":"owner",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-
-        ],
-        "abi":{
-          "constant":true,
-          "inputs":[
-
-          ],
-          "name":"owner",
-          "outputs":[
-              {
-                "name":"",
-                "type":"address"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"view",
-          "type":"function"
-        }
-    },
-    {
-        "id":"refundContribution",
-        "label":"refundContribution",
-        "description":"refundContribution",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "Sender Address",
+            "type": "address"
           },
           {
-              "label":"_bountyId",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"_contributionId",
-              "name":"_contributionId"
+            "name": "_issuerId",
+            "type": "uint256"
+          },
+          {
+            "name": "_issuers",
+            "type": "address[]"
+          },
+          {
+            "name": "_approvers",
+            "type": "address[]"
+          },
+          {
+            "name": "_data",
+            "type": "string"
+          },
+          {
+            "name": "_deadline",
+            "type": "uint256"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_contributionId",
-                "type":"uint256"
-              }
-          ],
-          "name":"refundContribution",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
+        "name": "changeBounty",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     },
     {
-        "id":"fulfillBounty",
-        "label":"fulfillBounty",
-        "description":"fulfillBounty",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
+      "id": "fulfillAndAccept",
+      "label": "Fulfill and Accept",
+      "description": "Allows any of the approvers to both fulfill and accept a submission.",
+      "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
+      "fields": [
+        {
+          "label": "Sender Address",
+          "name": "_sender",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty ID",
+          "name": "_bountyId"
+        },
+        {
+          "label": "Fulfiller Addresses",
+          "name": "_fulfillers",
+          "placeholder": "Address (0x0000…)"
+        },
+        {
+          "label": "Bounty Details",
+          "name": "_data",
+          "placeholder":"IPFS Hash (Qmd0...)"
+        },
+        {
+          "label": "Fulfillment ID",
+          "name": "_approverId"
+        },
+        {
+          "label": "Token Amount",
+          "name": "_tokenAmounts",
+          "decimals": 18
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
           {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
+            "name": "_sender",
+            "type": "address"
           },
           {
-              "label":"_bountyId",
-              "name":"_bountyId"
+            "name": "_bountyId",
+            "type": "uint256"
           },
           {
-              "label":"_fulfillers",
-              "name":"_fulfillers",
-              "placeholder":"Address (0x0000…)"
+            "name": "_fulfillers",
+            "type": "address[]"
           },
           {
-              "label":"_data",
-              "name":"_data"
+            "name": "_data",
+            "type": "string"
+          },
+          {
+            "name": "_approverId",
+            "type": "uint256"
+          },
+          {
+            "name": "_tokenAmounts",
+            "type": "uint256[]"
           }
         ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_fulfillers",
-                "type":"address[]"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              }
-          ],
-          "name":"fulfillBounty",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"replaceIssuers",
-        "label":"Replace Issuers",
-        "description":"Allows any of the issuers to replace the issuers of the bounty",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Bounty Id",
-              "name":"_bountyId"
-          },
-          {
-              "label":"Issuer Id",
-              "name":"_issuerId"
-          },
-          {
-              "label":"New Issuers Address",
-              "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuers",
-                "type":"address[]"
-              }
-          ],
-          "name":"replaceIssuers",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"changeIssuer",
-        "label":"changeIssuer",
-        "description":"changeIssuer",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_issuerId",
-              "name":"_issuerId"
-          },
-          {
-              "label":"_issuerIdToChange",
-              "name":"_issuerIdToChange"
-          },
-          {
-              "label":"_newIssuer",
-              "name":"_newIssuer",
-              "placeholder":"Address (0x0000…)"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerIdToChange",
-                "type":"uint256"
-              },
-              {
-                "name":"_newIssuer",
-                "type":"address"
-              }
-          ],
-          "name":"changeIssuer",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"refundContributions",
-        "label":"Refund Contributions",
-        "description":"Allows users to refund their contributions in bulk.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Bounty Id",
-              "name":"_bountyId"
-          },
-          {
-              "label":"Issuer Id",
-              "name":"_issuerId"
-          },
-          {
-              "label":"Contribution Id",
-              "name":"_contributionIds"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_contributionIds",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"refundContributions",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"contribute",
-        "label":"Allows users to contribute tokens to a given bounty. ",
-        "description":"Contributing merits no privelages to administer the funds in the bounty or accept submissions. Contributions are refundable but only on the condition that the deadline has elapsed, and the bounty has not yet paid out any funds. All funds deposited in a bounty are at the mercy of a bounty's issuers and approvers.",
-
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Bounty Id",
-              "name":"_bountyId"
-          },
-          {
-              "label":"Contribution Amount",
-              "name":"_amount",
-              "placeholder": "Token Amount",
-              "decimals": 18
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_amount",
-                "type":"uint256"
-              }
-          ],
-          "name":"contribute",
-          "outputs":[
-
-          ],
-          "payable":true,
-          "stateMutability":"payable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"changeDeadline",
-        "label":"Change Deadline",
-        "description":"Allows any of the issuers to change the deadline the bounty.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Bounty Id",
-              "name":"_bountyId"
-          },
-          {
-              "label":"Issuer Id",
-              "name":"_issuerId"
-          },
-          {
-              "label":"Deadline",
-              "name":"_deadline",
-              "placeholder":"Timestamp"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_deadline",
-                "type":"uint256"
-              }
-          ],
-          "name":"changeDeadline",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"changeBounty",
-        "label":"Change Bounty",
-        "description":"Allows any of the issuers to change the bounty.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Bounty Id",
-              "name":"_bountyId"
-          },
-          {
-              "label":"Issuer Id",
-              "name":"_issuerId",
-              "placeholder":"Index of issuer calling this action"
-          },
-          {
-              "label":"New Issuer Address",
-              "name":"_issuers",
-              "placeholder":"DAO Address (0x0000…)"
-          },
-          {
-              "label":"New Approver Address",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Bounty Details",
-              "name":"_data",
-              "placeholder":"IPFS Hash (Qmd0...)"
-          },
-          {
-              "label":"Deadline",
-              "name":"_deadline",
-              "placeholder":"Timestamp"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuers",
-                "type":"address[]"
-              },
-              {
-                "name":"_approvers",
-                "type":"address[]"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              },
-              {
-                "name":"_deadline",
-                "type":"uint256"
-              }
-          ],
-          "name":"changeBounty",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"metaTxRelayer",
-        "label":"metaTxRelayer",
-        "description":"metaTxRelayer",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-
-        ],
-        "abi":{
-          "constant":true,
-          "inputs":[
-
-          ],
-          "name":"metaTxRelayer",
-          "outputs":[
-              {
-                "name":"",
-                "type":"address"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"view",
-          "type":"function"
-        }
-    },
-    {
-        "id":"fulfillAndAccept",
-        "label":"Fulfill And Accept",
-        "description":"Allows any of the approvers to both fulfill and accept a submission.",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"Sender Address",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Bounty Id",
-              "name":"_bountyId"
-          },
-          {
-              "label":"Fulfiller Address",
-              "name":"_fulfillers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"Submission Details",
-              "name":"_data",
-              "placeholder":"IPFS Hash (Qmd0...)"
-          },
-          {
-              "label":"Approver Id",
-              "name":"_approverId"
-          },
-          {
-              "label":"Amount",
-              "name":"_tokenAmounts",
-              "placeholder":"Token Amount to be Paid",
-              "decimals": 18
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_fulfillers",
-                "type":"address[]"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              },
-              {
-                "name":"_approverId",
-                "type":"uint256"
-              },
-              {
-                "name":"_tokenAmounts",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"fulfillAndAccept",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"updateFulfillment",
-        "label":"updateFulfillment",
-        "description":"updateFulfillment",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_fulfillmentId",
-              "name":"_fulfillmentId"
-          },
-          {
-              "label":"_fulfillers",
-              "name":"_fulfillers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_data",
-              "name":"_data"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_fulfillmentId",
-                "type":"uint256"
-              },
-              {
-                "name":"_fulfillers",
-                "type":"address[]"
-              },
-              {
-                "name":"_data",
-                "type":"string"
-              }
-          ],
-          "name":"updateFulfillment",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"addIssuers",
-        "label":"addIssuers",
-        "description":"addIssuers",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_issuerId",
-              "name":"_issuerId"
-          },
-          {
-              "label":"_issuers",
-              "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuerId",
-                "type":"uint256"
-              },
-              {
-                "name":"_issuers",
-                "type":"address[]"
-              }
-          ],
-          "name":"addIssuers",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"bounties",
-        "label":"bounties",
-        "description":"bounties",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"",
-              "name":""
-          }
-        ],
-        "abi":{
-          "constant":true,
-          "inputs":[
-              {
-                "name":"",
-                "type":"uint256"
-              }
-          ],
-          "name":"bounties",
-          "outputs":[
-              {
-                "name":"deadline",
-                "type":"uint256"
-              },
-              {
-                "name":"token",
-                "type":"address"
-              },
-              {
-                "name":"tokenVersion",
-                "type":"uint256"
-              },
-              {
-                "name":"balance",
-                "type":"uint256"
-              },
-              {
-                "name":"hasPaidOut",
-                "type":"bool"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"view",
-          "type":"function"
-        }
-    },
-    {
-        "id":"tokenBalances",
-        "label":"tokenBalances",
-        "description":"tokenBalances",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"",
-              "name":""
-          },
-          {
-              "label":"",
-              "name":""
-          }
-        ],
-        "abi":{
-          "constant":true,
-          "inputs":[
-              {
-                "name":"",
-                "type":"uint256"
-              },
-              {
-                "name":"",
-                "type":"uint256"
-              }
-          ],
-          "name":"tokenBalances",
-          "outputs":[
-              {
-                "name":"",
-                "type":"bool"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"view",
-          "type":"function"
-        }
-    },
-    {
-        "id":"refundMyContributions",
-        "label":"refundMyContributions",
-        "description":"refundMyContributions",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_sender",
-              "name":"_sender",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_contributionIds",
-              "name":"_contributionIds"
-          }
-        ],
-        "abi":{
-          "constant":false,
-          "inputs":[
-              {
-                "name":"_sender",
-                "type":"address"
-              },
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "name":"_contributionIds",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"refundMyContributions",
-          "outputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"function"
-        }
-    },
-    {
-        "id":"getBounty",
-        "label":"getBounty",
-        "description":"getBounty",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          }
-        ],
-        "abi":{
-          "constant":true,
-          "inputs":[
-              {
-                "name":"_bountyId",
-                "type":"uint256"
-              }
-          ],
-          "name":"getBounty",
-          "outputs":[
-              {
-                "components":[
-                    {
-                      "name":"issuers",
-                      "type":"address[]"
-                    },
-                    {
-                      "name":"approvers",
-                      "type":"address[]"
-                    },
-                    {
-                      "name":"deadline",
-                      "type":"uint256"
-                    },
-                    {
-                      "name":"token",
-                      "type":"address"
-                    },
-                    {
-                      "name":"tokenVersion",
-                      "type":"uint256"
-                    },
-                    {
-                      "name":"balance",
-                      "type":"uint256"
-                    },
-                    {
-                      "name":"hasPaidOut",
-                      "type":"bool"
-                    },
-                    {
-                      "components":[
-                          {
-                            "name":"fulfillers",
-                            "type":"address[]"
-                          },
-                          {
-                            "name":"submitter",
-                            "type":"address"
-                          }
-                      ],
-                      "name":"fulfillments",
-                      "type":"tuple[]"
-                    },
-                    {
-                      "components":[
-                          {
-                            "name":"contributor",
-                            "type":"address"
-                          },
-                          {
-                            "name":"amount",
-                            "type":"uint256"
-                          },
-                          {
-                            "name":"refunded",
-                            "type":"bool"
-                          }
-                      ],
-                      "name":"contributions",
-                      "type":"tuple[]"
-                    }
-                ],
-                "name":"",
-                "type":"tuple"
-              }
-          ],
-          "payable":false,
-          "stateMutability":"view",
-          "type":"function"
-        }
-    },
-    {
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-
-        ],
-        "abi":{
-          "inputs":[
-
-          ],
-          "payable":false,
-          "stateMutability":"nonpayable",
-          "type":"constructor"
-        }
-    },
-    {
-        "id":"BountyIssued",
-        "label":"BountyIssued",
-        "description":"BountyIssued",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_creator",
-              "name":"_creator",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_issuers",
-              "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_approvers",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_data",
-              "name":"_data"
-          },
-          {
-              "label":"_deadline",
-              "name":"_deadline"
-          },
-          {
-              "label":"_token",
-              "name":"_token",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_tokenVersion",
-              "name":"_tokenVersion"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_creator",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_issuers",
-                "type":"address[]"
-              },
-              {
-                "indexed":false,
-                "name":"_approvers",
-                "type":"address[]"
-              },
-              {
-                "indexed":false,
-                "name":"_data",
-                "type":"string"
-              },
-              {
-                "indexed":false,
-                "name":"_deadline",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_token",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_tokenVersion",
-                "type":"uint256"
-              }
-          ],
-          "name":"BountyIssued",
-          "type":"event"
-        }
-    },
-    {
-        "id":"ContributionAdded",
-        "label":"ContributionAdded",
-        "description":"ContributionAdded",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_contributionId",
-              "name":"_contributionId"
-          },
-          {
-              "label":"_contributor",
-              "name":"_contributor",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_amount",
-              "name":"_amount"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_contributionId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_contributor",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_amount",
-                "type":"uint256"
-              }
-          ],
-          "name":"ContributionAdded",
-          "type":"event"
-        }
-    },
-    {
-        "id":"ContributionRefunded",
-        "label":"ContributionRefunded",
-        "description":"ContributionRefunded",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_contributionId",
-              "name":"_contributionId"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_contributionId",
-                "type":"uint256"
-              }
-          ],
-          "name":"ContributionRefunded",
-          "type":"event"
-        }
-    },
-    {
-        "id":"ContributionsRefunded",
-        "label":"ContributionsRefunded",
-        "description":"ContributionsRefunded",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_issuer",
-              "name":"_issuer",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_contributionIds",
-              "name":"_contributionIds"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_issuer",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_contributionIds",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"ContributionsRefunded",
-          "type":"event"
-        }
-    },
-    {
-        "id":"BountyDrained",
-        "label":"BountyDrained",
-        "description":"BountyDrained",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_issuer",
-              "name":"_issuer",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_amounts",
-              "name":"_amounts"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_issuer",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_amounts",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"BountyDrained",
-          "type":"event"
-        }
-    },
-    {
-        "id":"ActionPerformed",
-        "label":"ActionPerformed",
-        "description":"ActionPerformed",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_fulfiller",
-              "name":"_fulfiller",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_data",
-              "name":"_data"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_fulfiller",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_data",
-                "type":"string"
-              }
-          ],
-          "name":"ActionPerformed",
-          "type":"event"
-        }
-    },
-    {
-        "id":"BountyFulfilled",
-        "label":"BountyFulfilled",
-        "description":"BountyFulfilled",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_fulfillmentId",
-              "name":"_fulfillmentId"
-          },
-          {
-              "label":"_fulfillers",
-              "name":"_fulfillers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_data",
-              "name":"_data"
-          },
-          {
-              "label":"_submitter",
-              "name":"_submitter",
-              "placeholder":"Address (0x0000…)"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_fulfillmentId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_fulfillers",
-                "type":"address[]"
-              },
-              {
-                "indexed":false,
-                "name":"_data",
-                "type":"string"
-              },
-              {
-                "indexed":false,
-                "name":"_submitter",
-                "type":"address"
-              }
-          ],
-          "name":"BountyFulfilled",
-          "type":"event"
-        }
-    },
-    {
-        "id":"FulfillmentUpdated",
-        "label":"FulfillmentUpdated",
-        "description":"FulfillmentUpdated",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_fulfillmentId",
-              "name":"_fulfillmentId"
-          },
-          {
-              "label":"_fulfillers",
-              "name":"_fulfillers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_data",
-              "name":"_data"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_fulfillmentId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_fulfillers",
-                "type":"address[]"
-              },
-              {
-                "indexed":false,
-                "name":"_data",
-                "type":"string"
-              }
-          ],
-          "name":"FulfillmentUpdated",
-          "type":"event"
-        }
-    },
-    {
-        "id":"FulfillmentAccepted",
-        "label":"FulfillmentAccepted",
-        "description":"FulfillmentAccepted",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_fulfillmentId",
-              "name":"_fulfillmentId"
-          },
-          {
-              "label":"_approver",
-              "name":"_approver",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_tokenAmounts",
-              "name":"_tokenAmounts"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_fulfillmentId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_approver",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_tokenAmounts",
-                "type":"uint256[]"
-              }
-          ],
-          "name":"FulfillmentAccepted",
-          "type":"event"
-        }
-    },
-    {
-        "id":"BountyChanged",
-        "label":"BountyChanged",
-        "description":"BountyChanged",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_changer",
-              "name":"_changer",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_issuers",
-              "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_approvers",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_data",
-              "name":"_data"
-          },
-          {
-              "label":"_deadline",
-              "name":"_deadline"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_changer",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_issuers",
-                "type":"address[]"
-              },
-              {
-                "indexed":false,
-                "name":"_approvers",
-                "type":"address[]"
-              },
-              {
-                "indexed":false,
-                "name":"_data",
-                "type":"string"
-              },
-              {
-                "indexed":false,
-                "name":"_deadline",
-                "type":"uint256"
-              }
-          ],
-          "name":"BountyChanged",
-          "type":"event"
-        }
-    },
-    {
-        "id":"BountyIssuersUpdated",
-        "label":"BountyIssuersUpdated",
-        "description":"BountyIssuersUpdated",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_changer",
-              "name":"_changer",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_issuers",
-              "name":"_issuers",
-              "placeholder":"Address (0x0000…)"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_changer",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_issuers",
-                "type":"address[]"
-              }
-          ],
-          "name":"BountyIssuersUpdated",
-          "type":"event"
-        }
-    },
-    {
-        "id":"BountyApproversUpdated",
-        "label":"BountyApproversUpdated",
-        "description":"BountyApproversUpdated",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_changer",
-              "name":"_changer",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_approvers",
-              "name":"_approvers",
-              "placeholder":"Address (0x0000…)"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_changer",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_approvers",
-                "type":"address[]"
-              }
-          ],
-          "name":"BountyApproversUpdated",
-          "type":"event"
-        }
-    },
-    {
-        "id":"BountyDataChanged",
-        "label":"BountyDataChanged",
-        "description":"BountyDataChanged",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_changer",
-              "name":"_changer",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_data",
-              "name":"_data"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_changer",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_data",
-                "type":"string"
-              }
-          ],
-          "name":"BountyDataChanged",
-          "type":"event"
-        }
-    },
-    {
-        "id":"BountyDeadlineChanged",
-        "label":"BountyDeadlineChanged",
-        "description":"BountyDeadlineChanged",
-        "notes":"https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
-        "fields":[
-          {
-              "label":"_bountyId",
-              "name":"_bountyId"
-          },
-          {
-              "label":"_changer",
-              "name":"_changer",
-              "placeholder":"Address (0x0000…)"
-          },
-          {
-              "label":"_deadline",
-              "name":"_deadline"
-          }
-        ],
-        "abi":{
-          "anonymous":false,
-          "inputs":[
-              {
-                "indexed":false,
-                "name":"_bountyId",
-                "type":"uint256"
-              },
-              {
-                "indexed":false,
-                "name":"_changer",
-                "type":"address"
-              },
-              {
-                "indexed":false,
-                "name":"_deadline",
-                "type":"uint256"
-              }
-          ],
-          "name":"BountyDeadlineChanged",
-          "type":"event"
-        }
+        "name": "fulfillAndAccept",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     }
   ]
 }
