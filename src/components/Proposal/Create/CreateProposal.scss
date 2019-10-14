@@ -330,14 +330,19 @@
 
 .createWrapperWithSidebar {
   width: 735px;
+  display: flex;
+  flex-direction: row;
   content: "";
   clear: both;
-  display: table;
+  overflow: auto;
+  max-height: 600px;
 
   .sidebar {
     width: 199px;
     float: left;
     padding-top: 30px;
+    overflow: auto;
+    z-index: 900;
 
     .addSchemeButton {
       display: block;
