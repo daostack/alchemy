@@ -7,7 +7,7 @@ import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { schemeName} from "lib/util";
+import { schemeName, getSchemeIsActive} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
@@ -19,8 +19,6 @@ import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
 import * as css from "./Scheme.scss";
-
-import moment = require("moment");
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
@@ -55,28 +53,6 @@ const mapDispatchToProps = {
 
 class SchemeContainer extends React.Component<IProps, null> {
 
-  private getSchemeIsActive(scheme: ISchemeState): boolean {
-    if (scheme.name === "SchemeRegistrar") {
-      /**
-       * If SchemeRegistrar has only one or the other active, then we'll deal with that case in
-       * `CreateSchemeRegistrarProposal`
-       */
-      return moment((scheme as any).schemeRegistrarParams.voteRegisterParams.activationTime).isSameOrBefore(moment()) ||
-             moment((scheme as any).schemeRegistrarParams.voteRemoveParams.activationTime).isSameOrBefore(moment());
-    } else {
-      let name = `${scheme.name[0].toLowerCase()}${scheme.name.slice(1)}`;
-      if (name === "genericScheme") {
-        if (scheme.uGenericSchemeParams) {
-          name = "uGenericScheme";
-        }
-      }
-      /**
-     * assumes the voting machine is GP and its params can be found at scheme.<schemeName>Params.voteParams
-     */
-      return moment((scheme as any)[`${name}Params`].voteParams.activationTime).isSameOrBefore(moment());
-    }
-  }
-
   public handleNewProposal = async (e: any): Promise<void> => {
     const { daoAvatarAddress, schemeId, showNotification } = this.props;
     e.preventDefault();
@@ -96,7 +72,7 @@ class SchemeContainer extends React.Component<IProps, null> {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
 
-    const isActive =  this.getSchemeIsActive(schemeState);
+    const isActive = getSchemeIsActive(schemeState);
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,

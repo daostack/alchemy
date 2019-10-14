@@ -5,14 +5,12 @@ import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeNameAndAddress, isValidUrl } from "lib/util";
+import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-
-import moment = require("moment");
 
 interface IExternalProps {
   daoAvatarAddress: string;
@@ -63,12 +61,6 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = { currentTab: "addScheme" };
-  }
-
-  private getIsActive(addScheme: boolean): boolean {
-    return moment((this.props.scheme as any)
-      .schemeRegistrarParams[addScheme ? "voteRegisterParams" : "voteRemoveParams"]
-      .activationTime).isSameOrBefore(moment());
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
@@ -145,8 +137,8 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       [css.editScheme]: currentTab === "editScheme",
     });
 
-    const isAddActive = this.getIsActive(true);
-    const isRemoveActive = this.getIsActive(false);
+    const isAddActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Register);
+    const isRemoveActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Remove);
 
     return (
       <div className={css.createWrapperWithSidebar}>
