@@ -1,6 +1,6 @@
 import { Address, IDAOState } from "@daostack/client";
 import * as uiActions from "actions/uiActions";
-import { serverLoginByEthSign } from "actions/profilesActions";
+import { serverLoginByEthSign, serverLogout } from "actions/profilesActions";
 import { enableWalletProvider, getAccountIsEnabled, getArc, gotoReadonly, getWeb3ProviderInfo } from "arc";
 import * as classNames from "classnames";
 import AccountBalances from "components/Account/AccountBalances";
@@ -84,9 +84,9 @@ class Header extends React.Component<IProps, IStateProps> {
     });
   }
 
+  // TODO: we may not actually want this button in the header since people can login when they do an action that requires it
   public handleClickLoginServer = async (_event: any): Promise<void> => {
-    const result = await this.props.serverLoginByEthSign(this.props.currentAccountAddress);
-    console.log("after server login", result);
+    await this.props.serverLoginByEthSign(this.props.currentAccountAddress);
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
@@ -98,6 +98,7 @@ class Header extends React.Component<IProps, IStateProps> {
   }
 
   public handleClickLogout = async (_event: any): Promise<void> => {
+    serverLogout();
     await gotoReadonly(this.props.showNotification);
   }
 

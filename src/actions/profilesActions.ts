@@ -235,3 +235,7 @@ export function serverLoginByEthSign(accountAddress: string) {
     }
   };
 }
+
+export function serverLogout() {
+  localStorage.removeItem(ACCESS_TOKEN_STORAGEKEY);
+}
