@@ -68,6 +68,34 @@
         "stateMutability": "nonpayable",
         "type": "function"
       }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Transfer Ownership",
+      "description": "...",
+      "notes": "",
+      "fields": [
+        {
+          "label": "new owner",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
     }
   ]
 }
