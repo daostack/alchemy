@@ -1,5 +1,5 @@
 import * as H from "history";
-import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Stake } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Stake } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -234,11 +234,15 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
           stakes (where: { staker: "${props.currentAccountAddress}"}) {
             ...StakeFields
           }
+          gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
+            ...RewardFields
+          }
         }
       }
       ${Proposal.fragments.ProposalFields}
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
+      ${Reward.fragments.RewardFields}
     `;
     await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
 
