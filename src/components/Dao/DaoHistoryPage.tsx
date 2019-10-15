@@ -104,8 +104,7 @@ export default withSubscription({
             "${IProposalStage[IProposalStage.ExpiredInQueue]}",
             "${IProposalStage[IProposalStage.Executed]}",
             "${IProposalStage[IProposalStage.Queued]}"
-          ],
-          closingAt_lte: "${Math.floor(new Date().getTime() / 1000)}",
+          ]
         }){
           ...ProposalFields
           votes (where: { voter: "${props.currentAccountAddress}"}) {

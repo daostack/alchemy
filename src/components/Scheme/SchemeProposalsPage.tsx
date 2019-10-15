@@ -1,8 +1,9 @@
 import * as H from "history";
-import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Stake } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import gql from "graphql-tag";
 import { schemeName} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -10,6 +11,7 @@ import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { combineLatest } from "rxjs";
+import { first } from "rxjs/operators";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import ProposalCard from "../Proposal/ProposalCard";
@@ -205,11 +207,40 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
            || oldProps.scheme.id !== newProps.scheme.id;
   },
 
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
     const schemeId = props.scheme.id;
+
+    // this query will fetch al data we need before rendering the page, so we avoid hitting the server
+    // with all separate queries for votes and stakes and stuff...
+
+    const prefetchQuery = gql`
+      query prefetchProposalDataForSchemeProposalsPage {
+        proposals (where: {
+          scheme: "${schemeId}"
+          stage_in: [
+            "${IProposalStage[IProposalStage.Boosted]}",
+            "${IProposalStage[IProposalStage.PreBoosted]}",
+            "${IProposalStage[IProposalStage.Queued]}"
+            "${IProposalStage[IProposalStage.QuietEndingPeriod]}",
+          ]
+        }){
+          ...ProposalFields
+          votes (where: { voter: "${props.currentAccountAddress}"}) {
+            ...VoteFields
+          }
+          stakes (where: { staker: "${props.currentAccountAddress}"}) {
+            ...StakeFields
+          }
+        }
+      }
+      ${Proposal.fragments.ProposalFields}
+      ${Vote.fragments.VoteFields}
+      ${Stake.fragments.StakeFields}
+    `;
+    await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
 
     return combineLatest(
       // the list of queued proposals
@@ -220,20 +251,20 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }, { subscribe: true, fetchAllData: true }),
+      }, { subscribe: true }),
 
       // the list of preboosted proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
         orderBy: "preBoostedAt",
-      }, { subscribe: true, fetchAllData: true }),
+      }, { subscribe: true }),
 
       // the list of boosted proposals
       dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }, { subscribe: true, fetchAllData: true }),
+      }, { subscribe: true}),
 
       // DAO state
       dao.state(),
