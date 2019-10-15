@@ -1,7 +1,6 @@
-import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
-import { getArc, getWeb3Provider, getWeb3ProviderInfo, enableWalletProvider } from "arc";
+import { getArc, enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
@@ -9,8 +8,6 @@ import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import DaoSidebar from "components/Dao/DaoSidebar";
-import * as sigUtil from "eth-sig-util";
-import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
 import { copyToClipboard, formatTokens } from "lib/util";
 import * as queryString from "query-string";
@@ -93,44 +90,11 @@ class AccountProfilePage extends React.Component<IProps, null> {
   }
 
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
-    const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
+    const { currentAccountAddress, updateProfile } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
+    await updateProfile(currentAccountAddress, values.name, values.description);
 
-    const web3Provider = await getWeb3Provider();
-    try {
-
-      const timestamp = new Date().getTime().toString();
-      const text = ("Please sign this message to confirm your request to update your profile to name '" +
-        values.name + "' and description '" + values.description +
-        "'. There's no gas cost to you. Timestamp:" + timestamp);
-      const msg = ethUtil.bufferToHex(Buffer.from(text, "utf8"));
-
-      const method = "personal_sign";
-
-      // Create promise-based version of send
-      const send = promisify(web3Provider.sendAsync);
-      const params = [msg, currentAccountAddress];
-      const result = await send({ method, params, from: currentAccountAddress });
-      if (result.error) {
-        showNotification(NotificationStatus.Failure, "Saving profile was canceled");
-        setSubmitting(false);
-        return;
-      }
-      const signature = result.result;
-
-      const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
-      if (recoveredAddress.toLowerCase() === accountAddress) {
-        await updateProfile(accountAddress, values.name, values.description, timestamp, signature);
-      } else {
-        showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error.message);
-      const providerName = getWeb3ProviderInfo(web3Provider).name;
-      showNotification(NotificationStatus.Failure, `We're very sorry, but saving the profile failed.  Your wallet (${providerName}) may not support message signing.`);
-    }
     setSubmitting(false);
   }
 

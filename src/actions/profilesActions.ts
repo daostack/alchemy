@@ -73,7 +73,7 @@ export function getProfile(accountAddress: string) {
 
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
-export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
+export function updateProfile(accountAddress: string, name: string, description: string) {
   return async (dispatch: any, _getState: any) => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
@@ -81,14 +81,24 @@ export function updateProfile(accountAddress: string, name: string, description:
       meta: { accountAddress },
     } as UpdateProfileAction);
 
+    const accessToken = await dispatch(checkIfAuthenticated(accountAddress));
+    if (!accessToken) {
+      dispatch({
+        type: ActionTypes.UPDATE_PROFILE,
+        sequence: AsyncActionSequence.Failure,
+        meta: { accountAddress },
+      } as UpdateProfileAction);
+
+      dispatch(showNotification(NotificationStatus.Failure, `Saving profile failed, not authenticated`));
+      return false;
+    }
+
     try {
       await axios.patch(process.env.API_URL + "/api/accounts", {
         ethereumAccountAddress: accountAddress,
         name,
-        description,
-        timestamp,
-        signature,
-      }, { headers: { 'Authorization': localStorage.getItem(ACCESS_TOKEN_STORAGEKEY)} });
+        description
+      }, { headers: { 'Authorization': accessToken} });
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
       // eslint-disable-next-line no-console
@@ -127,6 +137,21 @@ export function verifySocialAccount(accountAddress: string, account: IProfileSta
   };
 }
 
+/**
+ *  See if we have a locally stored accessToken for a user to authenticate with
+ *    otherwise go through the login procedure to get one
+ *
+ * @param accountAddress The address to log in
+ * @return string the accessToken
+ */
+export function checkIfAuthenticated(accountAddress:string) {
+  return async (dispatch: any, _getState: any) => {
+    if (localStorage.getItem(ACCESS_TOKEN_STORAGEKEY)) {
+      return localStorage.getItem(ACCESS_TOKEN_STORAGEKEY);
+    }
+    return await dispatch(serverLoginByEthSign(accountAddress));
+  }
+}
 
 export function serverLoginByEthSign(accountAddress: string) {
   return async (dispatch: any, _getState: any) => {
@@ -136,7 +161,7 @@ export function serverLoginByEthSign(accountAddress: string) {
       meta: { accountAddress },
     });
 
-    if (!(await enableWalletProvider({ showNotification }))) { return; }
+    if (!(await enableWalletProvider({ showNotification }))) { return false; }
 
     const response = await axios.get(process.env.API_URL + "/nonce?address=" + accountAddress);
     const nonce = response.data;
@@ -157,14 +182,14 @@ export function serverLoginByEthSign(accountAddress: string) {
       if (result.error) {
         console.error("Signing canceled, data was not saved");
         showNotification(NotificationStatus.Failure, "Saving profile was canceled");
-        return;
+        return false;
       }
       const signature = result.result;
 
       const recoveredAddress: string = sigUtil.recoverPersonalSignature({ data: msg, sig: signature });
       if (recoveredAddress.toLowerCase() !== accountAddress) {
         showNotification(NotificationStatus.Failure, "Saving profile failed, please try again");
-        return;
+        return false;
       }
 
       try {
@@ -175,8 +200,8 @@ export function serverLoginByEthSign(accountAddress: string) {
           timestamp,
           payload: text
         });
-        console.log("got response", response);
         localStorage.setItem(ACCESS_TOKEN_STORAGEKEY, response.data.token);
+        return response.data.token;
       } catch (e) {
         const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
         console.error("Error logging in: ", errorMsg);
@@ -201,7 +226,7 @@ export function serverLoginByEthSign(accountAddress: string) {
       return true;
     } catch (error) {
       if (web3Provider.isSafe) {
-        console.log(error.message);
+        console.error(error.message);
         showNotification(NotificationStatus.Failure, "We're very sorry, but Gnosis Safe does not support message signing :-(");
       } else {
         showNotification(NotificationStatus.Failure, error.message);
