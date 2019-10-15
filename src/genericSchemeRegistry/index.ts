@@ -82,7 +82,7 @@ export class ActionField {
   public callValue(userValue: string|string[]) {
     if (Array.isArray(userValue)) {
       userValue = userValue.map((val: string) => val.trim());
-    } else {
+    } else if (typeof userValue === 'string') {
       userValue = userValue.trim();
     }
 
