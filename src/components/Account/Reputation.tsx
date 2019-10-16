@@ -32,9 +32,7 @@ export default class Reputation extends React.Component<IProps, null> {
         percentage = percentageBn.toNumber() / 100;
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.error("totalReputation is <= 0");
-      percentageString = "NaN";
+      percentageString = "0";
     }
 
     if (!percentageString) {
@@ -45,10 +43,24 @@ export default class Reputation extends React.Component<IProps, null> {
       }
     }
 
+    const totalRepFormatted = fromWei(totalReputation).toLocaleString(
+      undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}
+    );
+
+    const repFormatted = fromWei(reputation).toLocaleString(
+      undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}
+    );
+
     return (
       <Tooltip
         placement="bottom"
-        overlay={<span>{fromWei(totalReputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} {daoName || ""} Reputation in total</span>}
+        overlay={
+          <>
+            <span>{repFormatted} Rep.</span>
+            <br/>
+            <span>{totalRepFormatted} {daoName || ""} Reputation in total</span>
+          </>
+        }
         trigger={hideTooltip ? [] : ["hover"]}
       >
         <span data-test-id="reputation">

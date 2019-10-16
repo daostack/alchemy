@@ -1,5 +1,8 @@
+import axios, { AxiosResponse } from "axios";
 import { IDAOState, Token } from "@daostack/client";
+import { from } from "rxjs";
 import { getArc } from "arc";
+import Loading from "components/Shared/Loading";
 
 import BN = require("bn.js");
 import * as classNames from "classnames";
@@ -8,6 +11,7 @@ import * as GeoPattern from "geopattern";
 import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { first } from "rxjs/operators";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import * as css from "./Dao.scss";
@@ -20,7 +24,11 @@ interface IStateProps {
   menuOpen: boolean;
 }
 
-type IProps = IExternalProps & IStateProps;
+interface IHasNewPosts {
+  hasNewPosts: boolean;
+}
+
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<IHasNewPosts>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -37,6 +45,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
 
   public render(): RenderOutput {
     const dao = this.props.dao;
+    const hasNewPosts = this.props.data.hasNewPosts;
     const daoHoldingsAddress = "https://etherscan.io/tokenholdings?a=" + dao.address;
     const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
@@ -121,7 +130,11 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
               </li>
               <li>
                 <Link to={"/dao/" + dao.address + "/discussion/"}>
-                  <span className={css.menuDot} />
+                  <span className={
+                    classNames({
+                      [css.menuDot]: true,
+                      [css.red]: hasNewPosts,
+                    })} />
                   <span className={
                     classNames({
                       [css.notification]: true,
@@ -234,11 +247,45 @@ const SubscribedTokenBalance = withSubscription({
   checkForUpdate: (oldProps: ITokenProps, newProps: ITokenProps) => {
     return oldProps.dao.address !== newProps.dao.address || oldProps.tokenAddress !== newProps.tokenAddress;
   },
-  createObservable: (props: ITokenProps) => {
+  createObservable: async (props: ITokenProps) => {
+    // General cache priming for the DAO we do here
+    // prime the cache: get all members fo this DAO -
+    const daoState = props.dao;
+    
+    await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
+
     const arc = getArc();
     const token = new Token(props.tokenAddress, arc);
     return token.balanceOf(props.dao.address);
   },
 });
 
-export default connect(mapStateToProps)(DaoSidebar);
+const SubscribedDaoSidebar = withSubscription({
+  wrappedComponent: DaoSidebar,
+  checkForUpdate: (oldProps, newProps) => { return oldProps.dao.address !== newProps.dao.address; },
+  loadingComponent: <div className={css.loading}><Loading/></div>,
+  createObservable: (props: IProps) => {
+
+    const lastAccessDate = localStorage.getItem(`daoWallEntryDate_${props.dao.address}`) || "0";
+
+    const promise = axios.get(`https://disqus.com/api/3.0/threads/listPosts.json?api_key=KVISHbDLtTycaGw5eoR8aQpBYN8bcVixONCXifYcih5CXanTLq0PpLh2cGPBkM4v&forum=${process.env.DISQUS_SITE}&thread:ident=${props.dao.address}&since=${lastAccessDate}&limit=1&order=asc`)
+      .then((response: AxiosResponse<any>): IHasNewPosts => {
+        if (response.status) {
+          const posts = response.data.response;
+          return { hasNewPosts : posts && posts.length };
+        } else {
+          // eslint-disable-next-line no-console
+          console.error(`request for disqus posts failed: ${response.statusText}`);
+          return { hasNewPosts : false };
+        }
+      })
+      .catch((error: Error): IHasNewPosts => {
+        // eslint-disable-next-line no-console
+        console.error(`request for disqus posts failed: ${error.message}`);
+        return { hasNewPosts : false };
+      });
+    return from(promise);
+  },
+});
+
+export default connect(mapStateToProps)(SubscribedDaoSidebar);

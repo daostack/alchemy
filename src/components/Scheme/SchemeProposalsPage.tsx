@@ -236,7 +236,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       }, { subscribe: true, fetchAllData: true }),
 
       // DAO state
-      dao.state()
+      dao.state(),
     );
   },
 

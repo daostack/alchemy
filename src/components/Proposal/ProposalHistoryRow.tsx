@@ -214,7 +214,8 @@ export default withSubscription({
         proposal.state(),
         proposal.stakes({ where: { staker: props.currentAccountAddress}}),
         proposal.votes({ where: { voter: props.currentAccountAddress }}),
-        props.daoState.dao.member(props.currentAccountAddress).state(),
+        // we set 'fetchPolicy' to 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
+        props.daoState.dao.member(props.currentAccountAddress).state({ fetchPolicy: "cache-only"}),
       );
     }
   },

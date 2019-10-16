@@ -7,7 +7,8 @@ import { NotificationStatus } from "reducers/notifications";
 import { Observable } from "rxjs";
 import Web3Connect from "web3connect";
 import { IProviderInfo } from "web3connect/lib/helpers/types";
-import { getNetworkId, getNetworkName, waitUntilTrue } from "./lib/util";
+import { settings } from "./settings";
+import { getNetworkId, getNetworkName, waitUntilTrue, isMobileBrowser } from "./lib/util";
 
 const Portis = require("@portis/web3");
 const Fortmatic = require("fortmatic");
@@ -27,7 +28,7 @@ const web3ConnectProviderOptions =
       {
         network: "mainnet",
         walletconnect: {
-          package: WalletConnectProvider,
+          package: isMobileBrowser() ? null : WalletConnectProvider,
           options: {
             infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
           },
@@ -54,7 +55,7 @@ const web3ConnectProviderOptions =
         {
           network: "rinkeby",
           walletconnect: {
-            package: WalletConnectProvider,
+            package: isMobileBrowser() ? null : WalletConnectProvider,
             options: {
               infuraId: "e0cdf3bfda9b468fa908aa6ab03d5ba2",
             },
@@ -78,39 +79,6 @@ const web3ConnectProviderOptions =
           },
         } : {});
 
-const settings = {
-  dev: {
-    graphqlHttpProvider: "http://127.0.0.1:8000/subgraphs/name/daostack",
-    graphqlWsProvider: "ws://127.0.0.1:8001/subgraphs/name/daostack",
-    web3Provider: "ws://127.0.0.1:8545",
-    web3ProviderRead: "ws://127.0.0.1:8545",
-    ipfsProvider: "localhost",
-  },
-  staging: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v29_0_rinkeby",
-    graphqlWsProvider:  process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v29_0_rinkeby",
-    web3Provider:  process.env.ARC_WEB3PROVIDER || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead:  process.env.ARC_WEB3PROVIDERREAD || "wss://rinkeby.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    ipfsProvider: process.env.ARC_IPFSPROVIDER || {
-      "host": process.env.ARC_IPFSPROVIDER_HOST || "api.thegraph.com",
-      "port": process.env.ARC_IPFSPROVIDER_PORT || "443",
-      "protocol": process.env.ARC_IPFSPROVIDER_PROTOCOL || "https",
-      "api-path": process.env.ARC_IPFSPROVIDER_API_PATH || "/ipfs-daostack/api/v0/",
-    },
-  },
-  production: {
-    graphqlHttpProvider: process.env.ARC_GRAPHQLHTTPPROVIDER || "https://api.thegraph.com/subgraphs/name/daostack/v29_0",
-    graphqlWsProvider: process.env.ARC_GRAPHQLWSPROVIDER || "wss://api.thegraph.com/subgraphs/name/daostack/v29_0",
-    web3Provider: process.env.ARC_WEB3PROVIDER || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    web3ProviderRead: process.env.ARC_WEB3PROVIDERREAD || "wss://mainnet.infura.io/ws/v3/e0cdf3bfda9b468fa908aa6ab03d5ba2",
-    ipfsProvider: process.env.ARC_IPFSPROVIDER || {
-      "host": process.env.ARC_IPFSPROVIDER_HOST || "api.thegraph.com",
-      "port": process.env.ARC_IPFSPROVIDER_PORT || "443",
-      "protocol": process.env.ARC_IPFSPROVIDER_PROTOCOL || "https",
-      "api-path": process.env.ARC_IPFSPROVIDER_API_PATH || "/ipfs-daostack/api/v0/",
-    },
-  },
-};
 
 /**
  * return the default Arc configuration given the execution environment
@@ -325,7 +293,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
           //   }
           // }
           // @ts-ignore
-          console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
+          // console.log(`${window.networkQueries.length} queries; ${window.networkSubscriptions.length} subscriptions`);
           // @ts-ignore
           // printQueries(window.networkSubscriptions);
         },
@@ -341,34 +309,46 @@ export async function initializeArc(provider?: any): Promise<boolean> {
   return success;
 }
 
+async function ensureCorrectNetwork(provider: any): Promise<void> {
+  
+  /**
+   * It is required that the provider be the correct one for the current platform
+   */
+  const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
+
+  if (correctNetworkErrorMsg) {
+    console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
+    throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
+  }
+}
+
+function inTesting(): boolean {
+  if (process.env.NODE_ENV === "development" && navigator.webdriver) {
+    // in test mode, we have an unlocked ganache and we are not using any wallet
+    console.log("not using any wallet, because we are in automated test");
+    selectedProvider = new Web3(settings.dev.web3Provider);
+    return true;
+  }
+  return false;
+}
+
 /**
  * Prompt user to select a web3Provider and enable their account.
  * Initializes Arc with the newly-selected web3Provider.
  * Is a no-op if already done.
+ * Side-effect is that `selectedProvider` will be set on success.
  * @param provider Optional web3 provider, supplied when using a cached provider
- * @param blockOnWrongNetwork if true, throw exception if is wrong network
- * @returns whether Arc has been successfully initialized.
+ * @returns Throws exception on error.
  */
-async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): Promise<boolean> {
-  let success = false;
+async function enableWeb3Provider(provider?: any): Promise<void> {
   /**
-   * Already got an already-selected provider?
-   * We'll replace it if provider has been supplied.
+   * Already got a selected provider, and is the same as the requested provider?
+   * We'll replace it if a  differen provider has been supplied.
    * Otherwise we'll swing with selectedProvider, and this becomes mostly a no-op.
    */
-  if (selectedProvider && !provider) {
-    provider = selectedProvider;
-    success = true;
+  if (selectedProvider && (!provider || (selectedProvider === provider))) {
+    return;
   } else if (!provider) {
-    /**
-     * if no provider then use web3Connect to obtain one
-     */
-    if (process.env.NODE_ENV === "development" && navigator.webdriver) {
-      // in test mode, we have an unlocked ganache and we are not using any wallet
-      console.log("not using any wallet, because we are in automated test");
-      selectedProvider = new Web3(settings.dev.web3Provider);
-      return true;
-    }
 
     const web3Connect = new Web3Connect.Core({
       modal: false,
@@ -422,76 +402,35 @@ async function enableWeb3Provider(provider?: any, blockOnWrongNetwork = true): P
     if (!provider) {
       // should only be cancelled, errors should have been handled above
       console.warn("uncaught error or user cancelled out");
-      return false;
+      return;
     }
   }
 
   /**
-   * note the thrown exceptions will be reported as notifications to the user
+   * bail if provider is not correct for the current platform
    */
-  const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
+  await ensureCorrectNetwork(provider);
 
-  if (correctNetworkErrorMsg) {
-    console.warn(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
-    if (blockOnWrongNetwork) {
-      throw new Error(`Please connect to ${correctNetworkErrorMsg}`);
-    }
-  }
-
-  if (provider !== selectedProvider) {
-    /**
-     * now ensure that the user has connected to a network and enabled access to the account,
-     * whatever the provider requires....
-     */
-    try {
-      // brings up the provider UI as needed
-      await provider.enable();
-      console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
-    } catch (ex) {
-      console.error(`Unable to enable provider: ${ex.message}`);
-      throw new Error("Unable to enable provider");
-    }
-
-    success = await initializeArc(provider);
-
-    if (!success) {
-      console.error("Unable to initialize Arc");
-      throw new Error("Unable to initialize Arc");
-    }
-  }
-
-  if (success) {
-    // eslint-disable-next-line require-atomic-updates
-    selectedProvider = provider;
-  }
-
-  return success;
-}
-
-/**
- * See `enableWeb3Provider`.  If that fails then issue a warning to the user.
- *
- * @param provider Optional web3Provider
- * @return boolean whether Arc is successfully initialized.
- */
-async function enableWeb3ProviderAndWarn(showNotification?: any, blockOnWrongNetwork = true): Promise<boolean> {
-  let success = false;
-  let msg: string;
+  /**
+   * now ensure that the user has connected to a network and enabled access to the account,
+   * whatever the provider requires....
+   */
   try {
-    success = await enableWeb3Provider(null, blockOnWrongNetwork);
-  } catch(err) {
-    msg = err.message;
+    // brings up the provider UI as needed
+    await provider.enable();
+    console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
+  } catch (ex) {
+    console.error(`Unable to enable provider: ${ex.message}`);
+    throw new Error("Unable to enable provider");
   }
 
-  if (!success  && msg) {
-    msg = msg ? msg : "Unable to connect to the web3 provider";
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
-    } else {
-      alert(msg);
-    }
+  if (!await initializeArc(provider)) {
+    console.error("Unable to initialize Arc");
+    throw new Error("Unable to initialize Arc");
   }
-  return success;
+
+  // eslint-disable-next-line require-atomic-updates
+  selectedProvider = provider;
 }
 
 /**
@@ -541,88 +480,64 @@ export async function gotoReadonly(showNotification?: any): Promise<boolean> {
 
 /**
  * Given IWeb3ProviderInfo, get a web3Provider and InitializeArc with it.
+ * Throws exception on any failure.
  *
  * This is meant to be used to bypass allowing the user to select a provider in the
  * case where we are initializing the app from a previously-cached (selected) provider.
- * Thrown exceptions will be reported as notifications to the user
  * @param web3ProviderInfo required IWeb3ProviderInfo
- * @returns whether Arc has been successfully initialized.
  */
-async function setWeb3ProviderAndWarn(
-  web3ProviderInfo: IWeb3ProviderInfo,
-  showNotification: any,
-  notifyOnSuccess = true): Promise<boolean> {
+async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<void> {
   let provider: any;
 
-  let success = false;
-  let msg: string;
-
   try {
+    switch (web3ProviderInfo.type) {
+      case "injected":
+      /**
+         * Safe doesn't always inject itself in a timely manner
+         */
+        if (!(window as any).ethereum) {
+          await waitUntilTrue((): boolean => !!(window as any).ethereum, 2000);
+        }
 
-    try {
-      switch (web3ProviderInfo.type) {
-        case "injected":
-        /**
-           * Safe doesn't always inject itself in a timely manner
-           */
-          if (!(window as any).ethereum) {
-            await waitUntilTrue((): boolean => !!(window as any).ethereum, 2000);
-          }
-
-          provider = await Web3Connect.ConnectToInjected();
-          break;
-        case "qrcode":
-          provider = await Web3Connect.ConnectToWalletConnect(
-            web3ConnectProviderOptions.walletconnect.package,
-            Object.assign(web3ConnectProviderOptions.walletconnect.options, { network: web3ConnectProviderOptions.network }));
-          break;
-        case "web":
-          switch (web3ProviderInfo.name) {
-            case "Portis":
-              provider = await Web3Connect.ConnectToPortis(
-                web3ConnectProviderOptions.portis.package,
-                Object.assign(web3ConnectProviderOptions.portis.options, { network: web3ConnectProviderOptions.network }));
-              break;
-            case "Fortmatic":
-              provider = await Web3Connect.ConnectToFortmatic(
-                web3ConnectProviderOptions.fortmatic.package,
-                Object.assign(web3ConnectProviderOptions.fortmatic.options, { network: web3ConnectProviderOptions.network }));
-              break;
-          }
-          break;
-      }
-    } catch (ex) {
-      console.error(`Unable to instantiate provider: ${ex.message}`);
-      throw new Error("Unable to instantiate provider");
+        provider = await Web3Connect.ConnectToInjected();
+        break;
+      case "qrcode":
+        provider = await Web3Connect.ConnectToWalletConnect(
+          web3ConnectProviderOptions.walletconnect.package,
+          Object.assign(web3ConnectProviderOptions.walletconnect.options, { network: web3ConnectProviderOptions.network }));
+        break;
+      case "web":
+        switch (web3ProviderInfo.name) {
+          case "Portis":
+            provider = await Web3Connect.ConnectToPortis(
+              web3ConnectProviderOptions.portis.package,
+              Object.assign(web3ConnectProviderOptions.portis.options, { network: web3ConnectProviderOptions.network }));
+            break;
+          case "Fortmatic":
+            provider = await Web3Connect.ConnectToFortmatic(
+              web3ConnectProviderOptions.fortmatic.package,
+              Object.assign(web3ConnectProviderOptions.fortmatic.options, { network: web3ConnectProviderOptions.network }));
+            break;
+        }
+        break;
     }
-    /**
-   * make sure the injected provider is the one we're looking for
+
+    if (!provider) {
+      throw new Error("Uncaught error or user cancelled out");
+    }
+
+  } catch (ex) {
+    console.error(`Unable to instantiate provider: ${ex.message}`);
+    throw new Error("Unable to instantiate provider");
+  }
+  /**
+   * make sure the provider is the one we're looking for
    */
-    if (provider && !provider[web3ProviderInfo.check]) {
-      console.error(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
-      throw new Error("Unable to instantiate provider");
-    }
-
-    success = provider ? await enableWeb3Provider(provider, false) : false;
-
-    if (success && showNotification && notifyOnSuccess) {
-      showNotification(NotificationStatus.Success, `Connected to ${web3ProviderInfo.name}`);
-    }
-
-  } catch(err) {
-    console.error(err);
-    msg = err.message;
+  if (!provider[web3ProviderInfo.check]) {
+    throw new Error(`instantiated provider is not the one requested: ${provider.name} != ${web3ProviderInfo.name}`);
   }
 
-  if (!success && msg) {
-    msg =  msg ? msg : `Unable to connect to: ${web3ProviderInfo.name}`;
-    if (showNotification) {
-      showNotification(NotificationStatus.Failure, msg);
-    } else {
-      alert(msg);
-    }
-  }
-  return success;
+  await enableWeb3Provider(provider);
 }
 
 /**
@@ -671,55 +586,93 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
   return cached ? JSON.parse(cached) : null;
 }
 
-export async function loadCachedWeb3Provider(showNotification: any, notifyOnSuccess = true): Promise<boolean> {
-  const web3ProviderInfo = getCachedWeb3ProviderInfo();
-  if (web3ProviderInfo) {
-    /**
-     * do nothing if already connected to this provider
-     */
-    const providerInfo = await getWeb3ProviderInfo();
-    const providerName = providerInfo ? await providerInfo.name : null;
-    if (web3ProviderInfo.name === providerName) {
-      return true;
-    }
 
-    let success = false;
-    /**
-     * If successful, this will result in setting the current account which
-     * we'll pick up below.
-     */
+/**
+ * fully enable a cached provider, if available.  Noop is nothing is cached or
+ * current provider is the same as the given one.
+ * Exception if cached provider can't be fully enabled.
+ * @param showNotification 
+ */
+async function loadCachedWeb3Provider(): Promise<void> {
+
+  const cachedWeb3ProviderInfo = getCachedWeb3ProviderInfo();
+  if (cachedWeb3ProviderInfo) {
+
     try {
-      if (await setWeb3ProviderAndWarn(web3ProviderInfo, showNotification, notifyOnSuccess)) {
-        // eslint-disable-next-line no-console
-        console.log("using cached web3Provider");
-        success = true;
-      }
-    // eslint-disable-next-line no-empty
-    } catch(ex) { }
-    if (!success) {
-      // eslint-disable-next-line no-console
+      await setWeb3Provider(cachedWeb3ProviderInfo);
+      console.log("using cached web3Provider");
+    } catch(ex) {
       console.error("failed to instantiate cached web3Provider");
       uncacheWeb3Info();
+      throw new Error(ex);
     }
-    return success;
   }
-  return false;
 }
 
-export interface IEnableWWalletProviderParams {
-  blockOnWrongNetwork?: boolean;
-  notifyOnSuccess?: boolean;
+export interface IEnableWalletProviderParams {
+  suppressNotifyOnSuccess?: boolean;
   showNotification: any;
 }
 
 /**
- * load web3 wallet provider, first trying from cache, otherwise prompting
+ * Load web3 wallet provider, first trying from cache, otherwise prompting.
+ * This is the only point of contact with the rest of the app for connecting to a wallet.
+ * App.tsx invokes `initializeArc` on startup just to get a readonly web3.
  * @param options `IEnableWWalletProviderParams`
  * @returns Promise of true on success
  */
-export async function enableWalletProvider(options: IEnableWWalletProviderParams): Promise<boolean> {
-  return await loadCachedWeb3Provider(options.showNotification, options.notifyOnSuccess) ||
-         await enableWeb3ProviderAndWarn(options.showNotification, options.blockOnWrongNetwork);
+export async function enableWalletProvider(options: IEnableWalletProviderParams): Promise<boolean> {
+  let msg: string;
+  try {
+
+    if (inTesting()) {
+      return true;
+    }
+
+    if (!selectedProvider) {
+      await loadCachedWeb3Provider();
+      if (!selectedProvider)
+      {
+        await enableWeb3Provider();
+      }
+      if (!selectedProvider) {
+        // something went wrong somewhere
+        throw new Error("Unable to connect to a wallet");
+      }
+      /**
+       * notify on success
+       */
+      if (!options.suppressNotifyOnSuccess && options.showNotification) {
+        const web3ProviderInfo = getWeb3ProviderInfo();
+        options.showNotification(NotificationStatus.Success, `Connected to ${web3ProviderInfo.name}`);
+      }
+    } else {
+      /**
+       * Bail if provider is not correct for the current platform. The user might have redirected
+       * Metamask to a different network without us knowing.  Just in that case, check here.
+       */
+      try {
+        await ensureCorrectNetwork(selectedProvider);
+      } catch (ex) {
+        /**
+         * This will result in completely logging out the user and clearing the cached provider,
+         * thus enabling them to have a choice of providers when they triy to log in again.
+         */
+        await gotoReadonly(options.showNotification);
+        throw new Error(ex);
+      }
+    }
+
+  } catch(err) {
+    msg = err.message || "Unable to connect to the web3 provider";
+    if (options.showNotification) {
+      options.showNotification(NotificationStatus.Failure, msg);
+    } else {
+      alert(msg);
+    }
+    return false;
+  }
+  return true;
 }
 
 // cf. https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#ear-listening-for-selected-account-changes
