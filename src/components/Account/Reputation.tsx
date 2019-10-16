@@ -32,9 +32,7 @@ export default class Reputation extends React.Component<IProps, null> {
         percentage = percentageBn.toNumber() / 100;
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.error("totalReputation is <= 0");
-      percentageString = "NaN";
+      percentageString = "0";
     }
 
     if (!percentageString) {
@@ -58,9 +56,9 @@ export default class Reputation extends React.Component<IProps, null> {
         placement="bottom"
         overlay={
           <>
-          <span>{repFormatted} Rep.</span>
-          <br/>
-          <span>{totalRepFormatted} {daoName || ""} Reputation in total</span>
+            <span>{repFormatted} Rep.</span>
+            <br/>
+            <span>{totalRepFormatted} {daoName || ""} Reputation in total</span>
           </>
         }
         trigger={hideTooltip ? [] : ["hover"]}

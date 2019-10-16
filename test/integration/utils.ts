@@ -51,3 +51,13 @@ export function getArc() {
   const arc = new Arc(settings.dev);
   return arc;
 }
+
+/**
+ * Note this won't work until you've browsed into the app.
+ */
+export async function hideCookieAcceptWindow(): Promise<void> {
+  const acceptCookiesButton = await $("*[data-test-id=\"acceptCookiesButton\"]");
+  if (!acceptCookiesButton.error && await acceptCookiesButton.isDisplayedInViewport()) {
+    await acceptCookiesButton.click();
+  }
+}

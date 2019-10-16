@@ -7,7 +7,7 @@ import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { schemeName} from "lib/util";
+import { schemeName, getSchemeIsActive} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
@@ -72,6 +72,8 @@ class SchemeContainer extends React.Component<IProps, null> {
       return <ReputationFromToken {...this.props} daoAvatarAddress={daoAvatarAddress} schemeState={schemeState} />;
     }
 
+    const isActive = getSchemeIsActive(schemeState);
+
     const proposalsTabClass = classNames({
       [css.proposals]: true,
       [css.active]: !this.props.location.pathname.includes("info"),
@@ -93,10 +95,14 @@ class SchemeContainer extends React.Component<IProps, null> {
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
             <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
-            <a className={css.createProposal}
-              data-test-id="createProposal"
-              href="javascript:void(0)"
-              onClick={this.handleNewProposal}
+            <a className={
+              classNames({
+                [css.createProposal]: true,
+                [css.disabled]: !isActive,
+              })}
+            data-test-id="createProposal"
+            href="javascript:void(0)"
+            onClick={isActive ? this.handleNewProposal : null}
             >+ New proposal</a>
           </div>
         </Sticky>
@@ -106,7 +112,7 @@ class SchemeContainer extends React.Component<IProps, null> {
             render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposalsPage {...props} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
+            render={(props) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
         </Switch>
       </div>
     );
@@ -123,11 +129,7 @@ const SubscribedSchemeContainer = withSubscription({
     const scheme = arc.scheme(props.schemeId);
 
     // TODO: this may NOT be the best place to do this - we'd like to do this higher up
-    // prime the cache: get all members fo this DAO -
-    // TODO: make one single query once https://github.com/daostack/subgraph/issues/331 is resolved
-    await props.daoState.dao.members({ first: 100, skip: 0 }).pipe(first()).toPromise();
-    await props.daoState.dao.members({ first: 100, skip: 100}).pipe(first()).toPromise();
-    await props.daoState.dao.members({ first: 100, skip: 200}).pipe(first()).toPromise();
+  
     // eslint-disable-next-line @typescript-eslint/camelcase
     await props.daoState.dao.proposals({where: { stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod, IProposalStage.Queued, IProposalStage.PreBoosted]}}, { fetchAllData: true }).pipe(first()).toPromise();
     // end cache priming

@@ -5,7 +5,7 @@
       "0x314159265dd8dbb310642f98f50c066173c1259b"
     ],
     "rinkeby": [
-      "0xece51d9ed0169cf8bca09d7a5bedf9198f9838f4",
+      "0xb5f95a7118c7b778746ae35adbb16fc95f021ae9",
       "0xf268dc803924f6d9d06c7ddbfc06bf7cc6daf7d4"
     ],
     "private": [
@@ -63,6 +63,34 @@
           }
         ],
         "name": "removeTokens",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    },
+    {
+      "id": "transferOwnership",
+      "label": "Transfer Ownership",
+      "description": "...",
+      "notes": "",
+      "fields": [
+        {
+          "label": "new owner",
+          "name": "newOwner",
+          "placeholder": "Address (0x0000…)"
+        }
+      ],
+      "abi": {
+        "constant": false,
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",

@@ -108,7 +108,8 @@ const SubscribedAccountPopup = withSubscription({
   checkForUpdate: (oldProps, newProps) => { return oldProps.accountAddress !== newProps.accountAddress || oldProps.daoState.address !== newProps.daoState.address; },
 
   createObservable: (props: IProps) => {
-    return props.daoState.dao.member(props.accountAddress).state();
+    // we set 'fetchPolicy'= 'cache-only' so as to not send queries for addresses that are not members. The cache is filled higher up.
+    return props.daoState.dao.member(props.accountAddress).state({ fetchPolicy: "cache-only"});
   },
 });
 
