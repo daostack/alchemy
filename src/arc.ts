@@ -594,7 +594,7 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
  * fully enable a cached provider, if available.  Noop is nothing is cached or
  * current provider is the same as the given one.
  * Exception if cached provider can't be fully enabled.
- * @param showNotification
+ * @param showNotification 
  */
 async function loadCachedWeb3Provider(): Promise<void> {
 
