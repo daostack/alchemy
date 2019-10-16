@@ -64,7 +64,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
     const width = 600; const height = 600;
     const left = (window.innerWidth / 2) - (width / 2);
     const top = (window.innerHeight / 2) - (height / 2);
-    const url = `${process.env.API_URL}/auth/${provider}?ethereumAccountAddress=${accountAddress}&socketId=${socket.id}`;
+    const url = `${process.env.API_URL}/link/${provider}?ethereumAccountAddress=${accountAddress}&socketId=${socket.id}`;
 
     return window.open(url, "",
       `toolbar=no, location=no, directories=no, status=no, menubar=no,
