@@ -284,7 +284,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
 
       if (!initializedAccount) {
-      // then something went wrong
+        // then something went wrong
         console.error("Unable to obtain an account from the provider");
         // success = false;
       }
