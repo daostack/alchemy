@@ -4,7 +4,7 @@
   - Maintenence / Refactor
   - Misc
 
-### Unreleased
+### 2019-10-16
 
   - Features Added
     - Links in proposal description open in new tab
@@ -18,7 +18,11 @@
     - List of voters in the Voters Popup now shows the user's friendly name, when available.
     - Don't allow connecting to wrong networks
     - Issue a notification when the user connects to a wrong network
-    
+    - Optimization of queries and subscriptions
+    - ENS interface for generic schemes
+    - Feedback when there are unread messages on DAO well
+    - Added Error and 404 pages
+
   - Bugs Fixed
     - Align headers of table in proposal history
     - Re-add redeem for beneficiary button to proposal details page
@@ -26,7 +30,7 @@
     - Fix infinite scroll loading of queued scheme proposals
     - handle Metamask account changing
 
-### 2019-09-12 [actually two releses]
+### 2019-09-12 [actually two releases]
 
   - Features Added
     - Tweaks to the wallet provider UI
@@ -44,7 +48,7 @@
     - Reduce number of subscriptions from DAO history page
     - add breadcrums to mobile
     - add support for WalletConnect web3 providers
-    - add static mint and burn permission 
+    - add static mint and burn permission
   - Bugs Fixed
     - Fix number formatting
     - Fix crashing of scheme page
