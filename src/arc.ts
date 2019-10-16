@@ -79,6 +79,7 @@ const web3ConnectProviderOptions =
           },
         } : {});
 
+
 /**
  * return the default Arc configuration given the execution environment
  */
@@ -585,6 +586,7 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
   return cached ? JSON.parse(cached) : null;
 }
 
+
 /**
  * fully enable a cached provider, if available.  Noop is nothing is cached or
  * current provider is the same as the given one.
@@ -595,6 +597,7 @@ async function loadCachedWeb3Provider(): Promise<void> {
 
   const cachedWeb3ProviderInfo = getCachedWeb3ProviderInfo();
   if (cachedWeb3ProviderInfo) {
+
     try {
       await setWeb3Provider(cachedWeb3ProviderInfo);
       console.log("using cached web3Provider");
