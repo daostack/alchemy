@@ -224,6 +224,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     // get contract information from the subgraph
     if ((window as any).arc) {
       arc = (window as any).arc;
+      arc.web3 = new Web3(provider);
     } else {
       arc = new Arc(arcSettings);
       // TODO: for debugging, remove this when done
@@ -594,7 +595,7 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
  * fully enable a cached provider, if available.  Noop is nothing is cached or
  * current provider is the same as the given one.
  * Exception if cached provider can't be fully enabled.
- * @param showNotification 
+ * @param showNotification
  */
 async function loadCachedWeb3Provider(): Promise<void> {
 
