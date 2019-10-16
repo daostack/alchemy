@@ -10,8 +10,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { combineLatest } from "rxjs";
-import { first } from "rxjs/operators";
+import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import ProposalCard from "../Proposal/ProposalCard";
@@ -49,7 +48,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type SubscriptionData = [Proposal[], Proposal[], Proposal[], IDAOState];
+type SubscriptionData = [Proposal[], Proposal[], Proposal[], IDAOState, Proposal[]];
 type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 const mapDispatchToProps = {
@@ -214,10 +213,9 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const schemeId = props.scheme.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
-    // with all separate queries for votes and stakes and stuff...
-
-    const prefetchQuery = gql`
-      query prefetchProposalDataForSchemeProposalsPage {
+    // with all separate queries for votes and stakes and rewards...
+    const bigProposalQuery = gql`
+      query ProposalDataForSchemeProposalsPage {
         proposals (where: {
           scheme: "${schemeId}"
           stage_in: [
@@ -244,7 +242,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       ${Stake.fragments.StakeFields}
       ${Reward.fragments.RewardFields}
     `;
-    await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
+    // await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
 
     return combineLatest(
       // the list of queued proposals
@@ -272,6 +270,8 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
 
       // DAO state
       dao.state(),
+      // big subscription query to make all other subscription queries obsolete
+      arc.getObservable(bigProposalQuery, {subscribe: true}) as Observable<Proposal[]>,
     );
   },
 
@@ -294,7 +294,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
-    return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
+    return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3], []];
   },
 });
 
