@@ -222,36 +222,11 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     const readonly = typeof provider === "string";
 
     // get contract information from the subgraph
-    arc = new Arc(arcSettings);
-    const contractInfos = await arc.fetchContractInfos();
-    success = !!contractInfos;
-
-    if (success) {
-      initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
-
-      if (!initializedAccount) {
-      // then something went wrong
-        console.error("Unable to obtain an account from the provider");
-        // success = false;
-      }
+    if ((window as any).arc) {
+      arc = (window as any).arc;
     } else {
-      initializedAccount = null;
-    }
-
-    if (success) {
-      provider = arc.web3.currentProvider; // won't be a string, but the actual provider
-      // save for future reference
-      // eslint-disable-next-line require-atomic-updates
-      provider.__networkId = await getNetworkId(provider);
-      if ((window as any).ethereum) {
-      // if this is metamask this should prevent a browser refresh when the network changes
-        (window as any).ethereum.autoRefreshOnNetworkChange = false;
-      }
-      console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
-    }
-
-    // TODO: for debugging, remove this when done
-    if (arc) {
+      arc = new Arc(arcSettings);
+      // TODO: for debugging, remove this when done
       // @ts-ignore
       window.networkSubscriptions = [];
       // @ts-ignore
@@ -298,7 +273,35 @@ export async function initializeArc(provider?: any): Promise<boolean> {
           // printQueries(window.networkSubscriptions);
         },
       });
+
     }
+    const contractInfos = await arc.fetchContractInfos();
+    success = !!contractInfos;
+
+    if (success) {
+      initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
+
+      if (!initializedAccount) {
+      // then something went wrong
+        console.error("Unable to obtain an account from the provider");
+        // success = false;
+      }
+    } else {
+      initializedAccount = null;
+    }
+
+    if (success) {
+      provider = arc.web3.currentProvider; // won't be a string, but the actual provider
+      // save for future reference
+      // eslint-disable-next-line require-atomic-updates
+      provider.__networkId = await getNetworkId(provider);
+      if ((window as any).ethereum) {
+      // if this is metamask this should prevent a browser refresh when the network changes
+        (window as any).ethereum.autoRefreshOnNetworkChange = false;
+      }
+      console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
+    }
+
     // TODO: End debugging stuff -- remove this when done
   } catch (reason) {
     console.error(reason.message);
@@ -310,7 +313,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 }
 
 async function ensureCorrectNetwork(provider: any): Promise<void> {
-  
+
   /**
    * It is required that the provider be the correct one for the current platform
    */
@@ -591,7 +594,7 @@ export function getCachedWeb3ProviderInfo(): IWeb3ProviderInfo | null {
  * fully enable a cached provider, if available.  Noop is nothing is cached or
  * current provider is the same as the given one.
  * Exception if cached provider can't be fully enabled.
- * @param showNotification 
+ * @param showNotification
  */
 async function loadCachedWeb3Provider(): Promise<void> {
 
