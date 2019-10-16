@@ -174,10 +174,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       !hasGens ?
         "Insufficient GENs" :
         currentAccountPrediction === prediction ?
-          "Can't change prediction" :
-          isPredicting ?
-            "Warning: Staking on this proposal is already in progress" :
-            ""
+          "Can't change prediction" : ""
       ;
 
     const passButton = (
