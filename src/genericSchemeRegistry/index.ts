@@ -6,12 +6,14 @@ const namehash = require("eth-ens-namehash");
 const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
-const ensInfo = require("./schemes/ENS.json");
+const ensRegistryInfo = require("./schemes/ENSRegistry.json");
+const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
-  ensInfo,
+  ensRegistryInfo,
+  ensPublicResolverInfo,
   gpInfo,
   registryLookupInfo,
 ];
@@ -243,7 +245,7 @@ export class GenericSchemeRegistry {
           network = "main";
       }
     }
-    const spec = SCHEMEADDRESSES[network][address];
+    const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {
       return new GenericSchemeInfo(spec);
     }
