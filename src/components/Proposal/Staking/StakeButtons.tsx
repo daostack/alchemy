@@ -1,6 +1,5 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
@@ -40,11 +39,11 @@ interface IExternalProps {
 interface IDispatchProps {
   stakeProposal: typeof arcActions.stakeProposal;
   showNotification: typeof showNotification;
-  approveStakingGens: typeof web3Actions.approveStakingGens;
+  approveStakingGens: typeof arcActions.approveStakingGens;
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: web3Actions.approveStakingGens,
+  approveStakingGens: arcActions.approveStakingGens,
   stakeProposal: arcActions.stakeProposal,
   showNotification,
 };

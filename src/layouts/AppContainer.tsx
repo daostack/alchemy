@@ -118,7 +118,6 @@ class AppContainer extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const {
-      // connectionStatus,
       dismissNotification,
       showNotification,
       sortedNotifications,
