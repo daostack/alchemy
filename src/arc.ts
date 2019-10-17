@@ -224,6 +224,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     // get contract information from the subgraph
     if ((window as any).arc) {
       arc = (window as any).arc;
+      arc.web3 = new Web3(provider);
     } else {
       arc = new Arc(arcSettings);
       // TODO: for debugging, remove this when done

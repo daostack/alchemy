@@ -32,7 +32,7 @@ class AccountBalances extends React.Component<IProps, null>  {
         { dao ?
           <div className={css.daoBalance}>
             <b>{dao.name}</b>
-            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation}/>
+            <Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} hideTooltip/>
           </div>
           :
           <div className={css.noReputation}>
