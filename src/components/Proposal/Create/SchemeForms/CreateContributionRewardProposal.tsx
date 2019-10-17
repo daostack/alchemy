@@ -9,6 +9,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
 import { showNotification } from "reducers/notifications";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -121,6 +122,11 @@ class CreateContributionReward extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
+  private onTagsChange = () => (tags: any[]): void => {
+    // eslint-disable-next-line no-console
+    console.log(tags);
+  }
+
   public render(): RenderOutput {
     const { data, daoAvatarAddress, handleClose } = this.props;
 
@@ -228,6 +234,13 @@ class CreateContributionReward extends React.Component<IProps, null> {
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
+
+              <label htmlFor="descriptionInput">
+                Tags
+              </label>
+
+              <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+
               <label htmlFor="urlInput">
                 URL
                 <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
