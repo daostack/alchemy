@@ -223,6 +223,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
     // if there is no existing arc, we create a new one
     if ((window as any).arc) {
       arc = (window as any).arc;
+      arc.web3 = new Web3(provider);
     } else {
       arc = new Arc(arcSettings);
 
