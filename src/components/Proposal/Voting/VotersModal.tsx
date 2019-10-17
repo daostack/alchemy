@@ -158,9 +158,7 @@ const voterModalWithSubscriptions = withSubscription({
   loadingComponent: <div>Loading ...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
-  checkForUpdate: (oldProps, newProps) => {
-    return oldProps.proposal.id !== newProps.proposal.id || oldProps.dao.address !== newProps.dao.address;
-  },
+  checkForUpdate: [],
 
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
