@@ -18,7 +18,7 @@ describe("Proposals ENS", () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
-    const ensTitle = await $("h2=ENS");
+    const ensTitle = await $("h2=EnsRegistry");
     await ensTitle.waitForExist();
     await ensTitle.click();
 
