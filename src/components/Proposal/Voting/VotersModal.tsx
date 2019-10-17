@@ -25,7 +25,6 @@ interface IVoteRowProps {
 class VoteRow extends React.Component<IVoteRowProps, null> {
   public render(): RenderOutput {
     const {dao, proposal, vote, accountProfile } = this.props;
-    console.dir(accountProfile);
     const voteState = vote.staticState;
     return (
       <div className={css.voteRow}>
