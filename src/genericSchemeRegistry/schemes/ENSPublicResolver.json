@@ -136,7 +136,8 @@
         },
         {
           "name": "data",
-          "label": "Data"
+          "label": "Data",
+          "optional": true
         }
       ],
       "abi": {

@@ -210,6 +210,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
           case "uint64":
           case "uint256":
           case "bytes32":
+          case "bytes":
           case "address":
           case "string":
             initialFormValues[field.name] = "";
@@ -270,7 +271,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               }
 
               for (const field of this.state.currentAction.getFields()) {
-                if (field.type !== "bool") {
+                if (field.type !== "bool" && !field.optional) {
                   valueIsRequired(field.name);
                 }
 
@@ -375,7 +376,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                             <label htmlFor={field.name}>
                               { field.label }
                               <ErrorMessage name={field.name}>{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                              {field.type !== "bool" ? <div className={css.requiredMarker}>*</div> : ""}
+                              {field.type !== "bool" && !field.optional ? <div className={css.requiredMarker}>*</div> : ""}
                             </label>
                             {this.renderField(field, values, touched, errors)}
                           </div>
