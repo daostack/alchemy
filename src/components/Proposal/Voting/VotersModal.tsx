@@ -25,6 +25,7 @@ interface IVoteRowProps {
 class VoteRow extends React.Component<IVoteRowProps, null> {
   public render(): RenderOutput {
     const {dao, proposal, vote, accountProfile } = this.props;
+    console.dir(accountProfile);
     const voteState = vote.staticState;
     return (
       <div className={css.voteRow}>
@@ -133,11 +134,11 @@ class VotersModal extends React.Component<IProps, null> {
             <div className={css.voters}>
               <div>
                 <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id}
-                  accountProfile={profiles[vote.id]} />)}</div>
+                  accountProfile={profiles[vote.staticState.voter]} />)}</div>
               </div>
               <div>
                 <div>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id}
-                  accountProfile={profiles[vote.id]} />)}</div>
+                  accountProfile={profiles[vote.staticState.voter]} />)}</div>
               </div>
             </div>
           </div>
