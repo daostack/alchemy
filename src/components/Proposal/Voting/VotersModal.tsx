@@ -168,7 +168,7 @@ const voterModalWithSubscriptions = withSubscription({
     const proposalId = props.proposal.id;
     const proposal = dao.proposal(proposalId);
 
-    return proposal.votes({}, { subscribe: true });
+    return proposal.votes({}, { subscribe: false });
   },
 });
 
