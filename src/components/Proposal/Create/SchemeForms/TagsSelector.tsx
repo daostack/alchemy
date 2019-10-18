@@ -41,17 +41,15 @@ export default class TagsSelector extends React.Component<IProps, IState> {
   }
 
   private handleDrag = () => (tag: Tag, currPos: number, newPos: number): void => {
-    // const tags = [...this.state.tags];
-    const tags = this.state.tags;
-    const newTags = tags.slice();
+    const tags = this.state.tags.slice();
 
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
+    tags.splice(currPos, 1);
+    tags.splice(newPos, 0, tag);
 
-    this.setState({ tags: newTags });
+    this.setState({ tags });
 
     if (this.props.onChange) {
-      this.props.onChange(this.state.tags);
+      this.props.onChange(tags);
     }
   }
 
