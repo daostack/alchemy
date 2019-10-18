@@ -151,6 +151,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
             title: "",
             url: "",
           } as IFormValues}
+          // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
 
@@ -193,6 +194,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
             return errors;
           }}
           onSubmit={this.handleSubmit}
+          // eslint-disable-next-line react/jsx-no-bind
           render={({
             errors,
             touched,
