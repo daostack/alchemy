@@ -1,5 +1,6 @@
 import * as React from "react";
 import { WithContext as ReactTags, Tag } from "react-tag-input";
+import * as css from "./TagsSelector.scss";
 
 interface IProps {
   onChange: (tags: Array<Tag>) => void;
@@ -12,9 +13,10 @@ interface IState {
 const KeyCodes = {
   comma: 188,
   enter: 13,
+  tab: 9,
 };
  
-const delimiters = [KeyCodes.comma, KeyCodes.enter];
+const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
   
 export default class TagsSelector extends React.Component<IProps, IState> {
 
@@ -61,27 +63,25 @@ export default class TagsSelector extends React.Component<IProps, IState> {
     const suggestions = [
       {id: "fun", text: "fun"},
       {id: "delete", text: "delete"},
-      {id: "deleterious", text: "deleterious"},
+      {id: "deleterious", text: "Deleterious"},
       {id: "deletion", text: "deletion"},
-      {id: "indelable", text: "indelable"},
+      {id: "indelable", text: "Indelable"},
       {id: "indelicate", text: "indelicate"},
-      {id: "indisrete", text: "indisrete"},
+      {id: "indisrete", text: "Indisrete"},
       {id: "governance", text: "governance"},
       {id: "extra", text: "extra terrestrial"}] as Array<Tag>;
 
-    return <ReactTags
-      tags={tags}
-      suggestions={suggestions}
-      handleDelete={this.handleDelete()}
-      handleAddition={this.handleAddition()}
-      handleDrag={this.handleDrag()}
-      delimiters={delimiters} 
-    />;
-    //               <ChipInput
-    // fullWidth
-    // defaultValue={tags}
-    // placeholder='Type and press enter or tab to select or add tags'
-    // onChange={onChange}
-    // />;
+    return <div className={css.reactTagsContainer}>
+      <ReactTags
+        tags={tags}
+        suggestions={suggestions}
+        handleDelete={this.handleDelete()}
+        handleAddition={this.handleAddition()}
+        handleDrag={this.handleDrag()}
+        delimiters={delimiters}
+        inputFieldPosition="inline"
+        autocomplete={1}
+      />
+    </div>;
   }
 }
