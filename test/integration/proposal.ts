@@ -19,7 +19,7 @@ describe("Proposals", () => {
     const loginButton = await $("*[data-test-id=\"loginButton\"]");
     await loginButton.click();
 
-    await hideCookieAcceptWindow()
+    await hideCookieAcceptWindow();
     const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
     await schemeCard.click();
 
@@ -68,7 +68,7 @@ describe("Proposals", () => {
     await proposal.click();
 
     const contextMenu = await proposal.$("[data-test-id=\"proposalContextMenu\"]");
-    await contextMenu.waitForDisplayed()
+    await contextMenu.waitForDisplayed();
     await contextMenu.click();
 
     const voteButton = await proposal.$("[data-test-id=\"voteFor\"]");
