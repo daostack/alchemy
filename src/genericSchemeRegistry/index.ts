@@ -84,8 +84,8 @@ export class ActionField {
    */
   public callValue(userValue: string|string[]) {
     if (Array.isArray(userValue)) {
-      userValue = userValue.map((val: string) => val.hasOwnProperty('trim') ? val.trim() : val);
-    } else if (userValue.hasOwnProperty('trim')) {
+      userValue = userValue.map((val: string) => Object.prototype.hasOwnProperty.call(val, "trim") ? val.trim() : val);
+    } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
       userValue = userValue.trim();
     }
 
