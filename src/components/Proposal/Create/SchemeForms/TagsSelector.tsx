@@ -25,19 +25,22 @@ export default class TagsSelector extends React.Component<IProps, IState> {
   }
 
   private handleDelete = () => (i: number): void => {
-    this.state.tags.splice(i, 1);
+    const tags = this.state.tags;
+    this.setState({
+      tags: tags.filter((_tag: Tag, index: number) => index !== i),
+    });
+        
     if (this.props.onChange) {
       this.props.onChange(this.state.tags);
     }
-    // this.setState({ tags: this.state.tags });
   }
  
   private handleAddition = () => (tag: Tag): void => {
-    this.state.tags.push(tag);
+    this.setState({ tags: [...this.state.tags, tag] });
+
     if (this.props.onChange) {
       this.props.onChange(this.state.tags);
     }
-    // this.setState({ tags: this.state.tags });
   }
 
   private handleDrag = () => (tag: Tag, currPos: number, newPos: number): void => {
