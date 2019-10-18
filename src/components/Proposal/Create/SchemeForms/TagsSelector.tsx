@@ -79,7 +79,6 @@ export default class TagsSelector extends React.Component<IProps, IState> {
         handleAddition={this.handleAddition()}
         handleDrag={this.handleDrag()}
         delimiters={delimiters}
-        inputFieldPosition="inline"
         autocomplete={1}
       />
     </div>;
