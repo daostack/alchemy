@@ -120,9 +120,9 @@ export default withSubscription({
       return combineLatest(
         proposal.state(), // state of the current proposal
         // TODO: do these subscription on the schemespage level
-        proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: true }),
-        proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: true }),
-        proposal.rewards({ where: {beneficiary: currentAccountAddress}},{ subscribe: true } )
+        proposal.votes({where: { voter: currentAccountAddress }}),
+        proposal.stakes({where: { staker: currentAccountAddress }}),
+        proposal.rewards({ where: {beneficiary: currentAccountAddress}})
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 

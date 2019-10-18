@@ -244,7 +244,7 @@ const TokenBalance = (props: ITokenProps) => {
   const { data, error, isLoading, tokenAddress } = props;
 
   const tokenData = supportedTokens()[tokenAddress];
-  if (isLoading || error || (data.isZero() && tokenData.symbol !== "GEN")) {
+  if (isLoading || error || ((data === null || data.isZero()) && tokenData.symbol !== "GEN")) {
     return null;
   }
 
@@ -264,7 +264,7 @@ const SubscribedTokenBalance = withSubscription({
     // General cache priming for the DAO we do here
     // prime the cache: get all members fo this DAO -
     const daoState = props.dao;
-    
+
     await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
 
     const arc = getArc();

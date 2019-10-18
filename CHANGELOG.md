@@ -20,7 +20,7 @@
     - Issue a notification when the user connects to a wrong network
     - Optimization of queries and subscriptions
     - ENS interface for generic schemes
-    - Feedback when there are unread messages on DAO well
+    - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
 
   - Bugs Fixed
