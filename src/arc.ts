@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Address, Arc, createApolloClient } from "@daostack/client";
 // @ts-ignore
 import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -221,11 +220,13 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
     const readonly = typeof provider === "string";
 
-    // get contract information from the subgraph
+    // if there is no existing arc, we create a new one
     if ((window as any).arc) {
       arc = (window as any).arc;
+      arc.web3 = new Web3(provider);
     } else {
       arc = new Arc(arcSettings);
+
       // TODO: for debugging, remove this when done
       // @ts-ignore
       window.networkSubscriptions = [];
@@ -273,8 +274,10 @@ export async function initializeArc(provider?: any): Promise<boolean> {
           // printQueries(window.networkSubscriptions);
         },
       });
-
+    // TODO: End debugging stuff -- remove this when done
     }
+
+    // get contract information from the subgraph
     const contractInfos = await arc.fetchContractInfos();
     success = !!contractInfos;
 
@@ -282,7 +285,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       initializedAccount = await _getCurrentAccountFromProvider(arc.web3);
 
       if (!initializedAccount) {
-      // then something went wrong
+        // then something went wrong
         console.error("Unable to obtain an account from the provider");
         // success = false;
       }
@@ -301,8 +304,6 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       }
       console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
     }
-
-    // TODO: End debugging stuff -- remove this when done
   } catch (reason) {
     console.error(reason.message);
   }

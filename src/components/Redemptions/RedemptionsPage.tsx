@@ -219,7 +219,7 @@ const SubscribedRedemptionsPage = withSubscription({
     }
 
     const arc = getArc();
-    const query = gql`
+    const query = gql`query proposalsWithUnclaimedRewards
       {
         proposals(
           where: {

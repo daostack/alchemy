@@ -7,7 +7,9 @@ import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import { Modal } from "react-router-modal";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState, IProfilesState } from "reducers/profilesReducer";
+import { IRootState } from "reducers";
+import { connect } from "react-redux";
 import VoteGraph from "./VoteGraph";
 
 import * as css from "./VotersModal.scss";
@@ -52,8 +54,19 @@ interface IExternalProps {
   accountProfile: IProfileState;
 }
 
+interface IStateProps {
+  profiles: IProfilesState;
+}
+
+const mapStateToProps = (state: IRootState, _ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ..._ownProps,
+    profiles: state.profiles,
+  };
+};
+
 type SubscriptionData = Vote[];
-type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<SubscriptionData>;
 
 class VotersModal extends React.Component<IProps, null> {
 
@@ -63,7 +76,7 @@ class VotersModal extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const votes = this.props.data;
-    const { dao, proposal, accountProfile } = this.props;
+    const { dao, proposal, profiles } = this.props;
 
     const currentAccountVote = votes[0];
 
@@ -119,10 +132,12 @@ class VotersModal extends React.Component<IProps, null> {
 
             <div className={css.voters}>
               <div>
-                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={accountProfile} />)}</div>
+                <div>{yesVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id}
+                  accountProfile={profiles[vote.staticState.voter]} />)}</div>
               </div>
               <div>
-                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id} accountProfile={accountProfile} />)}</div>
+                <div>{noVotes.map((vote) => <VoteRow dao={dao} proposal={proposal} vote={vote} key={"vote_" + vote.id}
+                  accountProfile={profiles[vote.staticState.voter]} />)}</div>
               </div>
             </div>
           </div>
@@ -138,14 +153,12 @@ class VotersModal extends React.Component<IProps, null> {
   }
 }
 
-export default withSubscription({
+const voterModalWithSubscriptions = withSubscription({
   wrappedComponent: VotersModal,
   loadingComponent: <div>Loading ...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
-  checkForUpdate: (oldProps, newProps) => {
-    return oldProps.proposal.id !== newProps.proposal.id || oldProps.dao.address !== newProps.dao.address;
-  },
+  checkForUpdate: [],
 
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
@@ -153,6 +166,8 @@ export default withSubscription({
     const proposalId = props.proposal.id;
     const proposal = dao.proposal(proposalId);
 
-    return proposal.votes({}, { subscribe: true });
+    return proposal.votes({}, { subscribe: false });
   },
 });
+
+export default connect(mapStateToProps)(voterModalWithSubscriptions);
