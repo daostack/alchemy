@@ -68,6 +68,17 @@ export default class TagsSelector extends React.Component<IProps, IState> {
       {id: "indelable", text: "Indelable"},
       {id: "indelicate", text: "indelicate"},
       {id: "indisrete", text: "Indisrete"},
+      {id: "indisrete1", text: "Indisrete1"},
+      {id: "indisrete2", text: "Indisrete2"},
+      {id: "indisrete3", text: "Indisrete3"},
+      {id: "indisrete4", text: "Indisrete4"},
+      {id: "indisrete5", text: "Indisrete5"},
+      {id: "indisrete6", text: "Indisrete6"},
+      {id: "indisrete7", text: "Indisrete7"},
+      {id: "indisrete8", text: "Indisrete8"},
+      {id: "indisrete9", text: "Indisrete9"},
+      {id: "indisrete10", text: "Indisretei10"},
+      {id: "indisrete11", text: "Indisrete11"},
       {id: "governance", text: "governance"},
       {id: "extra", text: "extra terrestrial"}] as Array<Tag>;
 
