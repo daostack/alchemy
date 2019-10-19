@@ -5,26 +5,28 @@
 
 :global {
   div.ReactTags__suggestions {
-      position: absolute;
-      background-color: white;
+    position: absolute;
+    background-color: white;
+    z-index: 10000;
   }
   div.ReactTags__suggestions ul {
-      list-style-type: none;
-      box-shadow: .05em .01em .5em rgba(0,0,0,.2);
+    margin-top: -6px;
+    padding: 0;
+    list-style-type: none;
+    border: 1px solid rgb(191, 203, 213);
+    border-radius: 0 0 5px 5px;
   }
   div.ReactTags__suggestions li {
-      border-bottom: 1px solid #ddd;
-      padding: 5px 10px;
-      margin: 0;
-  }
+    padding: 6px 14px;
+}
   div.ReactTags__suggestions li mark {
-      text-decoration: underline;
-      background: none;
-      font-weight: 600;
+    text-decoration: underline;
+    background: none;
+    font-weight: 600;
   }
   div.ReactTags__suggestions ul li.ReactTags__activeSuggestion {
-      background: #b7cfe0;
-      cursor: pointer;
+    background: #b7cfe0;
+    cursor: pointer;
   } 
   
   // div.ReactTags__tags {
