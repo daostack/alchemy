@@ -130,7 +130,7 @@
         {
           "label": "Bounty Details",
           "name": "_data",
-          "placeholder":"IPFS Hash (Qmd0...)"
+          "placeholder": "IPFS Hash (Qmd0...)"
         },
         {
           "label": "Fulfillment ID",
