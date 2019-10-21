@@ -3,11 +3,16 @@ import { WithContext as ReactTags, Tag } from "react-tag-input";
 import * as css from "./TagsSelector.scss";
 
 interface IProps {
-  onChange: (tags: Array<Tag>) => void;
+  onChange?: (tags: Array<string>) => void;
+  readOnly?: boolean;
+  /**
+   * tags to start with
+   */
+  tags?: Array<string>;
 }
 
 interface IState {
-  tags: Array<Tag>;
+  workingTags: Array<Tag>;
 }
 
 const KeyCodes = {
@@ -23,43 +28,43 @@ export default class TagsSelector extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = { tags: new Array<Tag>() };
+    this.state = { 
+      workingTags: props.tags ? props.tags.map((tag: string) => {return { id: tag, text: tag }; }) : new Array<Tag>() };
+  }
+
+  private emitOnChange(tags: Array<Tag>): void {
+    if (this.props.onChange) {
+      this.props.onChange(tags.map((tag: Tag) => tag.text));    
+    }
   }
 
   private handleDelete = () => (i: number): void => {
-    const tags = this.state.tags;
+    const tags = this.state.workingTags;
     this.setState({
-      tags: tags.filter((_tag: Tag, index: number) => index !== i),
+      workingTags: tags.filter((_tag: Tag, index: number) => index !== i),
     });
         
-    if (this.props.onChange) {
-      this.props.onChange(this.state.tags);
-    }
+    this.emitOnChange(this.state.workingTags);
   }
  
   private handleAddition = () => (tag: Tag): void => {
-    this.setState({ tags: [...this.state.tags, tag] });
-
-    if (this.props.onChange) {
-      this.props.onChange(this.state.tags);
-    }
+    this.setState({ workingTags: [...this.state.workingTags, tag] });
+    this.emitOnChange(this.state.workingTags);
   }
 
   private handleDrag = () => (tag: Tag, currPos: number, newPos: number): void => {
-    const tags = this.state.tags.slice();
+    const tags = this.state.workingTags.slice();
 
     tags.splice(currPos, 1);
     tags.splice(newPos, 0, tag);
 
-    this.setState({ tags });
-
-    if (this.props.onChange) {
-      this.props.onChange(tags);
-    }
+    this.setState({ workingTags: tags });
+    this.emitOnChange(tags);
   }
 
   public render(): RenderOutput {
-    const { tags } = this.state;
+    const { workingTags } = this.state;
+    const { readOnly } = this.props;
     const suggestions = [
       {id: "fun", text: "fun"},
       {id: "delete", text: "delete"},
@@ -84,13 +89,14 @@ export default class TagsSelector extends React.Component<IProps, IState> {
 
     return <div className={css.reactTagsContainer}>
       <ReactTags
-        tags={tags}
+        tags={workingTags}
         suggestions={suggestions}
         handleDelete={this.handleDelete()}
         handleAddition={this.handleAddition()}
         handleDrag={this.handleDrag()}
         delimiters={delimiters}
         autocomplete={1}
+        readOnly={!!readOnly}
       />
     </div>;
   }
