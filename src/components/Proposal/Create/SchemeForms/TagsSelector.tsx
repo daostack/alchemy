@@ -1,8 +1,13 @@
 import * as React from "react";
 import { WithContext as ReactTags, Tag } from "react-tag-input";
+import classNames from "classnames";
 import * as css from "./TagsSelector.scss";
 
 interface IProps {
+  /**
+   * for pages with a dark background (like proposal details)
+   */
+  darkTheme?: boolean;
   onChange?: (tags: Array<string>) => void;
   readOnly?: boolean;
   /**
@@ -64,7 +69,7 @@ export default class TagsSelector extends React.Component<IProps, IState> {
 
   public render(): RenderOutput {
     const { workingTags } = this.state;
-    const { readOnly } = this.props;
+    const { readOnly, darkTheme } = this.props;
     const suggestions = [
       {id: "fun", text: "fun"},
       {id: "delete", text: "delete"},
@@ -87,7 +92,10 @@ export default class TagsSelector extends React.Component<IProps, IState> {
       {id: "governance", text: "governance"},
       {id: "extra", text: "extra terrestrial"}] as Array<Tag>;
 
-    return <div className={css.reactTagsContainer}>
+    return <div className={classNames({
+      [css.reactTagsContainer]: true,
+      ["darkTheme"]: darkTheme,
+    })}>
       <ReactTags
         tags={workingTags}
         suggestions={suggestions}

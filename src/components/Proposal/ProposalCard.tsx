@@ -55,7 +55,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
           votes,
         } = props;
 
-        const tags = [ "Something", "Special", "This", "Way", "Comes" ];
+        const tags = [ "Something", "Special", "This", "Way", "Comes", "By", "a Way", "Less", "Travelled" ];
 
         let currentAccountVote = 0;
 
@@ -156,11 +156,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   <img src="/assets/images/Icon/Open.svg" />
                 </Link>
               </h3>
-              <div className={classNames({
-                [css.tagsContainer]: tags && tags.length,
-              })}>
+              
+              { tags && tags.length ? <div className={css.tagsContainer}>
                 <TagsSelector readOnly tags={tags}></TagsSelector>
-              </div>
+              </div> : "" }
+              
               <div className={css.summary}>
                 <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
               </div>

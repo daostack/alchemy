@@ -32,20 +32,6 @@
     background: #b7cfe0;
     cursor: pointer;
   } 
-  
-  // div.ReactTags__tags {
-  //   position: relative;
-  // }
-
-  // div.ReactTags__tagInput {
-  //   display: inline-block;
-  //   width: 100%;
-
-  //   .ReactTags__tagInputField {
-  //     width: 100%;
-  //   }
-  // }
-
   div.ReactTags__selected span.ReactTags__tag {
       display: inline-block;
       border-radius: 10px;
@@ -54,10 +40,13 @@
       margin: 3px 2px;
       font-size: 11px;
   }
-
   div.ReactTags__selected a.ReactTags__remove {
       color: #aaa;
       margin-left: 5px;
       cursor: pointer;
+  }
+  div.darkTheme .ReactTags__selected span.ReactTags__tag {
+    border: 1px solid #bfcbd5;
+    background-color: transparent;
   }
 }
