@@ -7,13 +7,15 @@ const Web3 = require("web3");
 const dutchXInfo = require("./schemes/DutchX.json");
 const bountiesInfo = require("./schemes/StandardBounties.json");
 const gpInfo = require("./schemes/GenesisProtocol.json");
-const ensInfo = require("./schemes/ENS.json");
+const ensRegistryInfo = require("./schemes/ENSRegistry.json");
+const ensPublicResolverInfo = require("./schemes/ENSPublicResolver.json");
 const registryLookupInfo = require("./schemes/RegistryLookup.json");
 
 const KNOWNSCHEMES = [
   dutchXInfo,
   bountiesInfo,
-  ensInfo,
+  ensRegistryInfo,
+  ensPublicResolverInfo,
   gpInfo,
   registryLookupInfo,
 ];
@@ -49,6 +51,7 @@ export interface IActionFieldOptions {
   labelTrue?: string;
   labelFalse?: string;
   type?: string;
+  optional?: boolean;
   placeholder?: string;
   transformation?: string;
 }
@@ -61,6 +64,7 @@ export class ActionField {
   public labelTrue?: string;
   public labelFalse?: string;
   public type?: string;
+  public optional?: boolean;
   public placeholder?: string;
   public transformation?: string;
 
@@ -72,6 +76,7 @@ export class ActionField {
     this.labelTrue = options.labelTrue;
     this.labelFalse = options.labelFalse;
     this.type = options.type;
+    this.optional = options.optional;
     this.placeholder = options.placeholder;
     this.transformation = options.transformation;
   }
@@ -81,8 +86,8 @@ export class ActionField {
    */
   public callValue(userValue: string|string[]) {
     if (Array.isArray(userValue)) {
-      userValue = userValue.map((val: string) => val.trim());
-    } else if (typeof userValue === 'string') {
+      userValue = userValue.map((val: string) => Object.prototype.hasOwnProperty.call(val, "trim") ? val.trim() : val);
+    } else if (Object.prototype.hasOwnProperty.call(userValue, "trim")) {
       userValue = userValue.trim();
     }
 
@@ -245,7 +250,7 @@ export class GenericSchemeRegistry {
           network = "main";
       }
     }
-    const spec = SCHEMEADDRESSES[network][address];
+    const spec = SCHEMEADDRESSES[network][address.toLowerCase()];
     if (spec) {
       return new GenericSchemeInfo(spec);
     }
