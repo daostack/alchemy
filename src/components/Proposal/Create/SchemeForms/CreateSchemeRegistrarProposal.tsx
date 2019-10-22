@@ -9,6 +9,7 @@ import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIs
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -110,6 +111,11 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({ currentTab: tab });
   }
 
+  private onTagsChange = () => (tags: any[]): void => {
+    // eslint-disable-next-line no-console
+    console.log(tags);
+  }
+
   public render(): RenderOutput {
     // "schemes" are the schemes registered in this DAO
     const schemes = this.props.data;
@@ -179,6 +185,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               title: "",
               url: "",
             } as IFormValues}
+            // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
 
@@ -221,6 +228,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               return errors;
             }}
             onSubmit={this.handleSubmit}
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
@@ -266,6 +274,14 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     name="description"
                     className={touched.description && errors.description ? css.error : null}
                   />
+
+                  <label className={css.tagSelectorLabel}>
+                    Tags
+                  </label>
+
+                  <div className={css.tagSelectorContainer}>
+                    <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                  </div>
 
                   <label htmlFor="urlInput">
                     URL

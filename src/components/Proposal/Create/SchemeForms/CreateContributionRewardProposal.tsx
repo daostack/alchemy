@@ -237,12 +237,12 @@ class CreateContributionReward extends React.Component<IProps, null> {
                 className={touched.description && errors.description ? css.error : null}
               />
 
-              <label htmlFor="descriptionInput">
+              <label className={css.tagSelectorLabel}>
                 Tags
               </label>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange()} id="descriptionInput"></TagsSelector>
               </div>
 
               <label htmlFor="urlInput">

@@ -555,7 +555,11 @@ div.description {
 }
 
 .tagSelectorContainer {
-  padding-top: 4px;
+  padding-top: 0;
+}
+
+.tagSelectorLabel {
+  margin-top: 4px;
 }
 
 @media only screen and (max-width: 425px) {
