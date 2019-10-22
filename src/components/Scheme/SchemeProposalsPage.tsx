@@ -1,17 +1,19 @@
 import * as H from "history";
-import { Address, IDAOState, IProposalStage, ISchemeState, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, ISchemeState, Proposal, Vote, Reward, Stake } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import gql from "graphql-tag";
 import { schemeName} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { combineLatest } from "rxjs";
+import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
+import classNames from "classnames";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
 
@@ -40,6 +42,7 @@ const Fade = ({ children, ...props }: any): any => (
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
   history: H.History;
+  isActive: boolean;
   scheme: ISchemeState;
 }
 
@@ -47,7 +50,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type SubscriptionData = [Proposal[], Proposal[], Proposal[], IDAOState];
+type SubscriptionData = [Proposal[], Proposal[], Proposal[], IDAOState, Proposal[]];
 type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 const mapDispatchToProps = {
@@ -71,7 +74,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
-    const { currentAccountAddress, fetchMore, hasMoreToLoad, scheme } = this.props;
+    const { currentAccountAddress, fetchMore, hasMoreToLoad, isActive, scheme } = this.props;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
@@ -119,10 +122,13 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
               <Link to={"/dao/" + dao.address}>
                 <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
               </Link>
-              <a className={css.blueButton}
-                href="javascript:void(0)"
-                onClick={this._handleNewProposal}
-                data-test-id="createProposal"
+              <a className={classNames({
+                [css.blueButton]: true,
+                [css.disabled]: !isActive,
+              })}
+              href="javascript:void(0)"
+              onClick={isActive ? this._handleNewProposal : null}
+              data-test-id="createProposal"
               >+ New Proposal</a>
             </div>
           </div>
@@ -205,11 +211,43 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
            || oldProps.scheme.id !== newProps.scheme.id;
   },
 
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const arc = getArc();
     const dao = arc.dao(daoAvatarAddress);
     const schemeId = props.scheme.id;
+
+    // this query will fetch al data we need before rendering the page, so we avoid hitting the server
+    // with all separate queries for votes and stakes and rewards...
+    const bigProposalQuery = gql`
+      query ProposalDataForSchemeProposalsPage {
+        proposals (where: {
+          scheme: "${schemeId}"
+          stage_in: [
+            "${IProposalStage[IProposalStage.Boosted]}",
+            "${IProposalStage[IProposalStage.PreBoosted]}",
+            "${IProposalStage[IProposalStage.Queued]}"
+            "${IProposalStage[IProposalStage.QuietEndingPeriod]}",
+          ]
+        }){
+          ...ProposalFields
+          votes (where: { voter: "${props.currentAccountAddress}"}) {
+            ...VoteFields
+          }
+          stakes (where: { staker: "${props.currentAccountAddress}"}) {
+            ...StakeFields
+          }
+          gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
+            ...RewardFields
+          }
+        }
+      }
+      ${Proposal.fragments.ProposalFields}
+      ${Vote.fragments.VoteFields}
+      ${Stake.fragments.StakeFields}
+      ${Reward.fragments.RewardFields}
+    `;
+    // await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
 
     return combineLatest(
       // the list of queued proposals
@@ -220,23 +258,25 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }, { subscribe: true, fetchAllData: true }),
+      }, { subscribe: true }),
 
       // the list of preboosted proposals
       dao.proposals({
         where: { scheme: schemeId, stage: IProposalStage.PreBoosted },
         orderBy: "preBoostedAt",
-      }, { subscribe: true, fetchAllData: true }),
+      }, { subscribe: true }),
 
       // the list of boosted proposals
       dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
-      }, { subscribe: true, fetchAllData: true }),
+      }, { subscribe: true}),
 
       // DAO state
       dao.state(),
+      // big subscription query to make all other subscription queries obsolete
+      arc.getObservable(bigProposalQuery, {subscribe: true}) as Observable<Proposal[]>,
     );
   },
 
@@ -259,7 +299,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
-    return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3]];
+    return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3], []];
   },
 });
 

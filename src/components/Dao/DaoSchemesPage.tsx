@@ -98,7 +98,7 @@ export default withSubscription({
     const dao = arc.dao(daoAvatarAddress);
     return combineLatest(
       dao.state({ fetchAllData: true }), // DAO state
-      arc.dao(daoAvatarAddress).schemes({}, { fetchAllData: true })
+      arc.dao(daoAvatarAddress).schemes({}, { fetchAllData: true, subscribe: true })
     );
   },
 });

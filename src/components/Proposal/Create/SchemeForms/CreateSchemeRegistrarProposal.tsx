@@ -5,7 +5,7 @@ import * as classNames from "classnames";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { schemeNameAndAddress, isValidUrl } from "lib/util";
+import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIsActive } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
@@ -137,21 +137,30 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       [css.editScheme]: currentTab === "editScheme",
     });
 
+    const isAddActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Register);
+    const isRemoveActive = getSchemeIsActive(this.props.scheme, GetSchemeIsActiveActions.Remove);
+
     return (
       <div className={css.createWrapperWithSidebar}>
         <div className={css.sidebar}>
-          <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
-            <span></span>
-            Add Scheme
-          </button>
-          <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
-            <span></span>
-            Edit Scheme
-          </button>
-          <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
-            <span></span>
+          { isAddActive ?
+            <button className={addSchemeButtonClass} onClick={this.handleTabClick("addScheme")} data-test-id="tab-AddScheme">
+              <span></span>
+              Add Scheme
+            </button>
+            : "" }
+          { isAddActive ?
+            <button className={editSchemeButtonClass} onClick={this.handleTabClick("editScheme")} data-test-id="tab-EditScheme">
+              <span></span>
+              Edit Scheme
+            </button>
+            : "" }
+          { isRemoveActive ?
+            <button className={removeSchemeButtonClass} onClick={this.handleTabClick("removeScheme")} data-test-id="tab-RemoveScheme">
+              <span></span>
             Remove Scheme
-          </button>
+            </button>
+            : "" }
         </div>
 
         <div className={schemeRegistrarFormClass}>

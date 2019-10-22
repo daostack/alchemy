@@ -75,16 +75,14 @@ class Header extends React.Component<IProps, IStateProps> {
 
   public handleClickLogin = async (_event: any): Promise<void> => {
     enableWalletProvider({
-      blockOnWrongNetwork: false,
-      notifyOnSuccess: false,
+      suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
     });
   }
 
   public handleConnect = async (_event: any): Promise<void> => {
     enableWalletProvider({
-      blockOnWrongNetwork: false,
-      notifyOnSuccess: false,
+      suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
     });
   }

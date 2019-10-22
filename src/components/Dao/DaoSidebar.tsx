@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { first } from "rxjs/operators";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
+import * as uiActions from "actions/uiActions";
 import * as css from "./Dao.scss";
 
 interface IExternalProps {
@@ -28,7 +29,15 @@ interface IHasNewPosts {
   hasNewPosts: boolean;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<IHasNewPosts>;
+interface IDispatchProps {
+  hideMenu: typeof uiActions.hideMenu;
+}
+
+const mapDispatchToProps = {
+  hideMenu: uiActions.hideMenu,
+};
+
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IHasNewPosts>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -41,6 +50,10 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
+  }
+
+  private handleCloseMenu = () => (_event: any): void => {
+    this.props.hideMenu();
   }
 
   public render(): RenderOutput {
@@ -59,7 +72,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
       <div className={menuClass}>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
-            <Link to={"/dao/" + dao.address}>
+            <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu()}>
               <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
               <em></em>
               <span>{dao.name}</span>
@@ -90,7 +103,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
             <span className={css.navHeading}><b>Menu</b></span>
             <ul>
               <li>
-                <Link to={"/dao/" + dao.address}>
+                <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu()}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -103,7 +116,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                 </Link>
               </li>
               <li>
-                <Link to={"/dao/" + dao.address + "/members/"}>
+                <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu()}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -116,7 +129,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                 </Link>
               </li>
               <li>
-                <Link to={"/dao/" + dao.address + "/history/"}>
+                <Link to={"/dao/" + dao.address + "/history/"} onClick={this.handleCloseMenu()}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -129,7 +142,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                 </Link>
               </li>
               <li>
-                <Link to={"/dao/" + dao.address + "/discussion/"}>
+                <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu()}>
                   <span className={
                     classNames({
                       [css.menuDot]: true,
@@ -164,7 +177,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
           </div>
           <div className={css.menuWrapper}>
             <ul>
-              <li><Link to="/">Home</Link></li>
+              <li><Link to="/" onClick={this.handleCloseMenu()}>Home</Link></li>
               <li>
                 <a>Buy GEN</a>
                 <ul>
@@ -231,7 +244,7 @@ const TokenBalance = (props: ITokenProps) => {
   const { data, error, isLoading, tokenAddress } = props;
 
   const tokenData = supportedTokens()[tokenAddress];
-  if (isLoading || error || (data.isZero() && tokenData.symbol !== "GEN")) {
+  if (isLoading || error || ((data === null || data.isZero()) && tokenData.symbol !== "GEN")) {
     return null;
   }
 
@@ -251,7 +264,7 @@ const SubscribedTokenBalance = withSubscription({
     // General cache priming for the DAO we do here
     // prime the cache: get all members fo this DAO -
     const daoState = props.dao;
-    
+
     await daoState.dao.members({ first: 1000, skip: 0 }).pipe(first()).toPromise();
 
     const arc = getArc();
@@ -288,4 +301,4 @@ const SubscribedDaoSidebar = withSubscription({
   },
 });
 
-export default connect(mapStateToProps)(SubscribedDaoSidebar);
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedDaoSidebar);
