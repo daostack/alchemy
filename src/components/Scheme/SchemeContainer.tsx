@@ -75,11 +75,15 @@ class SchemeContainer extends React.Component<IProps, null> {
 
     const proposalsTabClass = classNames({
       [css.proposals]: true,
-      [css.active]: !this.props.location.pathname.includes("info"),
+      [css.active]: !this.props.location.pathname.includes("info") && !this.props.location.pathname.includes("open"),
     });
     const infoTabClass = classNames({
       [css.info]: true,
       [css.active]: this.props.location.pathname.includes("info"),
+    });
+    const openTabClass = classNames({
+      [css.open]: true,
+      [css.active]: this.props.location.pathname.includes("open"),
     });
 
     return (
@@ -96,7 +100,7 @@ class SchemeContainer extends React.Component<IProps, null> {
             <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
             { // if Bounties Scheme, create new tab
               (schemeName(schemeState, schemeState.address) == 'Standard Bounties') &&
-              <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/open/`}>Open Bounties</Link>
+              <Link className={openTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/open/`}>Open Bounties</Link>
             }
             <a className={
               classNames({
@@ -114,11 +118,11 @@ class SchemeContainer extends React.Component<IProps, null> {
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
             render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
 
+          <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/open"
+            render={(props) => <SchemeOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
+
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
             render={(props) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
-
-          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId/open"
-            render={(props) => <SchemeOpenBountyPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
 
         </Switch>
       </div>

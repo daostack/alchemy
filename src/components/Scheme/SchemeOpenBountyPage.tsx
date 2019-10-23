@@ -39,6 +39,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
     // query all open bounties issued by current dao ordered by decending price
     let res = await fetch(`https://api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`)
     let json = await res.json();
+    console.log(json);
 
     this.setState({
       totalResults: json.count, 
@@ -63,6 +64,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
   public componentDidMount(): void {
     // call for open bounties on page load
     this.getApi()
+    console.log('opened')
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState): void {
