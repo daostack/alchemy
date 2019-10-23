@@ -20,6 +20,10 @@ interface IState {
   workingTags: Array<Tag>;
 }
 
+interface ITagEx extends Tag {
+  count: number;
+}
+
 const KeyCodes = {
   comma: 188,
   enter: 13,
@@ -71,25 +75,25 @@ export default class TagsSelector extends React.Component<IProps, IState> {
     const { workingTags } = this.state;
     const { readOnly, darkTheme } = this.props;
     const suggestions = [
-      {id: "fun", text: "fun", count: "20"},
-      {id: "delete", text: "delete", count: "19"},
-      {id: "deleterious", text: "Deleterious", count: "18"},
-      {id: "deletion", text: "deletion", count: "16"},
-      {id: "indelable", text: "Indelable", count: "15"},
-      {id: "indelicate", text: "indelicate", count: "14"},
-      {id: "indisrete", text: "Indisrete", count: "13"},
-      {id: "indisrete1", text: "Indisrete1", count: "12"},
-      {id: "indisrete2", text: "Indisrete2", count: "11"},
-      {id: "indisrete3", text: "Indisrete3", count: "10"},
-      {id: "indisrete4", text: "Indisrete4", count: "9"},
-      {id: "indisrete6", text: "Indisrete6", count: "8"},
-      {id: "indisrete7", text: "Indisrete7", count: "8"},
-      {id: "indisrete8", text: "Indisrete8", count: "7"},
-      {id: "indisrete9", text: "Indisrete9", count: "6"},
-      {id: "indisrete10", text: "Indisretei10", count: "6"},
-      {id: "indisrete11", text: "Indisrete11", count: "5"},
-      {id: "governance", text: "governance", count: "5"},
-    ] as Array<Tag>;
+      {id: "fun", text: "fun", count: 20},
+      {id: "delete", text: "delete", count: 19},
+      {id: "deleterious", text: "Deleterious", count: 18},
+      {id: "deletion", text: "deletion", count: 16},
+      {id: "indelable", text: "Indelable", count: 15},
+      {id: "indelicate", text: "indelicate", count: 14},
+      {id: "indisrete", text: "Indisrete", count: 13},
+      {id: "indisrete1", text: "Indisrete1", count: 12},
+      {id: "indisrete2", text: "Indisrete2", count: 11},
+      {id: "indisrete3", text: "Indisrete3", count: 10},
+      {id: "indisrete4", text: "Indisrete4", count: 9},
+      {id: "indisrete6", text: "Indisrete6", count: 8},
+      {id: "indisrete7", text: "Indisrete7", count: 8},
+      {id: "indisrete8", text: "Indisrete8", count: 7},
+      {id: "indisrete9", text: "Indisrete9", count: 6},
+      {id: "indisrete10", text: "Indisretei10", count: 6},
+      {id: "indisrete11", text: "Indisrete11", count: 5},
+      {id: "governance", text: "governance", count: 5},
+    ] as Array<ITagEx>;
 
     return <div className={classNames({
       [css.reactTagsContainer]: true,
@@ -105,7 +109,7 @@ export default class TagsSelector extends React.Component<IProps, IState> {
         autocomplete={1}
         readOnly={!!readOnly}
         // eslint-disable-next-line react/jsx-no-bind
-        renderSuggestion = {({ text, count }) => <div>{text} <span style={{ color: "red" }}>({count})</span></div>}
+        renderSuggestion = {( tag: ITagEx ) => <div>{tag.text} <span style={{ color: "red" }}>({tag.count})</span></div>}
       />
     </div>;
   }
