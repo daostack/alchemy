@@ -276,9 +276,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                 }
 
                 // Check if value can be interpreted correctly for this particular field
-                const value = values[field.name];
+                let value = values[field.name];
                 try {
-                  field.callValue(value);
+                  value = field.callValue(value);
                 } catch (error) {
                   if (error.message === "Assertion failed") {
                     // thank you BN.js for your helpful error messages
@@ -289,15 +289,20 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                 }
 
                 if (field.type === "address") {
-                  const value = values[field.name];
                   if (!arc.web3.utils.isAddress(value)) {
                     errors[field.name] = "Invalid address";
                   }
                 }
 
+                if (field.type.includes("bytes")) {
+                  if (!arc.web3.utils.isHexStrict(value)) {
+                    errors[field.name] = "Must be a hex value";
+                  }
+                }
+
                 if (field.type === "address[]") {
-                  for (const value of values[field.name]) {
-                    if (!arc.web3.utils.isAddress(value)) {
+                  for (const i of value) {
+                    if (!arc.web3.utils.isAddress(i)) {
                       errors[field.name] = "Invalid address";
                     }
                   }

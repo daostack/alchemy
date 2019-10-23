@@ -14,7 +14,7 @@ describe("Proposals ENS", () => {
 
   });
 
-  it("Create a Generic Scheme ENS proposal and check that the data is submitted correctly", async () => {
+  it("Create a Generic Scheme ENS Registry proposal and check that the data is submitted correctly", async () => {
     const url = `/dao/${daoAddress}/`;
     await browser.url(url);
 
