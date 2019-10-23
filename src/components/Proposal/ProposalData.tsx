@@ -119,7 +119,6 @@ export default withSubscription({
     if (currentAccountAddress) {
       return combineLatest(
         proposal.state(), // state of the current proposal
-        // TODO: do these subscription on the schemespage level
         proposal.votes({where: { voter: currentAccountAddress }}),
         proposal.stakes({where: { staker: currentAccountAddress }}),
         proposal.rewards({ where: {beneficiary: currentAccountAddress}})

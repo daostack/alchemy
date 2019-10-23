@@ -59,7 +59,13 @@ export default class ProposalSummary extends React.Component<IProps> {
 
       {detailView ?
         <div className={css.summaryDetails}>
-          Calling function { decodedCallData.action.abi.name} with values { decodedCallData.values.map((value: any) => <div key={value}>{value}</div>) }
+          Executing this proposal will call the function
+          <pre>{ decodedCallData.action.abi.name}
+        ({ decodedCallData.action.abi.inputs.map((x: any) => <span key={x.name}>{x.name} {x.type}, </span>) })
+          </pre>
+          with values <pre>{ decodedCallData.values.map((value: any) => <div key={value}>{value}</div>)}</pre>
+          on contract at
+          <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
         </div>
         : ""
       }
