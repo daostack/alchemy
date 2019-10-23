@@ -1,13 +1,15 @@
-import { Address, IDAOState, IProposalStage, Proposal } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, Proposal, Vote, Stake } from "@daostack/client";
 import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import gql from "graphql-tag";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { combineLatest } from "rxjs";
+import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./Dao.scss";
 
@@ -54,7 +56,7 @@ class DaoHistoryPage extends React.Component<IProps, null> {
             </p>
           }
         >
-          { proposals.length === 0 ? "There has been no activity to date" : 
+          { proposals.length === 0 ? "There has been no activity to date" :
             <table className={css.proposalHistoryTable}>
               <thead>
                 <tr className={css.proposalHistoryTableHeader}>
@@ -87,11 +89,37 @@ export default withSubscription({
 
   checkForUpdate: (oldProps, newProps) => { return oldProps.match.params.daoAvatarAddress !== newProps.match.params.daoAvatarAddress; },
 
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const arc = getArc();
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAvatarAddress);
 
+    // this query will fetch al data we need before rendering the page, so we avoid hitting the server
+    // with all separate queries for votes and stakes and stuff...
+
+    const prefetchQuery = gql`
+      query prefetchProposalDataForDAOHistory {
+        proposals (where: {
+          stage_in: [
+            "${IProposalStage[IProposalStage.ExpiredInQueue]}",
+            "${IProposalStage[IProposalStage.Executed]}",
+            "${IProposalStage[IProposalStage.Queued]}"
+          ]
+        }){
+          ...ProposalFields
+          votes (where: { voter: "${props.currentAccountAddress}"}) {
+            ...VoteFields
+          }
+          stakes (where: { staker: "${props.currentAccountAddress}"}) {
+            ...StakeFields
+          }
+        }
+      }
+      ${Proposal.fragments.ProposalFields}
+      ${Vote.fragments.VoteFields}
+      ${Stake.fragments.StakeFields}
+    `;
+    await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
     return combineLatest(
       dao.proposals({
         where: {
@@ -119,7 +147,6 @@ export default withSubscription({
     const arc = getArc();
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const dao = arc.dao(daoAvatarAddress);
-
     return dao.proposals({
       where: {
         // eslint-disable-next-line @typescript-eslint/camelcase
