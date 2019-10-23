@@ -500,3 +500,12 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
     return moment(schemeParams.activationTime).isSameOrBefore(moment());
   }
 }
+
+/**
+ * @param num The number to round
+ * @param precision The number of decimal places to preserve
+ */
+export function roundUp(num: number, precision: number) {
+  precision = Math.pow(10, precision);
+  return Math.ceil(num * precision) / precision;
+}
