@@ -202,16 +202,18 @@ body {
 
     .wallet {
       position: absolute;
-      top: 43px;
-      width: 0px;
-      opacity: 0;
-      transition: all .25s ease;
+      width: 270px;
+      top: 50px;
+      transform: scaleY(0);    
+      transform-origin: top;
+      transition: transform 0.25s ease;
       right: 12px;
       font-size: 12px;
       z-index: 100;
       color: rgba(78, 97, 118, 1.000);
       background-color: rgba(252, 253, 255, 1.000);
       border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
 
       .walletImage {
         float: left;
@@ -434,11 +436,13 @@ body {
   .accountInfoContainer:hover{
     background-color: rgba(10, 28, 61, 1.000);
 
-    .wallet {
-      width: 270px;
-      opacity: 1;
-      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
+    + .wallet {
+    transform: scaleY(1);
     }
+  }
+
+  .wallet:hover {
+    transform: scaleY(1);
   }
 
   .etherBalance {
