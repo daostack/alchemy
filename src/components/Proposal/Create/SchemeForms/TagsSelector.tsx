@@ -109,7 +109,7 @@ export default class TagsSelector extends React.Component<IProps, IState> {
         autocomplete={1}
         readOnly={!!readOnly}
         // eslint-disable-next-line react/jsx-no-bind
-        renderSuggestion = {( tag: ITagEx ) => <div>{tag.text} <span style={{ color: "red" }}>({tag.count})</span></div>}
+        renderSuggestion = {( tag: ITagEx ) => <div>{tag.text} <span className="count">({tag.count})</span></div>}
       />
     </div>;
   }
