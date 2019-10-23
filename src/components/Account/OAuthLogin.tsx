@@ -1,13 +1,19 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { connect } from "react-redux";
 
 import classNames = require("classnames");
 import * as React from "react";
 
+import { checkIfAuthenticated } from "actions/profilesActions";
 import { IProfileState } from "reducers/profilesReducer";
 
 import * as css from "./Account.scss";
 
-interface IProps {
+interface IDispatchProps {
+  checkIfAuthenticated: any;
+}
+
+interface IExternalProps {
   accountAddress: string;
   className?: string;
   editing: boolean;
@@ -17,11 +23,17 @@ interface IProps {
   socket?: any;
 }
 
+type IProps = IDispatchProps & IExternalProps;
+
+const mapDispatchToProps = {
+  checkIfAuthenticated,
+};
+
 interface IState {
   disabled: boolean;
 }
 
-export default class OAuthLogin extends React.Component<IProps, IState> {
+class OAuthLogin extends React.Component<IProps, IState> {
   public popup: Window;
 
   constructor(props: IProps) {
@@ -59,12 +71,12 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // Launches the popup by making a request to the server and then
   // passes along the socket id so it can be used to send back user
   // data to the appropriate socket on the connected client.
-  public openPopup() {
+  public openPopup(accessToken: any) {
     const { accountAddress, provider, socket } = this.props;
     const width = 600; const height = 600;
     const left = (window.innerWidth / 2) - (width / 2);
     const top = (window.innerHeight / 2) - (height / 2);
-    const url = `${process.env.API_URL}/link/${provider}?ethereumAccountAddress=${accountAddress}&socketId=${socket.id}`;
+    const url = `${process.env.API_URL}/link/${provider}?ethereumAccountAddress=${accountAddress}&socketId=${socket.id}&access_token=${accessToken}`;
 
     return window.open(url, "",
       `toolbar=no, location=no, directories=no, status=no, menubar=no,
@@ -76,12 +88,15 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // Kicks off the processes of opening the popup on the server and listening
   // to the popup. It also disables the login button so the user can not
   // attempt to login to the provider twice.
-  public startAuth(e: any) {
+  public async startAuth(e: any) {
     if (!this.state.disabled) {
       e.preventDefault();
-      this.popup = this.openPopup();
-      this.checkPopup();
-      this.setState({disabled: true});
+      const accessToken = await this.props.checkIfAuthenticated(this.props.accountAddress);
+      if (accessToken) {
+        this.popup = this.openPopup(accessToken);
+        this.checkPopup();
+        this.setState({disabled: true});
+      }
     }
   }
 
@@ -117,3 +132,5 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   }
 
 }
+
+export default connect(null, mapDispatchToProps)(OAuthLogin);

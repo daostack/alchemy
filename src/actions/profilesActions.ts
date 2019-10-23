@@ -20,6 +20,7 @@ export function serverLoginByEthSign(accountAddress: string) {
 
     if (!(await enableWalletProvider({ showNotification }))) { return false; }
 
+    axios.defaults.withCredentials = true;
     const response = await axios.get(process.env.API_URL + "/nonce?address=" + accountAddress);
     const nonce = response.data;
 
@@ -201,7 +202,7 @@ export function updateProfile(accountAddress: string, name: string, description:
         ethereumAccountAddress: accountAddress,
         name,
         description,
-      }, { headers: { "Authorization": accessToken} });
+      }, { headers: { "Authorization": accessToken}, withCredentials: true });
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
       // eslint-disable-next-line no-console
