@@ -30,6 +30,7 @@
     - ENS interface for generic schemes
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
+    - Added cancel button to staking preapproval prompt
 
   - Bugs Fixed
     - Align headers of table in proposal history

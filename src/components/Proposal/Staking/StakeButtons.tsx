@@ -81,6 +81,10 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
   }
 
+  public handleCancelPreApprove = () => async (_event: any): Promise<void> => {
+    this.setState({ showApproveModal: false });
+  }
+
   public handleClickPreApprove = () => async (_event: any): Promise<void> => {
     if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
 
@@ -134,7 +138,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                 will be authorized to receive up to 100000 GENs. This transaction will not
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
-              <div>
+              <div className={css.preapproveButtonsWrapper}>
+                <button onClick={this.handleCancelPreApprove()} data-test-id="button-cancel">Cancel</button>
                 <button onClick={this.handleClickPreApprove()} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
