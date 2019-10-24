@@ -29,6 +29,7 @@
     - Fix error on initializing arc
     - Fix infinite scroll loading of queued scheme proposals
     - handle Metamask account changing
+    - Improved layout of cookie disclaimer on mobile devices
 
 ### 2019-09-12 [actually two releases]
 
