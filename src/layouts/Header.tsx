@@ -136,14 +136,16 @@ class Header extends React.Component<IProps, IStateProps> {
           </div>
           <div className={css.accountInfo}>
             { currentAccountAddress ?
-              <div className={css.accountInfoContainer}>
-                <div className={css.accountImage}>
-                  <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !accountIsEnabled })}>
-                    <AccountProfileName accountAddress={currentAccountAddress}
-                      accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
-                    <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                      <AccountImage accountAddress={currentAccountAddress} />
-                    </span>
+              <span>
+                <div className={css.accountInfoContainer}>
+                  <div className={css.accountImage}>
+                    <div className={classNames({ [css.profileLink]: true, [css.noAccount]: !accountIsEnabled })}>
+                      <AccountProfileName accountAddress={currentAccountAddress}
+                        accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
+                      <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
+                        <AccountImage accountAddress={currentAccountAddress} />
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className={css.wallet}>
@@ -179,7 +181,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                   </div>
                 </div>
-              </div> : ""
+              </span> : ""
             }
             {!currentAccountAddress ?
               <div className={css.web3ProviderLogin}>
