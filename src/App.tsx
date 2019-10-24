@@ -40,6 +40,7 @@ export class App extends React.Component<{}, {
       .catch ((err): void => {
         // eslint-disable-next-line no-console
         console.log(err);
+        this.setState(() => {throw err;});
       });
 
     let GOOGLE_ANALYTICS_ID: string;

@@ -84,6 +84,8 @@ class Header extends React.Component<IProps, IStateProps> {
     enableWalletProvider({
       suppressNotifyOnSuccess: true,
       showNotification: this.props.showNotification,
+    }).catch((err) => {
+      this.setState(() => {throw err;});
     });
   }
 

@@ -110,11 +110,12 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
         (error: Error) => {
           // eslint-disable-next-line no-console
           console.error(getDisplayName(wrappedComponent), "Error in subscription", error);
-
-          this.setState({
-            isLoading: false,
-            error,
-          });
+          // this trick will effectively propagate the error to the error page (its magic!)
+          this.setState(() => { throw error; });
+          // this.setState({
+          //   isLoading: false,
+          //   error,
+          // });
         },
         () => { this.setState({
           complete: true,
