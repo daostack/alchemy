@@ -22,6 +22,7 @@
     - ENS interface for generic schemes
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
+    - In scheme properties, round thresholdConst up
 
   - Bugs Fixed
     - Align headers of table in proposal history
