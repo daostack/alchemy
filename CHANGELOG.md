@@ -11,6 +11,8 @@
   - Bugs fixed
     - Improved layout of cookie disclaimer on mobile devices
     - fix "nervous" account menu, now drops down instead of across
+    - fix hang on malformed dao address
+
     
 ### 2019-10-16
 
@@ -37,8 +39,7 @@
     - Fix error on initializing arc
     - Fix infinite scroll loading of queued scheme proposals
     - handle Metamask account changing
-    - fix hang on malformed dao address
-
+    
 
 ### 2019-09-12 [actually two releases]
 
