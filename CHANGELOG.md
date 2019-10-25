@@ -12,6 +12,7 @@
     - Improved layout of cookie disclaimer on mobile devices
     - fix "nervous" account menu, now drops down instead of across
     - In scheme properties, round thresholdConst up
+    - Added cancel button to staking preapproval prompt
 
 ### 2019-10-16
 
@@ -31,7 +32,6 @@
     - ENS interface for generic schemes
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
-    - Added cancel button to staking preapproval prompt
 
   - Bugs Fixed
     - Align headers of table in proposal history
