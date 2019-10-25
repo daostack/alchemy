@@ -11,7 +11,8 @@
   - Bugs fixed
     - Improved layout of cookie disclaimer on mobile devices
     - fix "nervous" account menu, now drops down instead of across
-    
+    - In scheme properties, round thresholdConst up
+
 ### 2019-10-16
 
   - Features Added
