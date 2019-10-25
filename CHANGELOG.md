@@ -13,6 +13,7 @@
     - fix "nervous" account menu, now drops down instead of across
     - fix hang on malformed dao address
     - In scheme properties, round thresholdConst up
+    - Added cancel button to staking preapproval prompt
 
 ### 2019-10-16
 
