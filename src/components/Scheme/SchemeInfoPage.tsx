@@ -3,8 +3,9 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams } from "@daostack/client";
-import { copyToClipboard, fromWei, linkToEtherScan, schemeName } from "lib/util";
+import { copyToClipboard, fromWei, linkToEtherScan, schemeName, roundUp } from "lib/util";
 import * as moment from "moment";
+import Tooltip from "rc-tooltip";
 import * as css from "./SchemeInfo.scss";
 
 interface IProps {
@@ -68,7 +69,17 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <tr><th>Queued Vote Period Limit:</th><td>{duration(params.queuedVotePeriodLimit)} ({params.queuedVotePeriodLimit} seconds)</td></tr>
         <tr><th>Queued Vote Required:</th><td>{params.queuedVoteRequiredPercentage}%</td></tr>
         <tr><th>Quiet Ending Period:</th><td>{duration(params.quietEndingPeriod)} ({params.quietEndingPeriod} seconds)</td></tr>
-        <tr><th>Threshold Constant</th><td>{params.thresholdConst.toString()}</td></tr>
+        <tr><th>Threshold Constant</th><td>
+          <Tooltip
+            placement="top"
+            overlay={
+              <span>{params.thresholdConst.toString()}</span>
+            }
+            trigger={["hover"]}
+          >
+            <span>{roundUp(params.thresholdConst, 3).toString()}</span>
+          </Tooltip>
+        </td></tr>
         <tr><th>Voters Reputation Loss:</th><td>{params.votersReputationLossRatio}%</td></tr>
       </tbody>;
     };
