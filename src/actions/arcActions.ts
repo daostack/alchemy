@@ -111,6 +111,15 @@ export function stakeProposal(daoAvatarAddress: string, proposalId: string, pred
   };
 }
 
+// Approve transfer of 100000 GENs from accountAddress to the GenesisProtocol contract for use in staking
+export function approveStakingGens(spender: Address) {
+  return async (dispatch: Redux.Dispatch<any, any>, ) => {
+    const arc = getArc();
+    const observer = operationNotifierObserver(dispatch, "Approve GEN");
+    await arc.approveForStaking(spender, toWei(100000)).subscribe(...observer);
+  };
+}
+
 export type RedeemAction = IAsyncAction<"ARC_REDEEM", {
   avatarAddress: string;
   proposalId: string;

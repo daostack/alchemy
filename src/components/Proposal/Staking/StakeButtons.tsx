@@ -1,6 +1,5 @@
 import { Address, IDAOState, IProposalStage, IProposalState, Stake } from "@daostack/client";
 import * as arcActions from "actions/arcActions";
-import * as web3Actions from "actions/web3Actions";
 import { enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
@@ -40,11 +39,11 @@ interface IExternalProps {
 interface IDispatchProps {
   stakeProposal: typeof arcActions.stakeProposal;
   showNotification: typeof showNotification;
-  approveStakingGens: typeof web3Actions.approveStakingGens;
+  approveStakingGens: typeof arcActions.approveStakingGens;
 }
 
 const mapDispatchToProps = {
-  approveStakingGens: web3Actions.approveStakingGens,
+  approveStakingGens: arcActions.approveStakingGens,
   stakeProposal: arcActions.stakeProposal,
   showNotification,
 };
@@ -80,6 +79,10 @@ class StakeButtons extends React.Component<IProps, IState> {
   public showPreStakeModal = (prediction: number): (_event: any) => void => async (_event: any): Promise<void> => {
     if (!await enableWalletProvider( { showNotification: this.props.showNotification })) { return; }
     this.setState({ pendingPrediction: prediction, showPreStakeModal: true });
+  }
+
+  public handleCancelPreApprove = () => async (_event: any): Promise<void> => {
+    this.setState({ showApproveModal: false });
   }
 
   public handleClickPreApprove = () => async (_event: any): Promise<void> => {
@@ -135,7 +138,8 @@ class StakeButtons extends React.Component<IProps, IState> {
                 will be authorized to receive up to 100000 GENs. This transaction will not
                 cost you GEN or commit you in any way to spending your GENs in the future.
               </p>
-              <div>
+              <div className={css.preapproveButtonsWrapper}>
+                <button onClick={this.handleCancelPreApprove()} data-test-id="button-cancel">Cancel</button>
                 <button onClick={this.handleClickPreApprove()} data-test-id="button-preapprove">Preapprove</button>
               </div>
             </div>
@@ -174,10 +178,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       !hasGens ?
         "Insufficient GENs" :
         currentAccountPrediction === prediction ?
-          "Can't change prediction" :
-          isPredicting ?
-            "Warning: Staking on this proposal is already in progress" :
-            ""
+          "Can't change prediction" : ""
       ;
 
     const passButton = (

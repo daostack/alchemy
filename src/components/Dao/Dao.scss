@@ -680,16 +680,16 @@ a {
   }
 
   .daoSidebar.menuOpen {
-      z-index: 1000000;
-      width: 100%;
-      background-color: rgba(49, 120, 202, 1.000);
-      padding-bottom: 50px;
-      transition: width 0s 0s, height .25s ease;
+    z-index: 1000000;
+    width: 100%;
+    background-color: rgba(49, 120, 202, 1.000);
+    padding-bottom: 50px;
+    transition: width 0s 0s, height .25s ease;
 
-      .daoNavigation {
-        height: 520px;
-      }
+    .daoNavigation {
+      height: 520px;
     }
+  }
 
   .menuWrapper {
     position: relative;

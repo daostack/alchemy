@@ -3,8 +3,9 @@
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams } from "@daostack/client";
-import { copyToClipboard, fromWei, linkToEtherScan, schemeName } from "lib/util";
+import { copyToClipboard, fromWei, linkToEtherScan, schemeName, roundUp } from "lib/util";
 import * as moment from "moment";
+import Tooltip from "rc-tooltip";
 import * as css from "./SchemeInfo.scss";
 
 interface IProps {
@@ -37,23 +38,33 @@ export default class SchemeInfo extends React.Component<IProps, null> {
       const first = days ? days : hours ? hours : minutes ? minutes : seconds ? seconds : null;
 
       return <span>
-        { 
+        {
           days ? <span className={css.timeSection}>{days}</span> : ""
         }
         {
           hours ? <span className={css.timeSection}><span>{first !== hours ? colon : ""} {hours}</span></span> : ""
-        }  
+        }
         {
           minutes ? <span className={css.timeSection}><span>{first !== minutes ? colon : ""} {minutes}</span></span> : ""
-        }  
+        }
         {
           seconds ? <span className={css.timeSection}><span>{first !== seconds ? colon : ""} {seconds}</span></span> : ""
-        }  
+        }
       </span>;
     };
 
+    const renderVotingMachineLink = (votingMachine: Address) => {
+      if (votingMachine) {
+        return <tr>
+          <th>Address:</th>
+          <td>
+            <a href={linkToEtherScan(votingMachine)} target="_blank" rel="noopener noreferrer">{ votingMachine }</a>
+          </td>
+        </tr>;
+      }
+    };
     const renderGpParams = (params: IGenesisProtocolParams): any => {
-  
+
       const activationTime = moment(params.activationTime);
 
       return <tbody>
@@ -68,11 +79,26 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <tr><th>Queued Vote Period Limit:</th><td>{duration(params.queuedVotePeriodLimit)} ({params.queuedVotePeriodLimit} seconds)</td></tr>
         <tr><th>Queued Vote Required:</th><td>{params.queuedVoteRequiredPercentage}%</td></tr>
         <tr><th>Quiet Ending Period:</th><td>{duration(params.quietEndingPeriod)} ({params.quietEndingPeriod} seconds)</td></tr>
-        <tr><th>Threshold Constant</th><td>{params.thresholdConst.toString()}</td></tr>
+        <tr><th>Threshold Constant</th><td>
+          <Tooltip
+            placement="top"
+            overlay={
+              <span>{params.thresholdConst.toString()}</span>
+            }
+            trigger={["hover"]}
+          >
+            <span>{roundUp(params.thresholdConst, 3).toString()}</span>
+          </Tooltip>
+        </td></tr>
         <tr><th>Voters Reputation Loss:</th><td>{params.votersReputationLossRatio}%</td></tr>
       </tbody>;
     };
 
+    const votingMachine = (
+      (scheme.genericSchemeParams && scheme.genericSchemeParams.votingMachine) ||
+      (scheme.contributionRewardParams && scheme.contributionRewardParams.votingMachine) ||
+      (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine)
+    );
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
@@ -81,17 +107,28 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <table className={css.infoCardContent}>
           <tbody>
             <tr>
-              <th>Address: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
-              <td className={css.ellipsis}>
+              <th>Address of scheme: <a href={linkToEtherScan(scheme.address)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
+              <td>
                 <span>{scheme.address}</span>
               </td>
               <td>
                 <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
               </td>
             </tr>
+            { scheme.genericSchemeParams ?
+              <tr>
+                <th>will call this contract: <a href={linkToEtherScan(scheme.genericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
+                <td>
+                  <span>{scheme.genericSchemeParams.contractToCall}</span>
+                </td>
+                <td>
+                  <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
+                </td>
+              </tr> : undefined
+            }
             <tr>
               <th>Param Hash:</th>
-              <td className={css.ellipsis}>
+              <td>
                 <span>{scheme.paramsHash}</span>
               </td>
               <td>
@@ -144,6 +181,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
+            {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.contributionRewardParams ? scheme.contributionRewardParams.voteParams : scheme.genericSchemeParams.voteParams)}
           </table>
         </div>
@@ -154,6 +192,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params for Scheme Registration -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
+            {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.schemeRegistrarParams.voteRegisterParams)}
           </table>
         </div>
@@ -164,6 +203,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
         <div className={css.schemeInfoContainer}>
           <h3>Genesis Protocol Params for Scheme Removal -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
           <table className={css.infoCardContent}>
+            {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.schemeRegistrarParams.voteRemoveParams)}
           </table>
         </div>
@@ -172,4 +212,3 @@ export default class SchemeInfo extends React.Component<IProps, null> {
     </div>;
   }
 }
-
