@@ -4,7 +4,7 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle } from "lib/util";
+import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
@@ -115,7 +115,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
         return (
           <div className={css.wrapper}>
-            <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+            <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
             <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
             <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
               <div className={css.proposalInfo}>
