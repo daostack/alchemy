@@ -1,10 +1,9 @@
 import { Address, IDAOState, IProposalState, IProposalOutcome, IRewardState } from "@daostack/client";
 import Reputation from "components/Account/Reputation";
-import { claimableContributionRewards, formatTokens, fromWei, getClaimableRewards, tokenSymbol } from "lib/util";
+import { getClaimableContributionRewards, formatTokens, fromWei, getGpRewards, tokenSymbol } from "lib/util";
 import * as React from "react";
 
 interface IProps {
-  beneficiaryHasRewards: boolean;
   currentAccountAddress: Address;
   dao: IDAOState;
   proposal: IProposalState;
@@ -16,7 +15,7 @@ export default (props: IProps) => {
 
   const rewardComponents = [];
   // rewards of current user
-  const claimableRewards = getClaimableRewards(rewardsForCurrentUser);
+  const claimableRewards = getGpRewards(rewardsForCurrentUser);
   let c = null;
   if (claimableRewards.reputationForProposer) {
     c = <div key={rewardsForCurrentUser.id + "_proposer"}>
@@ -60,7 +59,7 @@ export default (props: IProps) => {
 
   let ContributionRewardDiv = <div />;
   if (proposal.winningOutcome === IProposalOutcome.Pass && proposal.contributionReward) {
-    const contributionRewards = claimableContributionRewards(contributionReward);
+    const contributionRewards = getClaimableContributionRewards(contributionReward);
     if (Object.keys(contributionRewards).length > 0) {
       ContributionRewardDiv = <div>
         <strong>

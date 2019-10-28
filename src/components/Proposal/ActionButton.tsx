@@ -1,21 +1,26 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState } from "@daostack/client";
+import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
-import { enableWalletProvider } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import { claimableContributionRewards, hasClaimableRewards } from "lib/util";
+import { getClaimableContributionRewards, getGpRewards } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { proposalEnded } from "reducers/arcReducer";
-import { showNotification } from "reducers/notifications";
+import { showNotification, NotificationStatus } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import { from, of } from "rxjs";
 import * as css from "./ActionButton.scss";
-/* import RedemptionsString from "./RedemptionsString"; */
 import RedemptionsTip from "./RedemptionsTip";
 
 import BN = require("bn.js");
+
+interface IExternalTokenBalance {
+  externalTokenBalance: BN;
+}
 
 interface IExternalProps {
   currentAccountAddress?: Address;
@@ -24,6 +29,9 @@ interface IExternalProps {
   detailView?: boolean;
   expanded?: boolean;
   proposalState: IProposalState;
+  /**
+   * GP and CR rewards due to the current account
+   */
   rewards: IRewardState;
   expired: boolean;
 }
@@ -38,7 +46,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IStateProps & IDispatchProps;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IExternalTokenBalance>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const proposalState = ownProps.proposalState;
@@ -73,10 +81,15 @@ class ActionButton extends React.Component<IProps, IState> {
     await this.props.executeProposal(this.props.daoState.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  public async handleClickRedeem(_event: any): Promise<void> {
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+  public handleClickRedeem = (canRedeem: boolean) => async (): Promise<void> => {
 
-    this.setState({ preRedeemModalOpen: true });
+    if (!canRedeem) {
+      this.props.showNotification(NotificationStatus.Failure, "The DAO does not have enough funds to pay for these redemptions");
+    } else {
+      if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+      this.setState({ preRedeemModalOpen: true });
+    }
   }
 
   public closePreRedeemModal(_event: any): void {
@@ -98,32 +111,40 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const executable = proposalEnded(proposalState) && !proposalState.executedAt;
 
-    let beneficiaryHasRewards;
+    const daoBalances: {[key: string]: BN} = {
+      eth: daoEthBalance,
+      nativeToken: undefined,
+      rep: undefined,
+      externalToken: this.props.data.externalTokenBalance,
+    };
 
-    const accountHasGPRewards = hasClaimableRewards(rewards);
+    /**
+     * unredeemed and available to the current account
+     */
+    const availableGpRewards = getGpRewards(rewards, daoBalances);
+    const currentAccountHasAvailableUnredeemedGpRewards = Object.keys(availableGpRewards).length > 0;
+
+    /**
+     * note beneficiary may not be the current account
+     */
+    let beneficiaryHasAvailableUnredeemedCrRewards: boolean;
     if (proposalState.contributionReward) {
-      const daoBalances: {[key: string]: BN} = {
-        eth: daoEthBalance,
-        nativeToken: undefined,
-        rep: undefined,
-        externalToken: undefined,
-      };
-      const contributionRewards = claimableContributionRewards(proposalState.contributionReward, daoBalances);
-
-      beneficiaryHasRewards = Object.keys(contributionRewards).length > 0;
+      /**
+       * unredeemed and available to the current account
+       */
+      const unredeemedAvailableContributionRewards = getClaimableContributionRewards(proposalState.contributionReward, daoBalances);
+      beneficiaryHasAvailableUnredeemedCrRewards = Object.keys(unredeemedAvailableContributionRewards).length > 0;
     }
 
     const redeemable = proposalState.executedAt &&
                        ((currentAccountAddress ? proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase()) : false)
-                        || (proposalState.winningOutcome === IProposalOutcome.Pass && beneficiaryHasRewards));
+                        || (proposalState.winningOutcome === IProposalOutcome.Pass && beneficiaryHasAvailableUnredeemedCrRewards));
 
-    // hack to work around https://github.com/daostack/subgraph/issues/304
     const redemptionsTip = RedemptionsTip({
-      beneficiaryHasRewards,
       currentAccountAddress,
       dao: daoState,
       proposal: proposalState,
-      rewardsForCurrentUser: rewards,
+      rewardsForCurrentUser: rewards, 
     });
 
     const redeemButtonClass = classNames({
@@ -174,21 +195,17 @@ class ActionButton extends React.Component<IProps, IState> {
                 </button>
                 : redeemable ?
                   <div>
-                    {/* !detailView ?
-                  <RedemptionsString currentAccountAddress={currentAccountAddress} dao={daoState} proposal={proposalState} rewards={rewardsForCurrentUser} />
-                  : ""
-              */}
                     <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                       <button
                         style={{ whiteSpace: "nowrap" }}
                         disabled={false}
                         className={redeemButtonClass}
-                        onClick={this.handleClickRedeem.bind(this)}
+                        onClick={this.handleClickRedeem(beneficiaryHasAvailableUnredeemedCrRewards || currentAccountHasAvailableUnredeemedGpRewards)}
                         data-test-id="button-redeem"
                       >
                         <img src="/assets/images/Icon/redeem.svg" />
                         {
-                          beneficiaryHasRewards && !accountHasGPRewards ?
+                          beneficiaryHasAvailableUnredeemedCrRewards && !currentAccountHasAvailableUnredeemedGpRewards ?
                             " Redeem for beneficiary" :
                             " Redeem"
                         }
@@ -217,4 +234,24 @@ class ActionButton extends React.Component<IProps, IState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActionButton);
+const SubscribedActionButton = withSubscription({
+  wrappedComponent: ActionButton,
+  // Don't ever update the subscription
+  checkForUpdate: () => { return false; },
+  loadingComponent: null,
+  createObservable: (props: IProps) => {
+    if (props.proposalState.contributionReward.externalTokenReward && !props.proposalState.contributionReward.externalTokenReward.isZero())
+    {
+      const token = new Token(props.proposalState.contributionReward.externalToken, getArc());
+      return from(token.balanceOf(props.daoState.address).toPromise()
+        .then((balance: BN) => {
+          return {externalTokenBalance: balance };
+        }));
+
+    } else {
+      return of({externalTokenBalance: null});
+    }
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedActionButton);
