@@ -19,6 +19,10 @@ interface IExternalProps {
   handleClose: () => any;
 }
 
+interface IStateProps {
+  tags: Array<string>;
+}
+
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
   showNotification: typeof showNotification;
@@ -85,11 +89,14 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   />
 );
 
-class CreateContributionReward extends React.Component<IProps, null> {
+class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = { 
+      tags: new Array<string>(),
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
@@ -115,6 +122,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       reputationReward: toWei(Number(values.reputationReward)),
+      tags: this.state.tags,
     };
 
     setSubmitting(false);
@@ -122,9 +130,8 @@ class CreateContributionReward extends React.Component<IProps, null> {
     this.props.handleClose();
   }
 
-  private onTagsChange = () => (tags: any[]): void => {
-    // eslint-disable-next-line no-console
-    console.log(tags);
+  private onTagsChange = () => (tags: string[]): void => {
+    this.setState({tags});
   }
 
   public render(): RenderOutput {

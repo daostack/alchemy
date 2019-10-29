@@ -21,6 +21,10 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
+interface IStateProps {
+  tags: Array<string>;
+}
+
 type IProps = IExternalProps & IDispatchProps;
 
 const mapDispatchToProps = {
@@ -36,20 +40,24 @@ interface IFormValues {
   value: number;
 }
 
-class CreateGenericScheme extends React.Component<IProps, null> {
+class CreateGenericScheme extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = { 
+      tags: new Array<string>(),
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const proposalValues = {...values,
-      scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
+      scheme: this.props.scheme.address,
+      tags: this.state.tags,
     };
 
     setSubmitting(false);
@@ -58,8 +66,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
   }
 
   private onTagsChange = () => (tags: any[]): void => {
-    // eslint-disable-next-line no-console
-    console.log(tags);
+    this.setState({tags});
   }
 
   public render(): RenderOutput {

@@ -55,7 +55,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
           votes,
         } = props;
 
-        const tags = [ "Something", "Special", "This", "Way", "Comes", "By", "a Way", "Less", "Travelled" ];
+        const tags = proposal.tags;
 
         let currentAccountVote = 0;
 

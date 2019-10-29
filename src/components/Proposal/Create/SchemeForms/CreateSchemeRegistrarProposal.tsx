@@ -52,6 +52,7 @@ interface IFormValues {
 
 interface IState {
   currentTab: string;
+  tags: Array<string>;
 }
 
 class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
@@ -61,7 +62,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    this.state = { currentTab: "addScheme" };
+    this.state = {
+      currentTab: "addScheme",
+      tags: new Array<string>(),
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
@@ -100,6 +104,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
         currentTab === "editScheme" ? values.schemeToEdit :
           values.schemeToRemove,
+      tags: this.state.tags,
     };
 
     setSubmitting(false);
@@ -112,8 +117,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
   }
 
   private onTagsChange = () => (tags: any[]): void => {
-    // eslint-disable-next-line no-console
-    console.log(tags);
+    this.setState({tags});
   }
 
   public render(): RenderOutput {

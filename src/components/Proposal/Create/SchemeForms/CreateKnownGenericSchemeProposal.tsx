@@ -48,6 +48,7 @@ interface IFormValues {
 interface IState {
   actions: Action[];
   currentAction: Action;
+  tags: Array<string>;
 }
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
@@ -65,6 +66,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     this.state = {
       actions,
       currentAction:  actions[0],
+      tags: new Array<string>(),
     };
   }
 
@@ -95,6 +97,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       callData,
       dao: this.props.daoAvatarAddress,
       scheme: this.props.scheme.address,
+      tags: this.state.tags,
       type: IProposalType.GenericScheme,
       value: 0, // amount of eth to send with the call
     };
@@ -187,8 +190,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   }
 
   private onTagsChange = () => (tags: any[]): void => {
-    // eslint-disable-next-line no-console
-    console.log(tags);
+    this.setState({tags});
   }
 
   public render(): RenderOutput {

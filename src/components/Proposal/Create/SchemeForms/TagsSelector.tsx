@@ -3,7 +3,7 @@ import { WithContext as ReactTags, Tag } from "react-tag-input";
 import classNames from "classnames";
 import * as css from "./TagsSelector.scss";
 
-interface IProps {
+interface IExternalProps {
   /**
    * for pages with a dark background (like proposal details)
    */
@@ -16,7 +16,7 @@ interface IProps {
   tags?: Array<string>;
 }
 
-interface IState {
+interface IStateProps {
   workingTags: Array<Tag>;
 }
 
@@ -32,9 +32,9 @@ const KeyCodes = {
  
 const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
   
-export default class TagsSelector extends React.Component<IProps, IState> {
+export default class TagsSelector extends React.Component<IExternalProps, IStateProps> {
 
-  constructor(props: IProps) {
+  constructor(props: IExternalProps) {
     super(props);
 
     this.state = { 
@@ -48,17 +48,16 @@ export default class TagsSelector extends React.Component<IProps, IState> {
   }
 
   private handleDelete = () => (i: number): void => {
-    const tags = this.state.workingTags;
-    this.setState({
-      workingTags: tags.filter((_tag: Tag, index: number) => index !== i),
-    });
+    const tags = this.state.workingTags.filter((_tag: Tag, index: number) => index !== i);
+    this.setState({ workingTags: tags });
         
-    this.emitOnChange(this.state.workingTags);
+    this.emitOnChange(tags);
   }
  
   private handleAddition = () => (tag: Tag): void => {
-    this.setState({ workingTags: [...this.state.workingTags, tag] });
-    this.emitOnChange(this.state.workingTags);
+    const tags = [...this.state.workingTags, tag];
+    this.setState({ workingTags:  tags });
+    this.emitOnChange(tags);
   }
 
   private handleDrag = () => (tag: Tag, currPos: number, newPos: number): void => {

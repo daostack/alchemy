@@ -71,7 +71,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
   public render(): RenderOutput {
     const { currentAccountAddress, daoState, proposalId } = this.props;
-    const tags = [ "Something", "Special", "This", "Way", "Comes", "By", "a Way", "Less", "Travelled" ];
 
     return <ProposalData currentAccountAddress={currentAccountAddress} dao={daoState} proposalId={proposalId}>
       { props => {
@@ -93,6 +92,8 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           [css.proposal]: true,
           clearfix: true,
         });
+
+        const tags = proposal.tags;
 
         let currentAccountVote = 0;
 
