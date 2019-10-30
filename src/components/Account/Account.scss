@@ -219,27 +219,12 @@ a.detailView {
   height: 100%;
 }
 
-.socialProof {
-  width: 50%;
-  left: 30%;
-  position: absolute;
-  font-size: 14px;
-  left: 200px;
-  top: 30px;
-
-  p {
-    font-size: 12px;
-    padding: 0;
-  }
-}
-
 .profileContainer {
-  max-width: 800px;
+  max-width: 700px;
   width: 100%;
   border-radius: 15px;
   margin: 0 auto;
   margin-top: 40px;
-  padding: 0 20px 50px 250px;
   display: flex;
   flex-direction: column;
 
@@ -338,9 +323,13 @@ a.detailView {
   }
 }
 
+.profileContainer.withDao {
+  padding-left: 250px;
+}
+
 .socialLogins {
   position: relative;
-  height: 180px;
+  padding-bottom: 20px;
   width: 100%;
 }
 
@@ -457,7 +446,6 @@ input {
   }
 
   .socialProof {
-    left: 70px;
     opacity: .6;
     width: 77%;
   }

@@ -38,6 +38,10 @@ button:hover {
   width: 100%;
 }
 
+.memberHeaderTable {
+  padding: 0 15px 0 15px;
+}
+
 .memberTable, .memberTableHeading {
   width: 100%;
 
@@ -53,6 +57,11 @@ button:hover {
       color: rgba(0, 29, 53, 1.000);
       text-align: left;
       width: 200px;
+
+      > div {
+        width: 200px;
+        overflow: hidden;
+      }
     }
 
     .memberAddress {
@@ -78,19 +87,14 @@ button:hover {
       }
 
     }
-
-    .memberSocial {
-      text-align: right;
-      min-width: 110px;
-    }
   }
 }
 
 .memberTableHeading {
-    font-size: 13px;
-    font-weight: bold;
-    color: rgba(0, 29, 53, 1.000);
-    text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: rgba(0, 29, 53, 1.000);
+  text-align: center;
 
   tr {
     .memberAvatar {
@@ -99,10 +103,6 @@ button:hover {
 
     .memberAddress {
       font-size: 13px;
-    }
-
-    .memberSocial {
-      min-width: 110px;
     }
   }
 
@@ -546,7 +546,7 @@ button:hover {
 }
 
 .member {
-  padding: 15px;
+  padding: 5px 15px 5px 15px;
   margin-bottom: 2px;
   background-color: white;
   border-radius: 3px;

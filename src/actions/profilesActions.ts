@@ -1,8 +1,10 @@
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
+import { getWeb3Provider } from "arc";
 import axios from "axios";
+import Box = require('3box');
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import { ActionTypes, IProfileState, newProfile, profileDbToRedux } from "reducers/profilesReducer";
+import { ActionTypes, newProfile } from "reducers/profilesReducer";
 
 // Load account profile data from our database for all the "members" of the DAO
 export function getProfilesForAllAccounts() {
@@ -34,28 +36,29 @@ export function getProfilesForAllAccounts() {
 
 export function getProfile(accountAddress: string) {
   return async (dispatch: any) => {
-    const url = process.env.API_URL + "/api/accounts?filter={\"where\":{\"ethereumAccountAddress\":\"" + accountAddress + "\"}}";
     try {
       // Get profile data for this account
-      const response = await axios.get(url);
-      if (response.data.length > 0) {
+      const profile: any = await Box.getProfile(accountAddress);
+
+      if (profile) {
         // Update profiles state with profile data for this account
+        profile.socialURLs = await Box.getVerifiedAccounts(profile);
         dispatch({
           type: ActionTypes.GET_PROFILE_DATA,
           sequence: AsyncActionSequence.Success,
-          payload: { profiles: response.data },
+          payload: { profiles: { [accountAddress]: profile } },
         });
       } else {
         // Setup blank profile for the account
         dispatch({
           type: ActionTypes.GET_PROFILE_DATA,
           sequence: AsyncActionSequence.Success,
-          payload: { profiles: [newProfile(accountAddress)] },
+          payload: { profiles: { [accountAddress]: newProfile(accountAddress) } },
         });
       }
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error(`Error getting ${url} (${e.message})`);
+      console.error(`Error getting profile from 3box (${e.message})`);
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
@@ -67,7 +70,7 @@ export function getProfile(accountAddress: string) {
 
 export type UpdateProfileAction = IAsyncAction<"UPDATE_PROFILE", { accountAddress: string }, { description: string; name: string; socialURLs?: any }>;
 
-export function updateProfile(accountAddress: string, name: string, description: string, timestamp: string, signature: string) {
+export function updateProfile(accountAddress: string, name: string, description: string) {
   return async (dispatch: any, _getState: any) => {
     dispatch({
       type: ActionTypes.UPDATE_PROFILE,
@@ -76,17 +79,14 @@ export function updateProfile(accountAddress: string, name: string, description:
     } as UpdateProfileAction);
 
     try {
-      await axios.patch(process.env.API_URL + "/api/accounts", {
-        ethereumAccountAddress: accountAddress,
-        name,
-        description,
-        timestamp,
-        signature,
-      });
+      const web3Provider = await getWeb3Provider();
+      const box = await Box.openBox(accountAddress, web3Provider);
+      await box.syncDone;
+      await box.public.setMultiple(['name', 'description'], [name, description]);
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
       // eslint-disable-next-line no-console
-      console.error("Error saving profile to server: ", errorMsg);
+      console.error("Error saving profile to 3box: ", errorMsg);
 
       dispatch({
         type: ActionTypes.UPDATE_PROFILE,
@@ -94,7 +94,7 @@ export function updateProfile(accountAddress: string, name: string, description:
         meta: { accountAddress },
       } as UpdateProfileAction);
 
-      dispatch(showNotification(NotificationStatus.Failure, `Saving profile failed: ${errorMsg}`));
+      dispatch(showNotification(NotificationStatus.Failure, `Saving profile to 3box failed: ${errorMsg}`));
       return false;
     }
 
@@ -105,18 +105,8 @@ export function updateProfile(accountAddress: string, name: string, description:
       payload: { name, description },
     } as UpdateProfileAction);
 
-    dispatch(showNotification(NotificationStatus.Success, "Profile data saved"));
+    dispatch(showNotification(NotificationStatus.Success, "Profile data saved to 3box"));
     return true;
   };
 }
 
-export function verifySocialAccount(accountAddress: string, account: IProfileState) {
-  return async (dispatch: any, _getState: any) => {
-    dispatch({
-      type: ActionTypes.UPDATE_PROFILE,
-      sequence: AsyncActionSequence.Success,
-      meta: { accountAddress },
-      payload: profileDbToRedux(account),
-    });
-  };
-}

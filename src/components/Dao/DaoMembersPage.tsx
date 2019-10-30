@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
-import { IProfilesState } from "reducers/profilesReducer";
 
 import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";
@@ -17,16 +16,11 @@ interface IExternalProps extends RouteComponentProps<any> {
   daoState: IDAOState;
 }
 
-interface IStateProps {
-  profiles: IProfilesState;
-}
+type IProps = IExternalProps & ISubscriptionProps<Member[]>;
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
-
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps => {
   return {
-    ...ownProps,
-    profiles: state.profiles,
+    ...ownProps
   };
 };
 
@@ -39,10 +33,10 @@ class DaoMembersPage extends React.Component<IProps, null> {
 
     const members = data;
     const daoTotalReputation = this.props.daoState.reputationTotalSupply;
-    const { daoState, profiles } = this.props;
+    const { daoState } = this.props;
 
     const membersHTML = members.map((member) =>
-      <DaoMember key={member.staticState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.staticState.address]} />);
+      <DaoMember key={member.staticState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} />);
 
     return (
       <div className={css.membersContainer}>
@@ -50,14 +44,12 @@ class DaoMembersPage extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
-        <table>
+        <table className={css.memberHeaderTable}>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>
             <tr>
-              <td className={css.memberAvatar}></td>
               <td className={css.memberName}>Name</td>
               <td className={css.memberAddress}>Address</td>
               <td className={css.memberReputation}>Reputation</td>
-              <td className={css.memberSocial}>Social Verification</td>
             </tr>
           </tbody>
         </table>

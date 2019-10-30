@@ -97,7 +97,7 @@ class UserSearchField extends React.Component<IProps, IState> {
     return (
       <span>
         <span className={css.suggestionAvatar}>
-          <AccountImage accountAddress={suggestion.ethereumAccountAddress} />
+          <AccountImage accountAddress={suggestion.ethereumAccountAddress} profile={suggestion} />
         </span>
         <span className={css.suggestionText}>{suggestion.name + " " + suggestion.ethereumAccountAddress}</span>
       </span>

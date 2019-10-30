@@ -1,26 +1,23 @@
 import BN = require("bn.js");
 import { IDAOState, IMemberState, Member } from "@daostack/client";
-import AccountImage from "components/Account/AccountImage";
-import AccountProfileName from "components/Account/AccountProfileName";
-import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { fromWei } from "lib/util";
 import * as React from "react";
-import { IProfileState } from "reducers/profilesReducer";
 import * as css from "./Dao.scss";
+
+import ProfileHover from 'profile-hover';
 
 interface IProps extends ISubscriptionProps<IMemberState> {
   dao: IDAOState;
   member: Member;
-  profile: IProfileState;
   daoTotalReputation: BN;
 }
 
 class DaoMember extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { dao, profile, daoTotalReputation } = this.props;
+    const { dao, daoTotalReputation } = this.props;
     const memberState = this.props.data;
 
     return (
@@ -30,20 +27,8 @@ class DaoMember extends React.Component<IProps, null> {
         <table className={css.memberTable}>
           <tbody>
             <tr>
-              <td className={css.memberAvatar}>
-                <AccountImage
-                  accountAddress={memberState.address}
-                  className="membersPage"
-                />
-              </td>
               <td className={css.memberName}>
-                { profile ?
-                  <div>
-                    <AccountProfileName accountAddress={memberState.address} accountProfile={profile} daoAvatarAddress={dao.address} />
-                    <br/>
-                  </div>
-                  : <div className={css.noProfile}>No Profile</div>
-                }
+                <div><ProfileHover address={memberState.address} showName={true} url={process.env.BASE_URL + "/profile/" + memberState.address + (dao ? "?daoAvatarAddress=" + dao.address : "")} /></div>
               </td>
               <td className={css.memberAddress}>
                 {memberState.address}
@@ -53,16 +38,6 @@ class DaoMember extends React.Component<IProps, null> {
                 <div className={css.reputationAmounts}>
                   (<Reputation daoName={dao.name} totalReputation={daoTotalReputation} reputation={memberState.reputation}/>)
                 </div>
-              </td>
-              <td className={css.memberSocial}>
-                {profile && Object.keys(profile.socialURLs).length > 0 ?
-                  <span>
-                    <OAuthLogin editing={false} provider="facebook" accountAddress={memberState.address} profile={profile} className={css.socialButton}/>
-                    <OAuthLogin editing={false} provider="twitter" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                    <OAuthLogin editing={false} provider="github" accountAddress={memberState.address} profile={profile} className={css.socialButton} />
-                  </span>
-                  : ""
-                }
               </td>
             </tr>
           </tbody>

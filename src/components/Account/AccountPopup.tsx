@@ -2,7 +2,6 @@ import { Address, IDAOState, IMemberState } from "@daostack/client";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard  } from "lib/util";
@@ -70,15 +69,15 @@ class AccountPopup extends React.Component<IProps, null> {
     return (
       <div className={targetAccountClass}>
         <div className={css.avatar}>
-          <AccountImage accountAddress={accountAddress} />
+          <AccountImage accountAddress={accountAddress} profile={profile} />
         </div>
         <div className={css.accountInfo}>
           <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={daoState.address} /></div>
           {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
             <div>
-              <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
+{/*              <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
               <OAuthLogin editing={false} provider="twitter" accountAddress={accountAddress} profile={profile} />
-              <OAuthLogin editing={false} provider="github" accountAddress={accountAddress} profile={profile} />
+              <OAuthLogin editing={false} provider="github" accountAddress={accountAddress} profile={profile} />*/}
             </div>
           }
           <div className={css.beneficiaryAddress}>

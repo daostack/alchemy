@@ -7,12 +7,7 @@ export enum ActionTypes {
   UPDATE_PROFILE = "UPDATE_PROFILE"
 }
 
-export interface IProfileState {
-  description: string;
-  ethereumAccountAddress?: string;
-  name: string;
-  socialURLs: { [provider: string]: string };
-}
+export type IProfileState = any;
 
 export interface IProfilesState {
   [accountAddress: string]: IProfileState;
@@ -27,22 +22,22 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
   };
 }
 
-export function profileDbToRedux(dbProfile: any) {
-  const reduxProfile = dbProfile;
-  if (!dbProfile.socialURLs) {
-    reduxProfile.socialURLs = {};
-  }
-  if (dbProfile.facebookURL) {
-    reduxProfile.socialURLs.facebook = dbProfile.facebookURL;
-  }
-  if (dbProfile.githubURL) {
-    reduxProfile.socialURLs.github = dbProfile.githubURL;
-  }
-  if (dbProfile.twitterURL) {
-    reduxProfile.socialURLs.twitter = dbProfile.twitterURL;
-  }
-  return reduxProfile;
-}
+// export function profileDbToRedux(dbProfile: any) {
+//   const reduxProfile = dbProfile;
+//   if (!dbProfile.socialURLs) {
+//     reduxProfile.socialURLs = {};
+//   }
+//   if (dbProfile.facebookURL) {
+//     reduxProfile.socialURLs.facebook = dbProfile.facebookURL;
+//   }
+//   if (dbProfile.githubURL) {
+//     reduxProfile.socialURLs.github = dbProfile.githubURL;
+//   }
+//   if (dbProfile.twitterURL) {
+//     reduxProfile.socialURLs.twitter = dbProfile.twitterURL;
+//   }
+//   return reduxProfile;
+// }
 
 const initialState: IProfilesState = {};
 
@@ -68,8 +63,8 @@ const profilesReducer = (state = initialState, action: any) => {
         case AsyncActionSequence.Success: {
           const { profiles } = payload;
 
-          for (const profile of profiles) {
-            state = update(state, { [profile.ethereumAccountAddress]: { $set: profileDbToRedux(profile) } });
+          for (const address of Object.keys(profiles)) {
+            state = update(state, { [address]: { $set: profiles[address] } });
           }
           return state;
         }
