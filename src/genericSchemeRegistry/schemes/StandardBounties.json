@@ -58,7 +58,8 @@
         {
           "label": "Token Amount",
           "name": "_depositAmount",
-          "placeholder": "In Wei (10000…)"
+          "decimaals": 9,
+          "placeholder": "In Gwei (10000…)"
         }
       ],
       "abi": {
@@ -141,7 +142,8 @@
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "placeholder": "In Wei (10000…)"
+          "decimaals": 9,
+          "placeholder": "In Gwei (10000…)"
         }
       ],
       "abi": {
@@ -276,7 +278,8 @@
         {
           "label": "Token Amount",
           "name": "_amount",
-          "placeholder": "In Wei (10000…)"
+          "decimaals": 9,
+          "placeholder": "In Gwei (10000…)"
         }
       ],
       "abi": {
@@ -328,7 +331,8 @@
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "placeholder": "In Wei (10000…)"
+          "decimaals": 9,
+          "placeholder": "In Gwei (10000…)"
         }
       ],
       "abi": {
@@ -436,7 +440,8 @@
         {
           "label": "Token Amount",
           "name": "_amounts",
-          "placeholder": "In Wei (10000…)"
+          "decimaals": 9,
+          "placeholder": "In Gwei (10000…)"
         }
       ],
       "abi": {

@@ -48,7 +48,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
               <div className={css.summaryDetails}>
                 Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>. <br/>
                 Deadline: {(new Date(parseInt(decodedCallData.values[4], 10)*1000)).toString()}. <br />
-                Amount funded: {fromWei(decodedCallData.values[7])} {decodedCallData.values[6].toString() === '0' ?  'ETH'  : 'tokens'}. <br />
+                Amount funded: {fromWei(decodedCallData.values[7].dividedBy('1e+9'))} {decodedCallData.values[6].toString() === '0' ?  'ETH'  : 'tokens'}. <br />
                 Token Address: <a href={linkToEtherScan(decodedCallData.values[5])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a> <br />
                 Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br />
                 Issuer: <a href={linkToEtherScan(decodedCallData.values[1])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a> <br />
@@ -66,7 +66,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Contribution Amount: {fromWei(decodedCallData.values[2])} <br />
+                Contribution Amount: {fromWei(decodedCallData.values[2].dividedBy('1e+9'))} <br />
                 Bounty ID: {decodedCallData.values[1]} <br />
                 Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
@@ -102,7 +102,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Draining {fromWei(decodedCallData.values[3])} amount of tokens for bounty ID {decodedCallData.values[1]}. <br/>
+                Draining {fromWei(decodedCallData.values[3].dividedBy('1e+9'))} amount of tokens for bounty ID {decodedCallData.values[1]}. <br/>
                 Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
                 Issuer ID: {decodedCallData.values[2]}
               </div>
@@ -118,7 +118,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Accepting submission ID {decodedCallData.values[2]} for bounty ID {decodedCallData.values[1]} of {fromWei(decodedCallData.values[4])} tokens. <br/>
+                Accepting submission ID {decodedCallData.values[2]} for bounty ID {decodedCallData.values[1]} of {fromWei(decodedCallData.values[4].dividedBy('1e+9'))} tokens. <br/>
                 Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
                 Approver ID: {decodedCallData.values[3]}
               </div>
@@ -196,7 +196,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   <br />
                   { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
                 })}<br /> 
-                and send {fromWei(decodedCallData.values[5])} tokens for bounty ID {decodedCallData.values[1]}. <br/>
+                and send {fromWei(decodedCallData.values[5].dividedBy('1e+9'))} tokens for bounty ID {decodedCallData.values[1]}. <br/>
                 Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
                 Approver ID: {decodedCallData.values[4]} <br/>
                 Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>

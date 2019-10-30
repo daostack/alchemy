@@ -44,7 +44,7 @@ describe("Proposals", () => {
     await bountyIdInput.setValue(2);
 
     const tokenAmountInput = await $("*[data-test-id=\"_aamountr\"]");
-    await tokenAmountInput.setValue(100000000000000000);
+    await tokenAmountInput.setValue(100000000);
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();

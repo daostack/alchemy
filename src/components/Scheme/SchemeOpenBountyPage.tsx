@@ -5,6 +5,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState } from "@daostack/client";
 import { schemeName } from "lib/util";
 import * as css from "./SchemeInfo.scss";
+import { getNetworkName } from "lib/util";
 const ReactMarkdown = require('react-markdown');
 
 interface IProps {
@@ -37,7 +38,10 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
 
   private getApi = async (): Promise<void> => {
     // query all open bounties issued by current dao ordered by decending price
-    let res = await fetch(`https://api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`)
+    // rinkeby api and mainnet api are different subdomains
+    let network = (await getNetworkName()).toLowerCase();
+    let testnet = network === 'rinkeby' ? 'rinkeby.' : '';
+    let res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`)
     let json = await res.json();
     console.log(json);
 
