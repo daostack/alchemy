@@ -7,14 +7,14 @@ describe("Proposals", () => {
 
   beforeEach(async () => {
     const arc = getArc();
-    const daos = await arc.daos({ where: { name: "DAO For Testing"}}).pipe(first()).toPromise();
+    const daos = await arc.daos({ where: { name: "Ubiquitous Sawfiler"}}).pipe(first()).toPromise();
     const dao = daos[0];
     daoAddress = dao.id;
     if (!daoAddress) {
       throw Error("Could not find a DAO with this name");
     }
 
-  });
+  })
 
   it("Create a DutchX Generic Scheme proposal, vote for it, stake on it", async () => {
     const url = `/dao/${daoAddress}/`;
