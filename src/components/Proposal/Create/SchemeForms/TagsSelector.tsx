@@ -104,6 +104,9 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     
     if (allTags && allTags.length) {
       suggestions = new Array<ITagEx>();
+      /**
+       * concatenate all the proposals' lists of tags, then group by frequency
+       */
       const tagCounts = this.groupTags(allTags.reduce((acc: Array<string>, tags: Array<string>): Array<string> => {
         if (tags && tags.length) {
           acc = acc.concat(tags);
@@ -111,6 +114,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
         return acc;
       }, new Array<string>())
       );
+      // sort by descending tag count
       const sortedTags = Array.from(tagCounts.keys()).sort((a: string, b: string): number => tagCounts.get(b) - tagCounts.get(a));
       for (const tag of sortedTags) {
         suggestions.push({ id: tag, text: tag, count: tagCounts.get(tag)});
@@ -150,59 +154,13 @@ export default withSubscription({
     }
     const arc = getArc();
     const dao = arc.dao(props.daoAvatarAddress);
-
-    // dao.proposals({}, { subscribe: false }).pipe(
-    //   flatMap((proposals: Array<Proposal>) => proposals)
-    //   , mergeMap((proposal: Proposal) => proposal.state())
-    //   , mergeMap((proposal: IProposalState) => proposal.tags)
-      
-    //   // , groupBy(tag => tag.toLowerCase())
-    //   // , mergeMap(og => og.pipe(reduce((acc, tag: any): any => { acc.push(tag); return acc; }, [])))
-    //   // , concatMap(
-    //   //   group$ => group$.pipe(
-    //   //     map(obj => ({ key: group$.key, value: obj }))
-    //   //   )
-    //   // )
-    //   // , mergeMap(og => og.pipe(toArray()))
-    //   // , mergeMap((go) => go.pipe(reduce((acc, tag: any): any => { acc.push(tag); return acc; }, [])))
-    //   // , map((tagArray: Array<string>) => {
-    //   //   return of({id: tagArray[0], text: tagArray[0], count: tagArray.length});
-    //   // })4
-    // )
-    //   .subscribe(p => console.dir(p));
-
-    //emit each person
-    // of({name: "Sue", age:25},{name: "Joe", age: 30},{name: "Frank", age: 25}, {name: "Sarah", age: 35}).pipe(
-    //   groupBy(person => person.age),
-    // //return as array of each group
-    //   flatMap(group => group.reduce((acc, curr) => [...acc, ...curr], []))
-    //   })
-    //   .subscribe(val => console.log(val));
-
-    // of(
-    //   {id: 1, name: "JavaScript"},
-    //   {id: 2, name: "Parcel"},
-    //   {id: 2, name: "webpack"},
-    //   {id: 1, name: "TypeScript"},
-    //   {id: 3, name: "TSLint"}
-    // ).pipe(
-    //   groupBy(p => p.id)
-    //   // mergeMap((group) => group.pipe(toArray()))
-    // )
-    //   .subscribe(p => console.log(p));
-
+    /**
+     * returns an array of arrays of tag names, one array per proposals
+     */
     const tags = dao.proposals({}, { subscribe: false }).pipe(
       mergeMap((proposals: Array<Proposal>) => combineLatest(Array.from(proposals, (proposal) => proposal.state())))
       , mergeMap((proposals: Array<IProposalState>) => 
         combineLatest(Array.from(proposals, (proposal) => of(proposal.tags))))
-      // produces one iteration per tag from all the proposals:
-      // , mergeMap((proposal: IProposalState) => proposal.tags)
-      // reduces all the iterations (tags) down to a single array:
-      // , mergeMap((tags) => combineLatest(Array.from(tags, (tag) => tag)))
-      // , reduce((acc: Array<any>, val: any) => {
-      //   if (val) acc.push(val);
-      //   return acc;
-      // }, new Array<any>())
     );
     return tags;
   },
