@@ -25,8 +25,8 @@ describe("Proposals", () => {
 
     await createProposalButton.click();
 
-    const masterCopyTab = await $("*[data-test-id=\"action-tab-updateMasterCopy\"]");
-    await masterCopyTab.click();
+    const contributeTab = await $("*[data-test-id=\"action-tab-contribute\"]");
+    await contributeTab.click();
 
     const titleInput = await $("*[id=\"titleInput\"]");
     await titleInput.waitForExist();
@@ -37,8 +37,14 @@ describe("Proposals", () => {
     const descriptionInput = await $(".mde-text");
     await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
 
-    const masterCopyInput = await $("*[data-test-id=\"_masterCopy\"]");
-    await masterCopyInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+    const senderInput = await $("*[data-test-id=\"_sender\"]");
+    await senderInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+
+    const bountyIdInput = await $("*[data-test-id=\"_bountyId\"]");
+    await bountyIdInput.setValue(2);
+
+    const tokenAmountInput = await $("*[data-test-id=\"_aamountr\"]");
+    await tokenAmountInput.setValue(100000000000000000);
 
     const createProposalSubmitButton = await $("*[type=\"submit\"]");
     await createProposalSubmitButton.click();
