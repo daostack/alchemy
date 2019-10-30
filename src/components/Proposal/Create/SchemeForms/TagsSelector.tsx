@@ -138,6 +138,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
         autocomplete={1}
         readOnly={!!readOnly}
         autofocus={false}
+        allowDragDrop={false} // because we have no way to persist the tab order
         // eslint-disable-next-line react/jsx-no-bind
         renderSuggestion = {( tag: ITagEx ) => <div>{tag.text} <span className="count">({tag.count})</span></div>}
       />
