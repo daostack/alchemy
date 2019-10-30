@@ -41,7 +41,7 @@
         {
           "label": "Deadline",
           "name": "_deadline",
-          "placeholder": "Timestamp"
+          "placeholder": "Unix Timestamp"
         },
         {
           "label": "Token",
@@ -216,7 +216,7 @@
         {
           "label": "Deadline",
           "name": "_deadline",
-          "placeholder": "Timestamp"
+          "placeholder": "Unix Timestamp"
         }
       ],
       "abi": {
@@ -539,7 +539,7 @@
         {
           "label": "Deadline",
           "name": "_deadline",
-          "placeholder": "Timestamp"
+          "placeholder": "Unix Timestamp"
         }
       ],
       "abi": {
