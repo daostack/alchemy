@@ -14,7 +14,7 @@ describe("Proposals", () => {
       throw Error("Could not find a DAO with this name");
     }
 
-  })
+  });
 
   it("Create a DutchX Generic Scheme proposal, vote for it, stake on it", async () => {
     const url = `/dao/${daoAddress}/`;
