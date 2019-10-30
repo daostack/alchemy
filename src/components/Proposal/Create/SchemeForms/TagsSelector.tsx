@@ -111,7 +111,8 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
         return acc;
       }, new Array<string>())
       );
-      for (const tag of tagCounts.keys()) {
+      const sortedTags = Array.from(tagCounts.keys()).sort((a: string, b: string): number => tagCounts.get(b) - tagCounts.get(a));
+      for (const tag of sortedTags) {
         suggestions.push({ id: tag, text: tag, count: tagCounts.get(tag)});
       }
     }
