@@ -6,6 +6,7 @@ import withSubscription, { ISubscriptionProps } from "components/Shared/withSubs
 import { getArc } from "arc";
 import { from, combineLatest, of  } from "rxjs";
 import { mergeMap } from "rxjs/operators";
+import { RefObject } from "react";
 import * as css from "./TagsSelector.scss";
 
 interface IExternalProps {
@@ -48,9 +49,14 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = { 
-      workingTags: props.tags ? props.tags.map((tag: string) => {return { id: tag, text: tag }; }) : new Array<Tag>() };
+    this.tagsComponent = React.createRef();
+
+    this.state = {
+      workingTags: props.tags ? props.tags.map((tag: string) => {return { id: tag, text: tag }; }) : new Array<Tag>(),
+    };
   }
+
+  private tagsComponent: RefObject<HTMLDivElement>;
 
   private emitOnChange(tags: Array<Tag>): void {
     if (this.props.onChange) {
@@ -70,14 +76,21 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     this.emitOnChange(tags);
   }
 
-  private handleDrag = () => (tag: Tag, currPos: number, newPos: number): void => {
-    const tags = this.state.workingTags.slice();
-
-    tags.splice(currPos, 1);
-    tags.splice(newPos, 0, tag);
-
-    this.setState({ workingTags: tags });
-    this.emitOnChange(tags);
+  private handleBlur = () => (): void => {
+    const inputText = (this.tagsComponent.current.getElementsByClassName("ReactTags__tagInputField")[0] as HTMLInputElement).value;
+    if (inputText) {
+      let alreadyHas = false;
+      const lowerInputText = inputText.toLocaleLowerCase();
+      for (const tag of this.state.workingTags) {
+        if (tag.text.toLocaleLowerCase() === lowerInputText) {
+          alreadyHas = true;
+          break;
+        }
+      }
+      if (!alreadyHas) {
+        this.handleAddition()({ id: inputText, text: inputText });
+      }
+    }
   }
 
   /**
@@ -124,7 +137,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     return <div className={classNames({
       [css.reactTagsContainer]: true,
       ["darkTheme"]: darkTheme,
-    })}>
+    })} ref={this.tagsComponent}>
       {
         // from here: https://github.com/prakhar1989/react-tags
       }
@@ -133,7 +146,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
         suggestions={suggestions}
         handleDelete={this.handleDelete()}
         handleAddition={this.handleAddition()}
-        handleDrag={this.handleDrag()}
+        handleInputBlur={this.handleBlur()}
         delimiters={delimiters}
         autocomplete={1}
         readOnly={!!readOnly}
