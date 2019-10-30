@@ -14,7 +14,7 @@
   "actions": [
     {
       "id": "issueAndContribute",
-      "label": "issue and Contribute",
+      "label": "Issue and Contribute",
       "description": "Create a new bounty and contribute tokens to the bounty.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
@@ -46,17 +46,19 @@
         {
           "label": "Token",
           "name": "_token",
+          "defaultValue": "0x0000000000000000000000000000000000000000",
           "placeholder": "Address (0x0000…)"
         },
         {
           "label": "Token Version",
           "name": "_tokenVersion",
+          "defaultValue": 0,
           "placeholder":"0 for ETH, 20 for ERC20 Token"
         },
         {
           "label": "Token Amount",
           "name": "_depositAmount",
-          "decimals": 18
+          "placeholder": "In Wei (10000…)"
         }
       ],
       "abi": {
@@ -133,13 +135,13 @@
           "placeholder": "IPFS Hash (Qmd0...)"
         },
         {
-          "label": "Fulfillment ID",
+          "label": "Approver ID",
           "name": "_approverId"
         },
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "decimals": 18
+          "placeholder": "In Wei (10000…)"
         }
       ],
       "abi": {
@@ -274,7 +276,7 @@
         {
           "label": "Token Amount",
           "name": "_amount",
-          "decimals": 18
+          "placeholder": "In Wei (10000…)"
         }
       ],
       "abi": {
@@ -326,7 +328,7 @@
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "decimals": 18
+          "placeholder": "In Wei (10000…)"
         }
       ],
       "abi": {
@@ -434,7 +436,7 @@
         {
           "label": "Token Amount",
           "name": "_amounts",
-          "decimals": 18
+          "placeholder": "In Wei (10000…)"
         }
       ],
       "abi": {

@@ -5,6 +5,7 @@ import { GenericSchemeInfo } from "genericSchemeRegistry";
 import { linkToEtherScan } from "lib/util";
 import * as React from "react";
 import * as css from "./ProposalSummary.scss";
+import { fromWei } from "lib/util";
 
 interface IProps {
   genericSchemeInfo: GenericSchemeInfo;
@@ -15,9 +16,18 @@ interface IProps {
 
 export default class ProposalSummaryStandardBounties extends React.Component<IProps, null> {
 
-  public render() {
+  public render(): RenderOutput {
     const { proposal, detailView, genericSchemeInfo, transactionModal } = this.props;
-    const decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
+    let decodedCallData: any;
+    try {
+      decodedCallData = genericSchemeInfo.decodeCallData(proposal.genericScheme.callData);
+    } catch(err) {
+      if (err.message.match(/no action matching/gi)) {
+        return <div>Error: {err.message} </div>;
+      } else {
+        throw err;
+      }
+    }
     const action = decodedCallData.action;
 
     const proposalSummaryClass = classNames({
@@ -32,13 +42,17 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              New Bounty Created
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             { detailView ?
               <div className={css.summaryDetails}>
                 Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>. <br/>
-                Deadline set at {new Date(decodedCallData.values[4])}. <br />
-                Amount funded at {decodedCallData.values[7]} {decodedCallData.values[6].toString() === '0' ?  'ETH'  : 'tokens'}.
+                Deadline: {(new Date(parseInt(decodedCallData.values[4], 10)*1000)).toString()}. <br />
+                Amount funded: {fromWei(decodedCallData.values[7])} {decodedCallData.values[6].toString() === '0' ?  'ETH'  : 'tokens'}. <br />
+                Token Address: <a href={linkToEtherScan(decodedCallData.values[5])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a> <br />
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br />
+                Issuer: <a href={linkToEtherScan(decodedCallData.values[1])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[1]}</a> <br />
+                Approver: <a href={linkToEtherScan(decodedCallData.values[2])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[2]}</a> 
               </div>
               : ""
             }
@@ -48,11 +62,13 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              Adding Contribution to a Bounty
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Contribution of amount {decodedCallData.values[2]}
+                Contribution Amount: {fromWei(decodedCallData.values[2])} <br />
+                Bounty ID: {decodedCallData.values[1]} <br />
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>
               </div>
               : ""
             }
@@ -62,12 +78,17 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp;
-              {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Refund for contribution IDs {decodedCallData.values[3]}
+                Refund for contribution IDs: {decodedCallData.values[3].forEach((addr: string) => {
+                  <br />
+                  { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                })}<br />
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a>  <br />
+                Bounty ID: {decodedCallData.values[1]} <br />
+                Issuer ID: {decodedCallData.values[2]}
               </div>
               : ""
             }
@@ -77,11 +98,13 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Draining {decodedCallData.values[3]} amount of tokens.
+                Draining {fromWei(decodedCallData.values[3])} amount of tokens for bounty ID {decodedCallData.values[1]}. <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Issuer ID: {decodedCallData.values[2]}
               </div>
               : ""
             }
@@ -91,11 +114,13 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              Accept Submission
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Accepting submission ID {decodedCallData.values[2]} for {decodedCallData.values[4]} tokens. 
+                Accepting submission ID {decodedCallData.values[2]} for bounty ID {decodedCallData.values[1]} of {fromWei(decodedCallData.values[4])} tokens. <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Approver ID: {decodedCallData.values[3]}
               </div>
               : ""
             }
@@ -105,7 +130,7 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
@@ -119,7 +144,9 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
                   { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
                 })}<br />
                 Change bounty details to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[5]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[5]}</a><br/>
-                Change bounty deadline to {new Date(decodedCallData.values[6])}
+                Change bounty deadline to {(new Date(parseInt(decodedCallData.values[6], 10)*1000)).toString()} <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Issuer ID: {decodedCallData.values[2]}
               </div>
               : ""
             }
@@ -129,11 +156,13 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Change details of bounty ID  {decodedCallData.values[1]} to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>
+                Change details of bounty ID  {decodedCallData.values[1]} to <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>. <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Issuer ID: {decodedCallData.values[2]}
               </div>
               : ""
             }
@@ -143,11 +172,13 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              Change Bounty Deadline
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
-                Change bounty deadline to {new Date(decodedCallData.values[3])}
+                Change deadline of bounty ID {decodedCallData.values[1]} to {(new Date(parseInt(decodedCallData.values[3], 10)*1000)).toString()} <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Issuer ID: {decodedCallData.values[2]}
               </div>
               : ""
             }
@@ -157,11 +188,18 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              Fulfill and Accept Bounty
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <ul className={css.summaryDetails}>
-                Accept submission of and send {decodedCallData.values[5]} tokens to <a href={linkToEtherScan(decodedCallData.values[2])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[2]}</a>
+                Accept submission of {decodedCallData.values[2].forEach((addr: string) => {
+                  <br />
+                  { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
+                })}<br /> 
+                and send {fromWei(decodedCallData.values[5])} tokens for bounty ID {decodedCallData.values[1]}. <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Approver ID: {decodedCallData.values[4]} <br/>
+                Bounty Details: <a href={`https://ipfs.io/ipfs/${decodedCallData.values[3]}`} target="_blank" rel="noopener noreferrer">{decodedCallData.values[3]}</a>
               </ul>
               : ""
             }
@@ -171,14 +209,17 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
                 Change approvers to: {decodedCallData.values[3].forEach((addr: string) => {
                   <br />
                   { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
-                })}
+                })} <br/> 
+                Bounty ID: {decodedCallData.values[1]} <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Issuer ID: {decodedCallData.values[2]} <br/>
               </div>
               : ""
             }
@@ -188,14 +229,17 @@ export default class ProposalSummaryStandardBounties extends React.Component<IPr
         return (
           <div className={proposalSummaryClass}>
             <span className={css.summaryTitle}>
-              {action.label}
+              <img src="/assets/images/Icon/edit-sm.svg" />&nbsp; {action.label}
             </span>
             {detailView ?
               <div className={css.summaryDetails}>
                 Change issuers to: {decodedCallData.values[3].forEach((addr: string) => {
                   <br />
                   { '\u2B24' } <a href={linkToEtherScan(addr)} target="_blank" rel="noopener noreferrer">{addr}</a>
-                })}<br />
+                })} <br />
+                Bounty ID: {decodedCallData.values[1]} <br/>
+                Sender: <a href={linkToEtherScan(decodedCallData.values[0])} target="_blank" rel="noopener noreferrer">{decodedCallData.values[0]}</a> <br/>
+                Issuer ID: {decodedCallData.values[2]} <br/>
               </div>
               : ""
             }

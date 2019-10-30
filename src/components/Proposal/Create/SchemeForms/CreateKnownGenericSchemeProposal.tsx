@@ -67,7 +67,22 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     };
   }
 
+  public async getBountyEth(values: IFormValues): Promise<number> {
+    const currentAction = this.state.currentAction;
+    var ethToSend: number = 0;
+    console.log('Testing Bounty ', currentAction);
+    for (var field of currentAction.getFields()) {
+      if (field.name === '_depositAmount' || field.name === '_amount') {
+        console.log('field value', field.callValue(values[field.name]));
+        ethToSend += field.callValue(values[field.name]);
+      }
+    }
+
+    return ethToSend
+  }
+
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+    this.getBountyEth(values);
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
@@ -90,13 +105,15 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     }
     setSubmitting(false);
 
+    let ethValue = await this.getBountyEth(values);
+
     const proposalValues = {
       ...values,
       callData,
       dao: this.props.daoAvatarAddress,
       scheme: this.props.scheme.address,
       type: IProposalType.GenericScheme,
-      value: 0, // amount of eth to send with the call
+      value: ethValue, // amount of eth to send with the call
     };
 
     try {
