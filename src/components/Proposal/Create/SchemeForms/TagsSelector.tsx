@@ -118,7 +118,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     if (allTags && allTags.length) {
       suggestions = new Array<ITagEx>();
       /**
-       * concatenate all the proposals' lists of tags, then group by frequency
+       * create a handy map of tag=>count that merges counts by case insensitivity
        */
       const tagCounts = this.groupTags(allTags);
       /**
