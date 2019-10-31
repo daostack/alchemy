@@ -41,7 +41,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
     // rinkeby api and mainnet api are different subdomains
     let network = (await getNetworkName()).toLowerCase();
     let testnet = network === 'rinkeby' ? 'rinkeby.' : '';
-    let res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&bountyStage=1&offset=${this.state.page}`)
+    let res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`)
     let json = await res.json();
     console.log(json);
 
