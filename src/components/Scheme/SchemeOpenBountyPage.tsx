@@ -41,7 +41,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
     // rinkeby api and mainnet api are different subdomains
     let network = (await getNetworkName()).toLowerCase();
     let testnet = network === 'rinkeby' ? 'rinkeby.' : '';
-    let res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`)
+    let res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&bountyStage=1&offset=${this.state.page}`)
     let json = await res.json();
     console.log(json);
 
@@ -68,7 +68,6 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
   public componentDidMount(): void {
     // call for open bounties on page load
     this.getApi()
-    console.log('opened')
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState): void {
@@ -84,8 +83,9 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
       return this.state.bounties.map((bounty: any) => (
         <a href={bounty.attached_url} target="_blank">
           <div className={css.schemeInfoContainer}>
-            <h3>{bounty.title} [{parseFloat(bounty.calculated_fulfillment_amount).toFixed(2)} {bounty.token_symbol}]</h3>
+            <h3>{bounty.title} [{parseFloat(bounty.calculated_fulfillment_amount).toFixed(3)} {bounty.token_symbol}]</h3>
             <div className={css.infoCardContent}>
+              <strong>Bounty ID: </strong> {bounty.id} <br/>
               <ReactMarkdown source={bounty.description} />
             </div>
           </div>
