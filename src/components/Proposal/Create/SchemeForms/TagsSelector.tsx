@@ -163,20 +163,12 @@ export default withSubscription({
 
     const arc = getArc();
     /**
-     * returns an array of arrays of tag names, one array per proposals.
-     * ask for `first: 1000` to raise the minimum from the default of 100 to the max of 1000
+     * Returns an array of TagState.
+     * Ask for `first: 1000` to raise the minimum from the default of 100 to the max of 1000
      */
     return arc.tags({ first: 1000 }, { subscribe: false })
       .pipe(
-        map((tags: Array<TagEntity>) => {
-          return tags.map(tag => {
-            const state = tag.staticState;
-            return {
-              id: state.id,
-              numberOfProposals: state.numberOfProposals,
-            };
-          });
-        })
+        map((tags: Array<TagEntity>) => tags.map(tag => tag.staticState))
       );
   },
 });
