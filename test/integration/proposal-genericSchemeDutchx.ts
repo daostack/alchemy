@@ -7,7 +7,7 @@ describe("Proposals", () => {
 
   beforeEach(async () => {
     const arc = getArc();
-    const daos = await arc.daos({ where: { name: "Crapulous Musician"}}).pipe(first()).toPromise();
+    const daos = await arc.daos({ where: { name: "DutchX DAO"}}).pipe(first()).toPromise();
     const dao = daos[0];
     daoAddress = dao.id;
     if (!daoAddress) {
