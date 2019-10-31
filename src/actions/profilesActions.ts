@@ -41,7 +41,7 @@ export function getProfile(accountAddress: string) {
       const profile: any = await Box.getProfile(accountAddress);
 
       if (profile) {
-        // Update profiles state with profile data for this account
+        profile.ethereumAccountAddress = accountAddress;
         profile.socialURLs = await Box.getVerifiedAccounts(profile);
         dispatch({
           type: ActionTypes.GET_PROFILE_DATA,

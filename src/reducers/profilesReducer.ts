@@ -22,23 +22,6 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
   };
 }
 
-// export function profileDbToRedux(dbProfile: any) {
-//   const reduxProfile = dbProfile;
-//   if (!dbProfile.socialURLs) {
-//     reduxProfile.socialURLs = {};
-//   }
-//   if (dbProfile.facebookURL) {
-//     reduxProfile.socialURLs.facebook = dbProfile.facebookURL;
-//   }
-//   if (dbProfile.githubURL) {
-//     reduxProfile.socialURLs.github = dbProfile.githubURL;
-//   }
-//   if (dbProfile.twitterURL) {
-//     reduxProfile.socialURLs.twitter = dbProfile.twitterURL;
-//   }
-//   return reduxProfile;
-// }
-
 const initialState: IProfilesState = {};
 
 const profilesReducer = (state = initialState, action: any) => {
