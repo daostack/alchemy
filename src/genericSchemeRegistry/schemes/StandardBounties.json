@@ -15,7 +15,7 @@
     {
       "id": "issueAndContribute",
       "label": "Issue and Contribute",
-      "description": "Create a new bounty and contribute tokens to the bounty.",
+      "description": "Create a new bounty and contribute tokens to the bounty. IPFS upload of bounty details must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be queried by the API.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
         {
@@ -184,7 +184,7 @@
     {
       "id": "changeBounty",
       "label": "Change Bounty",
-      "description": "Allows any of the issuers to change the bounty.",
+      "description": "Allows any of the issuers to change the bounty. IPFS upload of bounty details must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be queried by the API.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
         {
@@ -369,7 +369,7 @@
     {
       "id": "changeData",
       "label": "Change Bounty Details",
-      "description": "Allows any of the issuers to change the bounty's details.",
+      "description": "Allows any of the issuers to change the bounty's details. IPFS upload of bounty details must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be queried by the API.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
         {
