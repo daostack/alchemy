@@ -58,7 +58,7 @@
         {
           "label": "Token Amount",
           "name": "_depositAmount",
-          "decimaals": 9,
+          "decimals": 9,
           "placeholder": "In Gwei (10000…)"
         }
       ],
@@ -142,7 +142,7 @@
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "decimaals": 9,
+          "decimals": 9,
           "placeholder": "In Gwei (10000…)"
         }
       ],
@@ -278,7 +278,7 @@
         {
           "label": "Token Amount",
           "name": "_amount",
-          "decimaals": 9,
+          "decimals": 9,
           "placeholder": "In Gwei (10000…)"
         }
       ],
@@ -331,7 +331,7 @@
         {
           "label": "Token Amount",
           "name": "_tokenAmounts",
-          "decimaals": 9,
+          "decimals": 9,
           "placeholder": "In Gwei (10000…)"
         }
       ],
@@ -440,7 +440,7 @@
         {
           "label": "Token Amount",
           "name": "_amounts",
-          "decimaals": 9,
+          "decimals": 9,
           "placeholder": "In Gwei (10000…)"
         }
       ],
