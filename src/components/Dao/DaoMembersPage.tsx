@@ -1,5 +1,4 @@
-import { DAO, IDAOState, Member } from "@daostack/client";
-import { getArc } from "arc";
+import { IDAOState, Member } from "@daostack/client";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
@@ -96,12 +95,8 @@ const SubscribedDaoMembersPage = withSubscription({
     });
   },
 
-  // used for hacky pagination tracking
-  pageSize: PAGE_SIZE,
-
   getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
-    const arc = getArc();
-    const dao = new DAO(props.daoState.address, arc);
+    const dao = props.daoState.dao;
     return dao.members({
       orderBy: "balance",
       orderDirection: "desc",

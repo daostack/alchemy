@@ -74,7 +74,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
-    const { currentAccountAddress, fetchMore, hasMoreToLoad, isActive, scheme } = this.props;
+    const { currentAccountAddress, fetchMore, isActive, scheme } = this.props;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
@@ -136,7 +136,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           <div>
             <div className={css.boostedContainer}>
               <div className={css.proposalsHeader}>
-                Boosted Proposals ({proposalsBoosted.length})
+                Boosted Proposals ({dao.numberOfBoostedProposals})
                 {proposalsBoosted.length === 0
                   ?
                   <div>
@@ -152,7 +152,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                Pending Proposals ({proposalsPreBoosted.length})
+                Pending Proposals ({dao.numberOfPreBoostedProposals})
                 {proposalsPreBoosted.length === 0
                   ?
                   <div>
@@ -167,7 +167,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             </div>
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                Regular Proposals ({proposalsQueued.length}{hasMoreToLoad ? "+" : ""})
+                Regular Proposals ({dao.numberOfQueuedProposals})
                 {proposalsQueued.length === 0
                   ?
                   <div>
@@ -180,7 +180,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
-                  hasMore={hasMoreToLoad}
+                  hasMore={proposalsQueued.length < dao.numberOfQueuedProposals}
                   loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
@@ -279,9 +279,6 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       arc.getObservable(bigProposalQuery, {subscribe: true}) as Observable<Proposal[]>,
     );
   },
-
-  // used for hacky pagination tracking
-  pageSize: PAGE_SIZE,
 
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
