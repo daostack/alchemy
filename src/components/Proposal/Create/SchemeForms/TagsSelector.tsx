@@ -1,12 +1,12 @@
 import * as React from "react";
 import { WithContext as ReactTags, Tag } from "react-tag-input";
 import classNames from "classnames";
-import { Address, Proposal, IProposalState} from "@daostack/client";
+import { Tag as TagEntity, Address } from "@daostack/client";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { getArc } from "arc";
-import { from, combineLatest, of  } from "rxjs";
-import { mergeMap } from "rxjs/operators";
 import { RefObject } from "react";
+import { map } from "rxjs/operators";
+import { ITagState } from "@daostack/client/dist/types/tag";
 import * as css from "./TagsSelector.scss";
 
 interface IExternalProps {
@@ -42,7 +42,7 @@ const KeyCodes = {
  
 const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
 
-type IProps = IExternalProps & ISubscriptionProps<Array<Array<string>>>
+type IProps = IExternalProps & ISubscriptionProps<Array<ITagState>>
   
 class TagsSelector extends React.Component<IProps, IStateProps> {
 
@@ -97,14 +97,14 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
    * return Map where key is tag, value is count of tags
    * @param allTags 
    */
-  private groupTags(allTags: Array<string>): Map<string,number> {
+  private groupTags(allTags: Array<ITagState>): Map<string,number> {
     const map = new Map<string,number>();
-    allTags.forEach(tag => {
-      tag = tag.toLocaleLowerCase();
+    allTags.forEach(tagState => {
+      const tag = tagState.id.toLocaleLowerCase();
       if (!map.has(tag)) {
         map.set(tag,0);
       }
-      map.set(tag,map.get(tag)+1);
+      map.set(tag, tagState.numberOfProposals + (map.get(tag) || 0));
     });
     return map;
   }
@@ -112,7 +112,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
   public render(): RenderOutput {
     const { workingTags } = this.state;
     const { readOnly, darkTheme } = this.props;
-    const allTags: Array<Array<string>> = this.props.data;
+    const allTags: Array<ITagState> = this.props.data;
     let suggestions: Array<ITagEx>;
     
     if (allTags && allTags.length) {
@@ -120,15 +120,12 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
       /**
        * concatenate all the proposals' lists of tags, then group by frequency
        */
-      const tagCounts = this.groupTags(allTags.reduce((acc: Array<string>, tags: Array<string>): Array<string> => {
-        if (tags && tags.length) {
-          acc = acc.concat(tags);
-        }
-        return acc;
-      }, new Array<string>())
-      );
-      // sort by descending tag count
+      const tagCounts = this.groupTags(allTags);
+      /**
+       * sort by descending tag count
+       */
       const sortedTags = Array.from(tagCounts.keys()).sort((a: string, b: string): number => tagCounts.get(b) - tagCounts.get(a));
+
       for (const tag of sortedTags) {
         suggestions.push({ id: tag, text: tag, count: tagCounts.get(tag)});
       }
@@ -162,20 +159,24 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
 export default withSubscription({
   wrappedComponent: TagsSelector,
   checkForUpdate: () => { return false; },
-  createObservable: (props: IExternalProps) => {
-    if (!props.daoAvatarAddress) {
-      return from([]);
-    }
+  createObservable: (_props: IExternalProps) => {
+
     const arc = getArc();
-    const dao = arc.dao(props.daoAvatarAddress);
     /**
-     * returns an array of arrays of tag names, one array per proposals
+     * returns an array of arrays of tag names, one array per proposals.
+     * ask for `first: 1000` to raise the minimum from the default of 100 to the max of 1000
      */
-    const tags = dao.proposals({}, { subscribe: false }).pipe(
-      mergeMap((proposals: Array<Proposal>) => combineLatest(Array.from(proposals, (proposal) => proposal.state())))
-      , mergeMap((proposals: Array<IProposalState>) => 
-        combineLatest(Array.from(proposals, (proposal) => of(proposal.tags))))
-    );
-    return tags;
+    return arc.tags({ first: 1000 }, { subscribe: false })
+      .pipe(
+        map((tags: Array<TagEntity>) => {
+          return tags.map(tag => {
+            const state = tag.staticState;
+            return {
+              id: state.id,
+              numberOfProposals: state.numberOfProposals,
+            };
+          });
+        })
+      );
   },
 });
