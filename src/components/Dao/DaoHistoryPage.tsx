@@ -99,13 +99,21 @@ export default withSubscription({
 
     const prefetchQuery = gql`
       query prefetchProposalDataForDAOHistory {
-        proposals (where: {
-          stage_in: [
-            "${IProposalStage[IProposalStage.ExpiredInQueue]}",
-            "${IProposalStage[IProposalStage.Executed]}",
-            "${IProposalStage[IProposalStage.Queued]}"
-          ]
-        }){
+        proposals (
+          first: ${PAGE_SIZE}
+          skip: 0
+          orderBy: "closingAt"
+          orderDirection: "desc"
+          where: {
+            dao: "${dao.id}"
+            stage_in: [
+              "${IProposalStage[IProposalStage.ExpiredInQueue]}",
+              "${IProposalStage[IProposalStage.Executed]}",
+              "${IProposalStage[IProposalStage.Queued]}"
+            ]
+            closingAt_lte: "${Math.floor(new Date().getTime() / 1000)}"
+          }
+        ){
           ...ProposalFields
           votes (where: { voter: "${props.currentAccountAddress}"}) {
             ...VoteFields
@@ -119,7 +127,7 @@ export default withSubscription({
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
     `;
-    await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
+    await arc.getObservable(prefetchQuery, { subscribe: true }).pipe(first()).toPromise();
     return combineLatest(
       dao.proposals({
         where: {
