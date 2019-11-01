@@ -388,8 +388,8 @@ export function hasGpRewards(reward: IRewardState) {
 /**
  * Returns an object describing ContributionReward non-zero, unredeemed reward amounts for the CR beneficiary, optionally
  * filtered by whether the DAO has the funds to pay the rewards.
- * @param  reward unredeemed CR rewards for the current user
- * @return  an array mapping strings to BN
+ * @param  reward unredeemed CR rewards
+ * @param daoBalances 
  */
 export function getCRRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};

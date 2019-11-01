@@ -29,7 +29,7 @@ interface IExternalProps {
   expanded?: boolean;
   proposalState: IProposalState;
   /**
-   * unawarded GP rewards due to the current account
+   * unredeemed GP rewards due to the current account
    */
   rewards: IRewardState;
   expired: boolean;
@@ -106,7 +106,7 @@ class ActionButton extends React.Component<IProps, IState> {
       expanded,
       proposalState,
       /**
-       * unawarded GP rewards due to the current account
+       * unredeemed GP rewards due to the current account
        */
       rewards,
     } = this.props;
@@ -118,7 +118,7 @@ class ActionButton extends React.Component<IProps, IState> {
       externalToken: this.props.data.externalTokenBalance,
     };
     /**
-     * unredeemed to the current account
+     * unredeemed by the current account
      */
     const gpRewards = getGpRewards(rewards);
     const currentAccountHasUnredeemedGpRewards = Object.keys(gpRewards).length > 0;
@@ -134,7 +134,7 @@ class ActionButton extends React.Component<IProps, IState> {
     let beneficiaryHasUnredeemedCrRewards = false;
     if (proposalState.contributionReward) {
       /**
-       * unredeemed to the beneficiary
+       * unredeemed by the beneficiary
        */
       const contributionRewards = getCRRewards(proposalState.contributionReward);
       beneficiaryHasUnredeemedCrRewards = Object.keys(contributionRewards).length > 0;
