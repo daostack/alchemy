@@ -96,11 +96,11 @@ export default withSubscription({
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
     // with all separate queries for votes and stakes and stuff...
-    let voterClause = ""
-    let stakerClause = ""
+    let voterClause = "";
+    let stakerClause = "";
     if (props.currentAccountAddress) {
-        voterClause = `(where: { voter: "${props.currentAccountAddress}"})`
-        stakerClause = `(where: { staker: "${props.currentAccountAddress}"})`
+      voterClause = `(where: { voter: "${props.currentAccountAddress}"})`;
+      stakerClause = `(where: { staker: "${props.currentAccountAddress}"})`;
 
     }
     const prefetchQuery = gql`
