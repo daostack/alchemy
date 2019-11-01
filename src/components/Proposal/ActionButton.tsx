@@ -25,7 +25,7 @@ interface IExternalProps {
   expanded?: boolean;
   proposalState: IProposalState;
   /**
-   * unredeemed GP rewards due to the current account
+   * unredeemed GP rewards owed to the current account
    */
   rewards: IRewardState;
   expired: boolean;
@@ -102,7 +102,7 @@ class ActionButton extends React.Component<IProps, IState> {
       expanded,
       proposalState,
       /**
-       * unredeemed GP rewards due to the current account
+       * unredeemed GP rewards owed to the current account
        */
       rewards,
     } = this.props;
