@@ -48,7 +48,7 @@ export default (props: IProps) => {
     c = <div key={rewardsForCurrentUser.id + "_staker_bounty"}>
       <strong>For staking on the proposal you will receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.daoBountyForStaker)} bounty from the DAO (if the DAO has enough GEN)
+        <li>{fromWei(gpRewards.daoBountyForStaker)} bounty from the DAO
         </li>
       </ul>
     </div >;
@@ -92,7 +92,7 @@ export default (props: IProps) => {
 
   }
 
-  return <div>
+  return <div style={{ paddingTop: "8px" }}>
     <React.Fragment>
       { rewardComponents }
     </React.Fragment>

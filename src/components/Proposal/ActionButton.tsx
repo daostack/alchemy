@@ -1,4 +1,4 @@
-import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Token, IProposalOutcome } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
@@ -11,15 +11,11 @@ import { IRootState } from "reducers";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import { from, of } from "rxjs";
+import { of, combineLatest, Observable } from "rxjs";
 import * as css from "./ActionButton.scss";
 import RedemptionsTip from "./RedemptionsTip";
 
 import BN = require("bn.js");
-
-interface IExternalTokenBalance {
-  externalTokenBalance: BN;
-}
 
 interface IExternalProps {
   currentAccountAddress?: Address;
@@ -45,7 +41,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IExternalTokenBalance>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[BN,BN]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   const proposalState = ownProps.proposalState;
@@ -74,13 +70,13 @@ class ActionButton extends React.Component<IProps, IState> {
     this.handleRedeemProposal = this.handleRedeemProposal.bind(this);
   }
 
-  public async handleClickExecute(_event: any): Promise<void> {
+  private handleClickExecute = () => async(): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     await this.props.executeProposal(this.props.daoState.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  public handleClickRedeem = (canRedeem: boolean) => async (): Promise<void> => {
+  private handleClickRedeem = (canRedeem: boolean) => async (): Promise<void> => {
 
     if (!canRedeem) {
       this.props.showNotification(NotificationStatus.Failure, "The DAO does not have enough funds to pay for these redemptions");
@@ -91,7 +87,7 @@ class ActionButton extends React.Component<IProps, IState> {
     }
   }
 
-  public closePreRedeemModal(_event: any): void {
+  private closePreRedeemModal = () => (): void => {
     this.setState({ preRedeemModalOpen: false });
   }
 
@@ -113,9 +109,10 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const daoBalances: {[key: string]: BN} = {
       eth: daoEthBalance,
+      externalToken: this.props.data[0],
+      GEN:this.props.data[1],
       nativeToken: undefined,
       rep: undefined,
-      externalToken: this.props.data.externalTokenBalance,
     };
     /**
      * unredeemed by the current account
@@ -150,7 +147,7 @@ class ActionButton extends React.Component<IProps, IState> {
      */
     const redeemable = proposalState.executedAt &&
                        ((currentAccountAddress ? currentAccountHasUnredeemedGpRewards : false) ||
-                         beneficiaryHasUnredeemedCrRewards);
+                        ((proposalState.winningOutcome === IProposalOutcome.Pass) && beneficiaryHasUnredeemedCrRewards));
 
     const redemptionsTip = RedemptionsTip({
       currentAccountAddress,
@@ -176,7 +173,7 @@ class ActionButton extends React.Component<IProps, IState> {
             actionType={ActionTypes.Redeem}
             action={this.handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreRedeemModal.bind(this)}
+            closeAction={this.closePreRedeemModal()}
             dao={daoState}
             effectText={redemptionsTip}
             proposal={proposalState}
@@ -184,23 +181,23 @@ class ActionButton extends React.Component<IProps, IState> {
         }
 
         { proposalState.stage === IProposalStage.Queued && proposalState.upstakeNeededToPreBoost.lt(new BN(0)) ?
-          <button className={css.preboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
+          <button className={css.preboostButton} onClick={this.handleClickExecute()} data-test-id="buttonBoost">
             <img src="/assets/images/Icon/boost.svg"/>
             { /* space after <span> is there on purpose */ }
             <span> Pre-Boost</span>
           </button> :
           proposalState.stage === IProposalStage.PreBoosted && expired && proposalState.downStakeNeededToQueue.lte(new BN(0)) ?
-            <button className={css.unboostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
+            <button className={css.unboostButton} onClick={this.handleClickExecute()} data-test-id="buttonBoost">
               <img src="/assets/images/Icon/boost.svg"/>
               <span> Un-Boost</span>
             </button> :
             proposalState.stage === IProposalStage.PreBoosted && expired ?
-              <button className={css.boostButton} onClick={this.handleClickExecute.bind(this)} data-test-id="buttonBoost">
+              <button className={css.boostButton} onClick={this.handleClickExecute()} data-test-id="buttonBoost">
                 <img src="/assets/images/Icon/boost.svg"/>
                 <span> Boost</span>
               </button> :
               (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && expired ?
-                <button className={css.executeButton} onClick={this.handleClickExecute.bind(this)}>
+                <button className={css.executeButton} onClick={this.handleClickExecute()}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   { /* space after <span> is there on purpose */ }
                   <span> Execute</span>
@@ -252,17 +249,26 @@ const SubscribedActionButton = withSubscription({
   checkForUpdate: () => { return false; },
   loadingComponent: null,
   createObservable: (props: IProps) => {
-    if (props.proposalState.contributionReward.externalTokenReward && !props.proposalState.contributionReward.externalTokenReward.isZero())
-    {
-      const token = new Token(props.proposalState.contributionReward.externalToken, getArc());
-      return from(token.balanceOf(props.daoState.address).toPromise()
-        .then((balance: BN) => {
-          return {externalTokenBalance: balance };
-        }));
+    let externalTokenObservable: Observable<BN>;
 
+    const arc = getArc();
+    const genToken = arc.GENToken();
+    
+    if (props.proposalState.contributionReward && 
+      props.proposalState.contributionReward.externalTokenReward &&
+      !props.proposalState.contributionReward.externalTokenReward.isZero()) {
+
+      const token = new Token(props.proposalState.contributionReward.externalToken, arc);
+
+      externalTokenObservable = token.balanceOf(props.daoState.address);
     } else {
-      return of({externalTokenBalance: null});
+      externalTokenObservable = of(undefined);
     }
+
+    return combineLatest(
+      externalTokenObservable,
+      genToken.balanceOf(props.daoState.address)
+    );
   },
 });
 
