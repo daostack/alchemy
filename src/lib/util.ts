@@ -340,7 +340,12 @@ export function linkToEtherScan(address: Address) {
 }
 
 export type AccountClaimableRewardsType = { [key: string]: BN };
-
+/**
+ * Returns an object describing GenesisProtocol non-zero, unredeemed reward amounts for the current user, optionally
+ * filtered by whether the DAO has the funds to pay the rewards.
+ * @param reward unredeemed GP rewards for the current user
+ * @param daoBalances 
+ */
 export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
   if (!reward) {
     return {};
@@ -381,12 +386,12 @@ export function hasGpRewards(reward: IRewardState) {
 }
 
 /**
- * given an IContributionReward, return an array with the amounts that are still to be claimbed
- * by the beneficiary of the proposal
- * @param  reward an object that immplements IContributionReward
+ * Returns an object describing ContributionReward non-zero, unredeemed reward amounts for the CR beneficiary, optionally
+ * filtered by whether the DAO has the funds to pay the rewards.
+ * @param  reward unredeemed CR rewards for the current user
  * @return  an array mapping strings to BN
  */
-export function getClaimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
+export function getCRRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
   if (
     reward.ethReward &&

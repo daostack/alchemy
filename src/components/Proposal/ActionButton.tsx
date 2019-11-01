@@ -1,14 +1,13 @@
-import { Address, IDAOState, IProposalOutcome, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client";
+import { Address, IDAOState, IProposalStage, IProposalState, IRewardState, Token } from "@daostack/client";
 import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import { getClaimableContributionRewards, getGpRewards } from "lib/util";
+import { getCRRewards, getGpRewards } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { proposalEnded } from "reducers/arcReducer";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -30,7 +29,7 @@ interface IExternalProps {
   expanded?: boolean;
   proposalState: IProposalState;
   /**
-   * GP and CR rewards due to the current account
+   * unawarded GP rewards due to the current account
    */
   rewards: IRewardState;
   expired: boolean;
@@ -106,10 +105,11 @@ class ActionButton extends React.Component<IProps, IState> {
       expired,
       expanded,
       proposalState,
+      /**
+       * unawarded GP rewards due to the current account
+       */
       rewards,
     } = this.props;
-
-    const executable = proposalEnded(proposalState) && !proposalState.executedAt;
 
     const daoBalances: {[key: string]: BN} = {
       eth: daoEthBalance,
@@ -117,34 +117,46 @@ class ActionButton extends React.Component<IProps, IState> {
       rep: undefined,
       externalToken: this.props.data.externalTokenBalance,
     };
-
+    /**
+     * unredeemed to the current account
+     */
+    const gpRewards = getGpRewards(rewards);
+    const currentAccountHasUnredeemedGpRewards = Object.keys(gpRewards).length > 0;
     /**
      * unredeemed and available to the current account
      */
     const availableGpRewards = getGpRewards(rewards, daoBalances);
     const currentAccountHasAvailableUnredeemedGpRewards = Object.keys(availableGpRewards).length > 0;
-
     /**
      * note beneficiary may not be the current account
      */
-    let beneficiaryHasAvailableUnredeemedCrRewards: boolean;
+    let beneficiaryHasAvailableUnredeemedCrRewards = false;
+    let beneficiaryHasUnredeemedCrRewards = false;
     if (proposalState.contributionReward) {
       /**
-       * unredeemed and available to the current account
+       * unredeemed to the beneficiary
        */
-      const unredeemedAvailableContributionRewards = getClaimableContributionRewards(proposalState.contributionReward, daoBalances);
-      beneficiaryHasAvailableUnredeemedCrRewards = Object.keys(unredeemedAvailableContributionRewards).length > 0;
+      const contributionRewards = getCRRewards(proposalState.contributionReward);
+      beneficiaryHasUnredeemedCrRewards = Object.keys(contributionRewards).length > 0;
+      /**
+       * unredeemed and available to the beneficiary
+       */
+      const availableContributionRewards = getCRRewards(proposalState.contributionReward, daoBalances);
+      beneficiaryHasAvailableUnredeemedCrRewards = Object.keys(availableContributionRewards).length > 0;
     }
-
+    /**
+     * Can't redeem unless executed.  We'll make the redeem button available even if the DAO can't pay.
+     * Similarly if even if the current account is not the CR beneficiary.
+     */
     const redeemable = proposalState.executedAt &&
-                       ((currentAccountAddress ? proposalState.accountsWithUnclaimedRewards.includes(currentAccountAddress.toLowerCase()) : false)
-                        || (proposalState.winningOutcome === IProposalOutcome.Pass && beneficiaryHasAvailableUnredeemedCrRewards));
+                       ((currentAccountAddress ? currentAccountHasUnredeemedGpRewards : false) ||
+                         beneficiaryHasUnredeemedCrRewards);
 
     const redemptionsTip = RedemptionsTip({
       currentAccountAddress,
       dao: daoState,
       proposal: proposalState,
-      rewardsForCurrentUser: rewards, 
+      gpRewardsForCurrentUser: rewards, 
     });
 
     const redeemButtonClass = classNames({
@@ -161,7 +173,7 @@ class ActionButton extends React.Component<IProps, IState> {
       <div className={wrapperClass}>
         {this.state.preRedeemModalOpen ?
           <PreTransactionModal
-            actionType={executable && !redeemable ? ActionTypes.Execute : ActionTypes.Redeem}
+            actionType={ActionTypes.Redeem}
             action={this.handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
             closeAction={this.closePreRedeemModal.bind(this)}
@@ -205,9 +217,9 @@ class ActionButton extends React.Component<IProps, IState> {
                       >
                         <img src="/assets/images/Icon/redeem.svg" />
                         {
-                          beneficiaryHasAvailableUnredeemedCrRewards && !currentAccountHasAvailableUnredeemedGpRewards ?
-                            " Redeem for beneficiary" :
-                            " Redeem"
+                          beneficiaryHasUnredeemedCrRewards && !currentAccountHasUnredeemedGpRewards ?
+                            // note beneficiary can be the current account
+                            " Redeem for beneficiary" : " Redeem"
                         }
                       </button>
                     </Tooltip>
