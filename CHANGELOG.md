@@ -5,7 +5,7 @@
 ### Current
 
   - Features Added
-    -
+    - prevent attempting redemptions unless there exist sufficient resources to pay out at least one reward
   - Bugs Fixed
     -
 
