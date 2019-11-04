@@ -166,7 +166,7 @@ class ActionButton extends React.Component<IProps, IState> {
                 <img src="/assets/images/Icon/boost.svg"/>
                 <span> Boost</span>
               </button> :
-              (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod) && expired ?
+              (proposalState.stage === IProposalStage.Boosted || proposalState.stage === IProposalStage.QuietEndingPeriod  || proposalState.stage === IProposalStage.Queued) && expired ?
                 <button className={css.executeButton} onClick={this.handleClickExecute.bind(this)}>
                   <img src="/assets/images/Icon/execute.svg"/>
                   { /* space after <span> is there on purpose */ }

@@ -7,7 +7,6 @@ import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
-import { proposalEnded } from "reducers/arcReducer";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -79,25 +78,22 @@ export default class ProposalCard extends React.Component<IProps, null> {
           [css.voteControls]: true,
         });
 
-        return (proposal.stage === IProposalStage.Queued && expired ? null :
+        return (
           <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
             <div className={css.proposalInfo}>
               <div className={css.cardTop + " clearfix"}>
                 <div className={css.timer}>
-                  {!proposalEnded(proposal) ?
-                    <span className={css.content}>
-                      {!expired ?
-                        <Countdown toDate={closingTime(proposal)} detailView={false} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !expired} /> :
-                        <span className={css.closedTime}>
-                          {proposal.stage === IProposalStage.Queued ? "Expired" :
-                            proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
-                              "Closed"}&nbsp;
-                          {closingTime(proposal).format("MMM D, YYYY")}
-                        </span>
-                      }
-                    </span>
-                    : " "
-                  }
+                  <span className={css.content}>
+                    {!expired
+                      ? <Countdown toDate={closingTime(proposal)} detailView={false} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !expired} />
+                      : <span className={css.closedTime}>
+                        {proposal.stage === IProposalStage.Queued ? "Expired" :
+                          proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
+                            "Closed"}&nbsp;
+                        {closingTime(proposal).format("MMM D, YYYY")}
+                      </span>
+                    }
+                  </span>
                 </div>
 
                 <div className={css.actionButton}>

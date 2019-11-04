@@ -20,10 +20,6 @@ import * as css from "./SchemeProposals.scss";
 // For infinite scrolling
 const PAGE_SIZE = 100;
 
-// Have to fix this so that scrolling doesn't load weird different sets of proposals as the time changes
-// TODO: This is somewhat broken, it needs to get set on the initial render and reset/updated over time somehow?
-const currentTime = Math.floor(new Date().getTime() / 1000);
-
 const Fade = ({ children, ...props }: any): any => (
   <CSSTransition
     {...props}
@@ -136,7 +132,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           <div>
             <div className={css.boostedContainer}>
               <div className={css.proposalsHeader}>
-                Boosted Proposals ({dao.numberOfBoostedProposals})
+                Boosted Proposals ({scheme.numberOfBoostedProposals})
                 {proposalsBoosted.length === 0
                   ?
                   <div>
@@ -152,7 +148,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                Pending Proposals ({dao.numberOfPreBoostedProposals})
+                Pending Proposals ({scheme.numberOfPreBoostedProposals})
                 {proposalsPreBoosted.length === 0
                   ?
                   <div>
@@ -167,7 +163,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             </div>
             <div className={css.regularContainer}>
               <div className={css.proposalsHeader}>
-                Regular Proposals ({dao.numberOfQueuedProposals})
+                Regular Proposals ({scheme.numberOfQueuedProposals})
                 {proposalsQueued.length === 0
                   ?
                   <div>
@@ -180,7 +176,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
-                  hasMore={proposalsQueued.length < dao.numberOfQueuedProposals}
+                  hasMore={proposalsQueued.length < scheme.numberOfQueuedProposals}
                   loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
@@ -253,7 +249,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       // the list of queued proposals
       dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
-        where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
+        where: { scheme: schemeId, stage: IProposalStage.Queued },
         orderBy: "confidence",
         orderDirection: "desc",
         first: PAGE_SIZE,
@@ -287,7 +283,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
 
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
-      where: { scheme: props.scheme.id, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
+      where: { scheme: props.scheme.id, stage: IProposalStage.Queued },
       orderBy: "confidence",
       orderDirection: "desc",
       first: PAGE_SIZE,
