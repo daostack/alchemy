@@ -129,31 +129,43 @@ class ActionButton extends React.Component<IProps, IState> {
      */
     let beneficiaryHasAvailableUnredeemedCrRewards = false;
     let beneficiaryHasUnredeemedCrRewards = false;
+    let contributionRewards;
     if (proposalState.contributionReward) {
       /**
        * unredeemed by the beneficiary
        */
-      const contributionRewards = getCRRewards(proposalState.contributionReward);
+      contributionRewards = getCRRewards(proposalState.contributionReward);
       beneficiaryHasUnredeemedCrRewards = Object.keys(contributionRewards).length > 0;
       /**
        * unredeemed and available to the beneficiary
        */
-      const availableContributionRewards = getCRRewards(proposalState.contributionReward, daoBalances);
-      beneficiaryHasAvailableUnredeemedCrRewards = Object.keys(availableContributionRewards).length > 0;
+      const availableCrRewards = getCRRewards(proposalState.contributionReward, daoBalances);
+      beneficiaryHasAvailableUnredeemedCrRewards = Object.keys(availableCrRewards).length > 0;
     }
     /**
-     * Can't redeem unless executed.  We'll make the redeem button available even if the DAO can't pay.
-     * Similarly if even if the current account is not the CR beneficiary.
+     * Can't redeem unless executed.  We'll disable the redeem button if the DAO can't pay any of the redemptions, and warn
+     * if it can only pay some of them.
+     * 
+     * We'll display the redeem button even if the CR beneficiary is not the current account.
      */
-    const redeemable = proposalState.executedAt &&
+    const displayRedeemButton = proposalState.executedAt &&
+                       // can't get gp rewards unless an account is logged in
                        ((currentAccountAddress ? currentAccountHasUnredeemedGpRewards : false) ||
                         ((proposalState.winningOutcome === IProposalOutcome.Pass) && beneficiaryHasUnredeemedCrRewards));
 
+    const canRewardNone = !(beneficiaryHasAvailableUnredeemedCrRewards || currentAccountHasAvailableUnredeemedGpRewards);
+    // eslint-disable-next-line no-bitwise
+    const canRewardOnlySome = !canRewardNone && !(beneficiaryHasAvailableUnredeemedCrRewards && currentAccountHasAvailableUnredeemedGpRewards);
+
     const redemptionsTip = RedemptionsTip({
+      canRewardNone, 
+      canRewardOnlySome,
+      contributionRewards,
       currentAccountAddress,
       dao: daoState,
+      gpRewards,
+      id: rewards ? rewards.id : "0",
       proposal: proposalState,
-      gpRewardsForCurrentUser: rewards, 
     });
 
     const redeemButtonClass = classNames({
@@ -202,7 +214,7 @@ class ActionButton extends React.Component<IProps, IState> {
                   { /* space after <span> is there on purpose */ }
                   <span> Execute</span>
                 </button>
-                : redeemable ?
+                : displayRedeemButton ?
                   <div>
                     <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                       <button

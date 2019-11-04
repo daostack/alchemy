@@ -764,3 +764,18 @@ input[type=number] {
     }
   }
 }
+
+.tipContainer {
+  padding-top: 8px;
+
+  .message {
+    padding-bottom: 8px;
+    .icon {
+      display: inline-block;
+      margin-right:6px;
+      position: relative;
+      top: 2px;
+    }
+    .text { display: inline; }
+  }
+}
