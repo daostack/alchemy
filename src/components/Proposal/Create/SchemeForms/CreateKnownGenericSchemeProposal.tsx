@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { isValidUrl } from "lib/util";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -47,6 +48,7 @@ interface IFormValues {
 interface IState {
   actions: Action[];
   currentAction: Action;
+  tags: Array<string>;
 }
 
 class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
@@ -64,10 +66,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     this.state = {
       actions,
       currentAction:  actions[0],
+      tags: new Array<string>(),
     };
   }
 
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+  private handleSubmit = () => async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
@@ -83,7 +86,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     try {
       callData = this.props.genericSchemeInfo.encodeABI(currentAction, callValues);
     } catch (err) {
-      console.error(err.message);
       showNotification(NotificationStatus.Failure, err.message);
       setSubmitting(false);
       return;
@@ -95,6 +97,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       callData,
       dao: this.props.daoAvatarAddress,
       scheme: this.props.scheme.address,
+      tags: this.state.tags,
       type: IProposalType.GenericScheme,
       value: 0, // amount of eth to send with the call
     };
@@ -144,6 +147,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         </div>;
       default:
         if (field.type.includes("[]")) {
+          // eslint-disable-next-line react/jsx-no-bind
           return <FieldArray name={field.name} render={(arrayHelpers) => (
             <div className={css.arrayFieldContainer}>
               {values[field.name] && values[field.name].length > 0 ? (
@@ -183,6 +187,10 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       type={type}
       className={touched[field.name] && errors[field.name] ? css.error : null}
     />;
+  }
+
+  private onTagsChange = () => (tags: any[]): void => {
+    this.setState({tags});
   }
 
   public render(): RenderOutput {
@@ -246,7 +254,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         <div className={css.formWrapper}>
           <Formik
             initialValues={initialFormValues}
-            validate={(values: IFormValues) => {
+            // eslint-disable-next-line react/jsx-no-bind
+            validate={(values: IFormValues): void => {
               const errors: any = {};
 
               const valueIsRequired = (name: string) => {
@@ -310,7 +319,8 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               }
               return errors;
             }}
-            onSubmit={this.handleSubmit.bind(this)}
+            onSubmit={this.handleSubmit()}
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
@@ -353,6 +363,14 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     name="description"
                     className={touched.description && errors.description ? css.error : null}
                   />
+
+                  <label className={css.tagSelectorLabel}>
+                    Tags
+                  </label>
+
+                  <div className={css.tagSelectorContainer}>
+                    <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                  </div>
 
                   <label htmlFor="urlInput">
                     URL

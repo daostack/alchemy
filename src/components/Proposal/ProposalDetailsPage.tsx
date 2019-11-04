@@ -11,6 +11,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -91,6 +92,8 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           [css.proposal]: true,
           clearfix: true,
         });
+
+        const tags = proposal.tags;
 
         let currentAccountVote = 0;
 
@@ -180,7 +183,16 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   : " "
                 }
 
-                <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
+                <div className={classNames({
+                  [css.proposalSummaryContainer]: true,
+                  [css.hasTags]: tags && tags.length,
+                })}>
+                  <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
+                </div>
+
+                { tags && tags.length ? <div className={css.tagsContainer}>
+                  <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
+                </div> : "" }
 
                 <div className={css.voteButtonsBottom}>
                   <span className={css.voteLabel}>Vote:</span>

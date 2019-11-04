@@ -43,6 +43,7 @@
     - ENS interface for generic schemes
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
+    - Proposals now can have tags
 
   - Bugs Fixed
     - Align headers of table in proposal history

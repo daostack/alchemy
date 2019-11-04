@@ -6,6 +6,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import { isValidUrl } from "lib/util";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -18,6 +19,10 @@ interface IExternalProps {
 interface IDispatchProps {
   createProposal: typeof arcActions.createProposal;
   showNotification: typeof showNotification;
+}
+
+interface IStateProps {
+  tags: Array<string>;
 }
 
 type IProps = IExternalProps & IDispatchProps;
@@ -35,25 +40,33 @@ interface IFormValues {
   value: number;
 }
 
-class CreateGenericScheme extends React.Component<IProps, null> {
+class CreateGenericScheme extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = { 
+      tags: new Array<string>(),
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const proposalValues = {...values,
-      scheme: this.props.scheme.address,
       dao: this.props.daoAvatarAddress,
+      scheme: this.props.scheme.address,
+      tags: this.state.tags,
     };
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
     this.props.handleClose();
+  }
+
+  private onTagsChange = () => (tags: any[]): void => {
+    this.setState({tags});
   }
 
   public render(): RenderOutput {
@@ -69,6 +82,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
             url: "",
             value: 0,
           } as IFormValues}
+          // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
 
@@ -110,6 +124,7 @@ class CreateGenericScheme extends React.Component<IProps, null> {
             return errors;
           }}
           onSubmit={this.handleSubmit}
+          // eslint-disable-next-line react/jsx-no-bind
           render={({
             errors,
             touched,
@@ -150,6 +165,14 @@ class CreateGenericScheme extends React.Component<IProps, null> {
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
+
+              <label className={css.tagSelectorLabel}>
+                Tags
+              </label>
+
+              <div className={css.tagSelectorContainer}>
+                <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+              </div>
 
               <label htmlFor="urlInput">
                 URL
