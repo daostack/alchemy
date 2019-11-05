@@ -165,9 +165,17 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       const web3Provider = await getWeb3Provider();
       const send = promisify(web3Provider.sendAsync);
       const params = [messageToSign, this.props.currentAccountAddress];
-      const result = await send({ method, params, from: this.props.currentAccountAddress });
+      let result
+
+      try {
+        result = await send({ method, params, from: this.props.currentAccountAddress });
+      } catch(err) {
+        this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
+        setSubmitting(false);
+        return
+      }
       if (result.error) {
-        showNotification(NotificationStatus.Failure, "The redemption was canceled");
+        this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
         setSubmitting(false);
         return;
       }
@@ -224,19 +232,20 @@ class ReputationFromToken extends React.Component<IProps, IState> {
           parameters: [values.accountAddress.toLowerCase(), signatureType, signature]
         }
         try {
+          this.props.showNotification(NotificationStatus.Success, `Sending the transaction to the payment service -- please be patient`)
           const response = await axios(txServiceUrl, {
             method: 'post',
-            data //,
-            // headers: {
-            //   'access-control-allow-origin': "*",
-            //   "access-control-allow-headers": "access-control-allow-origin, Origin, X-Requested-With, Content-Type, Accept"
-            // }
+            data,
           })
           console.log(response)
-          showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`)
+          if (response.data.status === 400) {
+            this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.message}`)
+          } else {
+            this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`)
+          }
         } catch(err) {
           console.log(err.message)
-          throw err
+          this.props.showNotification(NotificationStatus.Failure, `${err.message}}`)
         }
         // const tx = await contract.methods.redeemWithSignature(values.accountAddress.toLowerCase(), signatureType, signature).send(
         //   {from: this.props.currentAccountAddress}
