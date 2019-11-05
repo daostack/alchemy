@@ -189,6 +189,7 @@ class ActionButton extends React.Component<IProps, IState> {
             dao={daoState}
             effectText={redemptionsTip}
             proposal={proposalState}
+            multiLineMsg
           /> : ""
         }
 
