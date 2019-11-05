@@ -15,7 +15,7 @@
     {
       "id": "issueAndContribute",
       "label": "Issue and Contribute",
-      "description": "Create a new bounty and contribute tokens to the bounty. IPFS upload of bounty details must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be listed in Open Bounties.",
+      "description": "Create a new bounty and contribute tokens to the bounty. IPFS upload of bounty data must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be listed in Open Bounties.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
         {
@@ -34,7 +34,7 @@
           "placeholder": "DAO Avatar Address (0x0000…)"
         },
         {
-          "label": "Bounty Details",
+          "label": "Bounty Data",
           "name": "_data",
           "placeholder":"IPFS Hash (Qmd0...)"
         },
@@ -131,7 +131,7 @@
           "placeholder": "Address (0x0000…)"
         },
         {
-          "label": "Bounty Details",
+          "label": "Bounty Data",
           "name": "_data",
           "placeholder": "IPFS Hash (Qmd0...)"
         },
@@ -184,7 +184,7 @@
     {
       "id": "changeBounty",
       "label": "Change Bounty",
-      "description": "Allows any of the issuers to change the bounty. IPFS upload of bounty details must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be listed in Open Bounties.",
+      "description": "Allows any of the issuers to change the bounty. IPFS upload of bounty data must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be listed in Open Bounties.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
         {
@@ -211,7 +211,7 @@
           "placeholder": "DAO Avatar Address (0x0000…)"
         },
         {
-          "label": "Bounty Details",
+          "label": "Bounty Data",
           "name": "_data",
           "placeholder":"IPFS Hash (Qmd0...)"
         },
@@ -368,8 +368,8 @@
     },
     {
       "id": "changeData",
-      "label": "Change Bounty Details",
-      "description": "Allows any of the issuers to change the bounty's details. IPFS upload of bounty details must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be listed in Open Bounties.",
+      "label": "Change Bounty Data",
+      "description": "Allows any of the issuers to change the bounty's data queried by the Open Bounties List. IPFS upload of bounty data must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be listed in Open Bounties.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
         {
@@ -386,7 +386,7 @@
           "name": "_issuerId"
         },
         {
-          "label": "Bounty Details",
+          "label": "Bounty Data",
           "name": "_data",
           "placeholder":"IPFS Hash (Qmd0...)"
         }
