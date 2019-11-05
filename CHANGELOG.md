@@ -2,12 +2,20 @@
   - Features Added
   - Bugs Fixed
 
-### Current
-
+### Current Release
   - Features Added
     -
   - Bugs Fixed
-    -
+    - 
+
+### 2019-11-05
+
+  - Features Added
+    - Proposals can now be tagged on creation
+    - History (and other pages) load much faster now
+  - Bugs Fixed
+    - Proposals counts are fixed
+    - Upgrade client to 0.2.22 and subgraph to v31_0
 
 ### 2019-10-25
 
@@ -43,6 +51,7 @@
     - ENS interface for generic schemes
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
+    - Proposals now can have tags
 
   - Bugs Fixed
     - Align headers of table in proposal history

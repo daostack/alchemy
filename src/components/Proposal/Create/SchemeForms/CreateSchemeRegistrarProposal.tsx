@@ -9,6 +9,7 @@ import { schemeNameAndAddress, isValidUrl, GetSchemeIsActiveActions, getSchemeIs
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -51,6 +52,7 @@ interface IFormValues {
 
 interface IState {
   currentTab: string;
+  tags: Array<string>;
 }
 
 class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
@@ -60,7 +62,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    this.state = { currentTab: "addScheme" };
+    this.state = {
+      currentTab: "addScheme",
+      tags: new Array<string>(),
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ):  Promise<void> {
@@ -99,6 +104,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
       schemeToRegister: currentTab === "addScheme" ? values.schemeToAdd :
         currentTab === "editScheme" ? values.schemeToEdit :
           values.schemeToRemove,
+      tags: this.state.tags,
     };
 
     setSubmitting(false);
@@ -108,6 +114,10 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
 
   public handleTabClick = (tab: string) => (_e: any) => {
     this.setState({ currentTab: tab });
+  }
+
+  private onTagsChange = () => (tags: any[]): void => {
+    this.setState({tags});
   }
 
   public render(): RenderOutput {
@@ -179,6 +189,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               title: "",
               url: "",
             } as IFormValues}
+            // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues) => {
               const errors: any = {};
 
@@ -221,6 +232,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
               return errors;
             }}
             onSubmit={this.handleSubmit}
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
@@ -266,6 +278,14 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                     name="description"
                     className={touched.description && errors.description ? css.error : null}
                   />
+
+                  <label className={css.tagSelectorLabel}>
+                    Tags
+                  </label>
+
+                  <div className={css.tagSelectorContainer}>
+                    <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                  </div>
 
                   <label htmlFor="urlInput">
                     URL
