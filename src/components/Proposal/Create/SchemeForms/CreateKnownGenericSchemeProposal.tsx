@@ -70,23 +70,21 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     };
   }
 
-  public async getBountyEth(values: IFormValues): Promise<number> {
-    const currentAction = this.state.currentAction;
-    var ethToSend: number = 0;
-    console.log('Testing Bounty ', currentAction);
-    for (var field of currentAction.getFields()) {
-      if (field.name === '_depositAmount' || field.name === '_amount') {
-        console.log('field value', field.callValue(values[field.name]));
-        ethToSend += field.callValue(values[field.name]);
+  public async getBountyEth(values: IFormValues): Promise<string> {
+    const currentAction = this.state.currentAction;
+    var ethToSend: number = 0;
+
+    for (var field of currentAction.getFields()) {
+      if (field.name === '_depositAmount' || field.name === '_amount') {
+        ethToSend += parseInt(field.callValue(values[field.name]))/1000000000;
       }
     }
+    console.log('Adding ', ethToSend, ' Wei');
 
-    return ethToSend
+    return ethToSend.toString()
   }
 
   private handleSubmit = () => async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
-    this.getBountyEth(values);
-
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
