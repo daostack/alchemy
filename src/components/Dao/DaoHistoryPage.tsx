@@ -13,7 +13,7 @@ import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./Dao.scss";
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 50;
 
 interface IExternalProps extends RouteComponentProps<any> {
   currentAccountAddress: Address;
