@@ -165,14 +165,14 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       const web3Provider = await getWeb3Provider();
       const send = promisify(web3Provider.sendAsync);
       const params = [messageToSign, this.props.currentAccountAddress];
-      let result
+      let result;
 
       try {
         result = await send({ method, params, from: this.props.currentAccountAddress });
       } catch(err) {
         this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
         setSubmitting(false);
-        return
+        return;
       }
       if (result.error) {
         this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
@@ -181,7 +181,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       }
       let signature = result.result;
       const signature1 =  signature.substring(0, signature.length-2);
-      var v = signature.substring(signature.length-2, signature.length);
+      const v = signature.substring(signature.length-2, signature.length);
       if (v === "00") {
         signature = signature1+"1b";
       } else {
@@ -195,57 +195,57 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       // send the transaction and get notifications
       if (contract) {
         // more information on this service is here: https://github.com/dOrgTech/TxPayerService
-        const txServiceUrl = 'https://tx-sender-service.herokuapp.com/send-tx'
+        const txServiceUrl = "https://tx-sender-service.herokuapp.com/send-tx";
         const data = {
           to: schemeState.address,
           methodAbi: {
-              "constant": false,
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "_beneficiary",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "_signatureType",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "_signature",
-                  "type": "bytes"
-                }
-              ],
-              "name": "redeemWithSignature",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "function"
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_beneficiary",
+                "type": "address",
+              },
+              {
+                "internalType": "uint256",
+                "name": "_signatureType",
+                "type": "uint256",
+              },
+              {
+                "internalType": "bytes",
+                "name": "_signature",
+                "type": "bytes",
+              },
+            ],
+            "name": "redeemWithSignature",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256",
+              },
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function",
           },
-          parameters: [values.accountAddress.toLowerCase(), signatureType, signature]
-        }
+          parameters: [values.accountAddress.toLowerCase(), signatureType, signature],
+        };
         try {
-          this.props.showNotification(NotificationStatus.Success, `Sending the transaction to the payment service -- please be patient`)
+          this.props.showNotification(NotificationStatus.Success, "Sending the transaction to the payment service -- please be patient");
           const response = await axios(txServiceUrl, {
-            method: 'post',
+            method: "post",
             data,
-          })
-          console.log(response)
+          });
+          console.log(response);
           if (response.data.status === 400) {
-            this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.message}`)
+            this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.message}`);
           } else {
-            this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`)
+            this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`);
           }
         } catch(err) {
-          console.log(err.message)
-          this.props.showNotification(NotificationStatus.Failure, `${err.message}}`)
+          console.log(err.message);
+          this.props.showNotification(NotificationStatus.Failure, `${err.message}}`);
         }
         // const tx = await contract.methods.redeemWithSignature(values.accountAddress.toLowerCase(), signatureType, signature).send(
         //   {from: this.props.currentAccountAddress}
