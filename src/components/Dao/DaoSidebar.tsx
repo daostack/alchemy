@@ -244,7 +244,7 @@ const TokenBalance = (props: ITokenProps) => {
   const { data, error, isLoading, tokenAddress } = props;
 
   const tokenData = supportedTokens()[tokenAddress];
-  if (isLoading || error || ((data === null || data.isZero()) && tokenData.symbol !== "GEN")) {
+  if (isLoading || error || ((data === null || isNaN(data) || data.isZero()) && tokenData.symbol !== "GEN")) {
     return null;
   }
 
