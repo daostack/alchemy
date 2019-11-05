@@ -9,6 +9,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
 import { showNotification } from "reducers/notifications";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -16,6 +17,10 @@ interface IExternalProps {
   scheme: ISchemeState;
   daoAvatarAddress: string;
   handleClose: () => any;
+}
+
+interface IStateProps {
+  tags: Array<string>;
 }
 
 interface IDispatchProps {
@@ -84,11 +89,14 @@ export const SelectField: React.SFC<any> = ({options, field, form }) => (
   />
 );
 
-class CreateContributionReward extends React.Component<IProps, null> {
+class CreateContributionReward extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = { 
+      tags: new Array<string>(),
+    };
   }
 
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
@@ -114,11 +122,16 @@ class CreateContributionReward extends React.Component<IProps, null> {
       externalTokenReward,
       nativeTokenReward: toWei(Number(values.nativeTokenReward)),
       reputationReward: toWei(Number(values.reputationReward)),
+      tags: this.state.tags,
     };
 
     setSubmitting(false);
     await this.props.createProposal(proposalValues);
     this.props.handleClose();
+  }
+
+  private onTagsChange = () => (tags: string[]): void => {
+    this.setState({tags});
   }
 
   public render(): RenderOutput {
@@ -145,6 +158,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
             title: "",
             url: "",
           } as IFormValues}
+          // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
 
@@ -187,6 +201,7 @@ class CreateContributionReward extends React.Component<IProps, null> {
             return errors;
           }}
           onSubmit={this.handleSubmit}
+          // eslint-disable-next-line react/jsx-no-bind
           render={({
             errors,
             touched,
@@ -228,6 +243,15 @@ class CreateContributionReward extends React.Component<IProps, null> {
                 name="description"
                 className={touched.description && errors.description ? css.error : null}
               />
+
+              <label className={css.tagSelectorLabel}>
+                Tags
+              </label>
+
+              <div className={css.tagSelectorContainer}>
+                <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+              </div>
+
               <label htmlFor="urlInput">
                 URL
                 <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>

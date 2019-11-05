@@ -4,13 +4,14 @@ import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import { DiscussionEmbed } from "disqus-react";
-import { humanProposalTitle } from "lib/util";
+import { humanProposalTitle, schemeName } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
 import { Link, RouteComponentProps } from "react-router-dom";
 import { proposalEnded } from "reducers/arcReducer";
 import { closingTime } from "reducers/arcReducer";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import SocialShareModal from "../Shared/SocialShareModal";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
@@ -92,11 +93,18 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           clearfix: true,
         });
 
+        const tags = proposal.tags;
+
         let currentAccountVote = 0;
 
         let currentVote: Vote;
-        if (votes.length > 0) {
-          currentVote = votes[0];
+
+        // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary,
+        // bc these should be filter in the `proposals.votes({where: {voter...}} query above)`
+        // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
+        const currentAccountVotes = votes.filter((v: Vote) => v.staticState.voter === currentAccountAddress);
+        if (currentAccountVotes.length > 0) {
+          currentVote = currentAccountVotes[0];
           currentAccountVote = currentVote.staticState.outcome;
         }
 
@@ -115,7 +123,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
         return (
           <div className={css.wrapper}>
-            <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{proposal.queue.name.replace(/([A-Z])/g, " $1")}</BreadcrumbsItem>
+            <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
             <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
             <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
               <div className={css.proposalInfo}>
@@ -175,7 +183,16 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   : " "
                 }
 
-                <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
+                <div className={classNames({
+                  [css.proposalSummaryContainer]: true,
+                  [css.hasTags]: tags && tags.length,
+                })}>
+                  <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView />
+                </div>
+
+                { tags && tags.length ? <div className={css.tagsContainer}>
+                  <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
+                </div> : "" }
 
                 <div className={css.voteButtonsBottom}>
                   <span className={css.voteLabel}>Vote:</span>

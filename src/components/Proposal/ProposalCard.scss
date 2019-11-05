@@ -67,7 +67,7 @@
 
   h3 {
     font-size: $body;
-    margin: 4px 20px 10px 20px;
+    margin: 4px 20px 6px 20px;
   }
 
   .closedTime {
@@ -245,6 +245,10 @@
   }
 }
 
+.tagsContainer {
+  padding-left: 18px;
+  padding-bottom: 12px;
+}
 
 @media only screen and (max-width: 425px) {
   .proposal {

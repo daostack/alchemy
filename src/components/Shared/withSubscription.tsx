@@ -98,7 +98,12 @@ const withSubscription = <Props extends ISubscriptionProps<ObservableType>, Obse
 
       const { createObservable, wrappedComponent } = options;
 
-      this.observable = observable || await createObservable(this.props);
+      try {
+        this.observable = observable || await createObservable(this.props);
+      } catch(ex) {
+        // this will go to the error page
+        this.setState(() => { throw ex; });
+      }
 
       this.subscription = this.observable.subscribe(
         (next: ObservableType) => {

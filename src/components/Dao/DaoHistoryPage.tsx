@@ -96,21 +96,35 @@ export default withSubscription({
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
     // with all separate queries for votes and stakes and stuff...
+    let voterClause = "";
+    let stakerClause = "";
+    if (props.currentAccountAddress) {
+      voterClause = `(where: { voter: "${props.currentAccountAddress}"})`;
+      stakerClause = `(where: { staker: "${props.currentAccountAddress}"})`;
 
+    }
     const prefetchQuery = gql`
       query prefetchProposalDataForDAOHistory {
-        proposals (where: {
-          stage_in: [
-            "${IProposalStage[IProposalStage.ExpiredInQueue]}",
-            "${IProposalStage[IProposalStage.Executed]}",
-            "${IProposalStage[IProposalStage.Queued]}"
-          ]
-        }){
+        proposals (
+          first: ${PAGE_SIZE}
+          skip: 0
+          orderBy: "closingAt"
+          orderDirection: "desc"
+          where: {
+            dao: "${dao.id}"
+            stage_in: [
+              "${IProposalStage[IProposalStage.ExpiredInQueue]}",
+              "${IProposalStage[IProposalStage.Executed]}",
+              "${IProposalStage[IProposalStage.Queued]}"
+            ]
+            closingAt_lte: "${Math.floor(new Date().getTime() / 1000)}"
+          }
+        ){
           ...ProposalFields
-          votes (where: { voter: "${props.currentAccountAddress}"}) {
+          votes ${voterClause} {
             ...VoteFields
           }
-          stakes (where: { staker: "${props.currentAccountAddress}"}) {
+          stakes ${stakerClause} {
             ...StakeFields
           }
         }
@@ -119,7 +133,7 @@ export default withSubscription({
       ${Vote.fragments.VoteFields}
       ${Stake.fragments.StakeFields}
     `;
-    await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
+    await arc.getObservable(prefetchQuery, { subscribe: true }).pipe(first()).toPromise();
     return combineLatest(
       dao.proposals({
         where: {

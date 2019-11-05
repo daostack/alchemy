@@ -1,8 +1,37 @@
 ### template
   - Features Added
   - Bugs Fixed
-  - Maintenence / Refactor
-  - Misc
+
+### Current Release
+  - Features Added
+    -
+  - Bugs Fixed
+    - 
+
+### 2019-11-05
+
+  - Features Added
+    - Proposals can now be tagged on creation
+    - History (and other pages) load much faster now
+  - Bugs Fixed
+    - Proposals counts are fixed
+    - Upgrade client to 0.2.22 and subgraph to v31_0
+
+### 2019-10-25
+
+  - Features Added
+    - More detailed information on scheme page
+    - Performance improvements
+    - New proposal button not available on inactive schemes
+    - ENS public resolver interface
+
+  - Bugs fixed
+    - Improved layout of cookie disclaimer on mobile devices
+    - fix "nervous" account menu, now drops down instead of across
+    - fix hang on malformed dao address
+    - In scheme properties, round thresholdConst up
+    - Added cancel button to staking preapproval prompt
+    - Names on vote popup are correct now
 
 ### 2019-10-16
 
@@ -22,6 +51,7 @@
     - ENS interface for generic schemes
     - Feedback when there are unread messages on DAO wall
     - Added Error and 404 pages
+    - Proposals now can have tags
 
   - Bugs Fixed
     - Align headers of table in proposal history
@@ -29,6 +59,7 @@
     - Fix error on initializing arc
     - Fix infinite scroll loading of queued scheme proposals
     - handle Metamask account changing
+
 
 ### 2019-09-12 [actually two releases]
 

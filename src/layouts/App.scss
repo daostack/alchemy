@@ -202,16 +202,18 @@ body {
 
     .wallet {
       position: absolute;
-      top: 43px;
-      width: 0px;
-      opacity: 0;
-      transition: all .25s ease;
+      width: 270px;
+      top: 50px;
+      transform: scaleY(0);    
+      transform-origin: top;
+      transition: transform 0.25s ease;
       right: 12px;
       font-size: 12px;
       z-index: 100;
       color: rgba(78, 97, 118, 1.000);
       background-color: rgba(252, 253, 255, 1.000);
       border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
 
       .walletImage {
         float: left;
@@ -434,11 +436,13 @@ body {
   .accountInfoContainer:hover{
     background-color: rgba(10, 28, 61, 1.000);
 
-    .wallet {
-      width: 270px;
-      opacity: 1;
-      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.27);
+    + .wallet {
+    transform: scaleY(1);
     }
+  }
+
+  .wallet:hover {
+    transform: scaleY(1);
   }
 
   .etherBalance {
@@ -577,6 +581,82 @@ body {
 }
 /* EO Header */
 
+.cookieDisclaimerContainer {
+  padding-left: 12%;
+  padding-right: 12%;
+  text-align: center;
+  width: 76%;
+  position: fixed;
+  bottom: 0px;
+  z-index: 999999;
+  display: inline-block;
+
+  .cookieDisclaimer {
+    padding: 25px;
+    border-radius: 10px 10px 0px 0px;
+    box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.15);
+    background-color: #132e5b;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    .body {
+      text-align: left;
+      height: auto;
+      font-family: "Open Sans";
+      font-size: 13px;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: 1.54;
+      letter-spacing: 0.24px;
+      color: #ffffff;
+      display: inline-block;
+      width: 80%;
+      flex-grow: 2;
+      flex-basis: content;
+    }
+
+    .accept {
+      flex-grow: 1;
+      text-align: right;
+      display: inline-block;
+      white-space: nowrap;
+
+      a.blueButton {
+        position: relative;
+        top: 12px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 13px;
+        color: white;
+        background-color: rgba(5, 118, 255, 1.000);
+        transition: all .25s ease;
+        border-radius: 15px;
+        display: inline-block;
+        padding: 0 30px;
+        font-weight: bold;
+        cursor: pointer;
+
+        img {
+          position: relative;
+          right: 9px;
+        }
+      }
+    }
+  }
+}
+
+.waitingToInitContainer {
+  padding-top: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.waitingToInitMessage {
+  text-align: center; 
+}
+
 @media only screen and (max-width: 425px) {
 
   .pendingTransactions {
@@ -682,80 +762,24 @@ body {
     top: 16px;
     left: 12px;
   }
- }
 
-.cookieDisclaimerContainer {
-  padding-left: 12%;
-  padding-right: 12%;
-  text-align: center;
-  width: 76%;
-  position: fixed;
-  bottom: 0px;
-  z-index: 999999;
-  display: inline-block;
+  .cookieDisclaimerContainer {
 
-  .cookieDisclaimer {
-    padding: 25px;
-    border-radius: 10px 10px 0px 0px;
-    box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.15);
-    background-color: #132e5b;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-
-    .body {
-      text-align: left;
-      height: auto;
-      font-family: "Open Sans";
-      font-size: 13px;
-      font-weight: normal;
-      font-style: normal;
-      font-stretch: normal;
-      line-height: 1.54;
-      letter-spacing: 0.24px;
-      color: #ffffff;
+    .cookieDisclaimer {
       display: inline-block;
-      width: 80%;
-      flex-grow: 2;
-      flex-basis: content;
-    }
+      padding-left: 20px;
+      padding-right: 20px;
 
-    .accept {
-      flex-grow: 1;
-      text-align: right;
-      display: inline-block;
-      white-space: nowrap;
+      .body {
+        display: block;
+        flex-grow: unset;
+        flex-basis: unset;
+        width: 100%;
+      }
 
-      a.blueButton {
-        position: relative;
-        top: 12px;
-        height: 30px;
-        line-height: 30px;
-        font-size: 13px;
-        color: white;
-        background-color: rgba(5, 118, 255, 1.000);
-        transition: all .25s ease;
-        border-radius: 15px;
-        display: inline-block;
-        padding: 0 30px;
-        font-weight: bold;
-        cursor: pointer;
-
-        img {
-          position: relative;
-          right: 9px;
-        }
+      .accept {
+        flex-grow: unset;
       }
     }
   }
-}
-
-.waitingToInitContainer {
-  padding-top: 4rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.waitingToInitMessage {
-  text-align: center; 
 }

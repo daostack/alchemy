@@ -8,6 +8,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
 import { proposalEnded } from "reducers/arcReducer";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -54,11 +55,17 @@ export default class ProposalCard extends React.Component<IProps, null> {
           votes,
         } = props;
 
+        const tags = proposal.tags;
+
         let currentAccountVote = 0;
 
         let currentVote: Vote;
-        if (votes.length > 0) {
-          currentVote = votes[0];
+
+        // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary
+        // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
+        const currentAccountVotes = votes.filter((v: Vote) => v.staticState.voter === currentAccountAddress);
+        if (currentAccountVotes.length > 0) {
+          currentVote = currentAccountVotes[0];
           currentAccountVote = currentVote.staticState.outcome;
         }
 
@@ -149,6 +156,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   <img src="/assets/images/Icon/Open.svg" />
                 </Link>
               </h3>
+              
+              { tags && tags.length ? <div className={css.tagsContainer}>
+                <TagsSelector readOnly tags={tags}></TagsSelector>
+              </div> : "" }
+              
               <div className={css.summary}>
                 <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
               </div>
