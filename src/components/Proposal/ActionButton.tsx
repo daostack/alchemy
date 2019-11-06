@@ -95,6 +95,7 @@ class ActionButton extends React.Component<IProps, IState> {
     const {
       beneficiaryProfile,
       currentAccountAddress,
+      data,
       daoState,
       daoEthBalance,
       detailView,
@@ -109,8 +110,8 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const daoBalances: {[key: string]: BN} = {
       eth: daoEthBalance,
-      externalToken: this.props.data[0],
-      GEN:this.props.data[1],
+      externalToken: data && data[0] || new BN(0),
+      GEN: data && data[1] || new BN(0),
       nativeToken: undefined,
       rep: undefined,
     };
@@ -145,7 +146,7 @@ class ActionButton extends React.Component<IProps, IState> {
     /**
      * Can't redeem unless executed.  We'll disable the redeem button if the DAO can't pay any of the redemptions, and warn
      * if it can only pay some of them.
-     * 
+     *
      * We'll display the redeem button even if the CR beneficiary is not the current account.
      */
     const displayRedeemButton = proposalState.executedAt &&
@@ -158,7 +159,7 @@ class ActionButton extends React.Component<IProps, IState> {
     const canRewardOnlySome = !canRewardNone && !(beneficiaryHasAvailableUnredeemedCrRewards && currentAccountHasAvailableUnredeemedGpRewards);
 
     const redemptionsTip = RedemptionsTip({
-      canRewardNone, 
+      canRewardNone,
       canRewardOnlySome,
       contributionRewards,
       currentAccountAddress,
@@ -266,8 +267,8 @@ const SubscribedActionButton = withSubscription({
 
     const arc = getArc();
     const genToken = arc.GENToken();
-    
-    if (props.proposalState.contributionReward && 
+
+    if (props.proposalState.contributionReward &&
       props.proposalState.contributionReward.externalTokenReward &&
       !props.proposalState.contributionReward.externalTokenReward.isZero()) {
 
