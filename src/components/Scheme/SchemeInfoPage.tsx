@@ -96,6 +96,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
 
     const votingMachine = (
       (scheme.genericSchemeParams && scheme.genericSchemeParams.votingMachine) ||
+      (scheme.uGenericSchemeParams && scheme.uGenericSchemeParams.votingMachine) ||
       (scheme.contributionRewardParams && scheme.contributionRewardParams.votingMachine) ||
       (scheme.schemeRegistrarParams && scheme.schemeRegistrarParams.votingMachine)
     );
@@ -122,10 +123,22 @@ export default class SchemeInfo extends React.Component<IProps, null> {
                   <span>{scheme.genericSchemeParams.contractToCall}</span>
                 </td>
                 <td>
-                  <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.address)} />
+                  <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.genericSchemeParams.contractToCall)} />
                 </td>
               </tr> : undefined
             }
+            { scheme.uGenericSchemeParams ?
+              <tr>
+                <th>will call this contract: <a href={linkToEtherScan(scheme.uGenericSchemeParams.contractToCall)} target="_blank" rel="noopener noreferrer"><img src="/assets/images/Icon/Link-blue.svg" /></a></th>
+                <td>
+                  <span>{scheme.uGenericSchemeParams.contractToCall}</span>
+                </td>
+                <td>
+                  <img src="/assets/images/Icon/Copy-blue.svg" onClick={this.copyToClipboardHandler(scheme.uGenericSchemeParams.contractToCall)} />
+                </td>
+              </tr> : undefined
+            }
+
             <tr>
               <th>Param Hash:</th>
               <td>
@@ -183,6 +196,16 @@ export default class SchemeInfo extends React.Component<IProps, null> {
           <table className={css.infoCardContent}>
             {renderVotingMachineLink(votingMachine)}
             {renderGpParams(scheme.contributionRewardParams ? scheme.contributionRewardParams.voteParams : scheme.genericSchemeParams.voteParams)}
+          </table>
+        </div>
+        : ""
+      }
+      { scheme.uGenericSchemeParams ?
+        <div className={css.schemeInfoContainer}>
+          <h3>Genesis Protocol Params -- <a href="https://daostack.zendesk.com/hc/en-us/articles/360002000537" target="_blank" rel="noopener noreferrer">Learn more</a></h3>
+          <table className={css.infoCardContent}>
+            {renderVotingMachineLink(votingMachine)}
+            {renderGpParams(scheme.uGenericSchemeParams.voteParams)}
           </table>
         </div>
         : ""
