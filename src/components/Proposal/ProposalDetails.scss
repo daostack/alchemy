@@ -261,6 +261,16 @@ button.disabled {
   margin-bottom: 20px;
 }
 
+.proposalSummaryContainer {
+  &.hasTags {
+    margin-bottom: 18px;
+  }
+}
+
+.tagsContainer {
+  padding-bottom: 0;
+}
+
 @media only screen and (max-width: 425px) {
   .proposal {
     display: block;

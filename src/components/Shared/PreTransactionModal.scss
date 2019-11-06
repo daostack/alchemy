@@ -525,6 +525,13 @@ input[type=number] {
         top: -1px;
         display: inline;
 
+        .titleSeparator {
+          display: inline-block;
+          margin: 6px;
+          position: relative;
+          bottom: 2px;
+        }
+
         .transactionEffect {
           font-size: 12px;
           display: inline;
@@ -762,5 +769,20 @@ input[type=number] {
         color: $accent-1;
       }
     }
+  }
+}
+
+.tipContainer {
+  padding-top: 8px;
+
+  .message {
+    padding-bottom: 8px;
+    .icon {
+      display: inline-block;
+      margin-right:6px;
+      position: relative;
+      top: 2px;
+    }
+    .text { display: inline; }
   }
 }

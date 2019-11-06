@@ -7,6 +7,7 @@ import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
+import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -52,6 +53,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
           stakes,
           votes,
         } = props;
+
+        const tags = proposal.tags;
 
         let currentAccountVote = 0;
 
@@ -149,6 +152,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   <img src="/assets/images/Icon/Open.svg" />
                 </Link>
               </h3>
+
+              { tags && tags.length ? <div className={css.tagsContainer}>
+                <TagsSelector readOnly tags={tags}></TagsSelector>
+              </div> : "" }
+
               <div className={css.summary}>
                 <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
               </div>
