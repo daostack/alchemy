@@ -110,6 +110,28 @@ a.daoLink {
 			color: $gray-1;
 		}
 	}
+
+  .followIcon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    font-family: LucidaGrande;
+    font-size: 11px;
+    line-height: 1.27;
+    letter-spacing: 0.5px;
+    text-align: center;
+    color: #ffffff;
+    border-radius: 11px;
+    border: solid 1px #ffffff;
+    padding: 4px 12px;
+  }
+
+  .isFollowing {
+    background-color: white;
+    color: #001d35;
+  }
+
 }
 
 .daoListHeader {

@@ -188,7 +188,7 @@
       width: 116px;
       border-radius: 0 8px 8px 8px;
       background-color: white;
-      height: 180px;
+      padding: 5px 0;
       box-shadow: 2px 2px 9px 0 rgba(12, 0, 51, 0.1);
       position: absolute;
       top: -90px;
@@ -207,6 +207,32 @@
       }
     }
 
+    .followButton {
+      padding: 5px 0;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+
+      img {
+        height: 10px;
+        width: 8px;
+        vertical-align: middle;
+      }
+
+      .followText, .hoverUnfollow {
+        vertical-align: middle;
+        padding-left: 5px;
+      }
+
+      .hoverUnfollow {
+        display: none;
+      }
+
+      &.isFollowing:hover {
+        .followText { display: none; }
+        .hoverUnfollow { display: inline; }
+      }
+    }
   }
 }
 

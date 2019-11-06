@@ -4,10 +4,25 @@ import { AsyncActionSequence } from "actions/async";
 
 export enum ActionTypes {
   GET_PROFILE_DATA = "GET_PROFILE_DATA",
-  UPDATE_PROFILE = "UPDATE_PROFILE"
+  UPDATE_PROFILE = "UPDATE_PROFILE",
+  FOLLOW_ITEM = "FOLLOW_ITEM"
 }
 
-export type IProfileState = any;
+export type FollowType = "daos" | "proposals" | "schemes" | "users";
+
+export type IProfileState = {
+  description: string;
+  ethereumAccountAddress: string;
+  follows: {
+    daos: string[],
+    proposals: string[],
+    schemes: string[],
+    users: string[]
+  }
+  image?: any;
+  name: string;
+  socialURLs: any;
+};
 
 export interface IProfilesState {
   threeBox: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
@@ -18,6 +33,12 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
   return {
     description: "",
     ethereumAccountAddress,
+    follows: {
+      daos: [],
+      proposals: [],
+      schemes: [],
+      users: []
+    },
     name: "",
     socialURLs: {},
   };
@@ -26,7 +47,7 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
 const initialState: IProfilesState = { threeBox: null };
 
 const profilesReducer = (state = initialState, action: any) => {
-  const { payload } = action;
+  const { payload, meta } = action;
 
   if (payload && payload.threeBox) {
     update(state, { threeBox: { $set: payload.threeBox } });
@@ -38,9 +59,30 @@ const profilesReducer = (state = initialState, action: any) => {
     case ActionTypes.UPDATE_PROFILE: {
       switch (action.sequence) {
         case AsyncActionSequence.Success:
-          return update(state, { [action.meta.accountAddress]: (profile: any) => {
-            return update(profile || newProfile(action.meta.accountAddress), { $merge: payload });
+          return update(state, { [meta.accountAddress]: (profile: any) => {
+            return update(profile || newProfile(meta.accountAddress), { $merge: payload });
           }});
+        default: {
+          return state;
+        }
+      }
+    }
+
+    case ActionTypes.FOLLOW_ITEM: {
+      switch (action.sequence) {
+        case AsyncActionSequence.Success:
+          const { type, id, isFollowing } = payload;
+
+          if (!state[meta.accountAddress]) {
+            state = update(state, { [meta.accountAddress]: { $set: newProfile(meta.accountAddress) }});
+          }
+
+          if (isFollowing && !state[meta.accountAddress].follows[type as FollowType].includes(id)) {
+            return update(state, { [meta.accountAddress]: { follows: { [type]: { $push: [id] } }}});
+          } else if (!isFollowing && state[meta.accountAddress].follows[type as FollowType].includes(id)) {
+            return update(state, { [meta.accountAddress]: { follows: { [type]: { $unset: [id] } }}});
+          }
+
         default: {
           return state;
         }

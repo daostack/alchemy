@@ -1,5 +1,6 @@
 import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
+import classNames from "classnames";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Loading from "components/Shared/Loading";
@@ -14,14 +15,16 @@ import * as css from "./SchemeCard.scss";
 
 interface IExternalProps {
   dao: IDAOState;
+  isFollowing: boolean;
   scheme: Scheme;
+  toggleFollow: any;
 }
 
 type SubscriptionData = [ISchemeState, Proposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalSchemeCard = (props: IProps) => {
-  const { data, dao} = props;
+  const { data, dao, isFollowing, toggleFollow } = props;
 
   const [schemeState, boostedProposals] = data;
 
@@ -62,6 +65,13 @@ const ProposalSchemeCard = (props: IProps) => {
           </div>
           : " "
         }
+
+        <svg className={classNames({[css.followIcon]: true, [css.isFollowing]: isFollowing})} onClick={toggleFollow} viewBox="0 0 64 64">
+          <path d="M11 2v57.7l22.1-13.4L55 59.7V2H11z"
+            strokeWidth="2" strokeMiterlimit="10"
+              strokeLinejoin="round" strokeLinecap="round"></path>
+        </svg>
+
       </Link>
       {proposals.length > 0 ?
         <div>

@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
-import { getArc } from "arc";
+import { toggleFollow } from "actions/profilesActions";
+import { enableWalletProvider, getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
 import BN = require("bn.js");
@@ -9,6 +10,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { closingTime } from "reducers/arcReducer";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
@@ -25,18 +27,27 @@ interface IExternalProps {
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
+  currentAccountProfile: IProfileState;
+}
+
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+  toggleFollow: typeof toggleFollow;
 }
 
 type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
-type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
+type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IDispatchProps & IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 interface IInjectedProposalProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
   currentAccountGenBalance: BN;
   currentAccountGenAllowance: BN;
+  currentAccountProfile: IProfileState;
   daoEthBalance: BN;
   expired: boolean;
+  handleClickFollow: any;
   member: IMemberState;
   proposal: IProposalState;
   rewards: IRewardState;
@@ -44,14 +55,20 @@ interface IInjectedProposalProps {
   votes: Vote[];
 }
 
-const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IProps => {
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscriptionProps<SubscriptionData>): IPreProps => {
   const proposalState = ownProps.data ? ownProps.data[0] : null;
 
   return {
     ...ownProps,
     beneficiaryProfile: proposalState && proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
     creatorProfile: proposalState ? state.profiles[proposalState.proposer] : null,
+    currentAccountProfile: state.profiles[ownProps.currentAccountAddress],
   };
+};
+
+const mapDispatchToProps = {
+  showNotification,
+  toggleFollow
 };
 
 interface IState {
@@ -78,17 +95,27 @@ class ProposalData extends React.Component<IProps, IState> {
     }
   }
 
+  public handleClickFollow = (proposalId: string) => async (e: any) => {
+    e.preventDefault();
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    const { toggleFollow, currentAccountProfile } = this.props;
+    await toggleFollow(currentAccountProfile.ethereumAccountAddress, "proposals", proposalId);
+  }
+
   render(): RenderOutput {
     const [proposal, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
-    const { beneficiaryProfile, creatorProfile } = this.props;
+    const { beneficiaryProfile, creatorProfile, currentAccountProfile } = this.props;
 
     return this.props.children({
       beneficiaryProfile,
       creatorProfile,
       currentAccountGenBalance,
       currentAccountGenAllowance,
+      currentAccountProfile,
       daoEthBalance,
       expired: this.state.expired,
+      handleClickFollow: this.handleClickFollow,
       member,
       proposal,
       rewards,
@@ -98,7 +125,7 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalData = connect(mapStateToProps)(ProposalData);
+const ConnectedProposalData = connect(mapStateToProps, mapDispatchToProps)(ProposalData);
 
 export default withSubscription({
   wrappedComponent: ConnectedProposalData,

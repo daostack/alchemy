@@ -51,8 +51,10 @@ export default class ProposalCard extends React.Component<IProps, null> {
           creatorProfile,
           currentAccountGenBalance,
           currentAccountGenAllowance,
+          currentAccountProfile,
           daoEthBalance,
           expired,
+          handleClickFollow,
           member,
           proposal,
           rewards,
@@ -73,6 +75,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
           currentVote = currentAccountVotes[0];
           currentAccountVote = currentVote.staticState.outcome;
         }
+
+        const isFollowing = currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.proposals.includes(proposal.id);
 
         const proposalClass = classNames({
           [css.proposal]: true,
@@ -165,6 +169,12 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     <img src="/assets/images/Icon/Context-menu.svg"/>
                   </div>
                   <div className={css.menu}>
+                    <div className={classNames({[css.followButton]: true, [css.isFollowing]: isFollowing})} onClick={handleClickFollow(proposal.id)}>
+                      <img src="/assets/images/Icon/follow.svg"/>
+                      <span className={css.followText}>{isFollowing ? "Following" : "Follow"}</span>
+                      <span className={css.hoverUnfollow}>Unfollow</span>
+                    </div>
+
                     <VoteButtons
                       currentAccountAddress={currentAccountAddress}
                       currentAccountState={member}
