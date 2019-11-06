@@ -95,6 +95,7 @@ class ActionButton extends React.Component<IProps, IState> {
     const {
       beneficiaryProfile,
       currentAccountAddress,
+      data,
       daoState,
       daoEthBalance,
       detailView,
@@ -109,8 +110,8 @@ class ActionButton extends React.Component<IProps, IState> {
 
     const daoBalances: {[key: string]: BN} = {
       eth: daoEthBalance,
-      externalToken: this.props.data[0],
-      GEN:this.props.data[1],
+      externalToken: data && data[0] || new BN(0),
+      GEN: data && data[1] || new BN(0),
       nativeToken: undefined,
       rep: undefined,
     };
