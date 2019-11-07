@@ -213,7 +213,6 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const schemeId = props.scheme.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
-    // with all separate queries for votes and stakes and rewards...
     let bigProposalQuery;
     if (props.currentAccountAddress) {
       bigProposalQuery = gql`
