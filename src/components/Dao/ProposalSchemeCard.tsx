@@ -46,7 +46,7 @@ const ProposalSchemeCard = (props: IProps) => {
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
         <TrainingTooltip placement="topLeft"
           overlay={trainingTooltipMessage}
-          trigger={trainingTooltipMessage ? ["hover"] : []}
+          trigger={trainingTooltipMessage ? undefined : []}
         >
           <h2>{schemeName(schemeState, "[Unknown]")}</h2>
         </TrainingTooltip>

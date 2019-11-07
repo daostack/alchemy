@@ -110,10 +110,9 @@
       visibility: visible;
       line-height: 1.5;
       font-size: 12px;
-      background-color: $white;
+      background-color: #001d35;
       padding: 1px;
       opacity: 1;
-      background-color: #001d35;
       border-radius: 16px;
     }
     .rc-trainingtooltip-hidden {
@@ -158,7 +157,7 @@
       bottom: 1px;
       margin-left: -6px;
       border-width: 6px 6px 0;
-      border-top-color:  $white;
+      border-top-color:  #001d35;
     }
     .rc-trainingtooltip-placement-top .rc-trainingtooltip-arrow {
       left: 50%;
@@ -175,7 +174,7 @@
       left: -5px;
       margin-top: -6px;
       border-width: 6px 6px 6px 0;
-      border-right-color:  $white;
+      border-right-color: #001d35;
     }
     .rc-trainingtooltip-placement-right .rc-trainingtooltip-arrow-inner,
     .rc-trainingtooltip-placement-rightTop .rc-trainingtooltip-arrow-inner,
@@ -183,7 +182,7 @@
       left: 1px;
       margin-top: -6px;
       border-width: 6px 6px 6px 0;
-      border-right-color:  $white;
+      border-right-color:  #001d35;
     }
     .rc-trainingtooltip-placement-right .rc-trainingtooltip-arrow {
       top: 50%;
@@ -201,7 +200,7 @@
       right: -5px;
       margin-top: -6px;
       border-width: 6px 0 6px 6px;
-      border-left-color:  $white;
+      border-left-color: #001d35;
     }
     .rc-trainingtooltip-placement-left .rc-trainingtooltip-arrow-inner,
     .rc-trainingtooltip-placement-leftTop .rc-trainingtooltip-arrow-inner,
@@ -209,7 +208,7 @@
       right: 1px;
       margin-top: -6px;
       border-width: 6px 0 6px 6px;
-      border-left-color: $white;
+      border-left-color: #001d35;
     }
     .rc-trainingtooltip-placement-left .rc-trainingtooltip-arrow {
       top: 50%;
@@ -235,7 +234,7 @@
       top: 1px;
       margin-left: -6px;
       border-width: 0 6px 6px;
-      border-bottom-color: $white;
+      border-bottom-color: #001d35;
     }
     .rc-trainingtooltip-placement-bottom .rc-trainingtooltip-arrow {
       left: 50%;
