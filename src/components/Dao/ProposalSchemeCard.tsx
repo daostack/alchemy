@@ -30,14 +30,13 @@ const ProposalSchemeCard = (props: IProps) => {
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
 
-  const schemeFriendlyName = schemeName(schemeState, "[Unknown]");
   let trainingTooltipMessage: string;
   
-  switch(schemeFriendlyName) {
-    case "Contribution Reward":
+  switch(schemeState.name) {
+    case "ContributionReward":
       trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
       break;
-    case "Scheme Registrar":
+    case "SchemeRegistrar":
       trainingTooltipMessage = "Use this scheme to install, remove or edit the schemes of the DAO";
       break;
   }
@@ -49,7 +48,7 @@ const ProposalSchemeCard = (props: IProps) => {
           overlay={trainingTooltipMessage}
           trigger={trainingTooltipMessage ? ["hover"] : []}
         >
-          <h2>{schemeFriendlyName}</h2>
+          <h2>{schemeName(schemeState, "[Unknown]")}</h2>
         </TrainingTooltip>
         <div>
           <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
