@@ -132,7 +132,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           :
           <div>
             <div className={css.boostedContainer}>
-              <TrainingTooltip placement="top" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
+              <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
                 <div className={css.proposalsHeader}>
                 Boosted Proposals ({scheme.numberOfBoostedProposals})
                   {proposalsBoosted.length === 0
@@ -150,7 +150,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             </div>
 
             <div className={css.regularContainer}>
-              <TrainingTooltip placement="top" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+              <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
                 <div className={css.proposalsHeader}>
                 Pending Proposals ({scheme.numberOfPreBoostedProposals})
                   {proposalsPreBoosted.length === 0
@@ -167,7 +167,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
               </div>
             </div>
             <div className={css.regularContainer}>
-              <TrainingTooltip placement="top" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
+              <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
                 <div className={css.proposalsHeader}>
                 Regular Proposals ({scheme.numberOfQueuedProposals})
                   {proposalsQueued.length === 0
