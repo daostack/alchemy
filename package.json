@@ -40,7 +40,7 @@
       "^data(.*)$": "<rootDir>/data$1",
       "^genericSchemeRegistry(.*)$": "<rootDir>/src/genericSchemeRegistry$1",
       "^layouts(.*)$": "<rootDir>/src/layouts$1",
-      "^lib(.*)$": "<rootDir>/src/lib$1",
+      "^lib/(.*)$": "<rootDir>/src/lib/$1",
       "^reducers(.*)$": "<rootDir>/src/reducers$1",
       "^selectors(.*)$": "<rootDir>/src/selectors$1",
       "^schemas(.*)$": "<rootDir>/src/schemas$1",
