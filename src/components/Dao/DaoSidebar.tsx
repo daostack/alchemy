@@ -15,6 +15,7 @@ import { first } from "rxjs/operators";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import * as uiActions from "actions/uiActions";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./Dao.scss";
 
 interface IExternalProps {
@@ -116,17 +117,19 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                 </Link>
               </li>
               <li>
-                <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu()}>
-                  <span className={css.menuDot} />
-                  <span className={
-                    classNames({
-                      [css.notification]: true,
-                      [css.holdersNotification]: true,
-                    })
-                  }></span>
-                  <img src="/assets/images/Icon/menu/holders.svg" />
+                <TrainingTooltip placement="topLeft" overlay={"List of entities (DAOs and individuals) that have voting power in the Genesis DAO"}>
+                  <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu()}>
+                    <span className={css.menuDot} />
+                    <span className={
+                      classNames({
+                        [css.notification]: true,
+                        [css.holdersNotification]: true,
+                      })
+                    }></span>
+                    <img src="/assets/images/Icon/menu/holders.svg" />
                   Reputation Holders
-                </Link>
+                  </Link>
+                </TrainingTooltip>
               </li>
               <li>
                 <Link to={"/dao/" + dao.address + "/history/"} onClick={this.handleCloseMenu()}>
@@ -142,21 +145,23 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                 </Link>
               </li>
               <li>
-                <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu()}>
-                  <span className={
-                    classNames({
-                      [css.menuDot]: true,
-                      [css.red]: hasNewPosts,
-                    })} />
-                  <span className={
-                    classNames({
-                      [css.notification]: true,
-                      [css.discussionNotification]: true,
-                    })
-                  }></span>
-                  <img src="/assets/images/Icon/menu/chat.svg" />
+                <TrainingTooltip placement="topLeft" overlay={"Space designated for general questions, statements and comments"}>
+                  <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu()}>
+                    <span className={
+                      classNames({
+                        [css.menuDot]: true,
+                        [css.red]: hasNewPosts,
+                      })} />
+                    <span className={
+                      classNames({
+                        [css.notification]: true,
+                        [css.discussionNotification]: true,
+                      })
+                    }></span>
+                    <img src="/assets/images/Icon/menu/chat.svg" />
                   DAO Wall
-                </Link>
+                  </Link>
+                </TrainingTooltip>
               </li>
             </ul>
           </div>

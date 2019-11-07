@@ -13,6 +13,7 @@ import * as Sticky from "react-stickynode";
 import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ReputationFromToken from "./ReputationFromToken";
 import SchemeInfoPage from "./SchemeInfoPage";
 import SchemeProposalsPage from "./SchemeProposalsPage";
@@ -92,16 +93,20 @@ class SchemeContainer extends React.Component<IProps, null> {
 
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
-            <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
-            <a className={
-              classNames({
-                [css.createProposal]: true,
-                [css.disabled]: !isActive,
-              })}
-            data-test-id="createProposal"
-            href="javascript:void(0)"
-            onClick={isActive ? this.handleNewProposal : null}
-            >+ New proposal</a>
+            <TrainingTooltip placement="bottom" overlay={"Learn about the protocol parameters for this scheme"}>
+              <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
+            </TrainingTooltip>
+            <TrainingTooltip placement="bottomRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+              <a className={
+                classNames({
+                  [css.createProposal]: true,
+                  [css.disabled]: !isActive,
+                })}
+              data-test-id="createProposal"
+              href="javascript:void(0)"
+              onClick={isActive ? this.handleNewProposal : null}
+              >+ New proposal</a>
+            </TrainingTooltip>
           </div>
         </Sticky>
 

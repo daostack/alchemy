@@ -2,7 +2,7 @@
   html {
     .rc-tooltip {
       background-color: #001d35 !important;
-      border: solid 1px #fcfdff !important;
+      // border: solid 1px #fcfdff !important;
       border-radius: 16px !important;
     }
 
@@ -12,8 +12,28 @@
       color: $white !important;
     }
 
-    .rc-tooltip-arrow {
+    .rc-tooltip-placement-bottom .rc-tooltip-arrow,
+    .rc-tooltip-placement-bottomLeft .rc-tooltip-arrow,
+    .rc-tooltip-placement-bottomRight .rc-tooltip-arrow
+    {
       border-bottom-color: #001d35 !important;
+    }
+    .rc-tooltip-placement-top .rc-tooltip-arrow,
+    .rc-tooltip-placement-topLeft .rc-tooltip-arrow,
+    .rc-tooltip-placement-topRight .rc-tooltip-arrow
+    {
+      border-top-color: #001d35 !important;
+    }
+    
+    .rc-tooltip-placement-bottom .rc-tooltip-arrow,
+    .rc-tooltip-placement-bottomLeft .rc-tooltip-arrow,
+    .rc-tooltip-placement-bottomRight .rc-tooltip-arrow {
+      top: -6px !important;
+    }
+    .rc-tooltip-placement-top .rc-tooltip-arrow,
+    .rc-tooltip-placement-topLeft .rc-tooltip-arrow,
+    .rc-tooltip-placement-topRight .rc-tooltip-arrow {
+      bottom: -6px !important;
     }
   }
 }
