@@ -5,6 +5,7 @@
 ### Current Release
   - Features Added
     - prevent attempting redemptions unless there exist sufficient resources to pay out at least one reward
+    - added informative tooltips for application training
   - Bugs Fixed
     - 
 
