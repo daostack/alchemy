@@ -1,4 +1,5 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -75,9 +76,14 @@ class AccountPopup extends React.Component<IProps, null> {
           <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={daoState.address} /></div>
           {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
             <div>
-{/*              <OAuthLogin editing={false} provider="facebook" accountAddress={accountAddress} profile={profile} />
-              <OAuthLogin editing={false} provider="twitter" accountAddress={accountAddress} profile={profile} />
-              <OAuthLogin editing={false} provider="github" accountAddress={accountAddress} profile={profile} />*/}
+              { profile.socialURLs.twitter ?
+                <a href={"https://twitter.com/" + profile.socialURLs.twitter.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} />
+                </a> : ""}
+              { profile.socialURLs.github ?
+                <a href={"https://github.com/" + profile.socialURLs.github.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} />
+                </a> : ""}
             </div>
           }
           <div className={css.beneficiaryAddress}>

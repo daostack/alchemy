@@ -82,7 +82,7 @@ export function updateProfile(accountAddress: string, name: string, description:
       const web3Provider = await getWeb3Provider();
       const box = await Box.openBox(accountAddress, web3Provider);
       await box.syncDone;
-      await box.public.setMultiple(['name', 'description'], [name, description]);
+      await box.public.setMultiple(["name", "description"], [name, description]);
     } catch (e) {
       const errorMsg = e.response && e.response.data ? e.response.data.error.message : e.toString();
       // eslint-disable-next-line no-console

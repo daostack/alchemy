@@ -57,7 +57,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 const mapDispatchToProps = {
   getProfile: profileActions.getProfile,
   updateProfile: profileActions.updateProfile,
-  showNotification
+  showNotification,
 };
 
 interface IFormValues {
