@@ -1,7 +1,8 @@
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { getWeb3Provider } from "arc";
 import axios from "axios";
-import Box = require('3box');
+
+import Box = require("3box");
 import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, newProfile } from "reducers/profilesReducer";
