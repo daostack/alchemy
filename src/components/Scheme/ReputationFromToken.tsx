@@ -338,6 +338,9 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                   >
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
+                </div>
+                <div className={schemeCss.redemptionButton}>
+                  <div>Or try our new experimental feature:</div>
                   <button type="submit"
                     disabled={false}
                     onClick={(_e)=>{
