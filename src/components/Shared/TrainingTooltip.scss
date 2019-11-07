@@ -1,7 +1,3 @@
-.container {
-
-}
-
 :global {
   html {
     .rc-tooltip {
@@ -19,10 +15,5 @@
     .rc-tooltip-arrow {
       border-bottom-color: #001d35 !important;
     }
-
-    // .rc-tooltip-arrow {
-    //   border-top-color: #001d35 !important;
-    //   border-bottom-color: #001d35 !important;
-    // }
   }
 }
