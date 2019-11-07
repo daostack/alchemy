@@ -43,7 +43,7 @@ interface IDispatchProps {
   verifySocialAccount: typeof profileActions.verifySocialAccount;
 }
 
-type SubscriptionData = [IDAOState, IMemberState, BN, BN];
+type SubscriptionData = [IDAOState, IMemberState, BN|null, BN|null];
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {

@@ -14,7 +14,7 @@ interface IExternalProps {
   address: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN, BN]>
+type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|null]>
 
 class AccountBalances extends React.Component<IProps, null>  {
 

@@ -27,7 +27,7 @@ interface IExternalProps {
   beneficiaryProfile?: IProfileState;
   contextMenu?: boolean;
   currentAccountAddress?: Address;
-  currentAccountGens: BN;
+  currentAccountGens: BN|null;
   currentAccountGenStakingAllowance: BN;
   dao: IDAOState;
   detailView?: boolean;
@@ -159,7 +159,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     const stakingEnabled = (proposal.stage === IProposalStage.Queued && !expired) ||
       (proposal.stage === IProposalStage.PreBoosted);
 
-    const hasGens = currentAccountGens.gt(new BN(0));
+    const hasGens = currentAccountGens && currentAccountGens.gt(new BN(0));
     // show staking buttons when !this.props.currentAccountAddress, even if no GENs
     const disableStakePass = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.No;
     const disableStakeFail = (currentAccountAddress && !hasGens) || currentAccountPrediction === VoteOptions.Yes;

@@ -106,7 +106,11 @@ export function supportedTokens() {
   }, ...tokens};
 }
 
-export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
+export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18): string {
+
+  if (amountWei === null) {
+    return `N/A ${symbol ? symbol: ""}`;
+  }
 
   const negative = amountWei.lt(new BN(0));
   const toSignedString = (amount: string) => { return  (negative ? "-" : "") + amount + (symbol ? " " + symbol : ""); };
@@ -380,12 +384,12 @@ export function hasClaimableRewards(reward: IRewardState) {
  * @param  reward an object that immplements IContributionReward
  * @return  an array mapping strings to BN
  */
-export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}) {
+export function claimableContributionRewards(reward: IContributionReward, daoBalances: { [key: string]: BN|null } = {}) {
   const result: { [key: string]: BN } = {};
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
-    && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
+    && (daoBalances["eth"] === undefined || daoBalances["eth"]=== null|| daoBalances["eth"].gte(reward.ethReward))
     && reward.alreadyRedeemedEthPeriods < reward.periods
   ) {
     result["eth"] = reward.ethReward;
@@ -514,5 +518,9 @@ export function roundUp(num: number, precision: number) {
 
 // error handler for ethereum subscriptions
 export function ethErrorHandler() {
-  return catchError((val: any) => {console.log(`Error! ${val}`); return of(new BN(0));});
+  const returnValueOnError: any = null; // return this when there is an error
+  return catchError((err: any) => {
+    console.log(`Error! ${err.message}`);
+    return of(returnValueOnError);
+  });
 }
