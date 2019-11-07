@@ -1,25 +1,26 @@
 import { AsyncActionSequence, IAsyncAction } from "actions/async";
 import { getWeb3Provider } from "arc";
-import axios from "axios";
+//import axios from "axios";
 
 import Box = require("3box");
-import { IRootState } from "reducers/index";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, newProfile } from "reducers/profilesReducer";
 
 // Load account profile data from our database for all the "members" of the DAO
-export function getProfilesForAllAccounts() {
-  return async (dispatch: any, getState: () => IRootState) => {
-    const accounts = getState().arc.accounts;
-    const accountFilters = [];
+export function getProfilesForAddresses(addresses: string[]) {
+  return async (dispatch: any) => {
+    // const accounts = getState().arc.accounts;
+    // const accountFilters = [];
 
-    for (const accountKey of Object.keys(accounts)) {
-      const account = accounts[accountKey];
-      accountFilters.push("{\"ethereumAccountAddress\":\"" + account.address + "\"}");
-    }
+    // for (const accountKey of Object.keys(accounts)) {
+    //   const account = accounts[accountKey];
+    //   accountFilters.push("{\"ethereumAccountAddress\":\"" + account.address + "\"}");
+    // }
 
+    console.log("getting profiles for", addresses);
     try {
-      const results = await axios.get(process.env.API_URL + "/api/accounts");
+      const results = await Box.getProfiles(addresses);
+      console.log("xxx", results);
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Success,

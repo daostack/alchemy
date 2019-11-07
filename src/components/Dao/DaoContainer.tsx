@@ -1,4 +1,4 @@
-import { IDAOState } from "@daostack/client";
+import { IDAOState, Member } from "@daostack/client";
 import * as profilesActions from "actions/profilesActions";
 import { getArc } from "arc";
 import CreateProposalPage from "components/Proposal/Create/CreateProposalPage";
@@ -15,7 +15,7 @@ import { ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { Subscription } from "rxjs";
+import { combineLatest, Subscription } from "rxjs";
 import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
@@ -32,11 +32,11 @@ interface IStateProps  {
 }
 
 interface IDispatchProps {
-  getProfilesForAllAccounts: typeof profilesActions.getProfilesForAllAccounts;
+  getProfilesForAddresses: typeof profilesActions.getProfilesForAddresses;
   showNotification: typeof showNotification;
 }
 
-type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
+type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<[IDAOState, Member[]]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -48,7 +48,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 };
 
 const mapDispatchToProps = {
-  getProfilesForAllAccounts: profilesActions.getProfilesForAllAccounts,
+  getProfilesForAddresses: profilesActions.getProfilesForAddresses,
   showNotification,
 };
 
@@ -57,7 +57,8 @@ class DaoContainer extends React.Component<IProps, null> {
   public subscription: Subscription;
 
   public async componentDidMount() {
-    this.props.getProfilesForAllAccounts();
+    console.log("got members", this.props.data[1]);
+    this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.staticState.address));
   }
 
   private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
@@ -75,7 +76,7 @@ class DaoContainer extends React.Component<IProps, null> {
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
 
   public render(): RenderOutput {
-    const daoState = this.props.data;
+    const daoState = this.props.data[0];
 
     return (
       <div className={css.outer}>
@@ -129,7 +130,11 @@ const SubscribedDaoContainer = withSubscription({
   createObservable: (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const daoAddress = props.match.params.daoAvatarAddress;
-    return arc.dao(daoAddress).state({ subscribe: true, fetchAllData: true } );
+    const dao = arc.dao(daoAddress);
+    return combineLatest(
+      dao.state({ subscribe: true, fetchAllData: true }), // DAO state
+      dao.members()
+    );
   },
 });
 
