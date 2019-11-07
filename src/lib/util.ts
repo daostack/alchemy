@@ -7,11 +7,13 @@ import {
   IRewardState,
   ISchemeState } from "@daostack/client";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
-import { getArc } from "../arc";
+import { of } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
-import moment = require("moment");
+import { getArc } from "../arc";
 
+import moment = require("moment");
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -447,7 +449,7 @@ export enum GetSchemeIsActiveActions {
 }
 
 const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, string>>([
-  [ 
+  [
     "SchemeRegistrar" , new Map<GetSchemeIsActiveActions, string>([
       [GetSchemeIsActiveActions.Register, "voteRegisterParams"],
       [GetSchemeIsActiveActions.Remove, "voteRemoveParams"],
@@ -508,4 +510,9 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
 export function roundUp(num: number, precision: number) {
   precision = Math.pow(10, precision);
   return Math.ceil(num * precision) / precision;
+}
+
+// error handler for ethereum subscriptions
+export function ethErrorHandler() {
+  return catchError((val: any) => {console.log(`Error! ${val}`); return of(new BN(0));});
 }

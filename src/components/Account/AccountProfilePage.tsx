@@ -1,9 +1,9 @@
 import { promisify } from "util";
 import { IDAOState, IMemberState } from "@daostack/client";
-import * as profileActions from "actions/profilesActions";
-import { getArc, getWeb3Provider, getWeb3ProviderInfo, enableWalletProvider } from "arc";
 
 import BN = require("bn.js");
+import * as profileActions from "actions/profilesActions";
+import { getArc, getWeb3Provider, getWeb3ProviderInfo, enableWalletProvider } from "arc";
 import AccountImage from "components/Account/AccountImage";
 import OAuthLogin from "components/Account/OAuthLogin";
 import Reputation from "components/Account/Reputation";
@@ -12,7 +12,7 @@ import DaoSidebar from "components/Dao/DaoSidebar";
 import * as sigUtil from "eth-sig-util";
 import * as ethUtil from "ethereumjs-util";
 import { Field, Formik, FormikProps } from "formik";
-import { copyToClipboard, formatTokens } from "lib/util";
+import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
 import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
@@ -305,8 +305,10 @@ const SubscribedAccountProfilePage = withSubscription({
     return combineLatest(
       daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
       daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),
-      arc.ethBalance(accountAddress),
+      arc.ethBalance(accountAddress)
+        .pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress)
+        .pipe(ethErrorHandler())
     );
   },
 });
