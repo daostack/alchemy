@@ -13,7 +13,7 @@ export default class TrainingToolip extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     return (
-      <Tooltip {...this.props}>
+      <Tooltip {...this.props} prefixCls="rc-trainingtooltip">
         {this.props.children}
       </Tooltip>
     );
