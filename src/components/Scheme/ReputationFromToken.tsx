@@ -1,4 +1,8 @@
+import { promisify } from "util";
 import { Address, ISchemeState, Token } from "@daostack/client";
+import axios from "axios";
+import { getWeb3Provider } from "arc";
+import * as ethABI from "ethereumjs-abi";
 import * as queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
 import { NotificationStatus } from "reducers/notifications";
@@ -53,6 +57,7 @@ interface IState {
 
 interface IFormValues {
   accountAddress: string;
+  useTxSenderService: boolean;
 }
 
 class ReputationFromToken extends React.Component<IProps, IState> {
@@ -130,27 +135,135 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
   public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
     // only connect to wallet if we do not have a private key to sign with
-    if (!this.state.privateKey && 
+    if (!this.state.privateKey &&
       !await enableWalletProvider({ showNotification: this.props.showNotification })) {
       setSubmitting(false);
       return;
     }
 
-    const state = this.props.schemeState;
-    const schemeAddress = state.address;
+    const schemeState = this.props.schemeState;
+    const schemeAddress = schemeState.address;
     const arc = getArc();
-    const schemeContract = await arc.getContract(schemeAddress);    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
+    const schemeContract = await arc.getContract(schemeAddress);
+    const alreadyRedeemed = await schemeContract.methods.redeems(this.state.redeemerAddress).call();
     if (alreadyRedeemed) {
       this.props.showNotification(NotificationStatus.Failure, `Reputation for the account ${this.state.redeemerAddress} was already redeemed`);
+    } else if (values.useTxSenderService === true) {
+      // construct the message to sign
+      // const signatureType = 1
+      const messageToSign = "0x"+ ethABI.soliditySHA3(
+        ["address","address"],
+        [schemeAddress, values.accountAddress]
+      ).toString("hex");
+
+      // console.log(`Sign this message of type ${signatureType}: ${messageToSign}`)
+      // const text = `Please sign this message to confirm your request to redeem reputation.
+      //     There's no gas cost to you.`
+      const method = "personal_sign";
+
+      // Create promise-based version of send
+      const web3Provider = await getWeb3Provider();
+      const send = promisify(web3Provider.sendAsync);
+      const params = [messageToSign, this.props.currentAccountAddress];
+      let result;
+
+      try {
+        result = await send({ method, params, from: this.props.currentAccountAddress });
+      } catch(err) {
+        this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
+        setSubmitting(false);
+        return;
+      }
+      if (result.error) {
+        this.props.showNotification(NotificationStatus.Failure, "The redemption was canceled");
+        setSubmitting(false);
+        return;
+      }
+      let signature = result.result;
+      const signature1 =  signature.substring(0, signature.length-2);
+      const v = signature.substring(signature.length-2, signature.length);
+      if (v === "00") {
+        signature = signature1+"1b";
+      } else {
+        signature = signature1+"1c";
+      }
+      const signatureType = 1;
+      // const scheme = arc.scheme(schemeState.id);
+      // const reputationFromTokenScheme = scheme.ReputationFromToken as ReputationFromTokenScheme;
+      const contract =  arc.getContract(schemeState.address);
+
+      // send the transaction and get notifications
+      if (contract) {
+        // more information on this service is here: https://github.com/dOrgTech/TxPayerService
+        const txServiceUrl = "https://tx-sender-service.herokuapp.com/send-tx";
+        const data = {
+          to: schemeState.address,
+          methodAbi: {
+            "constant": false,
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_beneficiary",
+                "type": "address",
+              },
+              {
+                "internalType": "uint256",
+                "name": "_signatureType",
+                "type": "uint256",
+              },
+              {
+                "internalType": "bytes",
+                "name": "_signature",
+                "type": "bytes",
+              },
+            ],
+            "name": "redeemWithSignature",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256",
+              },
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function",
+          },
+          parameters: [values.accountAddress.toLowerCase(), signatureType, signature],
+        };
+        try {
+          this.props.showNotification(NotificationStatus.Success, "Sending the transaction to the payment service -- please be patient");
+          const response = await axios(txServiceUrl, {
+            method: "post",
+            data,
+          });
+          console.log(response);
+          if (response.data.status === 400) {
+            this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.message}`);
+          } else {
+            this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`);
+          }
+        } catch(err) {
+          console.log(err.message);
+          this.props.showNotification(NotificationStatus.Failure, `${err.message}}`);
+        }
+        // const tx = await contract.methods.redeemWithSignature(values.accountAddress.toLowerCase(), signatureType, signature).send(
+        //   {from: this.props.currentAccountAddress}
+        // )
+      } else {
+        throw Error("Scheme not found!?!");
+      }
+      // return (await _testSetup.reputationFromToken.redeemWithSignature(_beneficiary,signatureType,signature
+      // ,{from:_fromAccount}));
     } else {
-      const scheme = arc.scheme(state.id);
+      const scheme = arc.scheme(schemeState.id);
       this.props.redeemReputationFromToken(scheme, values.accountAddress, this.state.privateKey, this.state.redeemerAddress);
     }
     setSubmitting(false);
   }
 
   public render(): RenderOutput {
-    const { daoAvatarAddress, schemeState } = this.props;
+    const { daoAvatarAddress, schemeState, currentAccountAddress } = this.props;
     const redeemerAddress = this.state.redeemerAddress;
 
     const arc = getArc();
@@ -169,7 +282,8 @@ class ReputationFromToken extends React.Component<IProps, IState> {
           <Formik
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialValues={{
-              accountAddress: "",
+              accountAddress: currentAccountAddress,
+              useTxSenderService: false,
             } as IFormValues}
 
             validate={(values: IFormValues): void => {
@@ -195,6 +309,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             render={({
               errors,
               touched,
+              setFieldValue,
             }: FormikProps<IFormValues>) => {
               return <Form noValidate>
                 <div className={schemeCss.fields}>
@@ -217,8 +332,22 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit"
                     disabled={false}
+                    onClick={(_e)=>{
+                      setFieldValue("useTxSenderService",false);
+                    }}
                   >
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
+                  </button>
+                </div>
+                <div className={schemeCss.redemptionButton}>
+                  <div>Or try our new experimental feature:</div>
+                  <button type="submit"
+                    disabled={false}
+                    onClick={(_e)=>{
+                      setFieldValue("useTxSenderService",true);
+                    }}
+                  >
+                    <img src="/assets/images/Icon/redeem.svg"/> Redeem w/o paying gas
                   </button>
                 </div>
               </Form>;

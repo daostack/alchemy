@@ -158,8 +158,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const redeemMethod = contract.methods.redeem(addressToRedeem);
       let gasPrice = await arc.web3.eth.getGasPrice();
       gasPrice = gasPrice * 1.2;
-      const txToSign
-      = {
+      const txToSign = {
         gas,
         gasPrice,
         data: redeemMethod.encodeABI(),
