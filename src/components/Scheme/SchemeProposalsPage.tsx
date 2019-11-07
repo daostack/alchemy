@@ -218,36 +218,55 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const schemeId = props.scheme.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
-    // with all separate queries for votes and stakes and rewards...
-    const bigProposalQuery = gql`
-      query ProposalDataForSchemeProposalsPage {
-        proposals (where: {
-          scheme: "${schemeId}"
-          stage_in: [
-            "${IProposalStage[IProposalStage.Boosted]}",
-            "${IProposalStage[IProposalStage.PreBoosted]}",
-            "${IProposalStage[IProposalStage.Queued]}"
-            "${IProposalStage[IProposalStage.QuietEndingPeriod]}",
-          ]
-        }){
-          ...ProposalFields
-          votes (where: { voter: "${props.currentAccountAddress}"}) {
-            ...VoteFields
-          }
-          stakes (where: { staker: "${props.currentAccountAddress}"}) {
-            ...StakeFields
-          }
-          gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
-            ...RewardFields
+    // with all separate queries for votes and stakes and rewards...    let bigProposalQuery;
+    let bigProposalQuery;
+    if (props.currentAccountAddress) {
+      bigProposalQuery = gql`
+        query ProposalDataForSchemeProposalsPage {
+          proposals (where: {
+            scheme: "${schemeId}"
+            stage_in: [
+              "${IProposalStage[IProposalStage.Boosted]}",
+              "${IProposalStage[IProposalStage.PreBoosted]}",
+              "${IProposalStage[IProposalStage.Queued]}"
+              "${IProposalStage[IProposalStage.QuietEndingPeriod]}",
+            ]
+          }){
+            ...ProposalFields
+            votes (where: { voter: "${props.currentAccountAddress}"}) {
+              ...VoteFields
+            }
+            stakes (where: { staker: "${props.currentAccountAddress}"}) {
+              ...StakeFields
+            }
+            gpRewards (where: { beneficiary: "${props.currentAccountAddress}"}) {
+              ...RewardFields
+            }
           }
         }
-      }
-      ${Proposal.fragments.ProposalFields}
-      ${Vote.fragments.VoteFields}
-      ${Stake.fragments.StakeFields}
-      ${Reward.fragments.RewardFields}
-    `;
-    // await arc.getObservable(prefetchQuery, { subscribe: false }).pipe(first()).toPromise();
+        ${Proposal.fragments.ProposalFields}
+        ${Vote.fragments.VoteFields}
+        ${Stake.fragments.StakeFields}
+        ${Reward.fragments.RewardFields}
+        `;
+    } else {
+      bigProposalQuery = gql`
+        query ProposalDataForSchemeProposalsPage {
+          proposals (where: {
+            scheme: "${schemeId}"
+            stage_in: [
+              "${IProposalStage[IProposalStage.Boosted]}",
+              "${IProposalStage[IProposalStage.PreBoosted]}",
+              "${IProposalStage[IProposalStage.Queued]}"
+              "${IProposalStage[IProposalStage.QuietEndingPeriod]}",
+            ]
+          }){
+            ...ProposalFields
+          }
+        }
+        ${Proposal.fragments.ProposalFields}
+      `;
+    }
 
     return combineLatest(
       // the list of queued proposals
