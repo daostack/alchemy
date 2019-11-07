@@ -1,0 +1,28 @@
+.container {
+
+}
+
+:global {
+  html {
+    .rc-tooltip {
+      background-color: #001d35 !important;
+      border: solid 1px #fcfdff !important;
+      border-radius: 16px !important;
+    }
+
+    .rc-tooltip-inner {
+      background-color: #001d35 !important;
+      border-radius: 16px !important;
+      color: $white !important;
+    }
+
+    .rc-tooltip-arrow {
+      border-bottom-color: #001d35 !important;
+    }
+
+    // .rc-tooltip-arrow {
+    //   border-top-color: #001d35 !important;
+    //   border-bottom-color: #001d35 !important;
+    // }
+  }
+}
