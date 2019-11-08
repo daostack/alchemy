@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import { Address, ISchemeState, Token } from "@daostack/client";
 import axios from "axios";
-import { getWeb3Provider } from "arc";
+import { getWeb3Provider, getArcSettings } from "arc";
 import * as ethABI from "ethereumjs-abi";
 import * as queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
@@ -195,7 +195,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       // send the transaction and get notifications
       if (contract) {
         // more information on this service is here: https://github.com/dOrgTech/TxPayerService
-        const txServiceUrl = "https://tx-sender-service.herokuapp.com/send-tx";
+        const txServiceUrl = getArcSettings().txSenderServiceUrl;
         const data = {
           to: schemeState.address,
           methodAbi: {
@@ -339,17 +339,19 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
                 </div>
-                <div className={schemeCss.redemptionButton}>
-                  <div>Or try our new experimental feature:</div>
-                  <button type="submit"
-                    disabled={false}
-                    onClick={(_e)=>{
-                      setFieldValue("useTxSenderService",true);
-                    }}
-                  >
-                    <img src="/assets/images/Icon/redeem.svg"/> Redeem w/o paying gas
-                  </button>
-                </div>
+                {  getArcSettings().txSenderServiceUrl ?
+                  <div className={schemeCss.redemptionButton}>
+                    <div>Or try our new experimental feature:</div>
+                    <button type="submit"
+                      disabled={false}
+                      onClick={(_e)=>{
+                        setFieldValue("useTxSenderService",true);
+                      }}
+                    >
+                      <img src="/assets/images/Icon/redeem.svg"/> Redeem w/o paying gas
+                    </button>
+                  </div>
+                  : null }
               </Form>;
             }}
           />

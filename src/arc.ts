@@ -81,7 +81,7 @@ const web3ConnectProviderOptions =
 /**
  * return the default Arc configuration given the execution environment
  */
-function getArcSettings(): any {
+export function getArcSettings(): any {
   let arcSettings: any;
   switch (process.env.NODE_ENV || "development") {
     case "test": {
