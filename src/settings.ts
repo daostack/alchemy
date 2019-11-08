@@ -31,6 +31,6 @@ export const settings = {
       "protocol": process.env.ARC_IPFSPROVIDER_PROTOCOL || "https",
       "api-path": process.env.ARC_IPFSPROVIDER_API_PATH || "/ipfs-daostack/api/v0/",
     },
-    txSenderServiceUrl: "",
+    txSenderServiceUrl: "https://tx-sender-service-mainnet.herokuapp.com/send-tx",
   },
 };
