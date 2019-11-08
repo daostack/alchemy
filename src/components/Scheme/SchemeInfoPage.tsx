@@ -65,7 +65,7 @@ export default class SchemeInfo extends React.Component<IProps, null> {
     };
     const renderGpParams = (params: IGenesisProtocolParams): any => {
 
-      const activationTime = moment(params.activationTime);
+      const activationTime = moment(params.activationTime*1000);
 
       return <tbody>
         <tr><th>Activation Time:</th><td className={css.ellipsis}>{
