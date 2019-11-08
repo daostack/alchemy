@@ -18,6 +18,7 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import Toggle from "react-toggle";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -65,6 +66,8 @@ class Header extends React.Component<IProps, IStateProps> {
     this.copyAddress = this.copyAddress.bind(this);
   }
 
+  private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
+
   public copyAddress(e: any): void {
     const { showNotification, currentAccountAddress } = this.props;
     copyToClipboard(currentAccountAddress);
@@ -94,6 +97,10 @@ class Header extends React.Component<IProps, IStateProps> {
     this.props.toggleMenu();
   }
 
+  private handleTrainingTooltipsEnabled = () => (event: any): void => {
+    localStorage.setItem(Header.trainingTooltipsEnabledKey, event.target.checked);
+  }
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
@@ -104,6 +111,7 @@ class Header extends React.Component<IProps, IStateProps> {
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
+    const trainingTooltipsOn = localStorage.getItem(Header.trainingTooltipsEnabledKey) === "true";
 
     return(
       <div className={css.headerContainer}>
@@ -132,6 +140,13 @@ class Header extends React.Component<IProps, IStateProps> {
               compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
+          <TrainingTooltip placement="bottom" overlay={"Show / hide tooltips on hover"}>
+            <div className={css.toggleButton}>
+              <Toggle
+                defaultChecked={trainingTooltipsOn}
+                onChange={this.handleTrainingTooltipsEnabled()}/>
+            </div>
+          </TrainingTooltip>
           <div className={css.redemptionsButton}>
             <RedemptionsButton currentAccountAddress={currentAccountAddress} />
           </div>
