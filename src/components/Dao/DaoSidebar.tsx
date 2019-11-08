@@ -8,7 +8,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
-import { formatTokens, getExchangesList, supportedTokens } from "lib/util";
+import { ethErrorHandler, formatTokens, getExchangesList, supportedTokens } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { first } from "rxjs/operators";
@@ -218,13 +218,13 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
 }
 
 /***** DAO ETH Balance *****/
-interface IEthProps extends ISubscriptionProps<any> {
+interface IEthProps extends ISubscriptionProps<BN|null> {
   dao: IDAOState;
 }
+
 const ETHBalance = (props: IEthProps) => {
   const { data } = props;
-
-  return <li key="ETH"><strong>{formatTokens(new BN(data))}</strong> ETH</li>;
+  return <li key="ETH"><strong>{formatTokens(data)}</strong> ETH</li>;
 };
 
 const SubscribedEthBalance = withSubscription({
@@ -236,7 +236,7 @@ const SubscribedEthBalance = withSubscription({
   },
   createObservable: (props: IEthProps) => {
     const arc = getArc();
-    return arc.dao(props.dao.address).ethBalance();
+    return arc.dao(props.dao.address).ethBalance().pipe(ethErrorHandler());
   },
 });
 
@@ -274,7 +274,7 @@ const SubscribedTokenBalance = withSubscription({
 
     const arc = getArc();
     const token = new Token(props.tokenAddress, arc);
-    return token.balanceOf(props.dao.address);
+    return token.balanceOf(props.dao.address).pipe(ethErrorHandler());
   },
 });
 

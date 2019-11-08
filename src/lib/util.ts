@@ -7,11 +7,13 @@ import {
   IRewardState,
   ISchemeState } from "@daostack/client";
 import { GenericSchemeRegistry } from "genericSchemeRegistry";
-import { getArc } from "../arc";
+import { of } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 import BN = require("bn.js");
-import moment = require("moment");
+import { getArc } from "../arc";
 
+import moment = require("moment");
 const Web3 = require("web3");
 const tokens = require("data/tokens.json");
 const exchangesList = require("data/exchangesList.json");
@@ -104,7 +106,11 @@ export function supportedTokens() {
   }, ...tokens};
 }
 
-export function formatTokens(amountWei: BN, symbol?: string, decimals = 18): string {
+export function formatTokens(amountWei: BN|null, symbol?: string, decimals = 18): string {
+
+  if (amountWei === null) {
+    return `N/A ${symbol ? symbol: ""}`;
+  }
 
   const negative = amountWei.lt(new BN(0));
   const toSignedString = (amount: string) => { return  (negative ? "-" : "") + amount + (symbol ? " " + symbol : ""); };
@@ -344,7 +350,7 @@ export type AccountClaimableRewardsType = { [key: string]: BN };
  * Returns an object describing GenesisProtocol non-zero, unredeemed reward amounts for the current user, optionally
  * filtered by whether the DAO has the funds to pay the rewards.
  * @param reward unredeemed GP rewards for the current user
- * @param daoBalances 
+ * @param daoBalances
  */
 export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
   if (!reward) {
@@ -361,7 +367,7 @@ export function getGpRewards(reward: IRewardState, daoBalances: { [key: string]:
   /**
    * note the following assume that the GenesisProtocol is using GEN for staking
    */
-  if (reward.tokensForStaker.gt(new BN(0)) 
+  if (reward.tokensForStaker.gt(new BN(0))
     && (daoBalances["GEN"] === undefined || daoBalances["GEN"].gte(reward.tokensForStaker))
     && (reward.tokensForStakerRedeemedAt === 0)) {
     result.tokensForStaker = reward.tokensForStaker;
@@ -389,14 +395,14 @@ export function hasGpRewards(reward: IRewardState) {
  * Returns an object describing ContributionReward non-zero, unredeemed reward amounts for the CR beneficiary, optionally
  * filtered by whether the DAO has the funds to pay the rewards.
  * @param  reward unredeemed CR rewards
- * @param daoBalances 
+ * @param daoBalances
  */
-export function getCRRewards(reward: IContributionReward, daoBalances: { [key: string]: BN } = {}): AccountClaimableRewardsType {
+export function getCRRewards(reward: IContributionReward, daoBalances: { [key: string]: BN|null } = {}): AccountClaimableRewardsType {
   const result: AccountClaimableRewardsType = {};
   if (
     reward.ethReward &&
     !reward.ethReward.isZero()
-    && (daoBalances["eth"] === undefined || daoBalances["eth"].gte(reward.ethReward))
+    && (daoBalances["eth"] === undefined || daoBalances["eth"]=== null|| daoBalances["eth"].gte(reward.ethReward))
     && reward.alreadyRedeemedEthPeriods < reward.periods
   ) {
     result["eth"] = reward.ethReward;
@@ -460,7 +466,7 @@ export enum GetSchemeIsActiveActions {
 }
 
 const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, string>>([
-  [ 
+  [
     "SchemeRegistrar" , new Map<GetSchemeIsActiveActions, string>([
       [GetSchemeIsActiveActions.Register, "voteRegisterParams"],
       [GetSchemeIsActiveActions.Remove, "voteRemoveParams"],
@@ -521,4 +527,13 @@ export function getSchemeIsActive(scheme: ISchemeState, action?: GetSchemeIsActi
 export function roundUp(num: number, precision: number) {
   precision = Math.pow(10, precision);
   return Math.ceil(num * precision) / precision;
+}
+
+// error handler for ethereum subscriptions
+export function ethErrorHandler() {
+  const returnValueOnError: any = null; // return this when there is an error
+  return catchError((err: any) => {
+    console.log(`Error! ${err.message}`);
+    return of(returnValueOnError);
+  });
 }
