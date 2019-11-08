@@ -35,16 +35,16 @@
     "moduleNameMapper": {
       "\\.(scss|css|less|svg|png|jpg)$": "identity-obj-proxy",
       "^arc": "<rootDir>/src/arc",
-      "^actions(.*)$": "<rootDir>/src/actions$1",
+      "^actions/(.*)$": "<rootDir>/src/actions/$1",
       "^components(.*)$": "<rootDir>/src/components$1",
-      "^data(.*)$": "<rootDir>/data$1",
-      "^genericSchemeRegistry(.*)$": "<rootDir>/src/genericSchemeRegistry$1",
-      "^layouts(.*)$": "<rootDir>/src/layouts$1",
+      "^data/(.*)$": "<rootDir>/data/$1",
+      "^genericSchemeRegistry/(.*)$": "<rootDir>/src/genericSchemeRegistry/$1",
+      "^layouts/(.*)$": "<rootDir>/src/layouts/$1",
       "^lib/(.*)$": "<rootDir>/src/lib/$1",
-      "^reducers(.*)$": "<rootDir>/src/reducers$1",
-      "^selectors(.*)$": "<rootDir>/src/selectors$1",
-      "^schemas(.*)$": "<rootDir>/src/schemas$1",
-      "^src(.*)$": "<rootDir>/src$1"
+      "^reducers/(.*)$": "<rootDir>/src/reducers/$1",
+      "^selectors/(.*)$": "<rootDir>/src/selectors/$1",
+      "^schemas/(.*)$": "<rootDir>/src/schemas/$1",
+      "^src/(.*)$": "<rootDir>/src/$1"
     },
     "setupFiles": [
       "jest-canvas-mock"
