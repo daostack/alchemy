@@ -50,11 +50,13 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 interface IDispatchProps {
   showNotification: typeof showNotification;
   toggleMenu: typeof uiActions.toggleMenu;
+  toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
 }
 
 const mapDispatchToProps = {
   showNotification,
   toggleMenu: uiActions.toggleMenu,
+  toggleTrainingTooltipsOnHover: uiActions.toggleTrainingTooltipsOnHover,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
@@ -99,6 +101,7 @@ class Header extends React.Component<IProps, IStateProps> {
 
   private handleTrainingTooltipsEnabled = () => (event: any): void => {
     localStorage.setItem(Header.trainingTooltipsEnabledKey, event.target.checked);
+    this.props.toggleTrainingTooltipsOnHover();
   }
 
   public render(): RenderOutput {
@@ -111,7 +114,8 @@ class Header extends React.Component<IProps, IStateProps> {
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
-    const trainingTooltipsOn = localStorage.getItem(Header.trainingTooltipsEnabledKey) === "true";
+    const trainingTooltipsOnSetting = localStorage.getItem(Header.trainingTooltipsEnabledKey);
+    const trainingTooltipsOn = (trainingTooltipsOnSetting === null) || trainingTooltipsOnSetting === "true";
 
     return(
       <div className={css.headerContainer}>

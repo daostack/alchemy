@@ -1,15 +1,27 @@
 import {default as Tooltip, RCTooltip} from "rc-tooltip";
 import * as React from "react";
-// import * as css from "./TrainingTooltip.scss";
 import "./TrainingTooltip.scss";
+import { IRootState } from "reducers";
+import { connect } from "react-redux";
+
+interface IStateProps {
+  enableHover: boolean;
+}
 
 export interface IExternalProps extends RCTooltip.Props {
 
 }
 
-type IProps = IExternalProps;
+type IProps = IExternalProps & IStateProps;
 
-export default class TrainingToolip extends React.Component<IProps, null> {
+const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    enableHover: state.ui.trainingTooltipsOnHover,
+  };
+};
+
+class TrainingToolip extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     return (
@@ -19,3 +31,5 @@ export default class TrainingToolip extends React.Component<IProps, null> {
     );
   }
 }
+
+export default connect(mapStateToProps)(TrainingToolip);
