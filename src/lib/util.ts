@@ -237,7 +237,7 @@ export function schemeName(scheme: ISchemeState|IContractInfo, fallback?: string
     }
   } else if (scheme.name) {
     // add spaces before capital letters to approximate a human-readable title
-    name = scheme.name.replace(/([A-Z])/g, " $1");
+    name = `${scheme.name[0]}${scheme.name.slice(1).replace(/([A-Z])/g, " $1")}`;
   } else {
     name = fallback;
   }

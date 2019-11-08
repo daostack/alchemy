@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import { isValidUrl } from "lib/util";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -72,6 +73,8 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
   public render(): RenderOutput {
     const { handleClose } = this.props;
 
+    const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
+
     return (
       <div className={css.contributionReward}>
         <Formik
@@ -136,11 +139,13 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
             setFieldValue,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
-              <label htmlFor="titleInput">
+              <TrainingTooltip overlay="The title is the header of the proposal card and will be the first visible information about your proposal" placement="right">
+                <label htmlFor="titleInput">
                 Title
-                <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-                <div className={css.requiredMarker}>*</div>
-              </label>
+                  <ErrorMessage name="title">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                  <div className={css.requiredMarker}>*</div>
+                </label>
+              </TrainingTooltip>
               <Field
                 autoFocus
                 id="titleInput"
@@ -151,12 +156,14 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
                 className={touched.title && errors.title ? css.error : null}
               />
 
-              <label htmlFor="descriptionInput">
+              <TrainingTooltip overlay={fnDescription} placement="right">
+                <label htmlFor="descriptionInput">
                 Description
-                <div className={css.requiredMarker}>*</div>
-                <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
-                <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-              </label>
+                  <div className={css.requiredMarker}>*</div>
+                  <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
+                  <ErrorMessage name="description">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
+              </TrainingTooltip>
               <Field
                 component={MarkdownField}
                 onChange={(value: any) => { setFieldValue("description", value); }}
@@ -166,18 +173,22 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
                 className={touched.description && errors.description ? css.error : null}
               />
 
-              <label className={css.tagSelectorLabel}>
+              <TrainingTooltip overlay="Add some tags to give context about your proposal e.g. idea, signal, bounty, research, etc" placement="right">
+                <label className={css.tagSelectorLabel}>
                 Tags
-              </label>
+                </label>
+              </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
                 <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
               </div>
 
-              <label htmlFor="urlInput">
+              <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
+                <label htmlFor="urlInput">
                 URL
-                <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
-              </label>
+                  <ErrorMessage name="url">{(msg: string) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
+                </label>
+              </TrainingTooltip>
               <Field
                 id="urlInput"
                 maxLength={120}
@@ -225,9 +236,11 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
-                <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
+                <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
+                  <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                   Submit proposal
-                </button>
+                  </button>
+                </TrainingTooltip>
               </div>
             </Form>
           }

@@ -14,6 +14,7 @@ import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import classNames from "classnames";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
 
@@ -131,47 +132,53 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           :
           <div>
             <div className={css.boostedContainer}>
-              <div className={css.proposalsHeader}>
+              <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
+                <div className={css.proposalsHeader}>
                 Boosted Proposals ({scheme.numberOfBoostedProposals})
-                {proposalsBoosted.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                  : " "
-                }
-              </div>
+                  {proposalsBoosted.length === 0
+                    ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                    : " "
+                  }
+                </div>
+              </TrainingTooltip>
               <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
                 {boostedProposalsHTML}
               </div>
             </div>
 
             <div className={css.regularContainer}>
-              <div className={css.proposalsHeader}>
+              <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                <div className={css.proposalsHeader}>
                 Pending Proposals ({scheme.numberOfPreBoostedProposals})
-                {proposalsPreBoosted.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                  : " "
-                }
-              </div>
+                  {proposalsPreBoosted.length === 0
+                    ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                    : " "
+                  }
+                </div>
+              </TrainingTooltip>
               <div className={css.proposalsContainer}>
                 {preBoostedProposalsHTML}
               </div>
             </div>
             <div className={css.regularContainer}>
-              <div className={css.proposalsHeader}>
+              <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
+                <div className={css.proposalsHeader}>
                 Regular Proposals ({scheme.numberOfQueuedProposals})
-                {proposalsQueued.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                  : " "
-                }
-              </div>
+                  {proposalsQueued.length === 0
+                    ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                    : " "
+                  }
+                </div>
+              </TrainingTooltip>
               <div className={css.proposalsContainer}>
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
