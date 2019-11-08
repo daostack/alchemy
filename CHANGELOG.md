@@ -2,12 +2,18 @@
   - Features Added
   - Bugs Fixed
 
-### Current Release
+## Next release
+  - Features Added
+  - Bugs Fixed
+
+### 2019-11-05
   - Features Added
     - prevent attempting redemptions unless there exist sufficient resources to pay out at least one reward
     - added informative tooltips for application training
+    - gasless ReputationFromTokens using the tx-sender service
   - Bugs Fixed
     - fixed display of scheme activation time
+    - application behaves better whne the ethereum connection goes down or is unavailable
 
 ### 2019-11-05
 
