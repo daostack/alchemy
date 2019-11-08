@@ -65,11 +65,11 @@ export default class SchemeInfo extends React.Component<IProps, null> {
     };
     const renderGpParams = (params: IGenesisProtocolParams): any => {
 
-      const activationTime = moment(params.activationTime*1000);
+      const activationTime = moment.unix(params.activationTime);
 
       return <tbody>
         <tr><th>Activation Time:</th><td className={css.ellipsis}>{
-          `${ activationTime.format("MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
+          `${ activationTime.format("h:mm A z[GMT] on MMMM Do, YYYY")} ${activationTime.isSameOrBefore(moment()) ? "(active)" : "(inactive)"}`
         }</td></tr>
         <tr><th>Boosted Vote Period Limit:</th><td>{duration(params.boostedVotePeriodLimit)} ({params.boostedVotePeriodLimit} seconds)</td></tr>
         <tr><th>DAO Bounty Constant:</th><td>{params.daoBountyConst}</td></tr>
