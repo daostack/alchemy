@@ -133,10 +133,10 @@
     label {
       color: rgba(80, 97, 118, 1.000);
       display: block;
-      width: 372px;
+      width: fit-content;
       font-size: 13px;
       font-weight: bold;
-      padding: 5px 0 0 0;
+      padding: 5px 6px 0 0;
       position: relative;
 
       .requiredMarker {
@@ -158,8 +158,7 @@
 
     .errorMessage {
       font-weight: normal;
-      position: relative;
-      left: 10px;
+      padding-left: 10px;
       color: rgba(246, 80, 80, 1.000);
       font-size: 11px;
       font-weight: 300;

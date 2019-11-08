@@ -14,15 +14,12 @@ import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
 import classNames from "classnames";
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import ProposalCard from "../Proposal/ProposalCard";
 import * as css from "./SchemeProposals.scss";
 
 // For infinite scrolling
 const PAGE_SIZE = 100;
-
-// Have to fix this so that scrolling doesn't load weird different sets of proposals as the time changes
-// TODO: This is somewhat broken, it needs to get set on the initial render and reset/updated over time somehow?
-const currentTime = Math.floor(new Date().getTime() / 1000);
 
 const Fade = ({ children, ...props }: any): any => (
   <CSSTransition
@@ -74,7 +71,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
-    const { currentAccountAddress, fetchMore, hasMoreToLoad, isActive, scheme } = this.props;
+    const { currentAccountAddress, fetchMore, isActive, scheme } = this.props;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
@@ -135,56 +132,61 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           :
           <div>
             <div className={css.boostedContainer}>
-              <div className={css.proposalsHeader}>
-                Boosted Proposals ({proposalsBoosted.length})
-                {proposalsBoosted.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                  : " "
-                }
-              </div>
+              <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
+                <div className={css.proposalsHeader}>
+                Boosted Proposals ({scheme.numberOfBoostedProposals})
+                  {proposalsBoosted.length === 0
+                    ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                    : " "
+                  }
+                </div>
+              </TrainingTooltip>
               <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
                 {boostedProposalsHTML}
               </div>
             </div>
 
             <div className={css.regularContainer}>
-              <div className={css.proposalsHeader}>
-                Pending Proposals ({proposalsPreBoosted.length})
-                {proposalsPreBoosted.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                  : " "
-                }
-              </div>
+              <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                <div className={css.proposalsHeader}>
+                Pending Proposals ({scheme.numberOfPreBoostedProposals})
+                  {proposalsPreBoosted.length === 0
+                    ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                    : " "
+                  }
+                </div>
+              </TrainingTooltip>
               <div className={css.proposalsContainer}>
                 {preBoostedProposalsHTML}
               </div>
             </div>
             <div className={css.regularContainer}>
-              <div className={css.proposalsHeader}>
-                Regular Proposals ({proposalsQueued.length}{hasMoreToLoad ? "+" : ""})
-                {proposalsQueued.length === 0
-                  ?
-                  <div>
-                    <img src="/assets/images/yoga.svg"/>
-                  </div>
-                  : " "
-                }
-              </div>
+              <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
+                <div className={css.proposalsHeader}>
+                Regular Proposals ({scheme.numberOfQueuedProposals})
+                  {proposalsQueued.length === 0
+                    ?
+                    <div>
+                      <img src="/assets/images/yoga.svg"/>
+                    </div>
+                    : " "
+                  }
+                </div>
+              </TrainingTooltip>
               <div className={css.proposalsContainer}>
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
                   next={fetchMore}
-                  hasMore={hasMoreToLoad}
+                  hasMore={proposalsQueued.length < scheme.numberOfQueuedProposals}
                   loader={<h4>Fetching more proposals...</h4>}
                   endMessage={
                     <p style={{textAlign: "center"}}>
-                      <b>&mdash;</b>
                     </p>
                   }
                 >
@@ -218,7 +220,6 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     const schemeId = props.scheme.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
-    // with all separate queries for votes and stakes and rewards...    let bigProposalQuery;
     let bigProposalQuery;
     if (props.currentAccountAddress) {
       bigProposalQuery = gql`
@@ -248,7 +249,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         ${Vote.fragments.VoteFields}
         ${Stake.fragments.StakeFields}
         ${Reward.fragments.RewardFields}
-        `;
+      `;
     } else {
       bigProposalQuery = gql`
         query ProposalDataForSchemeProposalsPage {
@@ -272,7 +273,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
       // the list of queued proposals
       dao.proposals({
         // eslint-disable-next-line @typescript-eslint/camelcase
-        where: { scheme: schemeId, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
+        where: { scheme: schemeId, stage: IProposalStage.Queued },
         orderBy: "confidence",
         orderDirection: "desc",
         first: PAGE_SIZE,
@@ -299,9 +300,6 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
     );
   },
 
-  // used for hacky pagination tracking
-  pageSize: PAGE_SIZE,
-
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
     const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const arc = getArc();
@@ -309,7 +307,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
 
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
-      where: { scheme: props.scheme.id, stage: IProposalStage.Queued, expiresInQueueAt_gt: currentTime },
+      where: { scheme: props.scheme.id, stage: IProposalStage.Queued },
       orderBy: "confidence",
       orderDirection: "desc",
       first: PAGE_SIZE,

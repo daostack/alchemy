@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
 import { getArc } from "arc";
+import { ethErrorHandler } from "lib/util";
 
 import BN = require("bn.js");
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -131,9 +132,12 @@ export default withSubscription({
         // TODO: also need the member state for the proposal proposer and beneficiary
         //      but since we need the proposal state first to get those addresses we will need to
         //      update the client query to load them inline
-        concat(of(new BN("0")), arcDao.ethBalance()),
-        arc.GENToken().balanceOf(currentAccountAddress),
-        arc.allowance(currentAccountAddress, spender),
+        concat(of(new BN("0")), arcDao.ethBalance())
+          .pipe(ethErrorHandler()),
+        arc.GENToken().balanceOf(currentAccountAddress)
+          .pipe(ethErrorHandler()),
+        arc.allowance(currentAccountAddress, spender)
+          .pipe(ethErrorHandler())
       );
     } else {
       return combineLatest(
@@ -142,8 +146,9 @@ export default withSubscription({
         of([]), // stakes
         of(null), // rewards
         of(null), // current account member state
-        concat(of(new BN("0")), arcDao.ethBalance()), // dao eth balance
-        of(new BN("0")), // current account gen balance
+        concat(of(new BN(0)), arcDao.ethBalance()) // dao eth balance
+          .pipe(ethErrorHandler()),
+        of(new BN(0)), // current account gen balance
         of(null), // current account GEN allowance
       );
     }

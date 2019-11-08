@@ -1,4 +1,5 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
+import { ethErrorHandler } from "lib/util";
 
 import BN = require("bn.js");
 import AccountBalance from "components/Account/AccountBalance";
@@ -13,7 +14,7 @@ interface IExternalProps {
   address: Address;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN, BN]>
+type IProps = IExternalProps & ISubscriptionProps<[IMemberState, BN|null, BN|null]>
 
 class AccountBalances extends React.Component<IProps, null>  {
 
@@ -70,8 +71,8 @@ export default withSubscription({
     const arc = daoState.dao.context;
     return combineLatest(
       address && daoState.dao.member(address).state( { subscribe: true }) || of(null),
-      arc.ethBalance(address),
-      arc.GENToken().balanceOf(address),
+      arc.ethBalance(address).pipe(ethErrorHandler()),
+      arc.GENToken().balanceOf(address).pipe(ethErrorHandler()),
     );
   },
 });

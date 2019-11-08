@@ -81,7 +81,7 @@ const web3ConnectProviderOptions =
 /**
  * return the default Arc configuration given the execution environment
  */
-function getArcSettings(): any {
+export function getArcSettings(): any {
   let arcSettings: any;
   switch (process.env.NODE_ENV || "development") {
     case "test": {
@@ -576,7 +576,6 @@ export interface IEnableWalletProviderParams {
  * @returns Promise of true on success
  */
 export async function enableWalletProvider(options: IEnableWalletProviderParams): Promise<boolean> {
-  let msg: string;
   try {
 
     if (inTesting()) {
@@ -618,7 +617,11 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
     }
 
   } catch(err) {
-    msg = err.message || "Unable to connect to the web3 provider";
+    let msg: string;
+    msg = err.message || "Unable to connect to the ethereum provider";
+    if (msg.match(/response has no error or result for request/g)) {
+      msg = "Unable to connect to ethereum provider, sorry :-(";
+    }
     if (options.showNotification) {
       options.showNotification(NotificationStatus.Failure, msg);
     } else {

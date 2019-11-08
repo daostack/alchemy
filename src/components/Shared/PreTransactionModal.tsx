@@ -37,6 +37,7 @@ interface IProps {
   proposal: IProposalState;
   secondaryHeader?: string;
   showNotification: typeof showNotification;
+  multiLineMsg?: boolean;
 }
 
 interface IState {
@@ -78,7 +79,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   }
 
   public render(): RenderOutput {
-    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, proposal, secondaryHeader } = this.props;
+    const { actionType, beneficiaryProfile, currentAccount, currentAccountGens, dao, effectText, multiLineMsg, proposal, secondaryHeader } = this.props;
     const { stakeAmount } = this.state;
 
     let icon; let transactionType; let rulesHeader; let rules; let actionTypeClass;
@@ -221,7 +222,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               <div className={css.transactionIcon}>{icon}</div>
               <div className={css.transactionInfo}>
                 <span className={css.transactionType}>{transactionType}</span>
-                &nbsp; | &nbsp;
+                { !multiLineMsg ? <span className={css.titleSeparator}>|</span>: "" }
                 <span className={css.secondaryHeader}>{secondaryHeader}</span>
                 <div className={css.transactionEffect}>
                   {effectText}

@@ -9,7 +9,6 @@ import RedemptionsButton from "components/Redemptions/RedemptionsButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard } from "lib/util";
 import * as queryString from "query-string";
-import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Link, matchPath, NavLink, RouteComponentProps } from "react-router-dom";
@@ -18,7 +17,7 @@ import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
-
+import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -118,11 +117,13 @@ class Header extends React.Component<IProps, IStateProps> {
                 <img src="/assets/images/Icon/Close.svg"/> :
                 <img src="/assets/images/Icon/Menu.svg"/>}
             </div> : "" }
-          <div className={css.menu}>
-            <Link to="/">
-              <img src="/assets/images/alchemy-logo-white.svg"/>
-            </Link>
-          </div>
+          <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="bottomRight">
+            <div className={css.menu}>
+              <Link to="/">
+                <img src="/assets/images/alchemy-logo-white.svg"/>
+              </Link>
+            </div>
+          </TrainingTooltip>
           <div className={css.topInfo}>
             <Breadcrumbs
               separator={<b> &gt;   </b>}
@@ -185,19 +186,19 @@ class Header extends React.Component<IProps, IStateProps> {
             }
             {!currentAccountAddress ?
               <div className={css.web3ProviderLogin}>
-                <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
+                <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
                   <button onClick={this.handleClickLogin} data-test-id="loginButton">
                     Log in <img src="/assets/images/Icon/login-white.svg"/>
                   </button>
-                </Tooltip>
+                </TrainingTooltip>
               </div>
               : (!accountIsEnabled) ?
                 <div className={css.web3ProviderLogin}>
-                  <Tooltip placement="bottom" trigger={["hover"]} overlay={"Connect to a wallet provider"}>
+                  <TrainingTooltip placement="bottomLeft" overlay={"Click here to connect your wallet provider"}>
                     <button onClick={this.handleConnect} data-test-id="connectButton">
                       <span className={css.connectButtonText}>Connect</span><img src="/assets/images/Icon/login-white.svg"/>
                     </button>
-                  </Tooltip>
+                  </TrainingTooltip>
                 </div>
                 : ""
             }
