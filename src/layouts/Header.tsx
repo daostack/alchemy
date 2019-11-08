@@ -19,6 +19,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Toggle from "react-toggle";
+import Tooltip from "rc-tooltip";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -144,13 +145,14 @@ class Header extends React.Component<IProps, IStateProps> {
               compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
-          <TrainingTooltip placement="bottom" overlay={"Show / hide tooltips on hover"}>
+          <Tooltip placement="bottom" overlay={"Show / hide tooltips on hover"}>
             <div className={css.toggleButton}>
               <Toggle
                 defaultChecked={trainingTooltipsOn}
-                onChange={this.handleTrainingTooltipsEnabled()}/>
+                onChange={this.handleTrainingTooltipsEnabled()}
+                icons={{ checked: <img src='/assets/images/Icon/checked.svg'/>, unchecked: <img src='/assets/images/Icon/unchecked.svg'/> }}/>
             </div>
-          </TrainingTooltip>
+          </Tooltip>
           <div className={css.redemptionsButton}>
             <RedemptionsButton currentAccountAddress={currentAccountAddress} />
           </div>
