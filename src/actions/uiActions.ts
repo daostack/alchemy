@@ -32,3 +32,21 @@ export function toggleMenu() {
     dispatch({ type: _getState().ui.menuOpen? ActionTypes.HIDE_MENU: ActionTypes.SHOW_MENU });
   };
 }
+
+export function enableTrainingTooltipsOnHover() {
+  return (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    dispatch({ type: ActionTypes.ENABLE_TRAINING_TOOLTIPS_ON_HOVER });
+  };
+}
+
+export function disableTrainingTooltipsOnHover() {
+  return (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    dispatch({ type: ActionTypes.DISABLE_TRAINING_TOOLTIPS_ON_HOVER });
+  };
+}
+
+export function toggleTrainingTooltipsOnHover() {
+  return (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    dispatch({ type: _getState().ui.trainingTooltipsOnHover? ActionTypes.DISABLE_TRAINING_TOOLTIPS_ON_HOVER: ActionTypes.ENABLE_TRAINING_TOOLTIPS_ON_HOVER });
+  };
+}

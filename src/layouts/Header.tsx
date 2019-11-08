@@ -18,6 +18,8 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import Toggle from "react-toggle";
+import Tooltip from "rc-tooltip";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -49,11 +51,13 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 interface IDispatchProps {
   showNotification: typeof showNotification;
   toggleMenu: typeof uiActions.toggleMenu;
+  toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
 }
 
 const mapDispatchToProps = {
   showNotification,
   toggleMenu: uiActions.toggleMenu,
+  toggleTrainingTooltipsOnHover: uiActions.toggleTrainingTooltipsOnHover,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
@@ -64,6 +68,8 @@ class Header extends React.Component<IProps, IStateProps> {
     super(props);
     this.copyAddress = this.copyAddress.bind(this);
   }
+
+  private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
 
   public copyAddress(e: any): void {
     const { showNotification, currentAccountAddress } = this.props;
@@ -94,6 +100,11 @@ class Header extends React.Component<IProps, IStateProps> {
     this.props.toggleMenu();
   }
 
+  private handleTrainingTooltipsEnabled = () => (event: any): void => {
+    localStorage.setItem(Header.trainingTooltipsEnabledKey, event.target.checked);
+    this.props.toggleTrainingTooltipsOnHover();
+  }
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
@@ -104,6 +115,8 @@ class Header extends React.Component<IProps, IStateProps> {
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
+    const trainingTooltipsOnSetting = localStorage.getItem(Header.trainingTooltipsEnabledKey);
+    const trainingTooltipsOn = (trainingTooltipsOnSetting === null) || trainingTooltipsOnSetting === "true";
 
     return(
       <div className={css.headerContainer}>
@@ -132,6 +145,14 @@ class Header extends React.Component<IProps, IStateProps> {
               compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
+          <Tooltip placement="bottom" overlay={"Show / hide tooltips on hover"}>
+            <div className={css.toggleButton}>
+              <Toggle
+                defaultChecked={trainingTooltipsOn}
+                onChange={this.handleTrainingTooltipsEnabled()}
+                icons={{ checked: <img src='/assets/images/Icon/checked.svg'/>, unchecked: <img src='/assets/images/Icon/unchecked.svg'/> }}/>
+            </div>
+          </Tooltip>
           <div className={css.redemptionsButton}>
             <RedemptionsButton currentAccountAddress={currentAccountAddress} />
           </div>
