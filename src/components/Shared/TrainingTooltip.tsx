@@ -6,47 +6,64 @@ import { connect } from "react-redux";
 
 interface IAppStateProps {
   enableHover: boolean;
+  showAll: boolean;
 }
 
 interface IStateProps {
-  visible: boolean;
+  showingAll: boolean;
+  turningOffShowingAll: boolean;
 }
 
 export interface IExternalProps extends RCTooltip.Props {
 
 }
 
-type IProps = IExternalProps & IStateProps & IAppStateProps;
+type IProps = IExternalProps & IAppStateProps;
 
 const mapStateToProps = (state: IRootState & IAppStateProps, ownProps: IExternalProps): IExternalProps & IAppStateProps => {
   return {
     ...ownProps,
     enableHover: state.ui.trainingTooltipsOnHover,
+    showAll: state.ui.trainingTooltipsShowAll,
   };
 };
 
 class TrainingToolip extends React.Component<IProps, IStateProps> {
 
-  constructor(props: IProps) {
-    super(props);
-    this.state = { visible: true };
-  }
-
-  private afterVisibleChange = () => (visible: boolean) => {
-    if (visible !== this.state.visible)
-    {
-      this.setState({ visible });
+  static getDerivedStateFromProps(nextProps: IProps, prevState: IStateProps): IStateProps|undefined {
+    if (!nextProps.showAll && prevState.showingAll) {
+      return { showingAll: false, turningOffShowingAll: true };
+    } else if (nextProps.showAll && !prevState.showingAll) {
+      return { showingAll: true, turningOffShowingAll: false };
     }
   }
 
+  constructor(props: IProps) {
+    super(props);
+    this.state = { showingAll: false, turningOffShowingAll: false };
+  }
+
+  private tooltip = React.createRef<Tooltip>();
+
   public render(): RenderOutput {
 
+    const extraProps = {} as any;
+
+    if (this.props.showAll) {
+      if (this.props.enableHover) {
+        extraProps.visible = true;
+      }
+    } else if (this.state.turningOffShowingAll) {
+      setTimeout(() => {
+        (this.tooltip.current as any).trigger.onMouseLeave({});
+      }, 0);
+    }
+
     return (
-      <Tooltip {...this.props}
+      <Tooltip ref={this.tooltip} {...this.props} {...extraProps}
         prefixCls="rc-trainingtooltip"
         trigger={this.props.enableHover ? ["hover"] : []}
-        // visible={this.props.enableHover && (!this.props.trigger || !!this.props.trigger.length)}
-        afterVisibleChange={this.afterVisibleChange()}>
+      >
         {this.props.children}
       </Tooltip>
     );

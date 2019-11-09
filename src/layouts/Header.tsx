@@ -20,6 +20,7 @@ import { of } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Toggle from "react-toggle";
 import Tooltip from "rc-tooltip";
+import { RefObject } from "react";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -52,12 +53,16 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
   toggleMenu: typeof uiActions.toggleMenu;
   toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
+  enableTrainingTooltipsShowAll: typeof  uiActions.enableTrainingTooltipsShowAll;
+  disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
 }
 
 const mapDispatchToProps = {
   showNotification,
   toggleMenu: uiActions.toggleMenu,
   toggleTrainingTooltipsOnHover: uiActions.toggleTrainingTooltipsOnHover,
+  enableTrainingTooltipsShowAll: uiActions.enableTrainingTooltipsShowAll,
+  disableTrainingTooltipsShowAll: uiActions.disableTrainingTooltipsShowAll,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
@@ -67,9 +72,20 @@ class Header extends React.Component<IProps, IStateProps> {
   constructor(props: IProps) {
     super(props);
     this.copyAddress = this.copyAddress.bind(this);
+    this.toggleDiv = React.createRef();
   }
 
   private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
+  private toggleDiv: RefObject<HTMLDivElement>;
+
+  public componentDidMount() {
+    this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
+      this.props.enableTrainingTooltipsShowAll();
+    };
+    this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
+      this.props.disableTrainingTooltipsShowAll();
+    };
+  }
 
   public copyAddress(e: any): void {
     const { showNotification, currentAccountAddress } = this.props;
@@ -145,8 +161,8 @@ class Header extends React.Component<IProps, IStateProps> {
               compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
-          <Tooltip placement="bottom" overlay={"Show / hide tooltips on hover"}>
-            <div className={css.toggleButton}>
+          <Tooltip placement="left" overlay={"Show / hide tooltips on hover"}>
+            <div className={css.toggleButton} ref={this.toggleDiv}>
               <Toggle
                 defaultChecked={trainingTooltipsOn}
                 onChange={this.handleTrainingTooltipsEnabled()}
