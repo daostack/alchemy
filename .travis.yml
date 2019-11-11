@@ -30,7 +30,6 @@ script:
 
   # show the daos that are indexed
   - ./scripts/checkDaos.sh
-  - echo -en 'travis_fold:end:script.4\\r'
 
   # check lint
   - npm run lint -- --quiet
