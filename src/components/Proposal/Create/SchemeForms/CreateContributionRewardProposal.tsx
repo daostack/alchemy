@@ -108,12 +108,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
         reputationReward: 0,
         title: "",
         url: "",
-      }
+      },
     };
   }
   
   componentDidMount(){
-    this.loadInitialFormValues()
+    this.loadInitialFormValues();
   }
   
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
@@ -154,8 +154,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   private loadInitialFormValues = () => {
     const search = window.location.search.substring(1)
     if(search.length > 0 ) {
-      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
-      const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url, tags } = params
+      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+      const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url, tags } = params;
       const initialFormValues = {
         beneficiary,
         description,
@@ -166,8 +166,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
         reputationReward: Number(reputationReward),
         title,
         url
-      }
-      this.setState({ initialFormValues, tags: JSON.parse(tags) })
+      };
+      this.setState({ initialFormValues, tags: JSON.parse(tags) });
     }
   }
   

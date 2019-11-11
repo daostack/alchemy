@@ -303,7 +303,38 @@
   .submitProposal:disabled .sendIcon {
     display: none;
   }
+  
+  .exportProposal {
+    height: 30px;
+    border: none;
+    display: inline-block;
+    margin: 0 5px;
+    font-weight: normal;
+    font-size: 13px;
+    padding: 0 25px 2px 25px;
+    font-family: $body-font;
+    font-weight: bold;
+    transition: all .25s ease;
+    background-color: rgba(18, 46, 91, 1);
+    border-radius: 15px;
+    color: $white;
 
+    &:hover {
+      cursor: pointer;
+    }
+
+    img {
+      position: relative;
+      top: 4px;
+      margin-right: 8px;
+    }
+
+    .loading {
+      width: 18px;
+      display: none;
+    }
+  }
+  
   .createProposalActions {
     text-align: right;
     margin-top: 20px;
