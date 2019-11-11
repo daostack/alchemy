@@ -85,6 +85,7 @@ class Header extends React.Component<IProps, IStateProps> {
 
   public componentDidMount() {
     this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
+      console.log('here')
       this.props.enableTrainingTooltipsShowAll();
     };
     this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
@@ -125,8 +126,9 @@ class Header extends React.Component<IProps, IStateProps> {
     /**
      * maybe making this asynchronous can address reports of the button responding very slowly
      */
+    const checked =  event.target.checked;
     setTimeout(() => {
-      localStorage.setItem(Header.trainingTooltipsEnabledKey, event.target.checked);
+      localStorage.setItem(Header.trainingTooltipsEnabledKey, checked);
       this.props.toggleTrainingTooltipsOnHover();
     }, 0);
   }
