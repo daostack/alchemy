@@ -22,6 +22,7 @@ interface IExternalProps {
 
 interface IStateProps {
   tags: Array<string>;
+  initialFormValues: IFormValues;
 }
 
 interface IDispatchProps {
@@ -97,9 +98,24 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = { 
       tags: new Array<string>(),
+      initialFormValues: {
+        beneficiary: "",
+        description: "",
+        ethReward: 0,
+        externalTokenAddress: getArc().GENToken().address,
+        externalTokenReward: 0,
+        nativeTokenReward: 0,
+        reputationReward: 0,
+        title: "",
+        url: "",
+      }
     };
   }
-
+  
+  componentDidMount(){
+    this.loadInitialFormValues()
+  }
+  
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
@@ -134,7 +150,27 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   private onTagsChange = () => (tags: string[]): void => {
     this.setState({tags});
   }
-
+  
+  private loadInitialFormValues = () => {
+    const search = window.location.search.substring(1)
+    if(search.length > 0 ) {
+      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+      const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url, tags } = params
+      const initialFormValues = {
+        beneficiary,
+        description,
+        ethReward: Number(ethReward),
+        externalTokenAddress,
+        externalTokenReward: Number(externalTokenReward),
+        nativeTokenReward: Number(nativeTokenReward),
+        reputationReward: Number(reputationReward),
+        title,
+        url
+      }
+      this.setState({ initialFormValues, tags: JSON.parse(tags) })
+    }
+  }
+  
   public render(): RenderOutput {
     const { data, daoAvatarAddress, handleClose } = this.props;
 
@@ -150,17 +186,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={{
-            beneficiary: "",
-            description: "",
-            ethReward: 0,
-            externalTokenAddress: arc.GENToken().address,
-            externalTokenReward: 0,
-            nativeTokenReward: 0,
-            reputationReward: 0,
-            title: "",
-            url: "",
-          } as IFormValues}
+          initialValues={this.state.initialFormValues}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -258,7 +284,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange()} tags={this.state.tags}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
@@ -290,6 +316,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
+                    beneficiary={this.state.initialFormValues.beneficiary}
                   />
                 </div>
 
