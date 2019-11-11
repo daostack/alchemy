@@ -5,7 +5,7 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState, IGenesisProtocolParams } from "@daostack/client";
 import { copyToClipboard, fromWei, linkToEtherScan, schemeName, roundUp } from "lib/util";
 import * as moment from "moment";
-import Tooltip from "@ferngully/rc-tooltip";
+import Tooltip from "rc-tooltip";
 import * as css from "./SchemeInfo.scss";
 
 interface IProps {

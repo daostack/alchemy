@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Modal } from "react-router-modal";
 import { copyToClipboard } from "lib/util";
-import Tooltip from "@ferngully/rc-tooltip";
+import Tooltip from "rc-tooltip";
 import * as css from "./SocialShareModal.scss";
 
 interface IState {

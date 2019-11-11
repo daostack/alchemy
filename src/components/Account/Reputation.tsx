@@ -1,6 +1,6 @@
 import BN = require("bn.js");
 import { fromWei } from "lib/util";
-import Tooltip from "@ferngully/rc-tooltip";
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 
 interface IProps {

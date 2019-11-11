@@ -6,7 +6,7 @@ import BN = require("bn.js");
 import * as classNames from "classnames";
 import Reputation from "components/Account/Reputation";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import Tooltip from "@ferngully/rc-tooltip";
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { showNotification } from "reducers/notifications";
