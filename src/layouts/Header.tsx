@@ -18,8 +18,11 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+<<<<<<< HEAD
 import Toggle from "react-toggle";
 import Tooltip from "rc-tooltip";
+=======
+>>>>>>> master
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
