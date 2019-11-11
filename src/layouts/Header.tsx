@@ -19,7 +19,6 @@ import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import Toggle from "react-toggle";
-import Tooltip from "rc-tooltip";
 import { RefObject } from "react";
 import * as css from "./App.scss";
 
