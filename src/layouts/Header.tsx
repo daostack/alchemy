@@ -122,8 +122,13 @@ class Header extends React.Component<IProps, IStateProps> {
   }
 
   private handleTrainingTooltipsEnabled = () => (event: any): void => {
-    localStorage.setItem(Header.trainingTooltipsEnabledKey, event.target.checked);
-    this.props.toggleTrainingTooltipsOnHover();
+    /**
+     * maybe making this asynchronous can address reports of the button responding very slowly
+     */
+    setTimeout(() => {
+      localStorage.setItem(Header.trainingTooltipsEnabledKey, event.target.checked);
+      this.props.toggleTrainingTooltipsOnHover();
+    }, 0);
   }
 
   private getTrainingTooltipsEnabled(): boolean {
