@@ -85,7 +85,6 @@ class Header extends React.Component<IProps, IStateProps> {
 
   public componentDidMount() {
     this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
-      console.log('here')
       this.props.enableTrainingTooltipsShowAll();
     };
     this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {

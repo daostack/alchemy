@@ -45,7 +45,7 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
 
   private tooltip = React.createRef<Tooltip>();
 
-  public show(visible: boolean) {
+  private show(visible: boolean) {
     setTimeout(() => {
       if (visible) {
         (this.tooltip.current as any).trigger.onMouseEnter({});
@@ -55,8 +55,6 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
     }, 0);
   }
   public render(): RenderOutput {
-
-
     if (this.props.showAll) {
       if (this.props.enableHover) {
         this.show(true);
