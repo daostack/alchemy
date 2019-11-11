@@ -23,6 +23,7 @@ interface IExternalProps {
 interface IStateProps {
   tags: Array<string>;
   initialFormValues: IFormValues;
+  exportMode: boolean;
 }
 
 interface IDispatchProps {
@@ -109,6 +110,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
         title: "",
         url: "",
       },
+      exportMode: false,
     };
   }
   
@@ -117,6 +119,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   }
   
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
+    // Check if its a submit or export
+    if(this.state.exportMode) {
+      this.exportFormValues(values);
+      return;
+    }
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
@@ -146,15 +153,28 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     await this.props.createProposal(proposalValues);
     this.props.handleClose();
   }
+  
+  // Exports data from form to a shareable url.
+  public exportFormValues(values: IFormValues) {
+    const queryString = Object.keys(values).map(key => key + "=" + values[key]).join("&");
+    const { origin, pathname } = window.location;
+    const url = origin + pathname + "?" + queryString + "&tags=" + JSON.stringify(this.state.tags);
+    this.setState({
+      exportMode: false,
+    });
+    window.open(url);
+    this.props.handleClose();
+  }
 
   private onTagsChange = () => (tags: string[]): void => {
-    this.setState({tags});
+    this.setState({ tags });
   }
   
+  // Loads proposal data from params
   private loadInitialFormValues = () => {
     const search = window.location.search.substring(1)
     if(search.length > 0 ) {
-      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+      const params = JSON.parse(`{"` + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, `","`).replace(/=/g,`":"`) + `"}`);
       const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url, tags } = params;
       const initialFormValues = {
         beneficiary,
@@ -165,7 +185,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
         nativeTokenReward: Number(nativeTokenReward),
         reputationReward: Number(reputationReward),
         title,
-        url
+        url,
       };
       this.setState({ initialFormValues, tags: JSON.parse(tags) });
     }
@@ -404,6 +424,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                 <button className={css.exitProposalCreation} type="button" onClick={handleClose}>
                   Cancel
                 </button>
+                <TrainingTooltip overlay="Export proposal" placement="top">
+                  <button className={css.exportProposal} type="submit" disabled={isSubmitting} onClick={()=> this.setState({ exportMode: true }) }>
+                  Export proposal
+                  </button>
+                </TrainingTooltip>
                 <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
                   Submit proposal
