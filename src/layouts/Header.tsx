@@ -53,6 +53,8 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
   toggleMenu: typeof uiActions.toggleMenu;
   toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
+  enableTrainingTooltipsOnHover: typeof uiActions.enableTrainingTooltipsOnHover;
+  disableTrainingTooltipsOnHover: typeof uiActions.disableTrainingTooltipsOnHover;
   enableTrainingTooltipsShowAll: typeof  uiActions.enableTrainingTooltipsShowAll;
   disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
 }
@@ -61,6 +63,8 @@ const mapDispatchToProps = {
   showNotification,
   toggleMenu: uiActions.toggleMenu,
   toggleTrainingTooltipsOnHover: uiActions.toggleTrainingTooltipsOnHover,
+  enableTrainingTooltipsOnHover: uiActions.enableTrainingTooltipsOnHover,
+  disableTrainingTooltipsOnHover: uiActions.disableTrainingTooltipsOnHover,
   enableTrainingTooltipsShowAll: uiActions.enableTrainingTooltipsShowAll,
   disableTrainingTooltipsShowAll: uiActions.disableTrainingTooltipsShowAll,
 };
@@ -73,6 +77,7 @@ class Header extends React.Component<IProps, IStateProps> {
     super(props);
     this.copyAddress = this.copyAddress.bind(this);
     this.toggleDiv = React.createRef();
+    this.initializeTrainingTooltipsToggle();
   }
 
   private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
@@ -121,6 +126,20 @@ class Header extends React.Component<IProps, IStateProps> {
     this.props.toggleTrainingTooltipsOnHover();
   }
 
+  private getTrainingTooltipsEnabled(): boolean {
+    const trainingTooltipsOnSetting = localStorage.getItem(Header.trainingTooltipsEnabledKey);
+    return (trainingTooltipsOnSetting === null) || trainingTooltipsOnSetting === "true";
+  }
+
+  private initializeTrainingTooltipsToggle() {
+    const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
+    if (trainingTooltipsOn) {
+      this.props.enableTrainingTooltipsOnHover();
+    } else {
+      this.props.disableTrainingTooltipsOnHover();
+    }
+  }
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
@@ -131,8 +150,7 @@ class Header extends React.Component<IProps, IStateProps> {
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
-    const trainingTooltipsOnSetting = localStorage.getItem(Header.trainingTooltipsEnabledKey);
-    const trainingTooltipsOn = (trainingTooltipsOnSetting === null) || trainingTooltipsOnSetting === "true";
+    const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
 
     return(
       <div className={css.headerContainer}>
