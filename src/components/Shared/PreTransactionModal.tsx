@@ -8,7 +8,7 @@ import ProposalSummary from "components/Proposal/ProposalSummary";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import { formatTokens, fromWei } from "lib/util";
 import { getExchangesList, humanProposalTitle } from "lib/util";
-import Tooltip from "rc-tooltip";
+import Tooltip from "@ferngully/rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Modal } from "react-router-modal";

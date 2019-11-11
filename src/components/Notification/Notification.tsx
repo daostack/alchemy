@@ -3,7 +3,7 @@ import { copyToClipboard } from "lib/util";
 import * as React from "react";
 import Linkify from "react-linkify";
 import { NotificationStatus, showNotification } from "reducers/notifications";
-import Tooltip from "rc-tooltip";
+import Tooltip from "@ferngully/rc-tooltip";
 import * as css from "./Notification.scss";
 
 export enum NotificationViewStatus {

@@ -1,4 +1,4 @@
-import {default as Tooltip, RCTooltip} from "rc-tooltip";
+import {default as Tooltip, RCTooltip} from "@ferngully/rc-tooltip";
 import * as React from "react";
 import "./TrainingTooltip.scss";
 import { IRootState } from "reducers";

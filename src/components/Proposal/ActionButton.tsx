@@ -4,7 +4,7 @@ import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
 import { getCRRewards, getGpRewards } from "lib/util";
-import Tooltip from "rc-tooltip";
+import Tooltip from "@ferngully/rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";

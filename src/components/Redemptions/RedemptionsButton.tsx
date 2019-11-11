@@ -3,7 +3,7 @@ import { getArc } from "arc";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
 import * as React from "react";
-import Tooltip from "rc-tooltip";
+import Tooltip from "@ferngully/rc-tooltip";
 import { Link } from "react-router-dom";
 import { of } from "rxjs";
 import { map } from "rxjs/operators";

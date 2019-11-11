@@ -193,7 +193,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                 </div>
               </TrainingTooltip>
 
-              <TrainingTooltip placement="rightTop" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
+              <TrainingTooltip placement="topRight" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
                 <div className={css.predictions}>
                   <StakeGraph
                     proposal={proposal}
