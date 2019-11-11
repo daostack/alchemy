@@ -36,6 +36,7 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
     } else if (nextProps.showAll && !prevState.showingAll) {
       return { showingAll: true, turningOffShowingAll: false };
     }
+    return null;
   }
 
   constructor(props: IProps) {
@@ -46,13 +47,16 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
   private tooltip = React.createRef<Tooltip>();
 
   private show(visible: boolean) {
-    setTimeout(() => {
-      if (visible) {
-        (this.tooltip.current as any).trigger.onMouseEnter({});
-      } else {
-        (this.tooltip.current as any).trigger.onMouseLeave({});
-      }
-    }, 0);
+    const tooltip = this.tooltip.current as any;
+    if (tooltip) {
+      setTimeout(() => {
+        if (visible) {
+          tooltip.trigger.onMouseEnter({});
+        } else {
+          tooltip.trigger.onMouseLeave({});
+        }
+      }, 0);
+    }
   }
   public render(): RenderOutput {
     if (this.props.showAll) {
