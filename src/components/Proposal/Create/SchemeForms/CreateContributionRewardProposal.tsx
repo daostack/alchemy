@@ -172,9 +172,14 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   
   // Loads proposal data from params
   private loadInitialFormValues = () => {
-    const search = window.location.search.substring(1)
+    const search = window.location.search.substring(1);
     if(search.length > 0 ) {
-      const params = JSON.parse(`{"` + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, `","`).replace(/=/g,`":"`) + `"}`);
+      // The reason behind not using double quotes is because in this case if we do so it will give us an error.
+      // In order to avoid such error we use single quotes.
+      // the below line using Double quotes give the error: Unexpected token ' in JSON at position 
+      // const params = JSON.parse("{'" + decodeURI(search).replace(/"/g, "\\'").replace(/&/g, "','").replace(/=/g,"':'") + "'}");
+      // eslint-disable-next-line quotes
+      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
       const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url, tags } = params;
       const initialFormValues = {
         beneficiary,
@@ -425,7 +430,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button className={css.exportProposal} type="submit" disabled={isSubmitting} onClick={()=> this.setState({ exportMode: true }) }>
+                  <button className={css.exportProposal} type="submit" disabled={isSubmitting} onClick={()=> this.setState({ exportMode: true })}>
                   Export proposal
                   </button>
                 </TrainingTooltip>
