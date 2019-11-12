@@ -117,7 +117,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                 </Link>
               </li>
               <li>
-                <TrainingTooltip placement="topLeft" overlay={"List of entities (DAOs and individuals) that have voting power in the Genesis DAO"}>
+                <TrainingTooltip placement="topLeft" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
                   <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu()}>
                     <span className={css.menuDot} />
                     <span className={
