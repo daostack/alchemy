@@ -59,6 +59,8 @@ module.exports = {
           /node_modules\/rlp/,
           /node_modules\/subscriptions-transport-ws/,
           /node_modules\/zen-observable-ts/,
+          /node_modules\/graphql-request/,
+          /node_modules\/https-did-resolver/
         ]
       },
 
