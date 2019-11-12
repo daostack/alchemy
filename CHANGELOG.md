@@ -6,6 +6,13 @@
   - Features Added
   - Bugs Fixed
 
+### 2019-11-12
+  - Features added
+    - Add controls for training tooltips
+    - use subgraph v32
+  - Bugs fixed
+    - Recognize ENS contract addresses on main net
+
 ### 2019-11-05
   - Features Added
     - prevent attempting redemptions unless there exist sufficient resources to pay out at least one reward
