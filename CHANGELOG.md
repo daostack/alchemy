@@ -9,7 +9,7 @@
 ### 2019-11-12
   - Features added
     - Add controls for training tooltips
-    - Gasless reputation for tokens (not activated yet)
+    - use subgraph v32
   - Bugs fixed
     - Recognize ENS contract addresses on main net
 
