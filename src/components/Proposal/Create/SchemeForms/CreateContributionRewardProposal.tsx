@@ -120,9 +120,10 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     // Check if its a submit or export
+    // This is making tests to failed. Need to fix it.
     if(this.state.exportMode) {
       this.exportFormValues(values);
-      return;
+      return Promise.reject();
     }
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
