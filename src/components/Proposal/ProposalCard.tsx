@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { closingTime } from "reducers/arcReducer";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import VisibilitySensor from "react-visibility-sensor";
 import ActionButton from "./ActionButton";
 import BoostAmount from "./Staking/BoostAmount";
 import StakeButtons from "./Staking/StakeButtons";
@@ -30,6 +31,10 @@ interface IExternalProps {
 type IProps = IExternalProps;
 
 export default class ProposalCard extends React.Component<IProps, null> {
+
+  constructor(props: IProps) {
+    super(props);
+  }
 
   public render(): RenderOutput {
 
@@ -82,51 +87,128 @@ export default class ProposalCard extends React.Component<IProps, null> {
           [css.voteControls]: true,
         });
 
-        return (
-          <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
-            <div className={css.proposalInfo}>
-              <div className={css.cardTop + " clearfix"}>
-                <div className={css.timer}>
-                  <span className={css.content}>
-                    {!expired
-                      ? <Countdown toDate={closingTime(proposal)} detailView={false} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !expired} />
-                      : <span className={css.closedTime}>
-                        {proposal.stage === IProposalStage.Queued ? "Expired" :
-                          proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
-                            "Closed"}&nbsp;
-                        {closingTime(proposal).format("MMM D, YYYY")}
-                      </span>
-                    }
-                  </span>
+        return <VisibilitySensor key={proposal.id} scrollCheck resizeCheck intervalCheck={false}>
+          {({isVisible}) =>
+            <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
+              <div className={css.proposalInfo}>
+                <div className={css.cardTop + " clearfix"}>
+                  <div className={css.timer}>
+                    <span className={css.content}>
+                      {!expired
+                        ? <Countdown toDate={closingTime(proposal)} detailView={false} overTime={proposal.stage === IProposalStage.QuietEndingPeriod && !expired} />
+                        : <span className={css.closedTime}>
+                          {proposal.stage === IProposalStage.Queued ? "Expired" :
+                            proposal.stage === IProposalStage.PreBoosted ? "Ready to Boost" :
+                              "Closed"}&nbsp;
+                          {closingTime(proposal).format("MMM D, YYYY")}
+                        </span>
+                      }
+                    </span>
+                  </div>
+
+                  <div className={css.actionButton}>
+                    <ActionButton
+                      currentAccountAddress={currentAccountAddress}
+                      daoState={daoState}
+                      daoEthBalance={daoEthBalance}
+                      proposalState={proposal}
+                      rewards={rewards}
+                      expired={expired}
+                    />
+
+                    <div className={css.contextMenu} data-test-id="proposalContextMenu">
+                      <div className={css.menuIcon}>
+                        <img src="/assets/images/Icon/Context-menu.svg"/>
+                      </div>
+                      <div className={css.menu}>
+                        <VoteButtons
+                          currentAccountAddress={currentAccountAddress}
+                          currentAccountState={member}
+                          currentVote={currentAccountVote}
+                          dao={daoState}
+                          expired={expired}
+                          proposal={proposal}
+                          contextMenu/>
+
+                        <StakeButtons
+                          beneficiaryProfile={beneficiaryProfile}
+                          contextMenu
+                          currentAccountAddress={currentAccountAddress}
+                          currentAccountGens={currentAccountGenBalance}
+                          currentAccountGenStakingAllowance={currentAccountGenAllowance}
+                          dao={daoState}
+                          expired={expired}
+                          proposal={proposal}
+                          stakes={stakes}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className={css.createdBy}>
+                  <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView={false} />
+                  <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
+                </div>
+                <div className={css.description}>
+                  {proposal.description}
                 </div>
 
-                <div className={css.actionButton}>
-                  <ActionButton
-                    currentAccountAddress={currentAccountAddress}
-                    daoState={daoState}
-                    daoEthBalance={daoEthBalance}
-                    proposalState={proposal}
-                    rewards={rewards}
-                    expired={expired}
-                  />
+                <h3>
+                  <Link className={css.detailLink} to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
+                    <span>{humanProposalTitle(proposal)}</span>
+                    <img src="/assets/images/Icon/Open.svg" />
+                  </Link>
+                </h3>
 
-                  <div className={css.contextMenu} data-test-id="proposalContextMenu">
-                    <div className={css.menuIcon}>
-                      <img src="/assets/images/Icon/Context-menu.svg"/>
+                { tags && tags.length ? <div className={css.tagsContainer}>
+                  <TagsSelector readOnly tags={tags}></TagsSelector>
+                </div> : "" }
+
+                <div className={css.summary}>
+                  <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
+                </div>
+
+              </div>
+
+              <div className={css.proposalActions + " clearfix"}>
+                <TrainingTooltip hide={!isVisible} placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
+                  <div className={voteWrapperClass}>
+                    <div className={voteControls + " clearfix"}>
+                      <div className={css.voteDivider}>
+                        <VoteGraph size={40} proposal={proposal} />
+                      </div>
+
+                      <VoteBreakdown
+                        currentAccountAddress={currentAccountAddress}
+                        currentAccountState={member}
+                        currentVote={currentAccountVote}
+                        daoState={daoState}
+                        proposal={proposal}
+                        detailView={false} />
                     </div>
-                    <div className={css.menu}>
+
+                    <div className={css.voteButtons}>
                       <VoteButtons
                         currentAccountAddress={currentAccountAddress}
                         currentAccountState={member}
                         currentVote={currentAccountVote}
                         dao={daoState}
                         expired={expired}
-                        proposal={proposal}
-                        contextMenu/>
+                        proposal={proposal} />
+                    </div>
+                  </div>
+                </TrainingTooltip>
 
+                <TrainingTooltip hide={!isVisible} placement="topRight" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
+                  <div className={css.predictions}>
+                    <StakeGraph
+                      proposal={proposal}
+                    />
+                    <BoostAmount proposal={proposal} />
+
+                    <div className={css.predictionButtons}>
                       <StakeButtons
                         beneficiaryProfile={beneficiaryProfile}
-                        contextMenu
                         currentAccountAddress={currentAccountAddress}
                         currentAccountGens={currentAccountGenBalance}
                         currentAccountGenStakingAllowance={currentAccountGenAllowance}
@@ -137,86 +219,11 @@ export default class ProposalCard extends React.Component<IProps, null> {
                       />
                     </div>
                   </div>
-                </div>
+                </TrainingTooltip>
               </div>
-              <div className={css.createdBy}>
-                <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView={false} />
-                <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
-              </div>
-              <div className={css.description}>
-                {proposal.description}
-              </div>
-
-              <h3>
-                <Link className={css.detailLink} to={"/dao/" + daoState.address + "/proposal/" + proposal.id} data-test-id="proposal-title">
-                  <span>{humanProposalTitle(proposal)}</span>
-                  <img src="/assets/images/Icon/Open.svg" />
-                </Link>
-              </h3>
-
-              { tags && tags.length ? <div className={css.tagsContainer}>
-                <TagsSelector readOnly tags={tags}></TagsSelector>
-              </div> : "" }
-
-              <div className={css.summary}>
-                <ProposalSummary proposal={proposal} dao={daoState} beneficiaryProfile={beneficiaryProfile} detailView={false} />
-              </div>
-
             </div>
-
-            <div className={css.proposalActions + " clearfix"}>
-              <TrainingTooltip placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
-                <div className={voteWrapperClass}>
-                  <div className={voteControls + " clearfix"}>
-                    <div className={css.voteDivider}>
-                      <VoteGraph size={40} proposal={proposal} />
-                    </div>
-
-                    <VoteBreakdown
-                      currentAccountAddress={currentAccountAddress}
-                      currentAccountState={member}
-                      currentVote={currentAccountVote}
-                      daoState={daoState}
-                      proposal={proposal}
-                      detailView={false} />
-                  </div>
-
-                  <div className={css.voteButtons}>
-                    <VoteButtons
-                      currentAccountAddress={currentAccountAddress}
-                      currentAccountState={member}
-                      currentVote={currentAccountVote}
-                      dao={daoState}
-                      expired={expired}
-                      proposal={proposal} />
-                  </div>
-                </div>
-              </TrainingTooltip>
-
-              <TrainingTooltip placement="topRight" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
-                <div className={css.predictions}>
-                  <StakeGraph
-                    proposal={proposal}
-                  />
-                  <BoostAmount proposal={proposal} />
-
-                  <div className={css.predictionButtons}>
-                    <StakeButtons
-                      beneficiaryProfile={beneficiaryProfile}
-                      currentAccountAddress={currentAccountAddress}
-                      currentAccountGens={currentAccountGenBalance}
-                      currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                      dao={daoState}
-                      expired={expired}
-                      proposal={proposal}
-                      stakes={stakes}
-                    />
-                  </div>
-                </div>
-              </TrainingTooltip>
-            </div>
-          </div>
-        );
+          }
+        </VisibilitySensor>;
       }
       }
     </ProposalData>;

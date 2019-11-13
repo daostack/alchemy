@@ -124,6 +124,7 @@
     "react-through": "^1.1.1",
     "react-toggle": "^4.1.1",
     "react-transition-group": "^2.5.1",
+    "react-visibility-sensor": "^5.1.1",
     "redux": "^4.0.4",
     "redux-devtools-extension": "^2.13.7",
     "redux-thunk": "2.2.0",
