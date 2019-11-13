@@ -54,7 +54,7 @@ class VoteButtons extends React.Component<IProps, IState> {
     };
   }
 
-  public async handleClickVote(vote: number, _event: any): Promise<void> {
+  public handleClickVote = (vote: number) => async (): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAccountState = this.props.currentAccountState;
@@ -63,9 +63,27 @@ class VoteButtons extends React.Component<IProps, IState> {
     }
   }
 
-  public closePreVoteModal(_event: any): void {
-    this.setState({ showPreVoteModal: false });
-  }
+  private closePreVoteModal = () => (_event: any): void => { this.setState({ showPreVoteModal: false }); }
+  private handleVoteOnProposal = () => (): void => { this.props.voteOnProposal.bind(null, this.props.dao.address, this.props.proposal.id, this.state.currentVote);  };
+  /**
+     * only invoked when votingDisabled
+     * @param vote
+     */
+  private tipContent = 
+  ((this.props.currentVote === IProposalOutcome.Pass) || (this.props.currentVote === IProposalOutcome.Fail)) ?
+    "Can't change your vote" :
+    (this.props.currentAccountState && this.props.currentAccountState.reputation.eq(new BN(0))) ?
+      "Voting requires reputation in " + this.props.dao.name :
+      this.props.proposal.stage === IProposalStage.ExpiredInQueue ||
+          (this.props.proposal.stage === IProposalStage.Boosted && this.props.expired) ||
+          (this.props.proposal.stage === IProposalStage.QuietEndingPeriod && this.props.expired)  ||
+          (this.props.proposal.stage === IProposalStage.Queued && this.props.expired) ?
+        "Can't vote on expired proposals" :
+        this.props.proposal.stage === IProposalStage.Executed ?
+          "Can't vote on executed proposals" : "";
+  
+
+
 
   public render(): RenderOutput {
     const {
@@ -77,7 +95,6 @@ class VoteButtons extends React.Component<IProps, IState> {
       proposal,
       dao,
       expired,
-      voteOnProposal,
     } = this.props;
 
     const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
@@ -89,22 +106,6 @@ class VoteButtons extends React.Component<IProps, IState> {
                             currentVote === IProposalOutcome.Pass ||
                             currentVote === IProposalOutcome.Fail
                             ;
-
-    /**
-     * only invoked when votingDisabled
-     * @param vote
-     */
-    const tipContent = (vote: IProposalOutcome|undefined): string =>
-      ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
-        "Can't change your vote" :
-        (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
-          "Voting requires reputation in " + dao.name :
-          proposal.stage === IProposalStage.ExpiredInQueue || (proposal.stage === IProposalStage.Boosted && expired) || (proposal.stage === IProposalStage.QuietEndingPeriod && expired)  || (proposal.stage === IProposalStage.Queued && expired) ?
-            "Can't vote on expired proposals" :
-            proposal.stage === IProposalStage.Executed ?
-              "Can't vote on executed proposals" :
-              `Vote ${vote === IProposalOutcome.Pass ? "for" : "against"}`
-;
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
@@ -130,8 +131,8 @@ class VoteButtons extends React.Component<IProps, IState> {
         {this.state.showPreVoteModal ?
           <PreTransactionModal
             actionType={this.state.currentVote === IProposalOutcome.Pass ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-            action={voteOnProposal.bind(null, dao.address, proposal.id, this.state.currentVote)}
-            closeAction={this.closePreVoteModal.bind(this)}
+            action={this.handleVoteOnProposal()}
+            closeAction={this.closePreVoteModal()}
             currentAccount={currentAccountState}
             dao={dao}
             effectText={<span>Your influence: <strong><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}
@@ -168,12 +169,12 @@ class VoteButtons extends React.Component<IProps, IState> {
               <div className={css.hasNotVoted}>
                 {!votingDisabled ?
                   <div>
-                    <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
+                    <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
                       <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
                       <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                       <span> For</span>
                     </button>
-                    <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                    <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
                       <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
                       <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                       <span> Against</span>
@@ -181,7 +182,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                   </div>
                   :
                   <div className={css.votingDisabled}>
-                    <Tooltip overlay={tipContent}>
+                    <Tooltip overlay={this.tipContent}>
                       <span><img src="/assets/images/Icon/Alert-yellow-b.svg"/> Voting disabled</span>
                     </Tooltip>
                   </div>
@@ -194,12 +195,12 @@ class VoteButtons extends React.Component<IProps, IState> {
             <div className={css.castVote}>
               {!votingDisabled ?
                 <div>
-                  <button onClick={this.handleClickVote.bind(this, 1)} className={voteUpButtonClass} data-test-id="voteFor">
+                  <button onClick={this.handleClickVote(1)} className={voteUpButtonClass} data-test-id="voteFor">
                     <img src={`/assets/images/Icon/vote/for-btn-selected${altStyle ? "-w" : ""}.svg`} />
                     <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                     <span> For</span>
                   </button>
-                  <button onClick={this.handleClickVote.bind(this, 2)} className={voteDownButtonClass}>
+                  <button onClick={this.handleClickVote(2)} className={voteDownButtonClass}>
                     <img src={`/assets/images/Icon/vote/against-btn-selected${altStyle ? "-w" : ""}.svg`}/>
                     <img className={css.buttonLoadingImg} src="/assets/images/Icon/buttonLoadingBlue.gif"/>
                     <span> Against</span>
@@ -207,7 +208,7 @@ class VoteButtons extends React.Component<IProps, IState> {
                 </div>
                 :
                 <div className={css.votingDisabled}>
-                  <Tooltip placement="bottom" overlay={tipContent}>
+                  <Tooltip placement="bottom" overlay={this.tipContent}>
                     <span>Voting disabled</span>
                   </Tooltip>
                 </div>

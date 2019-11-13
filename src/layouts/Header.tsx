@@ -145,6 +145,8 @@ class Header extends React.Component<IProps, IStateProps> {
     }
   }
 
+  private breadCrumbCompare = (a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length;
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
@@ -181,7 +183,7 @@ class Header extends React.Component<IProps, IStateProps> {
               separator={<b> &gt;   </b>}
               item={NavLink}
               finalItem={"b"}
-              compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
+              compare={this.breadCrumbCompare}
             />
           </div>
           <TrainingTooltip placement="left" overlay={"Show / hide tooltips on hover"}>

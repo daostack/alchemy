@@ -105,6 +105,8 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     return map;
   }
 
+  private suggestionHtml = ( tag: ITagEx ) => <div>{tag.text} <span className="count">({tag.count})</span></div>;
+
   public render(): RenderOutput {
     const { workingTags } = this.state;
     const { readOnly, darkTheme } = this.props;
@@ -145,8 +147,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
         readOnly={!!readOnly}
         autofocus={false}
         allowDragDrop={false} // because we have no way to persist the tab order
-        // eslint-disable-next-line react/jsx-no-bind
-        renderSuggestion = {( tag: ITagEx ) => <div>{tag.text} <span className="count">({tag.count})</span></div>}
+        renderSuggestion = {this.suggestionHtml}
       />
     </div>;
   }

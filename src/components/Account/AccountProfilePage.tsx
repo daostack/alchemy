@@ -92,7 +92,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
+  public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void>  => {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
@@ -134,7 +134,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     setSubmitting(false);
   }
 
-  public onOAuthSuccess(account: IProfileState) {
+  public onOAuthSuccess = () => (account: IProfileState): void => {
     this.props.verifySocialAccount(this.props.accountAddress, account);
   }
 
@@ -163,6 +163,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
                 description: accountProfile ? accountProfile.description || "" : "",
                 name: accountProfile ? accountProfile.name || "" : "",
               } as IFormValues}
+              // eslint-disable-next-line react/jsx-no-bind
               validate={(values: IFormValues): void => {
                 // const { name } = values;
                 const errors: any = {};
@@ -177,7 +178,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
 
                 return errors;
               }}
-              onSubmit={this.handleSubmit.bind(this)}
+              onSubmit={this.handleFormSubmit}
+              // eslint-disable-next-line react/jsx-no-bind
               render={({
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 values,
@@ -258,8 +260,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
                         }
 
                         <h3>Social Verification</h3>
-                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess()} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess()} profile={accountProfile} socket={socket} />
                       </div>
                     }
                     <div className={css.otherInfoContainer}>

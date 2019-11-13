@@ -22,6 +22,10 @@ export default class ProposalSummary extends React.Component<IProps> {
     super(props);
   }
 
+  private inputHtml = (x: any) => <span key={x.name}>{x.name} {x.type}, </span>;
+  private callDataHtml = (value: any) => <div key={value}>{value}</div>;
+
+
   public render(): RenderOutput {
     const { proposal, detailView, transactionModal, genericSchemeInfo } = this.props;
     if (genericSchemeInfo.specs.name === "DutchX") {
@@ -61,9 +65,9 @@ export default class ProposalSummary extends React.Component<IProps> {
         <div className={css.summaryDetails}>
           Executing this proposal will call the function
           <pre>{ decodedCallData.action.abi.name}
-        ({ decodedCallData.action.abi.inputs.map((x: any) => <span key={x.name}>{x.name} {x.type}, </span>) })
+        ({ decodedCallData.action.abi.inputs.map(this.inputHtml) })
           </pre>
-          with values <pre>{ decodedCallData.values.map((value: any) => <div key={value}>{value}</div>)}</pre>
+          with values <pre>{ decodedCallData.values.map(this.callDataHtml)}</pre>
           on contract at
           <pre><a href={linkToEtherScan(proposal.genericScheme.contractToCall)}>{proposal.genericScheme.contractToCall}</a></pre>
         </div>

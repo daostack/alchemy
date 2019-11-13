@@ -63,8 +63,11 @@ class SchemeContainer extends React.Component<IProps, null> {
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
+  private schemeInfoPageHtml = () => (props: any) => <SchemeInfoPage {...props} daoAvatarAddress={this.props.daoAvatarAddress} scheme={this.props.data} />;
+  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
+
   public render(): RenderOutput {
-    const { currentAccountAddress, daoAvatarAddress, schemeId } = this.props;
+    const { daoAvatarAddress, schemeId } = this.props;
     const schemeState = this.props.data;
 
     if (schemeState.name === "ReputationFromToken") {
@@ -112,10 +115,10 @@ class SchemeContainer extends React.Component<IProps, null> {
 
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
+            render={this.schemeInfoPageHtml()} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
+            render={this.schemeProposalsPageHtml(isActive)} />
         </Switch>
       </div>
     );

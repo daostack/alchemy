@@ -72,7 +72,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     this.setState({ showApproveModal: false });
   }
 
-  public closePreStakeModal = (_event: any): void => {
+  public closePreStakeModal = () => (_event: any): void => {
     this.setState({ showPreStakeModal: false });
   }
 
@@ -92,6 +92,9 @@ class StakeButtons extends React.Component<IProps, IState> {
     approveStakingGens(this.props.proposal.votingMachine);
     this.setState({ showApproveModal: false });
   }
+
+  private getStakeProposalAction = (stakeProposal: typeof arcActions.stakeProposal, proposal: IProposalState, pendingPrediction: number) => 
+    (amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); };
 
   public render(): RenderOutput {
     const {
@@ -210,9 +213,9 @@ class StakeButtons extends React.Component<IProps, IState> {
         {showPreStakeModal ?
           <PreTransactionModal
             actionType={pendingPrediction === VoteOptions.Yes ? ActionTypes.StakePass : ActionTypes.StakeFail}
-            action={(amount: number) => { stakeProposal(proposal.dao.id, proposal.id, pendingPrediction, amount); }}
+            action={this.getStakeProposalAction(stakeProposal, proposal, pendingPrediction)}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreStakeModal.bind(this)}
+            closeAction={this.closePreStakeModal()}
             currentAccountGens={currentAccountGens}
             dao={dao}
             proposal={proposal}

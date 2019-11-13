@@ -13,12 +13,14 @@ interface IExternalProps {
 
 type IProps = IExternalProps & ISubscriptionProps<IDAOState>
 
+
 const DaoCard = (props: IProps) => {
   const { dao } = props;
   const daoState = props.data;
   const bgPattern = GeoPattern.generate(dao.id + daoState.name);
   const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
   const inActive = (daoState.name === "dxDAO") && dxDaoActivationDate.isSameOrAfter(moment());
+  const handleCLick = (e: any) => { if (inActive) { e.preventDefault(); } };
 
   return (
     <Link
@@ -26,7 +28,7 @@ const DaoCard = (props: IProps) => {
       to={"/dao/" + dao.id}
       key={"dao_" + dao.id}
       data-test-id="dao-link"
-      onClick={(e) => { if (inActive) { e.preventDefault(); } }}
+      onClick={handleCLick}
     >
       <div className={classNames({
         [css.dao]: true,
