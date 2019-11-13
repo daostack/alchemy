@@ -92,7 +92,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void>  => {
+  public handleFormSubmit = () => async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
@@ -178,7 +178,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
 
                 return errors;
               }}
-              onSubmit={this.handleFormSubmit}
+              onSubmit={this.handleFormSubmit()}
               // eslint-disable-next-line react/jsx-no-bind
               render={({
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -79,7 +79,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
   }
 
   private stakeOnChange = () => (e: any) => this.setState({stakeAmount: Number(e.target.value)});
-  private ref = (input: any) => { this.stakeInput = input; };
+  private ref = () => (input: any) => { this.stakeInput = input; };
   private exchangeHtml = (item: any) => {
     return(
       <li key={item.name}>
@@ -286,7 +286,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           autoFocus
                           type="number"
                           min="1"
-                          ref={this.ref}
+                          ref={this.ref()}
                           className={css.predictionAmount}
                           onChange={this.stakeOnChange()}
                           placeholder="0"
