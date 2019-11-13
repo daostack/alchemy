@@ -3,6 +3,7 @@ import * as React from "react";
 import "./TrainingTooltip.scss";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
+import VisibilitySensor from "react-visibility-sensor";
 
 interface IAppStateProps {
   enableHover: boolean;
@@ -12,10 +13,11 @@ interface IAppStateProps {
 interface IStateProps {
   showingAll: boolean;
   turningOffShowingAll: boolean;
+  isVisible?: boolean;
 }
 
 export interface IExternalProps extends RCTooltip.Props {
-  hide?: boolean;
+  alwaysAvailable?: boolean;
 }
 
 type IProps = IExternalProps & IAppStateProps;
@@ -41,19 +43,24 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
 
   constructor(props: IProps) {
     super(props);
-    this.state = { showingAll: false, turningOffShowingAll: false };
+    this.state = { showingAll: false, turningOffShowingAll: false, isVisible: undefined };
+    this.visibilityChanged = this.visibilityChanged.bind(this);
   }
 
   private tooltip = React.createRef<Tooltip>();
 
+  private visibilityChanged(isVisible: boolean) {
+    this.setState({isVisible});
+  }
+
   private show(visible: boolean) {
-    const tooltip = this.tooltip.current as any;
-    if (tooltip) {
+    const trigger = (this.tooltip && this.tooltip.current) ? (this.tooltip.current as any).trigger : null;
+    if (trigger) {
       setTimeout(() => {
         if (visible) {
-          tooltip.trigger.onMouseEnter({});
+          trigger.onMouseEnter({});
         } else {
-          tooltip.trigger.onMouseLeave({});
+          trigger.onMouseLeave({});
         }
       }, 0);
     }
@@ -67,15 +74,18 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
       this.show(false);
     }
 
-    return (
-      this.props.hide ? "" :
-        <Tooltip ref={this.tooltip} {...this.props}
-          prefixCls="rc-trainingtooltip"
-          trigger={this.props.enableHover ? ["hover"] : []}
-        >
-          {this.props.children}
-        </Tooltip>
-    );
+    const tooltipHtml = <Tooltip ref={this.tooltip} {...this.props}
+      prefixCls="rc-trainingtooltip"
+      trigger={this.props.enableHover ? ["hover"] : []}
+    >{this.props.children}</Tooltip>;
+
+    if (this.props.alwaysAvailable) {
+      return tooltipHtml;
+    } else {
+      return <VisibilitySensor scrollCheck resizeCheck intervalCheck={false} onChange={this.visibilityChanged}>
+        {this.state.isVisible ? tooltipHtml : this.props.children }
+      </VisibilitySensor>;
+    }
   }
 }
 

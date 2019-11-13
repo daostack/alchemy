@@ -184,7 +184,7 @@ class Header extends React.Component<IProps, IStateProps> {
               compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
-          <TrainingTooltip placement="left" overlay={"Show / hide tooltips on hover"}>
+          <TrainingTooltip placement="left" alwaysAvailable overlay={"Show / hide tooltips on hover"}>
             <div className={css.toggleButton} ref={this.toggleDiv}>
               <Toggle
                 defaultChecked={trainingTooltipsOn}
