@@ -98,6 +98,19 @@ body {
   color: rgba(255,255,255,1);
   display: flex;
 
+  /** the following is only meant to apply to the toggle button in the header **/
+  :global {
+    .react-toggle.react-toggle--checked .react-toggle-track {
+      background-color: #0076ff !important;
+    }
+
+    .react-toggle-thumb {
+      background-image: url(/assets/images/Icon/info-i.svg);
+      background-color: transparent !important;
+      background-size: 20px 20px;
+    }
+  }
+
   .logoContainer {
     margin: 0 auto;
     width: 230px;
@@ -153,6 +166,10 @@ body {
   }
 
   .redemptionsButton {
+    margin: 13px 0 14px 20px;
+  }
+
+  .toggleButton {
     margin: 13px 0 14px auto;
   }
 
@@ -729,7 +746,15 @@ body {
     }
 
     &.hasHamburger .redemptionsButton {
-      margin-left: 60px;
+      margin-left: 10px;
+    }
+
+    .toggleButton {
+      margin-left: 12px;
+    }
+
+    &.hasHamburger .toggleButton {
+      margin-left: 52px;
     }
 
     .accountInfo {

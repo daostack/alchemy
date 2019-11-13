@@ -2,11 +2,27 @@
   - Features Added
   - Bugs Fixed
 
-### Current Release
+## Next release
   - Features Added
-    -
   - Bugs Fixed
-    - 
+
+### 2019-11-12
+  - Features added
+    - Add controls for training tooltips
+    - use subgraph v32
+  - Bugs fixed
+    - Recognize ENS contract addresses on main net
+
+### 2019-11-05
+  - Features Added
+    - prevent attempting redemptions unless there exist sufficient resources to pay out at least one reward
+    - added informative tooltips for application training
+    - gasless ReputationFromTokens using the tx-sender service
+    - improved paging on scheme page
+  - Bugs Fixed
+    - fixed display of scheme activation time
+    - fixed empty proposal page when not logged in
+    - application behaves better whne the ethereum connection goes down or is unavailable
 
 ### 2019-11-05
 

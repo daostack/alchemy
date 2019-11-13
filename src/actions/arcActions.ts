@@ -11,7 +11,7 @@ import { ThunkAction } from "redux-thunk";
 
 export type CreateProposalAction = IAsyncAction<"ARC_CREATE_PROPOSAL", { avatarAddress: string }, any>;
 
-/** use like this (unfortunatly you need the @ts-ignore)
+/** use like this (unfortunately you need the @ts-ignore)
  * // @ts-ignore
  * transaction.send().observer(...operationNotifierObserver(dispatch, "Whatever"))
  */
@@ -31,11 +31,9 @@ const operationNotifierObserver = (dispatch: Redux.Dispatch<any, any>, txDescrip
       }
     },
     (err: Error) => {
-      const msg = `${txDescription}: transaction failed :-(`;
+      const msg = `${txDescription}: transaction failed :-( - ${err.message}`;
       // eslint-disable-next-line no-console
       console.warn(msg);
-      // eslint-disable-next-line no-console
-      console.warn(err.message);
       dispatch(showNotification(NotificationStatus.Failure, msg));
     },
   ];
@@ -158,8 +156,7 @@ export function redeemReputationFromToken(scheme: Scheme, addressToRedeem: strin
       const redeemMethod = contract.methods.redeem(addressToRedeem);
       let gasPrice = await arc.web3.eth.getGasPrice();
       gasPrice = gasPrice * 1.2;
-      const txToSign
-      = {
+      const txToSign = {
         gas,
         gasPrice,
         data: redeemMethod.encodeABI(),
