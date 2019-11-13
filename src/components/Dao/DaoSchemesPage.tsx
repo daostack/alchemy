@@ -41,9 +41,8 @@ interface IStateProps {
   currentAccountProfile: IProfileState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
+const mapStateToProps = (state: IRootState): IStateProps => {
   return {
-    ...ownProps,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
   };
 };

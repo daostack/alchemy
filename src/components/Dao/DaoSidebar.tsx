@@ -163,6 +163,21 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                   </Link>
                 </TrainingTooltip>
               </li>
+              <li>
+                <TrainingTooltip placement="topLeft" overlay={"A feed of things and stuffs"}>
+                  <Link to={"/feed/"} onClick={this.handleCloseMenu()}>
+                    <span className={css.menuDot} />
+                    <span className={
+                      classNames({
+                        [css.notification]: true,
+                        [css.holdersNotification]: true,
+                      })
+                    }></span>
+                    <img src="/assets/images/Icon/menu/holders.svg" />
+                    Feed
+                  </Link>
+                </TrainingTooltip>
+              </li>
             </ul>
           </div>
           <div className={css.daoHoldings}>

@@ -1,0 +1,84 @@
+.loading {
+  width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.feedContainer {
+  max-width: 900px;
+  width: 80%;
+  margin: 0 auto;
+
+  h2 {
+    background-color: #e5ebf2;
+  }
+}
+
+.connectButton {
+  cursor: pointer;
+
+  img {
+    width: 20px;
+  }
+}
+
+.feedItemContainer {
+  position: relative;
+  margin: 0 50px 20px 50px;
+  font-family: "Open Sans";
+  font-size: 13px;
+
+  > span {
+    width: 30px;
+    position: absolute;
+    top: 12px;
+    left: -50px;
+  }
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .itemTitle {
+    height: 50px;
+    border-radius: 14px 14px 0 0;
+    background-color: #fcfdff;
+    margin-bottom: 3px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 0 26px;
+
+    span {
+      vertical-align: middle;
+      line-height: 50px;
+    }
+  }
+
+  .itemContent {
+    background-color: #fcfdff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 21px 26px;
+
+    .daoName a {
+      color: #004799;
+    }
+  }
+
+  .proposalDetails {
+    position: relative;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+
+  .feedContainer {
+    width: 100%;
+  }
+
+  .feedItemContainer {
+    position: relative;
+    margin: 0 0 20px 0;
+  }
+}

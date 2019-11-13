@@ -16,4 +16,4 @@
   "exclude": [
     "src/**/*.scss.d.ts"
   ]
-  }
+}

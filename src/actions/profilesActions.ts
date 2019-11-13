@@ -47,8 +47,8 @@ export function getProfile(accountAddress: string) {
             daos: [],
             proposals: [],
             schemes: [],
-            users: []
-          }
+            users: [],
+          };
         }
 
         dispatch({
@@ -126,14 +126,14 @@ export function updateProfile(accountAddress: string, name: string, description:
   };
 }
 
-export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: string }, { type: FollowType; id: string, isFollowing: boolean}>;
+export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: string }, { type: FollowType; id: string; isFollowing: boolean}>;
 
 export function toggleFollow(accountAddress: string, type: FollowType, id: string) {
   return async (dispatch: any, _getState: any) => {
     const web3Provider = await getWeb3Provider();
     const box = await Box.openBox(accountAddress, web3Provider);
     await box.syncDone;
-    const space = await box.openSpace('DAOstack') ;
+    const space = await box.openSpace("DAOstack") ;
     await space.syncDone;
     let follows = await space.public.get("follows");
 
@@ -142,8 +142,8 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
         daos: [],
         proposals: [],
         schemes: [],
-        users: []
-      }
+        users: [],
+      };
     }
     if (!follows[type]) {
       follows[type] = [];
@@ -167,9 +167,9 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
       type: ActionTypes.FOLLOW_ITEM,
       sequence: AsyncActionSequence.Success,
       meta: { accountAddress },
-      payload: { type, id, isFollowing }
+      payload: { type, id, isFollowing },
     } as FollowItemAction);
 
     dispatch(showNotification(NotificationStatus.Success, (isFollowing ? "Now following" : "No longer following") + ` ${type} ${id}`));
-  }
+  };
 }
