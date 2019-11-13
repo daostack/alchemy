@@ -85,7 +85,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
           <div className={css.schemeInfoContainer}>
             <h3>{bounty.title} [{parseFloat(bounty.calculated_fulfillment_amount).toFixed(3)} {bounty.token_symbol}]</h3>
             <div className={css.infoCardContent}>
-              <strong>Bounty ID: </strong> {bounty.id} <br/>
+              <strong>Bounty ID: </strong> {bounty.bounty_id}  | <strong>Issuer IDs:</strong> {bounty.issuers}
               <ReactMarkdown source={bounty.description} />
             </div>
           </div>
