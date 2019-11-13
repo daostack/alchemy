@@ -87,6 +87,52 @@ export default class ProposalCard extends React.Component<IProps, null> {
           [css.voteControls]: true,
         });
 
+        const votingHtml = <div className={voteWrapperClass}>
+          <div className={voteControls + " clearfix"}>
+            <div className={css.voteDivider}>
+              <VoteGraph size={40} proposal={proposal} />
+            </div>
+
+            <VoteBreakdown
+              currentAccountAddress={currentAccountAddress}
+              currentAccountState={member}
+              currentVote={currentAccountVote}
+              daoState={daoState}
+              proposal={proposal}
+              detailView={false} />
+          </div>
+
+          <div className={css.voteButtons}>
+            <VoteButtons
+              currentAccountAddress={currentAccountAddress}
+              currentAccountState={member}
+              currentVote={currentAccountVote}
+              dao={daoState}
+              expired={expired}
+              proposal={proposal} />
+          </div>
+        </div>;
+
+        const stakingHtml = <div className={css.predictions}>
+          <StakeGraph
+            proposal={proposal}
+          />
+          <BoostAmount proposal={proposal} />
+
+          <div className={css.predictionButtons}>
+            <StakeButtons
+              beneficiaryProfile={beneficiaryProfile}
+              currentAccountAddress={currentAccountAddress}
+              currentAccountGens={currentAccountGenBalance}
+              currentAccountGenStakingAllowance={currentAccountGenAllowance}
+              dao={daoState}
+              expired={expired}
+              proposal={proposal}
+              stakes={stakes}
+            />
+          </div>
+        </div>;
+
         return <VisibilitySensor key={proposal.id} scrollCheck resizeCheck intervalCheck={false}>
           {({isVisible}) =>
             <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
@@ -171,55 +217,13 @@ export default class ProposalCard extends React.Component<IProps, null> {
               </div>
 
               <div className={css.proposalActions + " clearfix"}>
-                <TrainingTooltip hide={!isVisible} placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
-                  <div className={voteWrapperClass}>
-                    <div className={voteControls + " clearfix"}>
-                      <div className={css.voteDivider}>
-                        <VoteGraph size={40} proposal={proposal} />
-                      </div>
+                { isVisible ? (<TrainingTooltip placement="topLeft" overlay={"Percentage of voting power currently voting for and against"}>
+                  {votingHtml}
+                </TrainingTooltip>) : votingHtml }
 
-                      <VoteBreakdown
-                        currentAccountAddress={currentAccountAddress}
-                        currentAccountState={member}
-                        currentVote={currentAccountVote}
-                        daoState={daoState}
-                        proposal={proposal}
-                        detailView={false} />
-                    </div>
-
-                    <div className={css.voteButtons}>
-                      <VoteButtons
-                        currentAccountAddress={currentAccountAddress}
-                        currentAccountState={member}
-                        currentVote={currentAccountVote}
-                        dao={daoState}
-                        expired={expired}
-                        proposal={proposal} />
-                    </div>
-                  </div>
-                </TrainingTooltip>
-
-                <TrainingTooltip hide={!isVisible} placement="topRight" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
-                  <div className={css.predictions}>
-                    <StakeGraph
-                      proposal={proposal}
-                    />
-                    <BoostAmount proposal={proposal} />
-
-                    <div className={css.predictionButtons}>
-                      <StakeButtons
-                        beneficiaryProfile={beneficiaryProfile}
-                        currentAccountAddress={currentAccountAddress}
-                        currentAccountGens={currentAccountGenBalance}
-                        currentAccountGenStakingAllowance={currentAccountGenAllowance}
-                        dao={daoState}
-                        expired={expired}
-                        proposal={proposal}
-                        stakes={stakes}
-                      />
-                    </div>
-                  </div>
-                </TrainingTooltip>
+                { isVisible ? (<TrainingTooltip placement="topRight" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
+                  {stakingHtml}
+                </TrainingTooltip>) : stakingHtml }
               </div>
             </div>
           }
