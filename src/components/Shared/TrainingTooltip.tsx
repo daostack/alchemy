@@ -48,7 +48,7 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
 
   private show(visible: boolean) {
     const tooltip = this.tooltip.current as any;
-    if (tooltip) {
+    if (tooltip && tooltip.trigger) {
       setTimeout(() => {
         if (visible) {
           tooltip.trigger.onMouseEnter({});
