@@ -123,10 +123,10 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     // This is making tests to failed. Need to fix it.
     if(this.state.exportMode) {
       this.exportFormValues(values);
-      let promise = new Promise((res, _) => {
-          setTimeout(() => res("Now it's done!"), 500)
+      const promise = new Promise((res, _) => {
+        res("Now it's done!");
       });
-      let result = await promise; 
+      const result = await promise; 
       return result;
     }
 
