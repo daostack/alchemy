@@ -78,9 +78,18 @@ class VoteButtons extends React.Component<IProps, IState> {
       expired,
     } = this.props;
 
+    const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
+                            proposal.stage === IProposalStage.Executed ||
+                            (proposal.stage === IProposalStage.Queued && expired) ||
+                            (proposal.stage === IProposalStage.Boosted && expired) ||
+                            (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
+                            (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
+                            currentVote === IProposalOutcome.Pass ||
+                            currentVote === IProposalOutcome.Fail
+                            ;
+
     /**
-     * only invoked when votingDisabled
-     * @param vote
+     * only used when votingDisabled
      */
     const tipContent = 
       ((this.props.currentVote === IProposalOutcome.Pass) || (this.props.currentVote === IProposalOutcome.Fail)) ?
@@ -94,16 +103,6 @@ class VoteButtons extends React.Component<IProps, IState> {
             "Can't vote on expired proposals" :
             proposal.stage === IProposalStage.Executed ?
               "Can't vote on executed proposals" : "";
-
-    const votingDisabled = proposal.stage === IProposalStage.ExpiredInQueue ||
-                            proposal.stage === IProposalStage.Executed ||
-                            (proposal.stage === IProposalStage.Queued && expired) ||
-                            (proposal.stage === IProposalStage.Boosted && expired) ||
-                            (proposal.stage === IProposalStage.QuietEndingPeriod && expired) ||
-                            (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ||
-                            currentVote === IProposalOutcome.Pass ||
-                            currentVote === IProposalOutcome.Fail
-                            ;
 
     const voteUpButtonClass = classNames({
       [css.votedFor]: currentVote === IProposalOutcome.Pass,
