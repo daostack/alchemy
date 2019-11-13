@@ -1,12 +1,14 @@
-/* tslint:disable:max-classes-per-file */
+/*eslint @typescript-eslint/camelcase: ["error", {properties: "never"}]*/
+/*tslint:disable:max-classes-per-file*/
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Address, ISchemeState } from "@daostack/client";
 import { schemeName } from "lib/util";
-import * as css from "./SchemeInfo.scss";
 import { getNetworkName } from "lib/util";
-const ReactMarkdown = require('react-markdown');
+import * as css from "./SchemeInfo.scss";
+
+const ReactMarkdown = require("react-markdown");
 
 interface IProps {
   daoAvatarAddress: Address;
@@ -24,56 +26,56 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       bounties: [{
-        title: 'Loading...',
-        token_symbol: '',
-        calculated_fulfillment_amount: '0',
-        description: '',
-        attached_url: '#',
-        id: 1
+        title: "Loading...",
+        token_symbol: "",
+        calculated_fulfillment_amount: "0",
+        description: "",
+        attached_url: "#",
+        id: 1,
       }],
       page: 0,
-      totalResults: 0
-    }
+      totalResults: 0,
+    };
   }
 
   private getApi = async (): Promise<void> => {
     // query all open bounties issued by current dao ordered by decending price
     // rinkeby api and mainnet api are different subdomains
-    let network = (await getNetworkName()).toLowerCase();
-    let testnet = network === 'rinkeby' ? 'rinkeby.' : '';
-    let res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`)
-    let json = await res.json();
+    const network = (await getNetworkName()).toLowerCase();
+    const testnet = network === "rinkeby" ? "rinkeby." : "";
+    const res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`);
+    const json = await res.json();
     console.log(json);
 
     this.setState({
       totalResults: json.count, 
-      bounties: json.results
-    })
+      bounties: json.results,
+    });
   }
 
   private nextPage = (): void => {
     // go forward a page in open bounties
     this.setState({
-      page: this.state.page + 25
-    })
+      page: this.state.page + 25,
+    });
   }
 
   private prevPage = (): void => {
     // go back a page in open bounties
     this.setState({
-      page: this.state.page - 25
-    })
+      page: this.state.page - 25,
+    });
   }
   
   public componentDidMount(): void {
     // call for open bounties on page load
-    this.getApi()
+    this.getApi();
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState): void {
     // if this.state.page is updated, re-query open bounties
     if (prevState.page !== this.state.page) {
-      this.getApi()
+      this.getApi();
     }
   }
 
@@ -81,17 +83,17 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
     const { daoAvatarAddress, scheme } = this.props;
     const createCard = () => {
       return this.state.bounties.map((bounty: any) => (
-        <a href={bounty.attached_url} target="_blank">
+        <a href={bounty.attached_url} target="_blank" rel="noopener noreferrer" key={bounty.id}>
           <div className={css.schemeInfoContainer}>
-            <h3>{bounty.title} [{parseFloat(bounty.calculated_fulfillment_amount).toFixed(3)} {bounty.token_symbol}]</h3>
+            <h3>{bounty.title} [{parseFloat(bounty.calculated_fulfillment_amount).toFixed(3)} {bounty.token_symbol }]</h3>
             <div className={css.infoCardContent}>
               <strong>Bounty ID: </strong> {bounty.bounty_id}  | <strong>Issuer IDs:</strong> {bounty.issuers}
               <ReactMarkdown source={bounty.description} />
             </div>
           </div>
         </a>
-      ))
-    }
+      ));
+    };
 
     return <div>
       <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${scheme.id}/info`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
@@ -100,7 +102,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
         createCard()
       }
 
-      <div style={{flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-around'}}>
+      <div style={{flex: 1, display: "flex", flexDirection: "row", justifyContent: "space-around"}}>
         {this.state.page - 25 > 0 && ( 
           <button className={css.pageButton} onClick={this.prevPage}>
             prev

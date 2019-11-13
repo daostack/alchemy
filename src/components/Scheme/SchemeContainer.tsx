@@ -99,7 +99,7 @@ class SchemeContainer extends React.Component<IProps, null> {
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
             { // if Bounties Scheme, create new tab
-              (schemeName(schemeState, schemeState.address) == 'Standard Bounties') &&
+              (schemeName(schemeState, schemeState.address) === "Standard Bounties") &&
               <Link className={openTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/open/`}>Open Bounties</Link>
             }
             <TrainingTooltip placement="bottom" overlay={"Learn about the protocol parameters for this scheme"}>

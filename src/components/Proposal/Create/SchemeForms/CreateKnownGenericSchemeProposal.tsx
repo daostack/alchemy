@@ -65,23 +65,23 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     const actions = props.genericSchemeInfo.actions();
     this.state = {
       actions,
-      currentAction:  actions[0],
+      currentAction: actions[0],
       tags: new Array<string>(),
     };
   }
 
-  public async getBountyEth(values: IFormValues): Promise<string> {
-    const currentAction = this.state.currentAction;
-    var ethToSend: number = 0;
+  private async getBountyEth(values: IFormValues): Promise<string> {
+    const currentAction = this.state.currentAction;
+    let ethToSend = 0;
 
-    for (var field of currentAction.getFields()) {
-      if (field.name === '_depositAmount' || field.name === '_amount') {
-        ethToSend += parseInt(field.callValue(values[field.name]))/1000000000;
+    for (const field of currentAction.getFields()) {
+      if (field.name === "_depositAmount" || field.name === "_amount" && this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
+        ethToSend += parseInt(field.callValue(values[field.name]))/1000000000;
       }
     }
-    console.log('Adding ', ethToSend, ' Wei');
+    console.log("Adding ", ethToSend, " Wei");
 
-    return ethToSend.toString()
+    return ethToSend.toString();
   }
 
   private handleSubmit = () => async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
@@ -105,9 +105,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       return;
     }
     setSubmitting(false);
-
-    let ethValue = await this.getBountyEth(values);
-
+ 
+    const ethValue = await this.getBountyEth(values);
+ 
     const proposalValues = {
       ...values,
       callData,
@@ -351,7 +351,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                     <Interweave content={currentAction.description} />
                   </div>
                   <label htmlFor="titleInput">
-                      Title
+                    Title
                     <ErrorMessage name="title">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>
                     <div className={css.requiredMarker}>*</div>
                   </label>
@@ -366,7 +366,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   />
 
                   <label htmlFor="descriptionInput">
-                      Description
+                    Description
                     <div className={css.requiredMarker}>*</div>
                     <img className={css.infoTooltip} src="/assets/images/Icon/Info.svg"/>
                     <ErrorMessage name="description">{(msg) => <span className={css.errorMessage}>{msg}</span>}</ErrorMessage>

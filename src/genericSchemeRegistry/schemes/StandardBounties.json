@@ -14,7 +14,7 @@
   "actions": [
     {
       "id": "issueAndContribute",
-      "label": "Issue and Contribute",
+      "label": "Create and Fund Bounty",
       "description": "Create a new bounty and contribute tokens to the bounty. IPFS upload of bounty data must adhere to the <a href=\"https://github.com/Bounties-Network/StandardBounties/blob/master/docs/standardSchemas.md\" target=\"_blank\">StandardBounties Schema</a> to be listed in Open Bounties.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
@@ -112,7 +112,7 @@
     },
     {
       "id": "fulfillAndAccept",
-      "label": "Fulfill and Accept",
+      "label": "Accept Submission and Payout",
       "description": "Allows any of the approvers to both fulfill and accept a submission.",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
@@ -307,7 +307,7 @@
     },
     {
       "id": "acceptFulfillment",
-      "label": "Accept Fulfillment",
+      "label": "Accept Submission",
       "description": "Allows any of the approvers to accept a given submission",
       "notes": "https://github.com/Bounties-Network/StandardBounties/blob/master/contracts/StandardBounties.sol",
       "fields": [
