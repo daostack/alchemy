@@ -121,7 +121,7 @@ class AppContainer extends React.Component<IProps, IState> {
   private unminimizeNotif = () => () => this.setState({notificationsMinimized: false});
   private headerHtml = ( props: any ): any => <Header {...props} />;
 
-  private sortedNotification = () => (notif: INotification): any => {
+  private notificationHtml = () => (notif: INotification): any => {
     return <div key={notif.id}>
       <Notification
         title={(notif.title || notif.status).toUpperCase()}
@@ -186,7 +186,7 @@ class AppContainer extends React.Component<IProps, IState> {
             {this.state.notificationsMinimized ?
               <MinimizedNotifications notifications={sortedNotifications.length} unminimize={this.unminimizeNotif()} />
               :
-              sortedNotifications.map(this.sortedNotification())
+              sortedNotifications.map(this.notificationHtml())
             }
           </div>
           <div className={css.background}></div>
