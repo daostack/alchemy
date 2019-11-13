@@ -64,7 +64,7 @@ class VoteButtons extends React.Component<IProps, IState> {
   }
 
   private closePreVoteModal = () => (_event: any): void => { this.setState({ showPreVoteModal: false }); }
-  private handleVoteOnProposal = () => (): void => { this.props.voteOnProposal.bind(null, this.props.dao.address, this.props.proposal.id, this.state.currentVote);  };
+  private handleVoteOnProposal = () => (): void => { this.props.voteOnProposal(this.props.dao.address, this.props.proposal.id, this.state.currentVote);  };
 
   public render(): RenderOutput {
     const {
@@ -92,7 +92,7 @@ class VoteButtons extends React.Component<IProps, IState> {
      * only used when votingDisabled
      */
     const tipContent = 
-      ((this.props.currentVote === IProposalOutcome.Pass) || (this.props.currentVote === IProposalOutcome.Fail)) ?
+      ((currentVote === IProposalOutcome.Pass) || (currentVote === IProposalOutcome.Fail)) ?
         "Can't change your vote" :
         (currentAccountState && currentAccountState.reputation.eq(new BN(0))) ?
           "Voting requires reputation in " + dao.name :
