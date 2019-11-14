@@ -221,7 +221,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
                   {votingHtml}
                 </TrainingTooltip>) : votingHtml }
 
-                { isVisible ? (<TrainingTooltip placement="topRight" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
+                { isVisible ? (<TrainingTooltip placement="right" overlay={"GEN tokens staked to predict the proposal will pass or fail"}>
                   {stakingHtml}
                 </TrainingTooltip>) : stakingHtml }
               </div>
