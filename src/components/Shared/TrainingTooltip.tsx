@@ -15,7 +15,7 @@ interface IStateProps {
 }
 
 export interface IExternalProps extends RCTooltip.Props {
-  hide?: boolean;
+
 }
 
 type IProps = IExternalProps & IAppStateProps;
@@ -68,13 +68,12 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
     }
 
     return (
-      this.props.hide ? "" :
-        <Tooltip ref={this.tooltip} {...this.props}
-          prefixCls="rc-trainingtooltip"
-          trigger={this.props.enableHover ? ["hover"] : []}
-        >
-          {this.props.children}
-        </Tooltip>
+      <Tooltip ref={this.tooltip} {...this.props}
+        prefixCls="rc-trainingtooltip"
+        trigger={this.props.enableHover ? ["hover"] : []}
+      >
+        {this.props.children}
+      </Tooltip>
     );
   }
 }
