@@ -73,7 +73,7 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
     return (
       <Tooltip ref={this.tooltip} {...this.props}
         prefixCls="rc-trainingtooltip"
-        trigger={this.props.enableHover || this.props.alwaysAvailable ? ["hover"] : []}
+        trigger={(this.props.enableHover || this.props.alwaysAvailable) ? ["hover"] : []}
       >
         {this.props.children}
       </Tooltip>
