@@ -72,32 +72,37 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
     const { currentAccountAddress, fetchMore, isActive, scheme } = this.props;
+    let proposalCount=0;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
     );
+
+    proposalCount=0;
 
     const preBoostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsPreBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}  suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
         ))}
       </TransitionGroup>
     );
 
+    proposalCount=0;
+
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}  suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
         ))}
       </TransitionGroup>
