@@ -1,4 +1,4 @@
-import { IDAOState, Member, Reputation, IReputationState } from "@daostack/client";
+import { IDAOState, Member } from "@daostack/client";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
@@ -10,12 +10,9 @@ import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 
-import { mergeMap, map } from "rxjs/operators";
 import { combineLatest } from "rxjs";
 import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";
-
-import BN = require("bn.js");
 
 interface IExternalProps extends RouteComponentProps<any> {
   daoState: IDAOState;
@@ -25,7 +22,7 @@ interface IStateProps {
   profiles: IProfilesState;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<[Member[], BN]>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<[Member[]]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -42,7 +39,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const members = data[0];
-    const daoTotalReputation = data[1];
+    const daoTotalReputation = this.props.daoState.reputationTotalSupply;
     const { daoState, profiles } = this.props;
 
     const membersHTML = members.map((member) =>
@@ -99,18 +96,14 @@ const SubscribedDaoMembersPage = withSubscription({
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: 0,
-      }),
-      dao.nativeReputation().pipe(
-        mergeMap((reputation: Reputation) => reputation.state({subscribe: true})),
-        map((reputationState: IReputationState) => reputationState.totalSupply)
-      )
+      })
     );
   },
 
   // used for hacky pagination tracking
   pageSize: PAGE_SIZE,
 
-  getFetchMoreObservable: (props: IExternalProps, data: [Member[], BN]) => {
+  getFetchMoreObservable: (props: IExternalProps, data: [Member[]]) => {
     const dao = props.daoState.dao;
     return combineLatest(
       dao.members({
@@ -118,11 +111,7 @@ const SubscribedDaoMembersPage = withSubscription({
         orderDirection: "desc",
         first: PAGE_SIZE,
         skip: data.length,
-      }),
-      dao.nativeReputation().pipe(
-        mergeMap((reputation: Reputation) => reputation.state({subscribe: true})),
-        map((reputationState: IReputationState) => reputationState.totalSupply)
-      )
+      })
     );
   },
 });

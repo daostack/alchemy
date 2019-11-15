@@ -122,7 +122,7 @@ const SubscribedDaoContainer = withSubscription({
   createObservable: (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const daoAddress = props.match.params.daoAvatarAddress;
-    return arc.dao(daoAddress).state();
+    return arc.dao(daoAddress).state({ subscribe: true} );
   },
 });
 
