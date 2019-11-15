@@ -1,4 +1,4 @@
-import { IDAOState, Member } from "@daostack/client";
+import { IDAOState, Member, Reputation, IReputationState } from "@daostack/client";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
@@ -10,8 +10,12 @@ import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 
+import { mergeMap, map } from "rxjs/operators";
+import { combineLatest } from "rxjs";
 import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";
+
+import BN = require("bn.js");
 
 interface IExternalProps extends RouteComponentProps<any> {
   daoState: IDAOState;
@@ -21,7 +25,7 @@ interface IStateProps {
   profiles: IProfilesState;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<[Member[], BN]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -37,11 +41,12 @@ class DaoMembersPage extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { data } = this.props;
 
-    const members = data;
+    const members = data[0];
+    const daoTotalReputation = data[1];
     const { daoState, profiles } = this.props;
 
     const membersHTML = members.map((member) =>
-      <DaoMember key={member.staticState.address} dao={daoState} member={member} profile={profiles[member.staticState.address]} />);
+      <DaoMember key={member.staticState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.staticState.address]} />);
 
     return (
       <div className={css.membersContainer}>
@@ -83,26 +88,42 @@ const SubscribedDaoMembersPage = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
+  checkForUpdate: [], // (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
 
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const dao = props.daoState.dao;
-    return dao.members({
-      orderBy: "balance",
-      orderDirection: "desc",
-      first: PAGE_SIZE,
-      skip: 0,
-    });
+
+    return combineLatest(
+      dao.members({
+        orderBy: "balance",
+        orderDirection: "desc",
+        first: PAGE_SIZE,
+        skip: 0,
+      }),
+      dao.nativeReputation().pipe(
+        mergeMap((reputation: Reputation) => reputation.state({subscribe: true})),
+        map((reputationState: IReputationState) => reputationState.totalSupply)
+      )
+    );
   },
 
-  getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
+  // used for hacky pagination tracking
+  pageSize: PAGE_SIZE,
+
+  getFetchMoreObservable: (props: IExternalProps, data: [Member[], BN]) => {
     const dao = props.daoState.dao;
-    return dao.members({
-      orderBy: "balance",
-      orderDirection: "desc",
-      first: PAGE_SIZE,
-      skip: data.length,
-    });
+    return combineLatest(
+      dao.members({
+        orderBy: "balance",
+        orderDirection: "desc",
+        first: PAGE_SIZE,
+        skip: data.length,
+      }),
+      dao.nativeReputation().pipe(
+        mergeMap((reputation: Reputation) => reputation.state({subscribe: true})),
+        map((reputationState: IReputationState) => reputationState.totalSupply)
+      )
+    );
   },
 });
 
