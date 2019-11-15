@@ -25,7 +25,7 @@ export default class MarkdownField extends React.Component<Props, IState> {
   }
 
   private generateMarkdownPreview = (markdown: any) => Promise.resolve(<ReactMarkdown source={markdown} />);
-  private onTabChange = () => (tab: any) => { this.setState({ selectedTab: tab}); };
+  private onTabChange = (tab: any) => { this.setState({ selectedTab: tab}); };
 
   public render(): RenderOutput {
     const { field, onChange } = this.props;
@@ -50,7 +50,7 @@ export default class MarkdownField extends React.Component<Props, IState> {
           minEditorHeight={84}
           minPreviewHeight={74}
           onChange={onChange}
-          onTabChange={this.onTabChange()}
+          onTabChange={this.onTabChange}
           selectedTab={this.state.selectedTab}
           value={field.value}
         />

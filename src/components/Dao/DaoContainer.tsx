@@ -60,18 +60,18 @@ class DaoContainer extends React.Component<IProps, null> {
     this.props.getProfilesForAllAccounts();
   }
 
-  private daoHistoryRoute = () => (routeProps: any) => <DaoHistoryPage {...routeProps} currentAccountAddress={this.props.currentAccountAddress} />;
-  private daoMembersRoute = () => (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data} />;
-  private daoDiscussionRoute = () => (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data} />;
-  private daoProposalRoute = () => (routeProps: any) =>
+  private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} currentAccountAddress={this.props.currentAccountAddress} />;
+  private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data} />;
+  private daoDiscussionRoute = (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data} />;
+  private daoProposalRoute = (routeProps: any) =>
     <ProposalDetailsPage {...routeProps}
       daoState={this.props.data}
       currentAccountAddress={this.props.currentAccountAddress}
       proposalId={routeProps.match.params.proposalId}
     />;
 
-  private schemeRoute = () => (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
-  private daoSchemesRoute = () => (routeProps: any) => <DaoSchemesPage {...routeProps} />;
+  private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
+  private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
 
   public render(): RenderOutput {
@@ -93,20 +93,20 @@ class DaoContainer extends React.Component<IProps, null> {
           </div>
           <Switch>
             <Route exact path="/dao/:daoAvatarAddress/history"
-              render={this.daoHistoryRoute()} />
+              render={this.daoHistoryRoute} />
             <Route exact path="/dao/:daoAvatarAddress/members"
-              render={this.daoMembersRoute()} />
+              render={this.daoMembersRoute} />
             <Route exact path="/dao/:daoAvatarAddress/discussion"
-              render={this.daoDiscussionRoute()} />
+              render={this.daoDiscussionRoute} />
 
             <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
-              render={this.daoProposalRoute()}
+              render={this.daoProposalRoute}
             />
 
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-              render={this.schemeRoute()} />
+              render={this.schemeRoute} />
 
-            <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute()} />
+            <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute} />
           </Switch>
 
           <ModalRoute

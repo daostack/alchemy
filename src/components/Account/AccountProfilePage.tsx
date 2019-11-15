@@ -134,7 +134,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     setSubmitting(false);
   }
 
-  public onOAuthSuccess = () => (account: IProfileState): void => {
+  public onOAuthSuccess = (account: IProfileState): void => {
     this.props.verifySocialAccount(this.props.accountAddress, account);
   }
 
@@ -260,8 +260,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
                         }
 
                         <h3>Social Verification</h3>
-                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess()} profile={accountProfile} socket={socket} />
-                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess()} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess} profile={accountProfile} socket={socket} />
                       </div>
                     }
                     <div className={css.otherInfoContainer}>

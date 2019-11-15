@@ -63,8 +63,8 @@ class VoteButtons extends React.Component<IProps, IState> {
     }
   }
 
-  private closePreVoteModal = () => (_event: any): void => { this.setState({ showPreVoteModal: false }); }
-  private handleVoteOnProposal = () => (): void => { this.props.voteOnProposal(this.props.dao.address, this.props.proposal.id, this.state.currentVote);  };
+  private closePreVoteModal = (_event: any): void => { this.setState({ showPreVoteModal: false }); }
+  private handleVoteOnProposal = (): void => { this.props.voteOnProposal(this.props.dao.address, this.props.proposal.id, this.state.currentVote);  };
 
   public render(): RenderOutput {
     const {
@@ -128,8 +128,8 @@ class VoteButtons extends React.Component<IProps, IState> {
         {this.state.showPreVoteModal ?
           <PreTransactionModal
             actionType={this.state.currentVote === IProposalOutcome.Pass ? ActionTypes.VoteUp : ActionTypes.VoteDown}
-            action={this.handleVoteOnProposal()}
-            closeAction={this.closePreVoteModal()}
+            action={this.handleVoteOnProposal}
+            closeAction={this.closePreVoteModal}
             currentAccount={currentAccountState}
             dao={dao}
             effectText={<span>Your influence: <strong><Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={currentAccountState.reputation} /></strong></span>}

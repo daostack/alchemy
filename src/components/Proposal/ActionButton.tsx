@@ -87,7 +87,7 @@ class ActionButton extends React.Component<IProps, IState> {
     }
   }
 
-  private closePreRedeemModal = () => (): void => {
+  private closePreRedeemModal = (): void => {
     this.setState({ preRedeemModalOpen: false });
   }
 
@@ -186,7 +186,7 @@ class ActionButton extends React.Component<IProps, IState> {
             actionType={ActionTypes.Redeem}
             action={this.handleRedeemProposal}
             beneficiaryProfile={beneficiaryProfile}
-            closeAction={this.closePreRedeemModal()}
+            closeAction={this.closePreRedeemModal}
             dao={daoState}
             effectText={redemptionsTip}
             proposal={proposalState}

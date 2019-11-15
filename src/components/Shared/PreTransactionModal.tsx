@@ -74,12 +74,12 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     this.props.closeAction();
   }
 
-  public toggleInstructions = () => () => {
+  public toggleInstructions = () => {
     this.setState({ instructionsOpen: !this.state.instructionsOpen });
   }
 
-  private stakeOnChange = () => (e: any) => this.setState({stakeAmount: Number(e.target.value)});
-  private ref = () => (input: any) => { this.stakeInput = input; };
+  private stakeOnChange = (e: any) => this.setState({stakeAmount: Number(e.target.value)});
+  private ref = (input: any) => { this.stakeInput = input; };
   private exchangeHtml = (item: any) => {
     return(
       <li key={item.name}>
@@ -243,7 +243,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
               </div>
               {actionType !== ActionTypes.Redeem && actionType !== ActionTypes.Execute ?
                 <div className={classNames({[css.helpButton]: true, [css.open]: this.state.instructionsOpen})}>
-                  <button className={css.hover}  onClick={this.toggleInstructions()}>
+                  <button className={css.hover}  onClick={this.toggleInstructions}>
                     <b> &lt; Got it</b>
                     <span>x</span>
                     <span>?</span>
@@ -286,9 +286,9 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                           autoFocus
                           type="number"
                           min="1"
-                          ref={this.ref()}
+                          ref={this.ref}
                           className={css.predictionAmount}
-                          onChange={this.stakeOnChange()}
+                          onChange={this.stakeOnChange}
                           placeholder="0"
                         />
                         <span className={css.genLabel + " " + css.genSymbol}>GEN</span>

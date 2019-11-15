@@ -9,7 +9,7 @@ interface IProps {
 
 export default class Notification extends React.Component<IProps, null> {
 
-  private unmimimize = () => () => { this.props.unminimize(); };
+  private unmimimize = () => { this.props.unminimize(); };
 
   public render(): RenderOutput {
     const { notifications } = this.props;
@@ -23,7 +23,7 @@ export default class Notification extends React.Component<IProps, null> {
     });
 
     return (
-      <div style={{cursor: "pointer"}} className={transactionClass} onClick={this.unmimimize()}>
+      <div style={{cursor: "pointer"}} className={transactionClass} onClick={this.unmimimize}>
         <div className={css.statusIcon}>
           <b style={{whiteSpace: "nowrap"}}>{notifications} alert{notifications > 1 ? "s" : ""}</b>
         </div>

@@ -117,11 +117,11 @@ class AppContainer extends React.Component<IProps, IState> {
   }
 
   private dismissNotif = (id: string) => () => this.props.dismissNotification(id);
-  private minimizeNotif = () => () => this.setState({notificationsMinimized: true});
-  private unminimizeNotif = () => () => this.setState({notificationsMinimized: false});
+  private minimizeNotif = () => this.setState({notificationsMinimized: true});
+  private unminimizeNotif = () => this.setState({notificationsMinimized: false});
   private headerHtml = ( props: any ): any => <Header {...props} />;
 
-  private notificationHtml = () => (notif: INotification): any => {
+  private notificationHtml = (notif: INotification): any => {
     return <div key={notif.id}>
       <Notification
         title={(notif.title || notif.status).toUpperCase()}
@@ -138,7 +138,7 @@ class AppContainer extends React.Component<IProps, IState> {
         timestamp={notif.timestamp}
         dismiss={this.dismissNotif(notif.id)}
         showNotification={this.props.showNotification}
-        minimize={this.minimizeNotif()}
+        minimize={this.minimizeNotif}
       />
     </div>; 
   }
@@ -184,9 +184,9 @@ class AppContainer extends React.Component<IProps, IState> {
 
           <div className={css.pendingTransactions}>
             {this.state.notificationsMinimized ?
-              <MinimizedNotifications notifications={sortedNotifications.length} unminimize={this.unminimizeNotif()} />
+              <MinimizedNotifications notifications={sortedNotifications.length} unminimize={this.unminimizeNotif} />
               :
-              sortedNotifications.map(this.notificationHtml())
+              sortedNotifications.map(this.notificationHtml)
             }
           </div>
           <div className={css.background}></div>
