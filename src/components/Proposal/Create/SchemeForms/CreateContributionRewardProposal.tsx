@@ -22,7 +22,6 @@ interface IExternalProps {
 
 interface IStateProps {
   tags: Array<string>;
-  initialFormValues: IFormValues;
   exportMode: boolean;
 }
 
@@ -99,23 +98,12 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = { 
       tags: new Array<string>(),
-      initialFormValues: {
-        beneficiary: "",
-        description: "",
-        ethReward: 0,
-        externalTokenAddress: getArc().GENToken().address,
-        externalTokenReward: 0,
-        nativeTokenReward: 0,
-        reputationReward: 0,
-        title: "",
-        url: "",
-      },
       exportMode: false,
     };
   }
   
   componentDidMount(){
-    this.loadInitialFormValues();
+    this.loadInitialTagFormValues();
   }
   
   public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void | any> {
@@ -179,6 +167,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   // Loads proposal data from params
   private loadInitialFormValues = () => {
     const search = window.location.search.substring(1);
+    let initialFormValues;
     if(search.length > 0 ) {
       // The reason behind not using double quotes is because in this case if we do so it will give us an error.
       // In order to avoid such error we use single quotes.
@@ -186,8 +175,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       // const params = JSON.parse("{'" + decodeURI(search).replace(/"/g, "\\'").replace(/&/g, "','").replace(/=/g,"':'") + "'}");
       // eslint-disable-next-line quotes
       const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-      const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url, tags } = params;
-      const initialFormValues = {
+      const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url } = params;
+      initialFormValues = {
         beneficiary,
         description,
         ethReward: Number(ethReward),
@@ -198,7 +187,32 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
         title,
         url,
       };
-      this.setState({ initialFormValues, tags: JSON.parse(tags) });
+    }
+    else {
+      initialFormValues = {
+        beneficiary: "",
+        description: "",
+        ethReward: 0,
+        externalTokenAddress: getArc().GENToken().address,
+        externalTokenReward: 0,
+        nativeTokenReward: 0,
+        reputationReward: 0,
+        title: "",
+        url: "",
+      };
+    }
+    return initialFormValues;
+  }
+  
+  loadInitialTagFormValues(){
+    const search = window.location.search.substring(1);
+    if(search.length > 0 ) {
+      // eslint-disable-next-line quotes
+      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+      const { tags } = params;
+      if(tags) { 
+        this.setState({ tags: JSON.parse(tags) });
+      }
     }
   }
   
@@ -217,7 +231,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.state.initialFormValues}
+          initialValues={this.loadInitialFormValues()}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -347,7 +361,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                    beneficiary={this.state.initialFormValues.beneficiary}
+                    beneficiary={this.loadInitialFormValues().beneficiary}
                   />
                 </div>
 
