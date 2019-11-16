@@ -277,7 +277,8 @@ const SubscribedHeader = withSubscription({
   createObservable: (props: IProps) => {
     if (props.daoAvatarAddress) {
       const arc = getArc();
-      return arc.dao(props.daoAvatarAddress).state();
+      // subscribe if only to get DAO reputation supply updates
+      return arc.dao(props.daoAvatarAddress).state({ subscribe: true });
     } else {
       return of(null);
     }

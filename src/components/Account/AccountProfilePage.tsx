@@ -1,5 +1,5 @@
 import { promisify } from "util";
-import { IDAOState, IMemberState } from "@daostack/client";
+import { IDAOState, IMemberState, DAO } from "@daostack/client";
 
 import BN = require("bn.js");
 import * as profileActions from "actions/profilesActions";
@@ -302,9 +302,15 @@ const SubscribedAccountProfilePage = withSubscription({
     const queryValues = queryString.parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
+    let dao: DAO;
+    if (daoAvatarAddress) {
+      dao = arc.dao(daoAvatarAddress);
+    }
+
     return combineLatest(
-      daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
-      daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),
+      // subscribe if only to to get DAO reputation supply updates
+      daoAvatarAddress ? dao.state( {subscribe: true}) : of(null),
+      daoAvatarAddress ? dao.member(accountAddress).state() : of(null),
       arc.ethBalance(accountAddress)
         .pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress)
