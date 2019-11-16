@@ -99,7 +99,7 @@ class DaoContainer extends React.Component<IProps, null> {
             <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
               render={(props) => <SchemeContainer {...props} daoState={daoState} currentAccountAddress={currentAccountAddress} />} />
 
-            <Route path="/dao/:daoAvatarAddress" render={(props) => <DaoSchemesPage {...props} />} />
+            <Route path="/dao/:daoAvatarAddress" render={(props) => <DaoSchemesPage {...props} daoState={daoState} />} />
           </Switch>
 
           <ModalRoute
@@ -122,7 +122,7 @@ const SubscribedDaoContainer = withSubscription({
   createObservable: (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const daoAddress = props.match.params.daoAvatarAddress;
-    return arc.dao(daoAddress).state({ subscribe: true} );
+    return arc.dao(daoAddress).state({ subscribe: true, fetchAllData: true } );
   },
 });
 
