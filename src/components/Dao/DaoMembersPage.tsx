@@ -10,7 +10,6 @@ import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 
-import { combineLatest } from "rxjs";
 import DaoMember from "./DaoMember";
 import * as css from "./Dao.scss";
 
@@ -22,7 +21,7 @@ interface IStateProps {
   profiles: IProfilesState;
 }
 
-type IProps = IExternalProps & IStateProps & ISubscriptionProps<[Member[]]>;
+type IProps = IExternalProps & IStateProps & ISubscriptionProps<Member[]>;
 
 const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
   return {
@@ -38,7 +37,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { data } = this.props;
 
-    const members = data[0];
+    const members = data;
     const daoTotalReputation = this.props.daoState.reputationTotalSupply;
     const { daoState, profiles } = this.props;
 
@@ -90,29 +89,25 @@ const SubscribedDaoMembersPage = withSubscription({
   createObservable: async (props: IExternalProps) => {
     const dao = props.daoState.dao;
 
-    return combineLatest(
-      dao.members({
-        orderBy: "balance",
-        orderDirection: "desc",
-        first: PAGE_SIZE,
-        skip: 0,
-      })
-    );
+    return dao.members({
+      orderBy: "balance",
+      orderDirection: "desc",
+      first: PAGE_SIZE,
+      skip: 0,
+    });
   },
 
   // used for hacky pagination tracking
   pageSize: PAGE_SIZE,
 
-  getFetchMoreObservable: (props: IExternalProps, data: [Member[]]) => {
+  getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
     const dao = props.daoState.dao;
-    return combineLatest(
-      dao.members({
-        orderBy: "balance",
-        orderDirection: "desc",
-        first: PAGE_SIZE,
-        skip: data.length,
-      })
-    );
+    return dao.members({
+      orderBy: "balance",
+      orderDirection: "desc",
+      first: PAGE_SIZE,
+      skip: data.length,
+    });
   },
 });
 
