@@ -165,7 +165,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
               </li>
               <li>
                 <TrainingTooltip placement="topLeft" overlay={"A feed of things and stuffs"}>
-                  <Link to={"/feed/"} onClick={this.handleCloseMenu()}>
+                  <Link to={"/feed/"} onClick={this.handleCloseMenu}>
                     <span className={css.menuDot} />
                     <span className={
                       classNames({

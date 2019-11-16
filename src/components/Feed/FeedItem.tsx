@@ -62,7 +62,7 @@ const FeedItem = (props: IProps) => {
 
   return (
     <div className={css.feedItemContainer} data-test-id={`eventCard-${event.staticState.id}`}>
-      <span>{icon}</span>
+      <span className={css.icon}>{icon}</span>
       <div className={css.itemTitle}><span>{title}</span></div>
       <div className={css.itemContent}>{content}</div>
     </div>

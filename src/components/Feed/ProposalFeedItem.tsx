@@ -32,7 +32,7 @@ const ProposalFeedItem = (props: IProps) => {
       </div>
 
       <div className={css.proposalDetails}>
-        <AccountPopup accountAddress={proposal.proposer} daoState={dao} />
+        <AccountPopup accountAddress={proposal.proposer} daoState={dao} width={17} />
         <AccountProfileName accountAddress={proposal.proposer} accountProfile={profile} daoAvatarAddress={dao.address} />
       </div>
 

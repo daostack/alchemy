@@ -163,7 +163,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                 </div>
 
                 <div className={css.createdBy}>
-                  <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView />
+                  <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={35} />
                   <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView />
                 </div>
 

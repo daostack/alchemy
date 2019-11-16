@@ -200,7 +200,7 @@ export default class ProposalCard extends React.Component<IProps, null> {
               </div>
             </div>
             <div className={css.createdBy}>
-              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} detailView={false} />
+              <AccountPopup accountAddress={proposal.proposer} daoState={daoState} width={12} />
               <AccountProfileName accountAddress={proposal.proposer} accountProfile={creatorProfile} daoAvatarAddress={daoState.address} detailView={false} />
             </div>
             <div className={css.description}>

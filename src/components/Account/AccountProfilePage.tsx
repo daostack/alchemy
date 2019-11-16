@@ -164,7 +164,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
                   <div className={css.profileContent}>
                     <div className={css.profileDataContainer}>
                       <div className={css.userAvatarContainer}>
-                        <AccountImage accountAddress={accountAddress} profile={accountProfile} />
+                        <AccountImage accountAddress={accountAddress} profile={accountProfile} width={70} />
                       </div>
                       <div className={css.profileData}>
                         <label htmlFor="nameInput">

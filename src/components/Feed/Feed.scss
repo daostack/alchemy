@@ -37,7 +37,7 @@
     left: -50px;
   }
 
-  img {
+  .icon img {
     width: 30px;
     height: 30px;
   }
@@ -61,8 +61,12 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     padding: 21px 26px;
 
-    .daoName a {
-      color: #004799;
+    .daoName {
+      margin-bottom: 17px;
+
+      a {
+        color: #004799;
+      }
     }
   }
 

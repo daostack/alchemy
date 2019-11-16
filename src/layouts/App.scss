@@ -221,7 +221,7 @@ body {
       position: absolute;
       width: 270px;
       top: 50px;
-      transform: scaleY(0);    
+      transform: scaleY(0);
       transform-origin: top;
       transition: transform 0.25s ease;
       right: 12px;
@@ -234,12 +234,6 @@ body {
 
       .walletImage {
         float: left;
-
-        img {
-          width: 50px;
-          height: 50px;
-          border-radius: 8px;
-        }
       }
 
       .pointer {
@@ -411,7 +405,7 @@ body {
               color: #001d35;
               margin-bottom: 2px;
             }
-            
+
             .name {
               font-size: 11px;
               color: #4e6176;
@@ -671,7 +665,7 @@ body {
 }
 
 .waitingToInitMessage {
-  text-align: center; 
+  text-align: center;
 }
 
 @media only screen and (max-width: 425px) {

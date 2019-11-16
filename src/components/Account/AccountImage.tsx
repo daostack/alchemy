@@ -2,16 +2,18 @@ import * as blockies from "ethereum-blockies-png";
 import * as React from "react";
 import { IProfileState } from "reducers/profilesReducer";
 
+import * as css from "./Account.scss";
+
 interface IProps {
   accountAddress: string;
-  className?: string;
   profile?: IProfileState;
+  width: number;
 }
 
 export default class AccountImage extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { accountAddress, className, profile } = this.props;
+    const { accountAddress, profile, width } = this.props;
 
     let url;
     if (profile && profile.image && profile.image[0] && profile.image[0].contentUrl) {
@@ -23,6 +25,6 @@ export default class AccountImage extends React.Component<IProps, null> {
       });
     }
 
-    return (<img src={url} className={className} />);
+    return (<img src={url} className={css.accountImage} width={width} />);
   }
 }

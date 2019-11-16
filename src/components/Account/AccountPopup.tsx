@@ -1,7 +1,6 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProfile } from "actions/profilesActions";
-import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
@@ -21,8 +20,7 @@ import * as css from "./Account.scss";
 interface IExternalProps {
   accountAddress: Address;
   daoState: IDAOState;
-  detailView?: boolean;
-  historyView?: boolean;
+  width?: number;
 }
 
 interface IStateProps {
@@ -67,19 +65,15 @@ class AccountPopup extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const accountInfo = this.props.data;
-    const { accountAddress, daoState, profile } = this.props;
+    const { accountAddress, daoState, profile, width } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
-    const targetAccountClass = classNames({
-      [css.detailView]: this.props.detailView,
-      [css.historyView]: this.props.historyView,
-      [css.targetAccount]: true,
-    });
+    const _width = width || 12;
 
     return (
-      <div className={targetAccountClass}>
+      <div className={css.targetAccount} style={{ width: _width }}>
         <div className={css.avatar}>
-          <AccountImage accountAddress={accountAddress} profile={profile} />
+          <AccountImage accountAddress={accountAddress} profile={profile} width={_width} />
         </div>
         <div className={css.accountInfo}>
           <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={daoState.address} /></div>

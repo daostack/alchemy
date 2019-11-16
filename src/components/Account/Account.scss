@@ -19,27 +19,11 @@ a.detailView {
   position: relative;
   font-size: 13px;
   color: rgba(85, 85, 85, 1.000);
-  left: 17px;
+  left: 2px;
 }
 
-:global .membersPage {
-  border-radius: 3px;
-  height: 40px;
-  width: 40px;
-  float: left;
-  margin: 3px 20px 0 15px;
-}
-
-.detailView.targetAccount {
-  width: 35px;
-  height: 35px;
-  margin-right: 0;
-  margin-left: -6px;
-
-  .avatar img {
-    width: 35px;
-    height: 35px;
-  }
+.accountImage {
+  border-radius: 15%;
 }
 
 .socialProof {
@@ -49,17 +33,12 @@ a.detailView {
 .targetAccount {
   position: relative;
   display: inline-block;
-  width: 22px;
-  height: 22px;
   overflow: visible;
   transition: all .25s ease;
-  margin-right: 13px;
-  left: 7px;
+  margin-right: 6px;
   vertical-align: middle;
 
   .avatar {
-    width: 12px;
-    height: 12px;
     z-index: 1;
     position: absolute;
     top: 50%;
@@ -67,7 +46,6 @@ a.detailView {
     transform: translate(-50%, -50%);
     background-color: rgba(255,255,255, 0);
     transition: all .25s ease;
-    border-radius: 2px;
 
     img {
       transition: all .25s ease;
@@ -75,12 +53,9 @@ a.detailView {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 12px;
-      border-radius: 0;
-      border-radius: 2px;
-      height: 12px;
     }
   }
+
   .accountInfo {
     position: absolute;
     z-index: 0;
@@ -169,23 +144,12 @@ a.detailView {
   vertical-align: middle;
 }
 
-.historyView.targetAccount {
-  width: 40px;
-  height: 40px;
-  vertical-align: middle;
-
-  .avatar img {
-    width: 40px;
-    height: 40px;
-  }
-}
-
 .historyView.accountName {
   vertical-align: middle;
 }
 
 .targetAccount:hover {
-    z-index: 10000000;
+  z-index: 10000000;
 
   .avatar {
     width: 80px;
@@ -196,6 +160,7 @@ a.detailView {
       height: 50px;
     }
   }
+
   .accountInfo {
     opacity: 1;
     top: 0px;
@@ -203,20 +168,15 @@ a.detailView {
   }
 }
 
-.saveProfile {
-  display: block;
-  text-align: right;
-}
-
-
-.profileData {
-  flex-grow: 2;
-}
 
 /***** Account Profile ******/
 .profileWrapper {
   display: flex;
   height: 100%;
+}
+
+.profileData {
+  flex-grow: 2;
 }
 
 .profileContainer {
@@ -241,10 +201,11 @@ a.detailView {
 
   .userAvatarContainer {
     width: 100px;
-    img {
-      width: 70px;
-      border-radius: 10px;
-    }
+  }
+
+  .saveProfile {
+    display: block;
+    text-align: right;
   }
 
   .profileDataContainer {
@@ -448,28 +409,6 @@ input {
   .socialProof {
     opacity: .6;
     width: 77%;
-  }
-
-  :global .membersPage {
-    border-radius: 3px;
-    height: 40px;
-    width: 40px;
-    float: left;
-    margin: 3px 10px 0 0px;
-  }
-
-  .historyView.targetAccount {
-    width: 12px;
-    height: 12px;
-  }
-
-  .historyView.targetAccount .avatar {
-    top: 3px;
-  }
-
-  .historyView.targetAccount .avatar img {
-    height: 12px;
-    width: 12px;
   }
 
   a.historyView {
