@@ -30,7 +30,6 @@ interface IExternalProps extends RouteComponentProps<any> {
 }
 
 interface IStateProps {
-  daoAvatarAddress: Address;
   schemeId: Address;
 }
 
@@ -41,7 +40,6 @@ const mapStateToProps = (_state: IRootState, ownProps: IExternalProps): IExterna
 
   return {
     ...ownProps,
-    daoAvatarAddress: match.params.daoAvatarAddress,
     schemeId: match.params.schemeId,
   };
 };
@@ -53,7 +51,8 @@ const mapDispatchToProps = {
 class SchemeContainer extends React.Component<IProps, null> {
 
   public handleNewProposal = async (e: any): Promise<void> => {
-    const { daoAvatarAddress, schemeId, showNotification } = this.props;
+    const { schemeId, showNotification, daoState } = this.props;
+    const daoAvatarAddress = daoState.address;
     e.preventDefault();
 
     e.preventDefault();
@@ -64,7 +63,8 @@ class SchemeContainer extends React.Component<IProps, null> {
   };
 
   public render(): RenderOutput {
-    const { currentAccountAddress, daoAvatarAddress, schemeId } = this.props;
+    const { currentAccountAddress, schemeId, daoState } = this.props;
+    const daoAvatarAddress = daoState.address;
     const schemeState = this.props.data;
 
     if (schemeState.name === "ReputationFromToken") {
@@ -112,10 +112,10 @@ class SchemeContainer extends React.Component<IProps, null> {
 
         <Switch>
           <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={(props) => <SchemeInfoPage {...props} daoAvatarAddress={daoAvatarAddress} scheme={schemeState} />} />
+            render={(props) => <SchemeInfoPage {...props} scheme={schemeState}  daoState={daoState} />} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={(props) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={currentAccountAddress} scheme={schemeState} />} />
+            render={(props) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={currentAccountAddress} scheme={schemeState} daoState={daoState} />} />
         </Switch>
       </div>
     );

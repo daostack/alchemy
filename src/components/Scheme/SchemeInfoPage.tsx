@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import { Address, ISchemeState, IGenesisProtocolParams } from "@daostack/client";
+import { Address, ISchemeState, IGenesisProtocolParams, IDAOState } from "@daostack/client";
 import { copyToClipboard, fromWei, linkToEtherScan, schemeName, roundUp } from "lib/util";
 import * as moment from "moment";
 import Tooltip from "rc-tooltip";
 import * as css from "./SchemeInfo.scss";
 
 interface IProps {
-  daoAvatarAddress: Address;
+  daoState: IDAOState;
   scheme: ISchemeState;
 }
 
@@ -18,7 +18,8 @@ export default class SchemeInfo extends React.Component<IProps, null> {
   private copyToClipboardHandler = (str: string) => (_event: any) => { copyToClipboard(str); };
 
   public render(): RenderOutput {
-    const { daoAvatarAddress, scheme } = this.props;
+    const { daoState, scheme } = this.props;
+    const daoAvatarAddress = daoState.address;
 
     const duration = (durationSeconds: number): any => {
 
