@@ -2,7 +2,8 @@
   "name": "RegistryLookup",
   "addresses": {
     "main": [
-      "0xc6e6060f3c32de9615320ab047bb93919c8f6324"
+      "0xc6e6060f3c32de9615320ab047bb93919c8f6324",
+      "0xf52fa064a4077fa1a5ec50604304715d63f2b309"
     ],
     "rinkeby": [
       "0xb5f95a7118c7b778746ae35adbb16fc95f021ae9",
