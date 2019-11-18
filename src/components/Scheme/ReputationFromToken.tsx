@@ -238,8 +238,8 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             data,
           });
           console.log(response);
-          if (response.data.status === 400) {
-            this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.message}`);
+          if (response.data.status !== 200) {
+            this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.status}: ${response.data.message}`);
           } else {
             this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`);
           }

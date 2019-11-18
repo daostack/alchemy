@@ -18,6 +18,8 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { of } from "rxjs";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import Toggle from "react-toggle";
+import { RefObject } from "react";
 import * as css from "./App.scss";
 
 interface IExternalProps extends RouteComponentProps<any> {
@@ -49,11 +51,21 @@ const mapStateToProps = (state: IRootState & IStateProps, ownProps: IExternalPro
 interface IDispatchProps {
   showNotification: typeof showNotification;
   toggleMenu: typeof uiActions.toggleMenu;
+  toggleTrainingTooltipsOnHover: typeof uiActions.toggleTrainingTooltipsOnHover;
+  enableTrainingTooltipsOnHover: typeof uiActions.enableTrainingTooltipsOnHover;
+  disableTrainingTooltipsOnHover: typeof uiActions.disableTrainingTooltipsOnHover;
+  enableTrainingTooltipsShowAll: typeof  uiActions.enableTrainingTooltipsShowAll;
+  disableTrainingTooltipsShowAll: typeof uiActions.disableTrainingTooltipsShowAll;
 }
 
 const mapDispatchToProps = {
   showNotification,
   toggleMenu: uiActions.toggleMenu,
+  toggleTrainingTooltipsOnHover: uiActions.toggleTrainingTooltipsOnHover,
+  enableTrainingTooltipsOnHover: uiActions.enableTrainingTooltipsOnHover,
+  disableTrainingTooltipsOnHover: uiActions.disableTrainingTooltipsOnHover,
+  enableTrainingTooltipsShowAll: uiActions.enableTrainingTooltipsShowAll,
+  disableTrainingTooltipsShowAll: uiActions.disableTrainingTooltipsShowAll,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IDAOState>;
@@ -63,6 +75,20 @@ class Header extends React.Component<IProps, IStateProps> {
   constructor(props: IProps) {
     super(props);
     this.copyAddress = this.copyAddress.bind(this);
+    this.toggleDiv = React.createRef();
+    this.initializeTrainingTooltipsToggle();
+  }
+
+  private static trainingTooltipsEnabledKey = "trainingTooltipsEnabled";
+  private toggleDiv: RefObject<HTMLDivElement>;
+
+  public componentDidMount() {
+    this.toggleDiv.current.onmouseenter = (_ev: MouseEvent) => {
+      this.props.enableTrainingTooltipsShowAll();
+    };
+    this.toggleDiv.current.onmouseleave = (_ev: MouseEvent) => {
+      this.props.disableTrainingTooltipsShowAll();
+    };
   }
 
   public copyAddress(e: any): void {
@@ -94,6 +120,31 @@ class Header extends React.Component<IProps, IStateProps> {
     this.props.toggleMenu();
   }
 
+  private handleTrainingTooltipsEnabled = () => (event: any): void => {
+    /**
+     * maybe making this asynchronous can address reports of the button responding very slowly
+     */
+    const checked =  event.target.checked;
+    setTimeout(() => {
+      localStorage.setItem(Header.trainingTooltipsEnabledKey, checked);
+      this.props.toggleTrainingTooltipsOnHover();
+    }, 0);
+  }
+
+  private getTrainingTooltipsEnabled(): boolean {
+    const trainingTooltipsOnSetting = localStorage.getItem(Header.trainingTooltipsEnabledKey);
+    return (trainingTooltipsOnSetting === null) || trainingTooltipsOnSetting === "true";
+  }
+
+  private initializeTrainingTooltipsToggle() {
+    const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
+    if (trainingTooltipsOn) {
+      this.props.enableTrainingTooltipsOnHover();
+    } else {
+      this.props.disableTrainingTooltipsOnHover();
+    }
+  }
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
@@ -104,6 +155,7 @@ class Header extends React.Component<IProps, IStateProps> {
     const daoAvatarAddress = dao ? dao.address : null;
     const accountIsEnabled = getAccountIsEnabled();
     const web3ProviderInfo = getWeb3ProviderInfo();
+    const trainingTooltipsOn = this.getTrainingTooltipsEnabled();
 
     return(
       <div className={css.headerContainer}>
@@ -132,6 +184,14 @@ class Header extends React.Component<IProps, IStateProps> {
               compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
             />
           </div>
+          <TrainingTooltip placement="left" overlay={"Show / hide tooltips on hover"}>
+            <div className={css.toggleButton} ref={this.toggleDiv}>
+              <Toggle
+                defaultChecked={trainingTooltipsOn}
+                onChange={this.handleTrainingTooltipsEnabled()}
+                icons={{ checked: <img src='/assets/images/Icon/checked.svg'/>, unchecked: <img src='/assets/images/Icon/unchecked.svg'/> }}/>
+            </div>
+          </TrainingTooltip>
           <div className={css.redemptionsButton}>
             <RedemptionsButton currentAccountAddress={currentAccountAddress} />
           </div>
