@@ -44,7 +44,7 @@ const DaoCard = (props: IProps) => {
             {dxDaoActivationDate.format("h:mma z")}</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
         </div>
 
-        <span onClick={toggleFollow} className={classNames({[css.followIcon]: true, [css.isFollowing]: isFollowing})}>
+        <span onClick={toggleFollow} className={classNames({[css.followButton]: true, [css.isFollowing]: isFollowing})}>
           {isFollowing ? "Following" : "Follow"}
         </span>
 

@@ -62,7 +62,7 @@ a.detailView {
     opacity: 0;
     left: 50%;
     top: -150px;
-    padding: 60px 0 0 0;
+    padding: 40px 0 0 0;
     width: 190px;
     font-size: $caption;
     color: $black;
@@ -115,6 +115,24 @@ a.detailView {
         width: 20px;
         height: 20px;
       }
+    }
+
+    .followButton {
+      font-family: LucidaGrande;
+      font-size: 11px;
+      line-height: 1.27;
+      letter-spacing: 0.5px;
+      text-align: center;
+      color: #0076ff;
+      border-radius: 11px;
+      border: solid 1px #0076ff;
+      padding: 4px 12px;
+      cursor: pointer;
+    }
+
+    .isFollowing {
+      background-color: #0076ff;
+      color: white;
     }
 
     .holdings {

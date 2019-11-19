@@ -44,10 +44,10 @@ interface IInjectedProposalProps {
   creatorProfile?: IProfileState;
   currentAccountGenBalance: BN;
   currentAccountGenAllowance: BN;
-  currentAccountProfile: IProfileState;
   daoEthBalance: BN;
   expired: boolean;
   handleClickFollow: any;
+  isFollowing: boolean;
   member: IMemberState;
   proposal: IProposalState;
   rewards: IRewardState;
@@ -68,7 +68,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 
 const mapDispatchToProps = {
   showNotification,
-  toggleFollow
+  toggleFollow,
 };
 
 interface IState {
@@ -112,10 +112,10 @@ class ProposalData extends React.Component<IProps, IState> {
       creatorProfile,
       currentAccountGenBalance,
       currentAccountGenAllowance,
-      currentAccountProfile,
       daoEthBalance,
       expired: this.state.expired,
       handleClickFollow: this.handleClickFollow,
+      isFollowing: currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.proposals.includes(proposal.id),
       member,
       proposal,
       rewards,

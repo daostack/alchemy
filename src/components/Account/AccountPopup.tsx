@@ -1,6 +1,8 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getProfile } from "actions/profilesActions";
+import { getProfile, toggleFollow } from "actions/profilesActions";
+import { enableWalletProvider } from "arc";
+import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
@@ -24,6 +26,7 @@ interface IExternalProps {
 }
 
 interface IStateProps {
+  currentAccountProfile: IProfileState;
   profile: IProfileState;
 }
 
@@ -32,6 +35,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 
   return {
     ...ownProps,
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
     profile: account ? state.profiles[account.address] : null,
   };
 };
@@ -39,11 +43,13 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 interface IDispatchProps {
   getProfile: typeof getProfile;
   showNotification: typeof showNotification;
+  toggleFollow: typeof toggleFollow;
 }
 
 const mapDispatchToProps = {
   getProfile,
   showNotification,
+  toggleFollow,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
@@ -63,12 +69,22 @@ class AccountPopup extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
+  public handleClickFollow = async (e: any) => {
+    e.preventDefault();
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    const { accountAddress, toggleFollow } = this.props;
+    await toggleFollow(accountAddress, "users", accountAddress);
+  }
+
   public render(): RenderOutput {
     const accountInfo = this.props.data;
-    const { accountAddress, daoState, profile, width } = this.props;
+    const { accountAddress, currentAccountProfile, daoState, profile, width } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const _width = width || 12;
+
+    const isFollowing = currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.users.includes(accountAddress);
 
     return (
       <div className={css.targetAccount} style={{ width: _width }}>
@@ -77,21 +93,28 @@ class AccountPopup extends React.Component<IProps, null> {
         </div>
         <div className={css.accountInfo}>
           <div className={css.name}><AccountProfileName accountAddress={accountAddress} accountProfile={profile} daoAvatarAddress={daoState.address} /></div>
-          {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
-            <div>
-              { profile.socialURLs.twitter ?
-                <a href={"https://twitter.com/" + profile.socialURLs.twitter.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
-                  <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} />
-                </a> : ""}
-              { profile.socialURLs.github ?
-                <a href={"https://github.com/" + profile.socialURLs.github.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
-                  <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} />
-                </a> : ""}
-            </div>
-          }
+          <div>
+            {!profile || Object.keys(profile.socialURLs).length === 0 ? "No social profiles" :
+              <span>
+                { profile.socialURLs.twitter ?
+                  <a href={"https://twitter.com/" + profile.socialURLs.twitter.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
+                    <FontAwesomeIcon icon={["fab", "twitter"]} className={css.icon} />
+                  </a> : ""}
+                { profile.socialURLs.github ?
+                  <a href={"https://github.com/" + profile.socialURLs.github.username} className={css.socialButton} target="_blank" rel="noopener noreferrer">
+                    <FontAwesomeIcon icon={["fab", "github"]} className={css.icon} />
+                  </a> : ""}
+              </span>
+            }
+          </div>
           <div className={css.beneficiaryAddress}>
             <span>{accountAddress}</span>
             <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
+          </div>
+          <div>
+            <span onClick={this.handleClickFollow} className={classNames({[css.followButton]: true, [css.isFollowing]: isFollowing})}>
+              {isFollowing ? "Unfollow" : "Follow"}
+            </span>
           </div>
           <div className={css.holdings}>
             <span>HOLDINGS</span>

@@ -87,6 +87,11 @@ button.disabled {
   }
 }
 
+.statusContainer {
+  margin-right: 16px;
+  display: inline-block;
+}
+
 .description {
 	margin-bottom: 30px;
 	white-space: pre-wrap;
@@ -198,24 +203,6 @@ button.disabled {
   }
 }
 
-.voteButtonsBottom {
-  // text-align: left;
-  // font-size: 12px;
-  position: relative;
-  top: 20px;
-  display: inline-block;
-  margin-right: 6px;
-  white-space: nowrap;
-  // right: 0;
-
-  .voteLabel {
-    display: inline-block;
-    margin-right: 5px;
-    font-size: 16px;
-    font-weight: bold;
-  }
-}
-
 .proposalTitleTop {
   display: block;
   color: rgba(104, 155, 214, 1.000);
@@ -261,6 +248,68 @@ button.disabled {
   padding-bottom: 0;
 }
 
+.buttonBar {
+  position: relative;
+  top: 20px;
+
+  .voteButtonsBottom {
+    display: inline-block;
+    margin-right: 6px;
+    white-space: nowrap;
+
+    .voteLabel {
+      display: inline-block;
+      margin-right: 5px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+
+  button.shareButton {
+    height: 30px;
+    line-height: 30px;
+    width: auto;
+    border-radius: 30px;
+    background-color: #0071ff;
+    padding: 0 15px;
+    font-weight: 700;
+    color: #0376ff;
+    transition: all .25s ease;
+    border: 0;
+    display: inline-block;
+    font-size: 11px;
+    outline: none;
+    margin-bottom: 12px;
+
+    img {
+      margin-right: 6px;
+      position: relative;
+      top: 2px;
+      height: 14px;
+    }
+
+    span {
+      font-weight: bold;
+      font-size: 13px;
+      display: inline-block;
+      color: white;
+    }
+  }
+
+  .followButton {
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 6px;
+
+    img {
+      width: 22px;
+      vertical-align: middle;
+    }
+  }
+}
+
 @media only screen and (max-width: 425px) {
   .proposal {
     display: block;
@@ -304,40 +353,4 @@ button.disabled {
   }
 }
 
-.statusContainer {
-  margin-right: 16px;
-  display: inline-block;
-}
 
-button.shareButton {
-  height: 30px;
-  line-height: 30px;
-  width: auto;
-  border-radius: 30px;
-  background-color: #0071ff;
-  padding: 0 15px;
-  font-weight: 700;
-  color: #0376ff;
-  transition: all .25s ease;
-  position: relative;
-  border: 0;
-  display: inline-block;
-  font-size: 11px;
-  outline: none;
-  top: 20px;
-  margin-bottom: 12px;
-
-  img {
-    margin-right: 6px;
-    position: relative;
-    top: 2px;
-    height: 14px;
-  }
-
-  span {
-    font-weight: bold;
-    font-size: 13px;
-    display: inline-block;
-    color: white;
-  }
-}

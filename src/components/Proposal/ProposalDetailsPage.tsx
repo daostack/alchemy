@@ -5,6 +5,7 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, schemeName } from "lib/util";
+import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
@@ -81,6 +82,8 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           currentAccountGenBalance,
           daoEthBalance,
           expired,
+          handleClickFollow,
+          isFollowing,
           member,
           proposal,
           rewards,
@@ -194,27 +197,34 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                   <TagsSelector readOnly darkTheme tags={tags}></TagsSelector>
                 </div> : "" }
 
-                <div className={css.voteButtonsBottom}>
-                  <span className={css.voteLabel}>Vote:</span>
-                  <div className={css.altVoteButtons}>
-                    <VoteButtons
-                      altStyle
-                      currentAccountAddress={currentAccountAddress}
-                      currentVote={currentAccountVote}
-                      dao={daoState}
-                      detailView
-                      expired={expired}
-                      currentAccountState={member}
-                      proposal={proposal}
-                    />
+                <div className={css.buttonBar}>
+                  <div className={css.voteButtonsBottom}>
+                    <span className={css.voteLabel}>Vote:</span>
+                    <div className={css.altVoteButtons}>
+                      <VoteButtons
+                        altStyle
+                        currentAccountAddress={currentAccountAddress}
+                        currentVote={currentAccountVote}
+                        dao={daoState}
+                        detailView
+                        expired={expired}
+                        currentAccountState={member}
+                        proposal={proposal}
+                      />
+                    </div>
                   </div>
+
+                  <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
+                    <img src={"/assets/images/Icon/share-white.svg"} />
+                    <span>Share</span>
+                  </button>
+
+                  <Tooltip placement="bottom" trigger={["hover"]} overlay={isFollowing ? "Unfollow" : "Follow"}>
+                    <div className={css.followButton} onClick={handleClickFollow(proposal.id)}>
+                      <img src={isFollowing ? "/assets/images/Icon/follow-blue-fill.svg" : "/assets/images/Icon/follow-blue.svg"}/>
+                    </div>
+                  </Tooltip>
                 </div>
-
-                <button onClick={this.showShareModal} className={css.shareButton} data-test-id="share">
-                  <img src={"/assets/images/Icon/share-white.svg"} />
-                  <span>Share</span>
-                </button>
-
               </div>
 
               <div className={css.proposalActions + " clearfix"}>

@@ -1,6 +1,5 @@
 import { IDAOState, IProposalStage, IProposalState, ISchemeState, Proposal, Scheme } from "@daostack/client";
 import { getArc } from "arc";
-import classNames from "classnames";
 import VoteGraph from "components/Proposal/Voting/VoteGraph";
 import Countdown from "components/Shared/Countdown";
 import Loading from "components/Shared/Loading";
@@ -35,7 +34,7 @@ const ProposalSchemeCard = (props: IProps) => {
   const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
 
   let trainingTooltipMessage: string;
-  
+
   switch(schemeState.name) {
     case "ContributionReward":
       trainingTooltipMessage = "Use this scheme to reward users (rep and/or funds) for their contributions to the DAO";
@@ -65,14 +64,10 @@ const ProposalSchemeCard = (props: IProps) => {
           </div>
           : " "
         }
-
-        <svg className={classNames({[css.followIcon]: true, [css.isFollowing]: isFollowing})} onClick={toggleFollow} viewBox="0 0 64 64">
-          <path d="M11 2v57.7l22.1-13.4L55 59.7V2H11z"
-            strokeWidth="2" strokeMiterlimit="10"
-              strokeLinejoin="round" strokeLinecap="round"></path>
-        </svg>
-
       </Link>
+      <div className={css.followButton} onClick={toggleFollow}>
+        <img src={isFollowing ? "/assets/images/Icon/follow-gray-fill.svg" : "/assets/images/Icon/follow-gray.svg"} />
+      </div>
       {proposals.length > 0 ?
         <div>
           {proposalsHTML}
