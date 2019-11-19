@@ -1,4 +1,5 @@
 // import { Event } from "@daostack/client";
+import moment = require("moment");
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import ProposalFeedItem from "./ProposalFeedItem";
@@ -66,7 +67,10 @@ const FeedItem = (props: IProps) => {
   return (
     <div className={css.feedItemContainer} data-test-id={`eventCard-${event.id}`}>
       <span className={css.icon}>{icon}</span>
-      <div className={css.itemTitle}><span>{title}</span></div>
+      <div className={css.itemTitle}>
+        <span>{title}</span>
+        <span className={css.timestamp}>{moment.unix(event.timestamp).fromNow()}</span>
+      </div>
       <div className={css.itemContent}>{content}</div>
     </div>
   );
