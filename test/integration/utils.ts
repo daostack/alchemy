@@ -63,5 +63,7 @@ export async function hideCookieAcceptWindow(): Promise<void> {
 }
 
 export async function hideTrainingTooltips() {
-  localStorage.setItem("trainingTooltipsEnabled", "false");
+  if (localStorage) {
+    localStorage.setItem("trainingTooltipsEnabled", "false");
+  }
 }
