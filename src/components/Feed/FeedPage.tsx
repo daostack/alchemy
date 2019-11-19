@@ -1,8 +1,8 @@
-import { Event } from "@daostack/client";
+// import { Event } from "@daostack/client";
 import { enableWalletProvider, getAccountIsEnabled, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-//import gql from "graphql-tag";
+import gql from "graphql-tag";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
@@ -11,7 +11,7 @@ import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-//import { map } from "rxjs/operators";
+// import { map } from "rxjs/operators";
 import { of } from "rxjs";
 
 import FeedItem from "./FeedItem";
@@ -37,7 +37,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IStateProps & IDispatchProps & ISubscriptionProps<Event[]>;
+type IProps = IStateProps & IDispatchProps & ISubscriptionProps<any>;
 
 const PAGE_SIZE = 100;
 
@@ -59,10 +59,10 @@ class FeedPage extends React.Component<IProps, null> {
       </div>;
     }
 
-    const events = data;
+    const events = data.data.events;
     const { currentAccountProfile } = this.props;
 
-    const eventsHTML = events.map((event) =>
+    const eventsHTML = events.map((event: any) =>
       <FeedItem key={event.id} event={event} profile={currentAccountProfile} />);
 
     return (
@@ -105,44 +105,58 @@ const SubscribedFeedPage = withSubscription({
     }
 
     console.log("proposals", props.currentAccountProfile.follows.proposals);
-    //const proposalsString = props.currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
-    // const query = gql`query feedDaos
-    //   {
-    //     events(where: { proposal_in: [ ${proposalsString} ]}) {
-    //       id
-    //       type
-    //       data
-    //       proposal {
-    //         title
-    //       }
-    //       user
-    //       dao {
-    //         name
-    //       }
-    //       timestamp
-    //     }
-    //   }
-    // `;
+    const proposalsString = props.currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
+    const query = gql`query feedDaos
+      {
+        events(first: ${PAGE_SIZE}, where: { proposal_in: [ ${proposalsString} ]}) {
+          id
+          type
+          data
+          proposal {
+            id
+            title
+            description
+            stakesFor
+            stakesAgainst
+            votesFor
+            votesAgainst
+            proposer
+            scheme {
+              id
+              name
+            }
+            stage
+          }
+          user
+          dao {
+            id
+            name
+          }
+          timestamp
+        }
+      }
+    `;
 
     // console.log(query);
     // const events = arc.getObservable(query, { subscribe: true })
     //   .pipe(map((result: any) => result.data.events));
 
-    const events = Event.search(
-      arc,
-      {
-        where: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          proposal_in: props.currentAccountProfile.follows.proposals,
-        },
-        orderBy: "timestamp",
-        orderDirection: "desc",
-        first: PAGE_SIZE,
-        skip: 0,
-      },
-      { fetchAllData: true }, // get and subscribe to all data, so that subcomponents do nto have to send separate queries
-    );
-    return events;
+    return arc.getObservable(query);
+    // const events = Event.search(
+    //   arc,
+    //   {
+    //     where: {
+    //       // eslint-disable-next-line @typescript-eslint/camelcase
+    //       proposal_in: props.currentAccountProfile.follows.proposals,
+    //     },
+    //     orderBy: "timestamp",
+    //     orderDirection: "desc",
+    //     first: PAGE_SIZE,
+    //     skip: 0,
+    //   },
+    //   { fetchAllData: true }, // get and subscribe to all data, so that subcomponents do nto have to send separate queries
+    // );
+    // return events;
 
     // return combineLatest(
     //   dao.state({ fetchAllData: true }), // DAO state

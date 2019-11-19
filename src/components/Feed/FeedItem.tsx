@@ -1,12 +1,12 @@
-import { Event } from "@daostack/client";
-import ProposalFeedItem from "./ProposalFeedItem";
+// import { Event } from "@daostack/client";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
+import ProposalFeedItem from "./ProposalFeedItem";
 //import { Link } from "react-router-dom";
 import * as css from "./Feed.scss";
 
 interface IProps {
-  event: Event;
+  event: any;
   profile: IProfileState;
 }
 
@@ -16,7 +16,8 @@ const FeedItem = (props: IProps) => {
   let title;
   let content;
   let icon;
-  switch (event.staticState.type) {
+  let eventData = JSON.parse(event.data)
+  switch (event.type) {
     case "NewDAO":
       title = "New DAO!";
       icon = "🎉";
@@ -30,13 +31,13 @@ const FeedItem = (props: IProps) => {
       break;
     case "ProposalStageChange":
       // TODO: dao name and boosted or unboosted?
-      title = "DAO Name - proposal is boosted";
+      title = `${event.dao.name} - proposal stage changed to ${eventData.stage}`;
       icon = <img src="/assets/images/Icon/info.svg" />;
       content = <ProposalFeedItem event={event} profile={profile} />;
       break;
     case "VoteFlip":
-      // TODO: which direction did it flip?
-      title = "For is now in the load";
+      const voteFlipForAgainst = eventData.outcome === "Pass" && "Pass" || "Fail"
+      title = `${voteFlipForAgainst} is now in the lead`;
       icon = <img src="/assets/images/Icon/info.svg" />;
       content = <ProposalFeedItem event={event} profile={profile} />;
       break;
@@ -47,12 +48,14 @@ const FeedItem = (props: IProps) => {
       content = <ProposalFeedItem event={event} profile={profile} />;
       break;
     case "Stake":
-      title = "Staked for";
+      const stakeForAgainst = eventData.outcome === "Pass" && "Pass" || "Fail"
+      title = `${event.user} staked on ${stakeForAgainst} with ${eventData.stakeAmount} REP`;
       icon = <img src="/assets/images/Icon/v-small-line.svg" />;
       content = <ProposalFeedItem event={event} profile={profile} />;
       break;
     case "Vote":
-      title = "Voted for";
+      const voteForAgainst = eventData.outcome === "Pass" && "For" || "Against"
+      title = `${event.user} voted ${voteForAgainst} with ${eventData.reputationAmount} REP`;
       icon = <img src="/assets/images/Icon/vote/for-gray.svg" />;
       content = <ProposalFeedItem event={event} profile={profile} />;
       break;
@@ -61,7 +64,7 @@ const FeedItem = (props: IProps) => {
   }
 
   return (
-    <div className={css.feedItemContainer} data-test-id={`eventCard-${event.staticState.id}`}>
+    <div className={css.feedItemContainer} data-test-id={`eventCard-${event.id}`}>
       <span className={css.icon}>{icon}</span>
       <div className={css.itemTitle}><span>{title}</span></div>
       <div className={css.itemContent}>{content}</div>
