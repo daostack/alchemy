@@ -46,7 +46,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
     if (data === null) {
       return <div className={css.wrapper}>
-        Please log in to see your rewards.
+        <h3 className={css.pleaseLogin}>Please log in to see your rewards.</h3>
       </div>;
     }
 
