@@ -15,7 +15,10 @@ interface IStateProps {
 }
 
 export interface IExternalProps extends RCTooltip.Props {
-
+  /**
+   * tooltip is always available even when tooltips are disabled
+   */
+  alwaysAvailable?: boolean;
 }
 
 type IProps = IExternalProps & IAppStateProps;
@@ -70,7 +73,7 @@ class TrainingToolip extends React.Component<IProps, IStateProps> {
     return (
       <Tooltip ref={this.tooltip} {...this.props}
         prefixCls="rc-trainingtooltip"
-        trigger={this.props.enableHover ? ["hover"] : []}
+        trigger={(this.props.enableHover || this.props.alwaysAvailable) ? ["hover"] : []}
       >
         {this.props.children}
       </Tooltip>
