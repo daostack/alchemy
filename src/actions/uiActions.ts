@@ -50,3 +50,21 @@ export function toggleTrainingTooltipsOnHover() {
     dispatch({ type: _getState().ui.trainingTooltipsOnHover? ActionTypes.DISABLE_TRAINING_TOOLTIPS_ON_HOVER: ActionTypes.ENABLE_TRAINING_TOOLTIPS_ON_HOVER });
   };
 }
+
+export function enableTrainingTooltipsShowAll() {
+  return (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    dispatch({ type: ActionTypes.ENABLE_TRAINING_TOOLTIPS_SHOW_ALL});
+  };
+}
+
+export function disableTrainingTooltipsShowAll() {
+  return (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    dispatch({ type: ActionTypes.DISABLE_TRAINING_TOOLTIPS_SHOW_ALL});
+  };
+}
+
+export function toggleTrainingTooltipsShowAll() {
+  return (dispatch: Redux.Dispatch<any, any>, _getState: () => IRootState) => {
+    dispatch({ type: _getState().ui.trainingTooltipsShowAll ? ActionTypes.DISABLE_TRAINING_TOOLTIPS_SHOW_ALL: ActionTypes.ENABLE_TRAINING_TOOLTIPS_SHOW_ALL});
+  };
+}
