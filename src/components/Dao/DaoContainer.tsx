@@ -15,7 +15,8 @@ import { ModalRoute } from "react-router-modal";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
-import { Subscription } from "rxjs";
+import { Subscription, of } from "rxjs";
+import { first } from "rxjs/operators";
 import DaoDiscussionPage from "./DaoDiscussionPage";
 import DaoSchemesPage from "./DaoSchemesPage";
 import DaoHistoryPage from "./DaoHistoryPage";
@@ -119,10 +120,16 @@ const SubscribedDaoContainer = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
   checkForUpdate: ["daoAvatarAddress"],
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const daoAddress = props.match.params.daoAvatarAddress;
-    return arc.dao(daoAddress).state();
+    const daoState = await arc.dao(daoAddress).state().pipe(first()).toPromise();
+    if ((process.env.NODE_ENV === "production") && (daoState.register !== "registered")) {
+      // this will go to the error page
+      throw new Error(`The DAO ${daoState.name} has not been registered`);
+    } else {
+      return of(daoState);
+    }
   },
 });
 
