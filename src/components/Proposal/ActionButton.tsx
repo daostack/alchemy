@@ -122,11 +122,13 @@ class ActionButton extends React.Component<IProps, IState> {
     const availableGpRewards = getGpRewards(rewards, daoBalances);
     // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
     const daoLacksRequiredGpRewards = Object.keys(availableGpRewards).length < currentAccountNumUnredeemedGpRewards;
+    const daoLacksAllRequiredGpRewards = (Object.keys(availableGpRewards).length === 0) && (currentAccountNumUnredeemedGpRewards > 0);
     /**
      * note beneficiary may not be the current account
      */
     let beneficiaryNumUnredeemedCrRewards = 0;
     let daoLacksRequiredCrRewards = false;
+    let daoLacksAllRequiredCrRewards = false;
     let contributionRewards;
     if (proposalState.contributionReward) {
       /**
@@ -140,6 +142,7 @@ class ActionButton extends React.Component<IProps, IState> {
       const availableCrRewards = getCRRewards(proposalState.contributionReward, daoBalances);
       // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
       daoLacksRequiredCrRewards = Object.keys(availableCrRewards).length < beneficiaryNumUnredeemedCrRewards;
+      daoLacksAllRequiredCrRewards = (Object.keys(availableCrRewards).length === 0) && (beneficiaryNumUnredeemedCrRewards > 0);
     }
     // account or beneficiary has a reward
     const hasRewards = (beneficiaryNumUnredeemedCrRewards > 0) || (currentAccountNumUnredeemedGpRewards > 0);
@@ -149,9 +152,12 @@ class ActionButton extends React.Component<IProps, IState> {
                           ((currentAccountNumUnredeemedGpRewards === 0) || !daoLacksRequiredGpRewards));
 
     // true if there exist one or more rewards and not any one of them can be paid
-    const canRewardNone = hasRewards &&
-                            !(((beneficiaryNumUnredeemedCrRewards > 0) && !daoLacksRequiredCrRewards) ||
-                             ((currentAccountNumUnredeemedGpRewards > 0) && !daoLacksRequiredGpRewards));
+    let canRewardNone=false;
+    if (daoLacksAllRequiredCrRewards) {
+      canRewardNone = daoLacksAllRequiredGpRewards || (currentAccountNumUnredeemedGpRewards === 0);
+    } else if (daoLacksAllRequiredGpRewards) {
+      canRewardNone = (beneficiaryNumUnredeemedCrRewards === 0);
+    }
 
     const canRewardSomeNotAll = hasRewards && !canRewardAll && !canRewardNone;
 
