@@ -106,18 +106,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.loadInitialTagFormValues();
   }
   
-  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void | any> {
-    // Check if its a submit or export
-    // This is making tests to failed. Need to fix it.
-    if(this.state.exportMode) {
-      this.exportFormValues(values);
-      const promise = new Promise((res, _) => {
-        res("Now it's done!");
-      });
-      const result = await promise; 
-      return result;
-    }
-
+  public async handleSubmit(values: IFormValues, { setSubmitting }: any ): Promise<void> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     if (!values.beneficiary.startsWith("0x")) { values.beneficiary = "0x" + values.beneficiary; }
