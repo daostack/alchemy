@@ -98,14 +98,16 @@ class SchemeContainer extends React.Component<IProps, null> {
 
           <div className={css.schemeMenu}>
             <Link className={proposalsTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/`}>Proposals</Link>
+
             { // if Bounties Scheme, create new tab
               (schemeName(schemeState, schemeState.address) === "Standard Bounties") &&
               <Link className={openTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/open/`}>Open Bounties</Link>
             }
-            <TrainingTooltip placement="bottom" overlay={"Learn about the protocol parameters for this scheme"}>
+            <TrainingTooltip placement="top" overlay={"Learn about the protocol parameters for this scheme"}>
+
               <Link className={infoTabClass} to={`/dao/${daoAvatarAddress}/scheme/${schemeId}/info/`}>Info</Link>
             </TrainingTooltip>
-            <TrainingTooltip placement="bottomRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
+            <TrainingTooltip placement="topRight" overlay={"A small amount of ETH is necessary to submit a proposal in order to pay gas costs"}>
               <a className={
                 classNames({
                   [css.createProposal]: true,

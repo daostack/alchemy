@@ -72,32 +72,37 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
     const { currentAccountAddress, fetchMore, isActive, scheme } = this.props;
+    let proposalCount=0;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0} />
           </Fade>
         ))}
       </TransitionGroup>
     );
+
+    proposalCount=0;
 
     const preBoostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsPreBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}  suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
         ))}
       </TransitionGroup>
     );
 
+    proposalCount=0;
+
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress}  suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
         ))}
       </TransitionGroup>
@@ -132,53 +137,53 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           :
           <div>
             <div className={css.boostedContainer}>
-              <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
-                <div className={css.proposalsHeader}>
-                Boosted Proposals ({scheme.numberOfBoostedProposals})
-                  {proposalsBoosted.length === 0
-                    ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
-                    : " "
-                  }
-                </div>
-              </TrainingTooltip>
+              <div className={css.proposalsHeader}>
+                <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
+                  <span>Boosted Proposals ({scheme.numberOfBoostedProposals})</span>
+                </TrainingTooltip>
+                {proposalsBoosted.length === 0
+                  ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                  : " "
+                }
+              </div>
               <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
                 {boostedProposalsHTML}
               </div>
             </div>
 
             <div className={css.regularContainer}>
-              <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                <div className={css.proposalsHeader}>
-                Pending Proposals ({scheme.numberOfPreBoostedProposals})
-                  {proposalsPreBoosted.length === 0
-                    ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
-                    : " "
-                  }
-                </div>
-              </TrainingTooltip>
+              <div className={css.proposalsHeader}>
+                <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                  <span>Pending Proposals ({scheme.numberOfPreBoostedProposals})</span>
+                </TrainingTooltip>
+                {proposalsPreBoosted.length === 0
+                  ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                  : " "
+                }
+              </div>
               <div className={css.proposalsContainer}>
                 {preBoostedProposalsHTML}
               </div>
             </div>
             <div className={css.regularContainer}>
-              <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
-                <div className={css.proposalsHeader}>
-                Regular Proposals ({scheme.numberOfQueuedProposals})
-                  {proposalsQueued.length === 0
-                    ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
-                    : " "
-                  }
-                </div>
-              </TrainingTooltip>
+              <div className={css.proposalsHeader}>
+                <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
+                  <span>Regular Proposals ({scheme.numberOfQueuedProposals})</span>
+                </TrainingTooltip>
+                {proposalsQueued.length === 0
+                  ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                  : " "
+                }
+              </div>
               <div className={css.proposalsContainer}>
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
