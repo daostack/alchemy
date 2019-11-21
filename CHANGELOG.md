@@ -5,6 +5,7 @@
 ## Next release
   - Features Added
   - Bugs Fixed
+    - go to error page on non-existent or unregistered DAOs
 
 ### 2019-11-12
   - Features added
