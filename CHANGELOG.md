@@ -1,11 +1,11 @@
 ### template
   - Features Added
   - Bugs Fixed
-    - update DAO total rep when it changes, so rep percentages remain correct
 
 ## Next release
   - Features Added
   - Bugs Fixed
+    - update DAO total rep when it changes, so rep percentages remain correct
 
 ### 2019-11-12
   - Features added
