@@ -29,6 +29,7 @@ const ProposalSchemeCard = (props: IProps) => {
   const proposals = boostedProposals.slice(0, 3);
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
+  const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
 
   let trainingTooltipMessage = "";
   
@@ -44,12 +45,11 @@ const ProposalSchemeCard = (props: IProps) => {
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
-        <TrainingTooltip placement="topLeft"
-          overlay={trainingTooltipMessage}
-          trigger={trainingTooltipMessage ? undefined : []}
-        >
-          <h2>{schemeName(schemeState, "[Unknown]")}</h2>
-        </TrainingTooltip>
+        { trainingTooltipMessage ? 
+          <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
+            {headerHtml}
+          </TrainingTooltip> : headerHtml
+        }
         <div>
           <b>{schemeState.numberOfBoostedProposals}</b> <span>Boosted</span> <b>{schemeState.numberOfPreBoostedProposals}</b> <span>Pending</span> <b>{schemeState.numberOfQueuedProposals}</b> <span>Regular</span>
         </div>
