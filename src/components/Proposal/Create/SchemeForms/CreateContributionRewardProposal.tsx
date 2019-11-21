@@ -1,18 +1,20 @@
-import { IDAOState, ISchemeState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import UserSearchField from "components/Shared/UserSearchField";
-import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import * as React from "react";
 import { connect } from "react-redux";
 import Select from "react-select";
-import { showNotification } from "reducers/notifications";
+import { IDAOState, ISchemeState } from "@daostack/client";
+import { enableWalletProvider, getArc } from "arc";
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
+import * as arcActions from "actions/arcActions";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, copyToClipboard } from "lib/util";
+import { showNotification, NotificationStatus } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -22,7 +24,6 @@ interface IExternalProps {
 
 interface IStateProps {
   tags: Array<string>;
-  exportMode: boolean;
 }
 
 interface IDispatchProps {
@@ -98,7 +99,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = { 
       tags: new Array<string>(),
-      exportMode: false,
     };
   }
   
@@ -142,11 +142,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     const queryString = Object.keys(values).map(key => key + "=" + values[key]).join("&");
     const { origin, pathname } = window.location;
     const url = origin + pathname + "?" + queryString + "&tags=" + JSON.stringify(this.state.tags);
-    this.setState({
-      exportMode: false,
-    });
-    window.open(url);
-    this.props.handleClose();
+    copyToClipboard(url);
+    this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
   private onTagsChange = () => (tags: string[]): void => {
@@ -158,10 +155,8 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     const search = window.location.search.substring(1);
     let initialFormValues;
     if(search.length > 0 ) {
-      // The reason behind not using double quotes is because in this case if we do so it will give us an error.
+      // The reason behind not using double quotes is because in this case if we do so it will give us an error: Unexpected token ' in JSON at position.
       // In order to avoid such error we use single quotes.
-      // the below line using Double quotes give the error: Unexpected token ' in JSON at position 
-      // const params = JSON.parse("{'" + decodeURI(search).replace(/"/g, "\\'").replace(/&/g, "','").replace(/=/g,"':'") + "'}");
       // eslint-disable-next-line quotes
       const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
       const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url } = params;
@@ -193,7 +188,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     return initialFormValues;
   }
   
-  loadInitialTagFormValues(){
+  loadInitialTagFormValues() {
     const search = window.location.search.substring(1);
     if(search.length > 0 ) {
       // eslint-disable-next-line quotes
@@ -273,6 +268,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
             isSubmitting,
             setFieldTouched,
             setFieldValue,
+            values,
           }: FormikProps<IFormValues>) =>
             <Form noValidate>
               <label className={css.description}>What to Expect</label>
@@ -439,13 +435,13 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button className={css.exportProposal} type="submit" disabled={isSubmitting} onClick={()=> this.setState({ exportMode: true })}>
-                  Export proposal
+                  <button className={css.exportProposal} type="button" disabled={isSubmitting} onClick={()=> this.exportFormValues(values)}>
+                    Export proposal
                   </button>
                 </TrainingTooltip>
                 <TrainingTooltip overlay="Once the proposal is submitted it cannot be edited or deleted" placement="top">
                   <button className={css.submitProposal} type="submit" disabled={isSubmitting}>
-                  Submit proposal
+                    Submit proposal
                   </button>
                 </TrainingTooltip>
               </div>
