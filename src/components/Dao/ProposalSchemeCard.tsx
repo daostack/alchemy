@@ -30,7 +30,7 @@ const ProposalSchemeCard = (props: IProps) => {
 
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
 
-  let trainingTooltipMessage: string;
+  let trainingTooltipMessage = "";
   
   switch(schemeState.name) {
     case "ContributionReward":
