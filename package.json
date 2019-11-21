@@ -138,6 +138,7 @@
     "ws": "^7.1.0"
   },
   "devDependencies": {
+    "@daostack/migration": "0.0.1-rc.33-v1",
     "@storybook/addon-info": "^5.0.10",
     "@storybook/react": "^5.0.10",
     "@types/chai": "^4.1.7",
