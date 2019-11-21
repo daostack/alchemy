@@ -1,5 +1,6 @@
 ### template
   - Features Added
+    - prevent redemptions when nothing will happen due to insuffucient DAO resources.  Warn on partial redemptions.
   - Bugs Fixed
 
 ## Next release
