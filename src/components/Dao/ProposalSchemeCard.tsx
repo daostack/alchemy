@@ -31,7 +31,7 @@ const ProposalSchemeCard = (props: IProps) => {
   const proposalsHTML = proposals.map((proposal: Proposal) => <SubscribedProposalDetail key={proposal.id} proposal={proposal} dao={dao} />);
   const headerHtml = <h2>{schemeName(schemeState, "[Unknown]")}</h2>;
 
-  let trainingTooltipMessage = "";
+  let trainingTooltipMessage: string;
   
   switch(schemeState.name) {
     case "ContributionReward":
