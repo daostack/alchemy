@@ -24,6 +24,7 @@ a.detailView {
 
 .accountImage {
   border-radius: 15%;
+  vertical-align: middle;
 }
 
 .socialProof {
@@ -159,10 +160,6 @@ a.detailView {
 }
 
 .accountName {
-  vertical-align: middle;
-}
-
-.historyView.accountName {
   vertical-align: middle;
 }
 

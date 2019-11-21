@@ -52,6 +52,7 @@ body {
 
 .web3ProviderLogin {
   display: inline-block;
+  vertical-align: middle;
 }
 
 .web3ProviderLogin button {
@@ -66,7 +67,7 @@ body {
   border-radius: 15px;
   color: $white;
   position: relative;
-  top: 9px;
+  vertical-align: middle;
   right: 10px;
 
   img {
@@ -177,6 +178,7 @@ body {
     display: inline-block;
     padding: 0 15px;
     height: 50px;
+    vertical-align: middle;
   }
 
   .accountInfo {
@@ -488,7 +490,6 @@ body {
       color: white;
       font-size: 13px;
       position: relative;
-      top: -6px;
       right: 12px;
     }
 

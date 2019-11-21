@@ -6,6 +6,8 @@ import AccountProfileName from "components/Account/AccountProfileName";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { humanProposalTitle } from "lib/util";
+import { connect } from "react-redux";
+import { IRootState } from "reducers";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -16,15 +18,25 @@ import * as css from "./Feed.scss";
 // type SubscriptionData = [IDAOState, IProposalState];
 type SubscriptionData = IDAOState;
 
-interface IExternalProps {
-  event: any;
-  profile: IProfileState;
+interface IStateProps {
+  proposerProfile: IProfileState;
 }
 
-type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
+interface IExternalProps {
+  event: any;
+}
+
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternalProps & IStateProps => {
+  return {
+    ...ownProps,
+    proposerProfile: state.profiles[ownProps.event.proposal.proposer],
+  };
+};
+
+type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalFeedItem = (props: IProps) => {
-  const { data, event, profile } = props;
+  const { data, event, proposerProfile } = props;
   // const [ dao, proposal ] = data;
   const dao = data;
 
@@ -36,7 +48,7 @@ const ProposalFeedItem = (props: IProps) => {
 
       <div className={css.proposalDetails}>
         <AccountPopup accountAddress={event.proposal.proposer} daoState={dao} width={17} />
-        <AccountProfileName accountAddress={event.proposal.proposer} accountProfile={profile} daoAvatarAddress={dao.address} />
+        <AccountProfileName accountAddress={event.proposal.proposer} accountProfile={proposerProfile} daoAvatarAddress={dao.address} />
       </div>
 
       <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>
@@ -52,7 +64,7 @@ const SubscribedProposalFeedItem = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
-  checkForUpdate: ["event", "profile"],
+  checkForUpdate: ["event"],
 
   createObservable: (props: IExternalProps) => {
     const arc = getArc();
@@ -68,4 +80,5 @@ const SubscribedProposalFeedItem = withSubscription({
   },
 });
 
-export default SubscribedProposalFeedItem;
+export default connect(mapStateToProps)(SubscribedProposalFeedItem);
+

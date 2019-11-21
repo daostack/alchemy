@@ -1,4 +1,4 @@
-// import { Event } from "@daostack/client";
+//import { Event } from "@daostack/client";
 import { enableWalletProvider, getAccountIsEnabled, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -10,9 +10,9 @@ import { connect } from "react-redux";
 import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
-import { IProfileState } from "reducers/profilesReducer";
+import { IProfileState, IProfilesState } from "reducers/profilesReducer";
 // import { map } from "rxjs/operators";
-import { of } from "rxjs";
+import { combineLatest, of } from "rxjs";
 
 import FeedItem from "./FeedItem";
 import * as css from "./Feed.scss";
@@ -20,12 +20,14 @@ import * as css from "./Feed.scss";
 interface IStateProps {
   currentAccountAddress: string;
   currentAccountProfile: IProfileState;
+  profiles: IProfilesState;
 }
 
 const mapStateToProps = (state: IRootState): IStateProps => {
   return {
     currentAccountAddress: state.web3.currentAccountAddress,
     currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
+    profiles: state.profiles,
   };
 };
 
@@ -37,7 +39,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IStateProps & IDispatchProps & ISubscriptionProps<any>;
+type IProps = IStateProps & IDispatchProps & ISubscriptionProps<[any, any]>;
 
 const PAGE_SIZE = 100;
 
@@ -51,7 +53,7 @@ class FeedPage extends React.Component<IProps, null> {
   }
 
   public render(): RenderOutput {
-    const { data } = this.props;
+    const { data, profiles } = this.props;
 
     if (!getAccountIsEnabled() || !data) {
       return <div onClick={this.handleConnect} className={css.connectButton}>
@@ -59,11 +61,13 @@ class FeedPage extends React.Component<IProps, null> {
       </div>;
     }
 
-    const events = data.data.events;
+    const eventsByProposal = data[0].data.events as any[];
+    const eventsByDao = data[1].data.events as any[];
+    const events = eventsByProposal.concat(eventsByDao).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
     const { currentAccountProfile } = this.props;
 
     const eventsHTML = events.map((event: any) =>
-      <FeedItem key={event.id} event={event} profile={currentAccountProfile} />);
+      <FeedItem key={event.id} event={event} currentAccountProfile={currentAccountProfile} userProfile={profiles[event.user]} />);
 
     return (
       <div className={css.feedContainer}>
@@ -104,36 +108,45 @@ const SubscribedFeedPage = withSubscription({
       return of(null);
     }
 
-    console.log("proposals", props.currentAccountProfile.follows.proposals);
-    const proposalsString = props.currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
-    const query = gql`query feedDaos
-      {
-        events(first: ${PAGE_SIZE}, where: { proposal_in: [ ${proposalsString} ]}) {
+    const queryData = `{
+      id
+      type
+      data
+      proposal {
+        id
+        title
+        description
+        stakesFor
+        stakesAgainst
+        votesFor
+        votesAgainst
+        proposer
+        scheme {
           id
-          type
-          data
-          proposal {
-            id
-            title
-            description
-            stakesFor
-            stakesAgainst
-            votesFor
-            votesAgainst
-            proposer
-            scheme {
-              id
-              name
-            }
-            stage
-          }
-          user
-          dao {
-            id
-            name
-          }
-          timestamp
+          name
         }
+        stage
+      }
+      user
+      dao {
+        id
+        name
+        nativeReputation {
+          totalSupply
+        }
+      }
+      timestamp
+    }`;
+
+    const proposalsString = props.currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
+    const proposalsQuery = gql`query feedProposals
+      {
+        events(first: ${PAGE_SIZE}, where: { proposal_in: [ ${proposalsString} ]}) ${queryData}
+      }`;
+    const daosString = props.currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
+    const daosQuery = gql`query feedDaos
+      {
+        events(first: ${PAGE_SIZE}, where: { dao_in: [ ${daosString} ]}) ${queryData}
       }
     `;
 
@@ -141,7 +154,11 @@ const SubscribedFeedPage = withSubscription({
     // const events = arc.getObservable(query, { subscribe: true })
     //   .pipe(map((result: any) => result.data.events));
 
-    return arc.getObservable(query);
+    return combineLatest(
+      arc.getObservable(proposalsQuery),
+      arc.getObservable(daosQuery)
+    );
+    return ;
     // const events = Event.search(
     //   arc,
     //   {
