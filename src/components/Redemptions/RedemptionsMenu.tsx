@@ -75,7 +75,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
         </Link>
         <button
           className={css.redeemAllButton}
-          onClick={this.redeemAll()}
+          onClick={this.redeemAll}
           disabled={redeemableProposals.length === 0}
         >
           <img src="/assets/images/Icon/redeem.svg" />
@@ -85,7 +85,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     </div>;
   }
 
-  private  redeemAll = () => async (): Promise<void> => {
+  private  redeemAll = async (): Promise<void> => {
     const {
       currentAccountAddress,
       data: redeemableProposals,

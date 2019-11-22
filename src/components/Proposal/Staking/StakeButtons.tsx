@@ -62,7 +62,7 @@ class StakeButtons extends React.Component<IProps, IState> {
     };
   }
 
-  public showApprovalModal = () => async (_event: any): Promise<void> => {
+  public showApprovalModal = async (_event: any): Promise<void> => {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     this.setState({ showApproveModal: true });
@@ -202,7 +202,7 @@ class StakeButtons extends React.Component<IProps, IState> {
       return (
         <div className={wrapperClass}>
           <div className={css.enablePredictions}>
-            <button onClick={this.showApprovalModal()} data-test-id="button-enable-predicting">Enable Predicting</button>
+            <button onClick={this.showApprovalModal} data-test-id="button-enable-predicting">Enable Predicting</button>
           </div>
         </div>
       );

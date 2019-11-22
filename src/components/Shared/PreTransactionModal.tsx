@@ -62,7 +62,7 @@ class PreTransactionModal extends React.Component<IProps, IState> {
     };
   }
 
-  private handleClickAction = () => async (): Promise<void> => {
+  private handleClickAction = async (): Promise<void> => {
     const { actionType, showNotification } = this.props;
     if (!await enableWalletProvider({ showNotification })) { return; }
 
@@ -358,14 +358,14 @@ class PreTransactionModal extends React.Component<IProps, IState> {
                       <button
                         className={classNames({[css.launchMetaMask]: true, [css.disabled]: true})}
                         disabled
-                        onClick={this.handleClickAction()}
+                        onClick={this.handleClickAction}
                         data-test-id="launch-metamask"
                       >
                         {transactionType}
                       </button>
                     </Tooltip>
                     :
-                    <button className={css.launchMetaMask} onClick={this.handleClickAction()} data-test-id="launch-metamask">
+                    <button className={css.launchMetaMask} onClick={this.handleClickAction} data-test-id="launch-metamask">
                       {transactionType}
                     </button>
                   }
