@@ -57,8 +57,8 @@ class DaoContainer extends React.Component<IProps, null> {
   public subscription: Subscription;
 
   public async componentDidMount() {
-    console.log("got members", this.props.data[1]);
-    this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.staticState.address));
+    // TODO: use this once 3box fixes Box.getProfiles
+    //this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.staticState.address));
   }
 
   private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;

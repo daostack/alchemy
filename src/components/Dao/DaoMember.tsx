@@ -34,6 +34,7 @@ class DaoMember extends React.Component<IProps, null> {
                 <AccountImage
                   accountAddress={memberState.address}
                   className="membersPage"
+                  profile={profile}
                 />
               </td>
               <td className={css.memberName}>

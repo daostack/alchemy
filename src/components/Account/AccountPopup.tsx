@@ -1,5 +1,6 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getProfile } from "actions/profilesActions";
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -38,16 +39,24 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 };
 
 interface IDispatchProps {
+  getProfile: typeof getProfile;
   showNotification: typeof showNotification;
 }
 
 const mapDispatchToProps = {
+  getProfile,
   showNotification,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
 
 class AccountPopup extends React.Component<IProps, null> {
+
+  public componentDidMount() {
+    if (!this.props.profile) {
+      this.props.getProfile(this.props.accountAddress);
+    }
+  }
 
   public copyAddress = (e: any) => {
     const { showNotification, accountAddress } = this.props;

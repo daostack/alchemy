@@ -7,20 +7,11 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { ActionTypes, newProfile } from "reducers/profilesReducer";
 
 // Load account profile data from our database for all the "members" of the DAO
+// TODO: use this once 3box fixes getProfiles
 export function getProfilesForAddresses(addresses: string[]) {
   return async (dispatch: any) => {
-    // const accounts = getState().arc.accounts;
-    // const accountFilters = [];
-
-    // for (const accountKey of Object.keys(accounts)) {
-    //   const account = accounts[accountKey];
-    //   accountFilters.push("{\"ethereumAccountAddress\":\"" + account.address + "\"}");
-    // }
-
-    console.log("getting profiles for", addresses);
     try {
       const results = await Box.getProfiles(addresses);
-      console.log("xxx", results);
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Success,
