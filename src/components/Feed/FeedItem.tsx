@@ -2,8 +2,11 @@
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
+import DaoFeedItem from "./DaoFeedItem";
+import * as GeoPattern from "geopattern";
 import { fromWei } from "lib/util";
 import moment = require("moment");
+import { Link } from "react-router-dom";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import ProposalFeedItem from "./ProposalFeedItem";
@@ -19,10 +22,24 @@ interface IProps {
 const accountTitle = (event: any, userProfile: IProfileState, text: string) => {
   return <span>
     <AccountImage accountAddress={event.user} width={17} />
-    <span className={css.accountName}><AccountProfileName accountAddress={event.user} accountProfile={userProfile} daoAvatarAddress={event.dao} /></span>
+    <span className={css.accountName}><AccountProfileName accountAddress={event.user} accountProfile={userProfile} daoAvatarAddress={event.dao.id} /></span>
     <span>{text}</span>
   </span>;
-}
+};
+
+const daoTitle = (event: any, text = "") => {
+  const bgPattern = GeoPattern.generate(event.dao.address + event.dao.name);
+
+  return <span>
+    <Link to={"/dao/" + event.dao.address}>
+      <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
+      <em></em>
+      <span>{event.dao.name}</span>
+      &nbsp;
+    </Link>
+    <span>{text}</span>
+  </span>;
+};
 
 const FeedItem = (props: IProps) => {
   const { event, userProfile } = props;
@@ -34,19 +51,19 @@ const FeedItem = (props: IProps) => {
   console.log(event);
   switch (event.type) {
     case "NewDAO":
-      title = "New DAO!";
+      title = <span>New DAO! {daoTitle(event)}</span>;
       icon = "🎉";
-      content = "msodifnisudfnisu nfisabdfi bsidbusabvfuasbf usbfuasbfuasbvfuavfuavfusdyafvuadsyfv";
+      content = <DaoFeedItem event={event} />;
       break;
     case "NewReputationHolder":
       // TODO
-      title = "DAO name has a new reputation holder";
+      title = daoTitle(event, "has a new reputation holder");
       icon = <img src="/assets/images/Icon/new-person.svg" />;
-      content = "msodifnisudfnisu nfisabdfi bsidbusabvfuasbf usbfuasbfuasbvfuavfuavfusdyafvuadsyfv";
+      content = <DaoFeedItem event={event} />;
       break;
     case "ProposalStageChange":
       // TODO: dao name and boosted or unboosted?
-      title = `${event.dao.name} - proposal stage changed to ${eventData.stage}`;
+      title = daoTitle(event, ` - proposal stage changed to ${eventData.stage}`);
       icon = <img src="/assets/images/Icon/info.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;

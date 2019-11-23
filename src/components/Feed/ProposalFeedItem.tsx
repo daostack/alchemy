@@ -52,8 +52,8 @@ const ProposalFeedItem = (props: IProps) => {
       </div>
 
       <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>
-        <h2>Proposal {humanProposalTitle(event.proposal)}</h2>
-        <div>{JSON.stringify(event.data)}</div>
+        <h3>Proposal {humanProposalTitle(event.proposal)}</h3>
+        <div>{event.proposal.description}</div>
       </Link>
     </div>
   );
