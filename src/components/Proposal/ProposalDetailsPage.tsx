@@ -72,7 +72,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
   public render(): RenderOutput {
     const { currentAccountAddress, daoState, proposalId } = this.props;
 
-    return <ProposalData currentAccountAddress={currentAccountAddress} dao={daoState} proposalId={proposalId}>
+    return <ProposalData currentAccountAddress={currentAccountAddress} dao={daoState} proposalId={proposalId} subscribeToProposalDetails>
       { props => {
         const {
           beneficiaryProfile,
