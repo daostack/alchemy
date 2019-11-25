@@ -60,19 +60,19 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     }
   }
 
-  private handleDelete = () => (i: number): void => {
+  private handleDelete = (i: number): void => {
     const tags = this.state.workingTags.filter((_tag: Tag, index: number) => index !== i);
     this.setState({ workingTags: tags });
     this.emitOnChange(tags);
   }
  
-  private handleAddition = () => (tag: Tag): void => {
+  private handleAddition = (tag: Tag): void => {
     const tags = [...this.state.workingTags, tag];
     this.setState({ workingTags:  tags });
     this.emitOnChange(tags);
   }
 
-  private handleBlur = () => (): void => {
+  private handleBlur = (): void => {
     const inputText = (this.tagsComponent.current.getElementsByClassName("ReactTags__tagInputField")[0] as HTMLInputElement).value;
     if (inputText) {
       let alreadyHas = false;
@@ -84,7 +84,7 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
         }
       }
       if (!alreadyHas) {
-        this.handleAddition()({ id: inputText, text: inputText });
+        this.handleAddition({ id: inputText, text: inputText });
       }
     }
   }
@@ -104,6 +104,8 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
     });
     return map;
   }
+
+  private suggestionHtml = ( tag: ITagEx ) => <div>{tag.text} <span className="count">({tag.count})</span></div>;
 
   public render(): RenderOutput {
     const { workingTags } = this.state;
@@ -137,16 +139,15 @@ class TagsSelector extends React.Component<IProps, IStateProps> {
       <ReactTags
         tags={workingTags}
         suggestions={suggestions}
-        handleDelete={this.handleDelete()}
-        handleAddition={this.handleAddition()}
-        handleInputBlur={this.handleBlur()}
+        handleDelete={this.handleDelete}
+        handleAddition={this.handleAddition}
+        handleInputBlur={this.handleBlur}
         delimiters={delimiters}
         autocomplete={1}
         readOnly={!!readOnly}
         autofocus={false}
         allowDragDrop={false} // because we have no way to persist the tab order
-        // eslint-disable-next-line react/jsx-no-bind
-        renderSuggestion = {( tag: ITagEx ) => <div>{tag.text} <span className="count">({tag.count})</span></div>}
+        renderSuggestion = {this.suggestionHtml}
       />
     </div>;
   }

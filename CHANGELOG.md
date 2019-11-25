@@ -6,6 +6,7 @@
   - Features Added
   - Bugs Fixed
     - update DAO total rep when it changes, so rep percentages remain correct
+    - go to error page on non-existent DAOs
 
 ### 2019-11-12
   - Features added

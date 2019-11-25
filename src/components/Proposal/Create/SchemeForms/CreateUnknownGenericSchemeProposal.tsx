@@ -66,7 +66,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
     this.props.handleClose();
   }
 
-  private onTagsChange = () => (tags: any[]): void => {
+  private onTagsChange = (tags: any[]): void => {
     this.setState({tags});
   }
 
@@ -180,7 +180,7 @@ class CreateGenericScheme extends React.Component<IProps, IStateProps> {
               </TrainingTooltip>
 
               <div className={css.tagSelectorContainer}>
-                <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                <TagsSelector onChange={this.onTagsChange}></TagsSelector>
               </div>
 
               <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">

@@ -181,6 +181,7 @@ async function checkWeb3ProviderIsForNetwork(provider: any): Promise<string> {
     }
     default: {
       const msg = `Unknown NODE_ENV: ${process.env.NODE_ENV}`;
+      // eslint-disable-next-line no-console
       console.error(msg);
       throw new Error(msg);
     }
@@ -236,6 +237,7 @@ export async function initializeArc(provider?: any): Promise<boolean> {
 
       if (!initializedAccount) {
         // then something went wrong
+        // eslint-disable-next-line no-console
         console.error("Unable to obtain an account from the provider");
         // success = false;
       }
@@ -252,9 +254,11 @@ export async function initializeArc(provider?: any): Promise<boolean> {
       // if this is metamask this should prevent a browser refresh when the network changes
         (window as any).ethereum.autoRefreshOnNetworkChange = false;
       }
+      // eslint-disable-next-line no-console
       console.log(`Connected Arc to ${await getNetworkName(provider.__networkId)}${readonly ? " (readonly)" : ""} `);
     }
   } catch (reason) {
+    // eslint-disable-next-line no-console
     console.error(reason.message);
   }
 
@@ -271,6 +275,7 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
   const correctNetworkErrorMsg = await checkWeb3ProviderIsForNetwork(provider);
 
   if (correctNetworkErrorMsg) {
+    // eslint-disable-next-line no-console
     console.error(`connected to the wrong network, should be ${correctNetworkErrorMsg}`);
     throw new Error(`Please connect your wallet provider to ${correctNetworkErrorMsg}`);
   }
@@ -279,6 +284,7 @@ async function ensureCorrectNetwork(provider: any): Promise<void> {
 function inTesting(): boolean {
   if (process.env.NODE_ENV === "development" && navigator.webdriver) {
     // in test mode, we have an unlocked ganache and we are not using any wallet
+    // eslint-disable-next-line no-console
     console.log("not using any wallet, because we are in automated test");
     selectedProvider = new Web3(settings.dev.web3Provider);
     return true;
@@ -330,6 +336,7 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
       });
 
     web3Connect.on("error", (error: Error): any => {
+      // eslint-disable-next-line no-console
       console.error(`web3Connect closed on error:  ${error.message}`);
       return rejectOnClosePromise(error);
     });
@@ -349,12 +356,14 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
       await onClosePromise;
 
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(`Unable to connect to web3 provider:  ${error.message}`);
       throw new Error("Unable to connect to web3 provider");
     }
 
     if (!provider) {
       // should only be cancelled, errors should have been handled above
+      // eslint-disable-next-line no-console
       console.warn("uncaught error or user cancelled out");
       return;
     }
@@ -372,13 +381,16 @@ async function enableWeb3Provider(provider?: any): Promise<void> {
   try {
     // brings up the provider UI as needed
     await provider.enable();
+    // eslint-disable-next-line no-console
     console.log(`Connected to network provider ${getWeb3ProviderInfo(provider).name}`);
   } catch (ex) {
+    // eslint-disable-next-line no-console
     console.error(`Unable to enable provider: ${ex.message}`);
     throw new Error("Unable to enable provider");
   }
 
   if (!await initializeArc(provider)) {
+    // eslint-disable-next-line no-console
     console.error("Unable to initialize Arc");
     throw new Error("Unable to initialize Arc");
   }
@@ -481,6 +493,7 @@ async function setWeb3Provider(web3ProviderInfo: IWeb3ProviderInfo): Promise<voi
     }
 
   } catch (ex) {
+    // eslint-disable-next-line no-console
     console.error(`Unable to instantiate provider: ${ex.message}`);
     throw new Error("Unable to instantiate provider");
   }
@@ -554,8 +567,10 @@ async function loadCachedWeb3Provider(): Promise<void> {
 
     try {
       await setWeb3Provider(cachedWeb3ProviderInfo);
+      // eslint-disable-next-line no-console
       console.log("using cached web3Provider");
     } catch(ex) {
+      // eslint-disable-next-line no-console
       console.error("failed to instantiate cached web3Provider");
       uncacheWeb3Info();
       throw new Error(ex);
@@ -637,6 +652,7 @@ export async function enableWalletProvider(options: IEnableWalletProviderParams)
 // TODO: check if this (new?) function can replace polling:
 // https://metamask.github.io/metamask-docs/Main_Concepts/Accessing_Accounts
 export function pollForAccountChanges(currentAccountAddress: Address | null, interval = 2000): Observable<Address> {
+  // eslint-disable-next-line no-console
   console.log(`start polling for account changes from: ${currentAccountAddress}`);
   return Observable.create((observer: any): () => void  => {
     let prevAccount = currentAccountAddress;
@@ -662,8 +678,10 @@ export function pollForAccountChanges(currentAccountAddress: Address | null, int
                 prevAccount = account;
               }
             })
+            // eslint-disable-next-line no-console
             .catch((err): void => {console.error(err.message); });
         } catch (ex) {
+          // eslint-disable-next-line no-console
           console.error(ex.message);
         }
         finally {
