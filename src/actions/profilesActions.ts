@@ -71,9 +71,16 @@ export function updateProfile(accountAddress: string, name: string, description:
       meta: { accountAddress },
     } as UpdateProfileAction);
 
+    const state = _getState();
+    let box;
+
     try {
-      const web3Provider = await getWeb3Provider();
-      const box = await Box.openBox(accountAddress, web3Provider);
+      if (state.threeBox) {
+        box = state.threeBox;
+      } else {
+        const web3Provider = await getWeb3Provider();
+        box = await Box.openBox(accountAddress, web3Provider);
+      }
       await box.syncDone;
       await box.public.setMultiple(["name", "description"], [name, description]);
     } catch (e) {
@@ -95,7 +102,7 @@ export function updateProfile(accountAddress: string, name: string, description:
       type: ActionTypes.UPDATE_PROFILE,
       sequence: AsyncActionSequence.Success,
       meta: { accountAddress },
-      payload: { name, description },
+      payload: { name, description, threeBox: box },
     } as UpdateProfileAction);
 
     dispatch(showNotification(NotificationStatus.Success, "Profile data saved to 3box"));

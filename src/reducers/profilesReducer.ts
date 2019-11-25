@@ -10,6 +10,7 @@ export enum ActionTypes {
 export type IProfileState = any;
 
 export interface IProfilesState {
+  threeBox: any; // To store the opened 3box box so we dont have to wait to open it every time we want to update data in it
   [accountAddress: string]: IProfileState;
 }
 
@@ -22,10 +23,15 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
   };
 }
 
-const initialState: IProfilesState = {};
+const initialState: IProfilesState = { threeBox: null };
 
 const profilesReducer = (state = initialState, action: any) => {
   const { payload } = action;
+
+  if (payload && payload.threeBox) {
+    update(state, { threeBox: { $set: payload.threeBox } });
+    delete payload.threeBox;
+  }
 
   switch (action.type) {
 
