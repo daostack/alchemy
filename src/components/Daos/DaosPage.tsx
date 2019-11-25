@@ -15,12 +15,13 @@ import * as css from "./Daos.scss";
 type SubscriptionData = DAO[];
 
 interface IStateProps {
-  currentAccountProfile: IProfileState
+  currentAccountProfile: IProfileState;
 }
 
 const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
   return {
-    currentAccountProfile: state.profiles[state.web3.currentAccountAddress]
+    ...ownProps,
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress],
   };
 };
 
@@ -31,7 +32,7 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   showNotification,
-  toggleFollow
+  toggleFollow,
 };
 
 type IProps = IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;

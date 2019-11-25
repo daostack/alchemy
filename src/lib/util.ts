@@ -544,7 +544,7 @@ export function ethErrorHandler() {
  * @param value The value to remove
  */
 export function arrayRemove(arr: any[], value: any) {
-   return arr.filter(function(ele){
-       return ele != value;
-   });
+  return arr.filter(function(ele){
+    return ele !== value;
+  });
 }

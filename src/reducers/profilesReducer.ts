@@ -14,11 +14,11 @@ export type IProfileState = {
   description: string;
   ethereumAccountAddress: string;
   follows: {
-    daos: string[],
-    proposals: string[],
-    schemes: string[],
-    users: string[]
-  }
+    daos: string[];
+    proposals: string[];
+    schemes: string[];
+    users: string[];
+  };
   image?: any;
   name: string;
   socialURLs: any;
@@ -37,7 +37,7 @@ export function newProfile(ethereumAccountAddress: string): IProfileState {
       daos: [],
       proposals: [],
       schemes: [],
-      users: []
+      users: [],
     },
     name: "",
     socialURLs: {},
@@ -70,7 +70,7 @@ const profilesReducer = (state = initialState, action: any) => {
 
     case ActionTypes.FOLLOW_ITEM: {
       switch (action.sequence) {
-        case AsyncActionSequence.Success:
+        case AsyncActionSequence.Success: {
           const { type, id, isFollowing } = payload;
 
           if (!state[meta.accountAddress]) {
@@ -82,7 +82,8 @@ const profilesReducer = (state = initialState, action: any) => {
           } else if (!isFollowing && state[meta.accountAddress].follows[type as FollowType].includes(id)) {
             return update(state, { [meta.accountAddress]: { follows: { [type]: { $unset: [id] } }}});
           }
-
+          return state;
+        }
         default: {
           return state;
         }

@@ -2,13 +2,14 @@
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
-import DaoFeedItem from "./DaoFeedItem";
 import * as GeoPattern from "geopattern";
 import { fromWei } from "lib/util";
+
 import moment = require("moment");
 import { Link } from "react-router-dom";
 import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
+import DaoFeedItem from "./DaoFeedItem";
 import ProposalFeedItem from "./ProposalFeedItem";
 //import { Link } from "react-router-dom";
 import * as css from "./Feed.scss";

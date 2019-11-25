@@ -84,12 +84,13 @@ class DaoSchemesPage extends React.Component<IProps, null> {
         { allKnownSchemes.map((scheme: Scheme) => (
           <Fade key={"scheme " + scheme.id}>
             {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
-              ? <ProposalSchemeCard
-                  dao={dao}
-                  isFollowing={currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.schemes.includes(scheme.staticState.address)}
-                  scheme={scheme}
-                  toggleFollow={this.handleClickFollow(scheme.staticState.address)}
-                />
+              ?
+              <ProposalSchemeCard
+                dao={dao}
+                isFollowing={currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.schemes.includes(scheme.staticState.address)}
+                scheme={scheme}
+                toggleFollow={this.handleClickFollow(scheme.staticState.address)}
+              />
               : <SimpleSchemeCard dao={dao} scheme={scheme} />
             }
           </Fade>

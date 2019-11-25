@@ -75,7 +75,7 @@ class ProposalHistoryRow extends React.Component<IProps, IState> {
     window.removeEventListener("resize", this.updateWindowDimensions);
   }
 
-  private updateWindowDimensions = (e: any) => {
+  private updateWindowDimensions = (_e: any) => {
     const nowMobile = window.innerWidth <= 425;
     if (nowMobile !== this.state.isMobile) {
       this.setState({ isMobile: nowMobile });
