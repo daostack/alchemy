@@ -8,7 +8,7 @@ import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
-import { showNotification, NotificationStatus } from "reducers/notifications";
+import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { of, combineLatest, Observable } from "rxjs";
@@ -76,15 +76,11 @@ class ActionButton extends React.Component<IProps, IState> {
     await this.props.executeProposal(this.props.daoState.address, this.props.proposalState.id, this.props.currentAccountAddress);
   }
 
-  private handleClickRedeem = (canRedeem: boolean) => async (): Promise<void> => {
+  private handleClickRedeem = async (): Promise<void> => {
 
-    if (!canRedeem) {
-      this.props.showNotification(NotificationStatus.Failure, "The DAO does not have enough funds to pay for these redemptions");
-    } else {
-      if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
-      this.setState({ preRedeemModalOpen: true });
-    }
+    this.setState({ preRedeemModalOpen: true });
   }
 
   private closePreRedeemModal = (): void => {
@@ -119,48 +115,68 @@ class ActionButton extends React.Component<IProps, IState> {
      * unredeemed by the current account
      */
     const gpRewards = getGpRewards(rewards);
-    const currentAccountHasUnredeemedGpRewards = Object.keys(gpRewards).length > 0;
+    const currentAccountNumUnredeemedGpRewards = Object.keys(gpRewards).length;
     /**
      * unredeemed and available to the current account
      */
     const availableGpRewards = getGpRewards(rewards, daoBalances);
-    const currentAccountHasAvailableUnredeemedGpRewards = Object.keys(availableGpRewards).length > 0;
+    // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
+    const daoLacksRequiredGpRewards = Object.keys(availableGpRewards).length < currentAccountNumUnredeemedGpRewards;
+    const daoLacksAllRequiredGpRewards = (Object.keys(availableGpRewards).length === 0) && (currentAccountNumUnredeemedGpRewards > 0);
     /**
      * note beneficiary may not be the current account
      */
-    let beneficiaryHasAvailableUnredeemedCrRewards = false;
-    let beneficiaryHasUnredeemedCrRewards = false;
+    let beneficiaryNumUnredeemedCrRewards = 0;
+    let daoLacksRequiredCrRewards = false;
+    let daoLacksAllRequiredCrRewards = false;
     let contributionRewards;
     if (proposalState.contributionReward) {
       /**
        * unredeemed by the beneficiary
        */
       contributionRewards = getCRRewards(proposalState.contributionReward);
-      beneficiaryHasUnredeemedCrRewards = Object.keys(contributionRewards).length > 0;
+      beneficiaryNumUnredeemedCrRewards = Object.keys(contributionRewards).length;
       /**
        * unredeemed and available to the beneficiary
        */
       const availableCrRewards = getCRRewards(proposalState.contributionReward, daoBalances);
-      beneficiaryHasAvailableUnredeemedCrRewards = Object.keys(availableCrRewards).length > 0;
+      // only true if there are rewards and the DAO can't pay them. false if there are no rewards or they can be paid.
+      daoLacksRequiredCrRewards = Object.keys(availableCrRewards).length < beneficiaryNumUnredeemedCrRewards;
+      daoLacksAllRequiredCrRewards = (Object.keys(availableCrRewards).length === 0) && (beneficiaryNumUnredeemedCrRewards > 0);
     }
+    // account or beneficiary has a reward
+    const hasRewards = (beneficiaryNumUnredeemedCrRewards > 0) || (currentAccountNumUnredeemedGpRewards > 0);
+
+    // true if all rewards can be paid.  doesn't imply there are any rewards
+    const canRewardAll = (((beneficiaryNumUnredeemedCrRewards === 0) || !daoLacksRequiredCrRewards) &&
+                          ((currentAccountNumUnredeemedGpRewards === 0) || !daoLacksRequiredGpRewards));
+
+    // true if there exist one or more rewards and not any one of them can be paid
+    let canRewardNone=false;
+    if (daoLacksAllRequiredCrRewards) {
+      canRewardNone = daoLacksAllRequiredGpRewards || (currentAccountNumUnredeemedGpRewards === 0);
+    } else if (daoLacksAllRequiredGpRewards) {
+      canRewardNone = (beneficiaryNumUnredeemedCrRewards === 0);
+    }
+
+    const canRewardSomeNotAll = hasRewards && !canRewardAll && !canRewardNone;
+
     /**
-     * Can't redeem unless executed.  We'll disable the redeem button if the DAO can't pay any of the redemptions, and warn
+     * Don't show redeem button unless proposal is executed and the current account has GP rewards or
+     * some account has CR rewards (either one redeemable or not), where for CR rewards, the winning proposal outcome was Pass.
+     * 
+     * We'll disable the redeem button if the DAO can't pay any of the redemptions, and warn
      * if it can only pay some of them.
      *
      * We'll display the redeem button even if the CR beneficiary is not the current account.
      */
     const displayRedeemButton = proposalState.executedAt &&
-                       // can't get gp rewards unless an account is logged in
-                       ((currentAccountAddress ? currentAccountHasUnredeemedGpRewards : false) ||
-                        ((proposalState.winningOutcome === IProposalOutcome.Pass) && beneficiaryHasUnredeemedCrRewards));
-
-    const canRewardNone = !(beneficiaryHasAvailableUnredeemedCrRewards || currentAccountHasAvailableUnredeemedGpRewards);
-    // eslint-disable-next-line no-bitwise
-    const canRewardOnlySome = !canRewardNone && !(beneficiaryHasAvailableUnredeemedCrRewards && currentAccountHasAvailableUnredeemedGpRewards);
+                        ((currentAccountNumUnredeemedGpRewards > 0) ||
+                        ((proposalState.winningOutcome === IProposalOutcome.Pass) && (beneficiaryNumUnredeemedCrRewards > 0)));
 
     const redemptionsTip = RedemptionsTip({
       canRewardNone,
-      canRewardOnlySome,
+      canRewardOnlySome: canRewardSomeNotAll,
       contributionRewards,
       currentAccountAddress,
       dao: daoState,
@@ -221,14 +237,15 @@ class ActionButton extends React.Component<IProps, IState> {
                     <Tooltip placement="left" trigger={["hover"]} overlay={redemptionsTip}>
                       <button
                         style={{ whiteSpace: "nowrap" }}
-                        disabled={false}
+                        disabled={canRewardNone}
                         className={redeemButtonClass}
-                        onClick={this.handleClickRedeem(beneficiaryHasAvailableUnredeemedCrRewards || currentAccountHasAvailableUnredeemedGpRewards)}
+                        onClick={this.handleClickRedeem}
                         data-test-id="button-redeem"
                       >
                         <img src="/assets/images/Icon/redeem.svg" />
                         {
-                          beneficiaryHasUnredeemedCrRewards && !currentAccountHasUnredeemedGpRewards ?
+                          (((beneficiaryNumUnredeemedCrRewards > 0) && (currentAccountAddress !== proposalState.contributionReward.beneficiary)) &&
+                           (currentAccountNumUnredeemedGpRewards === 0)) ?
                             // note beneficiary can be the current account
                             " Redeem for beneficiary" : " Redeem"
                         }

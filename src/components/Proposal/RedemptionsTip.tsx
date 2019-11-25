@@ -21,8 +21,8 @@ export default (props: IProps) => {
 
   const messageDiv = (canRewardNone || canRewardOnlySome) ? <div className={css.message}>
     <img className={css.icon} src="/assets/images/Icon/Alert-yellow-b.svg" />
-    {canRewardNone ? <div className={css.text}>At this time, none of these rewards can be redeemed -- the DAO does not have the necessary assets.</div> : ""}
-    {canRewardOnlySome ? <div className={css.text}>At this time, only some of these rewards can be redeemed -- the DAO does not have the necessary assets.</div> : ""}
+    {canRewardNone ? <div className={css.text}>At this time, none of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
+    {canRewardOnlySome ? <div className={css.text}>At this time, only some of these rewards can be redeemed -- {dao.name} does not hold all the necessary assets.</div> : ""}
   </div> : <span></span>;
   
   const rewardComponents = [];
@@ -58,7 +58,7 @@ export default (props: IProps) => {
     c = <div key={id + "_staker_bounty"}>
       <strong>For staking on the proposal you are due to receive:</strong>
       <ul>
-        <li>{fromWei(gpRewards.daoBountyForStaker)} bounty from the DAO
+        <li>{fromWei(gpRewards.daoBountyForStaker)} GEN as bounty from {dao.name}
         </li>
       </ul>
     </div >;

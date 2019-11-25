@@ -4,6 +4,7 @@
 
 ## Next release
   - Features Added
+    - prevent redemptions when nothing will happen due to insuffucient DAO resources.  Warn on partial redemptions.
   - Bugs Fixed
     - go to error page on non-existent DAOs
 
