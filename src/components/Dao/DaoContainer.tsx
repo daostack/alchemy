@@ -61,18 +61,18 @@ class DaoContainer extends React.Component<IProps, null> {
     //this.props.getProfilesForAddresses(this.props.data[1].map((member) => member.staticState.address));
   }
 
-  private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
-  private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data} />;
-  private daoDiscussionRoute = (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data} />;
+  private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
+  private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data[0]} />;
+  private daoDiscussionRoute = (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data[0]} />;
   private daoProposalRoute = (routeProps: any) =>
     <ProposalDetailsPage {...routeProps}
-      daoState={this.props.data}
+      daoState={this.props.data[0]}
       currentAccountAddress={this.props.currentAccountAddress}
       proposalId={routeProps.match.params.proposalId}
     />;
 
-  private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
-  private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data} />;
+  private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data[0]} currentAccountAddress={this.props.currentAccountAddress} />;
+  private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data[0]} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
 
   public render(): RenderOutput {
