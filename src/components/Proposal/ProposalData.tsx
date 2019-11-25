@@ -17,7 +17,7 @@ import * as css from "./ProposalCard.scss";
 
 interface IExternalProps {
   currentAccountAddress: Address;
-  dao: IDAOState;
+  daoState: IDAOState;
   proposalId: string;
   children(props: IInjectedProposalProps): JSX.Element;
   /**
@@ -115,8 +115,8 @@ export default withSubscription({
 
   createObservable: async (props) => {
     const arc = getArc();
-    const { currentAccountAddress, dao, proposalId } = props;
-    const arcDao = arc.dao(dao.address);
+    const { currentAccountAddress, daoState, proposalId } = props;
+    const arcDao = daoState.dao;
     const proposal = arc.proposal(proposalId);
     await proposal.fetchStaticState();
     const spender = proposal.staticState.votingMachine;

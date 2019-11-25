@@ -58,6 +58,12 @@
 }
 
 .redeemButton {
+
+  &:disabled {
+    background-color: rgba(200,200,200,.5);
+    color: rgba(75,75,75,1);
+  }
+
   img {
     margin-left: -1px;
     margin-right: 1px;

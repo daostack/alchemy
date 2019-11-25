@@ -237,14 +237,12 @@ class ReputationFromToken extends React.Component<IProps, IState> {
             method: "post",
             data,
           });
-          console.log(response);
           if (response.data.status !== 200) {
             this.props.showNotification(NotificationStatus.Failure, `An error occurred on the transaction service: ${response.data.status}: ${response.data.message}`);
           } else {
             this.props.showNotification(NotificationStatus.Success, `You've successfully redeemed rep to ${values.accountAddress}`);
           }
         } catch(err) {
-          console.log(err.message);
           this.props.showNotification(NotificationStatus.Failure, `${err.message}}`);
         }
         // const tx = await contract.methods.redeemWithSignature(values.accountAddress.toLowerCase(), signatureType, signature).send(
@@ -261,6 +259,8 @@ class ReputationFromToken extends React.Component<IProps, IState> {
     }
     setSubmitting(false);
   }
+
+  private onSubmitClick = (setFieldValue: any) => ()=>{ setFieldValue("useTxSenderService",false); }
 
   public render(): RenderOutput {
     const { daoAvatarAddress, schemeState, currentAccountAddress } = this.props;
@@ -286,6 +286,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
               useTxSenderService: false,
             } as IFormValues}
 
+            // eslint-disable-next-line react/jsx-no-bind
             validate={(values: IFormValues): void => {
               const errors: any = {};
 
@@ -306,6 +307,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
 
             onSubmit={this.handleSubmit}
 
+            // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
               touched,
@@ -332,9 +334,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                 <div className={schemeCss.redemptionButton}>
                   <button type="submit"
                     disabled={false}
-                    onClick={(_e)=>{
-                      setFieldValue("useTxSenderService",false);
-                    }}
+                    onClick={this.onSubmitClick(setFieldValue)}
                   >
                     <img src="/assets/images/Icon/redeem.svg"/> Redeem
                   </button>
@@ -344,9 +344,7 @@ class ReputationFromToken extends React.Component<IProps, IState> {
                     <div>Or try our new experimental feature:</div>
                     <button type="submit"
                       disabled={false}
-                      onClick={(_e)=>{
-                        setFieldValue("useTxSenderService",true);
-                      }}
+                      onClick={this.onSubmitClick(setFieldValue)}
                     >
                       <img src="/assets/images/Icon/redeem.svg"/> Redeem w/o paying gas
                     </button>

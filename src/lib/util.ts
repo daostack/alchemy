@@ -533,7 +533,8 @@ export function roundUp(num: number, precision: number) {
 export function ethErrorHandler() {
   const returnValueOnError: any = null; // return this when there is an error
   return catchError((err: any) => {
-    console.log(`Error! ${err.message}`);
+    // eslint-disable-next-line no-console
+    console.error(err.message);
     return of(returnValueOnError);
   });
 }
