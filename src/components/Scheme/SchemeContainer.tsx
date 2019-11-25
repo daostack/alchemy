@@ -62,8 +62,8 @@ class SchemeContainer extends React.Component<IProps, null> {
     this.props.history.push(`/dao/${daoAvatarAddress}/scheme/${schemeId}/proposals/create/`);
   };
 
-  private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} daoAvatarAddress={this.props.daoAvatarAddress} scheme={this.props.data} />;
-  private schemeProposalsPageHtml = (isActive: boolean) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
+  private schemeInfoPageHtml = (props: any) => <SchemeInfoPage {...props} scheme={this.props.data} />;
+  private schemeProposalsPageHtml = (isActive: boolean, daoState: IDAOState) => (props: any) => <SchemeProposalsPage {...props} isActive={isActive} daoState={daoState} currentAccountAddress={this.props.currentAccountAddress} scheme={this.props.data} />;
 
   public render(): RenderOutput {
     const { schemeId, daoState } = this.props;
@@ -118,7 +118,7 @@ class SchemeContainer extends React.Component<IProps, null> {
             render={this.schemeInfoPageHtml} />
 
           <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={this.schemeProposalsPageHtml(isActive)} />
+            render={this.schemeProposalsPageHtml(isActive, daoState)} />
         </Switch>
       </div>
     );
