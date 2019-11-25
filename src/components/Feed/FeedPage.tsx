@@ -131,9 +131,6 @@ const SubscribedFeedPage = withSubscription({
       dao {
         id
         name
-        nativeReputation {
-          totalSupply
-        }
       }
       timestamp
     }`;
