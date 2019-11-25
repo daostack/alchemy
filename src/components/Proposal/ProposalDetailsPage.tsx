@@ -51,6 +51,9 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
     };
   }
 
+  // define this here rather than in render to minimize rerendering of discus component
+  private disqusConfig = { url: "", identifier: "", title: "" };
+
   private showShareModal = (_event: any): void => {
     this.setState({ showShareModal: true });
   }
@@ -88,6 +91,10 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           votes,
         } = props;
 
+        this.disqusConfig.title = proposal.title;
+        this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
+        this.disqusConfig.identifier = this.props.proposalId;
+
         const proposalClass = classNames({
           [css.proposal]: true,
           clearfix: true,
@@ -114,12 +121,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           [css.voteBox]: true,
           clearfix: true,
         });
-
-        const disqusConfig = {
-          url: process.env.BASE_URL + this.props.location.pathname,
-          identifier: proposal.id,
-          title: proposal.title,
-        };
 
         return (
           <div className={css.wrapper}>
@@ -287,7 +288,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
             <h3 className={css.discussionTitle}>Discussion</h3>
             <div className={css.disqus}>
-              <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig}/>
+              <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
             </div>
 
             {this.state.showVotersModal ?
