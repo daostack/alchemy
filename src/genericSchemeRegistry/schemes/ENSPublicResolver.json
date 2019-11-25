@@ -2,7 +2,8 @@
   "name": "EnsPublicResolver",
   "addresses": {
     "main": [
-      "0x1da022710df5002339274aadee8d58218e9d6ab5"
+      "0x1da022710df5002339274aadee8d58218e9d6ab5",
+      "0x226159d592e2b063810a10ebf6dcbada94ed68b8"
     ],
     "rinkeby": [
       "0x2396A687f75f1a13e3927F1841B291350b0ED977"
