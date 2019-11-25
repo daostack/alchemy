@@ -123,7 +123,7 @@ export default withSubscription({
 
     if (currentAccountAddress) {
       return combineLatest(
-        proposal.state({ subscribe: true }), // state of the current proposal
+        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
         proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
         proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
         proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { subscribe: props.subscribeToProposalDetails })
