@@ -22,10 +22,9 @@ const DaoFeedItem = (props: IProps) => {
   const bgPattern = GeoPattern.generate(dao.address + dao.name);
 
   return (
-    <div data-test-id={`eventCardContent-${event.id}`}>
-      <Link to={"/dao/" + dao.address}>
-        <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
-        <em></em>
+    <div data-test-id={`eventCardContent-${event.id}`} className={css.daoItem}>
+      <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
+      <Link to={"/dao/" + dao.address} className={css.daoName}>
         <span>{dao.name}</span>
       </Link>
       <br/>

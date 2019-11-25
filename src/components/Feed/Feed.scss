@@ -84,11 +84,22 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     padding: 21px 26px;
 
-    .daoName {
-      margin-bottom: 17px;
+    .proposalItem {
+      .daoName {
+        margin-bottom: 17px;
 
-      a {
-        color: #004799;
+        a {
+          color: #004799;
+        }
+      }
+    }
+
+    .daoItem {
+      .daoName {
+        font-size: 21px;
+        display: inline-block;
+        margin-top: 3px;
+        font-family: "AccordBold", sans-serif;
       }
     }
 
@@ -98,7 +109,8 @@
       border-radius: 25px;
       display: inline-block;
       vertical-align: middle;
-      margin-right: 6px;
+      margin-right: 20px;
+      float: left;
     }
   }
 

@@ -41,7 +41,7 @@ const ProposalFeedItem = (props: IProps) => {
   const dao = data;
 
   return (
-    <div data-test-id={`eventCardContent-${event.id}`}>
+    <div data-test-id={`eventCardContent-${event.id}`} className={css.proposalItem}>
       <div className={css.daoName}>
         <Link to={`/dao/${dao.address}/scheme/${event.proposal.scheme.id}`}>{dao.name} &gt; {event.proposal.scheme.name} &gt;</Link>
       </div>
