@@ -116,11 +116,11 @@ class Header extends React.Component<IProps, IStateProps> {
     await gotoReadonly(this.props.showNotification);
   }
 
-  private handleToggleMenu = () => (_event: any): void => {
+  private handleToggleMenu = (_event: any): void => {
     this.props.toggleMenu();
   }
 
-  private handleTrainingTooltipsEnabled = () => (event: any): void => {
+  private handleTrainingTooltipsEnabled = (event: any): void => {
     /**
      * maybe making this asynchronous can address reports of the button responding very slowly
      */
@@ -145,6 +145,8 @@ class Header extends React.Component<IProps, IStateProps> {
     }
   }
 
+  private breadCrumbCompare = (a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length;
+
   public render(): RenderOutput {
     const {
       currentAccountProfile,
@@ -164,7 +166,7 @@ class Header extends React.Component<IProps, IStateProps> {
           [css.hasHamburger]: !!daoAvatarAddress,
         })}>
           { daoAvatarAddress ?
-            <div className={css.menuToggle} onClick={this.handleToggleMenu()}>
+            <div className={css.menuToggle} onClick={this.handleToggleMenu}>
               {this.props.menuOpen ?
                 <img src="/assets/images/Icon/Close.svg"/> :
                 <img src="/assets/images/Icon/Menu.svg"/>}
@@ -181,14 +183,14 @@ class Header extends React.Component<IProps, IStateProps> {
               separator={<b> &gt;   </b>}
               item={NavLink}
               finalItem={"b"}
-              compare={(a: any, b: any): number => a.weight ? a.weight - b.weight : a.to.length - b.to.length}
+              compare={this.breadCrumbCompare}
             />
           </div>
           <TrainingTooltip placement="left" overlay={"Show / hide tooltips on hover"} alwaysAvailable>
             <div className={css.toggleButton} ref={this.toggleDiv}>
               <Toggle
                 defaultChecked={trainingTooltipsOn}
-                onChange={this.handleTrainingTooltipsEnabled()}
+                onChange={this.handleTrainingTooltipsEnabled}
                 icons={{ checked: <img src='/assets/images/Icon/checked.svg'/>, unchecked: <img src='/assets/images/Icon/unchecked.svg'/> }}/>
             </div>
           </TrainingTooltip>

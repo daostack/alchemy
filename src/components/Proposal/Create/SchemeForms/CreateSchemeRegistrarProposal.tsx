@@ -117,7 +117,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
     this.setState({ currentTab: tab });
   }
 
-  private onTagsChange = () => (tags: any[]): void => {
+  private onTagsChange = (tags: any[]): void => {
     this.setState({tags});
   }
 
@@ -292,7 +292,7 @@ class CreateSchemeRegistrarProposal extends React.Component<IProps, IState> {
                   </TrainingTooltip>
 
                   <div className={css.tagSelectorContainer}>
-                    <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                    <TagsSelector onChange={this.onTagsChange}></TagsSelector>
                   </div>
 
                   <TrainingTooltip overlay="Link to the fully detailed description of your proposal" placement="right">
