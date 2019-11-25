@@ -4,10 +4,19 @@
 
 ## Next release
   - Features Added
-    - prevent redemptions when nothing will happen due to insuffucient DAO resources.  Warn on partial redemptions.
+  - Bugs Fixed
+
+## 2019-11-25
+  - Features Added
+    - prevent redemptions when nothing will happen due to insufficient DAO resources.  Warn on partial redemptions.
+    - tooltips: show less duplicates, toggle button always shows it
+    - use subgraph v33, client 0.2.34
   - Bugs Fixed
     - update DAO total rep when it changes, so rep percentages remain correct
     - go to error page on non-existent DAOs
+    - refactor arrow functions
+    - eliminate empty tooltips
+    - eliminate duplicate confirmation notifications
 
 ### 2019-11-12
   - Features added
