@@ -1,5 +1,5 @@
 import { promisify } from "util";
-import { IDAOState, IMemberState } from "@daostack/client";
+import { IDAOState, IMemberState, DAO } from "@daostack/client";
 
 import BN = require("bn.js");
 import * as profileActions from "actions/profilesActions";
@@ -92,7 +92,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     e.preventDefault();
   }
 
-  public async handleSubmit(values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> {
+  public handleFormSubmit = async (values: IFormValues, { _props, setSubmitting, _setErrors }: any): Promise<void> => {
     const { accountAddress, currentAccountAddress, showNotification, updateProfile } = this.props;
 
     if (!await enableWalletProvider({ showNotification })) { return; }
@@ -134,7 +134,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     setSubmitting(false);
   }
 
-  public onOAuthSuccess(account: IProfileState) {
+  public onOAuthSuccess = (account: IProfileState): void => {
     this.props.verifySocialAccount(this.props.accountAddress, account);
   }
 
@@ -163,6 +163,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
                 description: accountProfile ? accountProfile.description || "" : "",
                 name: accountProfile ? accountProfile.name || "" : "",
               } as IFormValues}
+              // eslint-disable-next-line react/jsx-no-bind
               validate={(values: IFormValues): void => {
                 // const { name } = values;
                 const errors: any = {};
@@ -177,7 +178,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
 
                 return errors;
               }}
-              onSubmit={this.handleSubmit.bind(this)}
+              onSubmit={this.handleFormSubmit}
+              // eslint-disable-next-line react/jsx-no-bind
               render={({
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 values,
@@ -258,8 +260,8 @@ class AccountProfilePage extends React.Component<IProps, null> {
                         }
 
                         <h3>Social Verification</h3>
-                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
-                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess.bind(this)} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="twitter" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess} profile={accountProfile} socket={socket} />
+                        <OAuthLogin editing={editing} provider="github" accountAddress={accountAddress} onSuccess={this.onOAuthSuccess} profile={accountProfile} socket={socket} />
                       </div>
                     }
                     <div className={css.otherInfoContainer}>
@@ -302,9 +304,15 @@ const SubscribedAccountProfilePage = withSubscription({
     const queryValues = queryString.parse(props.location.search);
     const daoAvatarAddress = queryValues.daoAvatarAddress as string;
     const accountAddress = props.match.params.accountAddress;
+    let dao: DAO;
+    if (daoAvatarAddress) {
+      dao = arc.dao(daoAvatarAddress);
+    }
+
     return combineLatest(
-      daoAvatarAddress ? arc.dao(daoAvatarAddress).state() : of(null),
-      daoAvatarAddress ? arc.dao(daoAvatarAddress).member(accountAddress).state() : of(null),
+      // subscribe if only to to get DAO reputation supply updates
+      daoAvatarAddress ? dao.state( {subscribe: true}) : of(null),
+      daoAvatarAddress ? dao.member(accountAddress).state() : of(null),
       arc.ethBalance(accountAddress)
         .pipe(ethErrorHandler()),
       arc.GENToken().balanceOf(accountAddress)

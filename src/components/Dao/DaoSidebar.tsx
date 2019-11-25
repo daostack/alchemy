@@ -53,7 +53,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
     super(props);
   }
 
-  private handleCloseMenu = () => (_event: any): void => {
+  private handleCloseMenu = (_event: any): void => {
     this.props.hideMenu();
   }
 
@@ -73,7 +73,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
       <div className={menuClass}>
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
-            <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu()}>
+            <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
               <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
               <em></em>
               <span>{dao.name}</span>
@@ -104,7 +104,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
             <span className={css.navHeading}><b>Menu</b></span>
             <ul>
               <li>
-                <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu()}>
+                <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -118,7 +118,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
               </li>
               <li>
                 <TrainingTooltip placement="topLeft" overlay={"List of entities (DAOs and individuals) that have voting power in the DAO"}>
-                  <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu()}>
+                  <Link to={"/dao/" + dao.address + "/members/"} onClick={this.handleCloseMenu}>
                     <span className={css.menuDot} />
                     <span className={
                       classNames({
@@ -132,7 +132,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                 </TrainingTooltip>
               </li>
               <li>
-                <Link to={"/dao/" + dao.address + "/history/"} onClick={this.handleCloseMenu()}>
+                <Link to={"/dao/" + dao.address + "/history/"} onClick={this.handleCloseMenu}>
                   <span className={css.menuDot} />
                   <span className={
                     classNames({
@@ -146,7 +146,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
               </li>
               <li>
                 <TrainingTooltip placement="topLeft" overlay={"Space designated for general questions, statements and comments"}>
-                  <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu()}>
+                  <Link to={"/dao/" + dao.address + "/discussion/"} onClick={this.handleCloseMenu}>
                     <span className={
                       classNames({
                         [css.menuDot]: true,
@@ -182,7 +182,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
           </div>
           <div className={css.menuWrapper}>
             <ul>
-              <li><Link to="/" onClick={this.handleCloseMenu()}>Home</Link></li>
+              <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
               <li>
                 <a>Buy GEN</a>
                 <ul>
