@@ -60,7 +60,7 @@ class DaoContainer extends React.Component<IProps, null> {
     this.props.getProfilesForAllAccounts();
   }
 
-  private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} currentAccountAddress={this.props.currentAccountAddress} />;
+  private daoHistoryRoute = (routeProps: any) => <DaoHistoryPage {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
   private daoMembersRoute = (routeProps: any) => <DaoMembersPage {...routeProps} daoState={this.props.data} />;
   private daoDiscussionRoute = (routeProps: any) => <DaoDiscussionPage {...routeProps} dao={this.props.data} />;
   private daoProposalRoute = (routeProps: any) =>
@@ -71,7 +71,7 @@ class DaoContainer extends React.Component<IProps, null> {
     />;
 
   private schemeRoute = (routeProps: any) => <SchemeContainer {...routeProps} daoState={this.props.data} currentAccountAddress={this.props.currentAccountAddress} />;
-  private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} />;
+  private daoSchemesRoute = (routeProps: any) => <DaoSchemesPage {...routeProps} daoState={this.props.data} />;
   private modalRoute = (route: any) => `/dao/${route.params.daoAvatarAddress}/scheme/${route.params.schemeId}/`;
 
   public render(): RenderOutput {
@@ -129,7 +129,7 @@ const SubscribedDaoContainer = withSubscription({
   createObservable: (props: IExternalProps) => {
     const arc = getArc(); // TODO: maybe we pass in the arc context from withSubscription instead of creating one every time?
     const daoAddress = props.match.params.daoAvatarAddress;
-    return arc.dao(daoAddress).state();
+    return arc.dao(daoAddress).state({ subscribe: true, fetchAllData: true } );
   },
 });
 

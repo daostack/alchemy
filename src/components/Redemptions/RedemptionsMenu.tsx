@@ -198,7 +198,8 @@ const SubscribedMenuItemContent = withSubscription({
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
-    return combineLatest(dao.state(), ethBalance, rewards);
+    // subscribe to dao to get DAO reputation supply updates
+    return combineLatest(dao.state( { subscribe: true }), ethBalance, rewards);
   },
 });
 
