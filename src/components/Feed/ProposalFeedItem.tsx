@@ -13,9 +13,10 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 // import { combineLatest } from "rxjs";
 
+import * as css from "./Feed.scss";
+
 const ReactMarkdown = require("react-markdown");
 
-import * as css from "./Feed.scss";
 
 // type SubscriptionData = [IDAOState, IProposalState];
 type SubscriptionData = IDAOState;
