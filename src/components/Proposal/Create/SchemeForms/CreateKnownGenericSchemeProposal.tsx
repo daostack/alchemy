@@ -56,8 +56,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.handleSubmit = this.handleSubmit.bind(this);
-
     if (!props.genericSchemeInfo) {
       throw Error("GenericSchemeInfo should be provided");
     }
@@ -69,7 +67,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       tags: new Array<string>(),
     };
   }
-
+  
   private async getBountyEth(values: IFormValues): Promise<string> {
     const currentAction = this.state.currentAction;
     let ethToSend = 0;
@@ -84,7 +82,9 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     return ethToSend.toString();
   }
 
-  private handleSubmit = () => async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+
+  private handleSubmit = async (values: IFormValues, { setSubmitting }: any ): Promise<void> => {
+
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
@@ -205,7 +205,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     />;
   }
 
-  private onTagsChange = () => (tags: any[]): void => {
+  private onTagsChange = (tags: any[]): void => {
     this.setState({tags});
   }
 
@@ -335,7 +335,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
               }
               return errors;
             }}
-            onSubmit={this.handleSubmit()}
+            onSubmit={this.handleSubmit}
             // eslint-disable-next-line react/jsx-no-bind
             render={({
               errors,
@@ -385,7 +385,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
                   </label>
 
                   <div className={css.tagSelectorContainer}>
-                    <TagsSelector onChange={this.onTagsChange()}></TagsSelector>
+                    <TagsSelector onChange={this.onTagsChange}></TagsSelector>
                   </div>
 
                   <label htmlFor="urlInput">

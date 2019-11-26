@@ -46,7 +46,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
 
     if (data === null) {
       return <div className={css.wrapper}>
-        Please log in to see your rewards.
+        <h3 className={css.pleaseLogin}>Please log in to see your rewards.</h3>
       </div>;
     }
 
@@ -65,7 +65,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
             {proposals.length > 0 ?
               <button
                 className={css.redeemAllButton}
-                onClick={this.redeemAll.bind(this)}
+                onClick={this.redeemAll}
               >
                 <img src="/assets/images/Icon/redeem.svg" />
                 Redeem all
@@ -89,7 +89,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
     );
   }
 
-  private async redeemAll() {
+  private redeemAll = async (): Promise<void> => {
     const {
       currentAccountAddress,
       data: [, proposals],

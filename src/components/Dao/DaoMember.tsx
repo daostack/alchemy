@@ -1,3 +1,4 @@
+import BN = require("bn.js");
 import { IDAOState, IMemberState, Member } from "@daostack/client";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -13,12 +14,13 @@ interface IProps extends ISubscriptionProps<IMemberState> {
   dao: IDAOState;
   member: Member;
   profile: IProfileState;
+  daoTotalReputation: BN;
 }
 
 class DaoMember extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
-    const { dao, profile } = this.props;
+    const { dao, profile, daoTotalReputation } = this.props;
     const memberState = this.props.data;
 
     return (
@@ -49,7 +51,7 @@ class DaoMember extends React.Component<IProps, null> {
               <td className={css.memberReputation}>
                 <span className={css.reputationAmount}>{fromWei(memberState.reputation).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
                 <div className={css.reputationAmounts}>
-                  (<Reputation daoName={dao.name} totalReputation={dao.reputationTotalSupply} reputation={memberState.reputation}/>)
+                  (<Reputation daoName={dao.name} totalReputation={daoTotalReputation} reputation={memberState.reputation}/>)
                 </div>
               </td>
               <td className={css.memberSocial}>
