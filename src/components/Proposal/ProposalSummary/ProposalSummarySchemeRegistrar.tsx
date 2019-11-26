@@ -28,7 +28,7 @@ export default class ProposalSummary extends React.Component<IProps, IState> {
 
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+  public async componentDidMount (): Promise<void> {
     this.setState({ network: (await getNetworkName()).toLowerCase() });
   }
 
