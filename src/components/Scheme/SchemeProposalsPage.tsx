@@ -8,7 +8,7 @@ import { schemeName} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Observable, combineLatest } from "rxjs";
 import { connect } from "react-redux";
@@ -36,18 +36,19 @@ const Fade = ({ children, ...props }: any): any => (
   </CSSTransition>
 );
 
-interface IExternalProps extends RouteComponentProps<any> {
+interface IExternalProps {
   currentAccountAddress: Address;
   history: H.History;
   isActive: boolean;
   scheme: ISchemeState;
+  daoState: IDAOState;
 }
 
 interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type SubscriptionData = [Proposal[], Proposal[], Proposal[], IDAOState, Proposal[]];
+type SubscriptionData = [Proposal[], Proposal[], Proposal[], Proposal[]];
 type IProps = IExternalProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 const mapDispatchToProps = {
@@ -63,41 +64,46 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
   }
 
   private _handleNewProposal = (e: any): void => {
-    this.handleNewProposal(this.props.data[3].address, this.props.scheme.id);
+    this.handleNewProposal(this.props.daoState.address, this.props.scheme.id);
     e.preventDefault();
   };
 
   public render(): RenderOutput {
     const { data } = this.props;
 
-    const [proposalsQueued, proposalsPreBoosted, proposalsBoosted, dao] = data;
-    const { currentAccountAddress, fetchMore, isActive, scheme } = this.props;
+    const [proposalsQueued, proposalsPreBoosted, proposalsBoosted ] = data;
+    const { currentAccountAddress, daoState, fetchMore, isActive, scheme } = this.props;
+    let proposalCount=0;
 
     const queuedProposalsHTML = (
       <TransitionGroup className="queued-proposals-list">
         { proposalsQueued.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
         ))}
       </TransitionGroup>
     );
+
+    proposalCount=0;
 
     const preBoostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsPreBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
         ))}
       </TransitionGroup>
     );
 
+    proposalCount=0;
+
     const boostedProposalsHTML = (
       <TransitionGroup className="boosted-proposals-list">
         { proposalsBoosted.map((proposal: Proposal): any => (
           <Fade key={"proposal_" + proposal.id}>
-            <ProposalCard proposal={proposal} daoState={dao} currentAccountAddress={currentAccountAddress} />
+            <ProposalCard proposal={proposal} daoState={daoState} currentAccountAddress={currentAccountAddress} suppressTrainingTooltips={proposalCount++ > 0}/>
           </Fade>
         ))}
       </TransitionGroup>
@@ -105,7 +111,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
 
     return (
       <div>
-        <BreadcrumbsItem to={`/dao/${dao.address}/scheme/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
+        <BreadcrumbsItem to={`/dao/${daoState.address}/scheme/${scheme.id}`}>{schemeName(scheme, scheme.address)}</BreadcrumbsItem>
 
         { proposalsQueued.length === 0 && proposalsPreBoosted.length === 0 && proposalsBoosted.length === 0
           ?
@@ -116,7 +122,7 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
             </div>
             <p>You can be the first one to create a {scheme.name && scheme.name.replace(/([A-Z])/g, " $1") || scheme.address} proposal today! (:</p>
             <div className={css.cta}>
-              <Link to={"/dao/" + dao.address}>
+              <Link to={"/dao/" + daoState.address}>
                 <img className={css.relax} src="/assets/images/lt.svg"/> Back to schemes
               </Link>
               <a className={classNames({
@@ -132,53 +138,53 @@ class SchemeProposalsPage extends React.Component<IProps, null> {
           :
           <div>
             <div className={css.boostedContainer}>
-              <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
-                <div className={css.proposalsHeader}>
-                Boosted Proposals ({scheme.numberOfBoostedProposals})
-                  {proposalsBoosted.length === 0
-                    ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
-                    : " "
-                  }
-                </div>
-              </TrainingTooltip>
+              <div className={css.proposalsHeader}>
+                <TrainingTooltip placement="bottom" overlay={"Boosted proposals are passed or failed via relative majority over a configured voting period"}>
+                  <span>Boosted Proposals ({scheme.numberOfBoostedProposals})</span>
+                </TrainingTooltip>
+                {proposalsBoosted.length === 0
+                  ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                  : " "
+                }
+              </div>
               <div className={css.proposalsContainer + " " + css.boostedProposalsContainer}>
                 {boostedProposalsHTML}
               </div>
             </div>
 
             <div className={css.regularContainer}>
-              <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
-                <div className={css.proposalsHeader}>
-                Pending Proposals ({scheme.numberOfPreBoostedProposals})
-                  {proposalsPreBoosted.length === 0
-                    ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
-                    : " "
-                  }
-                </div>
-              </TrainingTooltip>
+              <div className={css.proposalsHeader}>
+                <TrainingTooltip placement="bottom" overlay={"Pending proposals have reached the prediction score required for boosting and now must make it through the pending period without dipping below that threshold in order to be boosted."}>
+                  <span>Pending Proposals ({scheme.numberOfPreBoostedProposals})</span>
+                </TrainingTooltip>
+                {proposalsPreBoosted.length === 0
+                  ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                  : " "
+                }
+              </div>
               <div className={css.proposalsContainer}>
                 {preBoostedProposalsHTML}
               </div>
             </div>
             <div className={css.regularContainer}>
-              <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
-                <div className={css.proposalsHeader}>
-                Regular Proposals ({scheme.numberOfQueuedProposals})
-                  {proposalsQueued.length === 0
-                    ?
-                    <div>
-                      <img src="/assets/images/yoga.svg"/>
-                    </div>
-                    : " "
-                  }
-                </div>
-              </TrainingTooltip>
+              <div className={css.proposalsHeader}>
+                <TrainingTooltip placement="bottom" overlay={"Regular proposals are passed or failed via absolute majority over a configured voting period. If enough GEN is staked predicting they will pass, they can move to the pending and then boosted queues."}>
+                  <span>Regular Proposals ({scheme.numberOfQueuedProposals})</span>
+                </TrainingTooltip>
+                {proposalsQueued.length === 0
+                  ?
+                  <div>
+                    <img src="/assets/images/yoga.svg"/>
+                  </div>
+                  : " "
+                }
+              </div>
               <div className={css.proposalsContainer}>
                 <InfiniteScroll
                   dataLength={proposalsQueued.length} //This is important field to render the next data
@@ -209,14 +215,12 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
   errorComponent: null,
 
   checkForUpdate: (oldProps, newProps) => {
-    return oldProps.match.params.daoAvatarAddress !== oldProps.match.params.daoAvatarAddress
-           || oldProps.scheme.id !== newProps.scheme.id;
+    return oldProps.scheme.id !== newProps.scheme.id;
   },
 
   createObservable: async (props: IExternalProps) => {
-    const daoAvatarAddress = props.match.params.daoAvatarAddress;
     const arc = getArc();
-    const dao = arc.dao(daoAvatarAddress);
+    const dao = props.daoState.dao;
     const schemeId = props.scheme.id;
 
     // this query will fetch al data we need before rendering the page, so we avoid hitting the server
@@ -292,18 +296,13 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
         where: { scheme: schemeId, stage_in: [IProposalStage.Boosted, IProposalStage.QuietEndingPeriod] },
         orderBy: "boostedAt",
       }, { subscribe: true}),
-
-      // DAO state
-      dao.state(),
       // big subscription query to make all other subscription queries obsolete
       arc.getObservable(bigProposalQuery, {subscribe: true}) as Observable<Proposal[]>,
     );
   },
 
   getFetchMoreObservable: (props: IExternalProps, data: SubscriptionData) => {
-    const daoAvatarAddress = props.match.params.daoAvatarAddress;
-    const arc = getArc();
-    const dao = arc.dao(daoAvatarAddress);
+    const dao = props.daoState.dao;
 
     return dao.proposals({
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -316,7 +315,7 @@ const SubscribedSchemeProposalsPage = withSubscription<IProps, SubscriptionData>
   },
 
   fetchMoreCombine: (prevState: SubscriptionData, newData: Proposal[]) => {
-    return [prevState[0].concat(newData), prevState[1], prevState[2], prevState[3], []];
+    return [prevState[0].concat(newData), prevState[1], prevState[2], []];
   },
 });
 

@@ -76,7 +76,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
   // Kicks off the processes of opening the popup on the server and listening
   // to the popup. It also disables the login button so the user can not
   // attempt to login to the provider twice.
-  public startAuth(e: any) {
+  public startAuth = (e: any) => {
     if (!this.state.disabled) {
       e.preventDefault();
       this.popup = this.openPopup();
@@ -103,7 +103,7 @@ export default class OAuthLogin extends React.Component<IProps, IState> {
           : (editing
             ? <div>
               <button
-                onClick={this.startAuth.bind(this)}
+                onClick={this.startAuth}
                 disabled={disabled}
               >
                 <FontAwesomeIcon icon={["fab", provider]} className={css.icon}/>

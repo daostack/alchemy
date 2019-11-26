@@ -38,10 +38,11 @@ class DaoMembersPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const members = data;
+    const daoTotalReputation = this.props.daoState.reputationTotalSupply;
     const { daoState, profiles } = this.props;
 
     const membersHTML = members.map((member) =>
-      <DaoMember key={member.staticState.address} dao={daoState} member={member} profile={profiles[member.staticState.address]} />);
+      <DaoMember key={member.staticState.address} dao={daoState} daoTotalReputation={daoTotalReputation} member={member} profile={profiles[member.staticState.address]} />);
 
     return (
       <div className={css.membersContainer}>
@@ -83,10 +84,11 @@ const SubscribedDaoMembersPage = withSubscription({
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: (props) => <div>{ props.error.message }</div>,
 
-  checkForUpdate: (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
+  checkForUpdate: [], // (oldProps, newProps) => { return oldProps.daoState.address !== newProps.daoState.address; },
 
-  createObservable: (props: IExternalProps) => {
+  createObservable: async (props: IExternalProps) => {
     const dao = props.daoState.dao;
+
     return dao.members({
       orderBy: "balance",
       orderDirection: "desc",
@@ -94,6 +96,9 @@ const SubscribedDaoMembersPage = withSubscription({
       skip: 0,
     });
   },
+
+  // used for hacky pagination tracking
+  pageSize: PAGE_SIZE,
 
   getFetchMoreObservable: (props: IExternalProps, data: Member[]) => {
     const dao = props.daoState.dao;
