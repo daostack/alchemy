@@ -346,7 +346,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                    beneficiary={this.loadInitialFormValues().beneficiary}
+                    defaultValue={this.loadInitialFormValues().beneficiary}
                   />
                 </div>
 

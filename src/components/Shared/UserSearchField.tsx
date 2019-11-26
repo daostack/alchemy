@@ -17,7 +17,7 @@ interface IExternalProps {
   name?: string;
   onBlur?: (touched: boolean) => any;
   onChange?: (newValue: string) => any;
-  beneficiary: string;
+  defaultValue: string;
 }
 
 interface IStateProps {
@@ -45,7 +45,7 @@ class UserSearchField extends React.Component<IProps, IState> {
 
     this.state = {
       suggestions: [],
-      value: props.beneficiary ? props.beneficiary : "",
+      value: props.defaultValue ? props.defaultValue : "",
     };
   }
 
