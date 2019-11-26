@@ -14,9 +14,11 @@
   - Bugs Fixed
     - update DAO total rep when it changes, so rep percentages remain correct
     - go to error page on non-existent DAOs
+    - eliminate rerendering of Disqus component on the proposal details apge
     - refactor arrow functions
     - eliminate empty tooltips
     - eliminate duplicate confirmation notifications
+
 
 ### 2019-11-12
   - Features added

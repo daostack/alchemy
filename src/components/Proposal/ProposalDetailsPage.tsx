@@ -51,6 +51,16 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
     };
   }
 
+  /**
+   * Define these here rather than in `render` to minimize rerendering, particularly
+   * of the disqus component
+   **/
+  private disqusConfig = { url: "", identifier: "", title: "" };
+  private proposalClass = classNames({
+    [css.proposal]: true,
+    clearfix: true,
+  });
+
   private showShareModal = (_event: any): void => {
     this.setState({ showShareModal: true });
   }
@@ -88,23 +98,19 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           votes,
         } = props;
 
-        const proposalClass = classNames({
-          [css.proposal]: true,
-          clearfix: true,
-        });
+        this.disqusConfig.title = proposal.title;
+        this.disqusConfig.url = process.env.BASE_URL + this.props.location.pathname;
+        this.disqusConfig.identifier = this.props.proposalId;
 
         const tags = proposal.tags;
-
         let currentAccountVote = 0;
-
-        let currentVote: Vote;
 
         // TODO: the next line, is a hotfix for a  which filters the votes, should not be necessary,
         // bc these should be filter in the `proposals.votes({where: {voter...}} query above)`
         // https://daostack.tpondemand.com/RestUI/Board.aspx#page=board/5209716961861964288&appConfig=eyJhY2lkIjoiQjgzMTMzNDczNzlCMUI5QUE0RUE1NUVEOUQyQzdFNkIifQ==&boardPopup=bug/1766
         const currentAccountVotes = votes.filter((v: Vote) => v.staticState.voter === currentAccountAddress);
         if (currentAccountVotes.length > 0) {
-          currentVote = currentAccountVotes[0];
+          const currentVote = currentAccountVotes[0];
           currentAccountVote = currentVote.staticState.outcome;
         }
 
@@ -115,17 +121,11 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           clearfix: true,
         });
 
-        const disqusConfig = {
-          url: process.env.BASE_URL + this.props.location.pathname,
-          identifier: proposal.id,
-          title: proposal.title,
-        };
-
         return (
           <div className={css.wrapper}>
             <BreadcrumbsItem weight={1} to={`/dao/${daoState.address}/scheme/${proposal.scheme.id}`}>{schemeName(proposal.scheme, proposal.scheme.address)}</BreadcrumbsItem>
             <BreadcrumbsItem weight={2} to={`/dao/${daoState.address}/proposal/${proposal.id}`}>{humanProposalTitle(proposal)}</BreadcrumbsItem>
-            <div className={proposalClass + " clearfix"} data-test-id={"proposal-" + proposal.id}>
+            <div className={this.proposalClass} data-test-id={"proposal-" + proposal.id}>
               <div className={css.proposalInfo}>
                 <div>
                   <div className={css.statusContainer}>
@@ -287,7 +287,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
 
             <h3 className={css.discussionTitle}>Discussion</h3>
             <div className={css.disqus}>
-              <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={disqusConfig}/>
+              <DiscussionEmbed shortname={process.env.DISQUS_SITE} config={this.disqusConfig}/>
             </div>
 
             {this.state.showVotersModal ?
