@@ -13,6 +13,8 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 // import { combineLatest } from "rxjs";
 
+const ReactMarkdown = require("react-markdown");
+
 import * as css from "./Feed.scss";
 
 // type SubscriptionData = [IDAOState, IProposalState];
@@ -53,8 +55,20 @@ const ProposalFeedItem = (props: IProps) => {
 
       <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>
         <h3>Proposal {humanProposalTitle(event.proposal)}</h3>
-        <div>{event.proposal.description}</div>
       </Link>
+
+      { event.proposal.description ?
+        <ReactMarkdown source={event.proposal.description.slice(0, 300)}
+          renderers={{link: (props: { href: string; children: React.ReactNode }) => {
+            return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
+          }}}
+        />
+        : "" }
+
+      {event.proposal.description && event.proposal.description.length > 300 ?
+        <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>Show full details &gt;</Link>
+        : ""}
+
     </div>
   );
 };

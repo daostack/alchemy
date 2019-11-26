@@ -49,7 +49,7 @@ const FeedItem = (props: IProps) => {
   let content;
   let icon;
   const eventData = JSON.parse(event.data);
-  console.log(event);
+
   switch (event.type) {
     case "NewDAO":
       title = <span>New DAO! {daoTitle(event)}</span>;
@@ -57,13 +57,11 @@ const FeedItem = (props: IProps) => {
       content = <DaoFeedItem event={event} />;
       break;
     case "NewReputationHolder":
-      // TODO
       title = daoTitle(event, "has a new reputation holder");
       icon = <img src="/assets/images/Icon/new-person.svg" />;
       content = <DaoFeedItem event={event} />;
       break;
     case "ProposalStageChange":
-      // TODO: dao name and boosted or unboosted?
       title = daoTitle(event, ` - proposal stage changed to ${eventData.stage}`);
       icon = <img src="/assets/images/Icon/info.svg" />;
       content = <ProposalFeedItem event={event} />;
@@ -76,7 +74,6 @@ const FeedItem = (props: IProps) => {
       break;
     }
     case "NewProposal":
-      // TODO: proposer name. also maybe start with DAO name?
       title = accountTitle(event, userProfile, "submitted a new proposal");
       icon = <img src="/assets/images/Icon/circle-plus.svg" />;
       content = <ProposalFeedItem event={event} />;
@@ -90,8 +87,7 @@ const FeedItem = (props: IProps) => {
     }
     case "Vote": {
       const voteForAgainst = eventData.outcome === "Pass" ? "For" : "Against";
-      //title = `${event.user} voted ${voteForAgainst} with ${eventData.reputationAmount} REP`;
-      title = accountTitle(event, userProfile, `voted on ${voteForAgainst} with ${fromWei(new BN(eventData.reputationAmount))} REP`);
+      title = accountTitle(event, userProfile, `voted ${voteForAgainst} with ${fromWei(new BN(eventData.reputationAmount))} REP`);
       icon = <img src="/assets/images/Icon/vote/for-gray.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
