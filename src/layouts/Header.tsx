@@ -244,7 +244,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       <div className={css.web3ProviderLogInOut}  onClick={this.handleConnect}><div className={css.text}>Connect</div> <img src="/assets/images/Icon/login.svg"/></div> }
                   </div>
                 </div>
-              </span> : ""
+              </span> : <span></span>
             }
             {!currentAccountAddress ?
               <div className={css.web3ProviderLogin}>

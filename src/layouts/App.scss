@@ -69,7 +69,6 @@ body {
   position: relative;
   vertical-align: middle;
   right: 10px;
-  top: 9px;
 
   img {
     height: 12px;
@@ -190,6 +189,12 @@ body {
     padding: 0 20px;
     transition: all .25s ease;
     height: 50px;
+
+    > span {
+      height: 50px;
+      display: inline-block;
+      vertical-align: middle;
+    }
 
     .accountImage {
       border: none;
