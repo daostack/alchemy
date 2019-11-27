@@ -39,7 +39,7 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IStateProps & IDispatchProps & ISubscriptionProps<[any, any]>;
+type IProps = IStateProps & IDispatchProps & ISubscriptionProps<[any, any, any]>;
 
 const PAGE_SIZE = 100;
 
@@ -61,9 +61,11 @@ class FeedPage extends React.Component<IProps, null> {
       </div>;
     }
 
-    const eventsByProposal = data[0].data.events as any[];
-    const eventsByDao = data[1].data.events as any[];
-    const events = eventsByProposal.concat(eventsByDao).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
+    const eventsByDao = data[0].data.events as any[];
+    const eventsByProposal = data[1].data.events as any[];
+    //const eventsByScheme = data[2].data.events as any[];
+    const eventsByUser = data[2].data.events as any[];
+    const events = eventsByDao.concat(eventsByProposal).concat(eventsByUser).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
     const { currentAccountProfile } = this.props;
 
     const eventsHTML = events.map((event: any) =>
@@ -103,8 +105,9 @@ const SubscribedFeedPage = withSubscription({
 
   createObservable: (props: IStateProps) => {
     const arc = getArc();
+    const { currentAccountProfile } = props;
 
-    if (!props.currentAccountProfile) {
+    if (!currentAccountProfile) {
       return of(null);
     }
 
@@ -135,47 +138,57 @@ const SubscribedFeedPage = withSubscription({
       timestamp
     }`;
 
-    const proposalsString = props.currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
-    const proposalsQuery = gql`query feedProposals
-      {
-        events(first: ${PAGE_SIZE}, where: { proposal_in: [ ${proposalsString} ]}) ${queryData}
-      }`;
-    const daosString = props.currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
-    const daosQuery = gql`query feedDaos
-      {
-        events(first: ${PAGE_SIZE}, where: { dao_in: [ ${daosString} ]}) ${queryData}
-      }
-    `;
+    let daosString = "";
+    let proposalsString = "";
+    let usersString = "";
+    let daosQuery = of([]);
+    let proposalsQuery = of([]);
+    //let schemesQuery = of([]);
+    let usersQuery = of([]);
 
-    // console.log(query);
-    // const events = arc.getObservable(query, { subscribe: true })
-    //   .pipe(map((result: any) => result.data.events));
+    if (currentAccountProfile.follows.daos) {
+      daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
+      daosQuery = arc.getObservable(gql`query feedDaos
+        {
+          events(first: ${PAGE_SIZE}, where: { dao_in: [ ${daosString} ]}) ${queryData}
+        }
+      `);
+    }
 
-    return combineLatest(
-      arc.getObservable(proposalsQuery),
-      arc.getObservable(daosQuery)
-    );
-    return ;
-    // const events = Event.search(
-    //   arc,
-    //   {
-    //     where: {
-    //       // eslint-disable-next-line @typescript-eslint/camelcase
-    //       proposal_in: props.currentAccountProfile.follows.proposals,
-    //     },
-    //     orderBy: "timestamp",
-    //     orderDirection: "desc",
-    //     first: PAGE_SIZE,
-    //     skip: 0,
-    //   },
-    //   { fetchAllData: true }, // get and subscribe to all data, so that subcomponents do nto have to send separate queries
-    // );
-    // return events;
+    if (currentAccountProfile.follows.proposals) {
+      proposalsString = currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
+      proposalsQuery = arc.getObservable(gql`query feedProposals
+        {
+          events(first: ${PAGE_SIZE}, where: {
+            proposal_in: [ ${proposalsString} ]
+            ${daosString ? `, dao_not_in: [ ${daosString} ]` : ""}
+          }) ${queryData}
+        }`);
+    }
 
-    // return combineLatest(
-    //   dao.state({ fetchAllData: true }), // DAO state
-    //   arc.dao(daoAvatarAddress).schemes({}, { fetchAllData: true, subscribe: true })
-    // );
+    // if (currentAccountProfile.follows.schemes) {
+    //   const schemesString = currentAccountProfile.follows.schemes.map((scheme) => "\"" + scheme + "\"").join(",");
+    //   schemesQuery = arc.getObservable(gql`query feedSchemes
+    //     {
+    //       events(first: ${PAGE_SIZE}, where: { scheme_in: [ ${schemesString} ]}) ${queryData}
+    //     }
+    //   `);
+    // }
+
+    if (currentAccountProfile.follows.users) {
+      usersString = currentAccountProfile.follows.users.map((user) => "\"" + user + "\"").join(",");
+      usersQuery = arc.getObservable(gql`query feedUsers
+        {
+          events(first: ${PAGE_SIZE}, where: {
+            user_in: [ ${usersString} ]
+            ${daosString ? `, dao_not_in: [ ${daosString} ]` : ""}
+            ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
+          }) ${queryData}
+        }
+      `);
+    }
+
+    return combineLatest(daosQuery, proposalsQuery, usersQuery);
   },
 
   // getFetchMoreObservable: (props: IStateProps, data: Member[]) => {
