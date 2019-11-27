@@ -11,6 +11,7 @@ import { IProfileState } from "reducers/profilesReducer";
 import * as React from "react";
 import DaoFeedItem from "./DaoFeedItem";
 import ProposalFeedItem from "./ProposalFeedItem";
+import UserFeedItem from "./UserFeedItem";
 //import { Link } from "react-router-dom";
 import * as css from "./Feed.scss";
 
@@ -59,7 +60,7 @@ const FeedItem = (props: IProps) => {
     case "NewReputationHolder":
       title = daoTitle(event, "has a new reputation holder");
       icon = <img src="/assets/images/Icon/new-person.svg" />;
-      content = <DaoFeedItem event={event} />;
+      content = <UserFeedItem event={event} />;
       break;
     case "ProposalStageChange":
       title = daoTitle(event, ` - proposal stage changed to ${eventData.stage}`);
