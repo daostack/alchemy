@@ -3,7 +3,7 @@ import { executeProposal, redeemProposal } from "actions/arcActions";
 import { enableWalletProvider, getArc } from "arc";
 import * as classNames from "classnames";
 import { ActionTypes, default as PreTransactionModal } from "components/Shared/PreTransactionModal";
-import { getCRRewards, getGpRewards } from "lib/util";
+import { getCRRewards, getGpRewards, ethErrorHandler } from "lib/util";
 import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -291,14 +291,14 @@ const SubscribedActionButton = withSubscription({
 
       const token = new Token(props.proposalState.contributionReward.externalToken, arc);
 
-      externalTokenObservable = token.balanceOf(props.daoState.address);
+      externalTokenObservable = token.balanceOf(props.daoState.address).pipe(ethErrorHandler());
     } else {
       externalTokenObservable = of(undefined);
     }
 
     return combineLatest(
       externalTokenObservable,
-      genToken.balanceOf(props.daoState.address)
+      genToken.balanceOf(props.daoState.address).pipe(ethErrorHandler())
     );
   },
 });
