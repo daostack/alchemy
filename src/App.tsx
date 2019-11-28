@@ -80,6 +80,7 @@ export class App extends React.Component<{}, {
                 <Route path="/dao" component={AppContainer}/>
                 <Route path="/profile" component={AppContainer}/>
                 <Route path="/redemptions" component={AppContainer}/>
+                <Route path="/dao-creator" component={AppContainer} />
                 <Route component={Error404} />
                 <Redirect from="/*" to="/Error404" />
               </Switch>

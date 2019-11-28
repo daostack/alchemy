@@ -1,5 +1,6 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
+import DAOcreator from "@dorgtech/daocreator-ui-v1";
 import * as web3Actions from "actions/web3Actions";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
@@ -172,6 +173,7 @@ class AppContainer extends React.Component<IProps, IState> {
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
               <Route path="/profile/:accountAddress" component={AccountProfilePage} />
               <Route path="/redemptions" component={RedemptionsPage} />
+              <Route path="/dao-creator" component={DAOcreator} />
               <Route path="/" component={DaosPage} />
             </Switch>
 

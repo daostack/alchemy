@@ -4,6 +4,7 @@ import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
 import * as Sticky from "react-stickynode";
+import { Link } from "react-router-dom";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
@@ -36,6 +37,9 @@ class DaosPage extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
+            <Link to={"/dao-creator"}>
+              <div>Create A DAO</div>
+            </Link>
           </div>
         </Sticky>
         <div className={css.daoList}>
