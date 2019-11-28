@@ -14,16 +14,14 @@ import * as css from "./SchemeCard.scss";
 
 interface IExternalProps {
   dao: IDAOState;
-  isFollowing: boolean;
   scheme: Scheme;
-  toggleFollow: any;
 }
 
 type SubscriptionData = [ISchemeState, Proposal[]];
 type IProps = IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 const ProposalSchemeCard = (props: IProps) => {
-  const { data, dao, isFollowing, toggleFollow } = props;
+  const { data, dao } = props;
 
   const [schemeState, boostedProposals] = data;
 
@@ -47,7 +45,7 @@ const ProposalSchemeCard = (props: IProps) => {
   return (
     <div className={css.wrapper} data-test-id={`schemeCard-${schemeState.name}`}>
       <Link className={css.headerLink} to={`/dao/${dao.address}/scheme/${schemeState.id}`}>
-        { trainingTooltipMessage ? 
+        { trainingTooltipMessage ?
           <TrainingTooltip placement="topLeft" overlay={trainingTooltipMessage}>
             {headerHtml}
           </TrainingTooltip> : headerHtml
@@ -65,9 +63,7 @@ const ProposalSchemeCard = (props: IProps) => {
           : " "
         }
       </Link>
-      <div className={css.followButton} onClick={toggleFollow}>
-        <img src={isFollowing ? "/assets/images/Icon/follow-gray-fill.svg" : "/assets/images/Icon/follow-gray.svg"} />
-      </div>
+
       {proposals.length > 0 ?
         <div>
           {proposalsHTML}
