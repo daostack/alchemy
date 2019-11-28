@@ -6,6 +6,67 @@
   transform: translate(-50%,-50%);
 }
 
+.unconnectedBanner {
+  margin-top: 107px;
+  text-align: center;
+  font-family: "AccordBold";
+
+  > img {
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 45px;
+    line-height: 0.73;
+    letter-spacing: 0.61px;
+    text-align: center;
+    color: #689bd6;
+  }
+
+  h3 {
+    opacity: 0.9;
+    font-size: 21px;
+    line-height: 1.19;
+    letter-spacing: 0.29px;
+    text-align: center;
+    color: #9aa9b5;
+  }
+
+  .connectButton {
+    margin-top: 25px;
+    height: 30px;
+    padding-left: 14px;
+    padding-right: 14px;
+    line-height: 30px;
+    font-weight: bold;
+    font-size: 12px;
+    background-color: rgba(5, 118, 255, 1.000);
+    border: none;
+    border-radius: 15px;
+    color: $white;
+    position: relative;
+    vertical-align: middle;
+    right: 10px;
+
+    img {
+      height: 12px;
+      position: relative;
+      top: 2px;
+      padding-left: 8px;
+    }
+  }
+
+  .scrollDown {
+    margin-top: 164px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.38;
+    letter-spacing: 0.41px;
+    color: #4f6176;
+  }
+}
+
 .feedContainer {
   max-width: 900px;
   width: 80%;
@@ -18,14 +79,6 @@
   h3 {
     color: black;
     font-family: "AccordBold", sans-serif;
-  }
-}
-
-.connectButton {
-  cursor: pointer;
-
-  img {
-    width: 20px;
   }
 }
 
@@ -84,6 +137,7 @@
     background-color: #fcfdff;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     padding: 21px 26px;
+    max-height: 325px;
 
     .proposalItem {
       .daoName {

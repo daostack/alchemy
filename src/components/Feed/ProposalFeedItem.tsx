@@ -59,14 +59,14 @@ const ProposalFeedItem = (props: IProps) => {
       </Link>
 
       { event.proposal.description ?
-        <ReactMarkdown source={event.proposal.description.slice(0, 300)}
+        <ReactMarkdown source={event.proposal.description.slice(0, 600)}
           renderers={{link: (props: { href: string; children: React.ReactNode }) => {
             return <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>;
           }}}
         />
         : "" }
 
-      {event.proposal.description && event.proposal.description.length > 300 ?
+      {event.proposal.description && event.proposal.description.length > 600 ?
         <Link to={`/dao/${dao.address}/proposal/${event.proposal.id}`}>Show full details &gt;</Link>
         : ""}
 

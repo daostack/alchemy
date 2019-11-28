@@ -1,5 +1,6 @@
 //import { Event } from "@daostack/client";
 import { enableWalletProvider, getAccountIsEnabled, getArc } from "arc";
+import DaosPage from "components/Daos/DaosPage";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import gql from "graphql-tag";
@@ -56,8 +57,17 @@ class FeedPage extends React.Component<IProps, null> {
     const { data, profiles } = this.props;
 
     if (!getAccountIsEnabled() || !data) {
-      return <div onClick={this.handleConnect} className={css.connectButton}>
-        <span>Click to connect to your wallet to see your feed </span> <img src="/assets/images/Icon/login.svg"/>
+      return <div className={css.unconnectedBanner}>
+        <img src="/assets/images/unplugged.svg" />
+        <h1>Excuse me, who are you?</h1>
+        <h3>Please connect to see your personal feed</h3>
+        <button onClick={this.handleConnect} className={css.connectButton}>
+          <span>Connect</span>
+          <img src="/assets/images/Icon/login-white.svg" />
+        </button>
+        <div className={css.scrollDown}>Or scroll down to browse all our DAOs</div>
+        <div><img src="/assets/images/Icon/down-gray.svg"/></div>
+        <DaosPage />
       </div>;
     }
 
