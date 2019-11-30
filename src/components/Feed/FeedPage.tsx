@@ -156,22 +156,12 @@ const SubscribedFeedPage = withSubscription({
     //let schemesQuery = of([]);
     let usersQuery = of([]);
 
-    if (currentAccountProfile.follows.daos) {
-      daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
-      daosQuery = arc.getObservable(gql`query feedDaos
-        {
-          events(first: ${PAGE_SIZE}, where: { dao_in: [ ${daosString} ]}) ${queryData}
-        }
-      `);
-    }
-
     if (currentAccountProfile.follows.proposals) {
       proposalsString = currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
       proposalsQuery = arc.getObservable(gql`query feedProposals
         {
           events(first: ${PAGE_SIZE}, where: {
             proposal_in: [ ${proposalsString} ]
-            ${daosString ? `, dao_not_in: [ ${daosString} ]` : ""}
           }) ${queryData}
         }`);
     }
@@ -191,12 +181,26 @@ const SubscribedFeedPage = withSubscription({
         {
           events(first: ${PAGE_SIZE}, where: {
             user_in: [ ${usersString} ]
-            ${daosString ? `, dao_not_in: [ ${daosString} ]` : ""}
             ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
           }) ${queryData}
         }
       `);
     }
+
+    if (currentAccountProfile.follows.daos) {
+      daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
+      daosQuery = arc.getObservable(gql`query feedDaos
+        {
+          events(first: ${PAGE_SIZE}, where: {
+            dao_in: [ ${daosString} ]
+            ${usersString ? `, user_not_in: [ ${usersString} ]` : ""}
+            ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
+          }) ${queryData}
+        }
+      `);
+    }
+
+
 
     return combineLatest(daosQuery, proposalsQuery, usersQuery);
   },
