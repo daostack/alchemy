@@ -1,5 +1,5 @@
 //import { Event } from "@daostack/client";
-import { enableWalletProvider, getAccountIsEnabled, getArc } from "arc";
+import { enableWalletProvider, getArc } from "arc";
 import DaosPage from "components/Daos/DaosPage";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
@@ -56,7 +56,7 @@ class FeedPage extends React.Component<IProps, null> {
   public render(): RenderOutput {
     const { data, profiles } = this.props;
 
-    if (!getAccountIsEnabled() || !data) {
+    if (!data) {
       return <div className={css.unconnectedBanner}>
         <img src="/assets/images/unplugged.svg" />
         <h1>Excuse me, who are you?</h1>
