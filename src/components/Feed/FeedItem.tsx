@@ -23,7 +23,7 @@ interface IProps {
 
 const accountTitle = (event: any, userProfile: IProfileState, text: string) => {
   return <span>
-    <AccountImage accountAddress={event.user} width={17} />
+    <AccountImage accountAddress={event.user} width={17} profile={userProfile} />
     <span className={css.accountName}><AccountProfileName accountAddress={event.user} accountProfile={userProfile} daoAvatarAddress={event.dao.id} /></span>
     <span>{text}</span>
   </span>;
