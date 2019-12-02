@@ -75,7 +75,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
         </Link>
         <button
           className={css.redeemAllButton}
-          onClick={this.redeemAll.bind(this)}
+          onClick={this.redeemAll}
           disabled={redeemableProposals.length === 0}
         >
           <img src="/assets/images/Icon/redeem.svg" />
@@ -85,7 +85,7 @@ class RedemptionsMenu extends React.Component<IProps, null> {
     </div>;
   }
 
-  private async redeemAll() {
+  private  redeemAll = async (): Promise<void> => {
     const {
       currentAccountAddress,
       data: redeemableProposals,
@@ -198,7 +198,8 @@ const SubscribedMenuItemContent = withSubscription({
     const rewards = proposal.proposal.rewards({ where: { beneficiary: currentAccountAddress }})
       .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
       .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null))));
-    return combineLatest(dao.state(), ethBalance, rewards);
+    // subscribe to dao to get DAO reputation supply updates
+    return combineLatest(dao.state( { subscribe: true }), ethBalance, rewards);
   },
 });
 

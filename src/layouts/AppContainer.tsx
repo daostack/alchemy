@@ -15,7 +15,7 @@ import { connect } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
-import { dismissNotification, INotificationsState, NotificationStatus, showNotification } from "reducers/notifications";
+import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
 import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
@@ -78,7 +78,7 @@ class AppContainer extends React.Component<IProps, IState> {
     }
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+  public async componentDidMount (): Promise<void> {
     /**
      * Heads up that there is a chance this cached account may differ from an account
      * that the user has already selected in a provider but have
@@ -116,10 +116,37 @@ class AppContainer extends React.Component<IProps, IState> {
     this.setState({ error: null, sentryEventId: null });
   }
 
+  private dismissNotif = (id: string) => () => this.props.dismissNotification(id);
+  private minimizeNotif = () => this.setState({notificationsMinimized: true});
+  private unminimizeNotif = () => this.setState({notificationsMinimized: false});
+  private headerHtml = ( props: any ): any => <Header {...props} />;
+
+  private notificationHtml = (notif: INotification): any => {
+    return <div key={notif.id}>
+      <Notification
+        title={(notif.title || notif.status).toUpperCase()}
+        status={
+          notif.status === NotificationStatus.Failure ?
+            NotificationViewStatus.Failure :
+            notif.status === NotificationStatus.Success ?
+              NotificationViewStatus.Success :
+              NotificationViewStatus.Pending
+        }
+        message={notif.message}
+        fullErrorMessage={notif.fullErrorMessage}
+        url={notif.url}
+        timestamp={notif.timestamp}
+        dismiss={this.dismissNotif(notif.id)}
+        showNotification={this.props.showNotification}
+        minimize={this.minimizeNotif}
+      />
+    </div>; 
+  }
+              
+
   public render(): RenderOutput {
+    
     const {
-      dismissNotification,
-      showNotification,
       sortedNotifications,
     } = this.props;
 
@@ -139,13 +166,7 @@ class AppContainer extends React.Component<IProps, IState> {
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>
-            <Route path="/"
-            // eslint-disable react/jsx-no-bind
-              render={( props ): any => {
-                return <Header
-                  {...props} />;
-              }
-              } />
+            <Route path="/" render={this.headerHtml} />
 
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
@@ -163,31 +184,9 @@ class AppContainer extends React.Component<IProps, IState> {
 
           <div className={css.pendingTransactions}>
             {this.state.notificationsMinimized ?
-              <MinimizedNotifications
-                notifications={sortedNotifications.length}
-                unminimize={() => this.setState({notificationsMinimized: false})}
-              /> :
-              sortedNotifications.map(({id, status, title, message, fullErrorMessage, timestamp, url}): any => (
-                <div key={id}>
-                  <Notification
-                    title={(title || status).toUpperCase()}
-                    status={
-                      status === NotificationStatus.Failure ?
-                        NotificationViewStatus.Failure :
-                        status === NotificationStatus.Success ?
-                          NotificationViewStatus.Success :
-                          NotificationViewStatus.Pending
-                    }
-                    message={message}
-                    fullErrorMessage={fullErrorMessage}
-                    url={url}
-                    timestamp={timestamp}
-                    dismiss={() => dismissNotification(id)}
-                    showNotification={showNotification}
-                    minimize={() => this.setState({notificationsMinimized: true})}
-                  />
-                </div>
-              ))
+              <MinimizedNotifications notifications={sortedNotifications.length} unminimize={this.unminimizeNotif} />
+              :
+              sortedNotifications.map(this.notificationHtml)
             }
           </div>
           <div className={css.background}></div>
