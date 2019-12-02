@@ -24,7 +24,7 @@ export class App extends React.Component<{}, {
     };
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+  public async componentDidMount (): Promise<void> {
     // Do this here because we need to have initialized Arc first.  This will
     // not create a provider for the app, rather will just initialize Arc with a
     // readonly provider with no account, internal only to it.
