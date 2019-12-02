@@ -17,7 +17,7 @@ import { Route, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
-import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges } from "arc";
+import { getCachedAccount, cacheWeb3Info, uncacheWeb3Info, gotoReadonly, pollForAccountChanges, enableWalletProvider, getWeb3Provider } from "arc";
 import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
@@ -173,7 +173,15 @@ class AppContainer extends React.Component<IProps, IState> {
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
               <Route path="/profile/:accountAddress" component={AccountProfilePage} />
               <Route path="/redemptions" component={RedemptionsPage} />
-              <Route path="/dao-creator" component={DAOcreator} />
+              <Route path="/dao-creator" render={() => (
+                <DAOcreator setWeb3Provider={async (): Promise<any> => {
+                  if (!await enableWalletProvider({ showNotification })) {
+                    return undefined;
+                  }
+
+                  return await getWeb3Provider();
+                }}/>
+              )}/>
               <Route path="/" component={DaosPage} />
             </Switch>
 
