@@ -6,13 +6,17 @@
   transform: translate(-50%,-50%);
 }
 
-.unconnectedBanner {
+.emptyFeedBanner {
   margin-top: 107px;
   text-align: center;
   font-family: "AccordBold";
 
   > img {
     width: 100%;
+  }
+
+  > img.birds {
+    width: 80%;
   }
 
   h1 {
@@ -70,7 +74,7 @@
 .feedContainer {
   max-width: 900px;
   width: 80%;
-  margin: 0 auto;
+  margin: 40px auto;
 
   h2 {
     background-color: #e5ebf2;

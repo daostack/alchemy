@@ -141,12 +141,12 @@ class AppContainer extends React.Component<IProps, IState> {
         showNotification={this.props.showNotification}
         minimize={this.minimizeNotif}
       />
-    </div>; 
+    </div>;
   }
-              
+
 
   public render(): RenderOutput {
-    
+
     const {
       sortedNotifications,
     } = this.props;
@@ -171,10 +171,10 @@ class AppContainer extends React.Component<IProps, IState> {
 
             <Switch>
               <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
-              <Route path="/feed" component={FeedPage} />
               <Route path="/profile/:accountAddress" component={AccountProfilePage} />
               <Route path="/redemptions" component={RedemptionsPage} />
-              <Route path="/" component={DaosPage} />
+              <Route path="/daos" component={DaosPage} />
+              <Route path="/" component={FeedPage} />
             </Switch>
 
             <ModalContainer
