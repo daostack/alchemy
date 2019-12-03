@@ -30,10 +30,10 @@ const accountTitle = (event: any, userProfile: IProfileState, text: string) => {
 };
 
 const daoTitle = (event: any, text = "") => {
-  const bgPattern = GeoPattern.generate(event.dao.address + event.dao.name);
+  const bgPattern = GeoPattern.generate(event.dao.id + event.dao.name);
 
   return <span>
-    <Link to={"/dao/" + event.dao.address}>
+    <Link to={"/dao/" + event.dao.id}>
       <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
       <em></em>
       <span>{event.dao.name}</span>
