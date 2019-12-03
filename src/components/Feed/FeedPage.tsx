@@ -65,7 +65,7 @@ class FeedPage extends React.Component<IProps, null> {
     const { currentAccountAddress, data, profiles } = this.props;
 
     if (!currentAccountAddress) {
-      return <div className={css.emptyFeedBanner}>
+      return <div className={css.emptyFeedBanner} data-test-id="not-logged-in-banner">
         <img src="/assets/images/unplugged.svg" />
         <h1>Excuse me, who are you?</h1>
         <h3>Please Log In to see your personal feed</h3>
