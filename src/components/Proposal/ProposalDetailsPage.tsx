@@ -219,10 +219,14 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                     <span>Share</span>
                   </button>
 
-                  <Tooltip placement="bottom" trigger={["hover"]} overlay={isFollowing ? "Unfollow" : "Follow"}>
-                    <div className={css.followButton} onClick={handleClickFollow(proposal.id)}>
-                      <img src={isFollowing ? "/assets/images/Icon/follow-blue-fill.svg" : "/assets/images/Icon/follow-blue.svg"}/>
-                    </div>
+                  <Tooltip placement="bottom" trigger={["hover"]} overlay={isFollowing ? "Stop following changes to this proposal" : "Follow changes to this proposal"}>
+                    <button
+                      onClick={handleClickFollow(proposal.id)}
+                      className={classNames({[css.followButton]: true, [css.following]: isFollowing})}
+                      data-test-id="follow-button"
+                    >
+                      <span>{isFollowing ? "Following" : "Follow"}</span>
+                    </button>
                   </Tooltip>
                 </div>
               </div>

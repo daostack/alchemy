@@ -80,7 +80,7 @@ const profilesReducer = (state = initialState, action: any) => {
           if (isFollowing && !state[meta.accountAddress].follows[type as FollowType].includes(id)) {
             return update(state, { [meta.accountAddress]: { follows: { [type]: { $push: [id] } }}});
           } else if (!isFollowing && state[meta.accountAddress].follows[type as FollowType].includes(id)) {
-            return update(state, { [meta.accountAddress]: { follows: { [type]: { $unset: [id] } }}});
+            return update(state, { [meta.accountAddress]: { follows: { [type]: (arr: string[]) => arr.filter((item) => item !== id) }}});
           }
           return state;
         }

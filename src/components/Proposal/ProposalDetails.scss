@@ -267,19 +267,16 @@ button.disabled {
 
   button.shareButton {
     height: 30px;
-    line-height: 30px;
-    width: auto;
-    border-radius: 30px;
     background-color: #0071ff;
     padding: 0 15px;
-    font-weight: 700;
-    color: #0376ff;
-    transition: all .25s ease;
-    border: 0;
+    border-radius: 30px;
+    border-width: 1px;
     display: inline-block;
-    font-size: 11px;
     outline: none;
     margin-bottom: 12px;
+    font-weight: bold;
+    font-size: 13px;
+    color: white;
 
     img {
       margin-right: 6px;
@@ -287,26 +284,27 @@ button.disabled {
       top: 2px;
       height: 14px;
     }
-
-    span {
-      font-weight: bold;
-      font-size: 13px;
-      display: inline-block;
-      color: white;
-    }
   }
 
   .followButton {
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
     display: inline-block;
-    margin-left: 6px;
+    height: 30px;
+    border-radius: 30px;
+    border-width: 1px;
+    background-color: #0071ff;
+    padding: 0 15px;
+    color: #0376ff;
+    border-color: #0376ff;
+    outline: none;
+    margin-left: 7px;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+  }
 
-    img {
-      width: 22px;
-      vertical-align: middle;
-    }
+  .followButton.following {
+    color: #0071ff;
+    background-color: white;
   }
 }
 
