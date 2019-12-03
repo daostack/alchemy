@@ -1,5 +1,6 @@
-const chai = require("chai");
 import { hideCookieAcceptWindow } from "./utils";
+
+const chai = require("chai");
 
 global.expect = chai.expect;
 chai.Should();
