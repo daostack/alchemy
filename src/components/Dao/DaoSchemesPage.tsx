@@ -1,15 +1,18 @@
-import { IDAOState, Scheme } from "@daostack/client";
-import Loading from "components/Shared/Loading";
-import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
-import { KNOWN_SCHEME_NAMES, PROPOSAL_SCHEME_NAMES } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import * as css from "./DaoSchemesPage.scss";
+import { IDAOState, Scheme } from "@daostack/client";
+
+import Loading from "components/Shared/Loading";
+import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
+import { KNOWN_SCHEME_NAMES, PROPOSAL_SCHEME_NAMES } from "lib/util";
+
 import ProposalSchemeCard from "./ProposalSchemeCard";
 import SimpleSchemeCard from "./SimpleSchemeCard";
+import DAOHeader from "./DaoHeader";
+import * as css from "./DaoSchemesPage.scss";
 
 const Fade = ({ children, ...props }: any) => (
   <CSSTransition
@@ -62,25 +65,28 @@ class DaoSchemesPage extends React.Component<IProps, null> {
         }
       </TransitionGroup>
     );
-
+    // BackgroundImage is repeating, check this later when using real image
     return (
-      <div className={css.wrapper}>
-        <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
-
-        <Sticky enabled top={50} innerZ={10000}>
-          <h1>All Schemes</h1>
-        </Sticky>
-        {(allKnownSchemes.length + unknownSchemes.length) === 0
-          ? <div>
-            <img src="/assets/images/meditate.svg" />
-            <div>
-              No schemes registered
+      <React.Fragment>
+        <div className={css.daoHeaderBackground} style={{ backgroundImage: "url(/assets/images/bg-test.jpeg)" }}></div>
+        <div className={css.wrapper}>
+          <BreadcrumbsItem to={"/dao/" + dao.address}>{dao.name}</BreadcrumbsItem>
+          <DAOHeader {...props} />
+          <Sticky enabled top={50} innerZ={10000}>
+            <h1>All Schemes</h1>
+          </Sticky>
+          {(allKnownSchemes.length + unknownSchemes.length) === 0
+            ? <div>
+              <img src="/assets/images/meditate.svg" />
+              <div>
+                No schemes registered
+              </div>
             </div>
-          </div>
-          :
-          <div className={css.allSchemes}>{schemeCardsHTML}</div>
-        }
-      </div>
+            :
+            <div className={css.allSchemes}>{schemeCardsHTML}</div>
+          }
+        </div>
+      </React.Fragment>
     );
   }
 }
