@@ -79,7 +79,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
     super(props);
   }
 
-  public async UNSAFE_componentWillMount(): Promise<void> {
+  public async componentDidMount (): Promise<void> {
     const { accountAddress, getProfile } = this.props;
 
     getProfile(accountAddress);

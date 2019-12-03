@@ -20,6 +20,10 @@ interface IExternalProps {
   daoState: IDAOState;
   proposalId: string;
   children(props: IInjectedProposalProps): JSX.Element;
+  /**
+   * true to subscribe to changes in votes, stakes and rewards
+   */
+  subscribeToProposalDetails?: boolean;
 }
 
 interface IStateProps {
@@ -119,10 +123,10 @@ export default withSubscription({
 
     if (currentAccountAddress) {
       return combineLatest(
-        proposal.state(), // state of the current proposal
-        proposal.votes({where: { voter: currentAccountAddress }}),
-        proposal.stakes({where: { staker: currentAccountAddress }}),
-        proposal.rewards({ where: {beneficiary: currentAccountAddress}})
+        proposal.state({ subscribe: props.subscribeToProposalDetails }), // state of the current proposal
+        proposal.votes({where: { voter: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
+        proposal.stakes({where: { staker: currentAccountAddress }}, { subscribe: props.subscribeToProposalDetails }),
+        proposal.rewards({ where: {beneficiary: currentAccountAddress}}, { subscribe: props.subscribeToProposalDetails })
           .pipe(map((rewards: Reward[]): Reward => rewards.length === 1 && rewards[0] || null))
           .pipe(mergeMap(((reward: Reward): Observable<IRewardState> => reward ? reward.state() : of(null)))),
 
