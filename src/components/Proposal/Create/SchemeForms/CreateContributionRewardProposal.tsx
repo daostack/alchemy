@@ -435,7 +435,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button className={css.exportProposal} type="button" disabled={isSubmitting} onClick={()=> this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={()=> this.exportFormValues(values)}>
                     Export proposal
                   </button>
                 </TrainingTooltip>

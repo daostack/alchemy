@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { getContractAddresses, hideCookieAcceptWindow, hideTrainingTooltips } from "./utils";
-
+// import $ from "jquery";
 describe("Proposals", () => {
   let daoAddress: string;
   let addresses;
@@ -103,5 +103,45 @@ describe("Proposals", () => {
     launchMetaMaskButton = await $("[data-test-id=\"launch-metamask\"]");
     await launchMetaMaskButton.click();
   });
+  
+  it("Export a proposal", async () => {
+    const url = `/dao/${daoAddress}/`;
+    await browser.url(url);
 
+    const loginButton = await $("*[data-test-id=\"loginButton\"]");
+    await loginButton.click();
+
+    await hideCookieAcceptWindow();
+    const schemeCard = await $("[data-test-id=\"schemeCard-ContributionReward\"]");
+    await schemeCard.click();
+
+    const createProposalButton = await $("a[data-test-id=\"createProposal\"]");
+    await createProposalButton.waitForExist();
+
+    await createProposalButton.click();
+
+    const titleInput = await $("*[id=\"titleInput\"]");
+    await titleInput.waitForExist();
+
+    const title = uuid();
+    await titleInput.setValue(title);
+
+    // using uuid value so that the test will pass also if there is already a proposal with this description
+    // (which must be unique).
+    const descriptionInput = await $(".mde-text");
+    await descriptionInput.setValue(`https://this.must.be/a/valid/url${uuid()}`);
+
+    const beneficiaryInput = await $("*[data-test-id=\"beneficiaryInput\"]");
+    await beneficiaryInput.setValue("0x5fB320886aF629122736c0e1a5c94dCE841EA37B");
+
+    // ask for 100 rep
+    const repReward = Math.floor(Math.random() * 1000);
+    const reputationRewardInput = await $("*[id=\"reputationRewardInput\"]");
+    await reputationRewardInput.setValue(repReward);
+    const ethReward = Math.floor(Math.random() * 1000);
+    const ethRewardInput = await $("#ethRewardInput");
+    await ethRewardInput.setValue(ethReward);
+    const exportProposalSubmitButton = await $("*[id=\"export-proposal\"]");
+    await exportProposalSubmitButton.click();
+  });
 });
