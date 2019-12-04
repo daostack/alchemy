@@ -47,7 +47,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStatePro
     currentAccountAddress: state.web3.currentAccountAddress,
     daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
     sortedNotifications: sortedNotifications()(state),
-  }
+  };
 };
 
 interface IDispatchProps {
