@@ -1,6 +1,7 @@
 import { Address } from "@daostack/client";
 import * as Sentry from "@sentry/browser";
 import * as web3Actions from "actions/web3Actions";
+import * as classNames from "classnames";
 import AccountProfilePage from "components/Account/AccountProfilePage";
 import DaosPage from "components/Daos/DaosPage";
 import MinimizedNotifications from "components/Notification/MinimizedNotifications";
@@ -11,10 +12,11 @@ import RedemptionsPage from "components/Redemptions/RedemptionsPage";
 import * as History from "history";
 import Header from "layouts/Header";
 import SidebarMenu from "layouts/SidebarMenu";
+import * as queryString from "query-string";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import { matchPath, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
@@ -23,17 +25,30 @@ import ErrorUncaught from "components/Errors/ErrorUncaught";
 import { sortedNotifications } from "../selectors/notifications";
 import * as css from "./App.scss";
 
+interface IExternalProps extends RouteComponentProps<any> {
+  history: History.History;
+}
+
 interface IStateProps {
   currentAccountAddress: string;
-  history: History.History;
+  daoAvatarAddress: string;
   sortedNotifications: INotificationsState;
 }
 
-const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => ({
-  currentAccountAddress: state.web3.currentAccountAddress,
-  history: ownProps.history,
-  sortedNotifications: sortedNotifications()(state),
-});
+const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IStateProps & IExternalProps => {
+  const match = matchPath(ownProps.location.pathname, {
+    path: "/dao/:daoAvatarAddress",
+    strict: false,
+  });
+  const queryValues = queryString.parse(ownProps.location.search);
+
+  return {
+    ...ownProps,
+    currentAccountAddress: state.web3.currentAccountAddress,
+    daoAvatarAddress: match && match.params ? (match.params as any).daoAvatarAddress : queryValues.daoAvatarAddress,
+    sortedNotifications: sortedNotifications()(state),
+  }
+};
 
 interface IDispatchProps {
   dismissNotification: typeof dismissNotification;
@@ -47,7 +62,7 @@ const mapDispatchToProps = {
   showNotification,
 };
 
-type IProps = IStateProps & IDispatchProps;
+type IProps = IExternalProps & IStateProps & IDispatchProps;
 
 interface IState {
   error: Error;
@@ -150,6 +165,7 @@ class AppContainer extends React.Component<IProps, IState> {
   public render(): RenderOutput {
 
     const {
+      daoAvatarAddress,
       sortedNotifications,
     } = this.props;
 
@@ -161,11 +177,10 @@ class AppContainer extends React.Component<IProps, IState> {
         <ErrorUncaught errorMessage={this.state.error.message} sentryEventId={this.state.sentryEventId} goHome={this.clearError}></ErrorUncaught>
       </div>;
     } else {
-
       const hasAcceptedCookies = !!localStorage.getItem(AppContainer.hasAcceptedCookiesKey);
 
       return (
-        <div className={css.outer}>
+        <div className={classNames({[css.outer]: true, [css.withDAO]: !!daoAvatarAddress})}>
           <BreadcrumbsItem to="/">Alchemy</BreadcrumbsItem>
 
           <div className={css.container}>

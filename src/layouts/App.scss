@@ -35,6 +35,11 @@ body {
 
 .sidebarWrapper {
   position: relative;
+  width: 125px;
+}
+
+.withDAO .sidebarWrapper {
+  width: 250px;
 }
 
 .contentWrapper {
@@ -673,13 +678,33 @@ body {
   text-align: center;
 }
 
+/* This allow us to center content until screen is too small to
+   center content with width 1080 with DAO sidebar of width 250px */
+@media only screen and (max-width: 1580px) {
+  .withDAO {
+    .contentWrapper {
+      margin: 0 0 0 250px;
+    }
+  }
+}
+
+/* This allow us to center content until screen is too small to center
+   content with width 1080 with non DAO sidebar of width 125px */
+@media only screen and (max-width: 1330px) {
+  .contentWrapper {
+    margin: 0 0 0 125px;
+  }
+}
+
 @media only screen and (max-width: 425px) {
+  .contentWrapper {
+    margin: 0;
+  }
 
   .pendingTransactions {
     bottom: 70px;
     left: 15px;
   }
-
 
   .modal {
     top: 0;
