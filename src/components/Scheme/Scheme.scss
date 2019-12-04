@@ -11,6 +11,11 @@
   position: relative;
 }
 
+.tabContent {
+  overflow-y: auto;
+  height: calc(100vh - 200px);
+}
+
 .schemeName {
   font-size: 28px;
   color: #689ad6;
@@ -31,8 +36,8 @@ a.createProposal {
   display: block;
   position: absolute;
   z-index: 100;
-  right: 0;
-  top: 63px;
+  right: 26px;
+  top: 70px;
   padding: 0 15px;
 
   &:hover {

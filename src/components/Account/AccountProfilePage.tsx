@@ -291,7 +291,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
 
 const SubscribedAccountProfilePage = withSubscription({
   wrappedComponent: AccountProfilePage,
-  loadingComponent: <div>Loading...</div>,
+  loadingComponent: <div className={css.loading}>Loading...</div>,
   errorComponent: (props) => <div>{props.error.message}</div>,
 
   checkForUpdate: (oldProps, newProps) => {

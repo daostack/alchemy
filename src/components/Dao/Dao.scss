@@ -24,18 +24,45 @@ button:hover {
   cursor: pointer;
 }
 
-.wrapper {
-  flex-grow: 2;
-  padding: 30px 50px 100px 300px;
-  overflow: auto;
-  z-index: 0;
-  position: relative;
-}
-
-.outer {
-  display: flex;
+table.pageContentWrapper {
+  border-collapse: collapse;
   height: 100%;
   width: 100%;
+
+  > tbody > tr {
+    height: 100%;
+  }
+}
+
+div.pageContentWrapper {
+  z-index: 0;
+  position: relative;
+  padding-top:30px;
+  padding-left:40px;
+  padding-right:40px;
+  height: 100vh;
+}
+
+div.outer {
+  height: 100%;
+  overflow: hidden;
+
+  .columnsContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+
+    .sidebarColumn {
+      min-width: 215px;
+      max-width: 300px;
+    }
+
+    .sidebarColumn, .contentColumn {
+      vertical-align: top;
+      flex-grow: 1;
+    }
+  }
+
 }
 
 .memberTable, .memberTableHeading {
@@ -119,68 +146,48 @@ button:hover {
   text-align: left;
 }
 
-.noticeWrapper {
-  width: 100%;
-  position: fixed;
-  display: flex;
+tr.noticeWrapper {
   height: 40px;
-  bottom: 0;
-  left: 0;
+
+  td {
+    background-color: white;
+    color: rgba(78, 97, 118, 1.000);
+    font-size: 11px;
+    text-align: left;
+    font-family: "Open Sans";
+    padding-left: 8px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+    width: 100%;
+  }
+}
+
+div.noticeWrapper {
   z-index: 100000;
-}
 
-.noticeBuffer {
-  min-width: 250px;
-  max-width: 250px;
-  flex-grow: 1;
-  height: 100%;
-}
+  .notice {
+    width: 100%;
 
-.notice {
-  flex-grow: 2;
-  background-color: white;
-  padding: 11px 8px;
-  color: rgba(78, 97, 118, 1.000);
-  font-size: 11px;
-  text-align: left;
-  font-family: "Open Sans";
-  width: 100%;
+    div {
+      padding-left: 15px;
 
-  div {
-    padding-left: 15px;
+      img {
+        margin-right: 8px;
+      }
 
-    img {
-      margin-right: 8px;
+      b {
+        color: $accent-3;
+      }
     }
-
-    b {
-      color: $accent-3;
-    }
-  }
-
-  .notice::after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-  .closeNotice {
-    position: absolute;
-    border: none;
-    outline: none;
-    right: 6px;
-    top: 13px;
   }
 }
 
 .menuWrapper {
-  bottom: 0;
-  position: absolute;
-  height: 270px;
-  left: 0;
   width: 100%;
   border-top: 2px solid rgba(78, 137, 208, 1.000);
   transition: all .25s ease;
   padding-top: 20px;
+  padding-bottom: 20px;
 
   ul {
     width: 100%;
@@ -194,7 +201,6 @@ button:hover {
       list-style: none;
       margin: 0;
       width: 100%;
-      height: 24px;
 
       a {
         color: rgba(196, 215, 236, 1.000);
@@ -275,6 +281,10 @@ button:hover {
         transform: translateX(100%) scale(1);
         background-color: rgba(255,255,255,1);
       }
+
+      &.buyGEN {
+        height: 24px;
+      }
     }
 
     li.daoStack {
@@ -295,207 +305,188 @@ button:hover {
   }
 }
 
-.daoIcon {
-  width: 40px;
-  height: 40px;
-  display: inline-block;
-  border-radius: 40px;
-  background-repeat: repeat;
-}
-
 
 .daoSidebar {
-  min-width: 48px;
-  max-width: 250px;
-  height: 100%;
   background-color: $sky;
   color: $white;
-  flex-grow: 1;
   overflow-y: auto;
-  position: fixed;
-  top: 50px;
   z-index: 1000;
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
 
   &:hover {
     z-index: 1000;
   }
-}
 
-.daoDescription {
-  padding: 0px 20px 0px 20px;
-
-  p {
-    padding: 0;
-    margin: 0;
-    font-size: 13px;
-  }
-
-  a {
-    text-decoration: underline;
-    color: white;
-  }
-
-  a:hover {
-    color: silver;
-  }
-}
-
-.navHeading {
-  font-family: "Open Sans";
-  font-size: 11px;
-  border-bottom: 1px solid rgba(78, 137, 209, 1.000);
-  width: 100%;
-  display: block;
-
-  b {
-    display: inline-block;
-    background-color: #3178ca;
-    margin-right: 10px;
-    position: relative;
-    left: 15px;
-    top: 17px;
-    padding: 10px;
-    font-weight: normal;
-    color: rgba(255,255,255,.5);
-  }
-
-}
-
-.homeNotification, .holdersNotification, .historyNotification, .discussionNotification {
-  opacity: 0;
-}
-
-.daoNavigation {
-  position: relative;
-  height: 100%;
-  min-height: 780px;
-  background-color: rgba(48, 120, 202, 1.000);
-  height: -webkit-fill-available;
-  height: -opera-fill-available;
-
-  .daoName {
-    padding: 20px;
-
-    a {
-      display: block;
-      position: relative;
-      font-size: 29px;
-      line-height: 29px;
-      font-weight: bold;
-
-      em {
-        width: 50px;
-        height: 50px;
-        position: absolute;
-        opacity: .5;
-        z-index: 0;
-        background-color: rgba(255,255,255,.5);
-        top: -5px;
-        left: -5px;
-        border-radius: 50px;
-      }
-
-      b {
-        position: relative;
-        z-index: 100;
-      }
-      span {
-        position: absolute;
-        padding-left: 60px;
-        top: 50%;
-        left: 0;
-        margin-top: -3px;
-        transform: translateY(-50%);
-      }
-    }
-
-    a:visited {
-      color: $white;
-    }
+  .daoDescription {
+    padding: 0px 20px 0px 20px;
+    max-width: 250px;
 
     p {
-      font-size: 14px;
-      opacity: .7;
       padding: 0;
+      padding-bottom: 10px;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    a {
+      text-decoration: underline;
+      color: white;
+    }
+
+    a:hover {
+      color: silver;
     }
   }
-  .navigation {
+
+  .navHeading {
     font-family: "Open Sans";
+    font-size: 11px;
+    border-bottom: 1px solid rgba(78, 137, 209, 1.000);
+    width: 100%;
+    display: block;
+
+    b {
+      display: inline-block;
+      background-color: #3178ca;
+      margin-right: 10px;
+      position: relative;
+      left: 15px;
+      top: 17px;
+      padding-bottom: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+      font-weight: normal;
+      color: rgba(255,255,255,.5);
+    }
+
+  }
+
+  .homeNotification, .holdersNotification, .historyNotification, .discussionNotification {
+    opacity: 0;
+  }
+
+  .daoNavigation {
+    background-color: rgba(48, 120, 202, 1.000);
+    flex-grow: 1;
+
+    .daoName {
+      padding: 20px;
+      max-width: 250px;
+
+      a {
+        display: block;
+        position: relative;
+        font-size: 29px;
+        line-height: 29px;
+        font-weight: bold;
+
+        .icon span {
+          width: 40px;
+          height: 40px;
+          display: inline-block;
+          border-radius: 40px;
+          background-repeat: repeat;
+          position: relative;
+          z-index: 100;
+          top: 2px;
+        }
+
+        .name {
+          padding-left: 12px;
+        }
+      }
+
+      a:visited {
+        color: $white;
+      }
+
+      p {
+        font-size: 14px;
+        opacity: .7;
+        padding: 0;
+      }
+    }
+
+    .navigation {
+      font-family: "Open Sans";
+
+      ul {
+        margin-top: 15px;
+        padding: 0;
+      }
+
+      li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        .notification {
+          width: 4px;
+          height: 8px;
+          border-radius: 8px;
+          position: relative;
+          top: -2px;
+          background-color: $accent-2;
+          display: inline-block;
+          opacity: 0;
+        }
+
+        img {
+          margin-left: 2px;
+          position: relative;
+          top: 3px;
+          margin-right: 8px;
+        }
+
+      }
+      li a {
+        display: block;
+        font-size: 14px;
+        color: $white;
+        padding: 8px 23px 8px 8px;
+        background-color: rgba(32, 104, 188, 0);
+        transition: all .25s ease;
+      }
+
+      li a:visited {
+        color: $white;
+      }
+
+      li a:hover {
+        background-color: rgba(32, 104, 188, 1.000);
+      }
+    }
+  }
+
+  .daoHoldings {
+    display: block;
+
+    .navHeading b {
+      padding: 10px 25px 10px 10px;
+    }
+
+    .navHeading {
+      margin-top: -30px;
+    }
+
+    .navHeading a {
+      display: inline-block;
+      position: relative;
+      top: 19px;
+      left: -14px;
+    }
 
     ul {
       margin-top: 15px;
       padding: 0;
-    }
 
-    li {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-
-      .notification {
-        width: 4px;
-        height: 8px;
-        border-radius: 8px;
-        position: relative;
-        top: -2px;
-        background-color: $accent-2;
-        display: inline-block;
-        opacity: 0;
+      li {
+        padding: 8px 23px;
+        font-size: 14px;
+        list-style: none;
       }
-
-      img {
-        margin-left: 2px;
-        position: relative;
-        top: 3px;
-        margin-right: 8px;
-      }
-
-    }
-    li a {
-      display: block;
-      font-size: 14px;
-      color: $white;
-      padding: 8px 23px 8px 8px;
-      background-color: rgba(32, 104, 188, 0);
-      transition: all .25s ease;
-    }
-
-    li a:visited {
-      color: $white;
-    }
-
-    li a:hover {
-      background-color: rgba(32, 104, 188, 1.000);
-    }
-  }
-}
-
-.daoHoldings {
-  display: block;
-
-  .navHeading b {
-    padding: 10px 25px 10px 10px;
-  }
-
-  .navHeading {
-    margin-top: -30px;
-  }
-
-  .navHeading a {
-    display: inline-block;
-    position: relative;
-    top: 19px;
-    left: -14px;
-  }
-
-  ul {
-    margin-top: 15px;
-    padding: 0;
-
-    li {
-      padding: 8px 23px;
-      font-size: 14px;
-      list-style: none;
     }
   }
 }
@@ -527,12 +518,15 @@ button:hover {
 }
 
 .member {
-  padding: 5px 0;
   display: flex;
   font-family: $body-font;
   justify-content: space-between;
   font-size: 14px;
   align-items: center;
+  padding: 15px;
+  margin-bottom: 2px;
+  background-color: white;
+  border-radius: 3px;
 
   img {
     flex: none;
@@ -543,13 +537,6 @@ button:hover {
     padding: 2px 4px;
     display: inline-block;
   }
-}
-
-.member {
-  padding: 15px;
-  margin-bottom: 2px;
-  background-color: white;
-  border-radius: 3px;
 }
 
 a {
@@ -614,7 +601,7 @@ a {
 }
 
 @media only screen and (max-width: 425px) {
-  .outer {
+  div.outer {
     display: block;
     position: relative;
   }
@@ -660,17 +647,11 @@ a {
       transition: all .25s ease;
 
       .daoName {
-        padding: 20px 20px 23px 20px;
-      }
+        padding: 20px 20px 33px 20px;
 
-      .daoName a span {
-        position: absolute;
-        padding-left: 0;
-        top: -5px;
-        left: 64px;
-        margin-top: -3px;
-        transform: translateY(0);
-        font-size: 13px;
+        a .name {
+          font-size: 13px;
+        }
       }
 
       .navigation li a {
@@ -729,16 +710,15 @@ a {
     display: inline-block;
   }
 
-  .wrapper {
-    padding: 50px 0 100px 0;
-  }
-
-  .noticeWrapper {
+  tr.noticeWrapper {
     height: 52px;
 
-    .noticeBuffer {
-      display: none;
+    td {
+      padding-left: 0;
     }
+  }
+
+  div.noticeWrapper {
 
     .notice {
       font-size: 10px;
@@ -746,18 +726,12 @@ a {
       box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
 
       div {
-        padding-left: 0;
-
         img {
           height: 18px;
           float: left;
           position: relative;
           top: 5px;
         }
-      }
-
-      .closeNotice {
-        background-color: transparent;
       }
     }
   }

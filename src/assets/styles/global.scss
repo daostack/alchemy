@@ -2,9 +2,13 @@
 @import 'toggle';
 
 :global html {
-	min-height: 100%;
+	height: 100%;
 	position: relative;
 	width: 100%;
+
+  div#root {
+    height: 100%;
+  }
 }
 
 :global body {
@@ -34,4 +38,10 @@
  */
 :global div#walletconnect-qrcode-modal {
   z-index: 10000001 !important;
+}
+
+:global .sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
 }

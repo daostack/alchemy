@@ -9,7 +9,6 @@ import { schemeName, getSchemeIsActive} from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { Link, Route, RouteComponentProps, Switch } from "react-router-dom";
-import * as Sticky from "react-stickynode";
 import { showNotification } from "reducers/notifications";
 import { IRootState } from "reducers";
 import { connect } from "react-redux";
@@ -89,7 +88,7 @@ class SchemeContainer extends React.Component<IProps, null> {
       <div className={css.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeId}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
 
-        <Sticky enabled top={50} innerZ={10000}>
+        <div>
           <h2 className={css.schemeName}>
             {schemeName(schemeState, schemeState.address)}
           </h2>
@@ -111,15 +110,17 @@ class SchemeContainer extends React.Component<IProps, null> {
               >+ New proposal</a>
             </TrainingTooltip>
           </div>
-        </Sticky>
+        </div>
 
-        <Switch>
-          <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
-            render={this.schemeInfoPageHtml(daoState)} />
+        <div className={css.tabContent}>
+          <Switch>
+            <Route exact path="/dao/:daoAvatarAddress/scheme/:schemeId/info"
+              render={this.schemeInfoPageHtml(daoState)} />
 
-          <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-            render={this.schemeProposalsPageHtml(isActive, daoState)} />
-        </Switch>
+            <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
+              render={this.schemeProposalsPageHtml(isActive, daoState)} />
+          </Switch>
+        </div>
       </div>
     );
   }

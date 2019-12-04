@@ -80,41 +80,53 @@ class DaoContainer extends React.Component<IProps, null> {
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
-        <DaoSidebar dao={daoState} />
-        <div className={css.wrapper}>
-          <div className={css.noticeWrapper}>
-            <div className={css.noticeBuffer}></div>
-            <div className={css.notice}>
-              <div>
-                <img src="/assets/images/Icon/notice.svg" />
-                Alchemy and Arc are in Alpha. There will be BUGS! We don&apos;t guarantee complete security. *Play at your own risk*
+        <div className={css.columnsContainer}>
+          <div className={css.sidebarColumn}>
+            <DaoSidebar dao={daoState} inSchemes={this.props.location.pathname.includes("scheme")} />
+          </div>
+          <div className={css.contentColumn}>
+          <table className={css.pageContentWrapper}>
+          <tbody>
+          <tr><td>
+            <div className={css.pageContentWrapper}>
+              <Switch>
+                <Route exact path="/dao/:daoAvatarAddress/history"
+                  render={this.daoHistoryRoute} />
+                <Route exact path="/dao/:daoAvatarAddress/members"
+                  render={this.daoMembersRoute} />
+                <Route exact path="/dao/:daoAvatarAddress/discussion"
+                  render={this.daoDiscussionRoute} />
+
+                <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
+                  render={this.daoProposalRoute}
+                />
+
+                <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
+                  render={this.schemeRoute} />
+
+                <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute} />
+              </Switch>
+
+              <ModalRoute
+                path="/dao/:daoAvatarAddress/scheme/:schemeId/proposals/create"
+                parentPath={this.modalRoute}
+                component={CreateProposalPage}
+              />
+            </div>
+          </td></tr>
+          <tr className={css.noticeWrapper}><td>
+            <div className={css.noticeWrapper}>
+              <div className={css.notice}>
+                <div>
+                  <img src="/assets/images/Icon/notice.svg" />
+                  Alchemy and Arc are in Alpha. There will be BUGS! We don&apos;t guarantee complete security. *Play at your own risk*
+                </div>
               </div>
             </div>
+          </td></tr>
+          </tbody>
+          </table>
           </div>
-          <Switch>
-            <Route exact path="/dao/:daoAvatarAddress/history"
-              render={this.daoHistoryRoute} />
-            <Route exact path="/dao/:daoAvatarAddress/members"
-              render={this.daoMembersRoute} />
-            <Route exact path="/dao/:daoAvatarAddress/discussion"
-              render={this.daoDiscussionRoute} />
-
-            <Route exact path="/dao/:daoAvatarAddress/proposal/:proposalId"
-              render={this.daoProposalRoute}
-            />
-
-            <Route path="/dao/:daoAvatarAddress/scheme/:schemeId"
-              render={this.schemeRoute} />
-
-            <Route path="/dao/:daoAvatarAddress" render={this.daoSchemesRoute} />
-          </Switch>
-
-          <ModalRoute
-            path="/dao/:daoAvatarAddress/scheme/:schemeId/proposals/create"
-            parentPath={this.modalRoute}
-            component={CreateProposalPage}
-          />
-
         </div>
       </div>
     );

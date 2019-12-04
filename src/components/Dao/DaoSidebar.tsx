@@ -20,6 +20,7 @@ import * as css from "./Dao.scss";
 
 interface IExternalProps {
   dao: IDAOState;
+  inSchemes?: boolean;
 }
 
 interface IStateProps {
@@ -65,8 +66,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
 
     const menuClass = classNames({
       [css.menuOpen]: this.props.menuOpen,
-      [css.daoSidebar]: true,
-      clearfix: true,
+      [css.daoSidebar]: true
     });
 
     return (
@@ -74,9 +74,14 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
-              <b className={css.daoIcon} style={{ backgroundImage: bgPattern.toDataUrl() }}></b>
-              <em></em>
-              <span>{dao.name}</span>
+            <table>
+            <tbody>
+            <tr>
+            <td className={css.icon}><span style={{ backgroundImage: bgPattern.toDataUrl() }}></span></td>
+            <td className={css.name}>{dao.name}</td>
+            </tr>
+            </tbody>
+            </table>
             </Link>
           </div>
           <div className={css.daoDescription}>
@@ -97,7 +102,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                   A curated registry of identities on the Ethereum blockchain.&nbsp;
                       <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
                     </p>
-                    : <p>Anyone can make a proposal to the DAO! Click the button on the top right.</p>
+                    : this.props.inSchemes && !this.props.menuOpen ? <p>Anyone can make a proposal to the DAO! Just click the "New proposal" button.</p> : ""
             }
           </div>
           <div className={css.navigation}>
@@ -180,37 +185,37 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
               })}
             </ul>
           </div>
-          <div className={css.menuWrapper}>
-            <ul>
-              <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
-              <li>
-                <a>Buy GEN</a>
-                <ul>
-                  <div className={css.diamond}></div>
-                  {
-                    getExchangesList().map((item: any) => {
-                      return (
-                        <li key={item.name}>
-                          <a href={item.url} target="_blank" rel="noopener noreferrer">
-                            <b><img src={item.logo} /></b>
-                            <span>{item.name}</span>
-                          </a>
-                        </li>
-                      );
-                    })
-                  }
-                </ul>
-              </li>
-              <li><a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
-              <li><a href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-              <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
-              <li className={css.daoStack}>
-                <a href="http://daostack.io" target="_blank" rel="noopener noreferrer">
-                  <img src="/assets/images/Icon/dao-logo.svg" /> DAOstack
-                </a>
-              </li>
-            </ul>
-          </div>
+        </div>
+        <div className={css.menuWrapper}>
+          <ul>
+            <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
+            <li className={css.buyGEN}>
+              <a>Buy GEN</a>
+              <ul>
+                <div className={css.diamond}></div>
+                {
+                  getExchangesList().map((item: any) => {
+                    return (
+                      <li key={item.name}>
+                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                          <b><img src={item.logo} /></b>
+                          <span>{item.name}</span>
+                        </a>
+                      </li>
+                    );
+                  })
+                }
+              </ul>
+            </li>
+            <li><a href="https://daostack.zendesk.com/hc" target="_blank" rel="noopener noreferrer">Help Center</a></li>
+            <li><a href="https://hub.gendao.org/" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
+            <li><a href="https://cloudflare-ipfs.com/ipfs/Qmf4HafH1QiryBun7j2g9inp78Njrkt635WJ943rBQyWyy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+            <li className={css.daoStack}>
+              <a href="http://daostack.io" target="_blank" rel="noopener noreferrer">
+                <img src="/assets/images/Icon/dao-logo.svg" /> DAOstack
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     );
