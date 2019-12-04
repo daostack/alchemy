@@ -161,16 +161,12 @@ class Header extends React.Component<IProps, IStateProps> {
 
     return(
       <div className={css.headerContainer}>
-        <nav className={classNames({
-          [css.header]: true,
-          [css.hasHamburger]: !!daoAvatarAddress,
-        })}>
-          { daoAvatarAddress ?
-            <div className={css.menuToggle} onClick={this.handleToggleMenu}>
-              {this.props.menuOpen ?
-                <img src="/assets/images/Icon/Close.svg"/> :
-                <img src="/assets/images/Icon/Menu.svg"/>}
-            </div> : "" }
+        <nav className={css.header}>
+          <div className={css.menuToggle} onClick={this.handleToggleMenu}>
+            {this.props.menuOpen ?
+              <img src="/assets/images/Icon/Close.svg"/> :
+              <img src="/assets/images/Icon/Menu.svg"/>}
+          </div>
           <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="bottomRight">
             <div className={css.menu}>
               <Link to="/">

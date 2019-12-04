@@ -33,6 +33,16 @@ body {
   height: 100%;
 }
 
+.sidebarWrapper {
+  position: relative;
+}
+
+.contentWrapper {
+  position: relative;
+  max-width: $max-width;
+  margin: 0 auto;
+}
+
 .background {
   background-color: rgba(244, 244, 244, 1.000);
 }
@@ -548,18 +558,6 @@ body {
   overflow: hidden;
 }
 
-.breadcrumbsContainer {
-  position: absolute;
-  width: 100%;
-  background: #444;
-  padding: 0 0 3px 15px;
-  color: white;
-}
-
-.breadcrumb {
-  color: white;
-}
-
 .topInfo {
   position: absolute;
   left: 70px;
@@ -573,7 +571,7 @@ body {
     margin: 0 15px;
   }
 
-  a:visited {
+  a, a:visited {
     color: $white;
   }
 }
@@ -746,16 +744,8 @@ body {
       margin-left: 12px;
     }
 
-    &.hasHamburger .redemptionsButton {
-      margin-left: 10px;
-    }
-
     .toggleButton {
       margin-left: 12px;
-    }
-
-    &.hasHamburger .toggleButton {
-      margin-left: 52px;
     }
 
     .accountInfo {

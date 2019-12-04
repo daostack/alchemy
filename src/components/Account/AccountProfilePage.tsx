@@ -8,7 +8,6 @@ import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import Reputation from "components/Account/Reputation";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
-import DaoSidebar from "components/Dao/DaoSidebar";
 import { Field, Formik, FormikProps } from "formik";
 import { copyToClipboard, ethErrorHandler, formatTokens } from "lib/util";
 import * as queryString from "query-string";
@@ -116,8 +115,6 @@ class AccountProfilePage extends React.Component<IProps, null> {
         <BreadcrumbsItem to={`/profile/${accountAddress}`}>
           {editing ? (accountProfile && accountProfile.name ? "Edit 3Box Profile" : "Set 3Box Profile") : "View 3Box Profile"}
         </BreadcrumbsItem>
-
-        {dao ? <DaoSidebar dao={dao} /> : ""}
 
         <div className={profileContainerClass} data-test-id="profile-container">
           { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}

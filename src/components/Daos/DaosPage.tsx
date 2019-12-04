@@ -3,6 +3,7 @@ import { enableWalletProvider, getArc } from "arc";
 import { toggleFollow } from "actions/profilesActions";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
+import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
@@ -71,6 +72,8 @@ class DaosPage extends React.Component<IProps, null> {
     });
     return (
       <div className={css.wrapper}>
+        <BreadcrumbsItem to="/daos/">All DAOs</BreadcrumbsItem>
+
         <Sticky enabled top={50} innerZ={10000}>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>

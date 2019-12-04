@@ -10,6 +10,7 @@ import FeedPage from "components/Feed/FeedPage";
 import RedemptionsPage from "components/Redemptions/RedemptionsPage";
 import * as History from "history";
 import Header from "layouts/Header";
+import SidebarMenu from "layouts/SidebarMenu";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
@@ -121,6 +122,7 @@ class AppContainer extends React.Component<IProps, IState> {
   private minimizeNotif = () => this.setState({notificationsMinimized: true});
   private unminimizeNotif = () => this.setState({notificationsMinimized: false});
   private headerHtml = ( props: any ): any => <Header {...props} />;
+  private sidebarHtml = ( props: any ): any => <SidebarMenu {...props} />;
 
   private notificationHtml = (notif: INotification): any => {
     return <div key={notif.id}>
@@ -169,13 +171,19 @@ class AppContainer extends React.Component<IProps, IState> {
           <div className={css.container}>
             <Route path="/" render={this.headerHtml} />
 
-            <Switch>
-              <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
-              <Route path="/profile/:accountAddress" component={AccountProfilePage} />
-              <Route path="/redemptions" component={RedemptionsPage} />
-              <Route path="/daos" component={DaosPage} />
-              <Route path="/" component={FeedPage} />
-            </Switch>
+            <div className={css.sidebarWrapper}>
+              <Route path="/" render={this.sidebarHtml} />
+            </div>
+
+            <div className={css.contentWrapper}>
+              <Switch>
+                <Route path="/dao/:daoAvatarAddress" component={DaoContainer} />
+                <Route path="/profile/:accountAddress" component={AccountProfilePage} />
+                <Route path="/redemptions" component={RedemptionsPage} />
+                <Route path="/daos" component={DaosPage} />
+                <Route path="/" component={FeedPage} />
+              </Switch>
+            </div>
 
             <ModalContainer
               backdropClassName={css.backdrop}
