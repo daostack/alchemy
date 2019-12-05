@@ -18,6 +18,8 @@
 	width: 100%;
 	height: 100%;
 	color: $black;
+  // to avoid bad behavior when training tooltips are displayed off-page thus causing appearance of an unwelcome scrollbar
+  overflow: hidden;
 }
 
 :global(.clearfix:after) {
