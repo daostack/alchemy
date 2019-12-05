@@ -14,6 +14,7 @@ import { isValidUrl } from "lib/util";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
+const BN = require('bn.js');
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -68,18 +69,23 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     };
   }
   
-  private async getBountyEth(values: IFormValues): Promise<string> {
+  private async getBountyEth(values: IFormValues): Promise<any> {
     const currentAction = this.state.currentAction;
-    let ethToSend = 0;
+    let ethToSend = new BN(0);
 
+    /* 
+      Currently, as StandardBounties.json is configured, 
+      token amounts defaults to ETH by converting input to Wei decimals.
+      However, only whole units ETH are processed
+    */
+
+    // Search for payable feilds in Standard Bounties, add to send as ETH
     for (const field of currentAction.getFields()) {
-      if (field.name === "_depositAmount" || field.name === "_amount" && this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
-        ethToSend += parseInt(field.callValue(values[field.name]))/1000000000;
+      if (field.name === "_depositAmount" || field.name === "_amount") {
+        ethToSend = ethToSend.add(new BN(values[field.name]))
       }
     }
-    console.log("Adding ", ethToSend, " Wei");
-
-    return ethToSend.toString();
+    return ethToSend;
   }
 
 
@@ -105,8 +111,13 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       return;
     }
     setSubmitting(false);
- 
-    const ethValue = await this.getBountyEth(values);
+
+    var ethValue = new BN(0)
+    
+    if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
+      let calcBountEth = await this.getBountyEth(values)
+      ethValue =  ethValue.add(calcBountEth)
+    } 
  
     const proposalValues = {
       ...values,
@@ -115,7 +126,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       scheme: this.props.scheme.address,
       tags: this.state.tags,
       type: IProposalType.GenericScheme,
-      value: ethValue, // amount of eth to send with the call
+      value: ethValue.toString(), // amount of eth to send with the call
     };
 
     try {
