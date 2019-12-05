@@ -10,7 +10,6 @@ import { formatTokens, tokenSymbol } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
-import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { combineLatest, of } from "rxjs";
@@ -55,7 +54,7 @@ class RedemptionsPage extends React.Component<IProps, null> {
     return (
       <div className={css.wrapper}>
         <BreadcrumbsItem to="/redemptions">Redemptions</BreadcrumbsItem>
-        <Sticky enabled top={50} innerZ={10000}>
+        <div>
           <div className={css.header}>
             <h2>Redemptions</h2>
             {proposals.length > 0 ?
@@ -73,8 +72,8 @@ class RedemptionsPage extends React.Component<IProps, null> {
               : ""
             }
           </div>
-        </Sticky>
-        <div>
+        </div>
+        <div className={css.redemptionsContainer}>
           {proposals.length > 0 ?
             <div>{this.renderProposalsPerDAO()}</div>
             :

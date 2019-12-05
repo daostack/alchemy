@@ -600,6 +600,11 @@ a {
     padding-top: 10px;
 }
 
+.discussionContainer {
+  overflow-y: auto;
+  height: calc(100vh - 200px);
+}
+
 @media only screen and (max-width: 600px) {
   div.outer {
     div.pageContentWrapper {

@@ -98,6 +98,8 @@ a.createProposal {
   margin: 80px auto;
   background-color: $white;
   border-radius: 15px;
+  overflow-y: auto;
+  height: calc(100vh - 200px);
 
   .fields {
     padding: 50px;

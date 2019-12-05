@@ -6,7 +6,6 @@ import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
-import * as Sticky from "react-stickynode";
 import { IRootState } from "reducers";
 import { IProfilesState } from "reducers/profilesReducer";
 
@@ -47,9 +46,9 @@ class DaoMembersPage extends React.Component<IProps, null> {
     return (
       <div className={css.membersContainer}>
         <BreadcrumbsItem to={"/dao/" + daoState.address + "/members"}>Reputation Holders</BreadcrumbsItem>
-        <Sticky enabled top={50} innerZ={10000}>
+        <div>
           <h2>Reputation Holders</h2>
-        </Sticky>
+        </div>
         <table>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>
             <tr>
@@ -66,6 +65,7 @@ class DaoMembersPage extends React.Component<IProps, null> {
           next={this.props.fetchMore}
           hasMore={members.length < this.props.daoState.memberCount}
           loader={<h4>Loading...</h4>}
+          style={{"overflow-y": "auto", height: "calc(100vh - 200px)"}}
           endMessage={
             <p style={{textAlign: "center"}}>
               <b>&mdash;</b>

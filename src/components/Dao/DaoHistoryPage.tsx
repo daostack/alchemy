@@ -7,7 +7,6 @@ import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import * as InfiniteScroll from "react-infinite-scroll-component";
 import { RouteComponentProps } from "react-router-dom";
-import * as Sticky from "react-stickynode";
 import { first } from "rxjs/operators";
 import ProposalHistoryRow from "../Proposal/ProposalHistoryRow";
 import * as css from "./Dao.scss";
@@ -37,18 +36,18 @@ class DaoHistoryPage extends React.Component<IProps, null> {
       <div>
         <BreadcrumbsItem to={"/dao/" + daoState.address + "/history"}>History</BreadcrumbsItem>
 
-        <Sticky enabled top={50} innerZ={10000}>
+        <div>
           <div className={css.daoHistoryHeader}>
             History
           </div>
-        </Sticky>
+        </div>
 
         <InfiniteScroll
           dataLength={proposals.length} //This is important field to render the next data
           next={fetchMore}
           hasMore={hasMoreToLoad}
           loader=""
-          style={{overflow: "visible"}}
+          style={{"overflow-y": "auto", height: "calc(100vh - 200px)"}}
           endMessage={
             <p style={{textAlign: "center"}}>
               <b>&mdash;</b>

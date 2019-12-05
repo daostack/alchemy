@@ -12,7 +12,6 @@ import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
 import { schemeName, fromWei } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
-import * as Sticky from "react-stickynode";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
@@ -272,11 +271,11 @@ class ReputationFromToken extends React.Component<IProps, IState> {
       <div className={schemeCss.schemeContainer}>
         <BreadcrumbsItem to={`/dao/${daoAvatarAddress}/scheme/${schemeState.id}`}>{schemeName(schemeState, schemeState.address)}</BreadcrumbsItem>
 
-        <Sticky enabled top={50} innerZ={10000}>
+        <div>
           <h2 className={schemeCss.schemeName}>
             {schemeName(schemeState, schemeState.address)}
           </h2>
-        </Sticky>
+        </div>
         { this.state.alreadyRedeemed ? <div>Reputation for account {redeemerAddress} has already been redeemed</div> : <div />  }
         <div className={schemeCss.schemeRedemptionContainer}>
           <Formik

@@ -128,3 +128,8 @@
     }
   }
 }
+
+.redemptionsContainer {
+  overflow-y: auto;
+  height: calc(100vh - 200px);
+}
