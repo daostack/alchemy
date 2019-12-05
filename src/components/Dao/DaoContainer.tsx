@@ -22,6 +22,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import DaoSidebar from "./DaoSidebar";
 import * as css from "./Dao.scss";
+import * as sideBarCss from "./DaoSideBar.scss";
 
 type IExternalProps = RouteComponentProps<any>;
 
@@ -80,11 +81,11 @@ class DaoContainer extends React.Component<IProps, null> {
     return (
       <div className={css.outer}>
         <BreadcrumbsItem to={"/dao/" + daoState.address}>{daoState.name}</BreadcrumbsItem>
-        <div className={css.columnsContainer}>
-          <div className={css.sidebarColumn}>
+        <div className={sideBarCss.columnsContainer}>
+          <div className={sideBarCss.sidebarColumn}>
             <DaoSidebar dao={daoState} inSchemes={this.props.location.pathname.includes("scheme")} />
           </div>
-          <div className={css.contentColumn}>
+          <div className={sideBarCss.contentColumn}>
             <table className={css.pageContentWrapper}>
               <tbody>
                 <tr><td>
