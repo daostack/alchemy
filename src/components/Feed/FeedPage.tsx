@@ -83,10 +83,9 @@ class FeedPage extends React.Component<IProps, null> {
       return this.renderEmptyFeed();
     }
 
-    const eventsByDao = data[0].data.events as any[];
-    const eventsByProposal = data[1].data.events as any[];
-    //const eventsByScheme = data[2].data.events as any[];
-    const eventsByUser = data[2].data.events as any[];
+    const eventsByDao = (data[0] ? data[0].data.events : []) as any[];
+    const eventsByProposal = (data[1] ? data[1].data.events : []) as any[];
+    const eventsByUser = (data[2] ? data[2].data.events : []) as any[];
     const events = eventsByDao.concat(eventsByProposal).concat(eventsByUser).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
 
     if (events.length === 0) {
@@ -163,12 +162,12 @@ const SubscribedFeedPage = withSubscription({
     let daosString = "";
     let proposalsString = "";
     let usersString = "";
-    let daosQuery = of([]);
-    let proposalsQuery = of([]);
+    let daosQuery = of(null);
+    let proposalsQuery = of(null);
     //let schemesQuery = of([]);
-    let usersQuery = of([]);
+    let usersQuery = of(null);
 
-    if (currentAccountProfile.follows.proposals) {
+    if (currentAccountProfile.follows.proposals && currentAccountProfile.follows.proposals.length > 0) {
       proposalsString = currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
       proposalsQuery = arc.getObservable(gql`query feedProposals
         {
@@ -187,7 +186,7 @@ const SubscribedFeedPage = withSubscription({
     //   `);
     // }
 
-    if (currentAccountProfile.follows.users) {
+    if (currentAccountProfile.follows.users && currentAccountProfile.follows.users.length > 0) {
       usersString = currentAccountProfile.follows.users.map((user) => "\"" + user + "\"").join(",");
       usersQuery = arc.getObservable(gql`query feedUsers
         {
@@ -199,7 +198,7 @@ const SubscribedFeedPage = withSubscription({
       `);
     }
 
-    if (currentAccountProfile.follows.daos) {
+    if (currentAccountProfile.follows.daos && currentAccountProfile.follows.daos.length > 0) {
       daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
       daosQuery = arc.getObservable(gql`query feedDaos
         {
