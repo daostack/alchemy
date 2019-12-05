@@ -66,7 +66,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
 
     const menuClass = classNames({
       [css.menuOpen]: this.props.menuOpen,
-      [css.daoSidebar]: true
+      [css.daoSidebar]: true,
     });
 
     return (
@@ -74,14 +74,14 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
         <div className={css.daoNavigation}>
           <div className={css.daoName}>
             <Link to={"/dao/" + dao.address} onClick={this.handleCloseMenu}>
-            <table>
-            <tbody>
-            <tr>
-            <td className={css.icon}><span style={{ backgroundImage: bgPattern.toDataUrl() }}></span></td>
-            <td className={css.name}>{dao.name}</td>
-            </tr>
-            </tbody>
-            </table>
+              <table>
+                <tbody>
+                  <tr>
+                    <td className={css.icon}><span style={{ backgroundImage: bgPattern.toDataUrl() }}></span></td>
+                    <td className={css.name}>{dao.name}</td>
+                  </tr>
+                </tbody>
+              </table>
             </Link>
           </div>
           <div className={css.daoDescription}>
@@ -102,7 +102,7 @@ class DaoSidebar extends React.Component<IProps, IStateProps> {
                   A curated registry of identities on the Ethereum blockchain.&nbsp;
                       <a href="https://docs.google.com/document/d/1_aS41bvA6D83aTPv6QNehR3PfIRHJKkELnU76Sds5Xk" target="_blank" rel="noopener noreferrer">How to register.</a>
                     </p>
-                    : this.props.inSchemes && !this.props.menuOpen ? <p>Anyone can make a proposal to the DAO! Just click the "New proposal" button.</p> : ""
+                    : this.props.inSchemes && !this.props.menuOpen ? <p>Anyone can make a proposal to the DAO! Just click the &quot;New proposal&quot; button.</p> : ""
             }
           </div>
           <div className={css.navigation}>

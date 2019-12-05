@@ -3,7 +3,6 @@ import { getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as React from "react";
-import * as Sticky from "react-stickynode";
 import DaoCard from "./DaoCard";
 import * as css from "./Daos.scss";
 
@@ -33,11 +32,11 @@ class DaosPage extends React.Component<IProps, null> {
     });
     return (
       <div className={css.wrapper}>
-        <Sticky enabled top={50} innerZ={10000}>
+        <div>
           <div className={css.daoListHeader + " clearfix"}>
             <h2 data-test-id="header-all-daos">All DAOs</h2>
           </div>
-        </Sticky>
+        </div>
         <div className={css.daoList}>
           {daoNodes ? daoNodes : "None"}
         </div>

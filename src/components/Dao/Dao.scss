@@ -600,10 +600,30 @@ a {
     padding-top: 10px;
 }
 
-@media only screen and (max-width: 425px) {
+@media only screen and (max-width: 600px) {
   div.outer {
-    display: block;
-    position: relative;
+    div.pageContentWrapper {
+      padding-left:0;
+      padding-right:0;
+    }
+
+    .columnsContainer {
+
+      .sidebarColumn {
+        width: 100%;
+        min-width: 100%;
+        max-width: unset;
+        flex-grow: unset;
+        position: absolute;
+        transform: translateY(0);
+        z-index: 1000000;
+      }
+
+      .contentColumn {
+        vertical-align: top;
+        flex-grow: 1;
+      }
+    }
   }
 
   .memberTable {
@@ -628,24 +648,13 @@ a {
   }
 
   .daoSidebar {
-    width: 48px;
-    max-width: 100%;
-    height: auto;
-    flex-grow: unset;
-    z-index: 100000;
+    height: 0;
+    width: 100%;
     background-color: rgba(49, 120, 202, 0);
-    transition: height .25s ease, width 0s .25s;
-
-    &:hover {
-      z-index: 100000;
-    }
-
+    overflow: hidden;
+    transition: all .25s ease;
+    
     .daoNavigation {
-      height: 0px;
-      min-height: auto;
-      overflow: hidden;
-      transition: all .25s ease;
-
       .daoName {
         padding: 20px 20px 33px 20px;
 
@@ -658,63 +667,63 @@ a {
         padding: 4px 23px 4px 8px;
       }
     }
-  }
 
-  .daoSidebar.menuOpen {
-    z-index: 1000000;
-    width: 100%;
-    background-color: rgba(49, 120, 202, 1.000);
-    padding-bottom: 50px;
-    transition: width 0s 0s, height .25s ease;
+    .menuWrapper {
+      padding-bottom: 20px;
 
-    .daoNavigation {
-      height: 520px;
-    }
-  }
+      ul li {
+        height: auto;
 
-  .menuWrapper {
-    position: relative;
-    height: auto;
-    padding-bottom: 20px;
+        a {
+          padding: 3px 0 3px 30px;
+        }
+      }
 
-    ul li {
-      height: auto;
+      ul li:hover ul {
+        left: 40px;
+        top: -20px;
+      }
 
-      a {
-        padding: 3px 0 3px 30px;
+      ul li ul {
+        position: absolute;
       }
     }
 
-    ul li:hover ul {
-      left: 40px;
-      top: -20px;
+    .daoDescription {
+      font-size: 12px;
     }
 
-    ul li ul {
-      position: absolute;
+    .navHeading {
+      margin-top: -40px;
+    }
+
+    .daoHoldings ul li {
+      display: inline-block;
+    }
+
+    tr.noticeWrapper {
+      height: 52px;
+
+      td {
+        padding-left: 0;
+      }
     }
   }
 
-  .daoDescription {
-    position: absolute;
-    top: 35px;
-    left: 64px;
-    font-size: 12px;
-  }
-
-  .navHeading {
-    margin-top: -40px;
-  }
-
-  .daoHoldings ul li {
+  .daoSidebar.menuOpen {
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(49, 120, 202, 1.000);
+    transition: all .25s ease;
     display: inline-block;
-  }
+    flex-direction: unset;
 
-  tr.noticeWrapper {
-    height: 52px;
+    .daoNavigation {
+      height: 300px;
+    }
 
-    td {
-      padding-left: 0;
+    .menuWrapper {
+      height: 160px;
     }
   }
 

@@ -185,9 +185,9 @@ a.createProposal {
 
 @media only screen and (max-width: 425px) {
 
-  .createProposal {
-    top: 5px;
-    right: 15px;
+  a.createProposal {
+    top: 0px;
+    right: 10px;
   }
 
   .schemeName {

@@ -31,6 +31,8 @@
   position: relative;
   z-index: 0;
   padding-top: 30px;
+  overflow-y: auto;
+  height: calc(100vh - 200px);
 }
 
 .daoInfoTitle {
