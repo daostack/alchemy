@@ -12,9 +12,10 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as arcActions from "actions/arcActions";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
+import { loadInitialFormValues, exportFormValues } from "lib/proposal.util";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-import { loadInitialFormValues, exportFormValues } from 'lib/proposal.util';
+
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -395,7 +396,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values, this.state.tags) }>
+                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values, this.state.tags)}>
                     Export proposal
                   </button>
                 </TrainingTooltip>
