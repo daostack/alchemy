@@ -162,7 +162,6 @@
     "@types/react-router-dom": "^4.3.1",
     "@types/react-router-redux": "^5.0.17",
     "@types/react-select": "^3.0.2",
-    "@types/react-stickynode": "^1.4.0",
     "@types/react-tag-input": "^6.1.2",
     "@types/react-transition-group": "^2.0.15",
     "@types/socket.io-client": "^1.4.32",
