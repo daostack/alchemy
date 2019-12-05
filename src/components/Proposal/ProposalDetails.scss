@@ -27,6 +27,8 @@ button.disabled {
 .wrapper {
   width: 100%;
   max-width: 1440px;
+  overflow-y: auto;
+  height: calc(100vh - 180px);
 }
 
 .clickable {
