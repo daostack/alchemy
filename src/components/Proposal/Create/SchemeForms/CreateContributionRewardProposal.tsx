@@ -10,11 +10,11 @@ import UserSearchField from "components/Shared/UserSearchField";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as arcActions from "actions/arcActions";
-import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl, copyToClipboard } from "lib/util";
+import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-
+import { loadInitialFormValues, exportFormValues } from 'lib/proposal.util';
 
 interface IExternalProps {
   scheme: ISchemeState;
@@ -138,50 +138,13 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   }
   
   // Exports data from form to a shareable url.
-  public exportFormValues(values: IFormValues) {
-    const queryString = Object.keys(values).map(key => key + "=" + values[key]).join("&");
-    const { origin, pathname } = window.location;
-    const url = origin + pathname + "?" + queryString + "&tags=" + JSON.stringify(this.state.tags);
-    copyToClipboard(url);
+  public exportFormValues(values: IFormValues, tags: string[]) {
+    exportFormValues(values, tags);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
   }
 
   private onTagsChange = () => (tags: string[]): void => {
     this.setState({ tags });
-  }
-  
-  // Loads proposal data from params
-  private loadInitialFormValues = () => {
-    const { search } = window.location
-    const params = new URLSearchParams(search);
-    let initialFormValues;
-    if(search.length > 0 ) {
-      initialFormValues = {
-        beneficiary: params.get("beneficiary"),
-        description: params.get("description"),
-        ethReward: Number(params.get("ethReward")),
-        externalTokenAddress: params.get("externalTokenAddress"),
-        externalTokenReward: Number(params.get("externalTokenReward")),
-        nativeTokenReward: Number(params.get("nativeTokenReward")),
-        reputationReward: Number(params.get("reputationReward")),
-        title: params.get("title"),
-        url: params.get("url"),
-      };
-    }
-    else {
-      initialFormValues = {
-        beneficiary: "",
-        description: "",
-        ethReward: 0,
-        externalTokenAddress: getArc().GENToken().address,
-        externalTokenReward: 0,
-        nativeTokenReward: 0,
-        reputationReward: 0,
-        title: "",
-        url: "",
-      };
-    }
-    return initialFormValues;
   }
   
   // In order to avoid using setState({ tags }) inside of render(). 
@@ -212,7 +175,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={this.loadInitialFormValues()}
+          initialValues={loadInitialFormValues("contributionReward")}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -343,7 +306,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                    defaultValue={this.loadInitialFormValues().beneficiary}
+                    defaultValue={loadInitialFormValues("contributionReward").beneficiary}
                   />
                 </div>
 
@@ -432,7 +395,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                   Cancel
                 </button>
                 <TrainingTooltip overlay="Export proposal" placement="top">
-                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={()=> this.exportFormValues(values)}>
+                  <button id="export-proposal" className={css.exportProposal} type="button" disabled={isSubmitting} onClick={() => this.exportFormValues(values, this.state.tags) }>
                     Export proposal
                   </button>
                 </TrainingTooltip>
