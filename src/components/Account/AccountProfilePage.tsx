@@ -23,8 +23,8 @@ import { NotificationStatus, showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, of } from "rxjs";
 import * as io from "socket.io-client";
-import * as css from "./Account.scss";
 import * as sideBarCss from "../Dao/DaoSideBar.scss";
+import * as css from "./Account.scss";
 
 const socket = io(process.env.API_URL);
 
@@ -156,7 +156,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
 
           {dao ?
             <div className={sideBarCss.sidebarColumn}><DaoSidebar dao={dao} /></div>
-          : ""}
+            : ""}
           <div className={sideBarCss.contentColumn}>
             <div className={css.profileContainer} data-test-id="profile-container">
               { editing && (!accountProfile || !accountProfile.name) ? <div className={css.setupProfile}>In order to evoke a sense of trust and reduce risk of scams, we invite you to create a user profile which will be associated with your current Ethereum address.<br/><br/></div> : ""}
