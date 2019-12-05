@@ -1,6 +1,6 @@
 import * as uuid from "uuid";
 import { getContractAddresses, hideCookieAcceptWindow, hideTrainingTooltips } from "./utils";
-// import $ from "jquery";
+
 describe("Proposals", () => {
   let daoAddress: string;
   let addresses;
@@ -138,8 +138,8 @@ describe("Proposals", () => {
     const ethReward = Math.floor(Math.random() * 1000);
     const ethRewardInput = await $("#ethRewardInput");
     await ethRewardInput.setValue(ethReward);
-    const createProposalSubmitButton = await $("*[id=\"export-proposal\"]");
-    await createProposalSubmitButton.click();
+    const exportProposalSubmitButton = await $("*[id=\"export-proposal\"]");
+    await exportProposalSubmitButton.click();
 
   });
 });
