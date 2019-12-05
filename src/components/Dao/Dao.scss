@@ -722,6 +722,7 @@ a {
     transition: all .25s ease;
     display: inline-block;
     flex-direction: unset;
+    overflow-y: auto;
 
     .daoNavigation {
       height: 300px;
