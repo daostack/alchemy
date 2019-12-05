@@ -152,24 +152,20 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   
   // Loads proposal data from params
   private loadInitialFormValues = () => {
-    const search = window.location.search.substring(1);
+    const { search } = window.location
+    const params = new URLSearchParams(search);
     let initialFormValues;
     if(search.length > 0 ) {
-      // The reason behind not using double quotes is because in this case if we do so it will give us an error: Unexpected token ' in JSON at position.
-      // In order to avoid such error we use single quotes.
-      // eslint-disable-next-line quotes
-      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-      const { beneficiary, description, ethReward, externalTokenAddress, externalTokenReward, nativeTokenReward, reputationReward, title, url } = params;
       initialFormValues = {
-        beneficiary,
-        description,
-        ethReward: Number(ethReward),
-        externalTokenAddress,
-        externalTokenReward: Number(externalTokenReward),
-        nativeTokenReward: Number(nativeTokenReward),
-        reputationReward: Number(reputationReward),
-        title,
-        url,
+        beneficiary: params.get("beneficiary"),
+        description: params.get("description"),
+        ethReward: Number(params.get("ethReward")),
+        externalTokenAddress: params.get("externalTokenAddress"),
+        externalTokenReward: Number(params.get("externalTokenReward")),
+        nativeTokenReward: Number(params.get("nativeTokenReward")),
+        reputationReward: Number(params.get("reputationReward")),
+        title: params.get("title"),
+        url: params.get("url"),
       };
     }
     else {
@@ -188,12 +184,13 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     return initialFormValues;
   }
   
+  // In order to avoid using setState({ tags }) inside of render(). 
+  // I created another function that handles the loading of tags. 
   loadInitialTagFormValues() {
-    const search = window.location.search.substring(1);
+    const { search } = window.location;
+    const params = new URLSearchParams(search);
     if(search.length > 0 ) {
-      // eslint-disable-next-line quotes
-      const params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-      const { tags } = params;
+      const tags = params.get("tags");
       if(tags) { 
         this.setState({ tags: JSON.parse(tags) });
       }
