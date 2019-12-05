@@ -10,28 +10,56 @@ button:hover {
   cursor: pointer;
 }
 
-table.pageContentWrapper {
-  border-collapse: collapse;
-  height: 100%;
-  width: 100%;
-
-  > tbody > tr {
-    height: 100%;
-  }
-}
-
-div.pageContentWrapper {
-  z-index: 0;
-  position: relative;
-  padding-top:30px;
-  padding-left:40px;
-  padding-right:40px;
-  height: 100vh;
-}
-
 div.outer {
   height: 100%;
   overflow: hidden;
+
+  .pageContentWrapper {
+    border-collapse: collapse;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .pageSubComponentWrapper {
+      z-index: 0;
+      position: relative;
+      padding-top:30px;
+      padding-left:40px;
+      padding-right:40px;
+      max-height: calc(100vh - 120px);
+      flex-grow: 1;
+    }
+
+    .noticeWrapper {
+      z-index: 10000;
+      background-color: white;
+      color: rgba(78, 97, 118, 1.000);
+      font-size: 11px;
+      text-align: left;
+      font-family: "Open Sans";
+      padding-left: 8px;
+      padding-top: 11px;
+      padding-bottom: 11px;
+      width: 100%;
+
+      .notice {
+        width: 100%;
+
+        div {
+          padding-left: 15px;
+
+          img {
+            margin-right: 8px;
+          }
+
+          b {
+            color: $accent-3;
+          }
+        }
+      }
+    }
+  }
 }
 
 .memberTable, .memberTableHeading {
@@ -113,42 +141,6 @@ div.outer {
   font-size: 12px;
   font-weight: bold;
   text-align: left;
-}
-
-tr.noticeWrapper {
-  height: 40px;
-
-  td {
-    background-color: white;
-    color: rgba(78, 97, 118, 1.000);
-    font-size: 11px;
-    text-align: left;
-    font-family: "Open Sans";
-    padding-left: 8px;
-    padding-top: 11px;
-    padding-bottom: 11px;
-    width: 100%;
-  }
-}
-
-div.noticeWrapper {
-  z-index: 100000;
-
-  .notice {
-    width: 100%;
-
-    div {
-      padding-left: 15px;
-
-      img {
-        margin-right: 8px;
-      }
-
-      b {
-        color: $accent-3;
-      }
-    }
-  }
 }
 
 .loading img {
@@ -266,10 +258,28 @@ a {
 }
 
 @media only screen and (max-width: 600px) {
-  div.outer {
-    div.pageContentWrapper {
+  .outer {
+    .pageSubComponentWrapper {
       padding-left:0;
       padding-right:0;
+    }
+
+    .noticeWrapper {
+
+      .notice {
+        font-size: 10px;
+        padding-right: 70px;
+        box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
+
+        div {
+          img {
+            height: 18px;
+            float: left;
+            position: relative;
+            top: 5px;
+          }
+        }
+      }
     }
   }
 
@@ -292,24 +302,6 @@ a {
 
   .memberTable.memberTableHeading {
     display: none;
-  }
-
-  div.noticeWrapper {
-
-    .notice {
-      font-size: 10px;
-      padding-right: 70px;
-      box-shadow: 0 2px 16px 0 rgba(133, 168, 208, 0.4);
-
-      div {
-        img {
-          height: 18px;
-          float: left;
-          position: relative;
-          top: 5px;
-        }
-      }
-    }
   }
 
   .reputationAmounts {
