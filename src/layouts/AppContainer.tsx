@@ -193,8 +193,9 @@ class AppContainer extends React.Component<IProps, IState> {
           { hasAcceptedCookies ? "" :
             <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
-                <div className={css.body}>This website stores cookies on your computer. These cookies are used to collect information about how you interact with our website. We use this information for analytics in order to improve our website.</div>
-                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton} data-test-id="acceptCookiesButton"><img src="/assets/images/Icon/v-white-thick.svg"></img>Accept</a></div>
+                <div className={css.body}>Alchemy stores cookies on your device to enhance platform experience and analyze platform usage. Please read the&nbsp;
+                  <a href=" https://alchemy.daostack.io/cookie-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</a> for more information.</div>
+                <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton} data-test-id="acceptCookiesButton"><img src="/assets/images/Icon/v-white-thick.svg"></img>I Accept</a></div>
               </div>
             </div>
           }
