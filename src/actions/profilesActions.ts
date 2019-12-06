@@ -22,7 +22,7 @@ export function getProfilesForAddresses(addresses: string[]) {
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
-        payload: e.toString(),
+        payload: e.message,
       });
     }
   };
@@ -70,7 +70,7 @@ export function getProfile(accountAddress: string) {
       dispatch({
         type: ActionTypes.GET_PROFILE_DATA,
         sequence: AsyncActionSequence.Failure,
-        payload: e.toString(),
+        payload: e.message,
       });
     }
   };
@@ -99,7 +99,7 @@ export function updateProfile(accountAddress: string, name: string, description:
       await box.syncDone;
       await box.public.setMultiple(["name", "description"], [name, description]);
     } catch (e) {
-      const errorMsg = e.toString();
+      const errorMsg = e.message;
 
       // eslint-disable-next-line no-console
       console.error("Error saving profile to 3box: ", errorMsg);
@@ -130,13 +130,27 @@ export type FollowItemAction = IAsyncAction<"FOLLOW_ITEM", { accountAddress: str
 
 export function toggleFollow(accountAddress: string, type: FollowType, id: string) {
   return async (dispatch: any, _getState: any) => {
-    const web3Provider = await getWeb3Provider();
-    const box = await Box.openBox(accountAddress, web3Provider);
-    await box.syncDone;
-    const space = await box.openSpace("DAOstack") ;
-    await space.syncDone;
-    let follows = await space.public.get("follows");
+    const state = _getState();
+    let box;
+    let space;
 
+    try {
+      if (state.threeBox) {
+        box = state.threeBox;
+      } else {
+        const web3Provider = await getWeb3Provider();
+        box = await Box.openBox(accountAddress, web3Provider);
+      }
+
+      await box.syncDone;
+      space = await box.openSpace("DAOstack") ;
+      await space.syncDone;
+    } catch (e) {
+      dispatch(showNotification(NotificationStatus.Failure, `Failed to connect to 3box: ${e.message}`));
+      return false;
+    }
+
+    let follows = await space.public.get("follows");
     if (!follows) {
       follows = {
         daos: [],
