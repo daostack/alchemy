@@ -36,7 +36,9 @@ interface IDispatchProps {
   showNotification: typeof showNotification;
 }
 
-type IProps = IStateProps & IDispatchProps & ISubscriptionProps<[any, any, any]>;
+type SubscriptionData = [any[], any[], any[]];
+
+type IProps = IStateProps & IDispatchProps & ISubscriptionProps<SubscriptionData>;
 
 const PAGE_SIZE = 100;
 
@@ -81,9 +83,9 @@ class FeedPage extends React.Component<IProps, null> {
       return this.renderEmptyFeed();
     }
 
-    const eventsByDao = (data[0] ? data[0].data.events : []) as any[];
-    const eventsByProposal = (data[1] ? data[1].data.events : []) as any[];
-    const eventsByUser = (data[2] ? data[2].data.events : []) as any[];
+    const eventsByDao = data[0] as any[];
+    const eventsByProposal = data[1] as any[];
+    const eventsByUser = data[2] as any[];
     const events = eventsByDao.concat(eventsByProposal).concat(eventsByUser).sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
 
     if (events.length === 0) {
@@ -98,10 +100,10 @@ class FeedPage extends React.Component<IProps, null> {
     return (
       <div className={css.feedContainer}>
         <InfiniteScroll
-          dataLength={events.length} //This is important field to render the next data
+          dataLength={events.length} // This is important field to render the next data
           next={this.props.fetchMore}
           hasMore
-          loader={<h4>Loading...</h4>}
+          loader=""
           endMessage={
             <p style={{textAlign: "center"}}>
               <b>&mdash;</b>
@@ -115,6 +117,91 @@ class FeedPage extends React.Component<IProps, null> {
   }
 }
 
+const getFeedObservable = (props: IStateProps, existingData?: SubscriptionData) => {
+  const arc = getArc();
+  const { currentAccountProfile } = props;
+
+  if (!currentAccountProfile) {
+    return of(null);
+  }
+
+  const queryData = `{
+    id
+    type
+    data
+    proposal {
+      id
+      title
+      description
+      stakesFor
+      stakesAgainst
+      votesFor
+      votesAgainst
+      proposer
+      scheme {
+        id
+        name
+      }
+      stage
+    }
+    user
+    dao {
+      id
+      name
+    }
+    timestamp
+  }`;
+
+  let daosString = "";
+  let proposalsString = "";
+  let usersString = "";
+  let daosQuery = of(null);
+  let proposalsQuery = of(null);
+  let usersQuery = of(null);
+
+  if (currentAccountProfile.follows.proposals && currentAccountProfile.follows.proposals.length > 0) {
+    proposalsString = currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
+    const skip = existingData ? existingData[1].length : 0;
+    proposalsQuery = arc.getObservable(gql`query feedProposals
+      {
+        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, skip: ${skip}, where: {
+          proposal_in: [ ${proposalsString} ]
+        }) ${queryData}
+      }`);
+  }
+
+  if (currentAccountProfile.follows.users && currentAccountProfile.follows.users.length > 0) {
+    usersString = currentAccountProfile.follows.users.map((user) => "\"" + user + "\"").join(",");
+    const skip = existingData ? existingData[2].length : 0;
+    usersQuery = arc.getObservable(gql`query feedUsers
+      {
+        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, skip: ${skip}, where: {
+          user_in: [ ${usersString} ]
+          ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
+        }) ${queryData}
+      }
+    `);
+  }
+
+  if (currentAccountProfile.follows.daos && currentAccountProfile.follows.daos.length > 0) {
+    daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
+    const skip = existingData ? existingData[0].length : 0;
+    daosQuery = arc.getObservable(gql`query feedDaos
+      {
+        events(first: ${PAGE_SIZE}, orderBy: timestamp, orderDirection: desc, skip: ${skip}, where: {
+          dao_in: [ ${daosString} ]
+          ${usersString ? `, user_not_in: [ ${usersString} ]` : ""}
+          ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
+        }) ${queryData}
+      }
+    `);
+  }
+
+  return combineLatest(daosQuery, proposalsQuery, usersQuery, (daoEvents, proposalEvents, userEvents) => {
+    return [daoEvents ? daoEvents.data.events : [], proposalEvents ? proposalEvents.data.events : [], userEvents ? userEvents.data.events : []];
+  });
+};
+
 const SubscribedFeedPage = withSubscription({
   wrappedComponent: FeedPage,
   loadingComponent: <div className={css.loading}><Loading/></div>,
@@ -122,107 +209,17 @@ const SubscribedFeedPage = withSubscription({
 
   checkForUpdate: ["currentAccountAddress", "currentAccountProfile"],
 
-  createObservable: (props: IStateProps) => {
-    const arc = getArc();
-    const { currentAccountProfile } = props;
+  createObservable: getFeedObservable,
 
-    if (!currentAccountProfile) {
-      return of(null);
-    }
+  getFetchMoreObservable: getFeedObservable,
 
-    const queryData = `{
-      id
-      type
-      data
-      proposal {
-        id
-        title
-        description
-        stakesFor
-        stakesAgainst
-        votesFor
-        votesAgainst
-        proposer
-        scheme {
-          id
-          name
-        }
-        stage
-      }
-      user
-      dao {
-        id
-        name
-      }
-      timestamp
-    }`;
-
-    let daosString = "";
-    let proposalsString = "";
-    let usersString = "";
-    let daosQuery = of(null);
-    let proposalsQuery = of(null);
-    //let schemesQuery = of([]);
-    let usersQuery = of(null);
-
-    if (currentAccountProfile.follows.proposals && currentAccountProfile.follows.proposals.length > 0) {
-      proposalsString = currentAccountProfile.follows.proposals.map((proposal) => "\"" + proposal + "\"").join(",");
-      proposalsQuery = arc.getObservable(gql`query feedProposals
-        {
-          events(first: ${PAGE_SIZE}, where: {
-            proposal_in: [ ${proposalsString} ]
-          }) ${queryData}
-        }`);
-    }
-
-    // if (currentAccountProfile.follows.schemes) {
-    //   const schemesString = currentAccountProfile.follows.schemes.map((scheme) => "\"" + scheme + "\"").join(",");
-    //   schemesQuery = arc.getObservable(gql`query feedSchemes
-    //     {
-    //       events(first: ${PAGE_SIZE}, where: { scheme_in: [ ${schemesString} ]}) ${queryData}
-    //     }
-    //   `);
-    // }
-
-    if (currentAccountProfile.follows.users && currentAccountProfile.follows.users.length > 0) {
-      usersString = currentAccountProfile.follows.users.map((user) => "\"" + user + "\"").join(",");
-      usersQuery = arc.getObservable(gql`query feedUsers
-        {
-          events(first: ${PAGE_SIZE}, where: {
-            user_in: [ ${usersString} ]
-            ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
-          }) ${queryData}
-        }
-      `);
-    }
-
-    if (currentAccountProfile.follows.daos && currentAccountProfile.follows.daos.length > 0) {
-      daosString = currentAccountProfile.follows.daos.map((daoAvatarAddress) => "\"" + daoAvatarAddress + "\"").join(",");
-      daosQuery = arc.getObservable(gql`query feedDaos
-        {
-          events(first: ${PAGE_SIZE}, where: {
-            dao_in: [ ${daosString} ]
-            ${usersString ? `, user_not_in: [ ${usersString} ]` : ""}
-            ${proposalsString ? `, proposal_not_in: [ ${proposalsString} ]` : ""}
-          }) ${queryData}
-        }
-      `);
-    }
-
-
-
-    return combineLatest(daosQuery, proposalsQuery, usersQuery);
+  fetchMoreCombine: (prevState: SubscriptionData, newData: SubscriptionData) => {
+    return [
+      prevState[0].concat(newData[0]),
+      prevState[1].concat(newData[1]),
+      prevState[2].concat(newData[2]),
+    ];
   },
-
-  // getFetchMoreObservable: (props: IStateProps, data: Member[]) => {
-  //   const dao = props.daoState.dao;
-  //   return dao.members({
-  //     orderBy: "balance",
-  //     orderDirection: "desc",
-  //     first: PAGE_SIZE,
-  //     skip: data.length,
-  //   });
-  // },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubscribedFeedPage);
