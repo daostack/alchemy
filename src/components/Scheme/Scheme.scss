@@ -188,8 +188,12 @@ a.createProposal {
 @media only screen and (max-width: 425px) {
 
   a.createProposal {
-    top: 0px;
-    right: 10px;
+    height: 22px;
+    line-height: 21px;
+    font-size: 11px;
+    padding: 0 10px;
+    top: -8px;
+    right: -14px;
   }
 
   .schemeName {
