@@ -174,13 +174,27 @@ class AppContainer extends React.Component<IProps, IState> {
               <Route path="/profile/:accountAddress" component={AccountProfilePage} />
               <Route path="/redemptions" component={RedemptionsPage} />
               <Route path="/dao-creator" render={() => (
-                <DAOcreator setWeb3Provider={async (): Promise<any> => {
-                  if (!await enableWalletProvider({ showNotification })) {
-                    return undefined;
-                  }
+                <DAOcreator
+                  setWeb3Provider={async (): Promise<any> => {
+                    if (!await enableWalletProvider({ showNotification })) {
+                      return undefined;
+                    }
 
-                  return await getWeb3Provider();
-                }}/>
+                    return await getWeb3Provider();
+                  }
+                  theme={{
+                    palette: {
+                      primary: {
+                        main: "#ffffff",
+                        contrastText: "#ffffff"
+                      },
+                      secondary: {
+                        main: "#ffffff",
+                        contrastText: "#ffffff"
+                      }
+                    }
+                  }}
+                }/>
               )}/>
               <Route path="/" component={DaosPage} />
             </Switch>
