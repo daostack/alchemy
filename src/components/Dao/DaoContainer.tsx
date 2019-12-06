@@ -22,7 +22,7 @@ import DaoHistoryPage from "./DaoHistoryPage";
 import DaoMembersPage from "./DaoMembersPage";
 import DaoSidebar from "./DaoSidebar";
 import * as css from "./Dao.scss";
-import * as sideBarCss from "./DaoSideBar.scss";
+import * as sideBarCss from "./DaoSidebar.scss";
 
 type IExternalProps = RouteComponentProps<any>;
 

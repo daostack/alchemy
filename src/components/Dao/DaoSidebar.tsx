@@ -16,7 +16,7 @@ import { IRootState } from "reducers";
 import { connect } from "react-redux";
 import * as uiActions from "actions/uiActions";
 import TrainingTooltip from "components/Shared/TrainingTooltip";
-import * as css from "./DaoSideBar.scss";
+import * as css from "./DaoSidebar.scss";
 
 interface IExternalProps {
   dao: IDAOState;
