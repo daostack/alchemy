@@ -1,6 +1,5 @@
 import { Address, IDAOState, IMemberState, IProposalState, IRewardState, Reward, Stake, Vote } from "@daostack/client";
-import { toggleFollow } from "actions/profilesActions";
-import { enableWalletProvider, getArc } from "arc";
+import { getArc } from "arc";
 import { ethErrorHandler } from "lib/util";
 
 import BN = require("bn.js");
@@ -10,7 +9,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { closingTime } from "reducers/arcReducer";
-import { showNotification } from "reducers/notifications";
 import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest, concat, of, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
@@ -27,17 +25,11 @@ interface IExternalProps {
 interface IStateProps {
   beneficiaryProfile?: IProfileState;
   creatorProfile?: IProfileState;
-  currentAccountProfile: IProfileState;
-}
-
-interface IDispatchProps {
-  showNotification: typeof showNotification;
-  toggleFollow: typeof toggleFollow;
 }
 
 type SubscriptionData = [IProposalState, Vote[], Stake[], IRewardState, IMemberState, BN, BN, BN];
 type IPreProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
-type IProps = IDispatchProps & IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
+type IProps = IStateProps & IExternalProps & ISubscriptionProps<SubscriptionData>;
 
 interface IInjectedProposalProps {
   beneficiaryProfile?: IProfileState;
@@ -46,8 +38,6 @@ interface IInjectedProposalProps {
   currentAccountGenAllowance: BN;
   daoEthBalance: BN;
   expired: boolean;
-  handleClickFollow: any;
-  isFollowing: boolean;
   member: IMemberState;
   proposal: IProposalState;
   rewards: IRewardState;
@@ -62,13 +52,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
     ...ownProps,
     beneficiaryProfile: proposalState && proposalState.contributionReward ? state.profiles[proposalState.contributionReward.beneficiary] : null,
     creatorProfile: proposalState ? state.profiles[proposalState.proposer] : null,
-    currentAccountProfile: state.profiles[ownProps.currentAccountAddress],
   };
-};
-
-const mapDispatchToProps = {
-  showNotification,
-  toggleFollow,
 };
 
 interface IState {
@@ -95,17 +79,9 @@ class ProposalData extends React.Component<IProps, IState> {
     }
   }
 
-  public handleClickFollow = (proposalId: string) => async (e: any) => {
-    e.preventDefault();
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
-
-    const { toggleFollow, currentAccountProfile } = this.props;
-    await toggleFollow(currentAccountProfile.ethereumAccountAddress, "proposals", proposalId);
-  }
-
   render(): RenderOutput {
     const [proposal, votes, stakes, rewards, member, daoEthBalance, currentAccountGenBalance, currentAccountGenAllowance] = this.props.data;
-    const { beneficiaryProfile, creatorProfile, currentAccountProfile } = this.props;
+    const { beneficiaryProfile, creatorProfile } = this.props;
 
     return this.props.children({
       beneficiaryProfile,
@@ -114,8 +90,6 @@ class ProposalData extends React.Component<IProps, IState> {
       currentAccountGenAllowance,
       daoEthBalance,
       expired: this.state.expired,
-      handleClickFollow: this.handleClickFollow,
-      isFollowing: currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.proposals.includes(proposal.id),
       member,
       proposal,
       rewards,
@@ -125,7 +99,7 @@ class ProposalData extends React.Component<IProps, IState> {
   }
 }
 
-const ConnectedProposalData = connect(mapStateToProps, mapDispatchToProps)(ProposalData);
+const ConnectedProposalData = connect(mapStateToProps, null)(ProposalData);
 
 export default withSubscription({
   wrappedComponent: ConnectedProposalData,

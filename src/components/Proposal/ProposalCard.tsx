@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
+import FollowButton from "components/Shared/FollowButton";
 import { humanProposalTitle } from "lib/util";
 import * as React from "react";
 import { Link } from "react-router-dom";
@@ -53,8 +54,6 @@ export default class ProposalCard extends React.Component<IProps, null> {
           currentAccountGenAllowance,
           daoEthBalance,
           expired,
-          handleClickFollow,
-          isFollowing,
           member,
           proposal,
           rewards,
@@ -167,10 +166,8 @@ export default class ProposalCard extends React.Component<IProps, null> {
                     <img src="/assets/images/Icon/Context-menu.svg"/>
                   </div>
                   <div className={css.menu}>
-                    <div className={classNames({[css.followButton]: true, [css.isFollowing]: isFollowing})} onClick={handleClickFollow(proposal.id)}>
-                      <img src={isFollowing ? "/assets/images/Icon/follow-blue-fill.svg" : "/assets/images/Icon/follow-blue.svg"} />
-                      <span className={css.followText}>{isFollowing ? "Following" : "Follow"}</span>
-                      <span className={css.hoverUnfollow}>Unfollow</span>
+                    <div className={css.followButton}>
+                      <FollowButton id={proposal.id} type="proposals" />
                     </div>
 
                     <VoteButtons

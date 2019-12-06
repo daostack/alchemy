@@ -2,10 +2,10 @@ import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getProfile, toggleFollow } from "actions/profilesActions";
 import { enableWalletProvider } from "arc";
-import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
+import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import { copyToClipboard  } from "lib/util";
 import * as React from "react";
@@ -79,12 +79,10 @@ class AccountPopup extends React.Component<IProps, null> {
 
   public render(): RenderOutput {
     const accountInfo = this.props.data;
-    const { accountAddress, currentAccountProfile, daoState, profile, width } = this.props;
+    const { accountAddress, daoState, profile, width } = this.props;
     const reputation = accountInfo ? accountInfo.reputation : new BN(0);
 
     const _width = width || 12;
-
-    const isFollowing = currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.users.includes(accountAddress);
 
     return (
       <div className={css.targetAccount} style={{ width: _width }}>
@@ -111,11 +109,11 @@ class AccountPopup extends React.Component<IProps, null> {
             <span>{accountAddress}</span>
             <button onClick={this.copyAddress}><img src="/assets/images/Icon/Copy-black.svg"/></button>
           </div>
+
           <div>
-            <span onClick={this.handleClickFollow} className={classNames({[css.followButton]: true, [css.isFollowing]: isFollowing})}>
-              {isFollowing ? "Unfollow" : "Follow"}
-            </span>
+            <FollowButton type="users" id={this.props.accountAddress} />
           </div>
+
           <div className={css.holdings}>
             <span>HOLDINGS</span>
             <div><Reputation daoName={daoState.name} totalReputation={daoState.reputationTotalSupply} reputation={reputation}/></div>

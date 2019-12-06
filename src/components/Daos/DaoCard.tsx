@@ -1,5 +1,6 @@
 import { DAO, IDAOState } from "@daostack/client";
 import classNames from "classnames";
+import FollowButton from "components/Shared/FollowButton";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import * as GeoPattern from "geopattern";
 import * as moment from "moment";
@@ -9,15 +10,13 @@ import * as css from "./Daos.scss";
 
 interface IExternalProps {
   dao: DAO;
-  isFollowing: boolean;
-  toggleFollow: any;
 }
 
 type IProps = IExternalProps & ISubscriptionProps<IDAOState>
 
 
 const DaoCard = (props: IProps) => {
-  const { dao, isFollowing, toggleFollow } = props;
+  const { dao } = props;
   const daoState = props.data;
   const bgPattern = GeoPattern.generate(dao.id + daoState.name);
   const dxDaoActivationDate = moment("2019-07-14T12:00:00.000+0000");
@@ -44,8 +43,8 @@ const DaoCard = (props: IProps) => {
             {dxDaoActivationDate.format("h:mma z")}</div><img src="/assets/images/Icon/alarm.svg"></img></div> : ""}
         </div>
 
-        <span onClick={toggleFollow} className={classNames({[css.followButton]: true, [css.isFollowing]: isFollowing})}>
-          {isFollowing ? "Following" : "Follow"}
+        <span className={css.followButton}>
+          <FollowButton id={dao.id} type="daos" style="white" />
         </span>
 
         <div className={"clearfix " + css.daoInfoContainer}>

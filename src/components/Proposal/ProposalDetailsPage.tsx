@@ -3,9 +3,9 @@ import * as classNames from "classnames";
 import AccountPopup from "components/Account/AccountPopup";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Countdown from "components/Shared/Countdown";
+import FollowButton from "components/Shared/FollowButton";
 import { DiscussionEmbed } from "disqus-react";
 import { humanProposalTitle, schemeName } from "lib/util";
-import Tooltip from "rc-tooltip";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 
@@ -82,8 +82,6 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
           currentAccountGenBalance,
           daoEthBalance,
           expired,
-          handleClickFollow,
-          isFollowing,
           member,
           proposal,
           rewards,
@@ -219,15 +217,7 @@ export default class ProposalDetailsPage extends React.Component<IProps, IState>
                     <span>Share</span>
                   </button>
 
-                  <Tooltip placement="bottom" trigger={["hover"]} overlay={isFollowing ? "Stop following changes to this proposal" : "Follow changes to this proposal"}>
-                    <button
-                      onClick={handleClickFollow(proposal.id)}
-                      className={classNames({[css.followButton]: true, [css.following]: isFollowing})}
-                      data-test-id="follow-button"
-                    >
-                      <span>{isFollowing ? "Following" : "Follow"}</span>
-                    </button>
-                  </Tooltip>
+                  <div className={css.followButton}><FollowButton type="proposals" id={proposal.id} style="bigButton" /></div>
                 </div>
               </div>
 
