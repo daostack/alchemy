@@ -1,4 +1,3 @@
-//import { Event } from "@daostack/client";
 import { enableWalletProvider, getArc } from "arc";
 import DaosPage from "components/Daos/DaosPage";
 import Loading from "components/Shared/Loading";
@@ -10,7 +9,6 @@ import { connect } from "react-redux";
 import { IRootState } from "reducers";
 import { showNotification } from "reducers/notifications";
 import { IProfileState, IProfilesState } from "reducers/profilesReducer";
-// import { map } from "rxjs/operators";
 import { combineLatest, of } from "rxjs";
 
 import FeedItem from "./FeedItem";

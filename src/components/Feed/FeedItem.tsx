@@ -1,4 +1,3 @@
-// import { Event } from "@daostack/client";
 import BN = require("bn.js");
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
@@ -12,7 +11,6 @@ import * as React from "react";
 import DaoFeedItem from "./DaoFeedItem";
 import ProposalFeedItem from "./ProposalFeedItem";
 import UserFeedItem from "./UserFeedItem";
-//import { Link } from "react-router-dom";
 import * as css from "./Feed.scss";
 
 interface IProps {

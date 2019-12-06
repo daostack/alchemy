@@ -8,7 +8,7 @@ export enum ActionTypes {
   FOLLOW_ITEM = "FOLLOW_ITEM"
 }
 
-export type FollowType = "daos" | "proposals" | "schemes" | "users";
+export type FollowType = "daos" | "proposals" | "users";
 
 export type IProfileState = {
   description: string;

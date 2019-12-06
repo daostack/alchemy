@@ -141,7 +141,6 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
       follows = {
         daos: [],
         proposals: [],
-        schemes: [],
         users: [],
       };
     }
@@ -154,10 +153,8 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
     if (follows[type].includes(id)) {
       follows[type] = arrayRemove(follows[type], id);
       isFollowing = false;
-      console.log("remove", follows);
     } else {
       follows[type].push(id);
-      console.log("adding follow", follows);
     }
 
     // TODO: check success?
@@ -170,6 +167,6 @@ export function toggleFollow(accountAddress: string, type: FollowType, id: strin
       payload: { type, id, isFollowing },
     } as FollowItemAction);
 
-    dispatch(showNotification(NotificationStatus.Success, (isFollowing ? "Now following" : "No longer following") + ` ${type} ${id}`));
+    dispatch(showNotification(NotificationStatus.Success, (isFollowing ? "Now following" : "No longer following") + ` ${type.slice(0, -1)} ${id.slice(0, 8)}...`));
   };
 }

@@ -201,7 +201,11 @@ class SidebarMenu extends React.Component<IProps, IStateProps> {
           <div className={css.siteLinksWrapper}>
             <ul>
               <li><Link to="/" onClick={this.handleCloseMenu}>Home</Link></li>
-              <li><Link to="/daos" onClick={this.handleCloseMenu}>All DAOs</Link></li>
+              <li>
+                <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="right">
+                  <Link to="/daos" onClick={this.handleCloseMenu}>All DAOs</Link>
+                </TrainingTooltip>
+              </li>
               <li>
                 <a>$ Buy GEN</a>
                 <ul>

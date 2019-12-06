@@ -167,7 +167,7 @@ class Header extends React.Component<IProps, IStateProps> {
               <img src="/assets/images/Icon/Close.svg"/> :
               <img src="/assets/images/Icon/Menu.svg"/>}
           </div>
-          <TrainingTooltip overlay="List of all DAOs accessible by Alchemy" placement="bottomRight">
+          <TrainingTooltip overlay="View your personal feed" placement="bottomRight">
             <div className={css.menu}>
               <Link to="/">
                 <img src="/assets/images/alchemy-logo-white.svg"/>
