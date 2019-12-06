@@ -181,20 +181,20 @@ class AppContainer extends React.Component<IProps, IState> {
                     }
 
                     return await getWeb3Provider();
-                  }
+                  }}
                   theme={{
                     palette: {
                       primary: {
-                        main: "#ffffff",
-                        contrastText: "#ffffff"
+                        main: "#122e5b",
+                        contrastText: "#fafafa"
                       },
                       secondary: {
-                        main: "#ffffff",
-                        contrastText: "#ffffff"
+                        main: "#0076ff",
+                        contrastText: "#fafafa"
                       }
                     }
                   }}
-                }/>
+                />
               )}/>
               <Route path="/" component={DaosPage} />
             </Switch>
