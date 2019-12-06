@@ -12,7 +12,7 @@ import TrainingTooltip from "components/Shared/TrainingTooltip";
 import * as arcActions from "actions/arcActions";
 import { supportedTokens, toBaseUnit, tokenDetails, toWei, isValidUrl } from "lib/util";
 import { showNotification, NotificationStatus } from "reducers/notifications";
-import { loadInitialFormValues, exportFormValues } from "lib/proposal.util";
+import { exportFormValues, getInitialFormValues } from "lib/proposal.util";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
@@ -171,12 +171,23 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
     const arc = getArc();
 
     const fnDescription = () => (<span>Short description of the proposal.<ul><li>What are you proposing to do?</li><li>Why is it important?</li><li>How much will it cost the DAO?</li><li>When do you plan to deliver the work?</li></ul></span>);
-
+    const initialFormValues: IFormValues  = {
+      beneficiary: "",
+      description: "",
+      ethReward: 0,
+      externalTokenAddress: arc.GENToken().address,
+      externalTokenReward: 0,
+      nativeTokenReward: 0,
+      reputationReward: 0,
+      title: "",
+      url: "",
+    };
+    
     return (
       <div className={css.contributionReward}>
         <Formik
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          initialValues={loadInitialFormValues("contributionReward")}
+          initialValues={getInitialFormValues(initialFormValues)}
           // eslint-disable-next-line react/jsx-no-bind
           validate={(values: IFormValues): void => {
             const errors: any = {};
@@ -225,7 +236,6 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
             errors,
             touched,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            handleSubmit,
             isSubmitting,
             setFieldTouched,
             setFieldValue,
@@ -307,7 +317,7 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
                     name="beneficiary"
                     onBlur={(touched) => { setFieldTouched("beneficiary", touched); }}
                     onChange={(newValue) => { setFieldValue("beneficiary", newValue); }}
-                    defaultValue={loadInitialFormValues("contributionReward").beneficiary}
+                    defaultValue={getInitialFormValues(initialFormValues).beneficiary}
                   />
                 </div>
 
