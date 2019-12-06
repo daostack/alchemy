@@ -1,7 +1,6 @@
 import { Address, IDAOState, IMemberState } from "@daostack/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getProfile, toggleFollow } from "actions/profilesActions";
-import { enableWalletProvider } from "arc";
+import { getProfile } from "actions/profilesActions";
 import AccountImage from "components/Account/AccountImage";
 import AccountProfileName from "components/Account/AccountProfileName";
 import Reputation from "components/Account/Reputation";
@@ -43,13 +42,11 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps & ISubscrip
 interface IDispatchProps {
   getProfile: typeof getProfile;
   showNotification: typeof showNotification;
-  toggleFollow: typeof toggleFollow;
 }
 
 const mapDispatchToProps = {
   getProfile,
-  showNotification,
-  toggleFollow,
+  showNotification
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
@@ -67,14 +64,6 @@ class AccountPopup extends React.Component<IProps, null> {
     copyToClipboard(accountAddress);
     showNotification(NotificationStatus.Success, "Copied to clipboard!");
     e.preventDefault();
-  }
-
-  public handleClickFollow = async (e: any) => {
-    e.preventDefault();
-    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
-
-    const { accountAddress, toggleFollow } = this.props;
-    await toggleFollow(accountAddress, "users", accountAddress);
   }
 
   public render(): RenderOutput {
