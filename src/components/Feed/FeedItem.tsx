@@ -64,13 +64,13 @@ const FeedItem = (props: IProps) => {
       break;
     case "ProposalStageChange":
       title = daoTitle(event, ` - proposal stage changed to ${eventData.stage}`);
-      icon = <img src="/assets/images/Icon/info.svg" />;
+      icon = <img src="/assets/images/Icon/Info.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
     case "VoteFlip": {
       const voteFlipForAgainst = eventData.outcome === "Pass" ? "Pass" : "Fail";
       title = `${voteFlipForAgainst} is now in the lead`;
-      icon = <img src="/assets/images/Icon/info.svg" />;
+      icon = <img src="/assets/images/Icon/Info.svg" />;
       content = <ProposalFeedItem event={event} />;
       break;
     }
