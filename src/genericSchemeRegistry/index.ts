@@ -99,13 +99,17 @@ export class ActionField {
       return (new BN(userValue as string).mul(new BN(10).pow(new BN(this.decimals)))).toString();
     }
 
+    const web3 = new Web3();
+
     switch (this.transformation) {
       case "namehash": {
         return namehash.hash(userValue);
       }
       case "keccak256": {
-        const web3 = new Web3();
         return web3.utils.keccak256(userValue);
+      }
+      case "toWei": {
+        return web3.utils.toWei(userValue.toString(), "ether").toString();
       }
     }
 

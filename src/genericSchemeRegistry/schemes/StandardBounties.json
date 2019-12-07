@@ -57,7 +57,8 @@
         },
         {
           "label": "Token Amount",
-          "name": "_depositAmount"
+          "name": "_depositAmount",
+          "transformation": "toWei"
         }
       ],
       "abi": {
@@ -139,7 +140,8 @@
         },
         {
           "label": "Token Amount",
-          "name": "_tokenAmounts"
+          "name": "_tokenAmounts",
+          "transformation": "toWei"
         }
       ],
       "abi": {
@@ -273,7 +275,8 @@
         },
         {
           "label": "Token Amount",
-          "name": "_amount"
+          "name": "_amount",
+          "transformation": "toWei"
         }
       ],
       "abi": {
@@ -324,7 +327,8 @@
         },
         {
           "label": "Token Amount",
-          "name": "_tokenAmounts"
+          "name": "_tokenAmounts",
+          "transformation": "toWei"
         }
       ],
       "abi": {
@@ -431,7 +435,8 @@
         },
         {
           "label": "Token Amount",
-          "name": "_amounts"
+          "name": "_amounts",
+          "transformation": "toWei"
         }
       ],
       "abi": {

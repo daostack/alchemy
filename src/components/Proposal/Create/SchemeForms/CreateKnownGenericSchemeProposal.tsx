@@ -16,7 +16,6 @@ import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
 
 const BN = require("bn.js");
-const web3 = require("web3");
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -77,7 +76,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
 
     // Search for payable feilds in Standard Bounties, add to send as ETH
     for (const field of currentAction.getFields()) {
-      if (field.name === "_depositAmount" || field.name === "_amount") {
+      if (["_depositAmount", "_amount"].indexOf(field.name) >= 0) {
         ethToSend = ethToSend.add(new BN(values[field.name]));
       }
     }
@@ -92,25 +91,10 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     const currentAction = this.state.currentAction;
     const callValues = [];
 
-    if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") { 
-      for (const field of currentAction.getFields()) {
-        let callValue;
-        // checks if field is one in this list 
-        if (["_tokenAmounts", "_amount", "_tokenAmounts", "_amounts", "_depositAmount"].indexOf(field.name) >= 0) {
-          // converts feild to Wei without precision errors
-          callValue = field.callValue( web3.utils.toWei( values[field.name].toString(), "ether" ).toString() );
-        } else {
-          callValue = field.callValue(values[field.name]);
-        }
-        values[field.name] = callValue;
-        callValues.push(callValue);
-      }
-    } else {
-      for (const field of currentAction.getFields()) {
-        const callValue = field.callValue(values[field.name]);
-        values[field.name] = callValue;
-        callValues.push(callValue);
-      }
+    for (const field of currentAction.getFields()) {
+      const callValue = field.callValue(values[field.name]);
+      values[field.name] = callValue;
+      callValues.push(callValue);
     }
 
     let callData = "";
@@ -129,7 +113,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
       const calcBountEth = await this.getBountyEth(values);
       ethValue =  ethValue.add(calcBountEth);
     } 
- 
+
     const proposalValues = {
       ...values,
       callData,
