@@ -81,7 +81,6 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
         ethToSend = ethToSend.add(new BN(values[field.name]));
       }
     }
-    console.log(ethToSend.toString());
     return ethToSend;
   }
 
@@ -96,6 +95,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") { 
       for (const field of currentAction.getFields()) {
         let callValue;
+        // checks if field is one in this list 
         if (["_tokenAmounts", "_amount", "_tokenAmounts", "_amounts", "_depositAmount"].indexOf(field.name) >= 0) {
           // converts feild to Wei without precision errors
           callValue = field.callValue( web3.utils.toWei( values[field.name].toString(), "ether" ).toString() );
