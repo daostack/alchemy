@@ -25,9 +25,9 @@ export class App extends React.Component<{}, {
     };
   }
 
-  private getPdfHtml = (url: string) => {
+  private getPdfHtml = (filename: string) => {
     return <div className={css.pdfContainer}>
-      <Document file={url}
+      <Document file={`${window.location.protocol}//${window.location.host}/assets/${filename}`}
         className="reactPdfDocument"
         loading="Loading...">
         <Page pageNumber={1}></Page></Document>
@@ -35,11 +35,11 @@ export class App extends React.Component<{}, {
   }
 
   private CookiePolicy = () => {
-    return this.getPdfHtml("http://localhost:3000/assets/cookie_policy.pdf");
+    return this.getPdfHtml("cookie_policy.pdf");
   }
 
   private PrivacyPolicy = () => {
-    return this.getPdfHtml("http://localhost:3000/assets/privacy_policy.pdf");
+    return this.getPdfHtml("privacy_policy.pdf");
   }
 
   public async componentDidMount (): Promise<void> {
