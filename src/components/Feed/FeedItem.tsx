@@ -47,7 +47,14 @@ const FeedItem = (props: IProps) => {
   let title;
   let content;
   let icon;
-  const eventData = JSON.parse(event.data);
+  let eventData;
+  try {
+    // XXX: only need to try this because of malformed JSON in subgraph
+    //      (right now quotes in proposal titles are not escaped)
+    eventData = JSON.parse(event.data);
+  } catch (e) {
+    return null;
+  }
 
   switch (event.type) {
     case "NewDAO":
