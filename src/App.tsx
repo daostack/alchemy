@@ -9,6 +9,7 @@ import { ConnectedRouter } from "react-router-redux";
 import { ThroughProvider } from "react-through";
 import { sleep } from "lib/util";
 import Error404 from "components/Errors/Error404";
+import { Document, Page } from "react-pdf/dist/entry.webpack";
 import { history, default as store } from "./configureStore";
 import * as css from "./layouts/App.scss";
 
@@ -22,6 +23,23 @@ export class App extends React.Component<{}, {
       arcIsInitialized: false,
       retryingArc: false,
     };
+  }
+
+  private getPdfHtml = (url: string) => {
+    return <div className={css.pdfContainer}>
+      <Document file={url}
+        className="reactPdfDocument"
+        loading="Loading...">
+        <Page pageNumber={1}></Page></Document>
+    </div>;
+  }
+
+  private CookiePolicy = () => {
+    return this.getPdfHtml("http://localhost:3000/assets/cookie_policy.pdf");
+  }
+
+  private PrivacyPolicy = () => {
+    return this.getPdfHtml("http://localhost:3000/assets/privacy_policy.pdf");
   }
 
   public async componentDidMount (): Promise<void> {
@@ -76,6 +94,8 @@ export class App extends React.Component<{}, {
           <ThroughProvider>
             <ConnectedRouter history={history}>
               <Switch>
+                <Route path="/cookie-policy" component={this.CookiePolicy}/>
+                <Route path="/privacy-policy" component={this.PrivacyPolicy}/>
                 <Route path="/" exact component={AppContainer}/>
                 <Route path="/dao" component={AppContainer}/>
                 <Route path="/profile" component={AppContainer}/>

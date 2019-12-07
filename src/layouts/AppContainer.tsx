@@ -12,7 +12,7 @@ import Header from "layouts/Header";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
 import { connect } from "react-redux";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Link } from "react-router-dom";
 import { ModalContainer } from "react-router-modal";
 import { IRootState } from "reducers";
 import { dismissNotification, INotificationsState, NotificationStatus, showNotification, INotification } from "reducers/notifications";
@@ -142,7 +142,6 @@ class AppContainer extends React.Component<IProps, IState> {
       />
     </div>; 
   }
-              
 
   public render(): RenderOutput {
     
@@ -194,7 +193,7 @@ class AppContainer extends React.Component<IProps, IState> {
             <div className={css.cookieDisclaimerContainer}>
               <div className={css.cookieDisclaimer}>
                 <div className={css.body}>Alchemy stores cookies on your device to enhance platform experience and analyze platform usage. Please read the&nbsp;
-                  <a href=" https://alchemy.daostack.io/cookie-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</a> for more information.</div>
+                  <Link to="/cookie-policy" target="_blank" rel="noopener noreferrer">Cookie Policy</Link> for more information.</div>
                 <div className={css.accept}><a href="#" onClick={this.handleAccept} className={css.blueButton} data-test-id="acceptCookiesButton"><img src="/assets/images/Icon/v-white-thick.svg"></img>I Accept</a></div>
               </div>
             </div>

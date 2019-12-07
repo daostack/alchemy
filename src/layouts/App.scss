@@ -581,6 +581,14 @@ body {
   display: none;
 }
 
+.pdfContainer {
+  text-align: center;
+
+  :global .reactPdfDocument {
+    display: inline-block;
+  }
+}
+
 @media only screen and (max-device-width: 1024px) {
   .modalBody {
     position: fixed;
