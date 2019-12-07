@@ -14,7 +14,9 @@ import { isValidUrl } from "lib/util";
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-const BN = require('bn.js');
+
+const BN = require("bn.js");
+const web3 = require("web3");
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -73,18 +75,13 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     const currentAction = this.state.currentAction;
     let ethToSend = new BN(0);
 
-    /* 
-      Currently, as StandardBounties.json is configured, 
-      token amounts defaults to ETH by converting input to Wei decimals.
-      However, only whole units ETH are processed
-    */
-
     // Search for payable feilds in Standard Bounties, add to send as ETH
     for (const field of currentAction.getFields()) {
       if (field.name === "_depositAmount" || field.name === "_amount") {
-        ethToSend = ethToSend.add(new BN(values[field.name]))
+        ethToSend = ethToSend.add(new BN(values[field.name]));
       }
     }
+    console.log(ethToSend.toString());
     return ethToSend;
   }
 
@@ -94,12 +91,26 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
 
     const currentAction = this.state.currentAction;
-
     const callValues = [];
-    for (const field of currentAction.getFields()) {
-      const callValue = field.callValue(values[field.name]);
-      values[field.name] = callValue;
-      callValues.push(callValue);
+
+    if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") { 
+      for (const field of currentAction.getFields()) {
+        let callValue;
+        if (["_tokenAmounts", "_amount", "_tokenAmounts", "_amounts", "_depositAmount"].indexOf(field.name) >= 0) {
+          // converts feild to Wei without precision errors
+          callValue = field.callValue( web3.utils.toWei( values[field.name].toString(), "ether" ).toString() );
+        } else {
+          callValue = field.callValue(values[field.name]);
+        }
+        values[field.name] = callValue;
+        callValues.push(callValue);
+      }
+    } else {
+      for (const field of currentAction.getFields()) {
+        const callValue = field.callValue(values[field.name]);
+        values[field.name] = callValue;
+        callValues.push(callValue);
+      }
     }
 
     let callData = "";
@@ -112,11 +123,11 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     }
     setSubmitting(false);
 
-    var ethValue = new BN(0)
+    let ethValue = new BN(0);
     
     if (this.props.genericSchemeInfo.specs.name === "Standard Bounties") {
-      let calcBountEth = await this.getBountyEth(values)
-      ethValue =  ethValue.add(calcBountEth)
+      const calcBountEth = await this.getBountyEth(values);
+      ethValue =  ethValue.add(calcBountEth);
     } 
  
     const proposalValues = {

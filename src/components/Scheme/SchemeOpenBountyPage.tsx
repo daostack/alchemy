@@ -46,7 +46,6 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
     const testnet = network === "rinkeby" ? "rinkeby." : "";
     const res = await fetch(`https://${testnet}api.bounties.network/bounty/?ordering=usd_price&issuer=${this.props.daoAvatarAddress}&bountyStage=1&offset=${this.state.page}`);
     const json = await res.json();
-    console.log(json);
 
     this.setState({
       totalResults: json.count ? json.count : 0, 
@@ -105,7 +104,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
                 New bounties can be created with a new bounty proposal.
             </div>
           </div>
-        )
+        );
       }
     };
 
@@ -128,7 +127,7 @@ export default class SchemeOpenBounty extends React.Component<IProps, IState> {
           )}
         </div>
       </div>
-    )
+    );
   }
 }
 
