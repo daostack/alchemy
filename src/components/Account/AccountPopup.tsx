@@ -46,7 +46,7 @@ interface IDispatchProps {
 
 const mapDispatchToProps = {
   getProfile,
-  showNotification
+  showNotification,
 };
 
 type IProps = IExternalProps & IStateProps & IDispatchProps & ISubscriptionProps<IMemberState>;
