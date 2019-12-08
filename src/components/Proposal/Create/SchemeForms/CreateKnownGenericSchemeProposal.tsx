@@ -1,20 +1,26 @@
-// const BN = require("bn.js");
-import { IProposalType, ISchemeState } from "@daostack/client";
-import * as arcActions from "actions/arcActions";
-import { enableWalletProvider, getArc } from "arc";
-import * as classNames from "classnames";
-import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
-import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
-import Interweave from "interweave";
 import * as React from "react";
 import { connect } from "react-redux";
+// const BN = require("bn.js");
+import { IProposalType, ISchemeState } from "@daostack/client";
+import { enableWalletProvider, getArc } from "arc";
+
+import { ErrorMessage, Field, FieldArray, Form, Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
+import * as classNames from "classnames";
+import Interweave from "interweave";
+
+import { Action, ActionField, GenericSchemeInfo } from "genericSchemeRegistry";
+
 import { IRootState } from "reducers";
 import { NotificationStatus, showNotification } from "reducers/notifications";
+import * as arcActions from "actions/arcActions";
+
 import { isValidUrl } from "lib/util";
+import { exportFormValues, getInitialFormValues } from "lib/proposal.util";
+
 import TagsSelector from "components/Proposal/Create/SchemeForms/TagsSelector";
 import * as css from "../CreateProposal.scss";
 import MarkdownField from "./MarkdownField";
-import { exportFormValues, getInitialFormValues } from "lib/proposal.util";
+
 
 interface IStateProps {
   daoAvatarAddress: string;
@@ -62,7 +68,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
     }
 
     const actions = props.genericSchemeInfo.actions();
-    const initialActionId = getInitialFormValues({ currentActionId: ""}).currentActionId
+    const initialActionId = getInitialFormValues({ currentActionId: ""}).currentActionId;
     this.state = {
       actions,
       currentAction: initialActionId ? actions.find(action => action.id === initialActionId) : actions[0],
@@ -196,7 +202,7 @@ class CreateKnownSchemeProposal extends React.Component<IProps, IState> {
   public exportFormValues(values: IFormValues, tags: string[]) {
     values = {
       ...values, 
-      currentActionId: this.state.currentAction.id
+      currentActionId: this.state.currentAction.id,
     };
     exportFormValues(values, tags);
     this.props.showNotification(NotificationStatus.Success, "Exportable url is now in clipboard :)");
