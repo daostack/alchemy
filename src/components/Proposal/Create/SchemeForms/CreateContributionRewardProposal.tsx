@@ -147,17 +147,11 @@ class CreateContributionReward extends React.Component<IProps, IStateProps> {
   private onTagsChange = () => (tags: string[]): void => {
     this.setState({ tags });
   }
-  
-  // In order to avoid using setState({ tags }) inside of render(). 
-  // I created another function that handles the loading of tags. 
-  loadInitialTagFormValues() {
-    const { search } = window.location;
-    const params = new URLSearchParams(search);
-    if(search.length > 0 ) {
-      const tags = params.get("tags");
-      if(tags) { 
-        this.setState({ tags: JSON.parse(tags) });
-      }
+    
+  private loadInitialTagFormValues() {
+    const tags = getInitialFormValues({tags: []}).tags;
+    if(tags){
+      this.setState({ tags });
     }
   }
   

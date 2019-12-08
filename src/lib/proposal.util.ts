@@ -4,7 +4,6 @@ import { copyToClipboard } from "./util";
 export function getInitialFormValues<Values>(defaultValues: Values) {
   const { search } = window.location;
   const params = new URLSearchParams(search);
-
   // Warning, seem comment 1. below
   const initialFormValues: any = { ...defaultValues };
   for (const prop in defaultValues) {
@@ -42,7 +41,13 @@ export function getInitialFormValues<Values>(defaultValues: Values) {
 }
 
 export const exportFormValues = (values: any, tags: string[]) => {
-  const queryString = Object.keys(values).map(key => key + "=" + values[key]).join("&");
+  const setQueryString = (key: string) => {
+    if(typeof values[key] === "object"){
+      return key + "=" + JSON.stringify(values[key]);
+    }
+    return key + "=" + values[key];
+  };
+  const queryString = Object.keys(values).map(setQueryString).join("&");
   const { origin, pathname } = window.location;
   const url = origin + pathname + "?" + queryString + "&tags=" + JSON.stringify(tags);
   copyToClipboard(url);
